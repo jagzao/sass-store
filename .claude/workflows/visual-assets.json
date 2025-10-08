@@ -1,0 +1,75 @@
+{
+  "name": "Visual Assets Generation Workflow",
+  "description": "Workflow for generating and optimizing visual assets",
+  "trigger": "Request for visual assets",
+  "steps": [
+    {
+      "step": 1,
+      "agent": "visual",
+      "action": "generate_images",
+      "description": "Generate images using Nano Banana API",
+      "required": true,
+      "params": {
+        "prompts": [],
+        "quality": "high",
+        "format": "jpg"
+      },
+      "output": "generated_images",
+      "next_on_success": 2,
+      "next_on_failure": "notify_user"
+    },
+    {
+      "step": 2,
+      "agent": "visual",
+      "action": "optimize_images",
+      "description": "Optimize images for web performance",
+      "required": true,
+      "dependencies": ["visual:generated"],
+      "params": {
+        "quality": 80,
+        "formats": ["jpg", "webp", "avif"]
+      },
+      "output": "optimized_images",
+      "next_on_success": 3,
+      "next_on_failure": "notify_user"
+    },
+    {
+      "step": 3,
+      "agent": "visual",
+      "action": "generate_responsive_set",
+      "description": "Create responsive image sets",
+      "required": true,
+      "dependencies": ["visual:optimized"],
+      "params": {
+        "sizes": [320, 640, 1024, 1920]
+      },
+      "output": "responsive_images",
+      "next_on_success": 4,
+      "next_on_failure": "notify_user"
+    },
+    {
+      "step": 4,
+      "agent": "automation",
+      "action": "deploy_assets",
+      "description": "Upload assets to CDN",
+      "required": true,
+      "dependencies": ["visual:responsive_set_created"],
+      "output": "cdn_urls",
+      "next_on_success": "complete",
+      "next_on_failure": "notify_user"
+    }
+  ],
+  "success_criteria": {
+    "images_generated": true,
+    "images_optimized": true,
+    "max_file_size": "500KB",
+    "formats_created": ["jpg", "webp"],
+    "uploaded_to_cdn": true
+  },
+  "notifications": {
+    "on_start": true,
+    "on_step_complete": true,
+    "on_error": true,
+    "on_complete": true
+  }
+}

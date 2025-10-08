@@ -1,0 +1,259 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Tenant-specific colors set by TenantProvider */
+    --color-primary: #dc2626;
+    --color-secondary: #1f2937;
+
+    /* Base color palette */
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222.2 84% 4.9%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96%;
+    --accent-foreground: 222.2 84% 4.9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 84% 4.9%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 224.3 76.3% 94.1%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Tenant theming utilities */
+.tenant-primary {
+  color: var(--color-primary);
+}
+
+.tenant-primary-bg {
+  background-color: var(--color-primary);
+}
+
+.tenant-secondary {
+  color: var(--color-secondary);
+}
+
+/* WCAG AA Contrast Improvements */
+@layer utilities {
+  /* Override light gray text colors for better contrast */
+  .text-gray-400 {
+    color: rgb(
+      107,
+      114,
+      128
+    ) !important; /* Was rgb(156, 163, 175), now darker for 4.5:1 ratio */
+  }
+
+  .text-gray-500 {
+    color: rgb(75, 85, 99) !important; /* Darker for better contrast */
+  }
+}
+
+.tenant-secondary-bg {
+  background-color: var(--color-secondary);
+}
+
+/* Quick Actions Dock */
+.quick-actions-dock {
+  @apply fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50;
+  @apply bg-white/90 backdrop-blur-sm rounded-full shadow-lg border;
+  @apply flex items-center gap-2 px-4 py-2;
+  @apply transition-all duration-300 ease-in-out;
+}
+
+/* Command Palette */
+.command-palette {
+  @apply fixed inset-0 z-50 bg-black/50 backdrop-blur-sm;
+  @apply flex items-start justify-center pt-[20vh];
+}
+
+.command-palette-content {
+  @apply bg-white rounded-lg shadow-xl border;
+  @apply w-full max-w-lg mx-4;
+  @apply max-h-[60vh] overflow-hidden;
+}
+
+/* Mini Cart */
+.mini-cart {
+  @apply fixed top-4 right-4 z-40;
+  @apply bg-white rounded-lg shadow-lg border;
+  @apply w-80 max-h-96 overflow-hidden;
+  @apply transition-all duration-300 ease-in-out;
+}
+
+/* Animations */
+@keyframes slideInFromRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutToRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+.slide-in-right {
+  animation: slideInFromRight 0.3s ease-out;
+}
+
+.slide-out-right {
+  animation: slideOutToRight 0.3s ease-in;
+}
+
+/* Touch targets for mobile */
+@media (max-width: 768px) {
+  .touch-target {
+    @apply min-w-[44px] min-h-[44px];
+  }
+}
+
+/* Focus styles for accessibility */
+.focus-visible {
+  @apply outline-none ring-2 ring-primary ring-offset-2;
+}
+
+/* Loading states */
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Skeleton loading */
+.skeleton {
+  @apply bg-muted animate-pulse rounded;
+}
+
+/* Screen reader support */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.screen-reader-text {
+  @apply sr-only;
+}
+
+/* Visually hidden but available to screen readers */
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* Skip link for keyboard navigation */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 6px;
+  background: #000;
+  color: #fff;
+  padding: 8px;
+  text-decoration: none;
+  z-index: 1000;
+  transition: top 0.3s;
+}
+
+.skip-link:focus {
+  top: 6px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .quick-actions-dock {
+    @apply border-2 border-black bg-white;
+  }
+
+  .command-palette-content {
+    @apply border-2 border-black;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .animate-pulse {
+    animation: none;
+  }
+}

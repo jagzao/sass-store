@@ -1,0 +1,30 @@
+[env.production]
+name = "sass-store-cost-monitor"
+main = "../scripts/cost-monitor.js"
+compatibility_date = "2024-01-01"
+
+# Scheduled to run daily at 00:00 UTC
+[env.production.triggers]
+crons = ["0 0 * * *"]
+
+[env.production.vars]
+ENVIRONMENT = "production"
+MONTHLY_BUDGET = "5.00"
+
+# Secrets (set via wrangler secret put)
+# SLACK_WEBHOOK_URL
+# DATABASE_URL
+# GCP_SERVICE_ACCOUNT_KEY
+
+[env.staging]
+name = "sass-store-cost-monitor-staging"
+main = "../scripts/cost-monitor.js"
+compatibility_date = "2024-01-01"
+
+# Run more frequently in staging for testing
+[env.staging.triggers]
+crons = ["0 */6 * * *"]
+
+[env.staging.vars]
+ENVIRONMENT = "staging"
+MONTHLY_BUDGET = "2.00"

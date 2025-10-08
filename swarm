@@ -1,0 +1,38 @@
+#!/bin/bash
+# Swarm CLI Helper - Ejecuta sin "npm run"
+
+case "$1" in
+  status|s)
+    npm run swarm:status
+    ;;
+  start|new|n)
+    shift
+    npm run swarm:start "$*"
+    ;;
+  continue|c)
+    shift
+    npm run swarm:continue "$@"
+    ;;
+  resume|r)
+    shift
+    npm run swarm:resume "$@"
+    ;;
+  help|h|*)
+    echo "🐝 Swarm CLI Helper"
+    echo ""
+    echo "Uso: ./swarm <comando> [argumentos]"
+    echo ""
+    echo "Comandos:"
+    echo "  status, s           Ver estado actual"
+    echo "  start, new, n       Iniciar nueva feature"
+    echo "  continue, c         Continuar sesión"
+    echo "  resume, r           Reanudar sesión pausada"
+    echo "  help, h             Mostrar esta ayuda"
+    echo ""
+    echo "Ejemplos:"
+    echo "  ./swarm status"
+    echo "  ./swarm start Mi Feature"
+    echo "  ./swarm continue session_123 task_0"
+    echo ""
+    ;;
+esac

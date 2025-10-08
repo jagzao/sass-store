@@ -1,0 +1,80 @@
+{
+  "id": "swarm_1759372094756_1dbemh",
+  "featureName": "Ejecuta todos los tests de Playwright, corrige los errores encontrados, revisa el flujo completo de la aplicación para validar la funcionalidad, y corrige apps/web/components/tenant/nomnom/hero/HeroNomNom.tsx con las siguientes mejoras: 1) Agrega el reveal circular con overlay usando clip-path que anima de circle(0% at 70% 50%) a circle(140% at 70% 50%) con duración de 1s y ease power2.out, usando backgroundColor del nextSlide y display none al final. 2) Corrige el movimiento de las imágenes de tacos agregando transformOrigin 60% 80%, y-offset de 8px para saliente y -6px para entrante, scale 1.04 inicial en entrante, y usa window.matchMedia para responsive con delta de 40px en móvil y 60px en desktop.",
+  "status": "active",
+  "progress": 17,
+  "currentAgent": "DEVELOPER",
+  "tasks": [
+    {
+      "id": "task_0",
+      "agent": "ARCHITECT",
+      "description": "Valida arquitectura y estructura del proyecto",
+      "status": "completed",
+      "progress": 100,
+      "dependencies": [],
+      "startedAt": "2025-10-02T02:28:14.758Z",
+      "output": [
+        "🏗️  Validando arquitectura del proyecto...",
+        "📁 Validando estructura de carpetas...",
+        "✓ Estructura de carpetas correcta",
+        "📦 Analizando dependencias...",
+        "✓ Dependencias validadas",
+        "🎨 Validando patrones de código...",
+        "ℹ️  2 sugerencias de mejora encontradas",
+        "✓ Patrones validados",
+        "✓ Arquitectura validada exitosamente"
+      ],
+      "artifacts": ["architecture-report.md"],
+      "completedAt": "2025-10-02T02:28:14.765Z"
+    },
+    {
+      "id": "task_1",
+      "agent": "DEVELOPER",
+      "description": "Implementa código y features",
+      "status": "failed",
+      "progress": 20,
+      "dependencies": ["task_0"],
+      "startedAt": "2025-10-02T02:28:14.765Z",
+      "output": [
+        "💻 Iniciando implementación...",
+        "📋 Feature: Ejecuta todos los tests de Playwright, corrige los errores encontrados, revisa el flujo completo de la aplicación para validar la funcionalidad, y corrige apps/web/components/tenant/nomnom/hero/HeroNomNom.tsx con las siguientes mejoras: 1) Agrega el reveal circular con overlay usando clip-path que anima de circle(0% at 70% 50%) a circle(140% at 70% 50%) con duración de 1s y ease power2.out, usando backgroundColor del nextSlide y display none al final. 2) Corrige el movimiento de las imágenes de tacos agregando transformOrigin 60% 80%, y-offset de 8px para saliente y -6px para entrante, scale 1.04 inicial en entrante, y usa window.matchMedia para responsive con delta de 40px en móvil y 60px en desktop.",
+        "📁 Creando estructura de archivos..."
+      ],
+      "blockedReason": "ENOENT: no such file or directory, mkdir 'c:\\Dev\\Zo\\sass-store\\apps\\web\\features\\Ejecuta todos los tests de Playwright, corrige los errores encontrados, revisa el flujo completo de la aplicación para validar la funcionalidad, y corrige apps\\web\\components\\tenant\\nomnom\\hero\\HeroNomNom.tsx con las siguientes mejoras: 1) Agrega el reveal circular con overlay usando clip-path que anima de circle(0% at 70% 50%) a circle(140% at 70% 50%) con duración de 1s y ease power2.out, usando backgroundColor del nextSlide y display none al final. 2) Corrige el movimiento de las imágenes de tacos agregando transformOrigin 60% 80%, y-offset de 8px para saliente y -6px para entrante, scale 1.04 inicial en entrante, y usa window.matchMedia para responsive con delta de 40px en móvil y 60px en desktop.'"
+    },
+    {
+      "id": "task_2",
+      "agent": "TESTER",
+      "description": "Ejecuta tests y valida calidad",
+      "status": "pending",
+      "progress": 0,
+      "dependencies": ["task_1"]
+    },
+    {
+      "id": "task_3",
+      "agent": "QA",
+      "description": "Análisis de calidad y accesibilidad",
+      "status": "pending",
+      "progress": 0,
+      "dependencies": ["task_2"]
+    },
+    {
+      "id": "task_4",
+      "agent": "REVIEWER",
+      "description": "Code review y mejoras",
+      "status": "pending",
+      "progress": 0,
+      "dependencies": ["task_3"]
+    },
+    {
+      "id": "task_5",
+      "agent": "DEPLOYER",
+      "description": "Preparación y deployment",
+      "status": "pending",
+      "progress": 0,
+      "dependencies": ["task_4"]
+    }
+  ],
+  "createdAt": "2025-10-02T02:28:14.756Z",
+  "updatedAt": "2025-10-02T02:28:14.770Z"
+}

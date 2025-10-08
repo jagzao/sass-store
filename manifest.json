@@ -1,0 +1,227 @@
+{
+  "name": "Sass Store Multitenant Platform",
+  "version": "1.0.0",
+  "description": "S0 Sprint: Foundations + Guardrails - Multitenant SaaS platform for beauty salons with 10/10 UX, fallback zo-system, optimized media pipeline, and ≤$5/month operational costs",
+  "sprint": "S0",
+  "created": "2025-09-20",
+  "status": "foundation-complete",
+  "budget": {
+    "monthly_target": 5.0,
+    "currency": "USD",
+    "guardrails": {
+      "eco_mode": 50,
+      "freeze_mode": 90,
+      "kill_switch": 100
+    }
+  },
+  "documentation": {
+    "requirements": "/docs/PRD.md",
+    "architecture": "/docs/ARCHITECTURE.md",
+    "testing": "/docs/TESTING.md"
+  },
+  "seeds": {
+    "tenants": "/agents/outputs/seeds/tenants.json",
+    "description": "Initial tenant configurations including zo-system fallback and 6 sample beauty businesses"
+  },
+  "media": {
+    "plan": "/agents/outputs/media/plan.md",
+    "storage": "Cloudflare R2",
+    "variants": ["thumb", "card", "hd"],
+    "formats": ["avif", "webp", "jpeg"],
+    "optimization": "pre-processing with EXIF removal, deduplication, blurhash"
+  },
+  "next_sprints": {
+    "S1": {
+      "prime_designer": {
+        "description": "UX 10/10 with minimal clicks",
+        "deliverables": [
+          "/design/wireframes/*.png",
+          "/design/tokens.json",
+          "/agents/outputs/ux-checklist.md"
+        ]
+      },
+      "prime_frontend": {
+        "description": "App Router + RSC architecture",
+        "deliverables": ["/agents/outputs/frontend/plan.md"]
+      },
+      "prime_backend": {
+        "description": "Multitenant + fallback + error handling",
+        "deliverables": ["/agents/outputs/backend/plan.md"]
+      },
+      "prime_media": {
+        "description": "Image optimization pre-processing",
+        "deliverables": ["/agents/outputs/media/spec.md"]
+      },
+      "prime_testing": {
+        "description": "Gates & e2e with click budgets",
+        "deliverables": [
+          "/agents/outputs/testing/matrix.md",
+          "/agents/outputs/testing/e2e-flows.md"
+        ]
+      },
+      "prime_infra": {
+        "description": "Budget ≤$5/month infrastructure",
+        "deliverables": [
+          "/agents/outputs/infra/runbook.md",
+          "/agents/outputs/infra/cost-sentinel.md"
+        ]
+      }
+    }
+  },
+  "key_features": {
+    "click_budgets": {
+      "purchase": "≤3 clicks",
+      "booking": "≤2 clicks",
+      "reorder": "≤1 click"
+    },
+    "ux_10_10": {
+      "quick_actions_dock": "Role-aware action shortcuts",
+      "cmd_palette": "Global search and commands (Cmd+K)",
+      "plp_add": "1-click add from product list",
+      "mini_cart": "Sticky cart overlay",
+      "first_available": "Smart booking slot suggestion"
+    },
+    "multitenant": {
+      "resolution_order": [
+        "X-Tenant",
+        "subdomain",
+        "path",
+        "cookie",
+        "zo-system"
+      ],
+      "fallback": "zo-system tenant for unmapped hosts",
+      "rls": "Row-level security for data isolation",
+      "contact_maps": "Per-tenant contact info and location"
+    },
+    "cost_guardrails": {
+      "thresholds": "50/80/90/100% budget triggers",
+      "modes": "eco/freeze/kill switch automation",
+      "monitoring": "Daily cost sentinel worker",
+      "quotas": "Per-tenant storage and API limits"
+    }
+  },
+  "architecture": {
+    "pattern": "Clean Architecture + CQRS with MediatR",
+    "database": "PostgreSQL with Row-Level Security (RLS)",
+    "media": "Cloudflare R2 with optimization pipeline",
+    "errors": "Domain codes + ProblemDetails (no control-flow exceptions)",
+    "hosting": {
+      "frontend": "Cloudflare Pages",
+      "api": "Cloud Run/Fly.io (1 instance max, scale-to-zero)",
+      "database": "Neon (autosuspend, branch PRs)",
+      "cache": "Upstash Redis (queues, rate limiting)",
+      "monitoring": "Cloudflare Workers (cost sentinel)"
+    }
+  },
+  "testing": {
+    "coverage_targets": {
+      "domain_api": "≥80%",
+      "web": "≥70%"
+    },
+    "performance_budgets": {
+      "lcp": "<2.5s P75",
+      "inp": "<200ms P75",
+      "accessibility": "≥95% Lighthouse score"
+    },
+    "types": [
+      "unit",
+      "integration",
+      "e2e",
+      "contract",
+      "performance",
+      "accessibility",
+      "rls"
+    ]
+  },
+  "tenant_seeds": [
+    {
+      "slug": "zo-system",
+      "name": "Zo System",
+      "mode": "catalog",
+      "purpose": "Default fallback tenant"
+    },
+    {
+      "slug": "wondernails",
+      "name": "Wonder Nails Studio",
+      "mode": "booking",
+      "focus": "Nail art and manicure services"
+    },
+    {
+      "slug": "vigistudio",
+      "name": "Vigi Studio",
+      "mode": "booking",
+      "focus": "Hair salon and beauty treatments"
+    },
+    {
+      "slug": "villafuerte",
+      "name": "Villafuerte Spa",
+      "mode": "booking",
+      "focus": "Luxury spa and wellness"
+    },
+    {
+      "slug": "vainilla-vargas",
+      "name": "Vainilla Vargas Beauty",
+      "mode": "catalog",
+      "focus": "Natural cosmetics boutique"
+    },
+    {
+      "slug": "delirios",
+      "name": "Delirios Beauty Bar",
+      "mode": "booking",
+      "focus": "Creative makeup and nail art"
+    },
+    {
+      "slug": "nom-nom",
+      "name": "Nom Nom Beauty Kitchen",
+      "mode": "catalog",
+      "focus": "DIY beauty products and workshops"
+    }
+  ],
+  "security": {
+    "rls_enforcement": "All tenant data isolated via tenant_id",
+    "rate_limiting": "Per-tenant API quotas",
+    "secrets_management": "Environment-based configuration",
+    "audit_trail": "All tenant operations logged"
+  },
+  "performance": {
+    "image_optimization": {
+      "formats": ["AVIF", "WebP", "JPEG"],
+      "variants": ["150x150", "400x300", "1200x900"],
+      "features": [
+        "EXIF removal",
+        "blurhash",
+        "dominant color",
+        "deduplication"
+      ]
+    },
+    "caching": {
+      "media": "1 year immutable cache",
+      "api": "Per-endpoint cache strategies",
+      "edge": "Cloudflare CDN"
+    }
+  },
+  "flags": {
+    "eco_mode": "Reduce image quality, aggressive caching",
+    "freeze_mode": "Read-only operations, essential services only",
+    "kill_switch": "Maintenance mode, core services only",
+    "image_optimize": "Enable/disable image processing pipeline",
+    "image_variants": "Generate multiple image sizes",
+    "realtime_sync": "Enable real-time features",
+    "advanced_analytics": "Detailed tracking and reporting"
+  },
+  "mcp_tools": {
+    "allowed": ["db-postgres", "file/r2", "webfetch"],
+    "restrictions": [
+      "No global MCP autoload",
+      "No destructive DDL operations",
+      "No credential exposure",
+      "No large content embedding"
+    ]
+  },
+  "delivery_format": {
+    "plan": "Brief overview of implementation strategy",
+    "files": "List of created/updated documentation and configuration",
+    "risks": "Identified risks and mitigation strategies",
+    "next": "Next steps and sprint planning"
+  }
+}

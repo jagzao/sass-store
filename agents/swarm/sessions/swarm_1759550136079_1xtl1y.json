@@ -1,0 +1,132 @@
+{
+  "id": "swarm_1759550136079_1xtl1y",
+  "featureName": "ejecuta todos los tests para todos los tenants y corrigelos",
+  "status": "active",
+  "progress": 50,
+  "currentAgent": "SECURITY",
+  "tasks": [
+    {
+      "id": "task_0",
+      "agent": "ARCHITECT",
+      "description": "Valida arquitectura y estructura del proyecto",
+      "status": "completed",
+      "progress": 100,
+      "dependencies": [],
+      "startedAt": "2025-10-04T03:55:36.082Z",
+      "output": [
+        "🏗️  Validando arquitectura del proyecto...",
+        "📁 Validando estructura de carpetas...",
+        "✓ Estructura de carpetas correcta",
+        "📦 Analizando dependencias...",
+        "✓ Dependencias validadas",
+        "🎨 Validando patrones de código...",
+        "ℹ️  2 sugerencias de mejora encontradas",
+        "✓ Patrones validados",
+        "✓ Arquitectura validada exitosamente"
+      ],
+      "artifacts": ["architecture-report.md"],
+      "completedAt": "2025-10-04T03:55:36.095Z"
+    },
+    {
+      "id": "task_1",
+      "agent": "DEVELOPER",
+      "description": "Implementa código y features",
+      "status": "completed",
+      "progress": 100,
+      "dependencies": ["task_0"],
+      "startedAt": "2025-10-04T03:55:36.096Z",
+      "output": [
+        "💻 Iniciando implementación...",
+        "📋 Feature: ejecuta todos los tests para todos los tenants y corrigelos",
+        "📁 Creando estructura de archivos...",
+        "   ✓ Creado: apps/web/features/ejecuta todos los tests para todos los tenants y corrigelos",
+        "   ✓ Creado: packages/core/ejecuta todos los tests para todos los tenants y corrigelos-service",
+        "📝 Generando archivos...",
+        "   ✓ apps/web/features/ejecuta todos los tests para todos los tenants y corrigelos/index.tsx",
+        "   ✓ packages/core/ejecuta todos los tests para todos los tenants y corrigelos-service/index.ts",
+        "✓ 2 archivos generados",
+        "✓ Implementación completada"
+      ],
+      "artifacts": ["feature-implementation.md"],
+      "completedAt": "2025-10-04T03:55:36.105Z"
+    },
+    {
+      "id": "task_2",
+      "agent": "QA",
+      "description": "Crea y actualiza tests automáticamente",
+      "status": "completed",
+      "progress": 100,
+      "dependencies": ["task_1"],
+      "startedAt": "2025-10-04T03:55:36.105Z",
+      "output": {
+        "testsCreated": 1,
+        "testsPassed": 0,
+        "testsFailed": 0,
+        "coverage": 0
+      },
+      "completedAt": "2025-10-04T03:55:37.635Z"
+    },
+    {
+      "id": "task_3",
+      "agent": "CODE_QUALITY",
+      "description": "Valida estándares de código",
+      "status": "completed",
+      "progress": 100,
+      "dependencies": ["task_2"],
+      "startedAt": "2025-10-04T03:55:37.636Z",
+      "output": {
+        "totalIssues": 0,
+        "errors": 0,
+        "warnings": 0,
+        "fixed": 0,
+        "report": "## Code Quality Report\n\n**Total Issues:** 0\n- Errors: 0\n- Warnings: 0\n- Info: 0\n- Auto-fixed: 0\n\n"
+      },
+      "completedAt": "2025-10-04T03:55:43.025Z"
+    },
+    {
+      "id": "task_4",
+      "agent": "SECURITY",
+      "description": "Escanea vulnerabilidades de seguridad",
+      "status": "failed",
+      "progress": 100,
+      "dependencies": ["task_3"],
+      "startedAt": "2025-10-04T03:55:43.025Z",
+      "output": {
+        "totalIssues": 2,
+        "critical": 1,
+        "high": 0,
+        "medium": 1,
+        "low": 0,
+        "report": "# Security Scan Report\n\n**Total Issues:** 2\n\n- 🔴 Critical: 1\n- 🟠 High: 0\n- 🟡 Medium: 1\n- 🟢 Low: 0\n\n## 🔴 Critical Issues\n\n### Row Level Security not enabled\n**File:** c:\\Dev\\Zo\\sass-store\\packages\\database\\schema.ts:0\n**Category:** Missing RLS\n**Description:** Database schema lacks RLS policies for multi-tenant isolation\n**Recommendation:** Enable RLS policies on all tables to prevent data leakage\n\n\n## Summary\n\n⚠️ **Action Required:** Fix 1 critical security issue(s) before deployment.\n"
+      },
+      "completedAt": "2025-10-04T03:55:47.824Z",
+      "blockedReason": "Found 1 critical security issues!"
+    },
+    {
+      "id": "task_5",
+      "agent": "TESTER",
+      "description": "Validación final e integración",
+      "status": "pending",
+      "progress": 0,
+      "dependencies": ["task_4"]
+    },
+    {
+      "id": "task_6",
+      "agent": "REVIEWER",
+      "description": "Code review y mejoras",
+      "status": "pending",
+      "progress": 0,
+      "dependencies": ["task_5"]
+    },
+    {
+      "id": "task_7",
+      "agent": "DEPLOYER",
+      "description": "Preparación y deployment",
+      "status": "pending",
+      "progress": 0,
+      "dependencies": ["task_6"]
+    }
+  ],
+  "createdAt": "2025-10-04T03:55:36.079Z",
+  "updatedAt": "2025-10-04T03:55:47.825Z"
+}

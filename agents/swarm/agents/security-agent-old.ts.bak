@@ -1,0 +1,466 @@
+/**
+ * Security Agent
+ * Validates security best practices and identifies vulnerabilities
+ */
+
+import { BaseAgent } from './base-agent';
+import { swarmManager } from '../swarm-manager';
+import * as fs from 'fs';
+import * as path from 'path';
+import { exec } from 'child_process';
+import { promisify } from 'util';
+
+const execAsync = promisify(exec);
+
+interface SecurityIssue {
+  file: string;
+  line: number;
+  severity: 'critical' | 'high' | 'medium' | 'low';
+  category: string;
+  title: string;
+  description: string;
+  recommendation: string;
+  cwe?: string; // Common Weakness Enumeration
+  cvss?: number; // Common Vulnerability Scoring System
+}
+
+export class SecurityAgent extends BaseAgent {
+  private readonly securityPatterns = [
+    {
+      pattern: /eval\(/g,
+      title: 'Dangerous eval() usage',
+      category: 'Code Injection',
+      severity: 'critical' as const,
+      cwe: 'CWE-95',
+      recommendation: 'Avoid using eval(). Use safer alternatives like JSON.parse() or Function constructor with proper validation.'
+    },
+    {
+      pattern: /dangerouslySetInnerHTML/g,
+      title: 'XSS vulnerability via dangerouslySetInnerHTML',
+      category: 'Cross-Site Scripting',
+      severity: 'high' as const,
+      cwe: 'CWE-79',
+      recommendation: 'Sanitize HTML content using DOMPurify or similar library before rendering.'
+    },
+    {
+      pattern: /process\.env\.\w+/g,
+      title: 'Environment variable exposure',
+      category: 'Information Disclosure',
+      severity: 'medium' as const,
+      cwe: 'CWE-200',
+      recommendation: 'Ensure sensitive env vars are not exposed to client. Use NEXT_PUBLIC_ prefix only for public vars.'
+    },
+    {
+      pattern: /password\s*=\s*['"][^'"]+['"]/gi,
+      title: 'Hardcoded password detected',
+      category: 'Hardcoded Credentials',
+      severity: 'critical' as const,
+      cwe: 'CWE-798',
+      recommendation: 'Never hardcode passwords. Use environment variables or secret management systems.'
+    },
+    {
+      pattern: /api[_-]?key\s*=\s*['"][^'"]+['"]/gi,
+      title: 'Hardcoded API key detected',
+      category: 'Hardcoded Credentials',
+      severity: 'critical' as const,
+      cwe: 'CWE-798',
+      recommendation: 'Use environment variables for API keys. Never commit secrets to version control.'
+    },
+    {
+      pattern: /SELECT.*FROM.*WHERE.*\+/g,
+      title: 'Potential SQL Injection',
+      category: 'Injection',
+      severity: 'critical' as const,
+      cwe: 'CWE-89',
+      recommendation: 'Use parameterized queries or ORM to prevent SQL injection.'
+    },
+    {
+      pattern: /localStorage\.setItem.*token/gi,
+      title: 'Insecure token storage',
+      category: 'Insecure Storage',
+      severity: 'high' as const,
+      cwe: 'CWE-922',
+      recommendation: 'Store sensitive tokens in httpOnly cookies or secure server-side sessions.'
+    },
+    {
+      pattern: /http:\/\//g,
+      title: 'Insecure HTTP protocol',
+      category: 'Insecure Communication',
+      severity: 'medium' as const,
+      cwe: 'CWE-319',
+      recommendation: 'Always use HTTPS for external communications.'
+    },
+    {
+      pattern: /Math\.random\(\)/g,
+      title: 'Weak random number generation',
+      category: 'Weak Cryptography',
+      severity: 'low' as const,
+      cwe: 'CWE-338',
+      recommendation: 'Use crypto.randomBytes() or crypto.getRandomValues() for security-sensitive operations.'
+    }
+  ];
+
+  protected async execute(): Promise<void> {
+    const session = swarmManager.loadSession(this.sessionId);
+    if (!session) throw new Error('Session not found');
+
+    this.updateProgress(10, 'Initializing security scan...');
+
+    const issues: SecurityIssue[] = [];
+
+    this.updateProgress(20, 'Scanning for code vulnerabilities...');
+
+    // Get modified files
+    const modifiedFiles = await this.getModifiedFiles(session);
+
+    // Scan files for security issues
+    for (const file of modifiedFiles) {
+      const fileIssues = await this.scanFile(file);
+      issues.push(...fileIssues);
+    }
+
+    this.updateProgress(40, 'Checking dependencies for vulnerabilities...');
+
+    // Run npm audit
+    const npmIssues = await this.runNpmAudit();
+    issues.push(...npmIssues);
+
+    this.updateProgress(60, 'Validating authentication & authorization...');
+
+    // Check authentication patterns
+    const authIssues = await this.checkAuthSecurity(modifiedFiles);
+    issues.push(...authIssues);
+
+    this.updateProgress(70, 'Analyzing RLS policies...');
+
+    // Check RLS (Row Level Security) policies
+    const rlsIssues = await this.checkRLSPolicies();
+    issues.push(...rlsIssues);
+
+    this.updateProgress(80, 'Validating CORS & CSP configurations...');
+
+    // Check CORS and CSP
+    const corsIssues = await this.checkCORSandCSP();
+    issues.push(...corsIssues);
+
+    this.updateProgress(90, 'Generating security report...');
+
+    // Generate report
+    const report = this.generateSecurityReport(issues);
+
+    this.updateProgress(100, 'Security validation completed');
+
+    // Update task with results
+    this.updateTask('COMPLETED', {
+      totalIssues: issues.length,
+      critical: issues.filter(i => i.severity === 'critical').length,
+      high: issues.filter(i => i.severity === 'high').length,
+      medium: issues.filter(i => i.severity === 'medium').length,
+      low: issues.filter(i => i.severity === 'low').length,
+      report
+    });
+
+    // Fail if critical issues found
+    const criticalIssues = issues.filter(i => i.severity === 'critical');
+    if (criticalIssues.length > 0) {
+      throw new Error(`Found ${criticalIssues.length} critical security issues!`);
+    }
+  }
+
+  private async getModifiedFiles(session: any): Promise<string[]> {
+    const devTask = session.tasks.find((t: any) => t.agent === 'DEVELOPER');
+
+    if (devTask?.output?.files) {
+      return devTask.output.files;
+    }
+
+    try {
+      const { stdout } = await execAsync('git diff --name-only HEAD');
+      return stdout.split('\n').filter(f => f.length > 0);
+    } catch {
+      return [];
+    }
+  }
+
+  private async scanFile(filePath: string): Promise<SecurityIssue[]> {
+    const issues: SecurityIssue[] = [];
+
+    if (!fs.existsSync(filePath)) return issues;
+
+    const content = fs.readFileSync(filePath, 'utf-8');
+    const lines = content.split('\n');
+
+    // Check each security pattern
+    for (const { pattern, title, category, severity, cwe, recommendation } of this.securityPatterns) {
+      lines.forEach((line, index) => {
+        const matches = line.match(pattern);
+        if (matches && !line.trim().startsWith('//')) {
+          issues.push({
+            file: filePath,
+            line: index + 1,
+            severity,
+            category,
+            title,
+            description: `Found pattern: ${matches[0]}`,
+            recommendation,
+            cwe
+          });
+        }
+      });
+    }
+
+    // Check for OWASP Top 10 issues
+    const owaspIssues = this.checkOWASPTop10(filePath, content, lines);
+    issues.push(...owaspIssues);
+
+    return issues;
+  }
+
+  private checkOWASPTop10(filePath: string, content: string, lines: string[]): SecurityIssue[] {
+    const issues: SecurityIssue[] = [];
+
+    // A01:2021 – Broken Access Control
+    if (content.includes('findUnique') && !content.includes('where') && !content.includes('tenantId')) {
+      issues.push({
+        file: filePath,
+        line: 0,
+        severity: 'high',
+        category: 'Broken Access Control',
+        title: 'Missing tenant isolation in database query',
+        description: 'Database query lacks tenant isolation filter',
+        recommendation: 'Always include tenantId in WHERE clause for multi-tenant queries',
+        cwe: 'CWE-284'
+      });
+    }
+
+    // A02:2021 – Cryptographic Failures
+    const cryptoWeakPatterns = ['md5', 'sha1', 'DES', 'RC4'];
+    cryptoWeakPatterns.forEach(algo => {
+      if (content.toLowerCase().includes(algo.toLowerCase())) {
+        issues.push({
+          file: filePath,
+          line: 0,
+          severity: 'high',
+          category: 'Cryptographic Failures',
+          title: `Weak cryptographic algorithm: ${algo}`,
+          description: `Using deprecated/weak algorithm ${algo}`,
+          recommendation: 'Use SHA-256, SHA-3, or bcrypt for hashing',
+          cwe: 'CWE-327'
+        });
+      }
+    });
+
+    // A03:2021 – Injection
+    if (content.includes('raw') && (content.includes('$') || content.includes('+'))) {
+      issues.push({
+        file: filePath,
+        line: 0,
+        severity: 'critical',
+        category: 'SQL Injection',
+        title: 'Potential SQL injection via raw query',
+        description: 'Raw SQL query with string concatenation detected',
+        recommendation: 'Use parameterized queries or ORM methods',
+        cwe: 'CWE-89'
+      });
+    }
+
+    return issues;
+  }
+
+  private async runNpmAudit(): Promise<SecurityIssue[]> {
+    const issues: SecurityIssue[] = [];
+
+    try {
+      const { stdout } = await execAsync('npm audit --json', { timeout: 30000 });
+      const auditResult = JSON.parse(stdout);
+
+      if (auditResult.vulnerabilities) {
+        for (const [pkg, vuln] of Object.entries<any>(auditResult.vulnerabilities)) {
+          issues.push({
+            file: 'package.json',
+            line: 0,
+            severity: this.mapNpmSeverity(vuln.severity),
+            category: 'Dependency Vulnerability',
+            title: `${pkg}: ${vuln.title || 'Security vulnerability'}`,
+            description: vuln.overview || 'No description',
+            recommendation: `Update ${pkg} to version ${vuln.fixAvailable?.version || 'latest'}`,
+            cvss: vuln.cvss?.score
+          });
+        }
+      }
+    } catch (error) {
+      this.log(`npm audit error: ${error}`);
+    }
+
+    return issues;
+  }
+
+  private mapNpmSeverity(npmSeverity: string): 'critical' | 'high' | 'medium' | 'low' {
+    const map: Record<string, 'critical' | 'high' | 'medium' | 'low'> = {
+      critical: 'critical',
+      high: 'high',
+      moderate: 'medium',
+      low: 'low'
+    };
+    return map[npmSeverity] || 'low';
+  }
+
+  private async checkAuthSecurity(files: string[]): Promise<SecurityIssue[]> {
+    const issues: SecurityIssue[] = [];
+
+    for (const file of files) {
+      if (!fs.existsSync(file)) continue;
+
+      const content = fs.readFileSync(file, 'utf-8');
+
+      // Check for missing authentication
+      if (file.includes('api/') && !content.includes('auth') && !content.includes('session')) {
+        issues.push({
+          file,
+          line: 0,
+          severity: 'high',
+          category: 'Missing Authentication',
+          title: 'API endpoint missing authentication check',
+          description: 'This API endpoint appears to lack authentication',
+          recommendation: 'Add authentication middleware or session validation'
+        });
+      }
+
+      // Check for weak JWT secrets
+      if (content.includes('jwt.sign') && content.includes('secret')) {
+        const secretMatch = content.match(/secret:\s*['"](.+?)['"]/);
+        if (secretMatch && secretMatch[1].length < 32) {
+          issues.push({
+            file,
+            line: 0,
+            severity: 'high',
+            category: 'Weak Secrets',
+            title: 'JWT secret is too short',
+            description: 'JWT secret should be at least 32 characters',
+            recommendation: 'Use a strong, randomly generated secret from environment variables'
+          });
+        }
+      }
+    }
+
+    return issues;
+  }
+
+  private async checkRLSPolicies(): Promise<SecurityIssue[]> {
+    const issues: SecurityIssue[] = [];
+
+    // Check for RLS policies in schema files
+    const schemaFiles = [
+      path.join(process.cwd(), 'apps/api/db/schema.ts'),
+      path.join(process.cwd(), 'packages/database/schema.ts')
+    ];
+
+    for (const schemaFile of schemaFiles) {
+      if (!fs.existsSync(schemaFile)) continue;
+
+      const content = fs.readFileSync(schemaFile, 'utf-8');
+
+      // Check if RLS is enabled
+      if (!content.includes('enableRLS') && !content.includes('ROW LEVEL SECURITY')) {
+        issues.push({
+          file: schemaFile,
+          line: 0,
+          severity: 'critical',
+          category: 'Missing RLS',
+          title: 'Row Level Security not enabled',
+          description: 'Database schema lacks RLS policies for multi-tenant isolation',
+          recommendation: 'Enable RLS policies on all tables to prevent data leakage'
+        });
+      }
+    }
+
+    return issues;
+  }
+
+  private async checkCORSandCSP(): Promise<SecurityIssue[]> {
+    const issues: SecurityIssue[] = [];
+
+    // Check Next.js config
+    const configFiles = [
+      path.join(process.cwd(), 'apps/web/next.config.js'),
+      path.join(process.cwd(), 'next.config.js')
+    ];
+
+    for (const configFile of configFiles) {
+      if (!fs.existsSync(configFile)) continue;
+
+      const content = fs.readFileSync(configFile, 'utf-8');
+
+      // Check CSP headers
+      if (!content.includes('Content-Security-Policy')) {
+        issues.push({
+          file: configFile,
+          line: 0,
+          severity: 'medium',
+          category: 'Missing Security Headers',
+          title: 'Content-Security-Policy header not configured',
+          description: 'CSP header helps prevent XSS attacks',
+          recommendation: 'Add CSP headers in next.config.js'
+        });
+      }
+
+      // Check for overly permissive CORS
+      if (content.includes("origin: '*'") || content.includes('origin: "*"')) {
+        issues.push({
+          file: configFile,
+          line: 0,
+          severity: 'high',
+          category: 'Insecure CORS',
+          title: 'Overly permissive CORS configuration',
+          description: 'CORS allows all origins (*)',
+          recommendation: 'Restrict CORS to specific trusted domains'
+        });
+      }
+    }
+
+    return issues;
+  }
+
+  private generateSecurityReport(issues: SecurityIssue[]): string {
+    const critical = issues.filter(i => i.severity === 'critical');
+    const high = issues.filter(i => i.severity === 'high');
+    const medium = issues.filter(i => i.severity === 'medium');
+    const low = issues.filter(i => i.severity === 'low');
+
+    let report = `# Security Scan Report\n\n`;
+    report += `**Total Issues:** ${issues.length}\n\n`;
+    report += `- 🔴 Critical: ${critical.length}\n`;
+    report += `- 🟠 High: ${high.length}\n`;
+    report += `- 🟡 Medium: ${medium.length}\n`;
+    report += `- 🟢 Low: ${low.length}\n\n`;
+
+    if (critical.length > 0) {
+      report += `## 🔴 Critical Issues\n\n`;
+      critical.forEach(issue => {
+        report += `### ${issue.title}\n`;
+        report += `**File:** ${issue.file}:${issue.line}\n`;
+        report += `**Category:** ${issue.category}\n`;
+        if (issue.cwe) report += `**CWE:** ${issue.cwe}\n`;
+        report += `**Description:** ${issue.description}\n`;
+        report += `**Recommendation:** ${issue.recommendation}\n\n`;
+      });
+    }
+
+    if (high.length > 0) {
+      report += `## 🟠 High Priority Issues\n\n`;
+      high.slice(0, 5).forEach(issue => {
+        report += `- **${issue.title}** in ${path.basename(issue.file)}\n`;
+        report += `  ${issue.recommendation}\n\n`;
+      });
+    }
+
+    report += `\n## Summary\n\n`;
+    if (critical.length > 0) {
+      report += `⚠️ **Action Required:** Fix ${critical.length} critical security issue(s) before deployment.\n`;
+    } else {
+      report += `✅ No critical security issues found.\n`;
+    }
+
+    return report;
+  }
+}

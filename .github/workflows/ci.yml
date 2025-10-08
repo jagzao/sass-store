@@ -1,0 +1,254 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+env:
+  NODE_VERSION: '18'
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: sassstore_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Type check
+        run: npm run typecheck
+
+      - name: Unit tests
+        run: npm run test:unit
+
+      - name: Integration tests
+        run: npm run test:integration
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/sassstore_test
+          JWT_SECRET: test-jwt-secret
+          UPSTASH_REDIS_REST_URL: ${{ secrets.UPSTASH_REDIS_REST_URL }}
+          UPSTASH_REDIS_REST_TOKEN: ${{ secrets.UPSTASH_REDIS_REST_TOKEN }}
+
+      - name: Build
+        run: npm run build
+
+      - name: Install Playwright
+        run: npx playwright install --with-deps
+
+      - name: E2E tests
+        run: npm run test:e2e
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/sassstore_test
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: |
+            test-results/
+            playwright-report/
+
+  budget-guard:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Bundle analysis
+        run: |
+          # Check Next.js bundle size
+          cd apps/web
+          npx @next/bundle-analyzer
+
+          # Check if bundle size exceeds limits
+          BUNDLE_SIZE=$(du -sb .next/static | cut -f1)
+          MAX_SIZE=262144000  # 250MB in bytes
+
+          if [ $BUNDLE_SIZE -gt $MAX_SIZE ]; then
+            echo "Bundle size ($BUNDLE_SIZE bytes) exceeds limit ($MAX_SIZE bytes)"
+            exit 1
+          fi
+
+      - name: Performance budget check
+        run: |
+          # Run Lighthouse CI on key pages
+          npm install -g @lhci/cli
+          lhci autorun --config=.lighthouserc.js
+
+      - name: Cost estimation
+        run: |
+          echo "Estimating monthly costs..."
+
+          # Calculate estimated costs based on bundle size and features
+          # This is a simplified estimation
+          BUNDLE_SIZE_MB=$(echo "scale=2; $(du -sb apps/web/.next | cut -f1) / 1024 / 1024" | bc)
+          ESTIMATED_TRANSFER_COST=$(echo "scale=4; $BUNDLE_SIZE_MB * 0.09" | bc)
+
+          echo "Bundle size: ${BUNDLE_SIZE_MB}MB"
+          echo "Estimated monthly transfer cost: \$${ESTIMATED_TRANSFER_COST}"
+
+          # Fail if estimated cost exceeds budget
+          if (( $(echo "$ESTIMATED_TRANSFER_COST > 5.00" | bc -l) )); then
+            echo "Estimated cost exceeds $5/month budget"
+            exit 1
+          fi
+
+  deploy-staging:
+    runs-on: ubuntu-latest
+    needs: [test, budget-guard]
+    if: github.ref == 'refs/heads/develop'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+        env:
+          NODE_ENV: production
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: sass-store-staging
+          directory: apps/web/.next
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Deploy API to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: sass-store-api-staging
+          image: gcr.io/${{ secrets.GCP_PROJECT_ID }}/sass-store-api:${{ github.sha }}
+          region: us-central1
+          env_vars: |
+            NODE_ENV=production
+            DATABASE_URL=${{ secrets.STAGING_DATABASE_URL }}
+            JWT_SECRET=${{ secrets.STAGING_JWT_SECRET }}
+
+  deploy-production:
+    runs-on: ubuntu-latest
+    needs: [test, budget-guard]
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+        env:
+          NODE_ENV: production
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: sass-store-production
+          directory: apps/web/.next
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Deploy API to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: sass-store-api-production
+          image: gcr.io/${{ secrets.GCP_PROJECT_ID }}/sass-store-api:${{ github.sha }}
+          region: us-central1
+          env_vars: |
+            NODE_ENV=production
+            DATABASE_URL=${{ secrets.PRODUCTION_DATABASE_URL }}
+            JWT_SECRET=${{ secrets.PRODUCTION_JWT_SECRET }}
+
+      - name: Run post-deployment tests
+        run: |
+          # Wait for deployment to be ready
+          sleep 30
+
+          # Run smoke tests against production
+          npm run test:smoke -- --baseURL=https://sassstore.com
+        env:
+          TEST_API_KEY: ${{ secrets.PRODUCTION_TEST_API_KEY }}
+
+  cost-monitoring:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Check production costs
+        run: |
+          # This would integrate with cloud provider APIs to check actual costs
+          # For now, it's a placeholder for cost monitoring
+          echo "Checking production costs..."
+
+          # In a real implementation, this would:
+          # 1. Query Google Cloud Billing API
+          # 2. Query Cloudflare Analytics API
+          # 3. Check Neon usage
+          # 4. Alert if approaching budget limits
+
+          echo "Cost monitoring check completed"

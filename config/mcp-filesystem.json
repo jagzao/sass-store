@@ -1,0 +1,103 @@
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["@anthropic/mcp-filesystem"],
+      "env": {
+        "FILESYSTEM_ROOT": "C:\\Dev\\Zo\\sass-store",
+        "FILESYSTEM_ALLOWED_PATHS": [
+          "apps/",
+          "packages/",
+          "tools/",
+          "agents/",
+          "config/",
+          "tests/",
+          "scripts/",
+          "docs/"
+        ],
+        "FILESYSTEM_DENIED_PATHS": [
+          "node_modules/",
+          ".git/",
+          "dist/",
+          ".next/",
+          "coverage/",
+          "*.log",
+          ".env",
+          ".env.local"
+        ],
+        "FILESYSTEM_MAX_FILE_SIZE": "1000000",
+        "FILESYSTEM_WATCH_PATTERNS": "**/*.{ts,tsx,js,jsx,json,md}"
+      }
+    }
+  },
+  "description": "MCP Filesystem configuration for SaaS Store workflow automation",
+  "permissions": {
+    "read": {
+      "enabled": true,
+      "paths": [
+        "apps/**/*",
+        "packages/**/*",
+        "tools/**/*",
+        "agents/**/*",
+        "config/**/*",
+        "tests/**/*",
+        "*.md",
+        "*.json",
+        "package.json",
+        "tsconfig.json"
+      ]
+    },
+    "write": {
+      "enabled": true,
+      "paths": [
+        "agents/outputs/**/*",
+        "agents/alerts/**/*",
+        "agents/bundles/**/*",
+        "tools/**/*",
+        "tests/**/*",
+        "docs/**/*"
+      ],
+      "restricted": ["package.json", ".env*", "apps/*/package.json"]
+    },
+    "execute": {
+      "enabled": false,
+      "note": "File execution disabled for security"
+    }
+  },
+  "workflow_integration": {
+    "bundle_management": {
+      "enabled": true,
+      "bundle_directory": "agents/bundles",
+      "auto_create_structure": true
+    },
+    "alert_system": {
+      "enabled": true,
+      "alerts_directory": "agents/alerts",
+      "auto_create_instructions": true
+    },
+    "artifact_storage": {
+      "enabled": true,
+      "outputs_directory": "agents/outputs",
+      "retention_days": 30
+    }
+  },
+  "file_monitoring": {
+    "watch_for_changes": true,
+    "trigger_events": [
+      "test_file_modified",
+      "component_file_modified",
+      "api_route_modified"
+    ],
+    "auto_trigger_agents": {
+      "on_test_change": ["failure-triager"],
+      "on_component_change": ["patcher-frontend"],
+      "on_api_change": ["patcher-backend"]
+    }
+  },
+  "backup_strategy": {
+    "enabled": true,
+    "backup_before_writes": true,
+    "backup_directory": "agents/backups",
+    "max_backups_per_file": 5
+  }
+}

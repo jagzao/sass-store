@@ -1,0 +1,296 @@
+{
+  "id": "swarm_1759594202780_rzv52w",
+  "featureName": "ejecuta analisis completo de seguridad 2025",
+  "status": "active",
+  "progress": 50,
+  "currentAgent": "SECURITY",
+  "tasks": [
+    {
+      "id": "task_0",
+      "agent": "ARCHITECT",
+      "description": "Valida arquitectura y estructura del proyecto",
+      "status": "completed",
+      "progress": 100,
+      "dependencies": [],
+      "startedAt": "2025-10-04T16:10:02.784Z",
+      "output": [
+        "🏗️  Validando arquitectura del proyecto...",
+        "📁 Validando estructura de carpetas...",
+        "✓ Estructura de carpetas correcta",
+        "📦 Analizando dependencias...",
+        "✓ Dependencias validadas",
+        "🎨 Validando patrones de código...",
+        "ℹ️  2 sugerencias de mejora encontradas",
+        "✓ Patrones validados",
+        "✓ Arquitectura validada exitosamente"
+      ],
+      "artifacts": ["architecture-report.md"],
+      "completedAt": "2025-10-04T16:10:02.792Z"
+    },
+    {
+      "id": "task_1",
+      "agent": "DEVELOPER",
+      "description": "Implementa código y features",
+      "status": "completed",
+      "progress": 100,
+      "dependencies": ["task_0"],
+      "startedAt": "2025-10-04T16:10:02.792Z",
+      "output": [
+        "💻 Iniciando implementación...",
+        "📋 Feature: ejecuta analisis completo de seguridad 2025",
+        "📁 Creando estructura de archivos...",
+        "   ✓ Creado: apps/web/features/ejecuta analisis completo de seguridad 2025",
+        "   ✓ Creado: packages/core/ejecuta analisis completo de seguridad 2025-service",
+        "📝 Generando archivos...",
+        "   ✓ apps/web/features/ejecuta analisis completo de seguridad 2025/index.tsx",
+        "   ✓ packages/core/ejecuta analisis completo de seguridad 2025-service/index.ts",
+        "✓ 2 archivos generados",
+        "✓ Implementación completada"
+      ],
+      "artifacts": ["feature-implementation.md"],
+      "completedAt": "2025-10-04T16:10:02.801Z"
+    },
+    {
+      "id": "task_2",
+      "agent": "QA",
+      "description": "Crea y actualiza tests automáticamente",
+      "status": "completed",
+      "progress": 100,
+      "dependencies": ["task_1"],
+      "startedAt": "2025-10-04T16:10:02.802Z",
+      "output": {
+        "testsCreated": 1,
+        "testsPassed": 0,
+        "testsFailed": 0,
+        "coverage": 0
+      },
+      "completedAt": "2025-10-04T16:10:04.778Z"
+    },
+    {
+      "id": "task_3",
+      "agent": "CODE_QUALITY",
+      "description": "Valida estándares de código",
+      "status": "completed",
+      "progress": 100,
+      "dependencies": ["task_2"],
+      "startedAt": "2025-10-04T16:10:04.779Z",
+      "output": {
+        "totalIssues": 0,
+        "errors": 0,
+        "warnings": 0,
+        "fixed": 0,
+        "report": "## Code Quality Report\n\n**Total Issues:** 0\n- Errors: 0\n- Warnings: 0\n- Info: 0\n- Auto-fixed: 0\n\n"
+      },
+      "completedAt": "2025-10-04T16:10:10.622Z"
+    },
+    {
+      "id": "task_4",
+      "agent": "SECURITY",
+      "description": "Escanea vulnerabilidades de seguridad",
+      "status": "failed",
+      "progress": 100,
+      "dependencies": ["task_3"],
+      "startedAt": "2025-10-04T16:10:10.623Z",
+      "output": {
+        "totalIssues": 14,
+        "critical": 8,
+        "high": 1,
+        "medium": 4,
+        "low": 1,
+        "info": 0,
+        "issues": [
+          {
+            "file": "apps\\web\\app\\api\\auth\\forgot-password\\route.ts",
+            "line": 71,
+            "severity": "medium",
+            "category": "Information Disclosure",
+            "title": "Sensitive data logged to console",
+            "description": "Pattern detected: console.error(\"Forgot password...",
+            "recommendation": "Never log sensitive data. Use structured logging with redaction.",
+            "cwe": "CWE-532",
+            "owaspCategory": "A09",
+            "autoFixable": true
+          },
+          {
+            "file": "apps\\web\\app\\api\\auth\\reset-password\\route.ts",
+            "line": 63,
+            "severity": "medium",
+            "category": "Information Disclosure",
+            "title": "Sensitive data logged to console",
+            "description": "Pattern detected: console.error(\"Reset password...",
+            "recommendation": "Never log sensitive data. Use structured logging with redaction.",
+            "cwe": "CWE-532",
+            "owaspCategory": "A09",
+            "autoFixable": true
+          },
+          {
+            "file": "apps\\web\\app\\t\\[tenant]\\login\\page.tsx",
+            "line": 98,
+            "severity": "critical",
+            "category": "Missing Authorization",
+            "title": "Server Action missing session verification",
+            "description": "Found: \"use server\";",
+            "recommendation": "Always verify session at the start of Server Actions. Authentication ≠ Authorization.",
+            "cwe": "CWE-862",
+            "owaspCategory": "A01",
+            "autoFixable": false
+          },
+          {
+            "file": "apps\\web\\app\\t\\[tenant]\\register\\page.tsx",
+            "line": 72,
+            "severity": "critical",
+            "category": "Missing Authorization",
+            "title": "Server Action missing session verification",
+            "description": "Found: \"use server\";",
+            "recommendation": "Always verify session at the start of Server Actions. Authentication ≠ Authorization.",
+            "cwe": "CWE-862",
+            "owaspCategory": "A01",
+            "autoFixable": false
+          },
+          {
+            "file": "apps\\web\\components\\payments\\checkout-form.tsx",
+            "line": 13,
+            "severity": "critical",
+            "category": "Information Disclosure",
+            "title": "Secret exposed to client via NEXT_PUBLIC_",
+            "description": "Pattern detected: NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY...",
+            "recommendation": "NEVER use NEXT_PUBLIC_ for secrets. Only use for truly public configuration.",
+            "cwe": "CWE-200",
+            "owaspCategory": "A02",
+            "autoFixable": false
+          },
+          {
+            "file": "apps\\web\\components\\payments\\checkout-form.tsx",
+            "line": 14,
+            "severity": "critical",
+            "category": "Information Disclosure",
+            "title": "Secret exposed to client via NEXT_PUBLIC_",
+            "description": "Pattern detected: NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY...",
+            "recommendation": "NEVER use NEXT_PUBLIC_ for secrets. Only use for truly public configuration.",
+            "cwe": "CWE-200",
+            "owaspCategory": "A02",
+            "autoFixable": false
+          },
+          {
+            "file": "apps\\web\\lib\\auth.ts",
+            "line": 57,
+            "severity": "medium",
+            "category": "Information Disclosure",
+            "title": "Sensitive data logged to console",
+            "description": "Pattern detected: console.log(\"User signed out:\", { userId: token...",
+            "recommendation": "Never log sensitive data. Use structured logging with redaction.",
+            "cwe": "CWE-532",
+            "owaspCategory": "A09",
+            "autoFixable": true
+          },
+          {
+            "file": "apps\\web\\lib\\db\\tenant-service.ts",
+            "line": 733,
+            "severity": "medium",
+            "category": "Information Disclosure",
+            "title": "Sensitive data logged to console",
+            "description": "Pattern detected: console.log(`[TenantService] Available mock tenants:`, Object.key...",
+            "recommendation": "Never log sensitive data. Use structured logging with redaction.",
+            "cwe": "CWE-532",
+            "owaspCategory": "A09",
+            "autoFixable": true
+          },
+          {
+            "file": "apps\\web\\app\\t\\[tenant]\\login\\page.tsx",
+            "line": 0,
+            "severity": "critical",
+            "category": "Missing Authentication",
+            "title": "Server Action lacks session verification",
+            "description": "Server Action exposed without authentication check",
+            "recommendation": "Add verifySession() or getSession() at the start of the Server Action",
+            "owaspCategory": "A01",
+            "cwe": "CWE-862"
+          },
+          {
+            "file": "apps\\web\\app\\t\\[tenant]\\register\\page.tsx",
+            "line": 0,
+            "severity": "critical",
+            "category": "Missing Authentication",
+            "title": "Server Action lacks session verification",
+            "description": "Server Action exposed without authentication check",
+            "recommendation": "Add verifySession() or getSession() at the start of the Server Action",
+            "owaspCategory": "A01",
+            "cwe": "CWE-862"
+          },
+          {
+            "file": "apps/web/next.config.js",
+            "line": 0,
+            "severity": "high",
+            "category": "Missing Security Headers",
+            "title": "Content-Security-Policy header not configured",
+            "description": "Security header Content-Security-Policy is missing",
+            "recommendation": "Add Content-Security-Policy header in next.config",
+            "owaspCategory": "A05"
+          },
+          {
+            "file": "apps/web/next.config.js",
+            "line": 0,
+            "severity": "low",
+            "category": "Missing Security Headers",
+            "title": "Permissions-Policy header not configured",
+            "description": "Security header Permissions-Policy is missing",
+            "recommendation": "Add Permissions-Policy header in next.config",
+            "owaspCategory": "A05"
+          },
+          {
+            "file": "packages/database/schema.ts",
+            "line": 0,
+            "severity": "critical",
+            "category": "Missing RLS",
+            "title": "Row Level Security not enabled",
+            "description": "Database lacks RLS policies for multi-tenant isolation",
+            "recommendation": "Enable RLS policies on all tables to prevent data leakage",
+            "owaspCategory": "A01",
+            "cwe": "CWE-284"
+          },
+          {
+            "file": "drizzle.config.ts",
+            "line": 0,
+            "severity": "critical",
+            "category": "Missing RLS",
+            "title": "Row Level Security not enabled",
+            "description": "Database lacks RLS policies for multi-tenant isolation",
+            "recommendation": "Enable RLS policies on all tables to prevent data leakage",
+            "owaspCategory": "A01",
+            "cwe": "CWE-284"
+          }
+        ],
+        "report": "# 🔒 Security Scan Report 2025\n\n**Scan Date:** 2025-10-04T16:10:15.285Z\n**Standards:** OWASP Top 10:2025, Next.js Security Best Practices\n\n## 📊 Summary\n\n**Total Issues:** 14\n\n| Severity | Count | Status |\n|----------|-------|--------|\n| 🔴 Critical | 8 | ❌ FAIL |\n| 🟠 High | 1 | ⚠️ Review |\n| 🟡 Medium | 4 | ✅ Pass |\n| 🟢 Low | 1 | ℹ️ Info |\n\n## 🎯 OWASP Top 10:2025 Coverage\n\n- 🔴 **A01: Broken Access Control** - 6 issue(s)\n- 🔴 **A02: Cryptographic Failures** - 2 issue(s)\n- ✅ **A03: Injection** - 0 issue(s)\n- ✅ **A04: Insecure Design** - 0 issue(s)\n- 🟡 **A05: Security Misconfiguration** - 2 issue(s)\n- ✅ **A06: Vulnerable and Outdated Components** - 0 issue(s)\n- ✅ **A07: Identification and Authentication Failures** - 0 issue(s)\n- ✅ **A08: Software and Data Integrity Failures** - 0 issue(s)\n- 🟡 **A09: Security Logging and Monitoring Failures** - 4 issue(s)\n- ✅ **A10: Server-Side Request Forgery (SSRF)** - 0 issue(s)\n- ✅ **A11: AI/LLM Security Risks** - 0 issue(s)\n\n## 🔴 CRITICAL ISSUES - IMMEDIATE ACTION REQUIRED\n\n### 1. Server Action missing session verification\n- **File:** `apps\\web\\app\\t\\[tenant]\\login\\page.tsx:98`\n- **Category:** Missing Authorization\n- **OWASP:** A01\n- **CWE:** CWE-862\n- **Description:** Found: \"use server\";\n- **💡 Recommendation:** Always verify session at the start of Server Actions. Authentication ≠ Authorization.\n\n### 2. Server Action missing session verification\n- **File:** `apps\\web\\app\\t\\[tenant]\\register\\page.tsx:72`\n- **Category:** Missing Authorization\n- **OWASP:** A01\n- **CWE:** CWE-862\n- **Description:** Found: \"use server\";\n- **💡 Recommendation:** Always verify session at the start of Server Actions. Authentication ≠ Authorization.\n\n### 3. Secret exposed to client via NEXT_PUBLIC_\n- **File:** `apps\\web\\components\\payments\\checkout-form.tsx:13`\n- **Category:** Information Disclosure\n- **OWASP:** A02\n- **CWE:** CWE-200\n- **Description:** Pattern detected: NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY...\n- **💡 Recommendation:** NEVER use NEXT_PUBLIC_ for secrets. Only use for truly public configuration.\n\n### 4. Secret exposed to client via NEXT_PUBLIC_\n- **File:** `apps\\web\\components\\payments\\checkout-form.tsx:14`\n- **Category:** Information Disclosure\n- **OWASP:** A02\n- **CWE:** CWE-200\n- **Description:** Pattern detected: NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY...\n- **💡 Recommendation:** NEVER use NEXT_PUBLIC_ for secrets. Only use for truly public configuration.\n\n### 5. Server Action lacks session verification\n- **File:** `apps\\web\\app\\t\\[tenant]\\login\\page.tsx:0`\n- **Category:** Missing Authentication\n- **OWASP:** A01\n- **CWE:** CWE-862\n- **Description:** Server Action exposed without authentication check\n- **💡 Recommendation:** Add verifySession() or getSession() at the start of the Server Action\n\n### 6. Server Action lacks session verification\n- **File:** `apps\\web\\app\\t\\[tenant]\\register\\page.tsx:0`\n- **Category:** Missing Authentication\n- **OWASP:** A01\n- **CWE:** CWE-862\n- **Description:** Server Action exposed without authentication check\n- **💡 Recommendation:** Add verifySession() or getSession() at the start of the Server Action\n\n### 7. Row Level Security not enabled\n- **File:** `packages/database/schema.ts:0`\n- **Category:** Missing RLS\n- **OWASP:** A01\n- **CWE:** CWE-284\n- **Description:** Database lacks RLS policies for multi-tenant isolation\n- **💡 Recommendation:** Enable RLS policies on all tables to prevent data leakage\n\n### 8. Row Level Security not enabled\n- **File:** `drizzle.config.ts:0`\n- **Category:** Missing RLS\n- **OWASP:** A01\n- **CWE:** CWE-284\n- **Description:** Database lacks RLS policies for multi-tenant isolation\n- **💡 Recommendation:** Enable RLS policies on all tables to prevent data leakage\n\n## 🟠 HIGH PRIORITY ISSUES\n\n1. **Content-Security-Policy header not configured** in `next.config.js`\n   - Add Content-Security-Policy header in next.config\n\n## 🔧 Auto-Fixable Issues\n\n4 issue(s) can be automatically fixed:\n\n- Sensitive data logged to console in `route.ts`\n- Sensitive data logged to console in `route.ts`\n- Sensitive data logged to console in `auth.ts`\n- Sensitive data logged to console in `tenant-service.ts`\n\n**Run auto-fix:** `npm run security:autofix`\n\n## 🎯 Verdict\n\n❌ **SECURITY SCAN FAILED**\n\n**Action Required:** Fix 8 critical issue(s) before deployment.\n**Blocking Deployment:** YES\n",
+        "passed": false
+      },
+      "completedAt": "2025-10-04T16:10:15.288Z",
+      "blockedReason": "🚨 SECURITY FAILED: Found 8 critical security issues!"
+    },
+    {
+      "id": "task_5",
+      "agent": "TESTER",
+      "description": "Validación final e integración",
+      "status": "pending",
+      "progress": 0,
+      "dependencies": ["task_4"]
+    },
+    {
+      "id": "task_6",
+      "agent": "REVIEWER",
+      "description": "Code review y mejoras",
+      "status": "pending",
+      "progress": 0,
+      "dependencies": ["task_5"]
+    },
+    {
+      "id": "task_7",
+      "agent": "DEPLOYER",
+      "description": "Preparación y deployment",
+      "status": "pending",
+      "progress": 0,
+      "dependencies": ["task_6"]
+    }
+  ],
+  "createdAt": "2025-10-04T16:10:02.780Z",
+  "updatedAt": "2025-10-04T16:10:15.289Z"
+}

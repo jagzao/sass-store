@@ -1,0 +1,7 @@
+{
+  "timezone": "America/Mexico_City",
+  "windows": ["00:00", "05:00", "10:00", "15:00", "20:00"],
+  "maxRetries": 3,
+  "enabled": true,
+  "checkIntervalMinutes": 30
+}

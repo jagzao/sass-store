@@ -1,0 +1,20 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1758656428645,
+      "tag": "0000_open_fantastic_four",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1759431035222,
+      "tag": "0001_zippy_kronos",
+      "breakpoints": true
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "mcpServers": {
+    "code-graph": {
+      "command": "npx",
+      "args": ["@anthropic/mcp-code-graph"],
+      "env": {
+        "CODE_GRAPH_ROOT": "C:\\Dev\\Zo\\sass-store",
+        "CODE_GRAPH_INCLUDE": "apps/**/*.{ts,tsx,js,jsx},packages/**/*.{ts,tsx,js,jsx},tools/**/*.{ts,tsx,js,jsx}",
+        "CODE_GRAPH_EXCLUDE": "node_modules/**,dist/**,.next/**,coverage/**,*.test.{ts,tsx,js,jsx},*.spec.{ts,tsx,js,jsx}",
+        "CODE_GRAPH_MAX_FILE_SIZE": "100000",
+        "CODE_GRAPH_CACHE_TTL": "300"
+      }
+    }
+  },
+  "description": "MCP Code Graph configuration for SaaS Store monorepo analysis",
+  "features": {
+    "code_analysis": {
+      "enabled": true,
+      "max_files": 500,
+      "supported_languages": ["typescript", "javascript", "tsx", "jsx"]
+    },
+    "dependency_tracking": {
+      "enabled": true,
+      "include_node_modules": false,
+      "track_imports": true,
+      "track_exports": true
+    },
+    "workflow_integration": {
+      "enabled": true,
+      "auto_trigger_on": ["test_failure", "build_error", "lint_error"],
+      "bundle_analysis": true
+    }
+  },
+  "agents": {
+    "failure-triager": {
+      "use_code_graph": true,
+      "analyze_imports": true,
+      "track_dependencies": true
+    },
+    "patcher-frontend": {
+      "use_code_graph": true,
+      "component_analysis": true,
+      "style_tracking": true
+    },
+    "patcher-backend": {
+      "use_code_graph": true,
+      "api_route_analysis": true,
+      "database_tracking": true
+    }
+  },
+  "analysis_rules": {
+    "import_patterns": {
+      "enforce_aliases": true,
+      "max_relative_depth": 3,
+      "preferred_patterns": ["@/", "@sass-store/"]
+    },
+    "component_boundaries": {
+      "enforce_separation": true,
+      "ui_components_path": "apps/web/components",
+      "api_routes_path": "apps/api/app/api"
+    },
+    "tenant_isolation": {
+      "check_tenant_leaks": true,
+      "validate_rls": true,
+      "track_tenant_specific_code": true
+    }
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "name": "Bug Fix Workflow",
+  "description": "Workflow for fixing bugs and issues",
+  "trigger": "Bug report or test failure",
+  "steps": [
+    {
+      "step": 1,
+      "agent": "qa",
+      "action": "analyze_bug",
+      "description": "Analyze bug report and classify severity",
+      "required": true,
+      "output": "bug_analysis.json",
+      "next_on_success": 2,
+      "next_on_failure": "notify_user"
+    },
+    {
+      "step": 2,
+      "agent": "qa",
+      "action": "reproduce_bug",
+      "description": "Create minimal test case to reproduce the bug",
+      "required": true,
+      "dependencies": ["qa:analyzed"],
+      "output": "reproduction_test.ts",
+      "next_on_success": 3,
+      "next_on_failure": "notify_user"
+    },
+    {
+      "step": 3,
+      "agent": "developer",
+      "action": "fix_bug",
+      "description": "Implement fix following architect standards",
+      "required": true,
+      "dependencies": ["qa:reproduced"],
+      "output": "fix_files",
+      "next_on_success": 4,
+      "next_on_failure": "notify_user"
+    },
+    {
+      "step": 4,
+      "agent": "tester",
+      "action": "validate_fix",
+      "description": "Run tests to validate the fix",
+      "required": true,
+      "dependencies": ["developer:fixed"],
+      "output": "test_results.json",
+      "next_on_success": 5,
+      "next_on_failure": 3
+    },
+    {
+      "step": 5,
+      "agent": "tester",
+      "action": "regression_tests",
+      "description": "Run full test suite to prevent regressions",
+      "required": true,
+      "dependencies": ["tester:fix_validated"],
+      "output": "regression_results.json",
+      "next_on_success": 6,
+      "next_on_failure": 3
+    },
+    {
+      "step": 6,
+      "agent": "architect",
+      "action": "review_fix",
+      "description": "Review fix for code quality and architecture",
+      "required": true,
+      "can_block": false,
+      "dependencies": ["tester:regression_passed"],
+      "output": "review.json",
+      "next_on_success": "complete",
+      "next_on_failure": "notify_user"
+    }
+  ],
+  "success_criteria": {
+    "bug_reproduced": true,
+    "fix_validated": true,
+    "no_regressions": true,
+    "tests_passing": true
+  },
+  "notifications": {
+    "on_start": true,
+    "on_step_complete": false,
+    "on_error": true,
+    "on_complete": true
+  }
+}

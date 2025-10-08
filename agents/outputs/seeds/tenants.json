@@ -1,0 +1,754 @@
+{
+  "tenants": [
+    {
+      "id": "zo-system",
+      "name": "Zo System",
+      "slug": "zo-system",
+      "description": "Default fallback tenant for unmapped hosts",
+      "mode": "catalog",
+      "status": "active",
+      "branding": {
+        "primaryColor": "#DC2626",
+        "secondaryColor": "#1F2937",
+        "logo": "https://placeholder.zo.dev/logos/zo-system.png",
+        "favicon": "https://placeholder.zo.dev/favicons/zo-system.ico",
+        "website": "https://zo.dev"
+      },
+      "contact": {
+        "phone": "+1-555-0100",
+        "email": "hello@zo.dev",
+        "address": "123 Tech Avenue, San Francisco, CA 94105",
+        "hours": {
+          "monday": "9:00-17:00",
+          "tuesday": "9:00-17:00",
+          "wednesday": "9:00-17:00",
+          "thursday": "9:00-17:00",
+          "friday": "9:00-17:00",
+          "saturday": "closed",
+          "sunday": "closed"
+        }
+      },
+      "location": {
+        "latitude": 37.7749,
+        "longitude": -122.4194,
+        "placeId": "ChIJIQBpAG2ahYAR_6128GcTUEo"
+      },
+      "products": [
+        {
+          "sku": "zo-saas-starter",
+          "name": "SaaS Starter Kit",
+          "price": 299.0,
+          "category": "software",
+          "description": "Complete multi-tenant SaaS platform template",
+          "featured": true
+        },
+        {
+          "sku": "zo-mobile-app",
+          "name": "Custom Mobile App",
+          "price": 2499.0,
+          "category": "software",
+          "description": "Native iOS and Android app development"
+        },
+        {
+          "sku": "zo-api-design",
+          "name": "API Design Package",
+          "price": 899.0,
+          "category": "software",
+          "description": "RESTful API design and documentation"
+        }
+      ],
+      "services": [
+        {
+          "id": "zo-consultation",
+          "name": "Tech Consultation",
+          "price": 150.0,
+          "duration": 60,
+          "description": "Software architecture and technology strategy consultation"
+        },
+        {
+          "id": "zo-code-review",
+          "name": "Code Review",
+          "price": 200.0,
+          "duration": 90,
+          "description": "Comprehensive code review and optimization recommendations"
+        },
+        {
+          "id": "zo-deployment",
+          "name": "Deployment Setup",
+          "price": 350.0,
+          "duration": 120,
+          "description": "Production deployment and CI/CD pipeline setup"
+        }
+      ],
+      "quotas": {
+        "storageGB": 5,
+        "monthlyBudget": 25.0,
+        "apiCallsPerHour": 1000
+      }
+    },
+    {
+      "id": "wondernails",
+      "name": "Wonder Nails Studio",
+      "slug": "wondernails",
+      "description": "Premium nail art and manicure services",
+      "mode": "booking",
+      "status": "active",
+      "branding": {
+        "primaryColor": "#EC4899",
+        "secondaryColor": "#1E293B",
+        "logo": "https://placeholder.zo.dev/logos/wondernails.png",
+        "favicon": "https://placeholder.zo.dev/favicons/wondernails.ico",
+        "website": "https://wondernails.local"
+      },
+      "contact": {
+        "phone": "+1-555-0201",
+        "email": "book@wondernails.local",
+        "address": "456 Beauty Boulevard, Los Angeles, CA 90210",
+        "hours": {
+          "monday": "9:00-19:00",
+          "tuesday": "9:00-19:00",
+          "wednesday": "9:00-19:00",
+          "thursday": "9:00-20:00",
+          "friday": "9:00-20:00",
+          "saturday": "8:00-18:00",
+          "sunday": "10:00-16:00"
+        }
+      },
+      "location": {
+        "latitude": 34.0522,
+        "longitude": -118.2437,
+        "placeId": "ChIJE9on3F3HwoAR9AhGJW_fL-I"
+      },
+      "services": [
+        {
+          "id": "classic-manicure",
+          "name": "Classic Manicure",
+          "price": 35.0,
+          "duration": 45,
+          "description": "Traditional nail care with polish application",
+          "featured": true
+        },
+        {
+          "id": "gel-manicure",
+          "name": "Gel Manicure",
+          "price": 55.0,
+          "duration": 60,
+          "description": "Long-lasting gel polish manicure"
+        },
+        {
+          "id": "nail-art",
+          "name": "Custom Nail Art",
+          "price": 75.0,
+          "duration": 90,
+          "description": "Hand-painted custom nail designs",
+          "featured": true
+        },
+        {
+          "id": "pedicure",
+          "name": "Spa Pedicure",
+          "price": 45.0,
+          "duration": 60,
+          "description": "Relaxing foot treatment with nail care"
+        },
+        {
+          "id": "nail-repair",
+          "name": "Nail Repair",
+          "price": 15.0,
+          "duration": 20,
+          "description": "Fix broken or damaged nails"
+        }
+      ],
+      "products": [
+        {
+          "sku": "wn-polish-sunset",
+          "name": "Sunset Orange Polish",
+          "price": 22.0,
+          "category": "nail-polish",
+          "description": "Vibrant orange nail polish with high-gloss finish"
+        },
+        {
+          "sku": "wn-polish-midnight",
+          "name": "Midnight Blue Polish",
+          "price": 22.0,
+          "category": "nail-polish",
+          "description": "Deep blue nail polish with shimmer"
+        },
+        {
+          "sku": "wn-cuticle-oil",
+          "name": "Nourishing Cuticle Oil",
+          "price": 16.0,
+          "category": "care",
+          "description": "Vitamin E enriched cuticle oil for healthy nails"
+        }
+      ],
+      "staff": [
+        {
+          "id": "maria-gonzalez",
+          "name": "Maria Gonzalez",
+          "role": "Senior Nail Artist",
+          "specialties": ["nail-art", "gel-manicure"],
+          "photo": "https://placeholder.zo.dev/staff/maria-gonzalez.jpg",
+          "googleCalendarId": "maria@wondernails.local"
+        },
+        {
+          "id": "sophie-chen",
+          "name": "Sophie Chen",
+          "role": "Nail Technician",
+          "specialties": ["classic-manicure", "pedicure"],
+          "photo": "https://placeholder.zo.dev/staff/sophie-chen.jpg",
+          "googleCalendarId": "sophie@wondernails.local"
+        }
+      ],
+      "favorites": ["classic-manicure", "nail-art", "wn-polish-sunset"],
+      "quotas": {
+        "storageGB": 10,
+        "monthlyBudget": 50.0,
+        "apiCallsPerHour": 2000
+      }
+    },
+    {
+      "id": "vigistudio",
+      "name": "Vigi Studio",
+      "slug": "vigistudio",
+      "description": "Modern hair salon and beauty treatments",
+      "mode": "booking",
+      "status": "active",
+      "branding": {
+        "primaryColor": "#7C3AED",
+        "secondaryColor": "#374151",
+        "logo": "https://placeholder.zo.dev/logos/vigistudio.png",
+        "favicon": "https://placeholder.zo.dev/favicons/vigistudio.ico",
+        "website": "https://vigistudio.local"
+      },
+      "contact": {
+        "phone": "+1-555-0302",
+        "email": "hello@vigistudio.local",
+        "address": "789 Style Street, New York, NY 10001",
+        "hours": {
+          "monday": "closed",
+          "tuesday": "10:00-20:00",
+          "wednesday": "10:00-20:00",
+          "thursday": "10:00-20:00",
+          "friday": "10:00-20:00",
+          "saturday": "9:00-19:00",
+          "sunday": "11:00-17:00"
+        }
+      },
+      "location": {
+        "latitude": 40.7128,
+        "longitude": -74.006,
+        "placeId": "ChIJOwg_06VPwokRYv534QaPC8g"
+      },
+      "services": [
+        {
+          "id": "haircut-style",
+          "name": "Cut & Style",
+          "price": 85.0,
+          "duration": 90,
+          "description": "Professional haircut with styling",
+          "featured": true
+        },
+        {
+          "id": "color-highlights",
+          "name": "Color & Highlights",
+          "price": 150.0,
+          "duration": 180,
+          "description": "Full color treatment with highlights"
+        },
+        {
+          "id": "blowout",
+          "name": "Signature Blowout",
+          "price": 45.0,
+          "duration": 45,
+          "description": "Professional blow-dry and styling"
+        },
+        {
+          "id": "deep-treatment",
+          "name": "Deep Conditioning Treatment",
+          "price": 65.0,
+          "duration": 60,
+          "description": "Intensive hair repair and hydration"
+        }
+      ],
+      "products": [
+        {
+          "sku": "vs-shampoo-repair",
+          "name": "Repair Shampoo",
+          "price": 28.0,
+          "category": "hair-care",
+          "description": "Professional repair shampoo for damaged hair"
+        },
+        {
+          "sku": "vs-conditioner-hydrate",
+          "name": "Hydrating Conditioner",
+          "price": 32.0,
+          "category": "hair-care",
+          "description": "Deep hydrating conditioner for dry hair"
+        },
+        {
+          "sku": "vs-serum-shine",
+          "name": "Shine Serum",
+          "price": 38.0,
+          "category": "styling",
+          "description": "Lightweight serum for glossy, frizz-free hair"
+        }
+      ],
+      "staff": [
+        {
+          "id": "alex-rivera",
+          "name": "Alex Rivera",
+          "role": "Senior Stylist",
+          "specialties": ["haircut-style", "color-highlights"],
+          "photo": "https://placeholder.zo.dev/staff/alex-rivera.jpg",
+          "googleCalendarId": "alex@vigistudio.local"
+        },
+        {
+          "id": "emma-watson",
+          "name": "Emma Watson",
+          "role": "Color Specialist",
+          "specialties": ["color-highlights", "deep-treatment"],
+          "photo": "https://placeholder.zo.dev/staff/emma-watson.jpg",
+          "googleCalendarId": "emma@vigistudio.local"
+        }
+      ],
+      "favorites": ["haircut-style", "blowout", "vs-shampoo-repair"],
+      "quotas": {
+        "storageGB": 15,
+        "monthlyBudget": 75.0,
+        "apiCallsPerHour": 3000
+      }
+    },
+    {
+      "id": "villafuerte",
+      "name": "Villafuerte Spa",
+      "slug": "villafuerte",
+      "description": "Luxury spa and wellness center",
+      "mode": "booking",
+      "status": "active",
+      "branding": {
+        "primaryColor": "#059669",
+        "secondaryColor": "#1F2937",
+        "logo": "https://placeholder.zo.dev/logos/villafuerte.png",
+        "favicon": "https://placeholder.zo.dev/favicons/villafuerte.ico",
+        "website": "https://villafuerte.local"
+      },
+      "contact": {
+        "phone": "+1-555-0403",
+        "email": "reservations@villafuerte.local",
+        "address": "321 Wellness Way, Miami, FL 33101",
+        "hours": {
+          "monday": "8:00-20:00",
+          "tuesday": "8:00-20:00",
+          "wednesday": "8:00-20:00",
+          "thursday": "8:00-20:00",
+          "friday": "8:00-20:00",
+          "saturday": "8:00-19:00",
+          "sunday": "9:00-18:00"
+        }
+      },
+      "location": {
+        "latitude": 25.7617,
+        "longitude": -80.1918,
+        "placeId": "ChIJEQEQdDLv2YgRmVX0ej7Qb4U"
+      },
+      "services": [
+        {
+          "id": "facial-signature",
+          "name": "Signature Facial",
+          "price": 120.0,
+          "duration": 90,
+          "description": "Customized facial treatment for your skin type",
+          "featured": true
+        },
+        {
+          "id": "massage-swedish",
+          "name": "Swedish Massage",
+          "price": 110.0,
+          "duration": 60,
+          "description": "Relaxing full-body Swedish massage"
+        },
+        {
+          "id": "body-wrap",
+          "name": "Detox Body Wrap",
+          "price": 95.0,
+          "duration": 75,
+          "description": "Purifying and hydrating body treatment"
+        },
+        {
+          "id": "manicure-spa",
+          "name": "Spa Manicure",
+          "price": 65.0,
+          "duration": 60,
+          "description": "Luxurious manicure with hand treatment"
+        }
+      ],
+      "products": [
+        {
+          "sku": "vf-serum-vitamin-c",
+          "name": "Vitamin C Brightening Serum",
+          "price": 85.0,
+          "category": "skincare",
+          "description": "Antioxidant serum for brighter, more even skin tone"
+        },
+        {
+          "sku": "vf-moisturizer-hydra",
+          "name": "Hydra-Boost Moisturizer",
+          "price": 68.0,
+          "category": "skincare",
+          "description": "Intensive hydrating cream for all skin types"
+        },
+        {
+          "sku": "vf-oil-massage",
+          "name": "Relaxing Massage Oil",
+          "price": 42.0,
+          "category": "wellness",
+          "description": "Aromatherapy massage oil with lavender and eucalyptus"
+        }
+      ],
+      "staff": [
+        {
+          "id": "isabella-martinez",
+          "name": "Isabella Martinez",
+          "role": "Lead Esthetician",
+          "specialties": ["facial-signature", "body-wrap"],
+          "photo": "https://placeholder.zo.dev/staff/isabella-martinez.jpg",
+          "googleCalendarId": "isabella@villafuerte.local"
+        },
+        {
+          "id": "carlos-rodriguez",
+          "name": "Carlos Rodriguez",
+          "role": "Massage Therapist",
+          "specialties": ["massage-swedish"],
+          "photo": "https://placeholder.zo.dev/staff/carlos-rodriguez.jpg",
+          "googleCalendarId": "carlos@villafuerte.local"
+        }
+      ],
+      "favorites": [
+        "facial-signature",
+        "massage-swedish",
+        "vf-serum-vitamin-c"
+      ],
+      "quotas": {
+        "storageGB": 20,
+        "monthlyBudget": 100.0,
+        "apiCallsPerHour": 4000
+      }
+    },
+    {
+      "id": "vainilla-vargas",
+      "name": "Vainilla Vargas Beauty",
+      "slug": "vainilla-vargas",
+      "description": "Boutique beauty salon specializing in natural cosmetics",
+      "mode": "catalog",
+      "status": "active",
+      "branding": {
+        "primaryColor": "#F59E0B",
+        "secondaryColor": "#374151",
+        "logo": "https://placeholder.zo.dev/logos/vainilla-vargas.png",
+        "favicon": "https://placeholder.zo.dev/favicons/vainilla-vargas.ico",
+        "website": "https://vainilla-vargas.local"
+      },
+      "contact": {
+        "phone": "+1-555-0504",
+        "email": "info@vainilla-vargas.local",
+        "address": "654 Natural Avenue, Austin, TX 78701",
+        "hours": {
+          "monday": "10:00-18:00",
+          "tuesday": "10:00-18:00",
+          "wednesday": "10:00-18:00",
+          "thursday": "10:00-19:00",
+          "friday": "10:00-19:00",
+          "saturday": "9:00-17:00",
+          "sunday": "closed"
+        }
+      },
+      "location": {
+        "latitude": 30.2672,
+        "longitude": -97.7431,
+        "placeId": "ChIJLwPMoJm1RIYRetVp1EtGm10"
+      },
+      "products": [
+        {
+          "sku": "vv-lipstick-natural-rose",
+          "name": "Natural Rose Lipstick",
+          "price": 26.0,
+          "category": "cosmetics",
+          "description": "Organic lipstick with natural rose pigments",
+          "featured": true
+        },
+        {
+          "sku": "vv-foundation-mineral",
+          "name": "Mineral Foundation",
+          "price": 38.0,
+          "category": "cosmetics",
+          "description": "Natural mineral foundation for sensitive skin"
+        },
+        {
+          "sku": "vv-eyeshadow-earth",
+          "name": "Earth Tone Eyeshadow Palette",
+          "price": 45.0,
+          "category": "cosmetics",
+          "description": "8-shade palette with natural earth tones"
+        },
+        {
+          "sku": "vv-cleanser-honey",
+          "name": "Honey Oat Cleanser",
+          "price": 24.0,
+          "category": "skincare",
+          "description": "Gentle cleanser with organic honey and oats"
+        },
+        {
+          "sku": "vv-toner-rosewater",
+          "name": "Rose Water Toner",
+          "price": 22.0,
+          "category": "skincare",
+          "description": "Refreshing toner with pure rose water"
+        },
+        {
+          "sku": "vv-serum-hyaluronic",
+          "name": "Hyaluronic Acid Serum",
+          "price": 55.0,
+          "category": "skincare",
+          "description": "Hydrating serum with plant-based hyaluronic acid"
+        }
+      ],
+      "services": [
+        {
+          "id": "makeup-natural",
+          "name": "Natural Makeup Application",
+          "price": 75.0,
+          "duration": 60,
+          "description": "Makeup using only natural and organic products"
+        }
+      ],
+      "favorites": [
+        "vv-lipstick-natural-rose",
+        "vv-cleanser-honey",
+        "vv-serum-hyaluronic"
+      ],
+      "quotas": {
+        "storageGB": 12,
+        "monthlyBudget": 60.0,
+        "apiCallsPerHour": 2500
+      }
+    },
+    {
+      "id": "delirios",
+      "name": "Delirios Beauty Bar",
+      "slug": "delirios",
+      "description": "Trendy beauty bar with creative makeup and nail art",
+      "mode": "booking",
+      "status": "active",
+      "branding": {
+        "primaryColor": "#8B5CF6",
+        "secondaryColor": "#1F2937",
+        "logo": "https://placeholder.zo.dev/logos/delirios.png",
+        "favicon": "https://placeholder.zo.dev/favicons/delirios.ico",
+        "website": "https://delirios.local"
+      },
+      "contact": {
+        "phone": "+1-555-0605",
+        "email": "book@delirios.local",
+        "address": "987 Creative Boulevard, Portland, OR 97201",
+        "hours": {
+          "monday": "closed",
+          "tuesday": "11:00-20:00",
+          "wednesday": "11:00-20:00",
+          "thursday": "11:00-21:00",
+          "friday": "11:00-21:00",
+          "saturday": "10:00-19:00",
+          "sunday": "12:00-18:00"
+        }
+      },
+      "location": {
+        "latitude": 45.5152,
+        "longitude": -122.6784,
+        "placeId": "ChIJ-bDD5__lgVQRmTNqXl6_rTY"
+      },
+      "services": [
+        {
+          "id": "makeup-editorial",
+          "name": "Editorial Makeup",
+          "price": 120.0,
+          "duration": 120,
+          "description": "Bold, creative makeup for photoshoots and events",
+          "featured": true
+        },
+        {
+          "id": "nails-artistic",
+          "name": "Artistic Nail Design",
+          "price": 85.0,
+          "duration": 90,
+          "description": "Custom artistic nail designs and patterns"
+        },
+        {
+          "id": "brows-sculpt",
+          "name": "Brow Sculpting",
+          "price": 55.0,
+          "duration": 45,
+          "description": "Professional eyebrow shaping and tinting"
+        },
+        {
+          "id": "lashes-extensions",
+          "name": "Lash Extensions",
+          "price": 95.0,
+          "duration": 90,
+          "description": "Individual lash extensions for dramatic eyes"
+        }
+      ],
+      "products": [
+        {
+          "sku": "del-palette-neon",
+          "name": "Neon Dreams Eyeshadow Palette",
+          "price": 48.0,
+          "category": "cosmetics",
+          "description": "Bold neon eyeshadow palette for creative looks"
+        },
+        {
+          "sku": "del-liner-glitter",
+          "name": "Glitter Eyeliner Set",
+          "price": 35.0,
+          "category": "cosmetics",
+          "description": "Set of 6 glitter eyeliners in various colors"
+        },
+        {
+          "sku": "del-lipstick-holographic",
+          "name": "Holographic Lipstick",
+          "price": 32.0,
+          "category": "cosmetics",
+          "description": "Color-shifting holographic lipstick"
+        }
+      ],
+      "staff": [
+        {
+          "id": "zoe-kim",
+          "name": "Zoe Kim",
+          "role": "Creative Director",
+          "specialties": ["makeup-editorial", "nails-artistic"],
+          "photo": "https://placeholder.zo.dev/staff/zoe-kim.jpg",
+          "googleCalendarId": "zoe@delirios.local"
+        },
+        {
+          "id": "river-santos",
+          "name": "River Santos",
+          "role": "Lash & Brow Specialist",
+          "specialties": ["brows-sculpt", "lashes-extensions"],
+          "photo": "https://placeholder.zo.dev/staff/river-santos.jpg",
+          "googleCalendarId": "river@delirios.local"
+        }
+      ],
+      "favorites": ["makeup-editorial", "del-palette-neon", "nails-artistic"],
+      "quotas": {
+        "storageGB": 18,
+        "monthlyBudget": 80.0,
+        "apiCallsPerHour": 3500
+      }
+    },
+    {
+      "id": "nom-nom",
+      "name": "Nom Nom Beauty Kitchen",
+      "slug": "nom-nom",
+      "description": "DIY beauty products and workshops",
+      "mode": "catalog",
+      "status": "active",
+      "branding": {
+        "primaryColor": "#10B981",
+        "secondaryColor": "#374151",
+        "logo": "https://placeholder.zo.dev/logos/nom-nom.png",
+        "favicon": "https://placeholder.zo.dev/favicons/nom-nom.ico",
+        "website": "https://nom-nom.local"
+      },
+      "contact": {
+        "phone": "+1-555-0706",
+        "email": "hello@nom-nom.local",
+        "address": "159 Craft Street, Seattle, WA 98101",
+        "hours": {
+          "monday": "10:00-18:00",
+          "tuesday": "10:00-18:00",
+          "wednesday": "10:00-18:00",
+          "thursday": "10:00-19:00",
+          "friday": "10:00-19:00",
+          "saturday": "9:00-17:00",
+          "sunday": "11:00-16:00"
+        }
+      },
+      "location": {
+        "latitude": 47.6062,
+        "longitude": -122.3321,
+        "placeId": "ChIJVTPokywQkFQRmtVp0PcUSzs"
+      },
+      "products": [
+        {
+          "sku": "nn-kit-lip-balm",
+          "name": "DIY Lip Balm Kit",
+          "price": 28.0,
+          "category": "diy-kits",
+          "description": "Everything needed to make natural lip balms at home",
+          "featured": true
+        },
+        {
+          "sku": "nn-kit-face-mask",
+          "name": "Face Mask Making Kit",
+          "price": 35.0,
+          "category": "diy-kits",
+          "description": "Create custom face masks with natural ingredients"
+        },
+        {
+          "sku": "nn-kit-body-scrub",
+          "name": "Body Scrub Crafting Kit",
+          "price": 32.0,
+          "category": "diy-kits",
+          "description": "Make exfoliating body scrubs with organic materials"
+        },
+        {
+          "sku": "nn-ingredient-shea",
+          "name": "Organic Shea Butter",
+          "price": 18.0,
+          "category": "ingredients",
+          "description": "Pure organic shea butter for DIY beauty products"
+        },
+        {
+          "sku": "nn-ingredient-coconut",
+          "name": "Virgin Coconut Oil",
+          "price": 15.0,
+          "category": "ingredients",
+          "description": "Cold-pressed virgin coconut oil"
+        },
+        {
+          "sku": "nn-essential-lavender",
+          "name": "Lavender Essential Oil",
+          "price": 22.0,
+          "category": "ingredients",
+          "description": "Pure lavender essential oil for aromatherapy"
+        }
+      ],
+      "services": [
+        {
+          "id": "workshop-beginner",
+          "name": "DIY Beauty Workshop",
+          "price": 65.0,
+          "duration": 120,
+          "description": "Learn to make your own natural beauty products",
+          "featured": true
+        },
+        {
+          "id": "private-consultation",
+          "name": "Private Beauty Consultation",
+          "price": 85.0,
+          "duration": 60,
+          "description": "One-on-one consultation for custom beauty routines"
+        }
+      ],
+      "favorites": [
+        "nn-kit-lip-balm",
+        "workshop-beginner",
+        "nn-essential-lavender"
+      ],
+      "quotas": {
+        "storageGB": 8,
+        "monthlyBudget": 40.0,
+        "apiCallsPerHour": 1500
+      }
+    }
+  ]
+}

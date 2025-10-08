@@ -1,0 +1,179 @@
+'use client';
+
+import { useRouter } from 'next/navigation';
+import { LiveRegionProvider } from '@/components/a11y/LiveRegion';
+
+interface Service {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  duration: number;
+  metadata?: any;
+}
+
+interface ServicesClientProps {
+  services: Service[];
+  tenantData: {
+    slug: string;
+    name: string;
+    branding: {
+      primaryColor: string;
+    };
+  };
+}
+
+export function ServicesClient({ services, tenantData }: ServicesClientProps) {
+  const router = useRouter();
+
+  const handleBookService = (service: Service) => {
+    router.push(`/t/${tenantData.slug}/booking/${service.id}`);
+  };
+
+  if (services.length === 0) {
+    return (
+      <LiveRegionProvider>
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center py-12">
+          <p className="text-gray-600">
+            Este tenant no ofrece servicios de reserva.
+          </p>
+          <a
+            href={`/t/${tenantData.slug}/products`}
+            className="mt-4 inline-block px-6 py-3 rounded-lg text-white font-semibold hover:opacity-90 transition-opacity"
+            style={{ backgroundColor: tenantData.branding.primaryColor }}
+          >
+            Ver productos disponibles
+          </a>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <LiveRegionProvider>
+    <div className="container mx-auto px-4 py-8">
+      {/* Services Grid */}
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+        {services.map((service: any) => (
+          <div
+            key={service.id}
+            className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+          >
+            <div className="p-6">
+              <div className="text-5xl mb-4 text-center">
+                {service.metadata?.image || "💅"}
+              </div>
+              <h3 className="text-xl font-semibold mb-2">{service.name}</h3>
+              <p className="text-gray-600 text-sm mb-4">
+                {service.description}
+              </p>
+              <div className="flex justify-between items-center mb-4">
+                <span
+                  className="text-2xl font-bold"
+                  style={{ color: tenantData.branding.primaryColor }}
+                >
+                  ${service.price}
+                </span>
+                <span className="text-sm text-gray-500">
+                  {service.duration} min
+                </span>
+              </div>
+
+              {/* Click Budget: ≤2 clicks to book */}
+              <div className="space-y-2">
+                <a
+                  href={`/t/${tenantData.slug}/booking/${service.id}`}
+                  className="block w-full py-2 px-4 rounded border border-gray-300 text-gray-700 hover:bg-gray-50 text-sm text-center"
+                >
+                  Ver horarios (1/2)
+                </a>
+                <button
+                  onClick={() => handleBookService(service)}
+                  className="block w-full py-3 px-6 rounded-lg text-white font-semibold hover:opacity-90 transition-opacity text-center"
+                  style={{
+                    backgroundColor: tenantData.branding.primaryColor,
+                  }}
+                >
+                  Reservar ahora (1/2)
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Quick Booking Flow */}
+      <div className="bg-white rounded-lg shadow-md p-8">
+        <h2 className="text-2xl font-bold mb-6 text-center">
+          Reserva Rápida (≤2 clicks)
+        </h2>
+        <div className="grid md:grid-cols-2 gap-8">
+          <div className="text-center">
+            <div
+              className="w-12 h-12 rounded-full mx-auto mb-4 flex items-center justify-center text-white font-bold"
+              style={{ backgroundColor: tenantData.branding.primaryColor }}
+            >
+              1
+            </div>
+            <h3 className="font-semibold mb-2">Seleccionar servicio</h3>
+            <p className="text-gray-600 text-sm">
+              Elige el servicio que deseas y tu horario preferido
+            </p>
+          </div>
+          <div className="text-center">
+            <div
+              className="w-12 h-12 rounded-full mx-auto mb-4 flex items-center justify-center text-white font-bold"
+              style={{ backgroundColor: tenantData.branding.primaryColor }}
+            >
+              2
+            </div>
+            <h3 className="font-semibold mb-2">Confirmar reserva</h3>
+            <p className="text-gray-600 text-sm">
+              Confirma tus datos y finaliza la reserva
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-8 text-center">
+          <a
+            href={`/t/${tenantData.slug}/booking`}
+            className="inline-block px-8 py-3 rounded-lg text-white font-semibold hover:opacity-90 transition-opacity"
+            style={{ backgroundColor: tenantData.branding.primaryColor }}
+          >
+            Comenzar reserva express
+          </a>
+        </div>
+      </div>
+
+      {/* Available Times */}
+      <div className="mt-12 bg-white rounded-lg shadow-md p-8">
+        <h2 className="text-2xl font-bold mb-6 text-center">
+          Horarios Disponibles Hoy
+        </h2>
+        <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
+          {[
+            "9:00",
+            "10:30",
+            "12:00",
+            "14:00",
+            "15:30",
+            "17:00",
+            "18:30",
+            "20:00",
+          ].map((time) => (
+            <a
+              key={time}
+              href={`/t/${tenantData.slug}/booking?time=${encodeURIComponent(time)}`}
+              className="block py-2 px-3 rounded border border-gray-300 text-gray-700 hover:bg-gray-50 text-sm text-center"
+            >
+              {time}
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+    </LiveRegionProvider>
+  );
+}
+

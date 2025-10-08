@@ -1,0 +1,111 @@
+{
+  "id": "swarm_1759511432871_cj8zk3",
+  "featureName": "Add tooltip to product images",
+  "status": "active",
+  "progress": 25,
+  "currentAgent": "QA",
+  "tasks": [
+    {
+      "id": "task_0",
+      "agent": "ARCHITECT",
+      "description": "Valida arquitectura y estructura del proyecto",
+      "status": "completed",
+      "progress": 100,
+      "dependencies": [],
+      "startedAt": "2025-10-03T17:10:32.875Z",
+      "output": [
+        "🏗️  Validando arquitectura del proyecto...",
+        "📁 Validando estructura de carpetas...",
+        "✓ Estructura de carpetas correcta",
+        "📦 Analizando dependencias...",
+        "✓ Dependencias validadas",
+        "🎨 Validando patrones de código...",
+        "ℹ️  2 sugerencias de mejora encontradas",
+        "✓ Patrones validados",
+        "✓ Arquitectura validada exitosamente"
+      ],
+      "artifacts": ["architecture-report.md"],
+      "completedAt": "2025-10-03T17:10:32.882Z"
+    },
+    {
+      "id": "task_1",
+      "agent": "DEVELOPER",
+      "description": "Implementa código y features",
+      "status": "completed",
+      "progress": 100,
+      "dependencies": ["task_0"],
+      "startedAt": "2025-10-03T17:10:32.882Z",
+      "output": [
+        "💻 Iniciando implementación...",
+        "📋 Feature: Add tooltip to product images",
+        "📁 Creando estructura de archivos...",
+        "   ✓ Creado: apps/web/features/Add tooltip to product images",
+        "   ✓ Creado: packages/core/Add tooltip to product images-service",
+        "📝 Generando archivos...",
+        "   ✓ apps/web/features/Add tooltip to product images/index.tsx",
+        "   ✓ packages/core/Add tooltip to product images-service/index.ts",
+        "✓ 2 archivos generados",
+        "✓ Implementación completada"
+      ],
+      "artifacts": ["feature-implementation.md"],
+      "completedAt": "2025-10-03T17:10:32.889Z"
+    },
+    {
+      "id": "task_2",
+      "agent": "QA",
+      "description": "Crea y actualiza tests automáticamente",
+      "status": "failed",
+      "progress": 100,
+      "dependencies": ["task_1"],
+      "startedAt": "2025-10-03T17:10:32.890Z",
+      "output": [
+        "Creating new test file: c:\\Dev\\Zo\\sass-store\\tests\\unit\\add-tooltip-to-product-images.spec.ts",
+        "Created test file: add-tooltip-to-product-images.spec.ts",
+        "Test execution error: Error: Command failed: npm run test\ncache:test: ERROR: command finished with error: command (c:\\Dev\\Zo\\sass-store\\packages\\cache) C:\\Program Files\\nodejs\\npm.cmd run test exited (1)\ncache#test: command (c:\\Dev\\Zo\\sass-store\\packages\\cache) C:\\Program Files\\nodejs\\npm.cmd run test exited (1)\n ERROR  run failed: command  exited (1)\n"
+      ],
+      "blockedReason": "this.updateTask is not a function"
+    },
+    {
+      "id": "task_3",
+      "agent": "CODE_QUALITY",
+      "description": "Valida estándares de código",
+      "status": "pending",
+      "progress": 0,
+      "dependencies": ["task_2"]
+    },
+    {
+      "id": "task_4",
+      "agent": "SECURITY",
+      "description": "Escanea vulnerabilidades de seguridad",
+      "status": "pending",
+      "progress": 0,
+      "dependencies": ["task_3"]
+    },
+    {
+      "id": "task_5",
+      "agent": "TESTER",
+      "description": "Validación final e integración",
+      "status": "pending",
+      "progress": 0,
+      "dependencies": ["task_4"]
+    },
+    {
+      "id": "task_6",
+      "agent": "REVIEWER",
+      "description": "Code review y mejoras",
+      "status": "pending",
+      "progress": 0,
+      "dependencies": ["task_5"]
+    },
+    {
+      "id": "task_7",
+      "agent": "DEPLOYER",
+      "description": "Preparación y deployment",
+      "status": "pending",
+      "progress": 0,
+      "dependencies": ["task_6"]
+    }
+  ],
+  "createdAt": "2025-10-03T17:10:32.871Z",
+  "updatedAt": "2025-10-03T17:10:36.115Z"
+}

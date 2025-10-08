@@ -1,0 +1,127 @@
+{
+  "project": {
+    "name": "SASS-STORE",
+    "type": "E-commerce SaaS",
+    "architecture": "Clean Architecture + DDD"
+  },
+  "standards": {
+    "code_limits": {
+      "max_lines_per_file": 200,
+      "max_lines_per_function": 50,
+      "max_function_parameters": 4,
+      "max_nesting_levels": 3
+    },
+    "principles": {
+      "solid": true,
+      "dry": true,
+      "kiss": true,
+      "yagni": true
+    },
+    "security": {
+      "no_hardcoded_credentials": true,
+      "input_validation_required": true,
+      "sql_prepared_statements_only": true,
+      "zero_circular_dependencies": true
+    },
+    "testing": {
+      "min_coverage_statements": 80,
+      "min_coverage_branches": 75,
+      "min_coverage_functions": 80,
+      "min_coverage_lines": 80
+    }
+  },
+  "tech_stack": {
+    "frontend": ["React", "TypeScript", "Tailwind CSS"],
+    "backend": ["Node.js", "Hono", "CloudFlare Workers"],
+    "database": ["D1 (SQLite)", "KV Storage"],
+    "testing": ["Playwright", "Jest", "Vitest"],
+    "deployment": ["CloudFlare Workers", "GitHub Actions"]
+  },
+  "patterns": {
+    "design_patterns": [
+      "Repository",
+      "Factory",
+      "Strategy",
+      "Observer",
+      "Dependency Injection"
+    ],
+    "architectural_patterns": [
+      "Clean Architecture",
+      "Domain-Driven Design",
+      "CQRS",
+      "Event Sourcing"
+    ]
+  },
+  "folder_structure": {
+    "apps": {
+      "web": "Frontend React Application",
+      "api": "Backend Hono + CloudFlare Workers"
+    },
+    "packages": {
+      "shared": "Shared code and utilities",
+      "ui": "UI component library",
+      "database": "Database models and migrations"
+    }
+  },
+  "severity_levels": {
+    "critical": [
+      "Hardcoded credentials",
+      "SQL injection vulnerability",
+      "Security breach",
+      "Data loss risk"
+    ],
+    "high": [
+      "SOLID violation (severe)",
+      "Circular dependencies",
+      "God Objects (>500 lines)",
+      "Missing input validation"
+    ],
+    "medium": [
+      "Code duplication",
+      "Missing error handling",
+      "Poor naming conventions",
+      "Incomplete tests"
+    ],
+    "low": [
+      "Code formatting issues",
+      "Missing comments",
+      "Minor optimizations",
+      "Documentation gaps"
+    ]
+  },
+  "review_checklist": {
+    "architecture": [
+      "Follows Clean Architecture",
+      "Respects layer boundaries",
+      "Proper dependency injection",
+      "No circular dependencies"
+    ],
+    "code_quality": [
+      "Meets line limits",
+      "Descriptive naming",
+      "No code duplication",
+      "Proper error handling"
+    ],
+    "security": [
+      "Inputs validated",
+      "No hardcoded credentials",
+      "Parameterized queries",
+      "Data sanitization"
+    ],
+    "testing": [
+      "Coverage >80%",
+      "Unit tests present",
+      "Integration tests present",
+      "Critical paths covered"
+    ]
+  },
+  "blocking_criteria": [
+    "Hardcoded credentials found",
+    "Critical security vulnerability",
+    "Severe SOLID violation",
+    "Circular dependencies detected",
+    "God Objects present",
+    "Missing input validation on critical paths",
+    "SQL injection vulnerability"
+  ]
+}

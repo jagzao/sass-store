@@ -1,0 +1,76 @@
+{
+  "servers": {
+    "mcp-shadcn": {
+      "command": "node",
+      "args": ["mcp/shadcn/server.mjs"],
+      "env": {
+        "UI_WHITELIST": "apps/web/components,design/tokens.json,agents/outputs",
+        "DRY_RUN_DEFAULT": "true"
+      }
+    },
+    "mcp-db": {
+      "command": "node",
+      "args": ["mcp/db/server.mjs"],
+      "env": {
+        "DATABASE_URL": "${DATABASE_URL}",
+        "PG_SHADOW_URL": "${PG_SHADOW_URL:-}",
+        "RLS_REQUIRED": "true",
+        "MIGRATION_DIR": "db/migrations",
+        "SEED_DIR": "db/seeds"
+      }
+    },
+    "mcp-payments": {
+      "command": "node",
+      "args": ["mcp/payments/server.mjs"],
+      "env": {
+        "STRIPE_VAULT_DIR": "vault/.env",
+        "MERCADOPAGO_VAULT_DIR": "vault/.env",
+        "PAYMENT_ENV": "test"
+      }
+    },
+    "mcp-calendar": {
+      "command": "node",
+      "args": ["mcp/calendar/server.mjs"],
+      "env": {
+        "GOOGLE_TOKENS_DIR": "vault/google-tokens",
+        "CALENDAR_RATE_LIMIT": "100"
+      }
+    },
+    "mcp-file": {
+      "command": "node",
+      "args": ["mcp/file/server.mjs"],
+      "env": {
+        "EXTRACT_DIR": "agents/outputs/extracted-docs",
+        "ALLOWED_TYPES": "html,pdf,md"
+      }
+    },
+    "mcp-search": {
+      "command": "node",
+      "args": ["mcp/search/server.mjs"],
+      "env": {
+        "MEILISEARCH_URL": "${MEILISEARCH_URL:-http://localhost:7700}",
+        "MEILISEARCH_KEY": "${MEILISEARCH_KEY:-}"
+      }
+    },
+    "mcp-email": {
+      "command": "node",
+      "args": ["mcp/email/server.mjs"],
+      "env": {
+        "EMAIL_TEMPLATES_DIR": "apps/web/templates",
+        "EMAIL_VAULT_DIR": "vault/.env"
+      }
+    },
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-playwright"]
+    },
+    "puppeteer": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-puppeteer"]
+    },
+    "chrome-devtools": {
+      "command": "npx",
+      "args": ["chrome-devtools-mcp@latest"]
+    }
+  }
+}

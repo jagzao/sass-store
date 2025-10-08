@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: ./apps/web/Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - NEXT_PUBLIC_API_URL=http://localhost:3001
+    depends_on:
+      - api
+      - postgres
+    volumes:
+      - ./apps/web:/app/apps/web
+      - /app/node_modules
+
+  api:
+    build:
+      context: .
+      dockerfile: ./apps/api/Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/sassstore
+      - JWT_SECRET=dev-jwt-secret-change-in-production
+      - UPSTASH_REDIS_REST_URL=${UPSTASH_REDIS_REST_URL}
+      - UPSTASH_REDIS_REST_TOKEN=${UPSTASH_REDIS_REST_TOKEN}
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - ./apps/api:/app/apps/api
+      - /app/node_modules
+
+  postgres:
+    image: postgres:15-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=sassstore
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init.sql
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6380:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+
+  # Cost monitoring worker (simulated with cron)
+  cost-monitor:
+    image: alpine:latest
+    command: >
+      sh -c "echo '0 0 * * * /app/cost-check.sh' | crontab - && crond -f"
+    volumes:
+      - ./scripts/cost-check.sh:/app/cost-check.sh
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/sassstore
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
+  redis_data:

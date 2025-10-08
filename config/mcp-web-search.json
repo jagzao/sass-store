@@ -1,0 +1,114 @@
+{
+  "mcpServers": {
+    "web-search": {
+      "command": "npx",
+      "args": ["@anthropic/mcp-web-search"],
+      "env": {
+        "WEB_SEARCH_API_KEY": "${WEB_SEARCH_API_KEY}",
+        "WEB_SEARCH_ENGINE": "google",
+        "WEB_SEARCH_SAFE": "active",
+        "WEB_SEARCH_MAX_RESULTS": "10"
+      }
+    }
+  },
+  "description": "MCP Web Search configuration for external documentation and best practices",
+  "search_strategies": {
+    "technical_documentation": {
+      "enabled": true,
+      "domains": [
+        "developer.mozilla.org",
+        "react.dev",
+        "nextjs.org",
+        "typescript-eslint.io",
+        "playwright.dev",
+        "vitest.dev"
+      ],
+      "query_templates": [
+        "{technology} best practices {year}",
+        "{framework} performance optimization",
+        "{tool} configuration guide"
+      ]
+    },
+    "accessibility_guidelines": {
+      "enabled": true,
+      "domains": [
+        "www.w3.org/WAI",
+        "webaim.org",
+        "a11y-101.com",
+        "accessibility.dev"
+      ],
+      "query_templates": [
+        "WCAG 2.1 {guideline} examples",
+        "accessibility {component} best practices",
+        "screen reader {element} testing"
+      ]
+    },
+    "seo_optimization": {
+      "enabled": true,
+      "domains": ["developers.google.com", "schema.org", "web.dev", "moz.com"],
+      "query_templates": [
+        "Core Web Vitals {metric} optimization",
+        "structured data {business_type}",
+        "SEO best practices {industry}"
+      ]
+    },
+    "security_practices": {
+      "enabled": true,
+      "domains": [
+        "owasp.org",
+        "security.snyk.io",
+        "docs.github.com/en/code-security"
+      ],
+      "query_templates": [
+        "OWASP {vulnerability} prevention",
+        "secure coding {language} practices",
+        "dependency security scanning"
+      ]
+    }
+  },
+  "workflow_integration": {
+    "auto_research": {
+      "enabled": true,
+      "triggers": [
+        "unknown_error_pattern",
+        "new_framework_version",
+        "security_vulnerability_detected",
+        "performance_regression"
+      ]
+    },
+    "documentation_updates": {
+      "enabled": true,
+      "auto_update_docs": false,
+      "research_depth": "moderate",
+      "fact_checking": true
+    }
+  },
+  "agents": {
+    "failure-triager": {
+      "use_web_search": true,
+      "search_for_errors": true,
+      "check_known_issues": true
+    },
+    "patcher-frontend": {
+      "use_web_search": true,
+      "research_react_patterns": true,
+      "check_accessibility_docs": true
+    },
+    "patcher-backend": {
+      "use_web_search": true,
+      "research_api_patterns": true,
+      "check_security_docs": true
+    }
+  },
+  "search_filtering": {
+    "exclude_domains": ["stackoverflow.com", "reddit.com", "medium.com"],
+    "prefer_official_docs": true,
+    "prefer_recent_content": true,
+    "max_age_days": 365
+  },
+  "rate_limiting": {
+    "max_searches_per_hour": 50,
+    "max_searches_per_bundle": 10,
+    "cooldown_between_searches": 2
+  }
+}

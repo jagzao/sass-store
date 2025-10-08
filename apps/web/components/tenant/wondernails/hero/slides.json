@@ -1,0 +1,90 @@
+[
+  {
+    "img": "/tenants/wondernails/hero/img1.webp",
+    "title": "WONDERNAILS PRO",
+    "topic": "Manicure Premium",
+    "description": "Reserva en 2 clics · Garantía de acabado gel · Desde $35",
+    "badge": "-20% hoy",
+    "bgColor": "#FF2D6A",
+    "detailTitle": "Manicure Premium LED",
+    "detail": "Tecnología LED de última generación para un acabado profesional que dura hasta 4 semanas. Incluye diseño personalizado y acabado glossy.",
+    "specs": [
+      { "label": "Duración", "value": "4 semanas" },
+      { "label": "Tecnología", "value": "LED Pro" },
+      { "label": "Precio", "value": "desde $35" }
+    ]
+  },
+  {
+    "img": "/tenants/wondernails/hero/img2.webp",
+    "title": "WONDERNAILS PRO",
+    "topic": "Nail Art",
+    "description": "Diseños únicos · Artistas certificados · Desde $45",
+    "badge": "Nuevo diseño",
+    "bgColor": "#B025FF",
+    "detailTitle": "Nail Art Premium",
+    "detail": "Crea diseños únicos con nuestros artistas certificados. Desde minimalista hasta arte complejo.",
+    "specs": [
+      { "label": "Duración", "value": "3 semanas" },
+      { "label": "Estilos", "value": "Ilimitados" },
+      { "label": "Precio", "value": "desde $45" }
+    ]
+  },
+  {
+    "img": "/tenants/wondernails/hero/img3.webp",
+    "title": "WONDERNAILS PRO",
+    "topic": "Pedicure Spa",
+    "description": "Relajación total · Acabado perfecto · Desde $50",
+    "bgColor": "#FF2D6A",
+    "detailTitle": "Pedicure Spa Premium",
+    "detail": "Tratamiento completo de pies con exfoliación, masaje y acabado gel profesional.",
+    "specs": [
+      { "label": "Duración", "value": "90 min" },
+      { "label": "Incluye", "value": "Masaje" },
+      { "label": "Precio", "value": "desde $50" }
+    ]
+  },
+  {
+    "img": "/tenants/wondernails/hero/img4.webp",
+    "title": "WONDERNAILS PRO",
+    "topic": "Acrílicas",
+    "description": "Resistentes y elegantes · Diseño incluido · Desde $60",
+    "badge": "Más popular",
+    "bgColor": "#B025FF",
+    "detailTitle": "Uñas Acrílicas Premium",
+    "detail": "Sistema acrílico de alta calidad que se adapta a tu estilo de vida activo.",
+    "specs": [
+      { "label": "Duración", "value": "6 semanas" },
+      { "label": "Resistencia", "value": "Alta" },
+      { "label": "Precio", "value": "desde $60" }
+    ]
+  },
+  {
+    "img": "/tenants/wondernails/hero/img5.webp",
+    "title": "WONDERNAILS PRO",
+    "topic": "Fortalecedor",
+    "description": "Recupera uñas dañadas · Resultados en 2 semanas · $80",
+    "bgColor": "#FF2D6A",
+    "detailTitle": "Tratamiento Fortalecedor",
+    "detail": "Restaura la salud de tus uñas con nuestro tratamiento especializado.",
+    "specs": [
+      { "label": "Sesiones", "value": "4" },
+      { "label": "Resultados", "value": "2 semanas" },
+      { "label": "Precio", "value": "$80" }
+    ]
+  },
+  {
+    "img": "/tenants/wondernails/hero/img6.webp",
+    "title": "WONDERNAILS PRO",
+    "topic": "Pack Novia",
+    "description": "Manicure + Pedicure · Diseño personalizado · $120",
+    "badge": "Especial",
+    "bgColor": "#B025FF",
+    "detailTitle": "Pack Novia Premium",
+    "detail": "Todo lo que necesitas para lucir perfecta en tu día especial.",
+    "specs": [
+      { "label": "Incluye", "value": "Manicure + Pedicure" },
+      { "label": "Duración", "value": "4 semanas" },
+      { "label": "Precio", "value": "$120" }
+    ]
+  }
+]

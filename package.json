@@ -1,0 +1,101 @@
+{
+  "name": "sass-store",
+  "version": "1.0.0",
+  "description": "Multitenant SaaS platform for beauty salons with 10/10 UX",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "start": "turbo run start",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "test:e2e": "turbo run test:e2e",
+    "test:unit": "turbo run test:unit",
+    "test:integration": "turbo run test:integration",
+    "test:e2e:subset": "ts-node ./tests/e2e/subset/*.e2e.ts",
+    "typecheck": "turbo run typecheck",
+    "db:generate": "cd apps/api && npm run db:generate",
+    "db:push": "cd apps/api && npm run db:push",
+    "db:seed": "cd apps/api && npm run db:seed",
+    "autoresume": "ts-node ./tools/autoresume.ts",
+    "autoresume:daemon": "ts-node ./tools/autoresume-daemon.ts",
+    "autoresume:start": "ts-node ./tools/autoresume-daemon.ts",
+    "workflow:status": "ts-node --transpile-only ./tools/workflow-status.ts",
+    "workflow:cleanup": "ts-node --transpile-only ./tools/workflow-cleanup.ts",
+    "swarm:status": "ts-node --transpile-only ./agents/swarm/cli/status.ts",
+    "swarm:start": "ts-node --transpile-only ./agents/swarm/cli/start.ts",
+    "swarm:resume": "ts-node --transpile-only ./agents/swarm/cli/resume.ts",
+    "swarm:continue": "ts-node --transpile-only ./agents/swarm/cli/continue.ts",
+    "lint:imports": "ts-node ./tests/integration/lint-paths.int.spec.ts",
+    "seo:analyze": "ts-node -e \"console.log('Running SEO analysis...')\"",
+    "a11y:audit": "ts-node -e \"console.log('Running accessibility audit...')\"",
+    "perf:analyze": "ts-node -e \"console.log('Running performance analysis...')\"",
+    "security:full": "npm run swarm:start \"security scan full\"",
+    "security:quick": "ts-node ./scripts/security-quick-scan.ts",
+    "security:autofix": "npx ts-node ./scripts/security-autofix-simple.ts",
+    "security:check-deps": "npm audit --audit-level=high",
+    "security:update-deps": "npm audit fix && npm update",
+    "rls:apply": "npx ts-node ./scripts/apply-rls.ts",
+    "rls:test": "npx ts-node ./scripts/test-rls.ts",
+    "test:e2e:all": "playwright test",
+    "test:e2e:chromium": "playwright test --project=chromium",
+    "test:e2e:firefox": "playwright test --project=firefox",
+    "test:e2e:webkit": "playwright test --project=webkit",
+    "test:e2e:mobile": "playwright test --project='Mobile Chrome' --project='Mobile Safari'",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:debug": "playwright test --debug",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:report": "playwright show-report",
+    "test:e2e:codegen": "playwright codegen http://localhost:3001",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@jest/globals": "^30.2.0",
+    "@playwright/test": "^1.40.0",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.0",
+    "@turbo/gen": "^1.10.12",
+    "@types/jest": "^30.0.0",
+    "@vitest/ui": "^1.0.0",
+    "eslint": "^8.57.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.3",
+    "prettier": "^3.0.0",
+    "sharp": "^0.34.4",
+    "turbo": "^1.10.12",
+    "typescript": "^5.2.2",
+    "vitest": "^1.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "packageManager": "npm@9.6.7",
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,css,md}": [
+      "prettier --write"
+    ]
+  },
+  "dependencies": {
+    "@apollo/client": "^4.0.7",
+    "@apollo/server": "^5.0.0",
+    "@as-integrations/next": "^4.0.0",
+    "@tanstack/react-query": "^5.90.2",
+    "@tanstack/react-query-devtools": "^5.90.2",
+    "@types/pg": "^8.15.5",
+    "@upstash/redis": "^1.35.4",
+    "framer-motion": "^12.23.22",
+    "graphql": "^16.11.0",
+    "graphql-tag": "^2.12.6",
+    "pg": "^8.16.3",
+    "postgres-js": "^0.1.0",
+    "zod": "^3.25.76"
+  }
+}

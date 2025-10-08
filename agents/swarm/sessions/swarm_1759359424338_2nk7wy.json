@@ -1,0 +1,102 @@
+{
+  "id": "swarm_1759359424338_2nk7wy",
+  "featureName": "corrige los errores",
+  "status": "active",
+  "progress": 50,
+  "currentAgent": "TESTER",
+  "tasks": [
+    {
+      "id": "task_0",
+      "agent": "ARCHITECT",
+      "description": "Valida arquitectura y estructura del proyecto",
+      "status": "completed",
+      "progress": 100,
+      "dependencies": [],
+      "startedAt": "2025-10-01T22:57:04.341Z",
+      "output": [
+        "🏗️  Validando arquitectura del proyecto...",
+        "📁 Validando estructura de carpetas...",
+        "✓ Estructura de carpetas correcta",
+        "📦 Analizando dependencias...",
+        "✓ Dependencias validadas",
+        "🎨 Validando patrones de código...",
+        "ℹ️  2 sugerencias de mejora encontradas",
+        "✓ Patrones validados",
+        "✓ Arquitectura validada exitosamente"
+      ],
+      "artifacts": ["architecture-report.md"],
+      "completedAt": "2025-10-01T22:57:04.353Z"
+    },
+    {
+      "id": "task_1",
+      "agent": "DEVELOPER",
+      "description": "Implementa código y features",
+      "status": "completed",
+      "progress": 100,
+      "dependencies": ["task_0"],
+      "startedAt": "2025-10-01T22:57:04.354Z",
+      "output": [
+        "💻 Iniciando implementación...",
+        "📋 Feature: corrige los errores",
+        "📁 Creando estructura de archivos...",
+        "   ✓ Creado: apps/web/features/corrige los errores",
+        "   ✓ Creado: packages/core/corrige los errores-service",
+        "📝 Generando archivos...",
+        "   ✓ apps/web/features/corrige los errores/index.tsx",
+        "   ✓ packages/core/corrige los errores-service/index.ts",
+        "✓ 2 archivos generados",
+        "✓ Implementación completada"
+      ],
+      "artifacts": ["feature-implementation.md"],
+      "completedAt": "2025-10-01T22:57:04.363Z"
+    },
+    {
+      "id": "task_2",
+      "agent": "TESTER",
+      "description": "Ejecuta tests y valida calidad",
+      "status": "completed",
+      "progress": 100,
+      "dependencies": ["task_1"],
+      "startedAt": "2025-10-01T22:57:04.363Z",
+      "output": [
+        "🧪 Iniciando suite de tests...",
+        "🔬 Ejecutando tests unitarios...",
+        "   ✓ 24/24 tests unitarios pasando",
+        "🔗 Ejecutando tests de integración...",
+        "   ✓ 12/12 tests de integración pasando",
+        "🎭 Ejecutando tests E2E...",
+        "   ✓ 8/8 tests E2E pasando",
+        "   ✓ Cobertura: 87%",
+        "✓ Todos los tests pasaron"
+      ],
+      "artifacts": ["test-report.json", "coverage-report.html"],
+      "completedAt": "2025-10-01T22:57:07.912Z"
+    },
+    {
+      "id": "task_3",
+      "agent": "QA",
+      "description": "Análisis de calidad y accesibilidad",
+      "status": "pending",
+      "progress": 0,
+      "dependencies": ["task_2"]
+    },
+    {
+      "id": "task_4",
+      "agent": "REVIEWER",
+      "description": "Code review y mejoras",
+      "status": "pending",
+      "progress": 0,
+      "dependencies": ["task_3"]
+    },
+    {
+      "id": "task_5",
+      "agent": "DEPLOYER",
+      "description": "Preparación y deployment",
+      "status": "pending",
+      "progress": 0,
+      "dependencies": ["task_4"]
+    }
+  ],
+  "createdAt": "2025-10-01T22:57:04.338Z",
+  "updatedAt": "2025-10-01T22:57:07.912Z"
+}

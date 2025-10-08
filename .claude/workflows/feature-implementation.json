@@ -1,0 +1,98 @@
+{
+  "name": "Feature Implementation Workflow",
+  "description": "Complete workflow for implementing a new feature",
+  "trigger": "User requests a new feature",
+  "steps": [
+    {
+      "step": 1,
+      "agent": "architect",
+      "action": "pre_review",
+      "description": "Validate feature architecture and design",
+      "required": true,
+      "can_block": true,
+      "output": "architecture_review.json",
+      "next_on_success": 2,
+      "next_on_failure": "notify_user"
+    },
+    {
+      "step": 2,
+      "agent": "developer",
+      "action": "implement",
+      "description": "Implement the feature following architect's guidelines",
+      "required": true,
+      "dependencies": ["architect:approved"],
+      "output": "implementation_files",
+      "next_on_success": 3,
+      "next_on_failure": "notify_user"
+    },
+    {
+      "step": 3,
+      "agent": "tester",
+      "action": "write_tests",
+      "description": "Write comprehensive tests for the feature",
+      "required": true,
+      "dependencies": ["developer:completed"],
+      "output": "test_files",
+      "next_on_success": 4,
+      "next_on_failure": "notify_user"
+    },
+    {
+      "step": 4,
+      "agent": "tester",
+      "action": "run_tests",
+      "description": "Execute test suite and generate coverage report",
+      "required": true,
+      "dependencies": ["tester:tests_written"],
+      "output": "test_results.json",
+      "next_on_success": 5,
+      "next_on_failure": 5
+    },
+    {
+      "step": 5,
+      "agent": "qa",
+      "action": "fix_issues",
+      "description": "Fix any test failures iteratively",
+      "required": true,
+      "max_iterations": 10,
+      "dependencies": ["tester:tests_executed"],
+      "output": "bug_fixes",
+      "next_on_success": 6,
+      "next_on_failure": "notify_user"
+    },
+    {
+      "step": 6,
+      "agent": "architect",
+      "action": "post_review",
+      "description": "Final architecture and code quality review",
+      "required": true,
+      "can_block": true,
+      "dependencies": ["qa:all_tests_passing"],
+      "output": "final_review.json",
+      "next_on_success": 7,
+      "next_on_failure": "notify_user"
+    },
+    {
+      "step": 7,
+      "agent": "automation",
+      "action": "setup_cicd",
+      "description": "Configure CI/CD pipeline and deployment",
+      "required": false,
+      "dependencies": ["architect:approved"],
+      "output": "cicd_config",
+      "next_on_success": "complete",
+      "next_on_failure": "notify_user"
+    }
+  ],
+  "success_criteria": {
+    "all_tests_passing": true,
+    "coverage_threshold": 80,
+    "architect_approved": true,
+    "no_critical_issues": true
+  },
+  "notifications": {
+    "on_start": true,
+    "on_step_complete": false,
+    "on_error": true,
+    "on_complete": true
+  }
+}

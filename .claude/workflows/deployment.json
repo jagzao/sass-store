@@ -1,0 +1,135 @@
+{
+  "name": "Deployment Workflow",
+  "description": "Complete deployment workflow with checks and rollback",
+  "trigger": "Deploy command or merge to main",
+  "steps": [
+    {
+      "step": 1,
+      "agent": "tester",
+      "action": "run_full_suite",
+      "description": "Execute complete test suite",
+      "required": true,
+      "can_block": true,
+      "output": "test_results.json",
+      "next_on_success": 2,
+      "next_on_failure": "notify_user"
+    },
+    {
+      "step": 2,
+      "agent": "architect",
+      "action": "pre_deploy_review",
+      "description": "Final architecture and security review",
+      "required": true,
+      "can_block": true,
+      "dependencies": ["tester:all_tests_passed"],
+      "output": "pre_deploy_review.json",
+      "next_on_success": 3,
+      "next_on_failure": "notify_user"
+    },
+    {
+      "step": 3,
+      "agent": "automation",
+      "action": "build",
+      "description": "Build application for production",
+      "required": true,
+      "dependencies": ["architect:approved"],
+      "output": "build_artifacts",
+      "next_on_success": 4,
+      "next_on_failure": "notify_user"
+    },
+    {
+      "step": 4,
+      "agent": "automation",
+      "action": "deploy_staging",
+      "description": "Deploy to staging environment",
+      "required": true,
+      "dependencies": ["automation:build_success"],
+      "output": "staging_url",
+      "next_on_success": 5,
+      "next_on_failure": "notify_user"
+    },
+    {
+      "step": 5,
+      "agent": "tester",
+      "action": "smoke_tests_staging",
+      "description": "Run smoke tests on staging",
+      "required": true,
+      "dependencies": ["automation:deployed_staging"],
+      "output": "smoke_results.json",
+      "next_on_success": 6,
+      "next_on_failure": "rollback_staging"
+    },
+    {
+      "step": 6,
+      "agent": "qa",
+      "action": "manual_validation",
+      "description": "Manual QA validation on staging",
+      "required": true,
+      "dependencies": ["tester:smoke_passed"],
+      "output": "qa_sign_off",
+      "next_on_success": 7,
+      "next_on_failure": "notify_user"
+    },
+    {
+      "step": 7,
+      "agent": "automation",
+      "action": "deploy_production",
+      "description": "Deploy to production environment",
+      "required": true,
+      "dependencies": ["qa:approved"],
+      "output": "production_url",
+      "next_on_success": 8,
+      "next_on_failure": "notify_user"
+    },
+    {
+      "step": 8,
+      "agent": "tester",
+      "action": "smoke_tests_production",
+      "description": "Run smoke tests on production",
+      "required": true,
+      "dependencies": ["automation:deployed_production"],
+      "output": "production_smoke_results.json",
+      "next_on_success": 9,
+      "next_on_failure": "rollback_production"
+    },
+    {
+      "step": 9,
+      "agent": "automation",
+      "action": "enable_monitoring",
+      "description": "Enable monitoring and alerts",
+      "required": true,
+      "dependencies": ["tester:production_smoke_passed"],
+      "output": "monitoring_dashboard",
+      "next_on_success": "complete",
+      "next_on_failure": "notify_user"
+    }
+  ],
+  "rollback_procedures": {
+    "rollback_staging": {
+      "agent": "automation",
+      "action": "rollback",
+      "environment": "staging"
+    },
+    "rollback_production": {
+      "agent": "automation",
+      "action": "rollback",
+      "environment": "production",
+      "priority": "critical"
+    }
+  },
+  "success_criteria": {
+    "all_tests_passing": true,
+    "architect_approved": true,
+    "build_successful": true,
+    "staging_validated": true,
+    "production_smoke_passed": true,
+    "monitoring_enabled": true
+  },
+  "notifications": {
+    "on_start": true,
+    "on_step_complete": true,
+    "on_error": true,
+    "on_complete": true,
+    "slack_channel": "#deployments"
+  }
+}
