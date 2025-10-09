@@ -1,0 +1,188 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+    - alert [ref=e2]
+    - generic [ref=e4]:
+        - banner [ref=e5]:
+            - generic [ref=e7]:
+                - generic:
+                    - img "Wonder Nails Studio logo"
+                - navigation [ref=e8]:
+                    - link "Servicios" [ref=e9] [cursor=pointer]:
+                        - /url: /t/wondernails/services
+                    - link "Productos" [ref=e10] [cursor=pointer]:
+                        - /url: /t/wondernails/products
+                    - link "Carrito" [ref=e11] [cursor=pointer]:
+                        - /url: /t/wondernails/cart
+                    - link "Iniciar Sesión" [ref=e12] [cursor=pointer]:
+                        - /url: /t/wondernails/login
+        - region "Carrusel Wonder Nails" [ref=e13]:
+            - generic [ref=e14]:
+                - generic [ref=e15]:
+                    - 'tabpanel "Slide 2: Nail Art"':
+                        - generic:
+                            - generic: Nuevo diseño
+                            - generic: WONDERNAILS PRO
+                            - generic: Nail Art
+                            - generic: Diseños únicos · Artistas certificados · Desde $45
+                            - button "Ver más del producto": VER MÁS ↗
+                        - generic:
+                            - img "Nail Art"
+                    - 'tabpanel "Slide 3: Pedicure Spa" [ref=e16]':
+                        - generic [ref=e17]:
+                            - generic [ref=e18]: WONDERNAILS PRO
+                            - generic [ref=e19]: Pedicure Spa
+                            - generic [ref=e20]: Relajación total · Acabado perfecto · Desde $50
+                            - button "Ver más del producto" [ref=e21] [cursor=pointer]: VER MÁS ↗
+                        - generic:
+                            - img "Pedicure Spa"
+                    - 'tabpanel "Slide 4: Acrílicas"':
+                        - generic:
+                            - generic: Más popular
+                            - generic: WONDERNAILS PRO
+                            - generic: Acrílicas
+                            - generic: Resistentes y elegantes · Diseño incluido · Desde $60
+                            - button "Ver más del producto": VER MÁS ↗
+                        - generic:
+                            - img "Acrílicas"
+                    - 'tabpanel "Slide 5: Fortalecedor"':
+                        - generic:
+                            - generic: WONDERNAILS PRO
+                            - generic: Fortalecedor
+                            - generic: Recupera uñas dañadas · Resultados en 2 semanas · $80
+                            - button "Ver más del producto": VER MÁS ↗
+                        - generic:
+                            - img "Fortalecedor"
+                    - 'tabpanel "Slide 6: Pack Novia"':
+                        - generic:
+                            - generic: Especial
+                            - generic: WONDERNAILS PRO
+                            - generic: Pack Novia
+                            - generic: Manicure + Pedicure · Diseño personalizado · $120
+                            - button "Ver más del producto": VER MÁS ↗
+                        - generic:
+                            - img "Pack Novia"
+                    - 'tabpanel "Slide 1: Manicure Premium"':
+                        - generic:
+                            - generic: "-20% hoy"
+                            - generic: WONDERNAILS PRO
+                            - generic: Manicure Premium
+                            - generic: Reserva en 2 clics · Garantía de acabado gel · Desde $35
+                            - button "Ver más del producto": VER MÁS ↗
+                        - generic:
+                            - img "Manicure Premium"
+                - generic:
+                    - button "Anterior" [ref=e22] [cursor=pointer]: ←
+                    - button "Siguiente" [ref=e23] [cursor=pointer]: →
+        - generic [ref=e24]:
+            - generic [ref=e25]:
+                - generic [ref=e26]:
+                    - heading "Servicios Destacados" [level=2] [ref=e27]
+                    - link "Ver todos →" [ref=e28] [cursor=pointer]:
+                        - /url: /t/wondernails/services
+                - generic [ref=e29]:
+                    - generic [ref=e31]:
+                        - generic [ref=e32]: 💅
+                        - heading "Classic Manicure" [level=3] [ref=e33]
+                        - paragraph [ref=e34]: Traditional nail care with polish application
+                        - generic [ref=e35]:
+                            - generic [ref=e36]:
+                                - generic [ref=e37]: $35.00
+                                - generic [ref=e38]: MXN
+                            - generic [ref=e39]: 45 min
+                        - button "Reservar Ahora" [ref=e40] [cursor=pointer]
+                    - generic [ref=e42]:
+                        - generic [ref=e43]: ✨
+                        - heading "Gel Manicure" [level=3] [ref=e44]
+                        - paragraph [ref=e45]: Long-lasting gel polish manicure
+                        - generic [ref=e46]:
+                            - generic [ref=e47]:
+                                - generic [ref=e48]: $55.00
+                                - generic [ref=e49]: MXN
+                            - generic [ref=e50]: 60 min
+                        - button "Reservar Ahora" [ref=e51] [cursor=pointer]
+                    - generic [ref=e53]:
+                        - generic [ref=e54]: 🦶
+                        - heading "Pedicure Deluxe" [level=3] [ref=e55]
+                        - paragraph [ref=e56]: Complete pedicure with massage
+                        - generic [ref=e57]:
+                            - generic [ref=e58]:
+                                - generic [ref=e59]: $65.00
+                                - generic [ref=e60]: MXN
+                            - generic [ref=e61]: 75 min
+                        - button "Reservar Ahora" [ref=e62] [cursor=pointer]
+            - generic [ref=e63]:
+                - generic [ref=e64]:
+                    - heading "Productos Destacados" [level=2] [ref=e65]
+                    - link "Ver todos →" [ref=e66] [cursor=pointer]:
+                        - /url: /t/wondernails/products
+                - generic [ref=e67]:
+                    - generic [ref=e68]:
+                        - generic [ref=e69]: 🧡
+                        - generic [ref=e70]:
+                            - heading "Sunset Orange Polish" [level=3] [ref=e71]
+                            - generic [ref=e72]:
+                                - generic [ref=e73]: $22.00
+                                - generic [ref=e74]: MXN
+                            - button "Comprar" [ref=e75] [cursor=pointer]
+                    - generic [ref=e76]:
+                        - generic [ref=e77]: 🧡
+                        - generic [ref=e78]:
+                            - heading "Sunset Orange Polish" [level=3] [ref=e79]
+                            - generic [ref=e80]:
+                                - generic [ref=e81]: $22.00
+                                - generic [ref=e82]: MXN
+                            - button "Comprar" [ref=e83] [cursor=pointer]
+            - generic [ref=e84]:
+                - heading "Información de Contacto" [level=2] [ref=e85]
+                - generic [ref=e86]:
+                    - generic [ref=e87]:
+                        - heading "¡Contáctanos!" [level=3] [ref=e88]
+                        - generic [ref=e89]:
+                            - generic [ref=e90]:
+                                - generic [ref=e91]: 📍
+                                - generic [ref=e92]: 456 Beauty Boulevard, Los Angeles, CA 90210
+                            - generic [ref=e93]:
+                                - generic [ref=e94]: 📞
+                                - link "+1-555-0201" [ref=e95] [cursor=pointer]:
+                                    - /url: tel:+1-555-0201
+                            - generic [ref=e96]:
+                                - generic [ref=e97]: ✉️
+                                - link "book@wondernails.local" [ref=e98] [cursor=pointer]:
+                                    - /url: mailto:book@wondernails.local
+                    - generic [ref=e99]:
+                        - heading "Horarios de Atención" [level=3] [ref=e100]
+                        - generic [ref=e101]:
+                            - generic [ref=e102]:
+                                - generic [ref=e103]: "friday:"
+                                - generic [ref=e104]: 9:00-20:00
+                            - generic [ref=e105]:
+                                - generic [ref=e106]: "monday:"
+                                - generic [ref=e107]: 9:00-19:00
+                            - generic [ref=e108]:
+                                - generic [ref=e109]: "sunday:"
+                                - generic [ref=e110]: 10:00-16:00
+                            - generic [ref=e111]:
+                                - generic [ref=e112]: "tuesday:"
+                                - generic [ref=e113]: 9:00-19:00
+                            - generic [ref=e114]:
+                                - generic [ref=e115]: "saturday:"
+                                - generic [ref=e116]: 8:00-18:00
+                            - generic [ref=e117]:
+                                - generic [ref=e118]: "thursday:"
+                                - generic [ref=e119]: 9:00-19:00
+                            - generic [ref=e120]:
+                                - generic [ref=e121]: "wednesday:"
+                                - generic [ref=e122]: 9:00-19:00
+            - generic [ref=e124]:
+                - generic [ref=e125]:
+                    - generic [ref=e126]: 🔒
+                    - generic [ref=e127]: Pagos Seguros
+                - generic [ref=e128]:
+                    - generic [ref=e129]: 🚚
+                    - generic [ref=e130]: Entrega Rápida
+                - generic [ref=e131]:
+                    - generic [ref=e132]: ⭐
+                    - generic [ref=e133]: Calidad Garantizada
+```

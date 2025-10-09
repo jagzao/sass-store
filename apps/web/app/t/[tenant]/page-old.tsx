@@ -10,41 +10,52 @@ interface PageProps {
   };
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   try {
     const tenantData = await getTenantDataForPage(params.tenant);
 
     // Preload hero image for LCP optimization (tenant-specific)
-    const heroImagePreload = params.tenant === 'wondernails'
-      ? [{ rel: 'preload', as: 'image', href: '/tenants/wondernails/hero/img1.webp' }]
-      : [];
+    const heroImagePreload =
+      params.tenant === "wondernails"
+        ? [
+            {
+              rel: "preload",
+              as: "image",
+              href: "/tenants/wondernails/hero/img1.webp",
+            },
+          ]
+        : [];
 
     return {
       title: tenantData.name,
       description: tenantData.description,
       icons: {
-        icon: '/favicon.ico',
+        icon: "/favicon.ico",
       },
       openGraph: {
         title: tenantData.name,
         description: tenantData.description,
-        type: 'website',
+        type: "website",
       },
       twitter: {
-        card: 'summary',
+        card: "summary",
         title: tenantData.name,
         description: tenantData.description,
       },
       other: {
         ...(heroImagePreload.length > 0 && {
-          'link-preload': heroImagePreload.map(l => `<${l.href}>; rel="${l.rel}"; as="${l.as}"`).join(', ')
-        })
-      }
+          "link-preload": heroImagePreload
+            .map((l) => `<${l.href}>; rel="${l.rel}"; as="${l.as}"`)
+            .join(", "),
+        }),
+      },
     };
   } catch (error) {
     return {
-      title: 'Tienda - Sass Store',
-      description: 'Plataforma de comercio electrónico multi-tenant',
+      title: "Tienda - Sass Store",
+      description: "Plataforma de comercio electrónico multi-tenant",
     };
   }
 }
@@ -52,7 +63,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function TenantPage({ params }: PageProps) {
   try {
     // Get headers from middleware
-    const headersList = headers();
+    const headersList = await headers();
     const tenantSlug = headersList.get("x-tenant") || params.tenant;
     const tenantMode = headersList.get("x-tenant-mode") || "catalog";
 
@@ -121,7 +132,7 @@ export default async function TenantPage({ params }: PageProps) {
             slug: params.tenant,
             mode: tenantData.mode,
             branding,
-            contact
+            contact,
           }}
           autoRotate={true}
         />

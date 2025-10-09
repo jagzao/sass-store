@@ -12,7 +12,7 @@ import * as dotenv from 'dotenv';
 // Load environment variables from .env.local
 dotenv.config({ path: path.join(__dirname, '..', '.env.local') });
 
-const SQL_FILE = path.join(__dirname, '..', 'packages', 'database', 'enable-rls.sql');
+const SQL_FILE = path.join(__dirname, '..', 'packages', 'database', 'migrations', 'add-rls-policies.sql');
 
 async function applyRLS() {
   console.log('🔒 Applying Row Level Security (RLS) to Database...\n');

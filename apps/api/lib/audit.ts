@@ -1,31 +1,27 @@
-import { db } from '@sass-store/database';
-import { auditLogs } from '@sass-store/database';
+import { db } from "@sass-store/database";
+import { auditLogs } from "@sass-store/database";
 
 export interface AuditLogData {
   tenantId: string;
-  userId?: string;
+  actorId?: string;
   action: string;
-  entityType: string;
-  entityId?: string;
-  changes?: Record<string, any>;
-  ipAddress?: string;
-  userAgent?: string;
+  targetTable?: string;
+  targetId?: string;
+  data?: Record<string, any>;
 }
 
 export async function createAuditLog(data: AuditLogData): Promise<void> {
   try {
     await db.insert(auditLogs).values({
       tenantId: data.tenantId,
-      userId: data.userId,
+      actorId: data.actorId,
       action: data.action,
-      entityType: data.entityType,
-      entityId: data.entityId,
-      changes: data.changes,
-      ipAddress: data.ipAddress,
-      userAgent: data.userAgent
+      targetTable: data.targetTable,
+      targetId: data.targetId,
+      data: data.data || {},
     });
   } catch (error) {
-    console.error('Failed to create audit log:', error);
+    console.error("Failed to create audit log:", error);
     // Don't throw error to avoid breaking the main operation
   }
 }

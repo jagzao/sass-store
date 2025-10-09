@@ -1,0 +1,86 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+    - alert [ref=e2]
+    - generic [ref=e4]:
+        - banner [ref=e5]:
+            - generic [ref=e7]:
+                - generic:
+                    - img "Delirios Healthy Food logo"
+                - navigation [ref=e8]:
+                    - link "Servicios" [ref=e9]:
+                        - /url: /t/delirios/services
+                    - link "Productos" [ref=e10]:
+                        - /url: /t/delirios/products
+                    - link "Carrito" [ref=e11]:
+                        - /url: /t/delirios/cart
+                    - link "Iniciar Sesión" [ref=e12]:
+                        - /url: /t/delirios/login
+        - status "Cargando carousel hero" [ref=e13]
+        - generic [ref=e41]:
+            - generic [ref=e42]:
+                - generic [ref=e43]:
+                    - heading "Productos Destacados" [level=2] [ref=e44]
+                    - link "Ver todos →" [ref=e45]:
+                        - /url: /t/delirios/products
+                - generic [ref=e47]:
+                    - generic [ref=e48]: 🥗
+                    - generic [ref=e49]:
+                        - heading "Superfood Bowl Mix" [level=3] [ref=e50]
+                        - generic [ref=e51]:
+                            - generic [ref=e52]: $18.00
+                            - generic [ref=e53]: MXN
+                        - button "Comprar" [ref=e54] [cursor=pointer]
+            - generic [ref=e55]:
+                - heading "Información de Contacto" [level=2] [ref=e56]
+                - generic [ref=e57]:
+                    - generic [ref=e58]:
+                        - heading "¡Contáctanos!" [level=3] [ref=e59]
+                        - generic [ref=e60]:
+                            - generic [ref=e61]:
+                                - generic [ref=e62]: 📍
+                                - generic [ref=e63]: 654 Wellness Ave, Portland, OR 97201
+                            - generic [ref=e64]:
+                                - generic [ref=e65]: 📞
+                                - link "+1-555-0205" [ref=e66]:
+                                    - /url: tel:+1-555-0205
+                            - generic [ref=e67]:
+                                - generic [ref=e68]: ✉️
+                                - link "pedidos@delirios.local" [ref=e69]:
+                                    - /url: mailto:pedidos@delirios.local
+                    - generic [ref=e70]:
+                        - heading "Horarios de Atención" [level=3] [ref=e71]
+                        - generic [ref=e72]:
+                            - generic [ref=e73]:
+                                - generic [ref=e74]: "friday:"
+                                - generic [ref=e75]: 7:00-22:00
+                            - generic [ref=e76]:
+                                - generic [ref=e77]: "monday:"
+                                - generic [ref=e78]: 7:00-21:00
+                            - generic [ref=e79]:
+                                - generic [ref=e80]: "sunday:"
+                                - generic [ref=e81]: 8:00-20:00
+                            - generic [ref=e82]:
+                                - generic [ref=e83]: "tuesday:"
+                                - generic [ref=e84]: 7:00-21:00
+                            - generic [ref=e85]:
+                                - generic [ref=e86]: "saturday:"
+                                - generic [ref=e87]: 8:00-22:00
+                            - generic [ref=e88]:
+                                - generic [ref=e89]: "thursday:"
+                                - generic [ref=e90]: 7:00-21:00
+                            - generic [ref=e91]:
+                                - generic [ref=e92]: "wednesday:"
+                                - generic [ref=e93]: 7:00-21:00
+            - generic [ref=e95]:
+                - generic [ref=e96]:
+                    - generic [ref=e97]: 🔒
+                    - generic [ref=e98]: Pagos Seguros
+                - generic [ref=e99]:
+                    - generic [ref=e100]: 🚚
+                    - generic [ref=e101]: Entrega Rápida
+                - generic [ref=e102]:
+                    - generic [ref=e103]: ⭐
+                    - generic [ref=e104]: Calidad Garantizada
+```

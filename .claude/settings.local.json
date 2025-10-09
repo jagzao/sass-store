@@ -18,7 +18,17 @@
       "Bash(npx drizzle-kit push:*)",
       "Bash(npx drizzle-kit push:pg:*)",
       "Bash(export DATABASE_URL=\"postgresql://postgres:TSGmf_3G-rbLbz!@db.jedryjmljffuvegggjmw.supabase.co:5432/postgres\")",
-      "Bash(npx kill-port:*)"
+      "Bash(npx kill-port:*)",
+      "Bash(cat:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run rls:apply:*)",
+      "Bash(npm run swarm:start:*)",
+      "Bash(ping:*)",
+      "Bash(npx drizzle-kit generate:pg:*)",
+      "Bash(set DATABASE_URL=postgresql://postgres.jedryjmljffuvegggjmw:TSGmf_3G-rbLbz!@aws-1-us-east-2.pooler.supabase.com:6543/postgres)",
+      "Bash(echo $DATABASE_URL)",
+      "Bash(psql:*)",
+      "Bash(set DATABASE_URL=postgresql://postgres.jedryjmljffuvegggjmw:TSGmf_3G-rbLbz!@aws-1-us-east-2.pooler.supabase.com:5432/postgres)"
     ],
     "deny": [],
     "ask": []

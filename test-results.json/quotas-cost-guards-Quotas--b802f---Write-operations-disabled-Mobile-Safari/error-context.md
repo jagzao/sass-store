@@ -1,0 +1,254 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+    - alert [ref=e2]
+    - generic [ref=e4]:
+        - navigation [ref=e5]:
+            - generic [ref=e6]:
+                - generic [ref=e7]:
+                    - link "Wonder Nails Studio" [ref=e8]:
+                        - /url: /t/wondernails
+                        - generic [ref=e9]: Wonder Nails Studio
+                    - generic [ref=e11]:
+                        - combobox [ref=e12]:
+                            - option "Todo" [selected]
+                        - textbox "Buscar productos, servicios, horarios…" [ref=e13]
+                        - button [ref=e14] [cursor=pointer]:
+                            - img [ref=e15] [cursor=pointer]
+                    - generic [ref=e17]:
+                        - button "Hola, Usuario Cuenta y listas" [ref=e20] [cursor=pointer]:
+                            - generic [ref=e21] [cursor=pointer]: Hola, Usuario
+                            - generic [ref=e22] [cursor=pointer]: Cuenta y listas
+                        - link "Devoluciones y Pedidos" [ref=e23]:
+                            - /url: /t/wondernails/orders
+                            - generic [ref=e24]: Devoluciones
+                            - generic [ref=e25]: y Pedidos
+                        - link "0 Carrito" [ref=e26]:
+                            - /url: /t/wondernails/cart
+                            - generic [ref=e27]:
+                                - img [ref=e28]
+                                - generic [ref=e30]: "0"
+                            - generic [ref=e31]: Carrito
+                - generic [ref=e33]:
+                    - link "🔥 Ofertas del día" [ref=e34]:
+                        - /url: /t/wondernails/deals
+                    - link "📞 Atención al cliente" [ref=e35]:
+                        - /url: /t/wondernails/support
+                    - link "ℹ️ Acerca de nosotros" [ref=e36]:
+                        - /url: /t/wondernails/about
+        - generic [ref=e38]:
+            - generic [ref=e40]:
+                - generic [ref=e41]:
+                    - heading "Panel de Administración" [level=1] [ref=e42]
+                    - paragraph [ref=e43]: "Gestiona tu negocio: Wonder Nails Studio"
+                - generic [ref=e44]:
+                    - text: "Modo:"
+                    - generic [ref=e45]: booking
+            - generic [ref=e46]:
+                - generic [ref=e48]:
+                    - generic [ref=e49]: 📦
+                    - generic [ref=e50]:
+                        - generic [ref=e51]: "6"
+                        - generic [ref=e52]: Productos
+                - generic [ref=e54]:
+                    - generic [ref=e55]: 📅
+                    - generic [ref=e56]:
+                        - generic [ref=e57]: "4"
+                        - generic [ref=e58]: Servicios
+                - generic [ref=e60]:
+                    - generic [ref=e61]: 💰
+                    - generic [ref=e62]:
+                        - generic [ref=e63]: $2450
+                        - generic [ref=e64]: Ingresos
+                - generic [ref=e66]:
+                    - generic [ref=e67]: 👥
+                    - generic [ref=e68]:
+                        - generic [ref=e69]: "23"
+                        - generic [ref=e70]: Clientes
+            - generic [ref=e71]:
+                - generic [ref=e72]:
+                    - generic [ref=e73]:
+                        - heading "Productos" [level=2] [ref=e74]
+                        - link "Gestionar →" [ref=e75]:
+                            - /url: /t/wondernails/admin/products
+                    - generic [ref=e76]:
+                        - generic [ref=e77]:
+                            - generic [ref=e78]:
+                                - generic [ref=e79]: 📦
+                                - generic [ref=e80]:
+                                    - generic [ref=e81]: Crear Producto
+                                    - generic [ref=e82]: Añadir nuevo producto
+                            - button "+" [ref=e83] [cursor=pointer]
+                        - generic [ref=e84]:
+                            - generic [ref=e85]:
+                                - generic [ref=e86]: 📊
+                                - generic [ref=e87]:
+                                    - generic [ref=e88]: Inventario
+                                    - generic [ref=e89]: Gestionar stock
+                            - generic [ref=e90]: 6 items
+                        - generic [ref=e91]:
+                            - generic [ref=e92]:
+                                - generic [ref=e93]: 🏷️
+                                - generic [ref=e94]:
+                                    - generic [ref=e95]: Categorías
+                                    - generic [ref=e96]: Organizar productos
+                            - generic [ref=e97]: 3 categorías
+                - generic [ref=e98]:
+                    - generic [ref=e99]:
+                        - heading "Servicios" [level=2] [ref=e100]
+                        - link "Gestionar →" [ref=e101]:
+                            - /url: /t/wondernails/admin/services
+                    - generic [ref=e102]:
+                        - generic [ref=e103]:
+                            - generic [ref=e104]:
+                                - generic [ref=e105]: ✨
+                                - generic [ref=e106]:
+                                    - generic [ref=e107]: Crear Servicio
+                                    - generic [ref=e108]: Nuevo servicio
+                            - button "+" [ref=e109] [cursor=pointer]
+                        - generic [ref=e110]:
+                            - generic [ref=e111]:
+                                - generic [ref=e112]: 📅
+                                - generic [ref=e113]:
+                                    - generic [ref=e114]: Horarios
+                                    - generic [ref=e115]: Disponibilidad
+                            - link "Ver" [ref=e116]:
+                                - /url: /t/wondernails/admin/calendar
+                        - generic [ref=e117]:
+                            - generic [ref=e118]:
+                                - generic [ref=e119]: 👥
+                                - generic [ref=e120]:
+                                    - generic [ref=e121]: Personal
+                                    - generic [ref=e122]: Gestionar staff
+                            - link "Ver" [ref=e123]:
+                                - /url: /t/wondernails/admin/staff
+                - generic [ref=e124]:
+                    - generic [ref=e125]:
+                        - heading "Contenido" [level=2] [ref=e126]
+                        - link "Gestionar →" [ref=e127]:
+                            - /url: /t/wondernails/admin/content
+                    - generic [ref=e128]:
+                        - generic [ref=e129]:
+                            - generic [ref=e130]:
+                                - generic [ref=e131]: 🎨
+                                - generic [ref=e132]:
+                                    - generic [ref=e133]: Look & Feel
+                                    - generic [ref=e134]: Personalizar diseño
+                            - button "Editar" [ref=e135] [cursor=pointer]
+                        - generic [ref=e136]:
+                            - generic [ref=e137]:
+                                - generic [ref=e138]: 📸
+                                - generic [ref=e139]:
+                                    - generic [ref=e140]: Galería
+                                    - generic [ref=e141]: Imágenes y media
+                            - link "Ver" [ref=e142]:
+                                - /url: /t/wondernails/admin/gallery
+                        - generic [ref=e143]:
+                            - generic [ref=e144]:
+                                - generic [ref=e145]: 📝
+                                - generic [ref=e146]:
+                                    - generic [ref=e147]: Información
+                                    - generic [ref=e148]: Contacto y horarios
+                            - button "Editar" [ref=e149] [cursor=pointer]
+                - generic [ref=e150]:
+                    - generic [ref=e151]:
+                        - heading "Ventas" [level=2] [ref=e152]
+                        - link "Ver todas →" [ref=e153]:
+                            - /url: /t/wondernails/admin/orders
+                    - generic [ref=e154]:
+                        - generic [ref=e155]:
+                            - generic [ref=e156]:
+                                - generic [ref=e157]: 📦
+                                - generic [ref=e158]:
+                                    - generic [ref=e159]: Pedidos
+                                    - generic [ref=e160]: Gestionar pedidos
+                            - generic [ref=e161]: "15"
+                        - generic [ref=e162]:
+                            - generic [ref=e163]:
+                                - generic [ref=e164]: 📅
+                                - generic [ref=e165]:
+                                    - generic [ref=e166]: Citas
+                                    - generic [ref=e167]: Reservas programadas
+                            - generic [ref=e168]: "8"
+                        - generic [ref=e169]:
+                            - generic [ref=e170]:
+                                - generic [ref=e171]: 💰
+                                - generic [ref=e172]:
+                                    - generic [ref=e173]: Ingresos
+                                    - generic [ref=e174]: Este mes
+                            - generic [ref=e175]: $2450
+                - generic [ref=e176]:
+                    - generic [ref=e177]:
+                        - heading "Analytics" [level=2] [ref=e178]
+                        - link "Ver más →" [ref=e179]:
+                            - /url: /t/wondernails/admin/analytics
+                    - generic [ref=e180]:
+                        - generic [ref=e181]:
+                            - generic [ref=e182]:
+                                - generic [ref=e183]: 👥
+                                - generic [ref=e184]:
+                                    - generic [ref=e185]: Clientes
+                                    - generic [ref=e186]: Total registrados
+                            - generic [ref=e187]: "23"
+                        - generic [ref=e188]:
+                            - generic [ref=e189]:
+                                - generic [ref=e190]: 📈
+                                - generic [ref=e191]:
+                                    - generic [ref=e192]: Crecimiento
+                                    - generic [ref=e193]: Este mes
+                            - generic [ref=e194]: +15%
+                        - generic [ref=e195]:
+                            - generic [ref=e196]:
+                                - generic [ref=e197]: ⭐
+                                - generic [ref=e198]:
+                                    - generic [ref=e199]: Satisfacción
+                                    - generic [ref=e200]: Calificación promedio
+                            - generic [ref=e201]: 4.8/5
+                - generic [ref=e202]:
+                    - generic [ref=e203]:
+                        - heading "Configuración" [level=2] [ref=e204]
+                        - link "Configurar →" [ref=e205]:
+                            - /url: /t/wondernails/admin/settings
+                    - generic [ref=e206]:
+                        - generic [ref=e207]:
+                            - generic [ref=e208]:
+                                - generic [ref=e209]: ⚙️
+                                - generic [ref=e210]:
+                                    - generic [ref=e211]: General
+                                    - generic [ref=e212]: Configuración básica
+                            - button "Editar" [ref=e213] [cursor=pointer]
+                        - generic [ref=e214]:
+                            - generic [ref=e215]:
+                                - generic [ref=e216]: 💳
+                                - generic [ref=e217]:
+                                    - generic [ref=e218]: Pagos
+                                    - generic [ref=e219]: Métodos de pago
+                            - button "Configurar" [ref=e220] [cursor=pointer]
+                        - generic [ref=e221]:
+                            - generic [ref=e222]:
+                                - generic [ref=e223]: 📧
+                                - generic [ref=e224]:
+                                    - generic [ref=e225]: Notificaciones
+                                    - generic [ref=e226]: Email y SMS
+                            - button "Configurar" [ref=e227] [cursor=pointer]
+            - generic [ref=e228]:
+                - heading "Acciones Rápidas" [level=3] [ref=e229]
+                - generic [ref=e230]:
+                    - button "📦 Crear Producto" [ref=e231] [cursor=pointer]:
+                        - generic [ref=e232] [cursor=pointer]: 📦
+                        - text: Crear Producto
+                    - button "📅 Crear Servicio" [ref=e233] [cursor=pointer]:
+                        - generic [ref=e234] [cursor=pointer]: 📅
+                        - text: Crear Servicio
+                    - button "🎨 Personalizar Diseño" [ref=e235] [cursor=pointer]:
+                        - generic [ref=e236] [cursor=pointer]: 🎨
+                        - text: Personalizar Diseño
+                    - button "📸 Subir Imagen" [ref=e237] [cursor=pointer]:
+                        - generic [ref=e238] [cursor=pointer]: 📸
+                        - text: Subir Imagen
+                    - link "👁️ Ver Mi Tienda" [ref=e239]:
+                        - /url: /t/wondernails
+                        - generic [ref=e240]: 👁️
+                        - text: Ver Mi Tienda
+```

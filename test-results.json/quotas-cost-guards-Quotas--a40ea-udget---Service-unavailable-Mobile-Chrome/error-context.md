@@ -1,0 +1,131 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+    - alert [ref=e2]
+    - generic [ref=e4]:
+        - banner [ref=e5]:
+            - generic [ref=e7]:
+                - generic:
+                    - img "Wonder Nails Studio logo"
+                - navigation [ref=e8]:
+                    - link "Servicios" [ref=e9] [cursor=pointer]:
+                        - /url: /t/wondernails/services
+                    - link "Productos" [ref=e10] [cursor=pointer]:
+                        - /url: /t/wondernails/products
+                    - link "Carrito" [ref=e11] [cursor=pointer]:
+                        - /url: /t/wondernails/cart
+                    - link "Iniciar Sesión" [ref=e12] [cursor=pointer]:
+                        - /url: /t/wondernails/login
+        - status "Cargando carousel hero" [ref=e13]
+        - generic [ref=e41]:
+            - generic [ref=e42]:
+                - generic [ref=e43]:
+                    - heading "Servicios Destacados" [level=2] [ref=e44]
+                    - link "Ver todos →" [ref=e45] [cursor=pointer]:
+                        - /url: /t/wondernails/services
+                - generic [ref=e46]:
+                    - generic [ref=e48]:
+                        - generic [ref=e49]: 💅
+                        - heading "Classic Manicure" [level=3] [ref=e50]
+                        - paragraph [ref=e51]: Traditional nail care with polish application
+                        - generic [ref=e52]:
+                            - generic [ref=e53]:
+                                - generic [ref=e54]: $35.00
+                                - generic [ref=e55]: MXN
+                            - generic [ref=e56]: 45 min
+                        - button "Reservar Ahora" [ref=e57] [cursor=pointer]
+                    - generic [ref=e59]:
+                        - generic [ref=e60]: ✨
+                        - heading "Gel Manicure" [level=3] [ref=e61]
+                        - paragraph [ref=e62]: Long-lasting gel polish manicure
+                        - generic [ref=e63]:
+                            - generic [ref=e64]:
+                                - generic [ref=e65]: $55.00
+                                - generic [ref=e66]: MXN
+                            - generic [ref=e67]: 60 min
+                        - button "Reservar Ahora" [ref=e68] [cursor=pointer]
+                    - generic [ref=e70]:
+                        - generic [ref=e71]: 🦶
+                        - heading "Pedicure Deluxe" [level=3] [ref=e72]
+                        - paragraph [ref=e73]: Complete pedicure with massage
+                        - generic [ref=e74]:
+                            - generic [ref=e75]:
+                                - generic [ref=e76]: $65.00
+                                - generic [ref=e77]: MXN
+                            - generic [ref=e78]: 75 min
+                        - button "Reservar Ahora" [ref=e79] [cursor=pointer]
+            - generic [ref=e80]:
+                - generic [ref=e81]:
+                    - heading "Productos Destacados" [level=2] [ref=e82]
+                    - link "Ver todos →" [ref=e83] [cursor=pointer]:
+                        - /url: /t/wondernails/products
+                - generic [ref=e84]:
+                    - generic [ref=e85]:
+                        - generic [ref=e86]: 🧡
+                        - generic [ref=e87]:
+                            - heading "Sunset Orange Polish" [level=3] [ref=e88]
+                            - generic [ref=e89]:
+                                - generic [ref=e90]: $22.00
+                                - generic [ref=e91]: MXN
+                            - button "Comprar" [ref=e92] [cursor=pointer]
+                    - generic [ref=e93]:
+                        - generic [ref=e94]: 🧡
+                        - generic [ref=e95]:
+                            - heading "Sunset Orange Polish" [level=3] [ref=e96]
+                            - generic [ref=e97]:
+                                - generic [ref=e98]: $22.00
+                                - generic [ref=e99]: MXN
+                            - button "Comprar" [ref=e100] [cursor=pointer]
+            - generic [ref=e101]:
+                - heading "Información de Contacto" [level=2] [ref=e102]
+                - generic [ref=e103]:
+                    - generic [ref=e104]:
+                        - heading "¡Contáctanos!" [level=3] [ref=e105]
+                        - generic [ref=e106]:
+                            - generic [ref=e107]:
+                                - generic [ref=e108]: 📍
+                                - generic [ref=e109]: 456 Beauty Boulevard, Los Angeles, CA 90210
+                            - generic [ref=e110]:
+                                - generic [ref=e111]: 📞
+                                - link "+1-555-0201" [ref=e112] [cursor=pointer]:
+                                    - /url: tel:+1-555-0201
+                            - generic [ref=e113]:
+                                - generic [ref=e114]: ✉️
+                                - link "book@wondernails.local" [ref=e115] [cursor=pointer]:
+                                    - /url: mailto:book@wondernails.local
+                    - generic [ref=e116]:
+                        - heading "Horarios de Atención" [level=3] [ref=e117]
+                        - generic [ref=e118]:
+                            - generic [ref=e119]:
+                                - generic [ref=e120]: "friday:"
+                                - generic [ref=e121]: 9:00-20:00
+                            - generic [ref=e122]:
+                                - generic [ref=e123]: "monday:"
+                                - generic [ref=e124]: 9:00-19:00
+                            - generic [ref=e125]:
+                                - generic [ref=e126]: "sunday:"
+                                - generic [ref=e127]: 10:00-16:00
+                            - generic [ref=e128]:
+                                - generic [ref=e129]: "tuesday:"
+                                - generic [ref=e130]: 9:00-19:00
+                            - generic [ref=e131]:
+                                - generic [ref=e132]: "saturday:"
+                                - generic [ref=e133]: 8:00-18:00
+                            - generic [ref=e134]:
+                                - generic [ref=e135]: "thursday:"
+                                - generic [ref=e136]: 9:00-19:00
+                            - generic [ref=e137]:
+                                - generic [ref=e138]: "wednesday:"
+                                - generic [ref=e139]: 9:00-19:00
+            - generic [ref=e141]:
+                - generic [ref=e142]:
+                    - generic [ref=e143]: 🔒
+                    - generic [ref=e144]: Pagos Seguros
+                - generic [ref=e145]:
+                    - generic [ref=e146]: 🚚
+                    - generic [ref=e147]: Entrega Rápida
+                - generic [ref=e148]:
+                    - generic [ref=e149]: ⭐
+                    - generic [ref=e150]: Calidad Garantizada
+```

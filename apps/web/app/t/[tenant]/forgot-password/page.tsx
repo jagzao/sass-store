@@ -6,7 +6,7 @@ import Link from "next/link";
 
 export default function ForgotPasswordPage() {
   const params = useParams();
-  const tenantSlug = params.tenant as string;
+  const tenantSlug = params?.tenant as string;
   const [tenantData, setTenantData] = useState<any>(null);
 
   const [email, setEmail] = useState("");

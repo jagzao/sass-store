@@ -1,14 +1,24 @@
-import { db } from '@sass-store/database';
-import { tenants, products, services, productReviews, bookings } from '@sass-store/database/schema';
-import { eq, and } from 'drizzle-orm';
-import { GraphQLError } from 'graphql';
+import { db } from "@sass-store/database";
+import {
+  tenants,
+  products,
+  services,
+  productReviews,
+  bookings,
+} from "@sass-store/database/schema";
+import { eq, and } from "drizzle-orm";
+import { GraphQLError } from "graphql";
 
 // Helper to get tenant by slug
 async function getTenantBySlug(slug: string) {
-  const [tenant] = await db.select().from(tenants).where(eq(tenants.slug, slug)).limit(1);
+  const [tenant] = await db
+    .select()
+    .from(tenants)
+    .where(eq(tenants.slug, slug))
+    .limit(1);
   if (!tenant) {
     throw new GraphQLError(`Tenant not found: ${slug}`, {
-      extensions: { code: 'TENANT_NOT_FOUND' },
+      extensions: { code: "TENANT_NOT_FOUND" },
     });
   }
   return tenant;
@@ -30,10 +40,14 @@ export const resolvers = {
 
     // Product queries
     product: async (_: any, { id }: { id: string }) => {
-      const [product] = await db.select().from(products).where(eq(products.id, id)).limit(1);
+      const [product] = await db
+        .select()
+        .from(products)
+        .where(eq(products.id, id))
+        .limit(1);
       if (!product) {
-        throw new GraphQLError('Product not found', {
-          extensions: { code: 'PRODUCT_NOT_FOUND' },
+        throw new GraphQLError("Product not found", {
+          extensions: { code: "PRODUCT_NOT_FOUND" },
         });
       }
       return product;
@@ -42,25 +56,32 @@ export const resolvers = {
     products: async (_: any, { tenantSlug, category, featured }: any) => {
       const tenant = await getTenantBySlug(tenantSlug);
 
-      let query = db.select().from(products).where(eq(products.tenantId, tenant.id));
+      let conditions = [eq(products.tenantId, tenant.id)];
 
       if (category) {
-        query = query.where(eq(products.category, category));
+        conditions.push(eq(products.category, category));
       }
 
       if (featured !== undefined) {
-        query = query.where(eq(products.featured, featured));
+        conditions.push(eq(products.featured, featured));
       }
 
-      return query;
+      return db
+        .select()
+        .from(products)
+        .where(and(...conditions));
     },
 
     // Service queries
     service: async (_: any, { id }: { id: string }) => {
-      const [service] = await db.select().from(services).where(eq(services.id, id)).limit(1);
+      const [service] = await db
+        .select()
+        .from(services)
+        .where(eq(services.id, id))
+        .limit(1);
       if (!service) {
-        throw new GraphQLError('Service not found', {
-          extensions: { code: 'SERVICE_NOT_FOUND' },
+        throw new GraphQLError("Service not found", {
+          extensions: { code: "SERVICE_NOT_FOUND" },
         });
       }
       return service;
@@ -69,32 +90,42 @@ export const resolvers = {
     services: async (_: any, { tenantSlug, featured }: any) => {
       const tenant = await getTenantBySlug(tenantSlug);
 
-      let query = db.select().from(services).where(eq(services.tenantId, tenant.id));
+      let conditions = [eq(services.tenantId, tenant.id)];
 
       if (featured !== undefined) {
-        query = query.where(eq(services.featured, featured));
+        conditions.push(eq(services.featured, featured));
       }
 
-      return query;
+      return db
+        .select()
+        .from(services)
+        .where(and(...conditions));
     },
 
     // Review queries
     reviews: async (_: any, { productId, status }: any) => {
-      let query = db.select().from(productReviews).where(eq(productReviews.productId, productId));
+      let conditions = [eq(productReviews.productId, productId)];
 
       if (status) {
-        query = query.where(eq(productReviews.status, status));
+        conditions.push(eq(productReviews.status, status));
       }
 
-      return query;
+      return db
+        .select()
+        .from(productReviews)
+        .where(and(...conditions));
     },
 
     // Booking queries
     booking: async (_: any, { id }: { id: string }) => {
-      const [booking] = await db.select().from(bookings).where(eq(bookings.id, id)).limit(1);
+      const [booking] = await db
+        .select()
+        .from(bookings)
+        .where(eq(bookings.id, id))
+        .limit(1);
       if (!booking) {
-        throw new GraphQLError('Booking not found', {
-          extensions: { code: 'BOOKING_NOT_FOUND' },
+        throw new GraphQLError("Booking not found", {
+          extensions: { code: "BOOKING_NOT_FOUND" },
         });
       }
       return booking;
@@ -103,13 +134,16 @@ export const resolvers = {
     bookings: async (_: any, { tenantSlug, status }: any) => {
       const tenant = await getTenantBySlug(tenantSlug);
 
-      let query = db.select().from(bookings).where(eq(bookings.tenantId, tenant.id));
+      let conditions = [eq(bookings.tenantId, tenant.id)];
 
       if (status) {
-        query = query.where(eq(bookings.status, status));
+        conditions.push(eq(bookings.status, status));
       }
 
-      return query;
+      return db
+        .select()
+        .from(bookings)
+        .where(and(...conditions));
     },
   },
 
@@ -148,8 +182,8 @@ export const resolvers = {
         .returning();
 
       if (!product) {
-        throw new GraphQLError('Product not found', {
-          extensions: { code: 'PRODUCT_NOT_FOUND' },
+        throw new GraphQLError("Product not found", {
+          extensions: { code: "PRODUCT_NOT_FOUND" },
         });
       }
 
@@ -175,7 +209,7 @@ export const resolvers = {
           rating: input.rating,
           title: input.title,
           comment: input.comment,
-          status: 'pending',
+          status: "pending",
           helpful: 0,
           reported: 0,
         })
@@ -195,8 +229,8 @@ export const resolvers = {
         .returning();
 
       if (!review) {
-        throw new GraphQLError('Review not found', {
-          extensions: { code: 'REVIEW_NOT_FOUND' },
+        throw new GraphQLError("Review not found", {
+          extensions: { code: "REVIEW_NOT_FOUND" },
         });
       }
 
@@ -223,8 +257,9 @@ export const resolvers = {
           customerPhone: input.customerPhone,
           startTime: new Date(input.startTime),
           endTime: new Date(input.endTime),
-          status: 'pending',
+          status: "pending",
           notes: input.notes,
+          totalPrice: input.totalPrice || "0.00",
         })
         .returning();
 
@@ -247,8 +282,8 @@ export const resolvers = {
         .returning();
 
       if (!booking) {
-        throw new GraphQLError('Booking not found', {
-          extensions: { code: 'BOOKING_NOT_FOUND' },
+        throw new GraphQLError("Booking not found", {
+          extensions: { code: "BOOKING_NOT_FOUND" },
         });
       }
 
@@ -258,13 +293,13 @@ export const resolvers = {
     cancelBooking: async (_: any, { id }: { id: string }) => {
       const [booking] = await db
         .update(bookings)
-        .set({ status: 'cancelled', updatedAt: new Date() })
+        .set({ status: "cancelled", updatedAt: new Date() })
         .where(eq(bookings.id, id))
         .returning();
 
       if (!booking) {
-        throw new GraphQLError('Booking not found', {
-          extensions: { code: 'BOOKING_NOT_FOUND' },
+        throw new GraphQLError("Booking not found", {
+          extensions: { code: "BOOKING_NOT_FOUND" },
         });
       }
 
@@ -284,34 +319,56 @@ export const resolvers = {
 
   Product: {
     tenant: async (parent: any) => {
-      const [tenant] = await db.select().from(tenants).where(eq(tenants.id, parent.tenantId)).limit(1);
+      const [tenant] = await db
+        .select()
+        .from(tenants)
+        .where(eq(tenants.id, parent.tenantId))
+        .limit(1);
       return tenant;
     },
     reviews: async (parent: any) => {
-      return db.select().from(productReviews).where(eq(productReviews.productId, parent.id));
+      return db
+        .select()
+        .from(productReviews)
+        .where(eq(productReviews.productId, parent.id));
     },
   },
 
   Service: {
     tenant: async (parent: any) => {
-      const [tenant] = await db.select().from(tenants).where(eq(tenants.id, parent.tenantId)).limit(1);
+      const [tenant] = await db
+        .select()
+        .from(tenants)
+        .where(eq(tenants.id, parent.tenantId))
+        .limit(1);
       return tenant;
     },
     bookings: async (parent: any) => {
-      return db.select().from(bookings).where(eq(bookings.serviceId, parent.id));
+      return db
+        .select()
+        .from(bookings)
+        .where(eq(bookings.serviceId, parent.id));
     },
   },
 
   Review: {
     product: async (parent: any) => {
-      const [product] = await db.select().from(products).where(eq(products.id, parent.productId)).limit(1);
+      const [product] = await db
+        .select()
+        .from(products)
+        .where(eq(products.id, parent.productId))
+        .limit(1);
       return product;
     },
   },
 
   Booking: {
     service: async (parent: any) => {
-      const [service] = await db.select().from(services).where(eq(services.id, parent.serviceId)).limit(1);
+      const [service] = await db
+        .select()
+        .from(services)
+        .where(eq(services.id, parent.serviceId))
+        .limit(1);
       return service;
     },
   },

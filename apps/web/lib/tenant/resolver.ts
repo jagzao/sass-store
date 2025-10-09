@@ -49,7 +49,7 @@ const DEFAULT_TENANT: Tenant = {
  * Returns { id, slug, featureMode, locale, currency } as required.
  */
 export async function resolveTenant(): Promise<Tenant> {
-  const headersList = headers();
+  const headersList = await headers();
 
   // Get resolved tenant from middleware headers (mandatory)
   const tenantSlug = headersList.get("x-tenant");
@@ -121,8 +121,8 @@ async function fetchTenantBySlug(slug: string): Promise<Tenant | null> {
   return null;
 }
 
-export function getTenantSlug(): string {
-  const headersList = headers();
+export async function getTenantSlug(): Promise<string> {
+  const headersList = await headers();
 
   // Get resolved tenant slug from middleware (should always be present)
   const tenantSlug = headersList.get("x-tenant");
@@ -133,9 +133,9 @@ export function getTenantSlug(): string {
   return "zo-system";
 }
 
-export function getTenantId(): string {
+export async function getTenantId(): Promise<string> {
   try {
-    const headersList = headers();
+    const headersList = await headers();
 
     // Get resolved tenant ID from middleware
     const tenantId = headersList.get("x-tenant-id");
@@ -152,7 +152,7 @@ export function getTenantId(): string {
   }
 }
 
-export function getTenantIdForRequest(request?: Request): string {
+export async function getTenantIdForRequest(request?: Request): Promise<string> {
   try {
     // For API routes, we can read headers from the request object
     if (request) {
@@ -161,7 +161,7 @@ export function getTenantIdForRequest(request?: Request): string {
     }
 
     // During static generation, try to get from Next.js headers with fallback
-    const headersList = headers();
+    const headersList = await headers();
     const tenantId = headersList.get("x-tenant-id");
     if (tenantId) return tenantId;
   } catch (error) {

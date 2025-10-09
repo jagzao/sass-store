@@ -1,0 +1,119 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+    - banner [ref=e4]:
+        - generic [ref=e6]:
+            - img "Nom Nom Tacos Auténticos logo" [ref=e8]
+            - navigation [ref=e9]:
+                - link "Servicios" [ref=e10]:
+                    - /url: /t/nom-nom/services
+                - link "Productos" [ref=e11]:
+                    - /url: /t/nom-nom/products
+                - link "Carrito" [ref=e12]:
+                    - /url: /t/nom-nom/cart
+                - link "Iniciar Sesión" [ref=e13]:
+                    - /url: /t/nom-nom/login
+    - generic [ref=e14]:
+        - generic [ref=e16]:
+            - heading "Tacos al Pastor" [level=2] [ref=e17]
+            - paragraph [ref=e18]: $12
+            - paragraph [ref=e19]: Deliciosos tacos al pastor con piña asada, cebolla y cilantro.
+            - button "Agregar" [ref=e20] [cursor=pointer]
+        - generic [ref=e21]:
+            - img "Tacos al Pastor" [ref=e22]
+            - img [ref=e23]
+        - generic [ref=e24]:
+            - button "Anterior" [ref=e25] [cursor=pointer]: <
+            - button "Siguiente" [ref=e26] [cursor=pointer]: ">"
+    - generic [ref=e27]:
+        - generic [ref=e28]:
+            - generic [ref=e29]:
+                - heading "Productos Destacados" [level=2] [ref=e30]
+                - link "Ver todos →" [ref=e31]:
+                    - /url: /t/nom-nom/products
+            - generic [ref=e32]:
+                - generic [ref=e33]:
+                    - generic [ref=e34]: 🌮
+                    - generic [ref=e35]:
+                        - heading "Taco Seasoning Mix" [level=3] [ref=e36]
+                        - generic [ref=e37]:
+                            - generic [ref=e38]: $8.00
+                            - generic [ref=e39]: MXN
+                        - button "Comprar" [ref=e40] [cursor=pointer]
+                - generic [ref=e41]:
+                    - generic [ref=e42]: 🟢
+                    - generic [ref=e43]:
+                        - heading "Salsa Verde" [level=3] [ref=e44]
+                        - generic [ref=e45]:
+                            - generic [ref=e46]: $12.00
+                            - generic [ref=e47]: MXN
+                        - button "Comprar" [ref=e48] [cursor=pointer]
+                - generic [ref=e49]:
+                    - generic [ref=e50]: 🌮
+                    - generic [ref=e51]:
+                        - heading "Tacos de Carnitas (3 pcs)" [level=3] [ref=e52]
+                        - generic [ref=e53]:
+                            - generic [ref=e54]: $8.50
+                            - generic [ref=e55]: MXN
+                        - button "Comprar" [ref=e56] [cursor=pointer]
+                - generic [ref=e57]:
+                    - generic [ref=e58]: 🍍
+                    - generic [ref=e59]:
+                        - heading "Tacos de Pastor (3 pcs)" [level=3] [ref=e60]
+                        - generic [ref=e61]:
+                            - generic [ref=e62]: $9.00
+                            - generic [ref=e63]: MXN
+                        - button "Comprar" [ref=e64] [cursor=pointer]
+        - generic [ref=e65]:
+            - heading "Información de Contacto" [level=2] [ref=e66]
+            - generic [ref=e67]:
+                - generic [ref=e68]:
+                    - heading "¡Contáctanos!" [level=3] [ref=e69]
+                    - generic [ref=e70]:
+                        - generic [ref=e71]:
+                            - generic [ref=e72]: 📍
+                            - generic [ref=e73]: 123 Taco Street, San Antonio, TX 78201
+                        - generic [ref=e74]:
+                            - generic [ref=e75]: 📞
+                            - link "+1-555-0206" [ref=e76]:
+                                - /url: tel:+1-555-0206
+                        - generic [ref=e77]:
+                            - generic [ref=e78]: ✉️
+                            - link "pedidos@nomnom.local" [ref=e79]:
+                                - /url: mailto:pedidos@nomnom.local
+                - generic [ref=e80]:
+                    - heading "Horarios de Atención" [level=3] [ref=e81]
+                    - generic [ref=e82]:
+                        - generic [ref=e83]:
+                            - generic [ref=e84]: "friday:"
+                            - generic [ref=e85]: 11:00-24:00
+                        - generic [ref=e86]:
+                            - generic [ref=e87]: "monday:"
+                            - generic [ref=e88]: 11:00-23:00
+                        - generic [ref=e89]:
+                            - generic [ref=e90]: "sunday:"
+                            - generic [ref=e91]: 10:00-22:00
+                        - generic [ref=e92]:
+                            - generic [ref=e93]: "tuesday:"
+                            - generic [ref=e94]: 11:00-23:00
+                        - generic [ref=e95]:
+                            - generic [ref=e96]: "saturday:"
+                            - generic [ref=e97]: 10:00-24:00
+                        - generic [ref=e98]:
+                            - generic [ref=e99]: "thursday:"
+                            - generic [ref=e100]: 11:00-23:00
+                        - generic [ref=e101]:
+                            - generic [ref=e102]: "wednesday:"
+                            - generic [ref=e103]: 11:00-23:00
+        - generic [ref=e105]:
+            - generic [ref=e106]:
+                - generic [ref=e107]: 🔒
+                - generic [ref=e108]: Pagos Seguros
+            - generic [ref=e109]:
+                - generic [ref=e110]: 🚚
+                - generic [ref=e111]: Entrega Rápida
+            - generic [ref=e112]:
+                - generic [ref=e113]: ⭐
+                - generic [ref=e114]: Calidad Garantizada
+```

@@ -7,11 +7,10 @@
 ALTER TABLE products ENABLE ROW LEVEL SECURITY;
 ALTER TABLE services ENABLE ROW LEVEL SECURITY;
 ALTER TABLE staff ENABLE ROW LEVEL SECURITY;
-ALTER TABLE appointments ENABLE ROW LEVEL SECURITY;
-ALTER TABLE users ENABLE ROW LEVEL SECURITY;
-ALTER TABLE cart_items ENABLE ROW LEVEL SECURITY;
+ALTER TABLE bookings ENABLE ROW LEVEL SECURITY;
+
 ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
-ALTER TABLE order_items ENABLE ROW LEVEL SECURITY;
+
 ALTER TABLE payments ENABLE ROW LEVEL SECURITY;
 
 -- ================================================================
@@ -85,67 +84,24 @@ CREATE POLICY tenant_isolation_staff_delete ON staff
 -- RLS Policies for Appointments
 -- ================================================================
 
-CREATE POLICY tenant_isolation_appointments_select ON appointments
+CREATE POLICY tenant_isolation_bookings_select ON bookings
   FOR SELECT
   USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
 
-CREATE POLICY tenant_isolation_appointments_insert ON appointments
+CREATE POLICY tenant_isolation_bookings_insert ON bookings
   FOR INSERT
   WITH CHECK (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
 
-CREATE POLICY tenant_isolation_appointments_update ON appointments
+CREATE POLICY tenant_isolation_bookings_update ON bookings
   FOR UPDATE
   USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid)
   WITH CHECK (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
 
-CREATE POLICY tenant_isolation_appointments_delete ON appointments
+CREATE POLICY tenant_isolation_bookings_delete ON bookings
   FOR DELETE
   USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
 
 -- ================================================================
--- RLS Policies for Users
--- ================================================================
-
-CREATE POLICY tenant_isolation_users_select ON users
-  FOR SELECT
-  USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
-
-CREATE POLICY tenant_isolation_users_insert ON users
-  FOR INSERT
-  WITH CHECK (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
-
-CREATE POLICY tenant_isolation_users_update ON users
-  FOR UPDATE
-  USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid)
-  WITH CHECK (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
-
-CREATE POLICY tenant_isolation_users_delete ON users
-  FOR DELETE
-  USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
-
--- ================================================================
--- RLS Policies for Cart Items
--- ================================================================
-
-CREATE POLICY tenant_isolation_cart_items_select ON cart_items
-  FOR SELECT
-  USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
-
-CREATE POLICY tenant_isolation_cart_items_insert ON cart_items
-  FOR INSERT
-  WITH CHECK (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
-
-CREATE POLICY tenant_isolation_cart_items_update ON cart_items
-  FOR UPDATE
-  USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid)
-  WITH CHECK (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
-
-CREATE POLICY tenant_isolation_cart_items_delete ON cart_items
-  FOR DELETE
-  USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
-
--- ================================================================
--- RLS Policies for Orders
 -- ================================================================
 
 CREATE POLICY tenant_isolation_orders_select ON orders
@@ -166,28 +122,6 @@ CREATE POLICY tenant_isolation_orders_delete ON orders
   USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
 
 -- ================================================================
--- RLS Policies for Order Items
--- ================================================================
-
-CREATE POLICY tenant_isolation_order_items_select ON order_items
-  FOR SELECT
-  USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
-
-CREATE POLICY tenant_isolation_order_items_insert ON order_items
-  FOR INSERT
-  WITH CHECK (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
-
-CREATE POLICY tenant_isolation_order_items_update ON order_items
-  FOR UPDATE
-  USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid)
-  WITH CHECK (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
-
-CREATE POLICY tenant_isolation_order_items_delete ON order_items
-  FOR DELETE
-  USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
-
--- ================================================================
--- RLS Policies for Payments
 -- ================================================================
 
 CREATE POLICY tenant_isolation_payments_select ON payments

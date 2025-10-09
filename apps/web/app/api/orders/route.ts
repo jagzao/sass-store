@@ -1,17 +1,17 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { headers } from 'next/headers';
-import { eq, desc } from 'drizzle-orm';
-import { db } from '@/lib/db/connection';
-import { orders, orderItems } from '@/lib/db/schema';
+import { NextRequest, NextResponse } from "next/server";
+import { headers } from "next/headers";
+import { eq, desc } from "drizzle-orm";
+import { db } from "@/lib/db/connection";
+import { orders, orderItems } from "@/lib/db/schema";
 
 export async function POST(request: NextRequest) {
   try {
-    const headersList = headers();
-    const tenantId = headersList.get('x-tenant-id');
+    const headersList = await headers();
+    const tenantId = headersList.get("x-tenant-id");
 
     if (!tenantId) {
       return NextResponse.json(
-        { error: 'Tenant context required' },
+        { error: "Tenant context required" },
         { status: 400 }
       );
     }
@@ -23,12 +23,12 @@ export async function POST(request: NextRequest) {
       customerPhone,
       items,
       total,
-      type = 'purchase'
+      type = "purchase",
     } = body;
 
     if (!customerName || !customerEmail || !items || items.length === 0) {
       return NextResponse.json(
-        { error: 'Missing required fields' },
+        { error: "Missing required fields" },
         { status: 400 }
       );
     }
@@ -37,20 +37,23 @@ export async function POST(request: NextRequest) {
     const orderNumber = `ORD-${Date.now()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
 
     // Create order
-    const [newOrder] = await db.insert(orders).values({
-      id: crypto.randomUUID(),
-      tenantId,
-      orderNumber,
-      customerName,
-      customerEmail,
-      customerPhone: customerPhone || null,
-      status: 'pending',
-      type,
-      total,
-      currency: 'MXN',
-      createdAt: new Date(),
-      updatedAt: new Date()
-    }).returning();
+    const [newOrder] = await db
+      .insert(orders)
+      .values({
+        id: crypto.randomUUID(),
+        tenantId,
+        orderNumber,
+        customerName,
+        customerEmail,
+        customerPhone: customerPhone || null,
+        status: "pending",
+        type,
+        total,
+        currency: "MXN",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .returning();
 
     // Create order items
     const orderItemsToInsert = items.map((item: any) => ({
@@ -62,7 +65,7 @@ export async function POST(request: NextRequest) {
       unitPrice: item.unitPrice,
       totalPrice: item.unitPrice * item.quantity,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     }));
 
     await db.insert(orderItems).values(orderItemsToInsert);
@@ -70,13 +73,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       orderId: newOrder.id,
-      orderNumber: newOrder.orderNumber
+      orderNumber: newOrder.orderNumber,
     });
-
   } catch (error) {
-    console.error('Order creation error:', error);
+    console.error("Order creation error:", error);
     return NextResponse.json(
-      { error: 'Failed to create order' },
+      { error: "Failed to create order" },
       { status: 500 }
     );
   }
@@ -84,19 +86,19 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
-    const headersList = headers();
-    const tenantId = headersList.get('x-tenant-id');
+    const headersList = await headers();
+    const tenantId = headersList.get("x-tenant-id");
 
     if (!tenantId) {
       return NextResponse.json(
-        { error: 'Tenant context required' },
+        { error: "Tenant context required" },
         { status: 400 }
       );
     }
 
     const { searchParams } = new URL(request.url);
-    const limit = parseInt(searchParams.get('limit') || '10');
-    const offset = parseInt(searchParams.get('offset') || '0');
+    const limit = parseInt(searchParams.get("limit") || "10");
+    const offset = parseInt(searchParams.get("offset") || "0");
 
     const tenantOrders = await db
       .select()
@@ -108,13 +110,12 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      orders: tenantOrders
+      orders: tenantOrders,
     });
-
   } catch (error) {
-    console.error('Orders fetch error:', error);
+    console.error("Orders fetch error:", error);
     return NextResponse.json(
-      { error: 'Failed to fetch orders' },
+      { error: "Failed to fetch orders" },
       { status: 500 }
     );
   }

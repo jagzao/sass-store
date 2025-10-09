@@ -1,14 +1,15 @@
-import { NextRequest, NextResponse } from 'next/server';
-import Stripe from 'stripe';
-import { headers } from 'next/headers';
-import { db } from '@/lib/db/connection';
-import { orders, orderItems } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
+import { NextRequest, NextResponse } from "next/server";
+import Stripe from "stripe";
+import { headers } from "next/headers";
+import { db } from "@/lib/db/connection";
+import { orders, orderItems } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
 
 // Initialize Stripe with fallback for build-time
-const stripeSecretKey = process.env.STRIPE_SECRET_KEY || 'sk_test_fallback_for_build';
+const stripeSecretKey =
+  process.env.STRIPE_SECRET_KEY || "sk_test_fallback_for_build";
 const stripe = new Stripe(stripeSecretKey, {
-  apiVersion: '2025-08-27.basil'
+  apiVersion: "2025-08-27.basil",
 });
 
 interface CreatePaymentIntentRequest {
@@ -21,27 +22,37 @@ interface CreatePaymentIntentRequest {
 export async function POST(request: NextRequest) {
   try {
     // Self-healing fallback for build-time when secrets aren't available
-    if (stripeSecretKey === 'sk_test_fallback_for_build') {
-      console.warn('[Self-Healing] Stripe payment intent creation disabled during build');
-      return NextResponse.json({ message: 'Payment intent creation disabled during build' }, { status: 200 });
+    if (stripeSecretKey === "sk_test_fallback_for_build") {
+      console.warn(
+        "[Self-Healing] Stripe payment intent creation disabled during build"
+      );
+      return NextResponse.json(
+        { message: "Payment intent creation disabled during build" },
+        { status: 200 }
+      );
     }
 
-    const headersList = headers();
-    const tenantId = headersList.get('x-tenant-id');
+    const headersList = await headers();
+    const tenantId = headersList.get("x-tenant-id");
 
     if (!tenantId) {
       return NextResponse.json(
-        { error: 'Tenant context required' },
+        { error: "Tenant context required" },
         { status: 400 }
       );
     }
 
     const body: CreatePaymentIntentRequest = await request.json();
-    const { orderId, currency = 'mxn', paymentMethodTypes = ['card'], metadata = {} } = body;
+    const {
+      orderId,
+      currency = "mxn",
+      paymentMethodTypes = ["card"],
+      metadata = {},
+    } = body;
 
     if (!orderId) {
       return NextResponse.json(
-        { error: 'Order ID is required' },
+        { error: "Order ID is required" },
         { status: 400 }
       );
     }
@@ -54,24 +65,21 @@ export async function POST(request: NextRequest) {
       .limit(1);
 
     if (!order) {
-      return NextResponse.json(
-        { error: 'Order not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Order not found" }, { status: 404 });
     }
 
     // Verify order belongs to the current tenant
     if (order.tenantId !== tenantId) {
       return NextResponse.json(
-        { error: 'Order not found in tenant context' },
+        { error: "Order not found in tenant context" },
         { status: 404 }
       );
     }
 
     // Check if order is already paid
-    if (order.status === 'paid') {
+    if (order.status === "paid") {
       return NextResponse.json(
-        { error: 'Order is already paid' },
+        { error: "Order is already paid" },
         { status: 400 }
       );
     }
@@ -83,7 +91,7 @@ export async function POST(request: NextRequest) {
       .where(eq(orderItems.orderId, orderId));
 
     const totalAmount = items.reduce((sum: number, item: any) => {
-      return sum + (parseFloat(item.unitPrice as string) * item.quantity);
+      return sum + parseFloat(item.unitPrice as string) * item.quantity;
     }, 0);
 
     // Create Stripe Payment Intent
@@ -94,20 +102,22 @@ export async function POST(request: NextRequest) {
       metadata: {
         orderId,
         tenantId,
-        ...metadata
+        ...metadata,
       },
       description: `Order ${order.orderNumber} - ${order.customerName}`,
       receipt_email: order.customerEmail || undefined,
-      shipping: order.shippingAddress ? {
-        name: order.customerName,
-        address: {
-          line1: order.shippingAddress.street || '',
-          city: order.shippingAddress.city || '',
-          state: order.shippingAddress.state || '',
-          postal_code: order.shippingAddress.postalCode || '',
-          country: order.shippingAddress.country || 'MX'
-        }
-      } : undefined
+      shipping: order.shippingAddress
+        ? {
+            name: order.customerName,
+            address: {
+              line1: order.shippingAddress.street || "",
+              city: order.shippingAddress.city || "",
+              state: order.shippingAddress.state || "",
+              postal_code: order.shippingAddress.postalCode || "",
+              country: order.shippingAddress.country || "MX",
+            },
+          }
+        : undefined,
     });
 
     // Update order with payment intent ID
@@ -115,8 +125,8 @@ export async function POST(request: NextRequest) {
       .update(orders)
       .set({
         paymentIntentId: paymentIntent.id,
-        status: 'payment_pending',
-        updatedAt: new Date()
+        status: "payment_pending",
+        updatedAt: new Date(),
       })
       .where(eq(orders.id, orderId));
 
@@ -125,11 +135,10 @@ export async function POST(request: NextRequest) {
       clientSecret: paymentIntent.client_secret,
       paymentIntentId: paymentIntent.id,
       amount: totalAmount,
-      currency
+      currency,
     });
-
   } catch (error) {
-    console.error('Payment intent creation error:', error);
+    console.error("Payment intent creation error:", error);
 
     if (error instanceof Stripe.errors.StripeError) {
       return NextResponse.json(
@@ -139,7 +148,7 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json(
-      { error: 'Failed to create payment intent' },
+      { error: "Failed to create payment intent" },
       { status: 500 }
     );
   }
@@ -148,27 +157,32 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     // Self-healing fallback for build-time when secrets aren't available
-    if (stripeSecretKey === 'sk_test_fallback_for_build') {
-      console.warn('[Self-Healing] Stripe payment intent retrieval disabled during build');
-      return NextResponse.json({ message: 'Payment intent retrieval disabled during build' }, { status: 200 });
+    if (stripeSecretKey === "sk_test_fallback_for_build") {
+      console.warn(
+        "[Self-Healing] Stripe payment intent retrieval disabled during build"
+      );
+      return NextResponse.json(
+        { message: "Payment intent retrieval disabled during build" },
+        { status: 200 }
+      );
     }
 
-    const headersList = headers();
-    const tenantId = headersList.get('x-tenant-id');
+    const headersList = await headers();
+    const tenantId = headersList.get("x-tenant-id");
 
     if (!tenantId) {
       return NextResponse.json(
-        { error: 'Tenant context required' },
+        { error: "Tenant context required" },
         { status: 400 }
       );
     }
 
     const { searchParams } = new URL(request.url);
-    const paymentIntentId = searchParams.get('paymentIntentId');
+    const paymentIntentId = searchParams.get("paymentIntentId");
 
     if (!paymentIntentId) {
       return NextResponse.json(
-        { error: 'Payment Intent ID is required' },
+        { error: "Payment Intent ID is required" },
         { status: 400 }
       );
     }
@@ -179,7 +193,7 @@ export async function GET(request: NextRequest) {
     // Verify payment intent belongs to current tenant
     if (paymentIntent.metadata.tenantId !== tenantId) {
       return NextResponse.json(
-        { error: 'Payment intent not found in tenant context' },
+        { error: "Payment intent not found in tenant context" },
         { status: 404 }
       );
     }
@@ -191,12 +205,11 @@ export async function GET(request: NextRequest) {
         status: paymentIntent.status,
         amount: paymentIntent.amount / 100,
         currency: paymentIntent.currency,
-        metadata: paymentIntent.metadata
-      }
+        metadata: paymentIntent.metadata,
+      },
     });
-
   } catch (error) {
-    console.error('Payment intent retrieval error:', error);
+    console.error("Payment intent retrieval error:", error);
 
     if (error instanceof Stripe.errors.StripeError) {
       return NextResponse.json(
@@ -206,7 +219,7 @@ export async function GET(request: NextRequest) {
     }
 
     return NextResponse.json(
-      { error: 'Failed to retrieve payment intent' },
+      { error: "Failed to retrieve payment intent" },
       { status: 500 }
     );
   }

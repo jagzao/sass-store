@@ -1,0 +1,96 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+    - banner [ref=e4]:
+        - generic [ref=e6]:
+            - generic [ref=e7]:
+                - link "← Volver a Wonder Nails Studio" [ref=e8]:
+                    - /url: /t/wondernails
+                - heading "Servicios" [level=1] [ref=e9]
+            - navigation [ref=e10]:
+                - link "Productos" [ref=e11]:
+                    - /url: /t/wondernails/products
+                - link "Carrito" [ref=e12]:
+                    - /url: /t/wondernails/cart
+                - link "Login" [ref=e13]:
+                    - /url: /t/wondernails/login
+    - generic [ref=e14]:
+        - generic [ref=e15]:
+            - generic [ref=e17]:
+                - generic [ref=e18]: 💅
+                - heading "Classic Manicure" [level=3] [ref=e19]
+                - paragraph [ref=e20]: Traditional nail care with polish application
+                - generic [ref=e21]:
+                    - generic [ref=e22]: $35.00
+                    - generic [ref=e23]: 45 min
+                - generic [ref=e24]:
+                    - link "Ver horarios (1/2)" [ref=e25]:
+                        - /url: /t/wondernails/booking/60cefac8-c0a2-4fdf-b637-eddf05a02fb8
+                    - button "Reservar ahora (1/2)" [ref=e26] [cursor=pointer]
+            - generic [ref=e28]:
+                - generic [ref=e29]: ✨
+                - heading "Gel Manicure" [level=3] [ref=e30]
+                - paragraph [ref=e31]: Long-lasting gel polish manicure
+                - generic [ref=e32]:
+                    - generic [ref=e33]: $55.00
+                    - generic [ref=e34]: 60 min
+                - generic [ref=e35]:
+                    - link "Ver horarios (1/2)" [ref=e36]:
+                        - /url: /t/wondernails/booking/42dd13e6-6f0c-4efa-9673-f663c8d77d60
+                    - button "Reservar ahora (1/2)" [ref=e37] [cursor=pointer]
+            - generic [ref=e39]:
+                - generic [ref=e40]: 🎨
+                - heading "Custom Nail Art" [level=3] [ref=e41]
+                - paragraph [ref=e42]: Personalized nail art designs
+                - generic [ref=e43]:
+                    - generic [ref=e44]: $35.00
+                    - generic [ref=e45]: 45 min
+                - generic [ref=e46]:
+                    - link "Ver horarios (1/2)" [ref=e47]:
+                        - /url: /t/wondernails/booking/46ab3bb6-e872-4842-8bc2-d7f2ad6df89b
+                    - button "Reservar ahora (1/2)" [ref=e48] [cursor=pointer]
+            - generic [ref=e50]:
+                - generic [ref=e51]: 🦶
+                - heading "Pedicure Deluxe" [level=3] [ref=e52]
+                - paragraph [ref=e53]: Complete pedicure with massage
+                - generic [ref=e54]:
+                    - generic [ref=e55]: $65.00
+                    - generic [ref=e56]: 75 min
+                - generic [ref=e57]:
+                    - link "Ver horarios (1/2)" [ref=e58]:
+                        - /url: /t/wondernails/booking/e70b902f-8091-4ca2-a6c9-1324c7c22c0e
+                    - button "Reservar ahora (1/2)" [ref=e59] [cursor=pointer]
+        - generic [ref=e60]:
+            - heading "Reserva Rápida (≤2 clicks)" [level=2] [ref=e61]
+            - generic [ref=e62]:
+                - generic [ref=e63]:
+                    - generic [ref=e64]: "1"
+                    - heading "Seleccionar servicio" [level=3] [ref=e65]
+                    - paragraph [ref=e66]: Elige el servicio que deseas y tu horario preferido
+                - generic [ref=e67]:
+                    - generic [ref=e68]: "2"
+                    - heading "Confirmar reserva" [level=3] [ref=e69]
+                    - paragraph [ref=e70]: Confirma tus datos y finaliza la reserva
+            - link "Comenzar reserva express" [ref=e72]:
+                - /url: /t/wondernails/booking
+        - generic [ref=e73]:
+            - heading "Horarios Disponibles Hoy" [level=2] [ref=e74]
+            - generic [ref=e75]:
+                - link "9:00" [ref=e76]:
+                    - /url: /t/wondernails/booking?time=9%3A00
+                - link "10:30" [ref=e77]:
+                    - /url: /t/wondernails/booking?time=10%3A30
+                - link "12:00" [ref=e78]:
+                    - /url: /t/wondernails/booking?time=12%3A00
+                - link "14:00" [ref=e79]:
+                    - /url: /t/wondernails/booking?time=14%3A00
+                - link "15:30" [ref=e80]:
+                    - /url: /t/wondernails/booking?time=15%3A30
+                - link "17:00" [ref=e81]:
+                    - /url: /t/wondernails/booking?time=17%3A00
+                - link "18:30" [ref=e82]:
+                    - /url: /t/wondernails/booking?time=18%3A30
+                - link "20:00" [ref=e83]:
+                    - /url: /t/wondernails/booking?time=20%3A00
+```

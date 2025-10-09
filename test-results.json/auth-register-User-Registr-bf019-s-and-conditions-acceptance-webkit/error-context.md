@@ -1,0 +1,70 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+    - alert [ref=e2]
+    - generic [ref=e4]:
+        - generic [ref=e6]:
+            - generic [ref=e7]: 💅
+            - heading "Wonder Nails Studio" [level=2] [ref=e8]
+            - paragraph [ref=e9]: Crea tu cuenta
+        - generic [ref=e10]:
+            - generic [ref=e11]:
+                - generic [ref=e12]:
+                    - generic [ref=e13]:
+                        - generic [ref=e14]: Nombre completo
+                        - textbox "Nombre completo" [ref=e16]
+                    - generic [ref=e17]:
+                        - generic [ref=e18]: Correo electrónico
+                        - textbox "Correo electrónico" [ref=e20]
+                    - generic [ref=e21]:
+                        - generic [ref=e22]: Teléfono
+                        - textbox "Teléfono" [ref=e24]
+                    - generic [ref=e25]:
+                        - generic [ref=e26]: Contraseña
+                        - generic [ref=e27]:
+                            - textbox "Contraseña" [ref=e28]
+                            - button [ref=e29] [cursor=pointer]:
+                                - img [ref=e30] [cursor=pointer]
+                    - generic [ref=e33]:
+                        - generic [ref=e34]: Confirmar contraseña
+                        - generic [ref=e35]:
+                            - textbox "Confirmar contraseña" [ref=e36]
+                            - button [ref=e37] [cursor=pointer]:
+                                - img [ref=e38] [cursor=pointer]
+                    - generic [ref=e41]:
+                        - checkbox "Acepto los términos y condiciones y la política de privacidad" [ref=e42]
+                        - generic [ref=e43]:
+                            - text: Acepto los
+                            - link "términos y condiciones" [ref=e44]:
+                                - /url: "#"
+                            - text: y la
+                            - link "política de privacidad" [ref=e45]:
+                                - /url: "#"
+                    - button "Crear cuenta" [ref=e47] [cursor=pointer]
+                - generic [ref=e48]:
+                    - generic [ref=e53]: O continúa con
+                    - generic [ref=e54]:
+                        - button "📧 Google" [ref=e56] [cursor=pointer]:
+                            - generic [ref=e57] [cursor=pointer]: 📧
+                            - text: Google
+                        - button "📘 Facebook (Soon)" [ref=e58]:
+                            - generic [ref=e59]: 📘
+                            - text: Facebook (Soon)
+                - paragraph [ref=e61]:
+                    - text: ¿Ya tienes cuenta?
+                    - link "Inicia sesión aquí" [ref=e62]:
+                        - /url: /t/wondernails/login
+                - link "← Volver a la tienda" [ref=e64]:
+                    - /url: /t/wondernails
+            - generic [ref=e66]:
+                - generic [ref=e67]:
+                    - generic [ref=e68]: 🔒
+                    - text: Seguro
+                - generic [ref=e69]:
+                    - generic [ref=e70]: 🛡️
+                    - text: Protegido
+                - generic [ref=e71]:
+                    - generic [ref=e72]: ⚡
+                    - text: Rápido
+```

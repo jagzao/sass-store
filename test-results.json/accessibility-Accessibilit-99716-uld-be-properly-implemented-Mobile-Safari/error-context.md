@@ -1,0 +1,282 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+    - navigation [ref=e4]:
+        - generic [ref=e5]:
+            - generic [ref=e6]:
+                - link "SaaS Store" [ref=e7]:
+                    - /url: /
+                    - generic [ref=e8]: SaaS Store
+                - generic [ref=e10]:
+                    - combobox [ref=e11]:
+                        - option "Todo" [selected]
+                    - textbox "Buscar productos, servicios, horarios…" [ref=e12]
+                    - button [ref=e13] [cursor=pointer]:
+                        - img [ref=e14] [cursor=pointer]
+                - generic [ref=e16]:
+                    - button "Hola, Usuario Cuenta y listas" [ref=e19] [cursor=pointer]:
+                        - generic [ref=e20] [cursor=pointer]: Hola, Usuario
+                        - generic [ref=e21] [cursor=pointer]: Cuenta y listas
+                    - link "Devoluciones y Pedidos" [ref=e22]:
+                        - /url: /orders
+                        - generic [ref=e23]: Devoluciones
+                        - generic [ref=e24]: y Pedidos
+                    - link "0 Carrito" [ref=e25]:
+                        - /url: /cart
+                        - generic [ref=e26]:
+                            - img [ref=e27]
+                            - generic [ref=e29]: "0"
+                        - generic [ref=e30]: Carrito
+            - generic [ref=e32]:
+                - link "📍 Todos los tenants" [ref=e33]:
+                    - /url: /tenants
+                - link "🏠 Explorar todos los tenants" [ref=e34]:
+                    - /url: /
+                - link "🔥 Ofertas del día" [ref=e35]:
+                    - /url: /deals
+                - link "📞 Atención al cliente" [ref=e36]:
+                    - /url: /customer-service
+    - main [ref=e37]:
+        - generic [ref=e38]:
+            - generic [ref=e39]:
+                - generic [ref=e40]:
+                    - heading "Comprar de nuevo" [level=2] [ref=e41]
+                    - button "Ver todo tu historial →" [ref=e42] [cursor=pointer]
+                - generic [ref=e43]:
+                    - generic [ref=e44]:
+                        - generic [ref=e45]:
+                            - generic [ref=e46]: 💻
+                            - heading "SaaS Starter Kit" [level=3] [ref=e47]
+                            - paragraph [ref=e48]: $299
+                            - generic [ref=e49]:
+                                - img [ref=e50]
+                                - text: 11 ene
+                        - generic [ref=e52]:
+                            - button "Comprar ahora" [ref=e53] [cursor=pointer]
+                            - button "Agregar al carrito" [ref=e54] [cursor=pointer]
+                    - generic [ref=e55]:
+                        - generic [ref=e56]:
+                            - generic [ref=e57]: 🔗
+                            - heading "API Design Package" [level=3] [ref=e58]
+                            - paragraph [ref=e59]: $899
+                            - generic [ref=e60]:
+                                - img [ref=e61]
+                                - text: 7 ene
+                        - generic [ref=e63]:
+                            - button "Comprar ahora" [ref=e64] [cursor=pointer]
+                            - button "Agregar al carrito" [ref=e65] [cursor=pointer]
+            - generic [ref=e66]:
+                - generic [ref=e67]:
+                    - heading "Retoma tu compra" [level=2] [ref=e68]
+                    - button "Ver todo guardado →" [ref=e69] [cursor=pointer]
+                - generic [ref=e70]:
+                    - generic [ref=e71]:
+                        - generic [ref=e72]:
+                            - generic [ref=e73]:
+                                - generic [ref=e75]: 🏆
+                                - generic [ref=e76]:
+                                    - heading "Custom Mobile App" [level=3] [ref=e77]
+                                    - paragraph [ref=e78]: Zo System
+                            - generic [ref=e79]: En checkout
+                        - generic [ref=e80]:
+                            - generic [ref=e81]:
+                                - generic [ref=e82]: 📱
+                                - generic [ref=e83]: $2499
+                            - generic [ref=e85]:
+                                - img [ref=e86]
+                                - text: Hace 628 días
+                            - generic [ref=e89]:
+                                - button "Continuar" [ref=e90] [cursor=pointer]
+                                - button "Ver detalles" [ref=e91] [cursor=pointer]
+                    - generic [ref=e92]:
+                        - generic [ref=e93]:
+                            - generic [ref=e94]:
+                                - generic [ref=e96]: 🏆
+                                - generic [ref=e97]:
+                                    - heading "Deployment Setup" [level=3] [ref=e98]
+                                    - paragraph [ref=e99]: Zo System
+                            - generic [ref=e100]: En carrito
+                        - generic [ref=e101]:
+                            - generic [ref=e102]:
+                                - generic [ref=e103]: 🚀
+                                - generic [ref=e104]: $350
+                            - generic [ref=e106]:
+                                - img [ref=e107]
+                                - text: Hace 629 días
+                            - generic [ref=e110]:
+                                - button "Continuar" [ref=e111] [cursor=pointer]
+                                - button "Ver detalles" [ref=e112] [cursor=pointer]
+            - generic [ref=e113]:
+                - generic [ref=e114]:
+                    - heading "Reservar otra vez" [level=2] [ref=e115]
+                    - button "Ver todas tus reservas →" [ref=e116] [cursor=pointer]
+                - generic [ref=e117]:
+                    - generic [ref=e118]:
+                        - generic [ref=e120]:
+                            - generic [ref=e121]:
+                                - generic [ref=e122]: 🧠
+                                - generic [ref=e123]:
+                                    - heading "Tech Consultation" [level=3] [ref=e124]
+                                    - generic [ref=e125]:
+                                        - generic [ref=e126]: 60 min
+                                        - generic [ref=e127]: • Lead Developer
+                            - generic [ref=e128]: $150
+                        - generic [ref=e129]:
+                            - generic [ref=e130]:
+                                - img [ref=e132]
+                                - generic [ref=e134]:
+                                    - paragraph [ref=e135]: Siguiente slot
+                                    - paragraph [ref=e136]: Hoy 15:00
+                            - generic [ref=e137]:
+                                - button "Reservar hoy 15:00" [ref=e138] [cursor=pointer]
+                                - button "Ver más horarios" [ref=e139] [cursor=pointer]
+                            - paragraph [ref=e141]: "Última reserva: 8 ene"
+                    - generic [ref=e142]:
+                        - generic [ref=e144]:
+                            - generic [ref=e145]:
+                                - generic [ref=e146]: 🔍
+                                - generic [ref=e147]:
+                                    - heading "Code Review" [level=3] [ref=e148]
+                                    - generic [ref=e149]:
+                                        - generic [ref=e150]: 90 min
+                                        - generic [ref=e151]: • Senior Architect
+                            - generic [ref=e152]: $200
+                        - generic [ref=e153]:
+                            - generic [ref=e154]:
+                                - img [ref=e156]
+                                - generic [ref=e158]:
+                                    - paragraph [ref=e159]: Siguiente slot
+                                    - paragraph [ref=e160]: Hoy 10:30
+                            - generic [ref=e161]:
+                                - button "Reservar hoy 10:30" [ref=e162] [cursor=pointer]
+                                - button "Ver más horarios" [ref=e163] [cursor=pointer]
+                            - paragraph [ref=e165]: "Última reserva: 4 ene"
+            - generic [ref=e166]:
+                - generic [ref=e167]:
+                    - heading "Trending ahora" [level=2] [ref=e168]
+                    - button "Ver todas las ofertas →" [ref=e169] [cursor=pointer]
+                - generic [ref=e170]:
+                    - generic [ref=e171]:
+                        - generic [ref=e173]: 🔥 HOT
+                        - generic [ref=e174]:
+                            - generic [ref=e175]: 🧠
+                            - heading "Tech Consultation" [level=3] [ref=e176]
+                            - generic [ref=e178]: $150
+                            - button "Reservar ahora" [ref=e179] [cursor=pointer]
+                            - generic [ref=e180]:
+                                - generic [ref=e181]:
+                                    - img [ref=e182]
+                                    - text: "23"
+                                - generic [ref=e184]: •
+                                - generic [ref=e185]: software
+                    - generic [ref=e186]:
+                        - generic [ref=e188]: 💰 OFERTA
+                        - generic [ref=e189]: "-25%"
+                        - generic [ref=e190]:
+                            - generic [ref=e191]: 💻
+                            - heading "SaaS Starter Kit" [level=3] [ref=e192]
+                            - generic [ref=e195]:
+                                - generic [ref=e196]: $299
+                                - generic [ref=e197]: $399
+                            - button "Comprar ahora" [ref=e198] [cursor=pointer]
+                            - generic [ref=e199]:
+                                - generic [ref=e200]:
+                                    - img [ref=e201]
+                                    - text: "15"
+                                - generic [ref=e203]: •
+                                - generic [ref=e204]: software
+        - generic [ref=e205]:
+            - generic [ref=e206]:
+                - heading "Explorar todos los tenants" [level=2] [ref=e207]
+                - link "Ver directorio completo →" [ref=e208]:
+                    - /url: /tenants
+            - generic [ref=e209]:
+                - link "💅 Wonder Nails Manicure" [ref=e210]:
+                    - /url: /t/wondernails
+                    - generic [ref=e211]: 💅
+                    - generic [ref=e212]: Wonder Nails
+                    - generic [ref=e213]: Manicure
+                - link "✂️ Vigi Studio Cabello" [ref=e214]:
+                    - /url: /t/vigistudio
+                    - generic [ref=e215]: ✂️
+                    - generic [ref=e216]: Vigi Studio
+                    - generic [ref=e217]: Cabello
+                - link "🎾 Centro Tenístico Tenis" [ref=e218]:
+                    - /url: /t/centro-tenistico
+                    - generic [ref=e219]: 🎾
+                    - generic [ref=e220]: Centro Tenístico
+                    - generic [ref=e221]: Tenis
+                - link "🍨 Vainilla Vargas Vainilla" [ref=e222]:
+                    - /url: /t/vainilla-vargas
+                    - generic [ref=e223]: 🍨
+                    - generic [ref=e224]: Vainilla Vargas
+                    - generic [ref=e225]: Vainilla
+                - link "🍽️ Delirios Comida saludable" [ref=e226]:
+                    - /url: /t/delirios
+                    - generic [ref=e227]: 🍽️
+                    - generic [ref=e228]: Delirios
+                    - generic [ref=e229]: Comida saludable
+                - link "🌮 nom-nom Tacos" [ref=e230]:
+                    - /url: /t/nom-nom
+                    - generic [ref=e231]: 🌮
+                    - generic [ref=e232]: nom-nom
+                    - generic [ref=e233]: Tacos
+                - link "💻 Zo System Software" [ref=e234]:
+                    - /url: /t/zo-system
+                    - generic [ref=e235]: 💻
+                    - generic [ref=e236]: Zo System
+                    - generic [ref=e237]: Software
+    - contentinfo [ref=e238]:
+        - generic [ref=e239]:
+            - generic [ref=e240]:
+                - generic [ref=e241]:
+                    - heading "SaaS Store" [level=3] [ref=e242]
+                    - paragraph [ref=e243]: Plataforma multitenant para servicios y productos locales.
+                - generic [ref=e244]:
+                    - heading "Categorías" [level=4] [ref=e245]
+                    - list [ref=e246]:
+                        - listitem [ref=e247]:
+                            - link "Belleza" [ref=e248]:
+                                - /url: "#"
+                        - listitem [ref=e249]:
+                            - link "Deportes" [ref=e250]:
+                                - /url: "#"
+                        - listitem [ref=e251]:
+                            - link "Comida" [ref=e252]:
+                                - /url: "#"
+                        - listitem [ref=e253]:
+                            - link "Productos" [ref=e254]:
+                                - /url: "#"
+                - generic [ref=e255]:
+                    - heading "Ayuda" [level=4] [ref=e256]
+                    - list [ref=e257]:
+                        - listitem [ref=e258]:
+                            - link "Centro de ayuda" [ref=e259]:
+                                - /url: "#"
+                        - listitem [ref=e260]:
+                            - link "Contacto" [ref=e261]:
+                                - /url: "#"
+                        - listitem [ref=e262]:
+                            - link "Términos" [ref=e263]:
+                                - /url: "#"
+                        - listitem [ref=e264]:
+                            - link "Privacidad" [ref=e265]:
+                                - /url: "#"
+                - generic [ref=e266]:
+                    - heading "Para Negocios" [level=4] [ref=e267]
+                    - list [ref=e268]:
+                        - listitem [ref=e269]:
+                            - link "Registrar tenant" [ref=e270]:
+                                - /url: "#"
+                        - listitem [ref=e271]:
+                            - link "Dashboard" [ref=e272]:
+                                - /url: "#"
+                        - listitem [ref=e273]:
+                            - link "API" [ref=e274]:
+                                - /url: "#"
+                        - listitem [ref=e275]:
+                            - link "Soporte" [ref=e276]:
+                                - /url: "#"
+            - paragraph [ref=e278]: © 2024 SaaS Store. Todos los derechos reservados.
+```

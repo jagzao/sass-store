@@ -1,0 +1,78 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+    - banner [ref=e4]:
+        - generic [ref=e6]:
+            - generic [ref=e7]:
+                - link "← Volver a Wonder Nails Studio" [ref=e8] [cursor=pointer]:
+                    - /url: /t/wondernails
+                - heading "Mi Carrito" [level=1] [ref=e9]
+            - navigation [ref=e10]:
+                - link "Servicios" [ref=e11] [cursor=pointer]:
+                    - /url: /t/wondernails/services
+                - link "Productos" [ref=e12] [cursor=pointer]:
+                    - /url: /t/wondernails/products
+                - link "Login" [ref=e13] [cursor=pointer]:
+                    - /url: /t/wondernails/login
+    - generic [ref=e15]:
+        - generic [ref=e16]:
+            - heading "Mi Carrito" [level=1] [ref=e17]
+            - paragraph [ref=e18]: 2 artículo(s) en tu carrito
+        - generic [ref=e19]:
+            - generic [ref=e22]:
+                - generic [ref=e23]:
+                    - generic [ref=e24]:
+                        - generic [ref=e25]: ✨
+                        - generic [ref=e26]:
+                            - heading "Gel Manicure" [level=3] [ref=e27]
+                            - paragraph [ref=e28]: Long-lasting gel polish manicure
+                            - generic [ref=e29]:
+                                - generic [ref=e30]: Servicio
+                                - generic [ref=e31]: 60 min
+                        - generic [ref=e32]:
+                            - button "-" [ref=e33] [cursor=pointer]
+                            - generic [ref=e34]: "1"
+                            - button "+" [ref=e35] [cursor=pointer]
+                        - generic [ref=e37]: $55.00
+                        - button "🗑️" [ref=e38] [cursor=pointer]
+                    - generic [ref=e39]:
+                        - generic [ref=e40]: 🧡
+                        - generic [ref=e41]:
+                            - heading "Sunset Orange Polish" [level=3] [ref=e42]
+                            - paragraph [ref=e43]: Vibrant orange nail polish with high-gloss finish
+                            - generic [ref=e45]: Producto
+                        - generic [ref=e46]:
+                            - button "-" [ref=e47] [cursor=pointer]
+                            - generic [ref=e48]: "2"
+                            - button "+" [ref=e49] [cursor=pointer]
+                        - generic [ref=e50]:
+                            - generic [ref=e51]: $44.00
+                            - generic [ref=e52]: $22.00 c/u
+                        - button "🗑️" [ref=e53] [cursor=pointer]
+                - link "← Continuar comprando" [ref=e55] [cursor=pointer]:
+                    - /url: /t/wondernails/products
+            - generic [ref=e56]:
+                - generic [ref=e57]:
+                    - heading "Resumen del Pedido" [level=2] [ref=e58]
+                    - generic [ref=e59]:
+                        - generic [ref=e60]:
+                            - generic [ref=e61]: Subtotal
+                            - generic [ref=e62]: $99.00
+                        - generic [ref=e63]:
+                            - generic [ref=e64]: Impuestos
+                            - generic [ref=e65]: $9.90
+                        - generic [ref=e67]:
+                            - generic [ref=e68]: Total
+                            - generic [ref=e69]: $108.90
+                    - button "Proceder al Pago" [ref=e70] [cursor=pointer]
+                    - generic [ref=e71]:
+                        - paragraph [ref=e72]: "Aceptamos:"
+                        - generic [ref=e73]: 💳 💰 📱
+                    - generic [ref=e75]: 🔒 Compra segura y protegida
+                - generic [ref=e76]:
+                    - heading "Código Promocional" [level=3] [ref=e77]
+                    - generic [ref=e78]:
+                        - textbox "Ingresa tu código" [ref=e79]
+                        - button "Aplicar" [ref=e80] [cursor=pointer]
+```

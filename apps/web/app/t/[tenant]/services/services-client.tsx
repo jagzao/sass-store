@@ -47,6 +47,7 @@ export function ServicesClient({ services, tenantData }: ServicesClientProps) {
           </a>
         </div>
       </div>
+      </LiveRegionProvider>
     );
   }
 

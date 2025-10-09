@@ -1,0 +1,292 @@
+{
+  "id": "swarm_1760023335188_edb4a96d3",
+  "featureName": "Ejecutar Tests y Corregir a 100%",
+  "status": "active",
+  "progress": 50,
+  "currentAgent": "SECURITY",
+  "tasks": [
+    {
+      "id": "task_0",
+      "agent": "ARCHITECT",
+      "description": "Valida arquitectura y estructura del proyecto",
+      "status": "completed",
+      "progress": 100,
+      "dependencies": [],
+      "startedAt": "2025-10-09T15:22:15.191Z",
+      "output": [
+        "🏗️  Validando arquitectura del proyecto...",
+        "📁 Validando estructura de carpetas...",
+        "✓ Estructura de carpetas correcta",
+        "📦 Analizando dependencias...",
+        "✓ Dependencias validadas",
+        "🎨 Validando patrones de código...",
+        "ℹ️  2 sugerencias de mejora encontradas",
+        "✓ Patrones validados",
+        "✓ Arquitectura validada exitosamente"
+      ],
+      "artifacts": [
+        "architecture-report.md"
+      ],
+      "completedAt": "2025-10-09T15:22:15.198Z"
+    },
+    {
+      "id": "task_1",
+      "agent": "DEVELOPER",
+      "description": "Implementa código y features",
+      "status": "completed",
+      "progress": 100,
+      "dependencies": [
+        "task_0"
+      ],
+      "startedAt": "2025-10-09T15:22:15.198Z",
+      "output": [
+        "💻 Iniciando implementación...",
+        "📋 Feature: Ejecutar Tests y Corregir a 100%",
+        "📁 Creando estructura de archivos...",
+        "   ✓ Creado: apps/web/features/Ejecutar Tests y Corregir a 100%",
+        "   ✓ Creado: packages/core/Ejecutar Tests y Corregir a 100%-service",
+        "📝 Generando archivos...",
+        "   ✓ apps/web/features/Ejecutar Tests y Corregir a 100%/index.tsx",
+        "   ✓ packages/core/Ejecutar Tests y Corregir a 100%-service/index.ts",
+        "✓ 2 archivos generados",
+        "✓ Implementación completada"
+      ],
+      "artifacts": [
+        "feature-implementation.md"
+      ],
+      "completedAt": "2025-10-09T15:22:15.206Z"
+    },
+    {
+      "id": "task_2",
+      "agent": "QA",
+      "description": "Crea y actualiza tests automáticamente",
+      "status": "completed",
+      "progress": 100,
+      "dependencies": [
+        "task_1"
+      ],
+      "startedAt": "2025-10-09T15:22:15.206Z",
+      "output": {
+        "testsCreated": 1,
+        "testsPassed": 0,
+        "testsFailed": 0,
+        "coverage": 0
+      },
+      "completedAt": "2025-10-09T15:22:17.822Z"
+    },
+    {
+      "id": "task_3",
+      "agent": "CODE_QUALITY",
+      "description": "Valida estándares de código",
+      "status": "completed",
+      "progress": 100,
+      "dependencies": [
+        "task_2"
+      ],
+      "startedAt": "2025-10-09T15:22:17.822Z",
+      "output": {
+        "totalIssues": 31,
+        "errors": 0,
+        "warnings": 0,
+        "fixed": 0,
+        "report": "## Code Quality Report\n\n**Total Issues:** 31\n- Errors: 0\n- Warnings: 0\n- Info: 31\n- Auto-fixed: 0\n\n"
+      },
+      "completedAt": "2025-10-09T15:22:25.909Z"
+    },
+    {
+      "id": "task_4",
+      "agent": "SECURITY",
+      "description": "Escanea vulnerabilidades de seguridad",
+      "status": "failed",
+      "progress": 100,
+      "dependencies": [
+        "task_3"
+      ],
+      "startedAt": "2025-10-09T15:22:25.910Z",
+      "output": {
+        "totalIssues": 13,
+        "critical": 6,
+        "high": 3,
+        "medium": 4,
+        "low": 0,
+        "info": 0,
+        "issues": [
+          {
+            "file": "apps/web/app/t/[tenant]/login/page.tsx",
+            "line": 106,
+            "severity": "critical",
+            "category": "Missing Authorization",
+            "title": "Server Action missing session verification",
+            "description": "Found: \"use server\";",
+            "recommendation": "Always verify session at the start of Server Actions. Authentication ≠ Authorization.",
+            "cwe": "CWE-862",
+            "owaspCategory": "A01",
+            "autoFixable": false
+          },
+          {
+            "file": "apps/web/app/t/[tenant]/register/page.tsx",
+            "line": 74,
+            "severity": "critical",
+            "category": "Missing Authorization",
+            "title": "Server Action missing session verification",
+            "description": "Found: \"use server\";",
+            "recommendation": "Always verify session at the start of Server Actions. Authentication ≠ Authorization.",
+            "cwe": "CWE-862",
+            "owaspCategory": "A01",
+            "autoFixable": false
+          },
+          {
+            "file": "apps/web/app/api/orders/route.ts",
+            "line": 0,
+            "severity": "high",
+            "category": "Missing Authentication",
+            "title": "API route missing authentication",
+            "description": "API endpoint appears to lack authentication",
+            "recommendation": "Add authentication check at the start of the API handler",
+            "owaspCategory": "A07"
+          },
+          {
+            "file": "apps/web/app/api/payments/create-intent/route.ts",
+            "line": 0,
+            "severity": "high",
+            "category": "Missing Authentication",
+            "title": "API route missing authentication",
+            "description": "API endpoint appears to lack authentication",
+            "recommendation": "Add authentication check at the start of the API handler",
+            "owaspCategory": "A07"
+          },
+          {
+            "file": "apps/web/app/t/[tenant]/login/page.tsx",
+            "line": 0,
+            "severity": "critical",
+            "category": "Missing Authentication",
+            "title": "Server Action lacks session verification",
+            "description": "Server Action exposed without authentication check",
+            "recommendation": "Add verifySession() or getSession() at the start of the Server Action",
+            "owaspCategory": "A01",
+            "cwe": "CWE-862"
+          },
+          {
+            "file": "apps/web/app/t/[tenant]/register/page.tsx",
+            "line": 0,
+            "severity": "critical",
+            "category": "Missing Authentication",
+            "title": "Server Action lacks session verification",
+            "description": "Server Action exposed without authentication check",
+            "recommendation": "Add verifySession() or getSession() at the start of the Server Action",
+            "owaspCategory": "A01",
+            "cwe": "CWE-862"
+          },
+          {
+            "file": "apps/api/graphql/resolvers.ts",
+            "line": 0,
+            "severity": "medium",
+            "category": "Missing Rate Limiting",
+            "title": "API endpoint lacks rate limiting",
+            "description": "No rate limiting detected on API endpoint",
+            "recommendation": "Implement rate limiting using @upstash/ratelimit or similar",
+            "owaspCategory": "A05"
+          },
+          {
+            "file": "apps/api/lib/audit.ts",
+            "line": 0,
+            "severity": "medium",
+            "category": "Missing Rate Limiting",
+            "title": "API endpoint lacks rate limiting",
+            "description": "No rate limiting detected on API endpoint",
+            "recommendation": "Implement rate limiting using @upstash/ratelimit or similar",
+            "owaspCategory": "A05"
+          },
+          {
+            "file": "apps/api/lib/audit.ts",
+            "line": 0,
+            "severity": "high",
+            "category": "Missing Input Validation",
+            "title": "API endpoint missing input validation",
+            "description": "No input validation library detected",
+            "recommendation": "Use Zod or similar for input validation",
+            "owaspCategory": "A03"
+          },
+          {
+            "file": "apps/web/app/api/orders/route.ts",
+            "line": 0,
+            "severity": "medium",
+            "category": "Missing Rate Limiting",
+            "title": "API endpoint lacks rate limiting",
+            "description": "No rate limiting detected on API endpoint",
+            "recommendation": "Implement rate limiting using @upstash/ratelimit or similar",
+            "owaspCategory": "A05"
+          },
+          {
+            "file": "apps/web/app/api/payments/create-intent/route.ts",
+            "line": 0,
+            "severity": "medium",
+            "category": "Missing Rate Limiting",
+            "title": "API endpoint lacks rate limiting",
+            "description": "No rate limiting detected on API endpoint",
+            "recommendation": "Implement rate limiting using @upstash/ratelimit or similar",
+            "owaspCategory": "A05"
+          },
+          {
+            "file": "packages/database/schema.ts",
+            "line": 0,
+            "severity": "critical",
+            "category": "Missing RLS",
+            "title": "Row Level Security not enabled",
+            "description": "Database lacks RLS policies for multi-tenant isolation",
+            "recommendation": "Enable RLS policies on all tables to prevent data leakage",
+            "owaspCategory": "A01",
+            "cwe": "CWE-284"
+          },
+          {
+            "file": "drizzle.config.ts",
+            "line": 0,
+            "severity": "critical",
+            "category": "Missing RLS",
+            "title": "Row Level Security not enabled",
+            "description": "Database lacks RLS policies for multi-tenant isolation",
+            "recommendation": "Enable RLS policies on all tables to prevent data leakage",
+            "owaspCategory": "A01",
+            "cwe": "CWE-284"
+          }
+        ],
+        "report": "# 🔒 Security Scan Report 2025\n\n**Scan Date:** 2025-10-09T15:22:33.116Z\n**Standards:** OWASP Top 10:2025, Next.js Security Best Practices\n\n## 📊 Summary\n\n**Total Issues:** 13\n\n| Severity | Count | Status |\n|----------|-------|--------|\n| 🔴 Critical | 6 | ❌ FAIL |\n| 🟠 High | 3 | ⚠️ Review |\n| 🟡 Medium | 4 | ✅ Pass |\n| 🟢 Low | 0 | ℹ️ Info |\n\n## 🎯 OWASP Top 10:2025 Coverage\n\n- 🔴 **A01: Broken Access Control** - 6 issue(s)\n- ✅ **A02: Cryptographic Failures** - 0 issue(s)\n- 🟡 **A03: Injection** - 1 issue(s)\n- ✅ **A04: Insecure Design** - 0 issue(s)\n- 🟡 **A05: Security Misconfiguration** - 4 issue(s)\n- ✅ **A06: Vulnerable and Outdated Components** - 0 issue(s)\n- 🟡 **A07: Identification and Authentication Failures** - 2 issue(s)\n- ✅ **A08: Software and Data Integrity Failures** - 0 issue(s)\n- ✅ **A09: Security Logging and Monitoring Failures** - 0 issue(s)\n- ✅ **A10: Server-Side Request Forgery (SSRF)** - 0 issue(s)\n- ✅ **A11: AI/LLM Security Risks** - 0 issue(s)\n\n## 🔴 CRITICAL ISSUES - IMMEDIATE ACTION REQUIRED\n\n### 1. Server Action missing session verification\n- **File:** `apps/web/app/t/[tenant]/login/page.tsx:106`\n- **Category:** Missing Authorization\n- **OWASP:** A01\n- **CWE:** CWE-862\n- **Description:** Found: \"use server\";\n- **💡 Recommendation:** Always verify session at the start of Server Actions. Authentication ≠ Authorization.\n\n### 2. Server Action missing session verification\n- **File:** `apps/web/app/t/[tenant]/register/page.tsx:74`\n- **Category:** Missing Authorization\n- **OWASP:** A01\n- **CWE:** CWE-862\n- **Description:** Found: \"use server\";\n- **💡 Recommendation:** Always verify session at the start of Server Actions. Authentication ≠ Authorization.\n\n### 3. Server Action lacks session verification\n- **File:** `apps/web/app/t/[tenant]/login/page.tsx:0`\n- **Category:** Missing Authentication\n- **OWASP:** A01\n- **CWE:** CWE-862\n- **Description:** Server Action exposed without authentication check\n- **💡 Recommendation:** Add verifySession() or getSession() at the start of the Server Action\n\n### 4. Server Action lacks session verification\n- **File:** `apps/web/app/t/[tenant]/register/page.tsx:0`\n- **Category:** Missing Authentication\n- **OWASP:** A01\n- **CWE:** CWE-862\n- **Description:** Server Action exposed without authentication check\n- **💡 Recommendation:** Add verifySession() or getSession() at the start of the Server Action\n\n### 5. Row Level Security not enabled\n- **File:** `packages/database/schema.ts:0`\n- **Category:** Missing RLS\n- **OWASP:** A01\n- **CWE:** CWE-284\n- **Description:** Database lacks RLS policies for multi-tenant isolation\n- **💡 Recommendation:** Enable RLS policies on all tables to prevent data leakage\n\n### 6. Row Level Security not enabled\n- **File:** `drizzle.config.ts:0`\n- **Category:** Missing RLS\n- **OWASP:** A01\n- **CWE:** CWE-284\n- **Description:** Database lacks RLS policies for multi-tenant isolation\n- **💡 Recommendation:** Enable RLS policies on all tables to prevent data leakage\n\n## 🟠 HIGH PRIORITY ISSUES\n\n1. **API route missing authentication** in `route.ts`\n   - Add authentication check at the start of the API handler\n\n2. **API route missing authentication** in `route.ts`\n   - Add authentication check at the start of the API handler\n\n3. **API endpoint missing input validation** in `audit.ts`\n   - Use Zod or similar for input validation\n\n## 🎯 Verdict\n\n❌ **SECURITY SCAN FAILED**\n\n**Action Required:** Fix 6 critical issue(s) before deployment.\n**Blocking Deployment:** YES\n",
+        "passed": false
+      },
+      "completedAt": "2025-10-09T15:22:33.119Z",
+      "blockedReason": "🚨 SECURITY FAILED: Found 6 critical security issues!"
+    },
+    {
+      "id": "task_5",
+      "agent": "TESTER",
+      "description": "Validación final e integración",
+      "status": "pending",
+      "progress": 0,
+      "dependencies": [
+        "task_4"
+      ]
+    },
+    {
+      "id": "task_6",
+      "agent": "REVIEWER",
+      "description": "Code review y mejoras",
+      "status": "pending",
+      "progress": 0,
+      "dependencies": [
+        "task_5"
+      ]
+    },
+    {
+      "id": "task_7",
+      "agent": "DEPLOYER",
+      "description": "Preparación y deployment",
+      "status": "pending",
+      "progress": 0,
+      "dependencies": [
+        "task_6"
+      ]
+    }
+  ],
+  "createdAt": "2025-10-09T15:22:15.189Z",
+  "updatedAt": "2025-10-09T15:22:33.119Z"
+}

@@ -1,0 +1,117 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+    - alert [ref=e2]
+    - generic [ref=e4]:
+        - banner [ref=e5]:
+            - generic [ref=e7]:
+                - generic:
+                    - img "Nom Nom Tacos Auténticos logo"
+                - navigation [ref=e8]:
+                    - link "Servicios" [ref=e9] [cursor=pointer]:
+                        - /url: /t/nom-nom/services
+                    - link "Productos" [ref=e10] [cursor=pointer]:
+                        - /url: /t/nom-nom/products
+                    - link "Carrito" [ref=e11] [cursor=pointer]:
+                        - /url: /t/nom-nom/cart
+                    - link "Iniciar Sesión" [ref=e12] [cursor=pointer]:
+                        - /url: /t/nom-nom/login
+        - generic [ref=e13]:
+            - generic:
+                - img "Tacos al Pastor"
+                - img
+            - generic [ref=e15]:
+                - button "Anterior" [ref=e16] [cursor=pointer]: <
+                - button "Siguiente" [ref=e17] [cursor=pointer]: ">"
+        - generic [ref=e18]:
+            - generic [ref=e19]:
+                - generic [ref=e20]:
+                    - heading "Productos Destacados" [level=2] [ref=e21]
+                    - link "Ver todos →" [ref=e22] [cursor=pointer]:
+                        - /url: /t/nom-nom/products
+                - generic [ref=e23]:
+                    - generic [ref=e24]:
+                        - generic [ref=e25]: 🌮
+                        - generic [ref=e26]:
+                            - heading "Taco Seasoning Mix" [level=3] [ref=e27]
+                            - generic [ref=e28]:
+                                - generic [ref=e29]: $8.00
+                                - generic [ref=e30]: MXN
+                            - button "Comprar" [ref=e31] [cursor=pointer]
+                    - generic [ref=e32]:
+                        - generic [ref=e33]: 🟢
+                        - generic [ref=e34]:
+                            - heading "Salsa Verde" [level=3] [ref=e35]
+                            - generic [ref=e36]:
+                                - generic [ref=e37]: $12.00
+                                - generic [ref=e38]: MXN
+                            - button "Comprar" [ref=e39] [cursor=pointer]
+                    - generic [ref=e40]:
+                        - generic [ref=e41]: 🌮
+                        - generic [ref=e42]:
+                            - heading "Tacos de Carnitas (3 pcs)" [level=3] [ref=e43]
+                            - generic [ref=e44]:
+                                - generic [ref=e45]: $8.50
+                                - generic [ref=e46]: MXN
+                            - button "Comprar" [ref=e47] [cursor=pointer]
+                    - generic [ref=e48]:
+                        - generic [ref=e49]: 🍍
+                        - generic [ref=e50]:
+                            - heading "Tacos de Pastor (3 pcs)" [level=3] [ref=e51]
+                            - generic [ref=e52]:
+                                - generic [ref=e53]: $9.00
+                                - generic [ref=e54]: MXN
+                            - button "Comprar" [ref=e55] [cursor=pointer]
+            - generic [ref=e56]:
+                - heading "Información de Contacto" [level=2] [ref=e57]
+                - generic [ref=e58]:
+                    - generic [ref=e59]:
+                        - heading "¡Contáctanos!" [level=3] [ref=e60]
+                        - generic [ref=e61]:
+                            - generic [ref=e62]:
+                                - generic [ref=e63]: 📍
+                                - generic [ref=e64]: 123 Taco Street, San Antonio, TX 78201
+                            - generic [ref=e65]:
+                                - generic [ref=e66]: 📞
+                                - link "+1-555-0206" [ref=e67] [cursor=pointer]:
+                                    - /url: tel:+1-555-0206
+                            - generic [ref=e68]:
+                                - generic [ref=e69]: ✉️
+                                - link "pedidos@nomnom.local" [ref=e70] [cursor=pointer]:
+                                    - /url: mailto:pedidos@nomnom.local
+                    - generic [ref=e71]:
+                        - heading "Horarios de Atención" [level=3] [ref=e72]
+                        - generic [ref=e73]:
+                            - generic [ref=e74]:
+                                - generic [ref=e75]: "friday:"
+                                - generic [ref=e76]: 11:00-24:00
+                            - generic [ref=e77]:
+                                - generic [ref=e78]: "monday:"
+                                - generic [ref=e79]: 11:00-23:00
+                            - generic [ref=e80]:
+                                - generic [ref=e81]: "sunday:"
+                                - generic [ref=e82]: 10:00-22:00
+                            - generic [ref=e83]:
+                                - generic [ref=e84]: "tuesday:"
+                                - generic [ref=e85]: 11:00-23:00
+                            - generic [ref=e86]:
+                                - generic [ref=e87]: "saturday:"
+                                - generic [ref=e88]: 10:00-24:00
+                            - generic [ref=e89]:
+                                - generic [ref=e90]: "thursday:"
+                                - generic [ref=e91]: 11:00-23:00
+                            - generic [ref=e92]:
+                                - generic [ref=e93]: "wednesday:"
+                                - generic [ref=e94]: 11:00-23:00
+            - generic [ref=e96]:
+                - generic [ref=e97]:
+                    - generic [ref=e98]: 🔒
+                    - generic [ref=e99]: Pagos Seguros
+                - generic [ref=e100]:
+                    - generic [ref=e101]: 🚚
+                    - generic [ref=e102]: Entrega Rápida
+                - generic [ref=e103]:
+                    - generic [ref=e104]: ⭐
+                    - generic [ref=e105]: Calidad Garantizada
+```

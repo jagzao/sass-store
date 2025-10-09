@@ -1,0 +1,110 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+    - alert [ref=e2]
+    - generic [ref=e4]:
+        - banner [ref=e5]:
+            - generic [ref=e7]:
+                - img "Nom Nom Tacos Auténticos logo" [ref=e9]
+                - navigation [ref=e10]:
+                    - link "Servicios" [ref=e11] [cursor=pointer]:
+                        - /url: /t/nom-nom/services
+                    - link "Productos" [ref=e12] [cursor=pointer]:
+                        - /url: /t/nom-nom/products
+                    - link "Carrito" [ref=e13] [cursor=pointer]:
+                        - /url: /t/nom-nom/cart
+                    - link "Iniciar Sesión" [ref=e14] [cursor=pointer]:
+                        - /url: /t/nom-nom/login
+        - status "Cargando carousel hero" [ref=e15]
+        - generic [ref=e43]:
+            - generic [ref=e44]:
+                - generic [ref=e45]:
+                    - heading "Productos Destacados" [level=2] [ref=e46]
+                    - link "Ver todos →" [ref=e47] [cursor=pointer]:
+                        - /url: /t/nom-nom/products
+                - generic [ref=e48]:
+                    - generic [ref=e49]:
+                        - generic [ref=e50]: 🌮
+                        - generic [ref=e51]:
+                            - heading "Taco Seasoning Mix" [level=3] [ref=e52]
+                            - generic [ref=e53]:
+                                - generic [ref=e54]: $8.00
+                                - generic [ref=e55]: MXN
+                            - button "Comprar" [ref=e56] [cursor=pointer]
+                    - generic [ref=e57]:
+                        - generic [ref=e58]: 🟢
+                        - generic [ref=e59]:
+                            - heading "Salsa Verde" [level=3] [ref=e60]
+                            - generic [ref=e61]:
+                                - generic [ref=e62]: $12.00
+                                - generic [ref=e63]: MXN
+                            - button "Comprar" [ref=e64] [cursor=pointer]
+                    - generic [ref=e65]:
+                        - generic [ref=e66]: 🌮
+                        - generic [ref=e67]:
+                            - heading "Tacos de Carnitas (3 pcs)" [level=3] [ref=e68]
+                            - generic [ref=e69]:
+                                - generic [ref=e70]: $8.50
+                                - generic [ref=e71]: MXN
+                            - button "Comprar" [ref=e72] [cursor=pointer]
+                    - generic [ref=e73]:
+                        - generic [ref=e74]: 🍍
+                        - generic [ref=e75]:
+                            - heading "Tacos de Pastor (3 pcs)" [level=3] [ref=e76]
+                            - generic [ref=e77]:
+                                - generic [ref=e78]: $9.00
+                                - generic [ref=e79]: MXN
+                            - button "Comprar" [ref=e80] [cursor=pointer]
+            - generic [ref=e81]:
+                - heading "Información de Contacto" [level=2] [ref=e82]
+                - generic [ref=e83]:
+                    - generic [ref=e84]:
+                        - heading "¡Contáctanos!" [level=3] [ref=e85]
+                        - generic [ref=e86]:
+                            - generic [ref=e87]:
+                                - generic [ref=e88]: 📍
+                                - generic [ref=e89]: 123 Taco Street, San Antonio, TX 78201
+                            - generic [ref=e90]:
+                                - generic [ref=e91]: 📞
+                                - link "+1-555-0206" [ref=e92] [cursor=pointer]:
+                                    - /url: tel:+1-555-0206
+                            - generic [ref=e93]:
+                                - generic [ref=e94]: ✉️
+                                - link "pedidos@nomnom.local" [ref=e95] [cursor=pointer]:
+                                    - /url: mailto:pedidos@nomnom.local
+                    - generic [ref=e96]:
+                        - heading "Horarios de Atención" [level=3] [ref=e97]
+                        - generic [ref=e98]:
+                            - generic [ref=e99]:
+                                - generic [ref=e100]: "friday:"
+                                - generic [ref=e101]: 11:00-24:00
+                            - generic [ref=e102]:
+                                - generic [ref=e103]: "monday:"
+                                - generic [ref=e104]: 11:00-23:00
+                            - generic [ref=e105]:
+                                - generic [ref=e106]: "sunday:"
+                                - generic [ref=e107]: 10:00-22:00
+                            - generic [ref=e108]:
+                                - generic [ref=e109]: "tuesday:"
+                                - generic [ref=e110]: 11:00-23:00
+                            - generic [ref=e111]:
+                                - generic [ref=e112]: "saturday:"
+                                - generic [ref=e113]: 10:00-24:00
+                            - generic [ref=e114]:
+                                - generic [ref=e115]: "thursday:"
+                                - generic [ref=e116]: 11:00-23:00
+                            - generic [ref=e117]:
+                                - generic [ref=e118]: "wednesday:"
+                                - generic [ref=e119]: 11:00-23:00
+            - generic [ref=e121]:
+                - generic [ref=e122]:
+                    - generic [ref=e123]: 🔒
+                    - generic [ref=e124]: Pagos Seguros
+                - generic [ref=e125]:
+                    - generic [ref=e126]: 🚚
+                    - generic [ref=e127]: Entrega Rápida
+                - generic [ref=e128]:
+                    - generic [ref=e129]: ⭐
+                    - generic [ref=e130]: Calidad Garantizada
+```

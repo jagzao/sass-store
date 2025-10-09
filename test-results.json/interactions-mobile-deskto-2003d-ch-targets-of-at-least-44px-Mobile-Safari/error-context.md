@@ -1,0 +1,95 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+    - banner [ref=e4]:
+        - generic [ref=e6]:
+            - generic [ref=e7]:
+                - link "← Volver a Wonder Nails Studio" [ref=e8]:
+                    - /url: /t/wondernails
+                - heading "Productos" [level=1] [ref=e9]
+            - navigation [ref=e10]:
+                - link "Servicios" [ref=e11]:
+                    - /url: /t/wondernails/services
+                - link "Carrito" [ref=e12]:
+                    - /url: /t/wondernails/cart
+                - link "Login" [ref=e13]:
+                    - /url: /t/wondernails/login
+    - generic [ref=e14]:
+        - generic [ref=e15]:
+            - generic [ref=e17]:
+                - generic [ref=e18]: 🧡
+                - heading "Sunset Orange Polish" [level=3] [ref=e19]
+                - paragraph [ref=e20]: Vibrant orange nail polish with high-gloss finish
+                - generic [ref=e21]:
+                    - generic [ref=e22]: $22.00
+                    - generic [ref=e23]: general
+                - generic [ref=e24]:
+                    - button "Añadir al carrito (1/3)" [ref=e25] [cursor=pointer]
+                    - button "Comprar ahora (1/3)" [ref=e26] [cursor=pointer]
+            - generic [ref=e28]:
+                - generic [ref=e29]: 🎨
+                - heading "Professional Nail Art Kit" [level=3] [ref=e30]
+                - paragraph [ref=e31]: Complete set for creating stunning nail designs
+                - generic [ref=e32]:
+                    - generic [ref=e33]: $45.00
+                    - generic [ref=e34]: general
+                - generic [ref=e35]:
+                    - button "Añadir al carrito (1/3)" [ref=e36] [cursor=pointer]
+                    - button "Comprar ahora (1/3)" [ref=e37] [cursor=pointer]
+            - generic [ref=e39]:
+                - generic [ref=e40]: 🧴
+                - heading "Gel Polish Remover" [level=3] [ref=e41]
+                - paragraph [ref=e42]: Gentle formula for safe gel polish removal
+                - generic [ref=e43]:
+                    - generic [ref=e44]: $15.00
+                    - generic [ref=e45]: general
+                - generic [ref=e46]:
+                    - button "Añadir al carrito (1/3)" [ref=e47] [cursor=pointer]
+                    - button "Comprar ahora (1/3)" [ref=e48] [cursor=pointer]
+            - generic [ref=e50]:
+                - generic [ref=e51]: 🌿
+                - heading "Nourishing Cuticle Oil" [level=3] [ref=e52]
+                - paragraph [ref=e53]: Vitamin E enriched cuticle oil for healthy nails
+                - generic [ref=e54]:
+                    - generic [ref=e55]: $16.00
+                    - generic [ref=e56]: general
+                - generic [ref=e57]:
+                    - button "Añadir al carrito (1/3)" [ref=e58] [cursor=pointer]
+                    - button "Comprar ahora (1/3)" [ref=e59] [cursor=pointer]
+            - generic [ref=e61]:
+                - generic [ref=e62]: 💙
+                - heading "Midnight Blue Polish" [level=3] [ref=e63]
+                - paragraph [ref=e64]: Deep blue nail polish with shimmer
+                - generic [ref=e65]:
+                    - generic [ref=e66]: $22.00
+                    - generic [ref=e67]: general
+                - generic [ref=e68]:
+                    - button "Añadir al carrito (1/3)" [ref=e69] [cursor=pointer]
+                    - button "Comprar ahora (1/3)" [ref=e70] [cursor=pointer]
+            - generic [ref=e72]:
+                - generic [ref=e73]: 🧡
+                - heading "Sunset Orange Polish" [level=3] [ref=e74]
+                - paragraph [ref=e75]: Vibrant orange nail polish with high-gloss finish
+                - generic [ref=e76]:
+                    - generic [ref=e77]: $22.00
+                    - generic [ref=e78]: general
+                - generic [ref=e79]:
+                    - button "Añadir al carrito (1/3)" [ref=e80] [cursor=pointer]
+                    - button "Comprar ahora (1/3)" [ref=e81] [cursor=pointer]
+        - generic [ref=e82]:
+            - heading "Compra Rápida (≤3 clicks)" [level=2] [ref=e83]
+            - generic [ref=e84]:
+                - generic [ref=e85]:
+                    - generic [ref=e86]: "1"
+                    - heading "Seleccionar" [level=3] [ref=e87]
+                    - paragraph [ref=e88]: Elige tu producto favorito
+                - generic [ref=e89]:
+                    - generic [ref=e90]: "2"
+                    - heading "Confirmar" [level=3] [ref=e91]
+                    - paragraph [ref=e92]: Revisar detalles del pedido
+                - generic [ref=e93]:
+                    - generic [ref=e94]: "3"
+                    - heading "Pagar" [level=3] [ref=e95]
+                    - paragraph [ref=e96]: Finalizar compra
+```

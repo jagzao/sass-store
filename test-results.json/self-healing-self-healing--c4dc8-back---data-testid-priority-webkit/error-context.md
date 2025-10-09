@@ -1,0 +1,115 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+    - banner [ref=e4]:
+        - generic [ref=e6]:
+            - img "Delirios Healthy Food logo" [ref=e8]
+            - navigation [ref=e9]:
+                - link "Servicios" [ref=e10]:
+                    - /url: /t/delirios/services
+                - link "Productos" [ref=e11]:
+                    - /url: /t/delirios/products
+                - link "Carrito" [ref=e12]:
+                    - /url: /t/delirios/cart
+                - link "Iniciar Sesión" [ref=e13]:
+                    - /url: /t/delirios/login
+    - generic [ref=e14]:
+        - generic [ref=e15]:
+            - generic [ref=e17]:
+                - generic [ref=e18]:
+                    - heading "Delirios Healthy Food" [level=1] [ref=e19]
+                    - heading "Explora Nuestros Productos" [level=2] [ref=e20]
+                    - paragraph [ref=e21]: Fresh, healthy meals and superfood bowls
+                    - link "Ver Catálogo" [ref=e22]:
+                        - /url: "#"
+                - generic [ref=e23]: 🛍️
+            - generic [ref=e25]:
+                - generic [ref=e26]:
+                    - heading "Delirios Healthy Food" [level=1] [ref=e27]
+                    - heading "Contacto Directo" [level=2] [ref=e28]
+                    - paragraph [ref=e29]: Llámanos al +1-555-0205 o visítanos en 654 Wellness Ave, Portland, OR 97201
+                    - link "Contactar" [ref=e30]:
+                        - /url: "#"
+                - generic [ref=e31]: 📞
+            - generic [ref=e33]:
+                - generic [ref=e34]:
+                    - heading "Delirios Healthy Food" [level=1] [ref=e35]
+                    - heading "Calidad Premium" [level=2] [ref=e36]
+                    - paragraph [ref=e37]: Comprometidos con la excelencia en cada servicio que ofrecemos
+                    - link "Conocer Más" [ref=e38]:
+                        - /url: "#"
+                - generic [ref=e39]: ⭐
+        - generic [ref=e40]:
+            - button "Slide anterior" [ref=e41] [cursor=pointer]: ←
+            - generic [ref=e42]:
+                - button "Ir a slide 1"
+                - button "Ir a slide 2"
+                - button "Ir a slide 3"
+            - button "Slide siguiente" [ref=e43] [cursor=pointer]: →
+    - generic [ref=e44]:
+        - generic [ref=e45]:
+            - generic [ref=e46]:
+                - heading "Productos Destacados" [level=2] [ref=e47]
+                - link "Ver todos →" [ref=e48]:
+                    - /url: /t/delirios/products
+            - generic [ref=e50]:
+                - generic [ref=e51]: 🥗
+                - generic [ref=e52]:
+                    - heading "Superfood Bowl Mix" [level=3] [ref=e53]
+                    - generic [ref=e54]:
+                        - generic [ref=e55]: $18.00
+                        - generic [ref=e56]: MXN
+                    - button "Comprar" [ref=e57] [cursor=pointer]
+        - generic [ref=e58]:
+            - heading "Información de Contacto" [level=2] [ref=e59]
+            - generic [ref=e60]:
+                - generic [ref=e61]:
+                    - heading "¡Contáctanos!" [level=3] [ref=e62]
+                    - generic [ref=e63]:
+                        - generic [ref=e64]:
+                            - generic [ref=e65]: 📍
+                            - generic [ref=e66]: 654 Wellness Ave, Portland, OR 97201
+                        - generic [ref=e67]:
+                            - generic [ref=e68]: 📞
+                            - link "+1-555-0205" [ref=e69]:
+                                - /url: tel:+1-555-0205
+                        - generic [ref=e70]:
+                            - generic [ref=e71]: ✉️
+                            - link "pedidos@delirios.local" [ref=e72]:
+                                - /url: mailto:pedidos@delirios.local
+                - generic [ref=e73]:
+                    - heading "Horarios de Atención" [level=3] [ref=e74]
+                    - generic [ref=e75]:
+                        - generic [ref=e76]:
+                            - generic [ref=e77]: "friday:"
+                            - generic [ref=e78]: 7:00-22:00
+                        - generic [ref=e79]:
+                            - generic [ref=e80]: "monday:"
+                            - generic [ref=e81]: 7:00-21:00
+                        - generic [ref=e82]:
+                            - generic [ref=e83]: "sunday:"
+                            - generic [ref=e84]: 8:00-20:00
+                        - generic [ref=e85]:
+                            - generic [ref=e86]: "tuesday:"
+                            - generic [ref=e87]: 7:00-21:00
+                        - generic [ref=e88]:
+                            - generic [ref=e89]: "saturday:"
+                            - generic [ref=e90]: 8:00-22:00
+                        - generic [ref=e91]:
+                            - generic [ref=e92]: "thursday:"
+                            - generic [ref=e93]: 7:00-21:00
+                        - generic [ref=e94]:
+                            - generic [ref=e95]: "wednesday:"
+                            - generic [ref=e96]: 7:00-21:00
+        - generic [ref=e98]:
+            - generic [ref=e99]:
+                - generic [ref=e100]: 🔒
+                - generic [ref=e101]: Pagos Seguros
+            - generic [ref=e102]:
+                - generic [ref=e103]: 🚚
+                - generic [ref=e104]: Entrega Rápida
+            - generic [ref=e105]:
+                - generic [ref=e106]: ⭐
+                - generic [ref=e107]: Calidad Garantizada
+```

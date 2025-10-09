@@ -1,0 +1,277 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+    - generic [ref=e3]:
+        - banner [ref=e4]:
+            - generic [ref=e6]:
+                - img "Wonder Nails Studio logo" [ref=e8]
+                - navigation [ref=e9]:
+                    - link "Servicios" [ref=e10]:
+                        - /url: /t/wondernails/services
+                    - link "Productos" [ref=e11]:
+                        - /url: /t/wondernails/products
+                    - link "Carrito" [ref=e12]:
+                        - /url: /t/wondernails/cart
+                    - link "Iniciar Sesión" [ref=e13]:
+                        - /url: /t/wondernails/login
+        - region "Carrusel Wonder Nails" [ref=e14]:
+            - generic [ref=e15]:
+                - generic [ref=e16]:
+                    - 'tabpanel "Slide 1: Manicure Premium" [ref=e17]':
+                        - generic [ref=e18]:
+                            - generic [ref=e19]: "-20% hoy"
+                            - generic [ref=e20]: WONDERNAILS PRO
+                            - generic [ref=e21]: Manicure Premium
+                            - generic [ref=e22]: Reserva en 2 clics · Garantía de acabado gel · Desde $35
+                            - button "Ver más del producto" [ref=e23] [cursor=pointer]: VER MÁS ↗
+                        - img "Manicure Premium" [ref=e24]
+                        - generic [ref=e25]:
+                            - generic [ref=e26]: Manicure Premium LED
+                            - generic [ref=e27]: Tecnología LED de última generación para un acabado profesional que dura hasta 4 semanas. Incluye diseño personalizado y acabado glossy.
+                            - generic [ref=e28]:
+                                - generic [ref=e29]:
+                                    - paragraph [ref=e30]: Duración
+                                    - paragraph [ref=e31]: 4 semanas
+                                - generic [ref=e32]:
+                                    - paragraph [ref=e33]: Tecnología
+                                    - paragraph [ref=e34]: LED Pro
+                                - generic [ref=e35]:
+                                    - paragraph [ref=e36]: Precio
+                                    - paragraph [ref=e37]: desde $35
+                            - generic [ref=e38]:
+                                - button "RESERVAR" [ref=e39] [cursor=pointer]
+                                - button "VER TODOS" [ref=e40] [cursor=pointer]
+                    - 'tabpanel "Slide 2: Nail Art" [ref=e41]':
+                        - generic [ref=e42]:
+                            - generic [ref=e43]: Nuevo diseño
+                            - generic [ref=e44]: WONDERNAILS PRO
+                            - generic [ref=e45]: Nail Art
+                            - generic [ref=e46]: Diseños únicos · Artistas certificados · Desde $45
+                            - button "Ver más del producto" [ref=e47] [cursor=pointer]: VER MÁS ↗
+                        - img "Nail Art" [ref=e48]
+                        - generic [ref=e49]:
+                            - generic [ref=e50]: Nail Art Premium
+                            - generic [ref=e51]: Crea diseños únicos con nuestros artistas certificados. Desde minimalista hasta arte complejo.
+                            - generic [ref=e52]:
+                                - generic [ref=e53]:
+                                    - paragraph [ref=e54]: Duración
+                                    - paragraph [ref=e55]: 3 semanas
+                                - generic [ref=e56]:
+                                    - paragraph [ref=e57]: Estilos
+                                    - paragraph [ref=e58]: Ilimitados
+                                - generic [ref=e59]:
+                                    - paragraph [ref=e60]: Precio
+                                    - paragraph [ref=e61]: desde $45
+                            - generic [ref=e62]:
+                                - button "RESERVAR" [ref=e63] [cursor=pointer]
+                                - button "VER TODOS" [ref=e64] [cursor=pointer]
+                    - 'tabpanel "Slide 3: Pedicure Spa" [ref=e65]':
+                        - generic [ref=e66]:
+                            - generic [ref=e67]: WONDERNAILS PRO
+                            - generic [ref=e68]: Pedicure Spa
+                            - generic [ref=e69]: Relajación total · Acabado perfecto · Desde $50
+                            - button "Ver más del producto" [ref=e70] [cursor=pointer]: VER MÁS ↗
+                        - img "Pedicure Spa" [ref=e71]
+                        - generic [ref=e72]:
+                            - generic [ref=e73]: Pedicure Spa Premium
+                            - generic [ref=e74]: Tratamiento completo de pies con exfoliación, masaje y acabado gel profesional.
+                            - generic [ref=e75]:
+                                - generic [ref=e76]:
+                                    - paragraph [ref=e77]: Duración
+                                    - paragraph [ref=e78]: 90 min
+                                - generic [ref=e79]:
+                                    - paragraph [ref=e80]: Incluye
+                                    - paragraph [ref=e81]: Masaje
+                                - generic [ref=e82]:
+                                    - paragraph [ref=e83]: Precio
+                                    - paragraph [ref=e84]: desde $50
+                            - generic [ref=e85]:
+                                - button "RESERVAR" [ref=e86] [cursor=pointer]
+                                - button "VER TODOS" [ref=e87] [cursor=pointer]
+                    - 'tabpanel "Slide 4: Acrílicas" [ref=e88]':
+                        - generic [ref=e89]:
+                            - generic [ref=e90]: Más popular
+                            - generic [ref=e91]: WONDERNAILS PRO
+                            - generic [ref=e92]: Acrílicas
+                            - generic [ref=e93]: Resistentes y elegantes · Diseño incluido · Desde $60
+                            - button "Ver más del producto" [ref=e94] [cursor=pointer]: VER MÁS ↗
+                        - img "Acrílicas" [ref=e95]
+                        - generic [ref=e96]:
+                            - generic [ref=e97]: Uñas Acrílicas Premium
+                            - generic [ref=e98]: Sistema acrílico de alta calidad que se adapta a tu estilo de vida activo.
+                            - generic [ref=e99]:
+                                - generic [ref=e100]:
+                                    - paragraph [ref=e101]: Duración
+                                    - paragraph [ref=e102]: 6 semanas
+                                - generic [ref=e103]:
+                                    - paragraph [ref=e104]: Resistencia
+                                    - paragraph [ref=e105]: Alta
+                                - generic [ref=e106]:
+                                    - paragraph [ref=e107]: Precio
+                                    - paragraph [ref=e108]: desde $60
+                            - generic [ref=e109]:
+                                - button "COMPRAR" [ref=e110] [cursor=pointer]
+                                - button "VER TODOS" [ref=e111] [cursor=pointer]
+                    - 'tabpanel "Slide 5: Fortalecedor" [ref=e112]':
+                        - generic [ref=e113]:
+                            - generic [ref=e114]: WONDERNAILS PRO
+                            - generic [ref=e115]: Fortalecedor
+                            - generic [ref=e116]: Recupera uñas dañadas · Resultados en 2 semanas · $80
+                            - button "Ver más del producto" [ref=e117] [cursor=pointer]: VER MÁS ↗
+                        - img "Fortalecedor" [ref=e118]
+                        - generic [ref=e119]:
+                            - generic [ref=e120]: Tratamiento Fortalecedor
+                            - generic [ref=e121]: Restaura la salud de tus uñas con nuestro tratamiento especializado.
+                            - generic [ref=e122]:
+                                - generic [ref=e123]:
+                                    - paragraph [ref=e124]: Sesiones
+                                    - paragraph [ref=e125]: "4"
+                                - generic [ref=e126]:
+                                    - paragraph [ref=e127]: Resultados
+                                    - paragraph [ref=e128]: 2 semanas
+                                - generic [ref=e129]:
+                                    - paragraph [ref=e130]: Precio
+                                    - paragraph [ref=e131]: $80
+                            - generic [ref=e132]:
+                                - button "COMPRAR" [ref=e133] [cursor=pointer]
+                                - button "VER TODOS" [ref=e134] [cursor=pointer]
+                    - 'tabpanel "Slide 6: Pack Novia" [ref=e135]':
+                        - generic [ref=e136]:
+                            - generic [ref=e137]: Especial
+                            - generic [ref=e138]: WONDERNAILS PRO
+                            - generic [ref=e139]: Pack Novia
+                            - generic [ref=e140]: Manicure + Pedicure · Diseño personalizado · $120
+                            - button "Ver más del producto" [ref=e141] [cursor=pointer]: VER MÁS ↗
+                        - img "Pack Novia" [ref=e142]
+                        - generic [ref=e143]:
+                            - generic [ref=e144]: Pack Novia Premium
+                            - generic [ref=e145]: Todo lo que necesitas para lucir perfecta en tu día especial.
+                            - generic [ref=e146]:
+                                - generic [ref=e147]:
+                                    - paragraph [ref=e148]: Incluye
+                                    - paragraph [ref=e149]: Manicure + Pedicure
+                                - generic [ref=e150]:
+                                    - paragraph [ref=e151]: Duración
+                                    - paragraph [ref=e152]: 4 semanas
+                                - generic [ref=e153]:
+                                    - paragraph [ref=e154]: Precio
+                                    - paragraph [ref=e155]: $120
+                            - generic [ref=e156]:
+                                - button "RESERVAR" [ref=e157] [cursor=pointer]
+                                - button "VER TODOS" [ref=e158] [cursor=pointer]
+                - generic [ref=e159]:
+                    - button "Anterior" [ref=e160] [cursor=pointer]: ←
+                    - button "Siguiente" [ref=e161] [cursor=pointer]: →
+        - generic [ref=e162]:
+            - generic [ref=e163]:
+                - generic [ref=e164]:
+                    - heading "Servicios Destacados" [level=2] [ref=e165]
+                    - link "Ver todos →" [ref=e166]:
+                        - /url: /t/wondernails/services
+                - generic [ref=e167]:
+                    - generic [ref=e169]:
+                        - generic [ref=e170]: 💅
+                        - heading "Classic Manicure" [level=3] [ref=e171]
+                        - paragraph [ref=e172]: Traditional nail care with polish application
+                        - generic [ref=e173]:
+                            - generic [ref=e174]:
+                                - generic [ref=e175]: $35.00
+                                - generic [ref=e176]: MXN
+                            - generic [ref=e177]: 45 min
+                        - button "Reservar Ahora" [ref=e178] [cursor=pointer]
+                    - generic [ref=e180]:
+                        - generic [ref=e181]: ✨
+                        - heading "Gel Manicure" [level=3] [ref=e182]
+                        - paragraph [ref=e183]: Long-lasting gel polish manicure
+                        - generic [ref=e184]:
+                            - generic [ref=e185]:
+                                - generic [ref=e186]: $55.00
+                                - generic [ref=e187]: MXN
+                            - generic [ref=e188]: 60 min
+                        - button "Reservar Ahora" [ref=e189] [cursor=pointer]
+                    - generic [ref=e191]:
+                        - generic [ref=e192]: 🦶
+                        - heading "Pedicure Deluxe" [level=3] [ref=e193]
+                        - paragraph [ref=e194]: Complete pedicure with massage
+                        - generic [ref=e195]:
+                            - generic [ref=e196]:
+                                - generic [ref=e197]: $65.00
+                                - generic [ref=e198]: MXN
+                            - generic [ref=e199]: 75 min
+                        - button "Reservar Ahora" [ref=e200] [cursor=pointer]
+            - generic [ref=e201]:
+                - generic [ref=e202]:
+                    - heading "Productos Destacados" [level=2] [ref=e203]
+                    - link "Ver todos →" [ref=e204]:
+                        - /url: /t/wondernails/products
+                - generic [ref=e205]:
+                    - generic [ref=e206]:
+                        - generic [ref=e207]: 🧡
+                        - generic [ref=e208]:
+                            - heading "Sunset Orange Polish" [level=3] [ref=e209]
+                            - generic [ref=e210]:
+                                - generic [ref=e211]: $22.00
+                                - generic [ref=e212]: MXN
+                            - button "Comprar" [ref=e213] [cursor=pointer]
+                    - generic [ref=e214]:
+                        - generic [ref=e215]: 🧡
+                        - generic [ref=e216]:
+                            - heading "Sunset Orange Polish" [level=3] [ref=e217]
+                            - generic [ref=e218]:
+                                - generic [ref=e219]: $22.00
+                                - generic [ref=e220]: MXN
+                            - button "Comprar" [ref=e221] [cursor=pointer]
+            - generic [ref=e222]:
+                - heading "Información de Contacto" [level=2] [ref=e223]
+                - generic [ref=e224]:
+                    - generic [ref=e225]:
+                        - heading "¡Contáctanos!" [level=3] [ref=e226]
+                        - generic [ref=e227]:
+                            - generic [ref=e228]:
+                                - generic [ref=e229]: 📍
+                                - generic [ref=e230]: 456 Beauty Boulevard, Los Angeles, CA 90210
+                            - generic [ref=e231]:
+                                - generic [ref=e232]: 📞
+                                - link "+1-555-0201" [ref=e233]:
+                                    - /url: tel:+1-555-0201
+                            - generic [ref=e234]:
+                                - generic [ref=e235]: ✉️
+                                - link "book@wondernails.local" [ref=e236]:
+                                    - /url: mailto:book@wondernails.local
+                    - generic [ref=e237]:
+                        - heading "Horarios de Atención" [level=3] [ref=e238]
+                        - generic [ref=e239]:
+                            - generic [ref=e240]:
+                                - generic [ref=e241]: "friday:"
+                                - generic [ref=e242]: 9:00-20:00
+                            - generic [ref=e243]:
+                                - generic [ref=e244]: "monday:"
+                                - generic [ref=e245]: 9:00-19:00
+                            - generic [ref=e246]:
+                                - generic [ref=e247]: "sunday:"
+                                - generic [ref=e248]: 10:00-16:00
+                            - generic [ref=e249]:
+                                - generic [ref=e250]: "tuesday:"
+                                - generic [ref=e251]: 9:00-19:00
+                            - generic [ref=e252]:
+                                - generic [ref=e253]: "saturday:"
+                                - generic [ref=e254]: 8:00-18:00
+                            - generic [ref=e255]:
+                                - generic [ref=e256]: "thursday:"
+                                - generic [ref=e257]: 9:00-19:00
+                            - generic [ref=e258]:
+                                - generic [ref=e259]: "wednesday:"
+                                - generic [ref=e260]: 9:00-19:00
+            - generic [ref=e262]:
+                - generic [ref=e263]:
+                    - generic [ref=e264]: 🔒
+                    - generic [ref=e265]: Pagos Seguros
+                - generic [ref=e266]:
+                    - generic [ref=e267]: 🚚
+                    - generic [ref=e268]: Entrega Rápida
+                - generic [ref=e269]:
+                    - generic [ref=e270]: ⭐
+                    - generic [ref=e271]: Calidad Garantizada
+    - alert [ref=e272]
+```

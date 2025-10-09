@@ -1,0 +1,80 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+    - alert [ref=e2]
+    - generic [ref=e4]:
+        - banner [ref=e5]:
+            - generic [ref=e7]:
+                - generic [ref=e8]:
+                    - link "← Volver a Wonder Nails Studio" [ref=e9] [cursor=pointer]:
+                        - /url: /t/wondernails
+                    - heading "Mi Carrito" [level=1] [ref=e10]
+                - navigation [ref=e11]:
+                    - link "Servicios" [ref=e12] [cursor=pointer]:
+                        - /url: /t/wondernails/services
+                    - link "Productos" [ref=e13] [cursor=pointer]:
+                        - /url: /t/wondernails/products
+                    - link "Login" [ref=e14] [cursor=pointer]:
+                        - /url: /t/wondernails/login
+        - generic [ref=e16]:
+            - generic [ref=e17]:
+                - heading "Mi Carrito" [level=1] [ref=e18]
+                - paragraph [ref=e19]: 2 artículo(s) en tu carrito
+            - generic [ref=e20]:
+                - generic [ref=e23]:
+                    - generic [ref=e24]:
+                        - generic [ref=e25]:
+                            - generic [ref=e26]: ✨
+                            - generic [ref=e27]:
+                                - heading "Gel Manicure" [level=3] [ref=e28]
+                                - paragraph [ref=e29]: Long-lasting gel polish manicure
+                                - generic [ref=e30]:
+                                    - generic [ref=e31]: Servicio
+                                    - generic [ref=e32]: 60 min
+                            - generic [ref=e33]:
+                                - button "-" [ref=e34] [cursor=pointer]
+                                - generic [ref=e35]: "1"
+                                - button "+" [ref=e36] [cursor=pointer]
+                            - generic [ref=e38]: $55.00
+                            - button "🗑️" [ref=e39] [cursor=pointer]
+                        - generic [ref=e40]:
+                            - generic [ref=e41]: 🧡
+                            - generic [ref=e42]:
+                                - heading "Sunset Orange Polish" [level=3] [ref=e43]
+                                - paragraph [ref=e44]: Vibrant orange nail polish with high-gloss finish
+                                - generic [ref=e46]: Producto
+                            - generic [ref=e47]:
+                                - button "-" [ref=e48] [cursor=pointer]
+                                - generic [ref=e49]: "2"
+                                - button "+" [ref=e50] [cursor=pointer]
+                            - generic [ref=e51]:
+                                - generic [ref=e52]: $44.00
+                                - generic [ref=e53]: $22.00 c/u
+                            - button "🗑️" [ref=e54] [cursor=pointer]
+                    - link "← Continuar comprando" [ref=e56] [cursor=pointer]:
+                        - /url: /t/wondernails/products
+                - generic [ref=e57]:
+                    - generic [ref=e58]:
+                        - heading "Resumen del Pedido" [level=2] [ref=e59]
+                        - generic [ref=e60]:
+                            - generic [ref=e61]:
+                                - generic [ref=e62]: Subtotal
+                                - generic [ref=e63]: $99.00
+                            - generic [ref=e64]:
+                                - generic [ref=e65]: Impuestos
+                                - generic [ref=e66]: $9.90
+                            - generic [ref=e68]:
+                                - generic [ref=e69]: Total
+                                - generic [ref=e70]: $108.90
+                        - button "Proceder al Pago" [ref=e71] [cursor=pointer]
+                        - generic [ref=e72]:
+                            - paragraph [ref=e73]: "Aceptamos:"
+                            - generic [ref=e74]: 💳 💰 📱
+                        - generic [ref=e76]: 🔒 Compra segura y protegida
+                    - generic [ref=e77]:
+                        - heading "Código Promocional" [level=3] [ref=e78]
+                        - generic [ref=e79]:
+                            - textbox "Ingresa tu código" [ref=e80]
+                            - button "Aplicar" [ref=e81] [cursor=pointer]
+```

@@ -6,16 +6,17 @@ import { Metadata } from "next";
 import { LoginForm } from "@/components/auth/LoginForm";
 
 interface PageProps {
-  params: {
+  params: Promise<{
     tenant: string;
-  };
+  }>;
 }
 
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   try {
-    const tenantData = await getTenantDataForPage(params.tenant);
+    const resolvedParams = await params;
+    const tenantData = await getTenantDataForPage(resolvedParams.tenant);
 
     return {
       title: `Iniciar Sesión - ${tenantData.name}`,
@@ -30,6 +31,8 @@ export async function generateMetadata({
 }
 
 export default async function LoginPage({ params }: PageProps) {
+  const resolvedParams = await params;
+
   // Resolve tenant to ensure it exists and is valid
   const resolvedTenant = await resolveTenant();
 
@@ -38,7 +41,7 @@ export default async function LoginPage({ params }: PageProps) {
   }
 
   // Fetch tenant data from database
-  const tenantData = await getTenantDataForPage(params.tenant);
+  const tenantData = await getTenantDataForPage(resolvedParams.tenant);
   const branding = tenantData.branding as any;
 
   return (
@@ -68,14 +71,14 @@ export default async function LoginPage({ params }: PageProps) {
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
           {/* Login Form */}
           <LoginForm
-            tenantSlug={params.tenant}
+            tenantSlug={resolvedParams.tenant}
             primaryColor={branding.primaryColor}
           />
 
           {/* Forgot Password Link */}
           <div className="mt-4 text-center">
             <a
-              href={`/t/${params.tenant}/forgot-password`}
+              href={`/t/${resolvedParams.tenant}/forgot-password`}
               className="text-sm font-medium hover:opacity-80"
               style={{ color: branding.primaryColor }}
             >
@@ -101,7 +104,8 @@ export default async function LoginPage({ params }: PageProps) {
               <form
                 action={async () => {
                   "use server";
-                  await signIn("google", { redirectTo: `/t/${params.tenant}` });
+                  const p = await params;
+                  await signIn("google", { redirectTo: `/t/${p.tenant}` });
                 }}
               >
                 <button
@@ -124,7 +128,7 @@ export default async function LoginPage({ params }: PageProps) {
             <p className="text-sm text-gray-600">
               ¿No tienes cuenta?{" "}
               <a
-                href={`/t/${params.tenant}/register`}
+                href={`/t/${resolvedParams.tenant}/register`}
                 className="font-medium hover:opacity-80"
                 style={{ color: branding.primaryColor }}
               >
@@ -136,7 +140,7 @@ export default async function LoginPage({ params }: PageProps) {
           {/* Back to store */}
           <div className="mt-6 text-center">
             <a
-              href={`/t/${params.tenant}`}
+              href={`/t/${resolvedParams.tenant}`}
               className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
             >
               ← Volver a la tienda

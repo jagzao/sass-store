@@ -1,19 +1,19 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
-import { db } from '@sass-store/database';
-import { mediaAssets, tenantQuotas } from '@sass-store/database';
-import { eq, sql } from 'drizzle-orm';
-import { resolveTenant } from '@/lib/tenant-resolver';
-import { validateApiKey } from '@/lib/auth';
-import { checkRateLimit, checkTenantQuota } from '@/lib/rate-limit';
-import { createAuditLog } from '@/lib/audit';
-import { MediaProcessor, STANDARD_VARIANTS } from '@/lib/media/processor';
+import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+import { db } from "@sass-store/database";
+import { mediaAssets, tenantQuotas } from "@sass-store/database";
+import { eq, sql } from "drizzle-orm";
+import { resolveTenant } from "@/lib/tenant-resolver";
+import { validateApiKey } from "@/lib/auth";
+import { checkRateLimit, checkTenantQuota } from "@/lib/rate-limit";
+import { createAuditLog } from "@/lib/audit";
+import { MediaProcessor, STANDARD_VARIANTS } from "@/lib/media/processor";
 
 const uploadSchema = z.object({
-  assetType: z.enum(['product', 'staff', 'service', 'branding', 'gallery']),
+  assetType: z.enum(["product", "staff", "service", "branding", "gallery"]),
   entityId: z.string().optional(),
-  variants: z.array(z.string()).default(['thumb', 'card', 'hd']),
-  qualityMode: z.enum(['normal', 'eco', 'freeze']).default('normal')
+  variants: z.array(z.string()).default(["thumb", "card", "hd"]),
+  qualityMode: z.enum(["normal", "eco", "freeze"]).default("normal"),
 });
 
 export async function POST(request: NextRequest) {
@@ -21,44 +21,35 @@ export async function POST(request: NextRequest) {
     // Validate API key
     const authResult = await validateApiKey(request);
     if (!authResult.success) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Resolve tenant
     const tenant = await resolveTenant(request);
     if (!tenant) {
-      return NextResponse.json(
-        { error: 'Tenant not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Tenant not found" }, { status: 404 });
     }
 
     // Check rate limits
-    const rateLimitResult = await checkRateLimit(tenant.id, 'media:upload');
+    const rateLimitResult = await checkRateLimit(tenant.id, "media:upload");
     if (!rateLimitResult.success) {
       return NextResponse.json(
-        { error: 'Rate limit exceeded' },
+        { error: "Rate limit exceeded" },
         { status: 429 }
       );
     }
 
     // Parse form data
     const formData = await request.formData();
-    const file = formData.get('file') as File;
-    const metadataJson = formData.get('metadata') as string;
+    const file = formData.get("file") as File;
+    const metadataJson = formData.get("metadata") as string;
 
     if (!file) {
-      return NextResponse.json(
-        { error: 'No file provided' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
 
     // Validate metadata
-    const metadata = uploadSchema.parse(JSON.parse(metadataJson || '{}'));
+    const metadata = uploadSchema.parse(JSON.parse(metadataJson || "{}"));
 
     // Convert file to buffer
     const arrayBuffer = await file.arrayBuffer();
@@ -70,28 +61,29 @@ export async function POST(request: NextRequest) {
     // Validate image
     const validation = processor.validateImage(buffer);
     if (!validation.valid) {
-      return NextResponse.json(
-        { error: validation.error },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: validation.error }, { status: 400 });
     }
 
     // Check storage quota before processing
-    const quotaResult = await checkTenantQuota(tenant.id, 'storage', buffer.length);
+    const quotaResult = await checkTenantQuota(
+      tenant.id,
+      "storage",
+      buffer.length
+    );
     if (!quotaResult.allowed) {
       return NextResponse.json(
         {
-          error: 'Storage quota exceeded',
+          error: "Storage quota exceeded",
           usage: quotaResult.usage,
           limit: quotaResult.limit,
-          resetDate: quotaResult.resetDate
+          resetDate: quotaResult.resetDate,
         },
         { status: 429 }
       );
     }
 
     // Check for existing asset with same content hash
-    const contentHash = processor['generateContentHash'](buffer);
+    const contentHash = processor["generateContentHash"](buffer);
     const existingAsset = await db
       .select()
       .from(mediaAssets)
@@ -101,12 +93,10 @@ export async function POST(request: NextRequest) {
     if (existingAsset.length > 0) {
       // Check if it belongs to the same tenant
       if (existingAsset[0].tenantId === tenant.id) {
-        return NextResponse.json(
-          {
-            data: existingAsset[0],
-            message: 'File already exists for this tenant'
-          }
-        );
+        return NextResponse.json({
+          data: existingAsset[0],
+          message: "File already exists for this tenant",
+        });
       } else {
         // Create a reference to existing asset (deduplication)
         const reference = await db
@@ -125,21 +115,22 @@ export async function POST(request: NextRequest) {
             dominantColor: existingAsset[0].dominantColor,
             blurhash: existingAsset[0].blurhash,
             variants: existingAsset[0].variants,
-            metadata: { deduplicated: true, originalAssetId: existingAsset[0].id }
+            metadata: {
+              deduplicated: true,
+              originalAssetId: existingAsset[0].id,
+            },
           })
           .returning();
 
-        return NextResponse.json(
-          {
-            data: reference[0],
-            message: 'File deduplicated from existing asset'
-          }
-        );
+        return NextResponse.json({
+          data: reference[0],
+          message: "File deduplicated from existing asset",
+        });
       }
     }
 
     // Process image
-    const selectedVariants = STANDARD_VARIANTS.filter(v =>
+    const selectedVariants = STANDARD_VARIANTS.filter((v) =>
       metadata.variants.includes(v.name)
     );
 
@@ -148,7 +139,7 @@ export async function POST(request: NextRequest) {
       stripExif: true,
       generateBlurhash: true,
       extractDominantColor: true,
-      qualityMode: metadata.qualityMode
+      qualityMode: metadata.qualityMode,
     });
 
     // Store variants (in production, this would upload to R2)
@@ -178,8 +169,8 @@ export async function POST(request: NextRequest) {
         variants: variantKeys,
         metadata: {
           qualityMode: metadata.qualityMode,
-          originalFilename: file.name
-        }
+          originalFilename: file.name,
+        },
       })
       .returning();
 
@@ -189,48 +180,52 @@ export async function POST(request: NextRequest) {
       .set({
         storageUsedBytes: quotaResult.usage + processed.metadata.totalSize,
         mediaCount: sql`media_count + 1`,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       })
       .where(eq(tenantQuotas.tenantId, tenant.id));
 
     // Create audit log
     await createAuditLog({
       tenantId: tenant.id,
-      userId: authResult.userId,
-      action: 'media:upload',
-      entityType: 'media_asset',
-      entityId: newAsset[0].id,
-      changes: {
+      actorId: authResult.userId,
+      action: "media:upload",
+      targetTable: "media_assets",
+      targetId: newAsset[0].id,
+      data: {
         uploaded: {
           filename: file.name,
           size: processed.metadata.originalSize,
-          variants: variantKeys.length
-        }
-      }
+          variants: variantKeys.length,
+        },
+      },
     });
 
     return NextResponse.json(
       {
         data: {
           ...newAsset[0],
-          urls: generateAssetUrls(tenant.slug, metadata.assetType, newAsset[0].id, variantKeys)
-        }
+          urls: generateAssetUrls(
+            tenant.slug,
+            metadata.assetType,
+            newAsset[0].id,
+            variantKeys
+          ),
+        },
       },
       { status: 201 }
     );
-
   } catch (error) {
-    console.error('Media upload error:', error);
+    console.error("Media upload error:", error);
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Invalid metadata', details: error.errors },
+        { error: "Invalid metadata", details: error.errors },
         { status: 400 }
       );
     }
 
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: "Internal server error" },
       { status: 500 }
     );
   }
@@ -242,12 +237,13 @@ function generateAssetUrls(
   assetId: string,
   variants: string[]
 ): Record<string, string> {
-  const baseUrl = process.env.MEDIA_CDN_URL || 'https://media.sassstore.com';
+  const baseUrl = process.env.MEDIA_CDN_URL || "https://media.sassstore.com";
   const urls: Record<string, string> = {};
 
-  variants.forEach(variant => {
-    const [name, format] = variant.split('.');
-    urls[variant] = `${baseUrl}/tenants/${tenantSlug}/${assetType}/${assetId}/${variant}`;
+  variants.forEach((variant) => {
+    const [name, format] = variant.split(".");
+    urls[variant] =
+      `${baseUrl}/tenants/${tenantSlug}/${assetType}/${assetId}/${variant}`;
   });
 
   return urls;

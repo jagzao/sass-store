@@ -1,0 +1,65 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+    - alert [ref=e2]
+    - generic [ref=e4]:
+        - banner [ref=e5]:
+            - generic [ref=e7]:
+                - generic [ref=e8]:
+                    - link "← Volver a Wonder Nails Studio" [ref=e9] [cursor=pointer]:
+                        - /url: /t/wondernails
+                    - heading "Checkout" [level=1] [ref=e10]
+                - navigation [ref=e11]:
+                    - link "Servicios" [ref=e12] [cursor=pointer]:
+                        - /url: /t/wondernails/services
+                    - link "Productos" [ref=e13] [cursor=pointer]:
+                        - /url: /t/wondernails/products
+                    - link "Carrito" [ref=e14] [cursor=pointer]:
+                        - /url: /t/wondernails/cart
+        - generic [ref=e16]:
+            - generic [ref=e17]:
+                - heading "Checkout" [level=1] [ref=e18]
+                - paragraph [ref=e19]: Completa tu compra de forma segura
+            - generic [ref=e20]:
+                - generic [ref=e21]:
+                    - heading "Tu Pedido" [level=2] [ref=e22]
+                    - generic [ref=e23]:
+                        - generic [ref=e24]:
+                            - generic [ref=e25]:
+                                - generic [ref=e26]: 💅
+                                - generic [ref=e27]:
+                                    - heading "Gel Manicure" [level=3] [ref=e28]
+                                    - paragraph [ref=e29]: "Cantidad: 1 | Servicio"
+                            - generic [ref=e30]: $45.00
+                        - generic [ref=e31]:
+                            - generic [ref=e32]:
+                                - generic [ref=e33]: 💅
+                                - generic [ref=e34]:
+                                    - heading "Esmalte Premium" [level=3] [ref=e35]
+                                    - paragraph [ref=e36]: "Cantidad: 2 | Producto"
+                            - generic [ref=e37]: $30.00
+                    - generic [ref=e38]:
+                        - generic [ref=e39]:
+                            - generic [ref=e40]: Subtotal
+                            - generic [ref=e41]: $75.00
+                        - generic [ref=e42]:
+                            - generic [ref=e43]: Envío
+                            - generic [ref=e44]: Gratis
+                        - generic [ref=e45]:
+                            - generic [ref=e46]: Total
+                            - generic [ref=e47]: $75.00
+                - generic [ref=e48]:
+                    - heading "Información del Cliente" [level=2] [ref=e49]
+                    - generic [ref=e50]:
+                        - generic [ref=e51]:
+                            - generic [ref=e52]: Nombre Completo *
+                            - textbox "Juan Pérez" [ref=e53]
+                        - generic [ref=e54]:
+                            - generic [ref=e55]: Email *
+                            - textbox "tu@email.com" [ref=e56]
+                        - generic [ref=e57]:
+                            - generic [ref=e58]: Teléfono
+                            - textbox "+52 555 123 4567" [ref=e59]
+                        - button "Continuar al pago" [disabled] [ref=e61]
+```

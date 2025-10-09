@@ -7,8 +7,8 @@ import Link from "next/link";
 export default function ResetPasswordPage() {
   const params = useParams();
   const searchParams = useSearchParams();
-  const tenantSlug = params.tenant as string;
-  const token = searchParams.get("token");
+  const tenantSlug = params?.tenant as string;
+  const token = searchParams?.get("token");
   const [tenantData, setTenantData] = useState<any>(null);
 
   const [password, setPassword] = useState("");

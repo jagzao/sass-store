@@ -196,48 +196,48 @@ FROM tenants t WHERE t.slug = 'nom-nom';
 
 -- WONDER NAILS Staff
 INSERT INTO staff (tenant_id, name, role, email, phone, specialties, photo, active, metadata)
-SELECT t.id, 'Marialicia Villafuerte Hurtado', 'Dueña y Especialista Principal', 'marialiciavh1984@gmail.mx', '+52 1 55 6406 8409', '["manicure", "pedicure", "nail-art", "gel-extensions"]', '/staff/marialicia.jpg', true,
+SELECT t.id, 'Marialicia Villafuerte Hurtado', 'Dueña y Especialista Principal', 'marialiciavh1984@gmail.mx', '+52 1 55 6406 8409', '["manicure", "pedicure", "nail-art", "gel-extensions"]'::jsonb, '/staff/marialicia.jpg', true,
   '{"experience_years": 8, "certifications": ["OPI Certified", "CND Certified"], "languages": ["español", "inglés"], "specialties_detail": ["Uñas acrílicas", "Nail art personalizado", "Manicure spa", "Pedicure médico"]}'::jsonb
 FROM tenants t WHERE t.slug = 'wondernails'
 
 UNION ALL
 
 -- VIGI STUDIO Staff
-SELECT t.id, 'Marialicia Villafuerte', 'Manicurista', 'marialicia@vigistudio.mx', '+525621990000', '["manicure", "pedicure", "nail-art"]', '/staff/marialicia-vigi.jpg', true,
+SELECT t.id, 'Marialicia Villafuerte', 'Manicurista', 'marialicia@vigistudio.mx', '+525621990000', '["manicure", "pedicure", "nail-art"]'::jsonb, '/staff/marialicia-vigi.jpg', true,
   '{"experience_years": 6, "specialties_detail": ["Manicure profesional", "Pedicure spa", "Nail art"]}'::jsonb
 FROM tenants t WHERE t.slug = 'vigistudio'
 
 UNION ALL
-SELECT t.id, 'Viridiana', 'Especialista en Depilación Láser', 'viridiana@vigistudio.mx', '+525621990001', '["depilacion-laser", "depilacion-tradicional"]', '/staff/viridiana.jpg', true,
+SELECT t.id, 'Viridiana', 'Especialista en Depilación Láser', 'viridiana@vigistudio.mx', '+525621990001', '["depilacion-laser", "depilacion-tradicional"]'::jsonb, '/staff/viridiana.jpg', true,
   '{"experience_years": 5, "certifications": ["Laser Certified"], "specialties_detail": ["Depilación láser", "Tratamientos de piel"]}'::jsonb
 FROM tenants t WHERE t.slug = 'vigistudio'
 
 UNION ALL
-SELECT t.id, 'Ivonne', 'Esteticista', 'ivonne@vigistudio.mx', '+525621990002', '["estetica-facial", "tratamientos-piel", "limpiezas"]', '/staff/ivonne.jpg', true,
+SELECT t.id, 'Ivonne', 'Esteticista', 'ivonne@vigistudio.mx', '+525621990002', '["estetica-facial", "tratamientos-piel", "limpiezas"]'::jsonb, '/staff/ivonne.jpg', true,
   '{"experience_years": 7, "specialties_detail": ["Estética facial", "Limpiezas profundas", "Tratamientos anti-edad"]}'::jsonb
 FROM tenants t WHERE t.slug = 'vigistudio'
 
 UNION ALL
-SELECT t.id, 'Gina', 'Masajista', 'gina@vigistudio.mx', '+525621990003', '["masajes", "terapia-relajante", "reflexologia"]', '/staff/gina.jpg', true,
+SELECT t.id, 'Gina', 'Masajista', 'gina@vigistudio.mx', '+525621990003', '["masajes", "terapia-relajante", "reflexologia"]'::jsonb, '/staff/gina.jpg', true,
   '{"experience_years": 4, "specialties_detail": ["Masajes relajantes", "Terapia de relajación", "Reflexología"]}'::jsonb
 FROM tenants t WHERE t.slug = 'vigistudio'
 
 UNION ALL
 
 -- CENTRO TENÍSTICO Staff
-SELECT t.id, 'Manlio Villafuerte', 'Instructor Principal', 'manlio@tenisticoelite.mx', '+52 1 595 116 3490', '["tenis-individual", "entrenamiento-avanzado", "tecnica"]', '/staff/manlio.jpg', true,
+SELECT t.id, 'Manlio Villafuerte', 'Instructor Principal', 'manlio@tenisticoelite.mx', '+52 1 595 116 3490', '["tenis-individual", "entrenamiento-avanzado", "tecnica"]'::jsonb, '/staff/manlio.jpg', true,
   '{"experience_years": 12, "certifications": ["PTR Certified"], "specialties_detail": ["Entrenamiento individual", "Técnica avanzada", "Competencia"]}'::jsonb
 FROM tenants t WHERE t.slug = 'centro-tenistico'
 
 UNION ALL
-SELECT t.id, 'Sergio Villafuerte', 'Instructor Asistente', 'sergio@tenisticoelite.mx', '+525536901478', '["tenis-grupal", "entrenamiento-principiantes", "condicionamiento"]', '/staff/sergio.jpg', true,
+SELECT t.id, 'Sergio Villafuerte', 'Instructor Asistente', 'sergio@tenisticoelite.mx', '+525536901478', '["tenis-grupal", "entrenamiento-principiantes", "condicionamiento"]'::jsonb, '/staff/sergio.jpg', true,
   '{"experience_years": 8, "specialties_detail": ["Clases grupales", "Principiantes", "Condicionamiento físico"], "location": "Texcoco, Estado de México"}'::jsonb
 FROM tenants t WHERE t.slug = 'centro-tenistico'
 
 UNION ALL
 
 -- DELIRIOS Staff
-SELECT t.id, 'Fernando Villafuerte', 'Chef Ejecutivo', 'fernando@delirios.mx', '+52 1 56 1079 9217', '["cocina-saludable", "nutricion", "entrenador-personal"]', '/staff/fernando.jpg', true,
+SELECT t.id, 'Fernando Villafuerte', 'Chef Ejecutivo', 'fernando@delirios.mx', '+52 1 56 1079 9217', '["cocina-saludable", "nutricion", "entrenador-personal"]'::jsonb, '/staff/fernando.jpg', true,
   '{"experience_years": 10, "certifications": ["Chef Saludable"], "specialties_detail": ["Cocina saludable", "Nutrición deportiva", "Planes alimenticios"], "location": "Distrito Federal"}'::jsonb
 FROM tenants t WHERE t.slug = 'delirios';
 

@@ -1,0 +1,176 @@
+{
+  "id": "swarm_1759967913947_d79597ba3",
+  "featureName": "Corregir los errores críticos de Next.js 15 async headers y params, aplicar las migraciones RLS, y mejorar tests hasta 100%",
+  "status": "active",
+  "progress": 50,
+  "currentAgent": "SECURITY",
+  "tasks": [
+    {
+      "id": "task_0",
+      "agent": "ARCHITECT",
+      "description": "Valida arquitectura y estructura del proyecto",
+      "status": "completed",
+      "progress": 100,
+      "dependencies": [],
+      "startedAt": "2025-10-08T23:58:33.950Z",
+      "output": [
+        "🏗️  Validando arquitectura del proyecto...",
+        "📁 Validando estructura de carpetas...",
+        "✓ Estructura de carpetas correcta",
+        "📦 Analizando dependencias...",
+        "✓ Dependencias validadas",
+        "🎨 Validando patrones de código...",
+        "ℹ️  2 sugerencias de mejora encontradas",
+        "✓ Patrones validados",
+        "✓ Arquitectura validada exitosamente"
+      ],
+      "artifacts": [
+        "architecture-report.md"
+      ],
+      "completedAt": "2025-10-08T23:58:33.959Z"
+    },
+    {
+      "id": "task_1",
+      "agent": "DEVELOPER",
+      "description": "Implementa código y features",
+      "status": "completed",
+      "progress": 100,
+      "dependencies": [
+        "task_0"
+      ],
+      "startedAt": "2025-10-08T23:58:33.959Z",
+      "output": [
+        "💻 Iniciando implementación...",
+        "📋 Feature: Corregir los errores críticos de Next.js 15 async headers y params, aplicar las migraciones RLS, y mejorar tests hasta 100%",
+        "📁 Creando estructura de archivos...",
+        "   ✓ Creado: apps/web/features/Corregir los errores críticos de Next.js 15 async headers y params, aplicar las migraciones RLS, y mejorar tests hasta 100%",
+        "   ✓ Creado: packages/core/Corregir los errores críticos de Next.js 15 async headers y params, aplicar las migraciones RLS, y mejorar tests hasta 100%-service",
+        "📝 Generando archivos...",
+        "   ✓ apps/web/features/Corregir los errores críticos de Next.js 15 async headers y params, aplicar las migraciones RLS, y mejorar tests hasta 100%/index.tsx",
+        "   ✓ packages/core/Corregir los errores críticos de Next.js 15 async headers y params, aplicar las migraciones RLS, y mejorar tests hasta 100%-service/index.ts",
+        "✓ 2 archivos generados",
+        "✓ Implementación completada"
+      ],
+      "artifacts": [
+        "feature-implementation.md"
+      ],
+      "completedAt": "2025-10-08T23:58:33.969Z"
+    },
+    {
+      "id": "task_2",
+      "agent": "QA",
+      "description": "Crea y actualiza tests automáticamente",
+      "status": "completed",
+      "progress": 100,
+      "dependencies": [
+        "task_1"
+      ],
+      "startedAt": "2025-10-08T23:58:33.970Z",
+      "output": {
+        "testsCreated": 1,
+        "testsPassed": 0,
+        "testsFailed": 0,
+        "coverage": 0
+      },
+      "completedAt": "2025-10-08T23:58:36.774Z"
+    },
+    {
+      "id": "task_3",
+      "agent": "CODE_QUALITY",
+      "description": "Valida estándares de código",
+      "status": "completed",
+      "progress": 100,
+      "dependencies": [
+        "task_2"
+      ],
+      "startedAt": "2025-10-08T23:58:36.774Z",
+      "output": {
+        "totalIssues": 0,
+        "errors": 0,
+        "warnings": 0,
+        "fixed": 0,
+        "report": "## Code Quality Report\n\n**Total Issues:** 0\n- Errors: 0\n- Warnings: 0\n- Info: 0\n- Auto-fixed: 0\n\n"
+      },
+      "completedAt": "2025-10-08T23:58:41.496Z"
+    },
+    {
+      "id": "task_4",
+      "agent": "SECURITY",
+      "description": "Escanea vulnerabilidades de seguridad",
+      "status": "failed",
+      "progress": 100,
+      "dependencies": [
+        "task_3"
+      ],
+      "startedAt": "2025-10-08T23:58:41.498Z",
+      "output": {
+        "totalIssues": 2,
+        "critical": 2,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "info": 0,
+        "issues": [
+          {
+            "file": "packages/database/schema.ts",
+            "line": 0,
+            "severity": "critical",
+            "category": "Missing RLS",
+            "title": "Row Level Security not enabled",
+            "description": "Database lacks RLS policies for multi-tenant isolation",
+            "recommendation": "Enable RLS policies on all tables to prevent data leakage",
+            "owaspCategory": "A01",
+            "cwe": "CWE-284"
+          },
+          {
+            "file": "drizzle.config.ts",
+            "line": 0,
+            "severity": "critical",
+            "category": "Missing RLS",
+            "title": "Row Level Security not enabled",
+            "description": "Database lacks RLS policies for multi-tenant isolation",
+            "recommendation": "Enable RLS policies on all tables to prevent data leakage",
+            "owaspCategory": "A01",
+            "cwe": "CWE-284"
+          }
+        ],
+        "report": "# 🔒 Security Scan Report 2025\n\n**Scan Date:** 2025-10-08T23:58:45.350Z\n**Standards:** OWASP Top 10:2025, Next.js Security Best Practices\n\n## 📊 Summary\n\n**Total Issues:** 2\n\n| Severity | Count | Status |\n|----------|-------|--------|\n| 🔴 Critical | 2 | ❌ FAIL |\n| 🟠 High | 0 | ✅ Pass |\n| 🟡 Medium | 0 | ✅ Pass |\n| 🟢 Low | 0 | ℹ️ Info |\n\n## 🎯 OWASP Top 10:2025 Coverage\n\n- 🔴 **A01: Broken Access Control** - 2 issue(s)\n- ✅ **A02: Cryptographic Failures** - 0 issue(s)\n- ✅ **A03: Injection** - 0 issue(s)\n- ✅ **A04: Insecure Design** - 0 issue(s)\n- ✅ **A05: Security Misconfiguration** - 0 issue(s)\n- ✅ **A06: Vulnerable and Outdated Components** - 0 issue(s)\n- ✅ **A07: Identification and Authentication Failures** - 0 issue(s)\n- ✅ **A08: Software and Data Integrity Failures** - 0 issue(s)\n- ✅ **A09: Security Logging and Monitoring Failures** - 0 issue(s)\n- ✅ **A10: Server-Side Request Forgery (SSRF)** - 0 issue(s)\n- ✅ **A11: AI/LLM Security Risks** - 0 issue(s)\n\n## 🔴 CRITICAL ISSUES - IMMEDIATE ACTION REQUIRED\n\n### 1. Row Level Security not enabled\n- **File:** `packages/database/schema.ts:0`\n- **Category:** Missing RLS\n- **OWASP:** A01\n- **CWE:** CWE-284\n- **Description:** Database lacks RLS policies for multi-tenant isolation\n- **💡 Recommendation:** Enable RLS policies on all tables to prevent data leakage\n\n### 2. Row Level Security not enabled\n- **File:** `drizzle.config.ts:0`\n- **Category:** Missing RLS\n- **OWASP:** A01\n- **CWE:** CWE-284\n- **Description:** Database lacks RLS policies for multi-tenant isolation\n- **💡 Recommendation:** Enable RLS policies on all tables to prevent data leakage\n\n## 🎯 Verdict\n\n❌ **SECURITY SCAN FAILED**\n\n**Action Required:** Fix 2 critical issue(s) before deployment.\n**Blocking Deployment:** YES\n",
+        "passed": false
+      },
+      "completedAt": "2025-10-08T23:58:45.352Z",
+      "blockedReason": "🚨 SECURITY FAILED: Found 2 critical security issues!"
+    },
+    {
+      "id": "task_5",
+      "agent": "TESTER",
+      "description": "Validación final e integración",
+      "status": "pending",
+      "progress": 0,
+      "dependencies": [
+        "task_4"
+      ]
+    },
+    {
+      "id": "task_6",
+      "agent": "REVIEWER",
+      "description": "Code review y mejoras",
+      "status": "pending",
+      "progress": 0,
+      "dependencies": [
+        "task_5"
+      ]
+    },
+    {
+      "id": "task_7",
+      "agent": "DEPLOYER",
+      "description": "Preparación y deployment",
+      "status": "pending",
+      "progress": 0,
+      "dependencies": [
+        "task_6"
+      ]
+    }
+  ],
+  "createdAt": "2025-10-08T23:58:33.947Z",
+  "updatedAt": "2025-10-08T23:58:45.353Z"
+}
