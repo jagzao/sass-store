@@ -4,12 +4,14 @@ import { TopNav } from "@/components/navigation/top-nav";
 import { getTenantDataForPage } from "@/lib/db/tenant-service";
 
 interface PageProps {
-  params: {
+  params: Promise<{
     tenant: string;
-  };
+  }>;
 }
 
 export default async function ContentAdminPage({ params }: PageProps) {
+  const resolvedParams = await params;
+
   // Resolve tenant to ensure it exists and is valid
   const resolvedTenant = await resolveTenant();
 
@@ -18,7 +20,7 @@ export default async function ContentAdminPage({ params }: PageProps) {
   }
 
   // Fetch tenant data from database
-  const tenantData = await getTenantDataForPage(params.tenant);
+  const tenantData = await getTenantDataForPage(resolvedParams.tenant);
   const branding = tenantData.branding as any;
   const contact = tenantData.contact as any;
 
@@ -41,7 +43,7 @@ export default async function ContentAdminPage({ params }: PageProps) {
               <div>
                 <div className="flex items-center space-x-3">
                   <a
-                    href={`/t/${params.tenant}/admin`}
+                    href={`/t/${resolvedParams.tenant}/admin`}
                     className="text-indigo-600 hover:text-indigo-700"
                   >
                     ← Panel Admin
@@ -57,7 +59,7 @@ export default async function ContentAdminPage({ params }: PageProps) {
               </div>
               <div className="flex space-x-3">
                 <a
-                  href={`/t/${params.tenant}`}
+                  href={`/t/${resolvedParams.tenant}`}
                   target="_blank"
                   className="flex items-center px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
                 >
@@ -351,7 +353,7 @@ export default async function ContentAdminPage({ params }: PageProps) {
                     Galería de Imágenes
                   </h3>
                   <a
-                    href={`/t/${params.tenant}/admin/gallery`}
+                    href={`/t/${resolvedParams.tenant}/admin/gallery`}
                     className="text-indigo-600 hover:text-indigo-700 text-sm"
                   >
                     Ver todas →

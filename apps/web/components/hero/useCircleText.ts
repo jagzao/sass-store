@@ -20,8 +20,10 @@ export function generateCircleTextChars(text: string): CircleTextChar[] {
 }
 
 export function useCircleText(text?: string) {
-  const defaultText = text || "DELIRIOS — CODING AND DESIGN WEBSITE —";
-  return generateCircleTextChars(defaultText);
+  const defaultText = text || "DELIRIOS — CODING AND DESIGN WEBSITE — YOUTUBE — ";
+  // Repetir el texto para llenar el círculo completamente
+  const repeatedText = (defaultText + defaultText).trim();
+  return generateCircleTextChars(repeatedText);
 }
 
 export default useCircleText;

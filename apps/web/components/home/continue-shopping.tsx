@@ -92,13 +92,34 @@ export function ContinueShopping() {
   };
 
   const handleContinue = (item: UnfinishedItem) => {
-    // TODO: Navigate to appropriate step (cart/checkout/payment) with tenant context
-    // Action handled by useCart hook
+    // Navigate to appropriate step based on progress
+    let targetUrl: string;
+
+    switch (item.progress) {
+      case 'cart':
+        targetUrl = `/t/${item.tenant}/cart`;
+        break;
+      case 'checkout':
+        targetUrl = `/t/${item.tenant}/checkout`;
+        break;
+      case 'payment':
+        targetUrl = `/t/${item.tenant}/checkout?step=payment`;
+        break;
+      default:
+        targetUrl = `/t/${item.tenant}/cart`;
+    }
+
+    window.location.href = targetUrl;
   };
 
   const handleRemove = (item: UnfinishedItem) => {
-    // TODO: Remove from saved items (tenant-scoped)
-    // Action handled by useCart hook
+    // Remove from saved items (tenant-scoped)
+    // This would connect to an API endpoint in production
+    if (confirm(`¿Eliminar "${item.name}" de tu lista?`)) {
+      // API call would go here: DELETE /api/saved-items/${item.id}
+      console.log(`Removing item ${item.id} for tenant ${item.tenant}`);
+      // TODO: Connect to actual API endpoint when implemented
+    }
   };
 
   const getTimeAgo = (dateString: string) => {

@@ -1,344 +1,259 @@
-/* HeroDelirios CSS Module - Delirios Slider with Circular Text & Blur Effects */
-
+/* HeroDelirios - Estilos principales */
 .hero {
   position: relative;
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
   overflow: hidden;
-  background-color: #17232a;
-  background-image: radial-gradient(rgba(255, 255, 255, 0.2), transparent 50%);
+  background: 
+    radial-gradient(
+      circle at center,
+      #2E3A3F 0%,
+      #0E1214 100%
+    ),
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.06'/%3E%3C/svg%3E");
+  background-blend-mode: overlay;
   display: flex;
   align-items: center;
   justify-content: center;
-  --radius: calc(100vw / 6);
+  padding: 2rem;
+  --radius: min(40vw, 450px); /* Aún más pequeño para que las imágenes dominen */
+  outline: none;
 }
 
+/* Contenedor del slider */
 .slider {
   position: relative;
   width: 100%;
-  height: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+/* Lista de items */
+.list {
+  position: absolute;
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-/* Item List (Carousel Track) */
-.list {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  gap: 2rem;
-  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-  will-change: transform;
-}
-
-.item {
-  position: relative;
-  width: calc(var(--radius) * 2);
-  height: calc(var(--radius) * 2);
-  flex-shrink: 0;
-  border-radius: 50%;
-  overflow: hidden;
-  transform: rotate(45deg) scale(0.98);
-  filter: blur(6px) brightness(0.9);
-  transition:
-    filter 0.25s ease,
-    transform 0.5s cubic-bezier(0.33, 1, 0.68, 1);
-  will-change: transform, filter;
-}
-
-.item img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  transform: rotate(-45deg);
+  top: 0;
+  left: 0;
+  padding: 2rem 0;
+  gap: 1vw; /* Pequeño gap positivo */
+}
+
+/* Item individual */
+.item {
+  position: relative;
+  width: calc(38vw * 3); /* 3 veces más grande: 38vw * 3 = 114vw */
+  height: calc(38vw * 3); /* Forzar altura explícita */
+  max-width: 1800px;
+  max-height: 1800px;
+  aspect-ratio: 1/1; /* Círculo perfecto */
+  border-radius: 50%;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); /* Reducido tiempo de transición */
+  will-change: transform, filter, opacity;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5); /* Más sombra para dar profundidad */
+  opacity: 0.85; /* Más visible */
+  filter: blur(2px); /* Menos blur para mejor visibilidad */
+  transform: scale(1.0); /* Sin reducción de escala inicial */
 }
 
 .item.active {
-  transform: rotate(0deg) scale(1);
-  filter: none;
+  opacity: 1;
+  filter: blur(0);
+  transform: scale(1);
   z-index: 2;
 }
 
-/* Circle with rotating text - FIXED: centered + mask + backdrop-filter */
+/* Imagen del platillo */
+.heroImg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Círculo de texto */
 .circle {
   position: absolute;
-  inset: 0;
-  margin: auto;
-  width: min(68vmin, 780px);
-  aspect-ratio: 1;
-  transform-origin: center;
-  mask: radial-gradient(closest-side, #000 68%, #0000 69%);
-  -webkit-mask: radial-gradient(closest-side, #000 68%, #0000 69%);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  z-index: 100;
-  pointer-events: none;
-  will-change: transform;
-}
-
-@keyframes circleRotate {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.circleText {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.circleChar {
-  position: absolute;
+  width: var(--radius);
+  height: var(--radius);
+  top: 50%;
   left: 50%;
-  top: 50%;
-  font-size: 14px;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.7);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  transform-origin: 0 240px;
-  transform: rotate(var(--rotate));
+  transform: translate(-50%, -50%);
+  z-index: 15;
+  pointer-events: none;
+  opacity: 0.85; /* Ligeramente transparente para no dominar tanto */
 }
 
-/* Content */
+.circleSvg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Contenido */
 .content {
-  position: absolute;
-  left: 5%;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 101;
-  max-width: 500px;
+  position: relative;
+  z-index: 20;
+  text-align: center;
+  margin-top: 2rem;
+  max-width: 800px;
+  padding: 0 1rem;
 }
 
 .eyebrow {
   font-size: 12px;
   font-weight: 700;
+  letter-spacing: 0.3em;
   text-transform: uppercase;
-  letter-spacing: 0.2em;
-  color: rgba(255, 255, 255, 0.6);
+  color: #B7BDC2;
   margin-bottom: 1rem;
+  display: block;
 }
 
 .title {
-  font-size: clamp(3rem, 8vw, 6rem);
-  font-weight: 900;
-  line-height: 1.1;
-  color: #fff;
-  margin-bottom: 2rem;
-  text-shadow: 2px 4px 12px rgba(0, 0, 0, 0.4);
-  position: relative;
-}
-
-.title::before {
-  content: "";
-  position: absolute;
-  left: -20px;
-  top: -10px;
-  width: 60px;
-  height: 60px;
-  background-image: url("/tenants/delirios/leaves.png");
-  background-size: contain;
-  background-repeat: no-repeat;
-  opacity: 0.8;
-}
-
-.cta {
-  padding: 1rem 2.5rem;
-  background: var(--accent, #fff);
-  color: #17232a;
-  border: none;
-  border-radius: 50px;
-  font-size: 1rem;
+  font-size: clamp(2.5rem, 5vw, 3.5rem);
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.33, 1, 0.68, 1);
-  box-shadow: 0 4px 20px rgba(255, 255, 255, 0.3);
-  position: relative;
-  overflow: hidden;
+  line-height: 1.2;
+  color: #F4F6F8;
+  margin: 0 0 1.5rem 0;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  font-family: 'Inter', -apple-system, sans-serif;
 }
 
-.cta::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    120deg,
-    transparent,
-    rgba(255, 255, 255, 0.4),
-    transparent
-  );
-  transform: translateX(-100%);
+/* Botón CTA */
+.cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 46px;
+  padding: 0 2rem;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1A1D1F;
+  background: linear-gradient(135deg, #EAD6A0 0%, #C8A560 100%);
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  margin-top: 1rem;
 }
 
 .cta:hover {
-  transform: scale(1.05);
-  box-shadow: 0 8px 30px rgba(255, 255, 255, 0.5);
-}
-
-.cta:hover::before {
-  animation: shimmer 0.6s forwards;
-}
-
-@keyframes shimmer {
-  to {
-    transform: translateX(100%);
-  }
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(200, 165, 96, 0.25);
 }
 
 .cta:active {
-  transform: scale(0.98);
+  transform: translateY(0);
 }
 
-/* Navigation Buttons */
-.prev,
-.next {
+/* Navegación */
+.navigation {
   position: absolute;
   top: 50%;
-  transform: translateY(-50%);
-  width: 60px;
-  height: 60px;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 1rem;
+  z-index: 40;
+  pointer-events: none;
+}
+
+.prev,
+.next {
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  color: #fff;
-  font-size: 2rem;
-  font-weight: 300;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  z-index: 102;
+  background: rgba(14, 18, 20, 0.5);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(232, 235, 238, 0.1);
+  color: #E8EBEE;
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.prev {
-  left: 2rem;
-}
-
-.next {
-  right: 2rem;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: all 0.3s ease;
 }
 
 .prev:hover,
 .next:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: translateY(-50%) scale(1.1);
+  background: rgba(14, 18, 20, 0.7);
+  transform: translateY(-2px);
 }
 
-.prev:active,
-.next:active {
-  transform: translateY(-50%) scale(0.95);
-}
-
-.prev.disabled,
-.next.disabled {
+.prev:disabled,
+.next:disabled {
   opacity: 0.3;
   cursor: not-allowed;
-  pointer-events: none;
 }
 
-/* Progress Bar */
+/* Barra de progreso */
 .progress {
   position: absolute;
   bottom: 2rem;
   left: 50%;
   transform: translateX(-50%);
-  width: 200px;
-  height: 4px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 2px;
+  width: 120px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.1);
   overflow: hidden;
-  z-index: 102;
+  z-index: 20;
 }
 
 .progress i {
   display: block;
   height: 100%;
-  background: rgba(255, 255, 255, 0.8);
+  width: 100%;
+  background: #E8EBEE;
   transform-origin: left center;
-  transform: scaleX(0);
   will-change: transform;
 }
 
+/* Efecto de reducción de movimiento */
+.reducedMotion .item,
+.reducedMotion .heroImg,
+.reducedMotion .circle {
+  animation: none !important;
+  transition: none !important;
+}
+
 /* Responsive */
-@media (max-width: 768px) {
-  .hero {
-    --radius: calc(100vw / 4);
-  }
-
-  .circle {
-    width: min(60vmin, 400px);
-  }
-
-  .circleChar {
-    font-size: 10px;
-    transform-origin: 0 calc(min(60vmin, 400px) / 2);
-  }
-
-  .content {
-    left: 50%;
-    top: 10%;
-    transform: translateX(-50%);
-    text-align: center;
-    max-width: 90%;
-  }
-
-  .title {
-    font-size: 2.5rem;
-  }
-
-  .title::before {
-    display: none;
-  }
-
-  .prev,
-  .next {
-    width: 44px;
-    height: 44px;
-    font-size: 1.5rem;
-  }
-
-  .prev {
-    left: 1rem;
-  }
-
-  .next {
-    right: 1rem;
+@media (max-width: 1024px) {
+  .item {
+    width: 60%;
   }
 }
 
-/* Reduced Motion Support */
-@media (prefers-reduced-motion: reduce) {
-  .item,
-  .circle,
-  .cta,
+@media (max-width: 768px) {
+  .item {
+    width: 80%;
+  }
+  
+  .title {
+    font-size: 2rem;
+  }
+  
+  .navigation {
+    padding: 0 0.5rem;
+  }
+  
   .prev,
-  .next,
-  .list {
-    transition-duration: 0.01ms !important;
-    animation-duration: 0.01ms !important;
-  }
-
-  @keyframes circleRotate {
-    from,
-    to {
-      transform: rotate(0deg);
-    }
-  }
-
-  .cta::before {
-    display: none;
+  .next {
+    width: 36px;
+    height: 36px;
   }
 }

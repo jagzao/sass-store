@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, useRef, ReactNode } from 'react';
 
 /**
  * Live Region Context for Screen Reader Announcements
@@ -30,11 +30,10 @@ const LiveRegionContext = createContext<LiveRegionContextType | undefined>(undef
 
 export function LiveRegionProvider({ children }: { children: ReactNode }) {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
-  const [announcementId, setAnnouncementId] = useState(0);
+  const idCounter = useRef(0);
 
   const announce = useCallback((message: string, priority: AnnouncementPriority = 'polite') => {
-    const id = announcementId + 1;
-    setAnnouncementId(id);
+    const id = Date.now() * 1000 + (++idCounter.current); // Ensures unique ID with high precision
 
     // Add announcement
     setAnnouncements(prev => [...prev, { message, priority, id }]);
@@ -43,7 +42,7 @@ export function LiveRegionProvider({ children }: { children: ReactNode }) {
     setTimeout(() => {
       setAnnouncements(prev => prev.filter(a => a.id !== id));
     }, 3000);
-  }, [announcementId]);
+  }, []);
 
   const politeMessages = announcements.filter(a => a.priority === 'polite');
   const assertiveMessages = announcements.filter(a => a.priority === 'assertive');

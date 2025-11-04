@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useTenantSlug } from '@/lib/tenant/client-resolver';
+import { useCart } from '@/lib/cart/cart-store';
 
 interface TenantInfo {
   id: string;
@@ -19,6 +20,13 @@ export function TopNav({ tenantInfo }: TopNavProps) {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
   const currentTenantSlug = useTenantSlug();
+  const items = useCart((state) => state.items);
+  const _deduplicateItems = useCart((state) => state._deduplicateItems);
+
+  // Filter items for current tenant, deduplicate, and calculate total
+  const totalItems = _deduplicateItems(
+    items.filter((item) => item.variant?.tenant === currentTenantSlug)
+  ).reduce((total, item) => total + item.quantity, 0);
 
   // Get tenant-specific categories from tenantInfo or default fallback
   const categories = tenantInfo?.categories && tenantInfo.categories.length > 0
@@ -32,12 +40,20 @@ export function TopNav({ tenantInfo }: TopNavProps) {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement tenant-scoped search
-    console.log('Search:', {
-      query: searchQuery,
-      category: selectedCategory,
-      tenant: currentTenantSlug
+
+    if (!searchQuery.trim()) return;
+
+    // Construct search URL with tenant scope and filters
+    const searchParams = new URLSearchParams({
+      q: searchQuery,
+      ...(selectedCategory !== 'all' && { category: selectedCategory })
     });
+
+    const searchUrl = isZoSystemTenant
+      ? `/search?${searchParams.toString()}`
+      : `/t/${currentTenantSlug}/search?${searchParams.toString()}`;
+
+    window.location.href = searchUrl;
   };
 
   const isZoSystemTenant = currentTenantSlug === 'zo-system';
@@ -144,9 +160,11 @@ export function TopNav({ tenantInfo }: TopNavProps) {
                 <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
                 </svg>
-                <span className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
-                  0
-                </span>
+                {totalItems > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs rounded-full min-w-[20px] h-5 px-1.5 flex items-center justify-center font-bold shadow-md">
+                    {totalItems > 99 ? '99+' : totalItems}
+                  </span>
+                )}
               </div>
               <span className="text-sm font-semibold">Carrito</span>
             </Link>

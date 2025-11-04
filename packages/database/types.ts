@@ -8,7 +8,8 @@ import {
   mediaAssets,
   tenantQuotas,
   auditLogs,
-  productReviews
+  productReviews,
+  users
 } from './schema';
 
 // Select types (for data coming from DB)
@@ -33,6 +34,8 @@ export type AuditLogInsert = InferInsertModel<typeof auditLogs>;
 
 export type ProductReview = InferSelectModel<typeof productReviews>;
 export type ProductReviewInsert = InferInsertModel<typeof productReviews>;
+export type User = InferSelectModel<typeof users>;
+export type UserInsert = InferInsertModel<typeof users>;
 
 // Utility types
 export type TenantMode = 'catalog' | 'booking';
@@ -40,3 +43,9 @@ export type TenantStatus = 'active' | 'inactive' | 'suspended';
 export type BookingStatus = 'pending' | 'confirmed' | 'completed' | 'cancelled';
 export type MediaAssetType = 'product' | 'staff' | 'service' | 'branding' | 'gallery';
 export type ReviewStatus = 'pending' | 'approved' | 'rejected';
+
+// Extended User types for NextAuth
+export interface ExtendedUser extends User {
+  role?: string;
+  tenantSlug?: string;
+}

@@ -1,152 +1,243 @@
-#!/usr/bin/env node
-/**
- * Apply RLS (Row Level Security) to Database
- * This script applies the RLS policies to your PostgreSQL database
- */
+import { drizzle } from 'drizzle-orm/postgres-js';
+import postgres from 'postgres';
+import * as schema from '../../packages/database/schema';
 
-import * as fs from 'fs';
-import * as path from 'path';
-import { Pool } from 'pg';
-import * as dotenv from 'dotenv';
+// Get database URL from environment
+const DATABASE_URL = process.env.DATABASE_URL;
 
-// Load environment variables from .env.local
-dotenv.config({ path: path.join(__dirname, '..', '.env.local') });
+if (!DATABASE_URL) {
+  console.error('❌ DATABASE_URL environment variable is not set');
+  process.exit(1);
+}
 
-const SQL_FILE = path.join(__dirname, '..', 'packages', 'database', 'migrations', 'add-rls-policies.sql');
+// Create connection without pooling for migration
+const migrationClient = postgres(DATABASE_URL, { max: 1 });
 
-async function applyRLS() {
-  console.log('🔒 Applying Row Level Security (RLS) to Database...\n');
-  console.log('════════════════════════════════════════════════════════\n');
+// Create drizzle instance for migrations
+const db = drizzle(migrationClient, { schema });
 
-  // Check if SQL file exists
-  if (!fs.existsSync(SQL_FILE)) {
-    console.error('❌ Error: SQL file not found at:', SQL_FILE);
-    process.exit(1);
-  }
-
-  // Read SQL file
-  const sql = fs.readFileSync(SQL_FILE, 'utf-8');
-  console.log(`📄 Loaded SQL file: ${SQL_FILE}`);
-  console.log(`📊 SQL Size: ${(sql.length / 1024).toFixed(2)} KB\n`);
-
-  // Get database connection string from environment
-  const connectionString = process.env.DATABASE_URL;
-
-  if (!connectionString) {
-    console.error('❌ Error: DATABASE_URL environment variable not set');
-    console.log('\n💡 Set it in your .env file or run:');
-    console.log('   export DATABASE_URL="postgresql://user:pass@host:5432/db"');
-    process.exit(1);
-  }
-
-  console.log('🔌 Connecting to database...');
-  console.log(`   Host: ${new URL(connectionString).host}`);
-  console.log(`   Database: ${new URL(connectionString).pathname.slice(1)}\n`);
-
-  const pool = new Pool({
-    connectionString,
-  });
+async function applyRLSPolicies() {
+  console.log('Applying Row Level Security policies...');
 
   try {
-    // Test connection
-    await pool.query('SELECT NOW()');
-    console.log('✅ Connected to database\n');
+    // Enable RLS on all multi-tenant tables
+    await db.execute(`
+      ALTER TABLE products ENABLE ROW LEVEL SECURITY;
+      ALTER TABLE services ENABLE ROW LEVEL SECURITY;
+      ALTER TABLE staff ENABLE ROW LEVEL SECURITY;
+      ALTER TABLE bookings ENABLE ROW LEVEL SECURITY;
+      ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
+      ALTER TABLE payments ENABLE ROW LEVEL SECURITY;
+    `);
 
-    console.log('📝 Executing RLS policies...');
-    console.log('   This may take a few seconds...\n');
+    console.log('✓ RLS enabled on all multi-tenant tables');
 
-    // Execute SQL
-    await pool.query(sql);
+    // Create RLS policies for each table
+    await db.execute(`
+      -- Products table RLS
+      DROP POLICY IF EXISTS tenant_isolation_products_select ON products;
+      DROP POLICY IF EXISTS tenant_isolation_products_insert ON products;
+      DROP POLICY IF EXISTS tenant_isolation_products_update ON products;
+      DROP POLICY IF EXISTS tenant_isolation_products_delete ON products;
+      
+      CREATE POLICY tenant_isolation_products_select ON products
+        FOR SELECT
+        USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+      
+      CREATE POLICY tenant_isolation_products_insert ON products
+        FOR INSERT
+        WITH CHECK (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+      
+      CREATE POLICY tenant_isolation_products_update ON products
+        FOR UPDATE
+        USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid)
+        WITH CHECK (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+      
+      CREATE POLICY tenant_isolation_products_delete ON products
+        FOR DELETE
+        USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+    `);
 
-    console.log('✅ RLS policies applied successfully!\n');
+    console.log('✓ RLS policies applied to products table');
 
-    // Verify RLS is enabled
-    console.log('🔍 Verifying RLS installation...\n');
+    await db.execute(`
+      -- Services table RLS
+      DROP POLICY IF EXISTS tenant_isolation_services_select ON services;
+      DROP POLICY IF EXISTS tenant_isolation_services_insert ON services;
+      DROP POLICY IF EXISTS tenant_isolation_services_update ON services;
+      DROP POLICY IF EXISTS tenant_isolation_services_delete ON services;
+      
+      CREATE POLICY tenant_isolation_services_select ON services
+        FOR SELECT
+        USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+      
+      CREATE POLICY tenant_isolation_services_insert ON services
+        FOR INSERT
+        WITH CHECK (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+      
+      CREATE POLICY tenant_isolation_services_update ON services
+        FOR UPDATE
+        USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid)
+        WITH CHECK (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+      
+      CREATE POLICY tenant_isolation_services_delete ON services
+        FOR DELETE
+        USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+    `);
 
-    const verifyQuery = `
-      SELECT schemaname, tablename, rowsecurity
-      FROM pg_tables
-      WHERE schemaname = 'public'
-        AND tablename IN ('products', 'services', 'users', 'appointments', 'staff', 'cart_items', 'orders', 'order_items', 'payments')
-      ORDER BY tablename;
-    `;
+    console.log('✓ RLS policies applied to services table');
 
-    const result = await pool.query(verifyQuery);
+    await db.execute(`
+      -- Staff table RLS
+      DROP POLICY IF EXISTS tenant_isolation_staff_select ON staff;
+      DROP POLICY IF EXISTS tenant_isolation_staff_insert ON staff;
+      DROP POLICY IF EXISTS tenant_isolation_staff_update ON staff;
+      DROP POLICY IF EXISTS tenant_isolation_staff_delete ON staff;
+      
+      CREATE POLICY tenant_isolation_staff_select ON staff
+        FOR SELECT
+        USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+      
+      CREATE POLICY tenant_isolation_staff_insert ON staff
+        FOR INSERT
+        WITH CHECK (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+      
+      CREATE POLICY tenant_isolation_staff_update ON staff
+        FOR UPDATE
+        USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid)
+        WITH CHECK (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+      
+      CREATE POLICY tenant_isolation_staff_delete ON staff
+        FOR DELETE
+        USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+    `);
 
-    console.log('RLS Status:');
-    console.log('────────────────────────────────');
-    for (const row of result.rows) {
-      const status = row.rowsecurity ? '✅ ENABLED' : '❌ DISABLED';
-      console.log(`  ${row.tablename.padEnd(20)} ${status}`);
-    }
+    console.log('✓ RLS policies applied to staff table');
 
-    const enabledCount = result.rows.filter(r => r.rowsecurity).length;
-    const totalCount = result.rows.length;
+    await db.execute(`
+      -- Bookings table RLS
+      DROP POLICY IF EXISTS tenant_isolation_bookings_select ON bookings;
+      DROP POLICY IF EXISTS tenant_isolation_bookings_insert ON bookings;
+      DROP POLICY IF EXISTS tenant_isolation_bookings_update ON bookings;
+      DROP POLICY IF EXISTS tenant_isolation_bookings_delete ON bookings;
+      
+      CREATE POLICY tenant_isolation_bookings_select ON bookings
+        FOR SELECT
+        USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+      
+      CREATE POLICY tenant_isolation_bookings_insert ON bookings
+        FOR INSERT
+        WITH CHECK (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+      
+      CREATE POLICY tenant_isolation_bookings_update ON bookings
+        FOR UPDATE
+        USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid)
+        WITH CHECK (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+      
+      CREATE POLICY tenant_isolation_bookings_delete ON bookings
+        FOR DELETE
+        USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+    `);
 
-    console.log('────────────────────────────────');
-    console.log(`Total: ${enabledCount}/${totalCount} tables with RLS\n`);
+    console.log('✓ RLS policies applied to bookings table');
 
-    if (enabledCount === totalCount) {
-      console.log('🎉 SUCCESS! All tables have RLS enabled.\n');
-    } else {
-      console.log('⚠️  WARNING: Some tables do not have RLS enabled.\n');
-    }
+    await db.execute(`
+      -- Orders table RLS
+      DROP POLICY IF EXISTS tenant_isolation_orders_select ON orders;
+      DROP POLICY IF EXISTS tenant_isolation_orders_insert ON orders;
+      DROP POLICY IF EXISTS tenant_isolation_orders_update ON orders;
+      DROP POLICY IF EXISTS tenant_isolation_orders_delete ON orders;
+      
+      CREATE POLICY tenant_isolation_orders_select ON orders
+        FOR SELECT
+        USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+      
+      CREATE POLICY tenant_isolation_orders_insert ON orders
+        FOR INSERT
+        WITH CHECK (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+      
+      CREATE POLICY tenant_isolation_orders_update ON orders
+        FOR UPDATE
+        USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid)
+        WITH CHECK (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+      
+      CREATE POLICY tenant_isolation_orders_delete ON orders
+        FOR DELETE
+        USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+    `);
 
-    // List policies
-    console.log('📋 Installed Policies:');
-    console.log('────────────────────────────────');
+    console.log('✓ RLS policies applied to orders table');
 
-    const policiesQuery = `
-      SELECT schemaname, tablename, policyname
-      FROM pg_policies
-      WHERE schemaname = 'public'
-      ORDER BY tablename, policyname;
-    `;
+    await db.execute(`
+      -- Payments table RLS
+      DROP POLICY IF EXISTS tenant_isolation_payments_select ON payments;
+      DROP POLICY IF EXISTS tenant_isolation_payments_insert ON payments;
+      DROP POLICY IF EXISTS tenant_isolation_payments_update ON payments;
+      DROP POLICY IF EXISTS tenant_isolation_payments_delete ON payments;
+      
+      CREATE POLICY tenant_isolation_payments_select ON payments
+        FOR SELECT
+        USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+      
+      CREATE POLICY tenant_isolation_payments_insert ON payments
+        FOR INSERT
+        WITH CHECK (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+      
+      CREATE POLICY tenant_isolation_payments_update ON payments
+        FOR UPDATE
+        USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid)
+        WITH CHECK (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+      
+      CREATE POLICY tenant_isolation_payments_delete ON payments
+        FOR DELETE
+        USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+    `);
 
-    const policies = await pool.query(policiesQuery);
-    let currentTable = '';
-    for (const policy of policies.rows) {
-      if (policy.tablename !== currentTable) {
-        console.log(`\n  ${policy.tablename}:`);
-        currentTable = policy.tablename;
-      }
-      console.log(`    - ${policy.policyname}`);
-    }
+    console.log('✓ RLS policies applied to payments table');
 
-    console.log('\n════════════════════════════════════════════════════════\n');
-    console.log('✅ RLS Installation Complete!\n');
-    console.log('🎯 Next Steps:\n');
-    console.log('1. Test RLS: npx ts-node scripts/test-rls.ts');
-    console.log('2. Update code to use RLS helpers');
-    console.log('3. Run security scan: npm run security:full');
-    console.log('4. Deploy to production\n');
+    // Create helper functions
+    await db.execute(`
+      -- Helper Function: Set Tenant Context
+      CREATE OR REPLACE FUNCTION set_tenant_context(tenant_uuid uuid)
+      RETURNS void AS $$
+      BEGIN
+        PERFORM set_config('app.current_tenant_id', tenant_uuid::text, FALSE);
+      END;
+      $$ LANGUAGE plpgsql SECURITY DEFINER;
+
+      -- Helper Function: Get Current Tenant
+      CREATE OR REPLACE FUNCTION get_current_tenant()
+      RETURNS uuid AS $$
+      BEGIN
+        RETURN current_setting('app.current_tenant_id', TRUE)::uuid;
+      EXCEPTION
+        WHEN OTHERS THEN
+          RETURN NULL;
+      END;
+      $$ LANGUAGE plpgsql;
+    `);
+
+    console.log('✓ Helper functions created');
+
+    console.log('\n✅ All RLS policies have been successfully applied!');
+    console.log('\nIMPORTANT: Make sure to run the database migrations first:');
+    console.log('  npm run db:push');
+    console.log('\nThen seed your database:');
+    console.log('  npm run db:seed');
+    console.log('\nThe tenants should be working after these steps.');
 
   } catch (error) {
-    console.error('\n❌ Error applying RLS:', error);
-
-    if (error instanceof Error) {
-      console.error('\nError Details:', error.message);
-
-      if (error.message.includes('already exists')) {
-        console.log('\n💡 Tip: RLS policies may already be installed.');
-        console.log('   To reinstall, drop policies first:');
-        console.log('   DROP POLICY IF EXISTS tenant_isolation_products_select ON products;');
-        console.log('   (Repeat for all policies)\n');
-      } else if (error.message.includes('permission denied')) {
-        console.log('\n💡 Tip: You need SUPERUSER or database owner permissions.');
-        console.log('   Try connecting as postgres user or database owner.\n');
-      }
-    }
-
-    process.exit(1);
+    console.error('❌ Error applying RLS policies:', error);
+    throw error;
   } finally {
-    await pool.end();
-    console.log('🔌 Database connection closed\n');
+    // Close the connection
+    await migrationClient.end();
   }
 }
 
-// Run
-applyRLS().catch(error => {
-  console.error('Fatal error:', error);
-  process.exit(1);
-});
+// Run the function if called directly
+if (require.main === module) {
+  applyRLSPolicies().catch(console.error);
+}
+
+export { applyRLSPolicies };

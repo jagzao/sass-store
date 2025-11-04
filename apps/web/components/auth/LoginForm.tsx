@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 interface LoginFormProps {
   tenantSlug: string;
@@ -11,6 +13,7 @@ export function LoginForm({ tenantSlug, primaryColor }: LoginFormProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -21,21 +24,37 @@ export function LoginForm({ tenantSlug, primaryColor }: LoginFormProps) {
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
 
+    console.log("[LoginForm] Attempting login with:", { email, tenantSlug });
+
     try {
-      const response = await fetch(`/api/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, tenantSlug }),
+      const result = await signIn("credentials", {
+        email,
+        password,
+        tenantSlug,
+        redirect: false,
       });
 
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || "Error al iniciar sesión");
+      console.log("[LoginForm] SignIn result:", result);
+
+      if (result?.error) {
+        console.error("[LoginForm] SignIn error:", result.error);
+        throw new Error("Credenciales inválidas");
       }
 
-      // Redirect to tenant page on success
-      window.location.href = `/t/${tenantSlug}`;
+      if (result?.ok) {
+        console.log(
+          "[LoginForm] SignIn successful, redirecting to:",
+          `/t/${tenantSlug}`
+        );
+        // Store current tenant in localStorage for session persistence
+        localStorage.setItem("currentTenant", tenantSlug);
+        // Redirect to tenant page on success
+        router.push(`/t/${tenantSlug}`);
+      } else {
+        console.warn("[LoginForm] SignIn result not ok:", result);
+      }
     } catch (err: any) {
+      console.error("[LoginForm] Login error:", err);
       setError(err.message);
     } finally {
       setIsLoading(false);
@@ -46,6 +65,7 @@ export function LoginForm({ tenantSlug, primaryColor }: LoginFormProps) {
     <form className="space-y-6" onSubmit={handleSubmit}>
       {error && (
         <div
+          data-testid="error-message"
           className="rounded-md bg-red-50 p-4 border border-red-200"
           role="alert"
         >
@@ -63,6 +83,7 @@ export function LoginForm({ tenantSlug, primaryColor }: LoginFormProps) {
         </label>
         <div className="mt-1">
           <input
+            data-testid="email-input"
             id="email"
             name="email"
             type="email"
@@ -71,7 +92,6 @@ export function LoginForm({ tenantSlug, primaryColor }: LoginFormProps) {
             className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 sm:text-sm"
             style={{
               borderColor: primaryColor,
-              focusRingColor: primaryColor,
             }}
             placeholder="tu@email.com"
           />
@@ -88,6 +108,7 @@ export function LoginForm({ tenantSlug, primaryColor }: LoginFormProps) {
         </label>
         <div className="mt-1 relative">
           <input
+            data-testid="password-input"
             id="password"
             name="password"
             type={showPassword ? "text" : "password"}
@@ -103,7 +124,9 @@ export function LoginForm({ tenantSlug, primaryColor }: LoginFormProps) {
             type="button"
             onClick={() => setShowPassword(!showPassword)}
             className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-600 hover:text-gray-900"
-            aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+            aria-label={
+              showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
+            }
           >
             {showPassword ? (
               <svg
@@ -178,6 +201,7 @@ export function LoginForm({ tenantSlug, primaryColor }: LoginFormProps) {
       {/* Submit button */}
       <div>
         <button
+          data-testid="login-btn"
           type="submit"
           disabled={isLoading}
           className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"

@@ -41,14 +41,16 @@ export default function ForgotPasswordPage() {
         body: JSON.stringify({ email, tenantSlug }),
       });
 
-      const data = await response.json();
-
       if (!response.ok) {
+        const data = await response.json().catch(() => ({ error: "Error al enviar el correo" }));
         throw new Error(data.error || "Error al enviar el correo");
       }
 
+      const data = await response.json().catch(() => ({ success: true }));
+      console.log('[ForgotPassword] Success response:', data);
       setSuccess(true);
     } catch (err: any) {
+      console.error('[ForgotPassword] Error:', err);
       setError(err.message);
     } finally {
       setIsLoading(false);
@@ -89,8 +91,10 @@ export default function ForgotPasswordPage() {
                 </div>
                 <div className="ml-3">
                   <p className="text-sm font-medium text-green-800">
-                    ¡Correo enviado! Revisa tu bandeja de entrada para
-                    restablecer tu contraseña.
+                    Correo enviado
+                  </p>
+                  <p className="text-sm text-green-700 mt-1">
+                    Revisa tu bandeja de entrada para restablecer tu contraseña.
                   </p>
                 </div>
               </div>

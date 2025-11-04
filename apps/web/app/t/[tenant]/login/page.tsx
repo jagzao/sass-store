@@ -34,14 +34,33 @@ export default async function LoginPage({ params }: PageProps) {
   const resolvedParams = await params;
 
   // Resolve tenant to ensure it exists and is valid
-  const resolvedTenant = await resolveTenant();
+  let resolvedTenant;
+  let tenantData;
 
-  if (!resolvedTenant) {
+  try {
+    resolvedTenant = await Promise.race([
+      resolveTenant(),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Tenant resolution timeout')), 5000)
+      )
+    ]);
+
+    if (!resolvedTenant) {
+      notFound();
+    }
+
+    // Fetch tenant data from database with timeout
+    tenantData = await Promise.race([
+      getTenantDataForPage(resolvedParams.tenant),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Tenant data fetch timeout')), 30000)
+      )
+    ]) as any;
+  } catch (error) {
+    console.error('Error loading tenant data:', error);
     notFound();
   }
 
-  // Fetch tenant data from database
-  const tenantData = await getTenantDataForPage(resolvedParams.tenant);
   const branding = tenantData.branding as any;
 
   return (

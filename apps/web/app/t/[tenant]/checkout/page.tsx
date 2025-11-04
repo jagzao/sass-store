@@ -3,19 +3,22 @@ import { getTenantDataForPage } from "@/lib/db/tenant-service";
 import { CheckoutClient } from "./checkout-client";
 
 interface CheckoutPageProps {
-  params: {
+  params: Promise<{
     tenant: string;
-  };
-  searchParams: {
+  }>;
+  searchParams: Promise<{
     service?: string;
-  };
+  }>;
 }
 
 export default async function CheckoutPage({
   params,
   searchParams,
 }: CheckoutPageProps) {
-  const tenantData = await getTenantDataForPage(params.tenant);
+  const resolvedParams = await params;
+  const resolvedSearchParams = await searchParams;
+
+  const tenantData = await getTenantDataForPage(resolvedParams.tenant);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -25,7 +28,7 @@ export default async function CheckoutPage({
           <div className="flex items-center justify-between">
             <div>
               <a
-                href={`/t/${params.tenant}`}
+                href={`/t/${resolvedParams.tenant}`}
                 className="text-sm text-gray-600 hover:text-gray-900 mb-2 inline-block"
               >
                 ← Volver a {tenantData.name}
@@ -39,19 +42,19 @@ export default async function CheckoutPage({
             </div>
             <nav className="flex space-x-4">
               <a
-                href={`/t/${params.tenant}/services`}
+                href={`/t/${resolvedParams.tenant}/services`}
                 className="text-gray-600 hover:text-gray-900"
               >
                 Servicios
               </a>
               <a
-                href={`/t/${params.tenant}/products`}
+                href={`/t/${resolvedParams.tenant}/products`}
                 className="text-gray-600 hover:text-gray-900"
               >
                 Productos
               </a>
               <a
-                href={`/t/${params.tenant}/cart`}
+                href={`/t/${resolvedParams.tenant}/cart`}
                 className="text-gray-600 hover:text-gray-900"
               >
                 Carrito
@@ -63,7 +66,7 @@ export default async function CheckoutPage({
 
       <CheckoutClient
         tenantData={tenantData}
-        selectedServiceId={searchParams.service}
+        selectedServiceId={resolvedSearchParams.service}
       />
     </div>
   );

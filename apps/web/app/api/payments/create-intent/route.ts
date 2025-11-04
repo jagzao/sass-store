@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { headers } from "next/headers";
-import { db } from "@/lib/db/connection";
+import { db, withTenantContext } from "@sass-store/database";
 import { orders, orderItems } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 
@@ -57,38 +57,39 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Fetch order details from database
-    const [order] = await db
-      .select()
-      .from(orders)
-      .where(eq(orders.id, orderId))
-      .limit(1);
+    // Fetch order details and items with RLS context
+    const orderData = await withTenantContext(
+      db,
+      tenantId,
+      null,
+      async (db) => {
+        // Fetch order details
+        const [order] = await db
+          .select()
+          .from(orders)
+          .where(eq(orders.id, orderId))
+          .limit(1);
 
-    if (!order) {
-      return NextResponse.json({ error: "Order not found" }, { status: 404 });
-    }
+        if (!order) {
+          throw new Error("Order not found");
+        }
 
-    // Verify order belongs to the current tenant
-    if (order.tenantId !== tenantId) {
-      return NextResponse.json(
-        { error: "Order not found in tenant context" },
-        { status: 404 }
-      );
-    }
+        // Check if order is already paid
+        if (order.status === "paid") {
+          throw new Error("Order is already paid");
+        }
 
-    // Check if order is already paid
-    if (order.status === "paid") {
-      return NextResponse.json(
-        { error: "Order is already paid" },
-        { status: 400 }
-      );
-    }
+        // Fetch order items to calculate total
+        const items = await db
+          .select()
+          .from(orderItems)
+          .where(eq(orderItems.orderId, orderId));
 
-    // Fetch order items to calculate total
-    const items = await db
-      .select()
-      .from(orderItems)
-      .where(eq(orderItems.orderId, orderId));
+        return { order, items };
+      }
+    );
+
+    const { order, items } = orderData;
 
     const totalAmount = items.reduce((sum: number, item: any) => {
       return sum + parseFloat(item.unitPrice as string) * item.quantity;
@@ -120,15 +121,17 @@ export async function POST(request: NextRequest) {
         : undefined,
     });
 
-    // Update order with payment intent ID
-    await db
-      .update(orders)
-      .set({
-        paymentIntentId: paymentIntent.id,
-        status: "payment_pending",
-        updatedAt: new Date(),
-      })
-      .where(eq(orders.id, orderId));
+    // Update order with payment intent ID using RLS context
+    await withTenantContext(db, tenantId, null, async (db) => {
+      await db
+        .update(orders)
+        .set({
+          paymentIntentId: paymentIntent.id,
+          status: "payment_pending",
+          updatedAt: new Date(),
+        })
+        .where(eq(orders.id, orderId));
+    });
 
     return NextResponse.json({
       success: true,

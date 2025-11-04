@@ -1,0 +1,119 @@
+name: 🚀 Deploy to Production
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+    inputs:
+      confirm_deployment:
+        description: 'Type "DEPLOY" to confirm production deployment'
+        required: true
+
+concurrency:
+  group: deploy-prod
+  cancel-in-progress: false
+
+jobs:
+  deploy-prod:
+    name: Deploy to Production Environment
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && contains(github.event.inputs.confirm_deployment, 'DEPLOY'))
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🧪 Run comprehensive tests
+        run: |
+          npm run lint
+          npm run typecheck
+          npm run test:unit
+          npm run test:integration
+          npm run test:e2e
+
+      - name: 🔒 Security scan
+        run: npm run swarm:start "production security scan"
+
+      - name: 🏗️ Build application
+        run: npm run build
+        env:
+          NODE_ENV: production
+
+      - name: 📊 Bundle analysis
+        run: |
+          BUNDLE_SIZE=$(du -sb apps/web/.next | cut -f1)
+          MAX_SIZE=262144000  # 250MB in bytes
+
+          if [ $BUNDLE_SIZE -gt $MAX_SIZE ]; then
+            echo "Bundle size ($BUNDLE_SIZE bytes) exceeds limit ($MAX_SIZE bytes)"
+            exit 1
+          fi
+
+          echo "✅ Bundle size check passed: $(($BUNDLE_SIZE / 1024 / 1024))MB"
+
+      - name: 💰 Cost estimation
+        run: |
+          BUNDLE_SIZE_MB=$(echo "scale=2; $(du -sb apps/web/.next | cut -f1) / 1024 / 1024" | bc)
+          ESTIMATED_COST=$(echo "scale=4; $BUNDLE_SIZE_MB * 0.09" | bc)
+
+          if (( $(echo "$ESTIMATED_COST > 5.00" | bc -l) )); then
+            echo "Estimated cost exceeds $5/month budget: \$${ESTIMATED_COST}"
+            exit 1
+          fi
+
+          echo "✅ Cost estimation passed: \$${ESTIMATED_COST}/month"
+
+      - name: 🚀 Deploy to Cloudflare Pages (Production)
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: sass-store-production
+          directory: apps/web/.next
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🐳 Deploy API to Cloud Run (Production)
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: sass-store-api-production
+          image: gcr.io/${{ secrets.GCP_PROJECT_ID }}/sass-store-api:${{ github.sha }}
+          region: us-central1
+          env_vars: |
+            NODE_ENV=production
+            DATABASE_URL=${{ secrets.PRODUCTION_DATABASE_URL }}
+            JWT_SECRET=${{ secrets.PRODUCTION_JWT_SECRET }}
+            REDIS_URL=${{ secrets.PRODUCTION_REDIS_URL }}
+
+      - name: 🧪 Run smoke tests
+        run: |
+          sleep 60
+          npm run test:smoke -- --baseURL=https://sassstore.com
+
+      - name: 🩺 Production health check
+        run: |
+          curl -f https://sassstore.com/api/health || exit 1
+          curl -f https://sassstore.com/api/metrics || exit 1
+
+      - name: 📢 Notify production deployment
+        run: |
+          echo "🎉 PRODUCTION DEPLOYMENT COMPLETED SUCCESSFULLY!"
+          echo "🌐 Frontend: https://sassstore.com"
+          echo "🔌 API: https://sass-store-api-prod-abc123.run.app"
+          echo "🧪 All tests: PASSED"
+          echo "🔒 Security: CLEARED"
+          echo "📊 Bundle size: OK"
+          echo "💰 Cost estimate: OK"
+
+      - name: 📊 Update deployment status
+        run: |
+          echo "DEPLOYMENT_STATUS=PRODUCTION_READY" >> $GITHUB_ENV
+          echo "DEPLOYMENT_TIMESTAMP=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_ENV

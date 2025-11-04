@@ -91,13 +91,15 @@ export function BookAgain() {
   }
 
   const handleBookNow = (service: Service) => {
-    // TODO: Direct booking with preferred staff and time
-    // Action handled by useCart hook
+    // Direct booking with preferred staff and time
+    const bookingUrl = `/t/${service.tenant}/booking/${service.id}?staff=${encodeURIComponent(service.preferredStaff)}&time=${service.nextAvailableSlot}`;
+    window.location.href = bookingUrl;
   };
 
   const handleSeeSchedule = (service: Service) => {
-    // TODO: Show all available times
-    // Action handled by useCart hook
+    // Show all available times for this service
+    const scheduleUrl = `/t/${service.tenant}/services/${service.id}/schedule`;
+    window.location.href = scheduleUrl;
   };
 
   return (

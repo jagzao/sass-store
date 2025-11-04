@@ -4,8 +4,8 @@
  * Watchdog continuo que revisa y reanuda sesiones automáticamente
  */
 
-import { autoResume } from './autoresume';
-import { logger } from './logger';
+import { autoResume } from "./autoresume";
+import { logger } from "./logger";
 
 class AutoResumeDaemon {
   private intervalId?: NodeJS.Timeout;
@@ -18,16 +18,22 @@ class AutoResumeDaemon {
     const config = autoResume.readConfig();
 
     if (!config.enabled) {
-      logger.warn('DAEMON', 'autoresume', 'Autoresume está deshabilitado en config');
+      logger.warn(
+        "DAEMON",
+        "autoresume",
+        "Autoresume está deshabilitado en config"
+      );
       return;
     }
 
-    // Usar intervalo configurado o default
-    if (config.checkIntervalMinutes) {
-      this.checkIntervalMs = config.checkIntervalMinutes * 60 * 1000;
-    }
+    // Usar intervalo fijo de 5 minutos (el sistema usa windows para scheduling)
+    // El daemon solo verifica periódicamente si hay bundles listos
 
-    logger.info('DAEMON', 'autoresume', `Iniciando daemon con intervalo de ${this.checkIntervalMs / 60000} minutos`);
+    logger.info(
+      "DAEMON",
+      "autoresume",
+      `Iniciando daemon con intervalo de ${this.checkIntervalMs / 60000} minutos`
+    );
 
     // Ejecutar inmediatamente
     this.check();
@@ -38,10 +44,14 @@ class AutoResumeDaemon {
     }, this.checkIntervalMs);
 
     // Mantener el proceso vivo
-    process.on('SIGINT', () => this.stop());
-    process.on('SIGTERM', () => this.stop());
+    process.on("SIGINT", () => this.stop());
+    process.on("SIGTERM", () => this.stop());
 
-    logger.ok('DAEMON', 'autoresume', '✅ Daemon iniciado - Presiona Ctrl+C para detener');
+    logger.ok(
+      "DAEMON",
+      "autoresume",
+      "✅ Daemon iniciado - Presiona Ctrl+C para detener"
+    );
   }
 
   /**
@@ -49,10 +59,14 @@ class AutoResumeDaemon {
    */
   private async check(): Promise<void> {
     try {
-      logger.debug('DAEMON', 'autoresume', '🔍 Verificando sesiones para reanudar...');
+      logger.debug(
+        "DAEMON",
+        "autoresume",
+        "🔍 Verificando sesiones para reanudar..."
+      );
       await autoResume.run();
     } catch (error) {
-      logger.error('DAEMON', 'autoresume', `Error en chequeo: ${error}`);
+      logger.error("DAEMON", "autoresume", `Error en chequeo: ${error}`);
     }
   }
 
@@ -62,7 +76,7 @@ class AutoResumeDaemon {
   stop(): void {
     if (this.intervalId) {
       clearInterval(this.intervalId);
-      logger.info('DAEMON', 'autoresume', '⏹️  Daemon detenido');
+      logger.info("DAEMON", "autoresume", "⏹️  Daemon detenido");
     }
     process.exit(0);
   }

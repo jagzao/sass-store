@@ -4,15 +4,14 @@ import { BuyAgain } from "@/components/home/buy-again";
 import { BookAgain } from "@/components/home/book-again";
 import { ContinueShopping } from "@/components/home/continue-shopping";
 import { Trending } from "@/components/home/trending";
-import { getTenantSlug } from "@/lib/tenant/client-resolver";
 import { TenantService } from "@/lib/db/tenant-service";
+import { headers } from "next/headers";
 // import { MiniCart } from '@/components/cart/mini-cart';
 
 export default async function HomePage() {
-  // For static generation, default to zo-system
-  // Tenant-specific content will be handled on the client side
-  const currentTenant = "zo-system";
-  const isZoSystemTenant = true;
+  const headersList = await headers();
+  const currentTenant = headersList.get("x-tenant") || "zo-system";
+  const isZoSystemTenant = currentTenant === "zo-system";
 
   // Get tenant data for non-zo-system tenants
   let tenantData = null;

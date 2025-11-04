@@ -8,10 +8,21 @@ import { z } from "zod";
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    let body;
+    try {
+      body = await request.json();
+    } catch (jsonError) {
+      console.error('[Register API] Failed to parse JSON:', jsonError);
+      return NextResponse.json(
+        { error: "Datos inválidos" },
+        { status: 400 }
+      );
+    }
+    console.log('[Register API] Received body:', JSON.stringify(body, null, 2));
 
     // Validate with Zod
     const validated = registerSchema.parse(body);
+    console.log('[Register API] Validation passed:', validated);
     const { name, email, password, tenantSlug } = validated;
 
     // Check if user already exists
@@ -62,6 +73,7 @@ export async function POST(request: NextRequest) {
     );
   } catch (error) {
     if (error instanceof z.ZodError) {
+      console.log('[Register API] Zod validation error:', JSON.stringify(error.errors, null, 2));
       return NextResponse.json(
         { error: error.errors[0].message },
         { status: 400 }

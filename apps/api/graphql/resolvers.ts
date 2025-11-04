@@ -1,4 +1,4 @@
-import { db } from "@sass-store/database";
+import { db, withTenantContext } from "@sass-store/database";
 import {
   tenants,
   products,
@@ -56,20 +56,22 @@ export const resolvers = {
     products: async (_: any, { tenantSlug, category, featured }: any) => {
       const tenant = await getTenantBySlug(tenantSlug);
 
-      let conditions = [eq(products.tenantId, tenant.id)];
+      return withTenantContext(db, tenant.id, null, async (db) => {
+        let conditions = [];
 
-      if (category) {
-        conditions.push(eq(products.category, category));
-      }
+        if (category) {
+          conditions.push(eq(products.category, category));
+        }
 
-      if (featured !== undefined) {
-        conditions.push(eq(products.featured, featured));
-      }
+        if (featured !== undefined) {
+          conditions.push(eq(products.featured, featured));
+        }
 
-      return db
-        .select()
-        .from(products)
-        .where(and(...conditions));
+        const whereConditions =
+          conditions.length > 0 ? and(...conditions) : undefined;
+
+        return db.select().from(products).where(whereConditions);
+      });
     },
 
     // Service queries
@@ -90,16 +92,18 @@ export const resolvers = {
     services: async (_: any, { tenantSlug, featured }: any) => {
       const tenant = await getTenantBySlug(tenantSlug);
 
-      let conditions = [eq(services.tenantId, tenant.id)];
+      return withTenantContext(db, tenant.id, null, async (db) => {
+        let conditions = [];
 
-      if (featured !== undefined) {
-        conditions.push(eq(services.featured, featured));
-      }
+        if (featured !== undefined) {
+          conditions.push(eq(services.featured, featured));
+        }
 
-      return db
-        .select()
-        .from(services)
-        .where(and(...conditions));
+        const whereConditions =
+          conditions.length > 0 ? and(...conditions) : undefined;
+
+        return db.select().from(services).where(whereConditions);
+      });
     },
 
     // Review queries
@@ -134,16 +138,18 @@ export const resolvers = {
     bookings: async (_: any, { tenantSlug, status }: any) => {
       const tenant = await getTenantBySlug(tenantSlug);
 
-      let conditions = [eq(bookings.tenantId, tenant.id)];
+      return withTenantContext(db, tenant.id, null, async (db) => {
+        let conditions = [];
 
-      if (status) {
-        conditions.push(eq(bookings.status, status));
-      }
+        if (status) {
+          conditions.push(eq(bookings.status, status));
+        }
 
-      return db
-        .select()
-        .from(bookings)
-        .where(and(...conditions));
+        const whereConditions =
+          conditions.length > 0 ? and(...conditions) : undefined;
+
+        return db.select().from(bookings).where(whereConditions);
+      });
     },
   },
 
@@ -310,10 +316,14 @@ export const resolvers = {
   // Field resolvers
   Tenant: {
     products: async (parent: any) => {
-      return db.select().from(products).where(eq(products.tenantId, parent.id));
+      return withTenantContext(db, parent.id, null,  async (db) => {
+        return db.select().from(products);
+      });
     },
     services: async (parent: any) => {
-      return db.select().from(services).where(eq(services.tenantId, parent.id));
+      return withTenantContext(db, parent.id, null,  async (db) => {
+        return db.select().from(services);
+      });
     },
   },
 
@@ -327,10 +337,12 @@ export const resolvers = {
       return tenant;
     },
     reviews: async (parent: any) => {
-      return db
-        .select()
-        .from(productReviews)
-        .where(eq(productReviews.productId, parent.id));
+      return withTenantContext(db, parent.tenantId, null,  async (db) => {
+        return db
+          .select()
+          .from(productReviews)
+          .where(eq(productReviews.productId, parent.id));
+      });
     },
   },
 
@@ -344,10 +356,12 @@ export const resolvers = {
       return tenant;
     },
     bookings: async (parent: any) => {
-      return db
-        .select()
-        .from(bookings)
-        .where(eq(bookings.serviceId, parent.id));
+      return withTenantContext(db, parent.tenantId, null,  async (db) => {
+        return db
+          .select()
+          .from(bookings)
+          .where(eq(bookings.serviceId, parent.id));
+      });
     },
   },
 

@@ -3,15 +3,17 @@ import { getTenantDataForPage } from "@/lib/db/tenant-service";
 import { BookingClient } from "./booking-client";
 
 interface PageProps {
-  params: {
+  params: Promise<{
     tenant: string;
     id: string;
-  };
+  }>;
 }
 
 export default async function BookingPage({ params }: PageProps) {
+  const resolvedParams = await params;
+
   // Fetch tenant data from database
-  const tenantData = await getTenantDataForPage(params.tenant);
+  const tenantData = await getTenantDataForPage(resolvedParams.tenant);
 
   if (!tenantData) {
     notFound();
@@ -25,7 +27,7 @@ export default async function BookingPage({ params }: PageProps) {
           <div className="flex items-center justify-between">
             <div>
               <a
-                href={`/t/${params.tenant}`}
+                href={`/t/${resolvedParams.tenant}`}
                 className="text-sm text-gray-600 hover:text-gray-900 mb-2 inline-block"
               >
                 ← Volver a {tenantData.name}
@@ -39,19 +41,19 @@ export default async function BookingPage({ params }: PageProps) {
             </div>
             <nav className="flex space-x-4">
               <a
-                href={`/t/${params.tenant}/services`}
+                href={`/t/${resolvedParams.tenant}/services`}
                 className="text-gray-600 hover:text-gray-900"
               >
                 Servicios
               </a>
               <a
-                href={`/t/${params.tenant}/products`}
+                href={`/t/${resolvedParams.tenant}/products`}
                 className="text-gray-600 hover:text-gray-900"
               >
                 Productos
               </a>
               <a
-                href={`/t/${params.tenant}/cart`}
+                href={`/t/${resolvedParams.tenant}/cart`}
                 className="text-gray-600 hover:text-gray-900"
               >
                 Carrito
@@ -61,7 +63,7 @@ export default async function BookingPage({ params }: PageProps) {
         </div>
       </header>
 
-      <BookingClient tenantData={tenantData} serviceId={params.id} />
+      <BookingClient tenantData={tenantData} serviceId={resolvedParams.id} />
     </div>
   );
 }

@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@sass-store/database";
-import { users } from "@sass-store/database/schema";
+import { users, tenants } from "@sass-store/database/schema";
 import { eq } from "drizzle-orm";
 import crypto from "crypto";
 import { forgotPasswordSchema } from "@sass-store/validation/schemas";
 import { z } from "zod";
+import { sendPasswordResetEmail } from "@/lib/email/email-service";
 
 export async function POST(request: NextRequest) {
   try {
@@ -42,21 +43,37 @@ export async function POST(request: NextRequest) {
       })
       .where(eq(users.id, user.id));
 
-    // In production, send email here
-    // For now, we'll log the reset link
+    // Get tenant name for email branding
+    const [tenant] = await db
+      .select()
+      .from(tenants)
+      .where(eq(tenants.slug, tenantSlug))
+      .limit(1);
+
+    // Generate reset link
     const resetLink = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3001'}/t/${tenantSlug}/reset-password?token=${resetToken}`;
 
-    // SECURITY: Redacted sensitive log;
-    console.log('📧 Send this link to:', email);
-
-    // TODO: Integrate with email service (SendGrid, Resend, etc.)
-    // await sendPasswordResetEmail(email, resetLink);
+    // Send password reset email with Resend
+    try {
+      await sendPasswordResetEmail({
+        email,
+        resetLink,
+        tenantName: tenant?.name || tenantSlug,
+        tenantColor: tenant?.branding?.primary_color || '#4F46E5',
+        tenantLogo: tenant?.branding?.logo_url,
+      });
+      console.log('✅ Password reset email sent successfully to:', email);
+    } catch (emailError) {
+      console.error('❌ Failed to send password reset email:', emailError);
+      // Continue anyway - token is saved in database
+      // In production, you might want to handle this differently
+    }
 
     return NextResponse.json(
       {
         success: true,
         message: "Si el correo existe, recibirás un enlace de recuperación",
-        // Remove this in production - only for development
+        // Keep reset link in development for testing
         resetLink: process.env.NODE_ENV === 'development' ? resetLink : undefined,
       },
       { status: 200 }

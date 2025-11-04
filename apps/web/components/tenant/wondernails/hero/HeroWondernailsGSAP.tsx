@@ -51,6 +51,7 @@ const HeroWondernailsGSAP: React.FC<WondernailsCarouselProps> = ({
   const [isPaused, setIsPaused] = useState(false);
   const [showDetail, setShowDetail] = useState(false);
   const [activeIndex, setActiveIndex] = useState(1);
+  const [isAnimating, setIsAnimating] = useState(false);
 
   // Detect prefers-reduced-motion
   const prefersReducedMotion = typeof window !== "undefined"
@@ -235,6 +236,7 @@ const HeroWondernailsGSAP: React.FC<WondernailsCarouselProps> = ({
 
     // Lock navigation
     navLockRef.current = true;
+    setIsAnimating(true);
 
     // Cancel and reschedule autoplay
     cancelAuto();
@@ -267,11 +269,11 @@ const HeroWondernailsGSAP: React.FC<WondernailsCarouselProps> = ({
         // Apply exact positions after FLIP completes
         applyPositions();
         updateAccentColor();
-        parallaxAndStagger("next");
-        unlock();
-        scheduleAuto();
-      },
-    });
+                   parallaxAndStagger("next");
+                   unlock();
+                   scheduleAuto();
+                   setIsAnimating(false);
+                 },    });
   }, [
     applyPositions,
     updateAccentColor,
@@ -288,6 +290,7 @@ const HeroWondernailsGSAP: React.FC<WondernailsCarouselProps> = ({
 
     // Lock navigation
     navLockRef.current = true;
+    setIsAnimating(true);
 
     // Cancel and reschedule autoplay
     cancelAuto();
@@ -323,6 +326,7 @@ const HeroWondernailsGSAP: React.FC<WondernailsCarouselProps> = ({
         parallaxAndStagger("prev");
         unlock();
         scheduleAuto();
+        setIsAnimating(false);
       },
     });
   }, [
@@ -552,6 +556,7 @@ const HeroWondernailsGSAP: React.FC<WondernailsCarouselProps> = ({
       role="region"
       aria-label="Carrusel Wonder Nails"
       aria-roledescription="carousel"
+      data-is-animating={isAnimating}
       aria-live={isPaused ? "off" : "polite"}
       onMouseEnter={pauseAutoPlay}
       onMouseLeave={resumeAutoPlay}

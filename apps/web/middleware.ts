@@ -219,6 +219,6 @@ export const config = {
      * - tenants (tenant assets - images, CSS, etc.)
      * - public static assets
      */
-    "/((?!api|_next/static|_next/image|_next/webpack-hmr|favicon.ico|tenants|.*\\.webp|.*\\.png|.*\\.jpg|.*\\.jpeg|.*\\.svg|.*\\.ico|.*\\.css|.*\\.js|.*\\.json).*)",
+    "/((?!api|_next/static|_next/image|favicon.ico|tenants).*)",
   ],
 };

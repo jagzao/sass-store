@@ -1,17 +1,60 @@
 -- ================================================================
 -- Row Level Security (RLS) Policies for Multi-Tenant Isolation
 -- CRITICAL: Prevents data leakage between tenants
+-- This script is now idempotent and can be run multiple times.
 -- ================================================================
 
+-- ================================================================
+-- Drop Existing Policies to ensure a clean slate
+-- ================================================================
+
+-- Products
+DROP POLICY IF EXISTS tenant_isolation_products_select ON products;
+DROP POLICY IF EXISTS tenant_isolation_products_insert ON products;
+DROP POLICY IF EXISTS tenant_isolation_products_update ON products;
+DROP POLICY IF EXISTS tenant_isolation_products_delete ON products;
+
+-- Services
+DROP POLICY IF EXISTS tenant_isolation_services_select ON services;
+DROP POLICY IF EXISTS tenant_isolation_services_insert ON services;
+DROP POLICY IF EXISTS tenant_isolation_services_update ON services;
+DROP POLICY IF EXISTS tenant_isolation_services_delete ON services;
+
+-- Staff
+DROP POLICY IF EXISTS tenant_isolation_staff_select ON staff;
+DROP POLICY IF EXISTS tenant_isolation_staff_insert ON staff;
+DROP POLICY IF EXISTS tenant_isolation_staff_update ON staff;
+DROP POLICY IF EXISTS tenant_isolation_staff_delete ON staff;
+
+-- Bookings
+DROP POLICY IF EXISTS tenant_isolation_bookings_select ON bookings;
+DROP POLICY IF EXISTS tenant_isolation_bookings_insert ON bookings;
+DROP POLICY IF EXISTS tenant_isolation_bookings_update ON bookings;
+DROP POLICY IF EXISTS tenant_isolation_bookings_delete ON bookings;
+
+-- Orders
+DROP POLICY IF EXISTS tenant_isolation_orders_select ON orders;
+DROP POLICY IF EXISTS tenant_isolation_orders_insert ON orders;
+DROP POLICY IF EXISTS tenant_isolation_orders_update ON orders;
+DROP POLICY IF EXISTS tenant_isolation_orders_delete ON orders;
+
+-- Payments
+DROP POLICY IF EXISTS tenant_isolation_payments_select ON payments;
+DROP POLICY IF EXISTS tenant_isolation_payments_insert ON payments;
+DROP POLICY IF EXISTS tenant_isolation_payments_update ON payments;
+DROP POLICY IF EXISTS tenant_isolation_payments_delete ON payments;
+
+
+-- ================================================================
 -- Enable RLS on all multi-tenant tables
-ALTER TABLE products ENABLE ROW LEVEL SECURITY;
-ALTER TABLE services ENABLE ROW LEVEL SECURITY;
-ALTER TABLE staff ENABLE ROW LEVEL SECURITY;
-ALTER TABLE bookings ENABLE ROW LEVEL SECURITY;
+-- ================================================================
 
-ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
-
-ALTER TABLE payments ENABLE ROW LEVEL SECURITY;
+ALTER TABLE products FORCE ROW LEVEL SECURITY;
+ALTER TABLE services FORCE ROW LEVEL SECURITY;
+ALTER TABLE staff FORCE ROW LEVEL SECURITY;
+ALTER TABLE bookings FORCE ROW LEVEL SECURITY;
+ALTER TABLE orders FORCE ROW LEVEL SECURITY;
+ALTER TABLE payments FORCE ROW LEVEL SECURITY;
 
 -- ================================================================
 -- RLS Policies for Products

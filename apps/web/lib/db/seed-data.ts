@@ -1,5 +1,5 @@
-import { db } from "@sass-store/database";
-import { tenants, services, products, staff } from "@sass-store/database";
+import { db } from "./connection";
+import { tenants, services, products, staff } from "./schema";
 import { eq } from "drizzle-orm";
 
 // Seed data that replaces the TENANTS_DATA mock
@@ -22,7 +22,7 @@ export async function seedTenantData() {
           heroConfig: {
             title: "💅 ¡Transforma tus uñas en obras de arte!",
             subtitle:
-              "El estudio de uñas más exclusivo de México. Especialistas en nail art personalizado y técnicas avanzadas.",
+              "El estudio de uñas más exclusivo de Texcoco. Especialistas en nail art personalizado y técnicas avanzadas.",
             backgroundType: "gradient",
             showContactInfo: true,
             showActionButtons: true,
@@ -45,7 +45,7 @@ export async function seedTenantData() {
         },
         contact: {
           phone: "+52 55 6406 8409",
-          email: "wondernails@gmail.com",
+          email: "marialiciavh1984@gmail.com",
           address:
             "Cda. 1-a Rtno. 21-3, San Lorenzo, 56140 Texcoco de Mora, 56140 México, Méx.",
           website: "https://wondernails.local",
@@ -83,7 +83,8 @@ export async function seedTenantData() {
         contact: {
           phone: "+1-555-0202",
           email: "appointments@vigistudio.local",
-          address: "789 Style Street, Beverly Hills, CA 90210",
+          address:
+            "Cda. 1-a Rtno. 21-3, San Lorenzo, 56140 Texcoco de Mora, 56140 México, Méx.",
           website: "https://vigistudio.local",
           hours: {
             monday: "Closed",
@@ -143,39 +144,39 @@ export async function seedTenantData() {
         },
       },
       {
-        slug: "vainilla-vargas",
-        name: "Vainilla Vargas",
-        description: "Artisanal vanilla products and gourmet extracts",
-        mode: "catalog",
+        slug: "delirios",
+        name: "Delirios",
+        description: "Restaurante gourmet con cocina fusión y experiencias culinarias únicas",
+        mode: "booking",
         status: "active",
         branding: {
-          primaryColor: "#F59E0B",
+          primaryColor: "#8B4513",
           secondaryColor: "#1F2937",
         },
         contact: {
-          phone: "+1-555-0204",
-          email: "orders@vainillavargas.local",
-          address: "654 Artisan Way, Culver City, CA 90232",
-          website: "https://vainillavargas.local",
+          phone: "+52-555-0210",
+          email: "reservas@delirios.local",
+          address: "Av. Reforma 123, CDMX",
+          website: "https://delirios.local",
           hours: {
-            monday: "9:00-17:00",
-            tuesday: "9:00-17:00",
-            wednesday: "9:00-17:00",
-            thursday: "9:00-17:00",
-            friday: "9:00-17:00",
-            saturday: "10:00-15:00",
-            sunday: "Closed",
+            monday: "Closed",
+            tuesday: "13:00-23:00",
+            wednesday: "13:00-23:00",
+            thursday: "13:00-23:00",
+            friday: "13:00-00:00",
+            saturday: "12:00-00:00",
+            sunday: "12:00-22:00",
           },
         },
         location: {
-          lat: 34.0194,
-          lng: -118.3965,
-          timezone: "America/Los_Angeles",
+          lat: 19.4326,
+          lng: -99.1332,
+          timezone: "America/Mexico_City",
         },
         quotas: {
-          maxServices: 0,
-          maxProducts: 200,
-          maxStaff: 5,
+          maxServices: 40,
+          maxProducts: 60,
+          maxStaff: 20,
         },
       },
       {
@@ -270,17 +271,19 @@ export async function seedTenantData() {
 
         console.log(`✅ Created tenant: ${tenant.slug}`);
         return newTenant;
-      }),
+      })
     );
 
-    // Create lookup map
-    const tenantMap = insertedTenants.reduce(
-      (acc, tenant) => {
-        acc[tenant.slug] = tenant.id;
-        return acc;
-      },
-      {} as Record<string, string>,
-    );
+    // Create lookup map (filter out undefined values)
+    const tenantMap = insertedTenants
+      .filter(t => t && t.slug && t.id)
+      .reduce(
+        (acc, tenant) => {
+          acc[tenant.slug] = tenant.id;
+          return acc;
+        },
+        {} as Record<string, string>
+      );
 
     // 2. Seed Services
     const serviceData = [
@@ -424,7 +427,7 @@ export async function seedTenantData() {
           await db.insert(services).values(service);
           console.log(`✅ Created service: ${service.name}`);
         }
-      }),
+      })
     );
 
     // 3. Seed Products
@@ -462,40 +465,6 @@ export async function seedTenantData() {
         featured: false,
         active: true,
         metadata: { image: "🌿", ingredients: ["Vitamin E", "Jojoba Oil"] },
-      },
-      // Vainilla Vargas Products
-      {
-        tenantId: tenantMap["vainilla-vargas"],
-        sku: "vv-vanilla-extract-50ml",
-        name: "Premium Vanilla Extract 50ml",
-        description: "Pure Madagascar vanilla extract, artisanally produced",
-        price: "24.00",
-        category: "extracts",
-        featured: true,
-        active: true,
-        metadata: { image: "🍨", origin: "Madagascar", volume: "50ml" },
-      },
-      {
-        tenantId: tenantMap["vainilla-vargas"],
-        sku: "vv-vanilla-beans-5pc",
-        name: "Vanilla Beans (5 pieces)",
-        description: "Grade A Madagascar vanilla beans",
-        price: "32.00",
-        category: "beans",
-        featured: true,
-        active: true,
-        metadata: { image: "🌿", grade: "A", quantity: 5 },
-      },
-      {
-        tenantId: tenantMap["vainilla-vargas"],
-        sku: "vv-vanilla-paste-100g",
-        name: "Vanilla Bean Paste 100g",
-        description: "Rich vanilla paste with real vanilla bean specks",
-        price: "28.00",
-        category: "pastes",
-        featured: false,
-        active: true,
-        metadata: { image: "🥄", weight: "100g", specks: true },
       },
       // nom-nom Products
       {
@@ -577,7 +546,7 @@ export async function seedTenantData() {
           await db.insert(products).values(product);
           console.log(`✅ Created product: ${product.name}`);
         }
-      }),
+      })
     );
 
     console.log("🎉 Database seed completed successfully!");

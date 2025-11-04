@@ -1,10 +1,21 @@
 import { Redis } from '@upstash/redis';
 
-// Initialize Upstash Redis client
-const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL!,
-  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
-});
+// Initialize Upstash Redis client only if environment variables are set
+const isRedisConfigured =
+  process.env.UPSTASH_REDIS_REST_URL &&
+  process.env.UPSTASH_REDIS_REST_URL !== 'your-upstash-redis-url' &&
+  process.env.UPSTASH_REDIS_REST_TOKEN &&
+  process.env.UPSTASH_REDIS_REST_TOKEN !== 'your-upstash-redis-token';
+
+const redis = isRedisConfigured
+  ? new Redis({
+      url: process.env.UPSTASH_REDIS_REST_URL!,
+      token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+    })
+  : null;
+
+// In-memory cache fallback for development
+const memoryCache = new Map<string, { data: any; expiresAt: number }>();
 
 /**
  * Cache wrapper with automatic TTL management
@@ -34,22 +45,43 @@ export class CacheManager {
     ttl: number = 3600
   ): Promise<T> {
     try {
-      // Try to get from cache
-      const cached = await redis.get<T>(key);
+      if (redis) {
+        // Try to get from Redis cache
+        const cached = await redis.get<T>(key);
 
-      if (cached !== null) {
+        if (cached !== null) {
+          // SECURITY: Redacted sensitive log;
+          return cached;
+        }
+
+        // Cache miss - fetch from database
         // SECURITY: Redacted sensitive log;
-        return cached;
+        const data = await fetcher();
+
+        // Store in Redis cache
+        await redis.setex(key, ttl, JSON.stringify(data));
+
+        return data;
+      } else {
+        // Use in-memory cache
+        const cached = memoryCache.get(key);
+        const now = Date.now();
+
+        if (cached && cached.expiresAt > now) {
+          return cached.data;
+        }
+
+        // Cache miss or expired - fetch from database
+        const data = await fetcher();
+
+        // Store in memory cache
+        memoryCache.set(key, {
+          data,
+          expiresAt: now + ttl * 1000,
+        });
+
+        return data;
       }
-
-      // Cache miss - fetch from database
-      // SECURITY: Redacted sensitive log;
-      const data = await fetcher();
-
-      // Store in cache
-      await redis.setex(key, ttl, JSON.stringify(data));
-
-      return data;
     } catch (error) {
       // SECURITY: Redacted sensitive log;
       // Fallback to direct fetch if cache fails
@@ -62,7 +94,11 @@ export class CacheManager {
    */
   async invalidate(key: string): Promise<void> {
     try {
-      await redis.del(key);
+      if (redis) {
+        await redis.del(key);
+      } else {
+        memoryCache.delete(key);
+      }
       // SECURITY: Redacted sensitive log;
     } catch (error) {
       // SECURITY: Redacted sensitive log;

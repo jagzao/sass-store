@@ -1,4 +1,4 @@
 // security scan full Feature Component
-export default function security scan full() {
+export default function SecurityScanFull() {
   return <div>security scan full</div>;
 }

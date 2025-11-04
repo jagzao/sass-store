@@ -24,8 +24,7 @@ services:
     ports:
       - "3001:3001"
     environment:
-      - NODE_ENV=development
-      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/sassstore
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/sass_store
       - JWT_SECRET=dev-jwt-secret-change-in-production
       - UPSTASH_REDIS_REST_URL=${UPSTASH_REDIS_REST_URL}
       - UPSTASH_REDIS_REST_TOKEN=${UPSTASH_REDIS_REST_TOKEN}
@@ -41,12 +40,12 @@ services:
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_DB=sassstore
+      - POSTGRES_DB=sass_store
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
 
   redis:
     image: redis:7-alpine
@@ -64,7 +63,7 @@ services:
     volumes:
       - ./scripts/cost-check.sh:/app/cost-check.sh
     environment:
-      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/sassstore
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/sass_store
     depends_on:
       - postgres
 

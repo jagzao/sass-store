@@ -1,8 +1,9 @@
-"use client";
+'use client';
 
-import { useState } from "react";
+import { useState, useRef, useEffect, memo } from "react";
 import { useRouter } from "next/navigation";
 import { useAnnounce } from "@/components/a11y/LiveRegion";
+import { useCart } from "@/lib/cart/cart-store";
 
 export interface ProductCardProps {
   id: string;
@@ -17,7 +18,7 @@ export interface ProductCardProps {
   onAddToCart?: (productId: string, quantity: number) => void;
 }
 
-export default function ProductCard({
+const ProductCard = memo(function ProductCard({
   id,
   name,
   description,
@@ -31,37 +32,118 @@ export default function ProductCard({
 }: ProductCardProps) {
   const router = useRouter();
   const announce = useAnnounce();
-  const [quantity, setQuantity] = useState(0);
+  const { items, updateQuantity, addItem, removeItem } = useCart();
+
+  // Get current quantity from cart
+  const cartItem = items.find(item => item.sku === id);
+  const [localQuantity, setLocalQuantity] = useState(cartItem?.quantity || 0);
   const [showModal, setShowModal] = useState(false);
+  const [isAdding, setIsAdding] = useState(false);
+  const addTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Sync local quantity with cart
+  useEffect(() => {
+    const itemInCart = items.find(item => item.sku === id);
+    setLocalQuantity(itemInCart?.quantity || 0);
+  }, [items, id]);
 
   const handleIncrement = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setQuantity(q => q + 1);
+    const newQuantity = localQuantity + 1;
+    setLocalQuantity(newQuantity);
+
+    // Update cart in real-time
+    if (cartItem) {
+      updateQuantity(id, newQuantity);
+    } else {
+      // Add to cart with quantity 1
+      addItem({
+        sku: id,
+        name,
+        price: Number(price), // Ensure price is a number
+        image: image || metadata?.image || '📦',
+        variant: {
+          tenant: tenantSlug,
+          type: 'product'
+        }
+      }, 1);
+    }
   };
 
   const handleDecrement = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setQuantity(q => Math.max(0, q - 1));
+    const newQuantity = Math.max(0, localQuantity - 1);
+    setLocalQuantity(newQuantity);
+
+    // Update cart in real-time
+    if (newQuantity === 0) {
+      removeItem(id);
+    } else {
+      updateQuantity(id, newQuantity);
+    }
   };
 
   const handleComprarAhora = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (quantity === 0) {
-      announce('Por favor selecciona una cantidad', 'assertive');
-      alert('Por favor selecciona una cantidad');
-      return;
+
+    // Prevent double-click
+    if (isAdding) return;
+
+    // Si la cantidad es 0, agregar automáticamente 1 item
+    if (localQuantity === 0) {
+      const newQuantity = 1;
+      setLocalQuantity(newQuantity);
+
+      // Add to cart
+      addItem({
+        sku: id,
+        name,
+        price: Number(price),
+        image: image || metadata?.image || '📦',
+        variant: {
+          tenant: tenantSlug,
+          type: 'product'
+        }
+      }, newQuantity);
+
+      announce(`Agregado ${newQuantity} ${name} al carrito`, 'polite');
     }
-    // Add to cart and navigate
-    if (onAddToCart) {
-      onAddToCart(id, quantity);
-    }
-    announce(`${quantity} ${name} agregado al carrito`, 'polite');
-    router.push(`/t/${tenantSlug}/cart`);
+
+    // Set adding state to prevent double-click
+    setIsAdding(true);
+
+    const finalQuantity = localQuantity === 0 ? 1 : localQuantity;
+    announce(`Ir al carrito con ${finalQuantity} ${name}`, 'polite');
+
+    // Navigate to cart (items already added via increment/decrement or just added above)
+    addTimeoutRef.current = setTimeout(() => {
+      router.push(`/t/${tenantSlug}/cart`);
+      setIsAdding(false);
+    }, 100);
   };
 
   const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value) || 0;
-    setQuantity(Math.max(0, value));
+    const newQuantity = Math.max(0, value);
+    setLocalQuantity(newQuantity);
+
+    // Update cart in real-time
+    if (newQuantity === 0) {
+      if (cartItem) removeItem(id);
+    } else if (cartItem) {
+      updateQuantity(id, newQuantity);
+    } else {
+      addItem({
+        sku: id,
+        name,
+        price: Number(price), // Ensure price is a number
+        image: image || metadata?.image || '📦',
+        variant: {
+          tenant: tenantSlug,
+          type: 'product'
+        }
+      }, newQuantity);
+    }
   };
 
   const handleImageClick = () => {
@@ -70,7 +152,7 @@ export default function ProductCard({
 
   return (
     <>
-      <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+      <div data-testid="product-card" className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
         {/* Image - clickable for details */}
         <div
           className="p-6 cursor-pointer hover:opacity-90 transition-opacity"
@@ -105,7 +187,7 @@ export default function ProductCard({
             </button>
             <input
               type="number"
-              value={quantity}
+              value={localQuantity}
               onChange={handleQuantityChange}
               className="w-16 text-center font-semibold text-lg border-2 border-gray-200 rounded px-2 py-1 focus:border-gray-400 focus:outline-none"
               min="0"
@@ -122,11 +204,13 @@ export default function ProductCard({
 
           {/* Action Button - Solo "Comprar ahora" */}
           <button
+            data-testid="add-to-cart-btn"
             onClick={handleComprarAhora}
-            className="w-full py-3 px-6 rounded-lg text-white font-semibold hover:opacity-90 transition-opacity"
+            disabled={isAdding}
+            className="w-full py-3 px-6 rounded-lg text-white font-semibold hover:opacity-90 transition-opacity disabled:opacity-70 disabled:cursor-not-allowed"
             style={{ backgroundColor: primaryColor }}
           >
-            Comprar ahora
+            {isAdding ? 'Agregando...' : 'Comprar ahora'}
           </button>
         </div>
       </div>
@@ -197,7 +281,7 @@ export default function ProductCard({
                 </button>
                 <input
                   type="number"
-                  value={quantity}
+                  value={localQuantity}
                   onChange={handleQuantityChange}
                   className="w-20 text-center font-bold text-2xl border-2 border-gray-200 rounded px-2 py-1 focus:border-gray-400 focus:outline-none"
                   min="0"
@@ -213,11 +297,13 @@ export default function ProductCard({
 
               {/* Action Button - Solo "Comprar ahora" */}
               <button
+                data-testid="add-to-cart-btn"
                 onClick={handleComprarAhora}
-                className="w-full py-4 px-6 rounded-lg text-white font-bold hover:opacity-90 transition-opacity shadow-lg"
+                disabled={isAdding}
+                className="w-full py-4 px-6 rounded-lg text-white font-bold hover:opacity-90 transition-opacity shadow-lg disabled:opacity-70 disabled:cursor-not-allowed"
                 style={{ backgroundColor: primaryColor }}
               >
-                Comprar ahora
+                {isAdding ? 'Agregando...' : 'Comprar ahora'}
               </button>
             </div>
           </div>
@@ -225,4 +311,8 @@ export default function ProductCard({
       )}
     </>
   );
-}
+});
+
+ProductCard.displayName = 'ProductCard';
+
+export default ProductCard;

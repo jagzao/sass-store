@@ -21,6 +21,24 @@ export default function SocialPlannerPage() {
     // Refresh data would happen here
   };
 
+  const [editingPostId, setEditingPostId] = useState<string | null>(null);
+
+  const handleEditPost = (postId: string) => {
+    setEditingPostId(postId);
+    setCurrentView('compose');
+  };
+
+  const handlePostEdited = () => {
+    setEditingPostId(null);
+    setCurrentView('posts');
+    // Refresh data would happen here
+  };
+
+  const handleCancelEdit = () => {
+    setEditingPostId(null);
+    setCurrentView('posts');
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -84,9 +102,10 @@ export default function SocialPlannerPage() {
       <div className="max-w-7xl mx-auto px-4 py-6">
         {currentView === 'compose' && (
           <PostComposer
-            onCancel={() => setCurrentView('calendar')}
-            onSuccess={handlePostCreated}
+            onCancel={handleCancelEdit}
+            onSuccess={editingPostId ? handlePostEdited : handlePostCreated}
             initialDate={selectedDate}
+            postIdToEdit={editingPostId}
           />
         )}
 
@@ -103,10 +122,7 @@ export default function SocialPlannerPage() {
         )}
 
         {currentView === 'posts' && (
-          <PostsList onEditPost={(postId) => {
-            // TODO: Implement edit functionality
-            console.log('Edit post:', postId);
-          }} />
+          <PostsList onEditPost={handleEditPost} />
         )}
       </div>
     </div>

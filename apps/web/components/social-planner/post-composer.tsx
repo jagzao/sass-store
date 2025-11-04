@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 
@@ -18,9 +18,10 @@ interface PostComposerProps {
   onCancel: () => void;
   onSuccess: () => void;
   initialDate?: Date;
+  postIdToEdit?: string | null;
 }
 
-export function PostComposer({ onCancel, onSuccess, initialDate }: PostComposerProps) {
+export function PostComposer({ onCancel, onSuccess, initialDate, postIdToEdit }: PostComposerProps) {
   const [title, setTitle] = useState('');
   const [baseText, setBaseText] = useState('');
   const [scheduledDate, setScheduledDate] = useState(
@@ -32,6 +33,59 @@ export function PostComposer({ onCancel, onSuccess, initialDate }: PostComposerP
   const [platformVariants, setPlatformVariants] = useState<Record<string, string>>({});
   const [isScheduled, setIsScheduled] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+
+  // If editing an existing post, load its data
+  useEffect(() => {
+    if (!postIdToEdit) return;
+
+    const fetchPostData = async () => {
+      try {
+        const response = await fetch(`/api/v1/social/posts/${postIdToEdit}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch post data');
+        }
+        
+        const postData = await response.json();
+        
+        setTitle(postData.data.title || '');
+        setBaseText(postData.data.baseText);
+        
+        // Set scheduling information if scheduled
+        if (postData.data.scheduledAtUtc) {
+          const scheduledDate = new Date(postData.data.scheduledAtUtc);
+          setScheduledDate(format(scheduledDate, 'yyyy-MM-dd'));
+          setScheduledTime(format(scheduledDate, 'HH:mm'));
+          setIsScheduled(true);
+        } else {
+          setIsScheduled(false);
+        }
+        
+        // Get the targets for the post
+        const targetsResponse = await fetch(`/api/v1/social/posts/${postIdToEdit}/targets`);
+        if (targetsResponse.ok) {
+          const targetsData = await targetsResponse.json();
+          
+          // Set selected platforms
+          const platforms = targetsData.data.map((target: any) => target.platform);
+          setSelectedPlatforms(platforms);
+          
+          // Set platform variants
+          const variants: Record<string, string> = {};
+          targetsData.data.forEach((target: any) => {
+            if (target.variantText) {
+              variants[target.platform] = target.variantText;
+            }
+          });
+          setPlatformVariants(variants);
+        }
+      } catch (error) {
+        console.error('Error fetching post data:', error);
+        alert('Error al cargar los datos del post');
+      }
+    };
+
+    fetchPostData();
+  }, [postIdToEdit]);
 
   const handlePlatformToggle = (platformId: string) => {
     setSelectedPlatforms(prev =>
@@ -73,30 +127,50 @@ export function PostComposer({ onCancel, onSuccess, initialDate }: PostComposerP
         assetIds: [] // TODO: Implement media selection
       }));
 
-      const response = await fetch('/api/v1/social/posts', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          title: title || null,
-          baseText,
-          scheduledAtUtc,
-          timezone,
-          targets,
-          createdBy: 'admin' // TODO: Get from auth context
-        }),
-      });
+      let response;
+      if (postIdToEdit) {
+        // If editing an existing post, use PUT method
+        response = await fetch(`/api/v1/social/posts/${postIdToEdit}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            title: title || null,
+            baseText,
+            scheduledAtUtc,
+            timezone,
+            targets,
+            updatedBy: 'admin' // TODO: Get from auth context
+          }),
+        });
+      } else {
+        // If creating a new post, use POST method
+        response = await fetch('/api/v1/social/posts', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            title: title || null,
+            baseText,
+            scheduledAtUtc,
+            timezone,
+            targets,
+            createdBy: 'admin' // TODO: Get from auth context
+          }),
+        });
+      }
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || 'Error creating post');
+        throw new Error(error.error || (postIdToEdit ? 'Error actualizando post' : 'Error creando post'));
       }
 
       onSuccess();
     } catch (error) {
-      console.error('Error creating post:', error);
-      alert('Error al crear el post. Intenta de nuevo.');
+      console.error(postIdToEdit ? 'Error actualizando post:' : 'Error creando post:', error);
+      alert(postIdToEdit ? 'Error al actualizar el post. Intenta de nuevo.' : 'Error al crear el post. Intenta de nuevo.');
     } finally {
       setIsLoading(false);
     }
@@ -105,8 +179,8 @@ export function PostComposer({ onCancel, onSuccess, initialDate }: PostComposerP
   return (
     <div className="bg-white rounded-lg shadow-sm border">
       <div className="p-6 border-b">
-        <h2 className="text-xl font-semibold text-gray-900">Crear Nuevo Post</h2>
-        <p className="text-gray-600 mt-1">Crea contenido para tus redes sociales</p>
+        <h2 className="text-xl font-semibold text-gray-900">{postIdToEdit ? 'Editar Post' : 'Crear Nuevo Post'}</h2>
+        <p className="text-gray-600 mt-1">{postIdToEdit ? 'Actualiza el contenido de tu post' : 'Crea contenido para tus redes sociales'}</p>
       </div>
 
       <form onSubmit={handleSubmit} className="p-6 space-y-6">

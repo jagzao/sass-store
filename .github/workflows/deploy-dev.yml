@@ -1,0 +1,68 @@
+name: 🚀 Deploy to Development
+
+on:
+  push:
+    branches: [develop]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-dev
+  cancel-in-progress: true
+
+jobs:
+  deploy-dev:
+    name: Deploy to Development Environment
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🧪 Run tests
+        run: npm run test:unit
+
+      - name: 🏗️ Build application
+        run: npm run build
+        env:
+          NODE_ENV: development
+
+      - name: 🚀 Deploy to Cloudflare Pages (Dev)
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: sass-store-dev
+          directory: apps/web/.next
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🐳 Deploy API to Cloud Run (Dev)
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: sass-store-api-dev
+          image: gcr.io/${{ secrets.GCP_PROJECT_ID }}/sass-store-api:${{ github.sha }}
+          region: us-central1
+          env_vars: |
+            NODE_ENV=development
+            DATABASE_URL=${{ secrets.DEV_DATABASE_URL }}
+            JWT_SECRET=${{ secrets.DEV_JWT_SECRET }}
+            REDIS_URL=${{ secrets.DEV_REDIS_URL }}
+
+      - name: 🩺 Health Check
+        run: |
+          sleep 30
+          curl -f https://sass-store-dev.pages.dev/api/health || exit 1
+
+      - name: 📢 Notify deployment
+        run: |
+          echo "✅ Development deployment completed successfully!"
+          echo "🌐 Frontend: https://sass-store-dev.pages.dev"
+          echo "🔌 API: https://sass-store-api-dev-abc123.run.app"

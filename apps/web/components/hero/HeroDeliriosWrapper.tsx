@@ -8,45 +8,45 @@ const deliriosSlides: DeliriosSlide[] = [
     title: "gourmet delights",
     eyebrow: "chef special",
     ctaText: "Ver Menú",
-    bgFrom: "#17232A",
-    bgTo: "#2A3F4F",
-    accent: "#FFC857"
+    bgFrom: "#0b0b10",
+    bgTo: "#2a0f3e",
+    accent: "#d4af37"
   },
   {
     img: "/tenants/delirios/hero/plate2.png",
     title: "culinary art",
     eyebrow: "signature dish",
     ctaText: "Ordenar Ahora",
-    bgFrom: "#1F2937",
-    bgTo: "#374151",
-    accent: "#F59E0B"
+    bgFrom: "#0d0d12",
+    bgTo: "#2f1145",
+    accent: "#d4af37"
   },
   {
     img: "/tenants/delirios/hero/plate3.png",
     title: "fresh flavors",
     eyebrow: "daily special",
     ctaText: "Explorar",
-    bgFrom: "#0F172A",
-    bgTo: "#1E293B",
-    accent: "#10B981"
+    bgFrom: "#0a0a0f",
+    bgTo: "#28133a",
+    accent: "#d4af37"
   },
   {
     img: "/tenants/delirios/hero/plate4.png",
     title: "exquisite taste",
     eyebrow: "premium",
     ctaText: "Descubrir",
-    bgFrom: "#1E1B4B",
-    bgTo: "#312E81",
-    accent: "#A78BFA"
+    bgFrom: "#0c0c11",
+    bgTo: "#2d1542",
+    accent: "#d4af37"
   },
   {
     img: "/tenants/delirios/hero/plate5.png",
     title: "divine cuisine",
     eyebrow: "masterpiece",
     ctaText: "Reservar",
-    bgFrom: "#7C2D12",
-    bgTo: "#991B1B",
-    accent: "#FB923C"
+    bgFrom: "#0b0b10",
+    bgTo: "#2a0f3e",
+    accent: "#d4af37"
   }
 ];
 
@@ -54,7 +54,7 @@ export default function HeroDeliriosWrapper() {
   return (
     <HeroDelirios
       slides={deliriosSlides}
-      initialIndex={1}
+      initialIndex={0}
       autoplayMs={4500}
       onCta={(index) => {
         // Navigate to products or specific section

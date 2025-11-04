@@ -1,7 +1,8 @@
-import { db } from "./connection";
-import { tenants, services, products, staff } from "./schema";
+import { db, withTenantContext } from "@sass-store/database";
+import { tenants, services, products, staff } from "@sass-store/database";
 import { eq, and } from "drizzle-orm";
 import { notFound } from "next/navigation";
+import { getOrSetCache, CacheKeys } from "@/lib/cache/redis";
 
 // Mock tenant data for self-healing when DB is not available
 const mockTenants = {
@@ -517,15 +518,14 @@ export class TenantService {
         };
       }
     } catch (error) {
-      if (process.env.NODE_ENV === "development") {
-        console.error(
-          "[Self-Healing] Error fetching tenant from database, falling back to mock data:",
-          error,
-        );
-      }
+      // Log the error but always use mock data when DB is unavailable
+      console.error(
+        "[TenantService] Database error, falling back to mock data:",
+        error,
+      );
     }
 
-    // Fallback to mock data if not found in database or error occurred
+    // Fallback to mock data when DB connection fails
     console.log(`[TenantService] Using mock data for tenant: ${slug}`);
     const mockTenant = mockTenants[slug as keyof typeof mockTenants];
     return mockTenant || null;
@@ -538,11 +538,18 @@ export class TenantService {
         `[TenantService] Fetching services from database for tenant: ${tenantId}`,
       );
 
-      // Query services from the database
-      const tenantServices = await db
-        .select()
-        .from(services)
-        .where(eq(services.tenantId, tenantId));
+      // Query services from the database with RLS
+      const tenantServices = await withTenantContext(
+        db,
+        tenantId,
+        null,
+        async (db) => {
+          return await db
+            .select()
+            .from(services)
+            .where(eq(services.tenantId, tenantId));
+        }
+      );
 
       if (Array.isArray(tenantServices)) {
         console.log(
@@ -576,11 +583,18 @@ export class TenantService {
         `[TenantService] Fetching products from database for tenant: ${tenantId}`,
       );
 
-      // Query products from the database
-      const tenantProducts = await db
-        .select()
-        .from(products)
-        .where(eq(products.tenantId, tenantId));
+      // Query products from the database with RLS
+      const tenantProducts = await withTenantContext(
+        db,
+        tenantId,
+        null,
+        async (db) => {
+          return await db
+            .select()
+            .from(products)
+            .where(eq(products.tenantId, tenantId));
+        }
+      );
 
       if (Array.isArray(tenantProducts)) {
         console.log(
@@ -615,11 +629,18 @@ export class TenantService {
         `[TenantService] Fetching staff from database for tenant: ${tenantId}`,
       );
 
-      // Query staff from the database
-      const tenantStaff = await db
-        .select()
-        .from(staff)
-        .where(eq(staff.tenantId, tenantId));
+      // Query staff from the database with RLS
+      const tenantStaff = await withTenantContext(
+        db,
+        tenantId,
+        null,
+        async (db) => {
+          return await db
+            .select()
+            .from(staff)
+            .where(eq(staff.tenantId, tenantId));
+        }
+      );
 
       if (Array.isArray(tenantStaff)) {
         console.log(
@@ -647,111 +668,135 @@ export class TenantService {
     return mockStaff[tenantId as keyof typeof mockStaff] || [];
   }
 
-  // Get complete tenant data with all relations (optimized with cache)
+  // Get complete tenant data with all relations (optimized with Redis + in-memory cache)
   static async getTenantWithData(slug: string) {
-    // Check cache first
-    const cacheKey = `tenant_with_data_${slug}`;
-    const cached = TenantCache.get(cacheKey);
-    if (cached) {
-      console.log(`[TenantService] Using cached data for: ${slug}`);
-      return cached;
+    const memoryCacheKey = `tenant_with_data_${slug}`;
+    const redisCacheKey = CacheKeys.tenantWithData(slug);
+
+    // Check in-memory cache first (fastest)
+    const memCached = TenantCache.get(memoryCacheKey);
+    if (memCached) {
+      console.log(`[TenantService] Using in-memory cache for: ${slug}`);
+      return memCached;
     }
 
-    try {
-      console.log(`[TenantService] Fetching complete tenant data for: ${slug}`);
+    // Use Redis cache-aside pattern with 10-minute TTL
+    return await getOrSetCache(
+      redisCacheKey,
+      async () => {
+        try {
+          console.log(`[TenantService] Fetching complete tenant data for: ${slug}`);
 
-      // Single optimized query to get tenant with all relations in one go
-      const tenant = await db
-        .select()
-        .from(tenants)
-        .where(eq(tenants.slug, slug))
-        .limit(1);
+          // Single optimized query to get tenant with all relations in one go
+          const tenant = await db
+            .select()
+            .from(tenants)
+            .where(eq(tenants.slug, slug))
+            .limit(1);
 
-      if (!tenant || tenant.length === 0) {
-        console.log(
-          `[TenantService] Tenant not found in database, using mock data: ${slug}`,
-        );
-        return this.getMockTenantWithData(slug);
-      }
+          if (!tenant || tenant.length === 0) {
+            console.log(
+              `[TenantService] Tenant not found in database, using mock data: ${slug}`,
+            );
+            return this.getMockTenantWithData(slug);
+          }
 
-      const tenantData = tenant[0];
-      console.log(
-        `[TenantService] Found tenant in database: ${tenantData.name}`,
-      );
+          const tenantData = tenant[0];
+          console.log(
+            `[TenantService] Found tenant in database: ${tenantData.name}`,
+          );
 
-      // Parallel fetch of all related data in single Promise.all
-      const [tenantServices, tenantProducts, tenantStaff] = await Promise.all([
-        tenantData.mode === "booking"
-          ? db
-              .select()
-              .from(services)
-              .where(eq(services.tenantId, tenantData.id))
-          : Promise.resolve([]),
-        db.select().from(products).where(eq(products.tenantId, tenantData.id)),
-        tenantData.mode === "booking"
-          ? db.select().from(staff).where(eq(staff.tenantId, tenantData.id))
-          : Promise.resolve([]),
-      ]);
+          // Parallel fetch of all related data with RLS context
+          const [tenantServices, tenantProducts, tenantStaff] = await withTenantContext(
+            db,
+            tenantData.id,
+            null,
+            async (db) => {
+              return await Promise.all([
+                tenantData.mode === "booking"
+                  ? db
+                      .select()
+                      .from(services)
+                      .where(eq(services.tenantId, tenantData.id))
+                  : Promise.resolve([]),
+                db.select().from(products).where(eq(products.tenantId, tenantData.id)),
+                tenantData.mode === "booking"
+                  ? db.select().from(staff).where(eq(staff.tenantId, tenantData.id))
+                  : Promise.resolve([]),
+              ]);
+            }
+          );
 
-      console.log(
-        `[TenantService] Loaded ${tenantServices.length} services, ${tenantProducts.length} products, ${tenantStaff.length} staff`,
-      );
+          console.log(
+            `[TenantService] Loaded ${tenantServices.length} services, ${tenantProducts.length} products, ${tenantStaff.length} staff`,
+          );
 
-      const result = {
-        id: tenantData.id,
-        slug: tenantData.slug,
-        name: tenantData.name,
-        description: tenantData.description,
-        mode: tenantData.mode,
-        status: tenantData.status,
-        branding: tenantData.branding,
-        contact: tenantData.contact,
-        location: tenantData.location,
-        quotas: tenantData.quotas,
-        services: tenantServices.map((service: any) => ({
-          id: service.id,
-          name: service.name,
-          price: service.price,
-          duration: service.duration,
-          featured: service.featured,
-          active: service.active,
-          description: service.description,
-          metadata: service.metadata,
-        })),
-        products: tenantProducts.map((product: any) => ({
-          id: product.id,
-          sku: product.sku,
-          name: product.name,
-          price: product.price,
-          category: product.category,
-          featured: product.featured,
-          active: product.active,
-          description: product.description,
-          metadata: product.metadata,
-        })),
-        staff: tenantStaff.map((staffMember: any) => ({
-          id: staffMember.id,
-          name: staffMember.name,
-          role: staffMember.role,
-          email: staffMember.email,
-          phone: staffMember.phone,
-          specialties: staffMember.specialties,
-          photo: staffMember.photo,
-          active: staffMember.active,
-          metadata: staffMember.metadata,
-        })),
-      };
+          const result = {
+            id: tenantData.id,
+            slug: tenantData.slug,
+            name: tenantData.name,
+            description: tenantData.description,
+            mode: tenantData.mode,
+            status: tenantData.status,
+            branding: tenantData.branding,
+            contact: tenantData.contact,
+            location: tenantData.location,
+            quotas: tenantData.quotas,
+            services: tenantServices.map((service: any) => ({
+              id: service.id,
+              name: service.name,
+              price: service.price,
+              duration: service.duration,
+              featured: service.featured,
+              active: service.active,
+              description: service.description,
+              metadata: service.metadata,
+            })),
+            products: tenantProducts.map((product: any) => ({
+              id: product.id,
+              sku: product.sku,
+              name: product.name,
+              price: product.price,
+              category: product.category,
+              featured: product.featured,
+              active: product.active,
+              description: product.description,
+              metadata: product.metadata,
+            })),
+            staff: tenantStaff.map((staffMember: any) => ({
+              id: staffMember.id,
+              name: staffMember.name,
+              role: staffMember.role,
+              email: staffMember.email,
+              phone: staffMember.phone,
+              specialties: staffMember.specialties,
+              photo: staffMember.photo,
+              active: staffMember.active,
+              metadata: staffMember.metadata,
+            })),
+          };
 
-      // Cache the result
-      TenantCache.set(cacheKey, result);
-      return result;
-    } catch (error) {
-      console.error(
-        "[TenantService] Database error, falling back to mock data:",
-        error,
-      );
-      return this.getMockTenantWithData(slug);
-    }
+          // Also cache in memory for ultra-fast subsequent access
+          TenantCache.set(memoryCacheKey, result);
+          return result;
+        } catch (error) {
+          // Log and use fallback - this handles DB connection errors gracefully
+          console.error(
+            "[TenantService] Error fetching complete tenant data, falling back to mock:",
+            error,
+          );
+          const mockData = this.getMockTenantWithData(slug);
+
+          // Cache mock data to avoid repeated errors
+          if (mockData) {
+            TenantCache.set(memoryCacheKey, mockData);
+          }
+
+          return mockData;
+        }
+      },
+      600 // 10 minutes TTL in Redis
+    );
   }
 
   // Helper method for mock data fallback
@@ -775,30 +820,37 @@ export class TenantService {
   // Get featured services/products for homepage
   static async getFeaturedItems(tenantId: string, limit: number = 6) {
     try {
-      const [featuredServices, featuredProducts] = await Promise.all([
-        db
-          .select()
-          .from(services)
-          .where(
-            and(
-              eq(services.tenantId, tenantId),
-              eq(services.featured, true),
-              eq(services.active, true),
-            ),
-          )
-          .limit(limit),
-        db
-          .select()
-          .from(products)
-          .where(
-            and(
-              eq(products.tenantId, tenantId),
-              eq(products.featured, true),
-              eq(products.active, true),
-            ),
-          )
-          .limit(limit),
-      ]);
+      const [featuredServices, featuredProducts] = await withTenantContext(
+        db,
+        tenantId,
+        null,
+        async (db) => {
+          return await Promise.all([
+            db
+              .select()
+              .from(services)
+              .where(
+                and(
+                  eq(services.tenantId, tenantId),
+                  eq(services.featured, true),
+                  eq(services.active, true),
+                ),
+              )
+              .limit(limit),
+            db
+              .select()
+              .from(products)
+              .where(
+                and(
+                  eq(products.tenantId, tenantId),
+                  eq(products.featured, true),
+                  eq(products.active, true),
+                ),
+              )
+              .limit(limit),
+          ]);
+        }
+      );
 
       return {
         services: featuredServices,

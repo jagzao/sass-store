@@ -32,8 +32,53 @@ export function RegisterForm({ tenantSlug, primaryColor }: RegisterFormProps) {
     };
 
     // Validations
-    if (!data.terms) {
-      setError("Debes aceptar los términos y condiciones");
+    if (!data.name || data.name.trim().length === 0) {
+      setError("El nombre es requerido");
+      setIsLoading(false);
+      return;
+    }
+
+    if (!data.email || data.email.trim().length === 0) {
+      setError("El correo electrónico es requerido");
+      setIsLoading(false);
+      return;
+    }
+
+    // Email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(data.email)) {
+      setError("El email es inválido");
+      setIsLoading(false);
+      return;
+    }
+
+    if (!data.password || data.password.length === 0) {
+      setError("La contraseña es requerida");
+      setIsLoading(false);
+      return;
+    }
+
+    if (data.password.length < 8) {
+      setError("La contraseña debe tener al menos 8 caracteres");
+      setIsLoading(false);
+      return;
+    }
+
+    // Password complexity validation
+    if (!/[A-Z]/.test(data.password)) {
+      setError("La contraseña debe contener al menos una mayúscula");
+      setIsLoading(false);
+      return;
+    }
+
+    if (!/[a-z]/.test(data.password)) {
+      setError("La contraseña debe contener al menos una minúscula");
+      setIsLoading(false);
+      return;
+    }
+
+    if (!/[0-9]/.test(data.password)) {
+      setError("La contraseña debe contener al menos un número");
       setIsLoading(false);
       return;
     }
@@ -44,8 +89,8 @@ export function RegisterForm({ tenantSlug, primaryColor }: RegisterFormProps) {
       return;
     }
 
-    if (data.password.length < 6) {
-      setError("La contraseña debe tener al menos 6 caracteres");
+    if (!data.terms) {
+      setError("Debes aceptar los términos y condiciones");
       setIsLoading(false);
       return;
     }
@@ -62,24 +107,29 @@ export function RegisterForm({ tenantSlug, primaryColor }: RegisterFormProps) {
         }),
       });
 
-      const result = await response.json();
-
       if (!response.ok) {
+        const result = await response.json().catch(() => ({ error: "Error al crear la cuenta" }));
         throw new Error(result.error || "Error al crear la cuenta");
       }
 
-      // Redirect to login after successful registration
+      // Success - redirect to login
+      const result = await response.json().catch(() => ({ success: true }));
+      console.log('[RegisterForm] Registration successful, redirecting...', result);
       router.push(`/t/${tenantSlug}/login?registered=true`);
     } catch (err: any) {
+      console.error('[RegisterForm] Registration error:', err);
       setError(err.message || "Error al crear la cuenta");
       setIsLoading(false);
     }
   };
 
   return (
-    <form className="space-y-6" onSubmit={handleSubmit}>
+    <form className="space-y-6" onSubmit={handleSubmit} noValidate>
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative">
+        <div
+          role="alert"
+          className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative"
+        >
           {error}
         </div>
       )}
@@ -145,9 +195,15 @@ export function RegisterForm({ tenantSlug, primaryColor }: RegisterFormProps) {
             style={{
               borderColor: primaryColor,
             }}
-            placeholder="+52 55 1234 5678"
+            placeholder="55 1234 5678"
+            maxLength={10}
+            pattern="[0-9]{10}"
+            title="Número de teléfono de 10 dígitos"
           />
         </div>
+        <p className="mt-1 text-xs text-gray-500">
+          Ingresa tu número de teléfono sin espacios ni guiones (10 dígitos)
+        </p>
       </div>
 
       {/* Password */}
@@ -259,6 +315,8 @@ export function RegisterForm({ tenantSlug, primaryColor }: RegisterFormProps) {
         <button
           type="submit"
           disabled={isLoading}
+          data-testid="register-submit"
+          aria-label="Crear cuenta"
           className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           style={{
             backgroundColor: primaryColor,

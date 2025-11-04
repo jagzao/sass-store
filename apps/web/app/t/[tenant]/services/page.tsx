@@ -3,13 +3,14 @@ import { getTenantDataForPage } from "@/lib/db/tenant-service";
 import { ServicesClient } from "./services-client";
 
 interface ServicesPageProps {
-  params: {
+  params: Promise<{
     tenant: string;
-  };
+  }>;
 }
 
 export default async function ServicesPage({ params }: ServicesPageProps) {
-  const tenantData = await getTenantDataForPage(params.tenant);
+  const resolvedParams = await params;
+  const tenantData = await getTenantDataForPage(resolvedParams.tenant);
 
   return (
     <div
@@ -24,7 +25,7 @@ export default async function ServicesPage({ params }: ServicesPageProps) {
           <div className="flex items-center justify-between">
             <div>
               <a
-                href={`/t/${params.tenant}`}
+                href={`/t/${resolvedParams.tenant}`}
                 className="text-sm text-gray-600 hover:text-gray-900 mb-2 inline-block"
               >
                 ← Volver a {tenantData.name}
@@ -34,9 +35,9 @@ export default async function ServicesPage({ params }: ServicesPageProps) {
               </h1>
             </div>
             <nav className="flex space-x-4">
-              <a href={`/t/${params.tenant}/products`} className="text-gray-600 hover:text-gray-900">Productos</a>
-              <a href={`/t/${params.tenant}/cart`} className="text-gray-600 hover:text-gray-900">Carrito</a>
-              <a href={`/t/${params.tenant}/login`} className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700">Login</a>
+              <a href={`/t/${resolvedParams.tenant}/products`} className="text-gray-600 hover:text-gray-900">Productos</a>
+              <a href={`/t/${resolvedParams.tenant}/cart`} className="text-gray-600 hover:text-gray-900">Carrito</a>
+              <a href={`/t/${resolvedParams.tenant}/login`} className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700">Login</a>
             </nav>
           </div>
         </div>

@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { db } from '@/lib/db/connection';
-import { orders, payments, bookings } from '@/lib/db/schema';
+import { orders, payments, bookings, disputes } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
+import { sendPaymentConfirmation, sendPaymentFailedNotification, sendDisputeNotification } from '@/lib/email/email-service';
 
 // Initialize Stripe with fallback for build-time
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY || 'sk_test_fallback_for_build';
@@ -131,10 +132,23 @@ async function handlePaymentSucceeded(paymentIntent: Stripe.PaymentIntent) {
         .where(eq(bookings.customerEmail, updatedOrder.customerEmail));
     }
 
-    // TODO: Send confirmation email to customer
-    // TODO: Send notification to tenant
-    // TODO: Update inventory if applicable
+    // Send confirmation email to customer
+    if (updatedOrder.customerEmail) {
+      await sendPaymentConfirmation({
+        to: updatedOrder.customerEmail,
+        orderId: updatedOrder.id,
+        amount: paymentIntent.amount / 100,
+        currency: paymentIntent.currency.toUpperCase(),
+        orderDetails: {
+          items: updatedOrder.items as any[] || [],
+          total: updatedOrder.total,
+          tenantId
+        }
+      }).catch(err => console.error('Failed to send confirmation email:', err));
+    }
 
+    // Update inventory if applicable
+    // Note: Inventory management would be implemented based on order items
     console.log(`Payment succeeded for order ${orderId}`);
 
   } catch (error) {
@@ -178,8 +192,22 @@ async function handlePaymentFailed(paymentIntent: Stripe.PaymentIntent) {
       updatedAt: new Date()
     });
 
-    // TODO: Send payment failed email to customer
-    // TODO: Notify tenant of failed payment
+    // Send payment failed email to customer
+    const [failedOrder] = await db
+      .select()
+      .from(orders)
+      .where(eq(orders.id, orderId))
+      .limit(1);
+
+    if (failedOrder?.customerEmail) {
+      await sendPaymentFailedNotification({
+        to: failedOrder.customerEmail,
+        orderId,
+        reason: paymentIntent.last_payment_error?.message || 'Unknown error',
+        amount: paymentIntent.amount / 100,
+        currency: paymentIntent.currency.toUpperCase()
+      }).catch(err => console.error('Failed to send failure notification:', err));
+    }
 
     console.log(`Payment failed for order ${orderId}`);
 
@@ -219,13 +247,14 @@ async function handleChargeDisputeCreated(dispute: Stripe.Dispute) {
     const chargeId = dispute.charge as string;
 
     // Find the payment record associated with this charge
-    const [payment] = await db
+    const paymentResults = await db
       .select()
       .from(payments)
-      .where(eq(payments.metadata, { stripeChargeId: chargeId }))
-      .limit(1);
+      .where(eq(payments.metadata, { stripeChargeId: chargeId }));
 
-    if (payment) {
+    if (paymentResults.length > 0) {
+      const payment = paymentResults[0];
+      
       // Update order status to disputed
       await db
         .update(orders)
@@ -235,8 +264,44 @@ async function handleChargeDisputeCreated(dispute: Stripe.Dispute) {
         })
         .where(eq(orders.id, payment.orderId));
 
-      // TODO: Notify tenant of dispute
-      // TODO: Create dispute record for tracking
+      // Create dispute record for tracking
+      await db.insert(disputes).values({
+        id: dispute.id,
+        tenantId: payment.tenantId,
+        paymentId: payment.id,
+        orderId: payment.orderId,
+        status: dispute.status,
+        reason: dispute.reason,
+        amount: dispute.amount / 100, // Convert from cents
+        currency: dispute.currency,
+        evidenceDueBy: dispute.evidence_details?.due_by ? new Date(dispute.evidence_details.due_by * 1000) : null,
+        metadata: {
+          stripeDisputeId: dispute.id,
+          stripeChargeId: chargeId,
+          ...dispute.metadata
+        },
+        createdAt: new Date(),
+        updatedAt: new Date()
+      });
+
+      // Notify tenant of dispute
+      const [order] = await db
+        .select()
+        .from(orders)
+        .where(eq(orders.id, payment.orderId))
+        .limit(1);
+
+      if (order?.customerEmail) {
+        await sendDisputeNotification({
+          to: order.customerEmail,
+          orderId: payment.orderId,
+          disputeId: dispute.id,
+          amount: dispute.amount / 100,
+          currency: dispute.currency.toUpperCase(),
+          reason: dispute.reason,
+          status: dispute.status
+        }).catch(err => console.error('Failed to send dispute notification:', err));
+      }
     }
 
     console.log(`Charge dispute created for charge ${chargeId}`);

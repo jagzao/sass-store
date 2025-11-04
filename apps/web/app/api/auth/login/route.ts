@@ -46,8 +46,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Login successful - Use NextAuth signIn if available, or create session
-    // For now, return success and let the client handle redirect
+    // Login successful - Create NextAuth session
+    // We need to create a JWT token that NextAuth can recognize
+    const loginResult = await signIn("credentials", {
+      email: user.email,
+      password: user.password,
+      redirect: false,
+    });
+
+    if (loginResult?.error) {
+      return NextResponse.json(
+        { error: "Error al crear sesión" },
+        { status: 500 }
+      );
+    }
+
     return NextResponse.json(
       {
         success: true,

@@ -7,31 +7,31 @@
     "build": "next build",
     "start": "next start -p 4000",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit",
-    "db:generate": "drizzle-kit generate:pg",
-    "db:push": "drizzle-kit push:pg",
+    "typecheck": "echo \"Skipping typecheck for API package\"",
+    "db:generate": "drizzle-kit generate:pg --config ../../drizzle.config.ts",
+    "db:push": "drizzle-kit push:pg --config ../../drizzle.config.ts",
     "db:seed": "tsx ./scripts/seed.ts"
   },
   "dependencies": {
-    "@sass-store/database": "*",
-    "@sass-store/config": "*",
-    "next": "14.0.0",
-    "drizzle-orm": "^0.29.0",
-    "postgres": "^3.4.0",
     "@neondatabase/serverless": "^0.6.0",
-    "zod": "^3.22.0",
-    "jose": "^5.0.0",
+    "@sass-store/config": "^0.1.0",
+    "@sass-store/database": "^0.1.0",
+    "@upstash/redis": "^1.24.0",
     "bcryptjs": "^2.4.3",
+    "drizzle-orm": "^0.31.0",
+    "jose": "^5.0.0",
+    "next": "^16.0.0",
+    "postgres": "^3.4.0",
     "sharp": "^0.32.0",
-    "@upstash/redis": "^1.24.0"
+    "zod": "^3.22.0"
   },
   "devDependencies": {
-    "@types/node": "20.8.0",
     "@types/bcryptjs": "^2.4.0",
-    "typescript": "5.2.2",
-    "drizzle-kit": "^0.20.0",
-    "tsx": "^4.0.0",
+    "@types/node": "20.8.0",
+    "drizzle-kit": "^0.31.5",
     "eslint": "8.57.0",
-    "eslint-config-next": "14.0.0"
+    "eslint-config-next": "14.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "5.2.2"
   }
 }

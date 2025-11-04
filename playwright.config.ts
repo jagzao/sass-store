@@ -1,12 +1,14 @@
 import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
+  globalSetup: require.resolve('./tests/e2e/global-setup.ts'),
   testDir: './tests/e2e',
   testMatch: ['**/*.spec.ts', '**/*.test.ts', '**/*.e2e.ts'],
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
+  timeout: 60000, // 60 seconds timeout for each test
   reporter: [
     ['html'],
     ['json', { outputFile: 'test-results/results.json' }],
@@ -16,7 +18,9 @@ export default defineConfig({
     baseURL: 'http://localhost:3001',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
-    video: 'retain-on-failure'
+    video: 'retain-on-failure',
+    navigationTimeout: 60000, // 60 seconds for navigation
+    actionTimeout: 15000, // 15 seconds for actions
   },
 
   projects: [

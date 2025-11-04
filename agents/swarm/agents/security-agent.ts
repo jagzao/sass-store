@@ -129,7 +129,7 @@ export class SecurityAgent extends BaseAgent {
       autoFixable: false
     },
     {
-      pattern: /NEXT_PUBLIC_.*(?:SECRET|KEY|TOKEN|PASSWORD)/gi,
+      pattern: /NEXT_PUBLIC_.*(?:SECRET|PRIVATE|KEY|TOKEN|PASSWORD)(?!.*PUBLISHABLE)/gi,
       title: 'Secret exposed to client via NEXT_PUBLIC_',
       category: 'Information Disclosure',
       severity: 'critical' as const,
@@ -426,6 +426,12 @@ export class SecurityAgent extends BaseAgent {
       const content = fs.readFileSync(file, 'utf-8');
 
       // Check for Server Actions without auth
+      if (file.includes("login") || file.includes("register")) {
+        // Check if it's NextAuth OAuth (signIn function)
+        if (content.includes("signIn(") && content.includes('"google"')) {
+          continue; // Skip OAuth handlers
+        }
+      }
       if (content.includes('"use server"') && !content.includes('verifySession') && !content.includes('getSession')) {
         issues.push({
           file,

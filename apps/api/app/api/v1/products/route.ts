@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { db } from "@sass-store/database";
+import { db, withTenantContext } from "@sass-store/database";
 import { products } from "@sass-store/database";
 import { eq, and } from "drizzle-orm";
 import { resolveTenant } from "@/lib/tenant-resolver";
-import { validateApiKey } from "@/lib/auth";
+import { validateApiKey } from "@sass-store/config";
 import { createAuditLog } from "@/lib/audit";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { requirePermission, Permission } from "@sass-store/database";
 
 // Validation schemas
 const getProductsSchema = z.object({
@@ -37,6 +38,12 @@ const createProductSchema = z.object({
 
 export async function GET(request: NextRequest) {
   try {
+    // ✅ RBAC: Require authentication and tenant access
+    const authResult = await validateApiKey(request);
+    if (!authResult.success) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     // Resolve tenant
     const tenant = await resolveTenant(request);
     if (!tenant) {
@@ -70,14 +77,16 @@ export async function GET(request: NextRequest) {
 
     const whereConditions = and(...conditions);
 
-    // Execute query with pagination
-    const productList = await db
-      .select()
-      .from(products)
-      .where(whereConditions)
-      .limit(params.limit)
-      .offset(params.offset)
-      .orderBy(products.createdAt);
+    // Execute query with pagination using RLS context
+    const productList = await withTenantContext(db, tenant.id, null,  async (db) => {
+      return await db
+        .select()
+        .from(products)
+        .where(whereConditions)
+        .limit(params.limit)
+        .offset(params.offset)
+        .orderBy(products.createdAt);
+    });
 
     return NextResponse.json({
       data: productList,
@@ -106,7 +115,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    // Validate API key for write operations
+    // ✅ RBAC: Require authentication and tenant access
     const authResult = await validateApiKey(request);
     if (!authResult.success) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -131,14 +140,18 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const productData = createProductSchema.parse(body);
 
-    // Check if SKU already exists for this tenant
-    const existingProduct = await db
-      .select()
-      .from(products)
-      .where(
-        and(eq(products.tenantId, tenant.id), eq(products.sku, productData.sku))
-      )
-      .limit(1);
+    // Check if SKU already exists for this tenant using RLS context
+    const existingProduct = await withTenantContext(
+      db,
+      tenant.id, null, 
+      async (db) => {
+        return await db
+          .select()
+          .from(products)
+          .where(eq(products.sku, productData.sku))
+          .limit(1);
+      }
+    );
 
     if (existingProduct.length > 0) {
       return NextResponse.json(
@@ -160,7 +173,7 @@ export async function POST(request: NextRequest) {
     // Create audit log
     await createAuditLog({
       tenantId: tenant.id,
-      actorId: authResult.userId,
+      actorId: "system", // For API-based actions, use a system actor
       action: "product:create",
       targetTable: "products",
       targetId: newProduct[0].id,

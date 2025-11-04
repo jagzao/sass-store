@@ -4,12 +4,14 @@ import { TopNav } from "@/components/navigation/top-nav";
 import { getTenantDataForPage } from "@/lib/db/tenant-service";
 
 interface PageProps {
-  params: {
+  params: Promise<{
     tenant: string;
-  };
+  }>;
 }
 
 export default async function AdminDashboardPage({ params }: PageProps) {
+  const resolvedParams = await params;
+
   // Resolve tenant to ensure it exists and is valid
   const resolvedTenant = await resolveTenant();
 
@@ -18,7 +20,7 @@ export default async function AdminDashboardPage({ params }: PageProps) {
   }
 
   // Fetch tenant data from database
-  const tenantData = await getTenantDataForPage(params.tenant);
+  const tenantData = await getTenantDataForPage(resolvedParams.tenant);
 
   // Mock admin stats
   const stats = {
@@ -125,7 +127,7 @@ export default async function AdminDashboardPage({ params }: PageProps) {
                   Productos
                 </h2>
                 <a
-                  href={`/t/${params.tenant}/admin/products`}
+                  href={`/t/${resolvedParams.tenant}/admin_products`}
                   className="text-indigo-600 hover:text-indigo-700 text-sm font-medium"
                 >
                   Gestionar →
@@ -186,7 +188,7 @@ export default async function AdminDashboardPage({ params }: PageProps) {
                     Servicios
                   </h2>
                   <a
-                    href={`/t/${params.tenant}/admin/services`}
+                    href={`/t/${resolvedParams.tenant}/admin_services`}
                     className="text-indigo-600 hover:text-indigo-700 text-sm font-medium"
                   >
                     Gestionar →
@@ -220,7 +222,7 @@ export default async function AdminDashboardPage({ params }: PageProps) {
                       </div>
                     </div>
                     <a
-                      href={`/t/${params.tenant}/admin/calendar`}
+                      href={`/t/${resolvedParams.tenant}/admin/calendar`}
                       className="text-indigo-600 text-sm"
                     >
                       Ver
@@ -238,7 +240,7 @@ export default async function AdminDashboardPage({ params }: PageProps) {
                       </div>
                     </div>
                     <a
-                      href={`/t/${params.tenant}/admin/staff`}
+                      href={`/t/${resolvedParams.tenant}/admin/staff`}
                       className="text-indigo-600 text-sm"
                     >
                       Ver
@@ -255,7 +257,7 @@ export default async function AdminDashboardPage({ params }: PageProps) {
                   Contenido
                 </h2>
                 <a
-                  href={`/t/${params.tenant}/admin/content`}
+                  href={`/t/${resolvedParams.tenant}/admin/content`}
                   className="text-indigo-600 hover:text-indigo-700 text-sm font-medium"
                 >
                   Gestionar →
@@ -289,7 +291,7 @@ export default async function AdminDashboardPage({ params }: PageProps) {
                     </div>
                   </div>
                   <a
-                    href={`/t/${params.tenant}/admin/gallery`}
+                    href={`/t/${resolvedParams.tenant}/admin/gallery`}
                     className="text-indigo-600 text-sm"
                   >
                     Ver
@@ -318,7 +320,7 @@ export default async function AdminDashboardPage({ params }: PageProps) {
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-semibold text-gray-900">Ventas</h2>
                 <a
-                  href={`/t/${params.tenant}/admin/orders`}
+                  href={`/t/${resolvedParams.tenant}/admin/orders`}
                   className="text-indigo-600 hover:text-indigo-700 text-sm font-medium"
                 >
                   Ver todas →
@@ -380,7 +382,7 @@ export default async function AdminDashboardPage({ params }: PageProps) {
                   Analytics
                 </h2>
                 <a
-                  href={`/t/${params.tenant}/admin/analytics`}
+                  href={`/t/${resolvedParams.tenant}/admin/analytics`}
                   className="text-indigo-600 hover:text-indigo-700 text-sm font-medium"
                 >
                   Ver más →
@@ -440,7 +442,7 @@ export default async function AdminDashboardPage({ params }: PageProps) {
                   Configuración
                 </h2>
                 <a
-                  href={`/t/${params.tenant}/admin/settings`}
+                  href={`/t/${resolvedParams.tenant}/admin/settings`}
                   className="text-indigo-600 hover:text-indigo-700 text-sm font-medium"
                 >
                   Configurar →
@@ -523,7 +525,7 @@ export default async function AdminDashboardPage({ params }: PageProps) {
               </button>
 
               <a
-                href={`/t/${params.tenant}`}
+                href={`/t/${resolvedParams.tenant}`}
                 className="flex items-center px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
               >
                 <span className="mr-2">👁️</span>

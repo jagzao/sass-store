@@ -23,7 +23,11 @@ interface BookingClientProps {
 
 export function BookingClient({ tenantData, serviceId }: BookingClientProps) {
   const [selectedStaff, setSelectedStaff] = useState<string>("");
-  const [selectedDate, setSelectedDate] = useState<string>("");
+  const [selectedDate, setSelectedDate] = useState<string>(() => {
+    // Set today's date as the default
+    const today = new Date();
+    return today.toISOString().split('T')[0];
+  });
   const [selectedTime, setSelectedTime] = useState<string>("");
   const [customerInfo, setCustomerInfo] = useState({
     name: "",
@@ -53,20 +57,50 @@ export function BookingClient({ tenantData, serviceId }: BookingClientProps) {
     metadata: { experience: "8 years" },
   };
 
-  const timeSlots = ["09:00", "10:00", "11:00", "14:00", "15:00", "16:00"];
+  // Filter time slots based on current time if selected date is today
+  const isToday = selectedDate === new Date().toISOString().split('T')[0];
+  const currentTime = isToday ? new Date().getHours() + ':' + String(new Date().getMinutes()).padStart(2, '0') : '00:00';
+  
+  const allTimeSlots = ["09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00"];
+  
+  const timeSlots = isToday 
+    ? allTimeSlots.filter(time => time > currentTime)
+    : allTimeSlots;
 
   const formatPhoneNumber = (value: string) => {
-    // Remove all non-digit characters
-    const cleaned = value.replace(/\D/g, "");
+    // Remove all non-digit characters except the + at the beginning
+    const cleaned = value.replace(/[^\d+]/g, "");
+    
+    // If user is still typing +52, allow it
+    if (cleaned === '+' || cleaned === '+5' || cleaned === '+52') {
+      return cleaned;
+    }
 
+    // Remove the +52 prefix to work with the 10 digits
+    let digits = cleaned;
+    if (cleaned.startsWith('+52')) {
+      digits = cleaned.substring(3);
+    } else if (cleaned.startsWith('52')) {
+      digits = cleaned.substring(2);
+    } else if (cleaned.startsWith('5') && cleaned.length === 1) {
+      return "+5";
+    }
+    
+    // Limit to 10 digits max for Mexican numbers
+    digits = digits.substring(0, 10);
+    
     // Apply Mexican phone format: +52 XXX XXX XXXX
-    if (cleaned.length <= 10) {
-      const match = cleaned.match(/^(\d{0,3})(\d{0,3})(\d{0,4})$/);
+    if (digits.length > 0) {
+      const match = digits.match(/^(\d{0,3})(\d{0,3})(\d{0,4})$/);
       if (match) {
-        return `+52 ${match[1]}${match[2] ? " " + match[2] : ""}${match[3] ? " " + match[3] : ""}`.trim();
+        let formatted = `+52 ${match[1]}`;
+        if (match[2]) formatted += ` ${match[2]}`;
+        if (match[3]) formatted += ` ${match[3]}`;
+        return formatted.trim();
       }
     }
-    return value;
+    
+    return "+52 ";
   };
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -266,6 +300,20 @@ Te enviaremos una confirmación por SMS.`);
                     type="tel"
                     value={customerInfo.phone}
                     onChange={handlePhoneChange}
+                    onKeyDown={(e) => {
+                      // Allow backspace, delete, tab, escape, enter, and arrow keys
+                      if (['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                        return;
+                      }
+                      // Allow Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+                      if ((e.ctrlKey || e.metaKey) && ['a', 'c', 'v', 'x'].includes(e.key.toLowerCase())) {
+                        return;
+                      }
+                      // Prevent all other non-digit characters except + at the beginning
+                      if (!/[\d+]/.test(e.key) && e.key !== 'Unidentified') {
+                        e.preventDefault();
+                      }
+                    }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="+52 555 123 4567"
                     required

@@ -1,0 +1,79 @@
+name: 🧪 Deploy to QA
+
+on:
+  push:
+    branches: [qa, qa/*]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-qa
+  cancel-in-progress: true
+
+jobs:
+  deploy-qa:
+    name: Deploy to QA Environment
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🧪 Run full test suite
+        run: |
+          npm run lint
+          npm run typecheck
+          npm run test:unit
+          npm run test:integration
+
+      - name: 🏗️ Build application
+        run: npm run build
+        env:
+          NODE_ENV: production
+
+      - name: 🚀 Deploy to Cloudflare Pages (QA)
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: sass-store-qa
+          directory: apps/web/.next
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🐳 Deploy API to Cloud Run (QA)
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: sass-store-api-qa
+          image: gcr.io/${{ secrets.GCP_PROJECT_ID }}/sass-store-api:${{ github.sha }}
+          region: us-central1
+          env_vars: |
+            NODE_ENV=production
+            DATABASE_URL=${{ secrets.QA_DATABASE_URL }}
+            JWT_SECRET=${{ secrets.QA_JWT_SECRET }}
+            REDIS_URL=${{ secrets.QA_REDIS_URL }}
+
+      - name: 🧪 Run E2E tests against QA
+        run: |
+          npm install -g @playwright/test
+          npx playwright install --with-deps chromium
+          npx playwright test --project=chromium --baseURL=https://sass-store-qa.pages.dev
+
+      - name: 🩺 Health Check
+        run: |
+          sleep 30
+          curl -f https://sass-store-qa.pages.dev/api/health || exit 1
+
+      - name: 📢 Notify QA deployment
+        run: |
+          echo "✅ QA deployment completed successfully!"
+          echo "🌐 Frontend: https://sass-store-qa.pages.dev"
+          echo "🔌 API: https://sass-store-api-qa-abc123.run.app"
+          echo "🧪 E2E tests: PASSED"

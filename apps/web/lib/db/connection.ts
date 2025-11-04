@@ -78,7 +78,17 @@ const createMockDb = () => {
 };
 
 // Initialize PostgreSQL connection
-const connectionString = process.env.DATABASE_URL;
+// TEMPORARY FIX: Override cached env var with correct hostname and username
+let connectionString = process.env.DATABASE_URL;
+
+if (connectionString?.includes('db.jedryjmljffuvegggjmw.supabase.co')) {
+  // Fix hostname
+  connectionString = connectionString.replace('db.jedryjmljffuvegggjmw.supabase.co', 'aws-1-us-east-2.pooler.supabase.com');
+  // Fix username for pooler (needs to be postgres.PROJECT_ID)
+  if (!connectionString.includes('postgres.jedryjmljffuvegggjmw')) {
+    connectionString = connectionString.replace('postgresql://postgres:', 'postgresql://postgres.jedryjmljffuvegggjmw:');
+  }
+}
 
 // Connection pool configuration
 export const connectionConfig = {
@@ -86,6 +96,12 @@ export const connectionConfig = {
   maxConnections: 10, // Keep low for cost optimization
   connectionTimeout: 30000, // 30 seconds
 };
+
+// Singleton cache with connection string tracking
+declare global {
+  var __webDbInstance: any;
+  var __webDbConnectionString: string | undefined;
+}
 
 // Helper to check database connectivity
 export async function checkDatabaseConnection(): Promise<boolean> {
@@ -124,6 +140,11 @@ function createDatabaseInstance() {
   }
 
   try {
+    // Extract hostname for debugging
+    const url = new URL(connectionString.replace('postgresql://', 'http://'));
+    console.log('[DB] Connecting to host:', url.hostname);
+    console.log('[DB] Full connection string:', connectionString.substring(0, 80) + '...');
+
     const client = postgres(connectionString, {
       prepare: false,
       ssl: 'require',
@@ -141,7 +162,26 @@ function createDatabaseInstance() {
   }
 }
 
-export const db = createDatabaseInstance();
+// FORCE INVALIDATE CACHE - hostname was corrected
+if (globalThis.__webDbConnectionString?.includes('db.jedryjmljffuvegggjmw.supabase.co')) {
+  console.log('[DB] FORCE INVALIDATING - old hostname detected in cache');
+  globalThis.__webDbInstance = undefined;
+  globalThis.__webDbConnectionString = undefined;
+}
+
+// Detect connection string change and invalidate cache
+if (globalThis.__webDbConnectionString && globalThis.__webDbConnectionString !== connectionString) {
+  console.log('[DB] Connection string changed, invalidating web db cache');
+  globalThis.__webDbInstance = undefined;
+}
+
+globalThis.__webDbConnectionString = connectionString;
+
+export const db = globalThis.__webDbInstance ?? createDatabaseInstance();
+
+if (process.env.NODE_ENV !== 'production') {
+  globalThis.__webDbInstance = db;
+}
 
 // Type for the database instance
 export type Database = typeof db;

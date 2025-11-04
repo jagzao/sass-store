@@ -1,11 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { eq, desc } from "drizzle-orm";
-import { db } from "@/lib/db/connection";
+import { db, withTenantContext } from "@sass-store/database";
 import { orders, orderItems } from "@/lib/db/schema";
+import { auth } from "@/lib/auth";
 
 export async function POST(request: NextRequest) {
   try {
+    const session = await auth();
+    const userId = session?.user?.id || null;
+
     const headersList = await headers();
     const tenantId = headersList.get("x-tenant-id");
 
@@ -36,44 +40,50 @@ export async function POST(request: NextRequest) {
     // Generate order number
     const orderNumber = `ORD-${Date.now()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
 
-    // Create order
-    const [newOrder] = await db
-      .insert(orders)
-      .values({
+    // Create order and items with RLS context
+    const result = await withTenantContext(db, tenantId, null, async (db) => {
+      // Create order
+      const [newOrder] = await db
+        .insert(orders)
+        .values({
+          id: crypto.randomUUID(),
+          tenantId,
+          userId,
+          orderNumber,
+          customerName,
+          customerEmail,
+          customerPhone: customerPhone || null,
+          status: "pending",
+          type,
+          total,
+          currency: "MXN",
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        })
+        .returning();
+
+      // Create order items
+      const orderItemsToInsert = items.map((item: any) => ({
         id: crypto.randomUUID(),
-        tenantId,
-        orderNumber,
-        customerName,
-        customerEmail,
-        customerPhone: customerPhone || null,
-        status: "pending",
-        type,
-        total,
-        currency: "MXN",
+        orderId: newOrder.id,
+        type: item.type,
+        name: item.name,
+        quantity: item.quantity,
+        unitPrice: item.unitPrice,
+        totalPrice: item.unitPrice * item.quantity,
         createdAt: new Date(),
         updatedAt: new Date(),
-      })
-      .returning();
+      }));
 
-    // Create order items
-    const orderItemsToInsert = items.map((item: any) => ({
-      id: crypto.randomUUID(),
-      orderId: newOrder.id,
-      type: item.type,
-      name: item.name,
-      quantity: item.quantity,
-      unitPrice: item.unitPrice,
-      totalPrice: item.unitPrice * item.quantity,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    }));
+      await db.insert(orderItems).values(orderItemsToInsert);
 
-    await db.insert(orderItems).values(orderItemsToInsert);
+      return newOrder;
+    });
 
     return NextResponse.json({
       success: true,
-      orderId: newOrder.id,
-      orderNumber: newOrder.orderNumber,
+      orderId: result.id,
+      orderNumber: result.orderNumber,
     });
   } catch (error) {
     console.error("Order creation error:", error);
@@ -100,13 +110,20 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get("limit") || "10");
     const offset = parseInt(searchParams.get("offset") || "0");
 
-    const tenantOrders = await db
-      .select()
-      .from(orders)
-      .where(eq(orders.tenantId, tenantId))
-      .orderBy(desc(orders.createdAt))
-      .limit(limit)
-      .offset(offset);
+    const tenantOrders = await withTenantContext(
+      db,
+      tenantId,
+      null,
+      async (db) => {
+        return await db
+          .select()
+          .from(orders)
+          .where(eq(orders.tenantId, tenantId))
+          .orderBy(desc(orders.createdAt))
+          .limit(limit)
+          .offset(offset);
+      }
+    );
 
     return NextResponse.json({
       success: true,

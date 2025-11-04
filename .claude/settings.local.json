@@ -1,34 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npx drizzle-kit generate:*)",
-      "Bash(start http://localhost:62758/)",
-      "Bash(tee:*)",
-      "Bash(copy security-agent.ts security-agent-old.ts.bak)",
-      "Bash(copy security-agent-2025.ts security-agent.ts)",
-      "Bash(npx @next/codemod@canary:*)",
-      "Bash(ts-node:*)",
-      "Bash(npx ts-node:*)",
-      "Bash(rm:*)",
-      "Bash(mkdir:*)",
-      "Bash(npm install)",
-      "Bash(npm run dev:*)",
-      "Bash(npx playwright test:*)",
-      "Bash(npm run:*)",
-      "Bash(npx drizzle-kit push:*)",
-      "Bash(npx drizzle-kit push:pg:*)",
-      "Bash(export DATABASE_URL=\"postgresql://postgres:TSGmf_3G-rbLbz!@db.jedryjmljffuvegggjmw.supabase.co:5432/postgres\")",
-      "Bash(npx kill-port:*)",
-      "Bash(cat:*)",
-      "Bash(npm install:*)",
-      "Bash(npm run rls:apply:*)",
-      "Bash(npm run swarm:start:*)",
-      "Bash(ping:*)",
-      "Bash(npx drizzle-kit generate:pg:*)",
-      "Bash(set DATABASE_URL=postgresql://postgres.jedryjmljffuvegggjmw:TSGmf_3G-rbLbz!@aws-1-us-east-2.pooler.supabase.com:6543/postgres)",
-      "Bash(echo $DATABASE_URL)",
-      "Bash(psql:*)",
-      "Bash(set DATABASE_URL=postgresql://postgres.jedryjmljffuvegggjmw:TSGmf_3G-rbLbz!@aws-1-us-east-2.pooler.supabase.com:5432/postgres)"
+      "Bash(npm cache clean:*)",
+      "Bash(npm ci:*)"
     ],
     "deny": [],
     "ask": []

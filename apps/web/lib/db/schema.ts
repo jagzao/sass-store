@@ -339,6 +339,43 @@ export const socialPostTargetsRelations = relations(socialPostTargets, ({ one })
   })
 }));
 
+// Disputes table for tracking payment disputes
+export const disputes = pgTable('disputes', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  tenantId: uuid('tenant_id').references(() => tenants.id).notNull(),
+  paymentId: uuid('payment_id').references(() => payments.id).notNull(),
+  orderId: uuid('order_id').references(() => orders.id).notNull(),
+  status: varchar('status', { length: 20 }).notNull(), // 'warning_needs_response' | 'warning_under_review' | 'warning_closed' | 'needs_response' | 'under_review' | 'charge_refunded' | 'won' | 'lost'
+  reason: varchar('reason', { length: 50 }).notNull(), // 'duplicate' | 'fraudulent' | 'subscription_canceled' | 'product_unacceptable' | 'product_not_received' | 'unrecognized' | 'credit_not_processed' | 'general'
+  amount: decimal('amount', { precision: 10, scale: 2 }).notNull(),
+  currency: varchar('currency', { length: 3 }).notNull().default('MXN'),
+  evidenceDueBy: timestamp('evidence_due_by'),
+  metadata: jsonb('metadata'),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow()
+}, (table) => ({
+  tenantIdx: index('dispute_tenant_idx').on(table.tenantId),
+  paymentIdx: index('dispute_payment_idx').on(table.paymentId),
+  orderIdx: index('dispute_order_idx').on(table.orderId),
+  statusIdx: index('dispute_status_idx').on(table.status),
+  reasonIdx: index('dispute_reason_idx').on(table.reason)
+}));
+
+export const disputesRelations = relations(disputes, ({ one }) => ({
+  tenant: one(tenants, {
+    fields: [disputes.tenantId],
+    references: [tenants.id]
+  }),
+  payment: one(payments, {
+    fields: [disputes.paymentId],
+    references: [payments.id]
+  }),
+  order: one(orders, {
+    fields: [disputes.orderId],
+    references: [orders.id]
+  })
+}));
+
 export const mediaAssetsRelations = relations(mediaAssets, ({ one }) => ({
   tenant: one(tenants, {
     fields: [mediaAssets.tenantId],

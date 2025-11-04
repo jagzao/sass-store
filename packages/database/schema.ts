@@ -13,8 +13,11 @@ import {
   primaryKey,
   index,
   uniqueIndex,
+  pgEnum,
 } from "drizzle-orm/pg-core";
 import { relations, sql } from "drizzle-orm";
+
+export const roles = pgEnum("roles", ["Admin", "Gerente", "Personal", "Cliente"]);
 
 // Tenants table - central to multitenant architecture
 export const tenants = pgTable(
@@ -37,6 +40,29 @@ export const tenants = pgTable(
   (table) => ({
     slugIdx: uniqueIndex("tenant_slug_idx").on(table.slug),
     statusIdx: index("tenant_status_idx").on(table.status),
+  })
+);
+
+// Tenant Configs table
+export const tenantConfigs = pgTable(
+  "tenant_configs",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .references(() => tenants.id)
+      .notNull(),
+    category: varchar("category", { length: 50 }).notNull(),
+    key: varchar("key", { length: 50 }).notNull(),
+    value: jsonb("value"),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    tenantCategoryKeyIdx: uniqueIndex("tenant_configs_tenant_category_key_idx").on(
+      table.tenantId,
+      table.category,
+      table.key
+    ),
   })
 );
 
@@ -67,6 +93,10 @@ export const products = pgTable(
     tenantIdx: index("product_tenant_idx").on(table.tenantId),
     categoryIdx: index("product_category_idx").on(table.category),
     featuredIdx: index("product_featured_idx").on(table.featured),
+    // Índices compuestos para optimización de consultas frecuentes
+    tenantFeaturedIdx: index("product_tenant_featured_idx").on(table.tenantId, table.featured),
+    tenantCategoryIdx: index("product_tenant_category_idx").on(table.tenantId, table.category),
+    createdAtIdx: index("product_created_at_idx").on(table.createdAt),
   })
 );
 
@@ -318,8 +348,19 @@ export const tenantsRelations = relations(tenants, ({ many }) => ({
   orders: many(orders),
   mediaAssets: many(mediaAssets),
   auditLogs: many(auditLogs),
+  configs: many(tenantConfigs),
+  kpis: many(financialKpis),
+  movements: many(financialMovements),
+  campaigns: many(campaigns),
+  reels: many(reels),
 }));
 
+export const tenantConfigsRelations = relations(tenantConfigs, ({ one }) => ({
+  tenant: one(tenants, {
+    fields: [tenantConfigs.tenantId],
+    references: [tenants.id],
+  }),
+}));
 export const productsRelations = relations(products, ({ one, many }) => ({
   tenant: one(tenants, {
     fields: [products.tenantId],
@@ -779,11 +820,37 @@ export const verificationTokens = pgTable(
   })
 );
 
+// RBAC table for multitenancy
+export const userRoles = pgTable(
+  "user_roles",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id")
+      .references(() => users.id)
+      .notNull(),
+    tenantId: uuid("tenant_id")
+      .references(() => tenants.id)
+      .notNull(),
+    role: roles("role").notNull(),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    userTenantUnique: uniqueIndex("user_roles_user_tenant_unique_idx").on(
+      table.userId,
+      table.tenantId
+    ),
+    userIdx: index("user_roles_user_idx").on(table.userId),
+    tenantIdx: index("user_roles_tenant_idx").on(table.tenantId),
+  })
+);
+
 // Authentication Relations
 export const usersRelations = relations(users, ({ many }) => ({
   accounts: many(accounts),
   sessions: many(sessions),
   reviews: many(productReviews),
+  roles: many(userRoles),
 }));
 
 export const accountsRelations = relations(accounts, ({ one }) => ({
@@ -797,6 +864,17 @@ export const sessionsRelations = relations(sessions, ({ one }) => ({
   user: one(users, {
     fields: [sessions.userId],
     references: [users.id],
+  }),
+}));
+
+export const userRolesRelations = relations(userRoles, ({ one }) => ({
+  user: one(users, {
+    fields: [userRoles.userId],
+    references: [users.id],
+  }),
+  tenant: one(tenants, {
+    fields: [userRoles.tenantId],
+    references: [tenants.id],
   }),
 }));
 
@@ -839,6 +917,61 @@ export const productReviews = pgTable(
   })
 );
 
+// Financial KPIs table
+export const financialKpis = pgTable(
+  "financial_kpis",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .references(() => tenants.id)
+      .notNull(),
+    date: date("date").notNull(),
+    totalIncome: decimal("total_income", { precision: 12, scale: 2 }).notNull(),
+    totalExpenses: decimal("total_expenses", { precision: 12, scale: 2 }).notNull(),
+    netCashFlow: decimal("net_cash_flow", { precision: 12, scale: 2 }).notNull(),
+    averageTicket: decimal("average_ticket", { precision: 10, scale: 2 }).notNull(),
+    approvalRate: decimal("approval_rate", { precision: 5, scale: 2 }).notNull(),
+    transactionCount: integer("transaction_count").notNull(),
+    availableBalance: decimal("available_balance", { precision: 12, scale: 2 }).notNull(),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    tenantDateIdx: index("financial_kpis_tenant_date_idx").on(
+      table.tenantId,
+      table.date
+    ),
+  })
+);
+
+// Financial Movements table
+export const financialMovements = pgTable(
+  "financial_movements",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .references(() => tenants.id)
+      .notNull(),
+    type: varchar("type", { length: 50 }).notNull(), // "income" | "expense"
+    paymentMethod: varchar("payment_method", { length: 50 }),
+    reconciled: boolean("reconciled").default(false),
+    movementDate: date("movement_date").notNull(),
+    description: text("description"),
+    referenceId: text("reference_id"),
+    counterparty: text("counterparty"),
+    amount: decimal("amount", { precision: 12, scale: 2 }).notNull(),
+    reconciliationId: uuid("reconciliation_id"),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    tenantDateIdx: index("financial_movements_tenant_date_idx").on(
+      table.tenantId,
+      table.movementDate
+    ),
+  })
+);
+
 // Review Relations
 export const productReviewsRelations = relations(
   productReviews,
@@ -857,3 +990,231 @@ export const productReviewsRelations = relations(
     }),
   })
 );
+
+// Financial KPIs Relations
+export const financialKpisRelations = relations(financialKpis, ({ one }) => ({
+  tenant: one(tenants, {
+    fields: [financialKpis.tenantId],
+    references: [tenants.id],
+  }),
+}));
+
+// User carts table for cart persistence
+export const userCarts = pgTable(
+  "user_carts",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id")
+      .references(() => users.id, { onDelete: "cascade" })
+      .notNull(),
+    items: jsonb("items").notNull().default(sql`'[]'`), // Store cart items as JSON
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    userIdx: uniqueIndex("user_carts_user_id_idx").on(table.userId),
+  })
+);
+
+// Financial Movements Relations
+export const financialMovementsRelations = relations(financialMovements, ({ one }) => ({
+  tenant: one(tenants, {
+    fields: [financialMovements.tenantId],
+    references: [tenants.id],
+  }),
+}));
+
+// User carts Relations
+export const userCartsRelations = relations(userCarts, ({ one }) => ({
+  user: one(users, {
+    fields: [userCarts.userId],
+    references: [users.id],
+  }),
+}));
+
+// ========================================================================
+// CAMPAIGNS & REELS - Social Media Content Management
+// ========================================================================
+
+// Campaigns table - Marketing campaigns for tenants
+export const campaigns = pgTable(
+  "campaigns",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .references(() => tenants.id)
+      .notNull(),
+    name: text("name").notNull(),
+    type: text("type").notNull(), // 'belleza' | 'navidad' | 'promocional' | 'verano', etc.
+    slug: text("slug").notNull(),
+    lutFile: text("lut_file"), // Path to LUT file for video color grading
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
+  },
+  (table) => ({
+    tenantSlugUnique: uniqueIndex("campaigns_tenant_slug_idx").on(
+      table.tenantId,
+      table.slug
+    ),
+    tenantIdx: index("campaigns_tenant_idx").on(table.tenantId),
+    slugIdx: index("campaigns_slug_idx").on(table.slug),
+    typeIdx: index("campaigns_type_idx").on(table.type),
+  })
+);
+
+// Reels table - Instagram/TikTok reels content
+export const reels = pgTable(
+  "reels",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .references(() => tenants.id)
+      .notNull(),
+    campaignId: uuid("campaign_id").references(() => campaigns.id),
+    title: text("title").notNull(),
+    status: text("status").notNull().default("pending"), // 'pending' | 'processing' | 'completed' | 'failed'
+    imageUrls: text("image_urls").array().notNull().default(sql`ARRAY[]::text[]`),
+    overlayType: text("overlay_type").notNull(), // Type of overlay/template to use
+    musicFile: text("music_file").notNull(), // Path to background music
+    duration: decimal("duration", { precision: 10, scale: 2 }).default("0"), // Duration in seconds
+    hashtags: text("hashtags").array().default(sql`ARRAY[]::text[]`),
+    caption: text("caption").default(""),
+    metadata: jsonb("metadata").default("{}"),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
+  },
+  (table) => ({
+    tenantIdx: index("reels_tenant_idx").on(table.tenantId),
+    campaignIdx: index("reels_campaign_idx").on(table.campaignId),
+    statusIdx: index("reels_status_idx").on(table.status),
+    createdIdx: index("reels_created_idx").on(table.createdAt),
+  })
+);
+
+// Campaigns Relations
+export const campaignsRelations = relations(campaigns, ({ one, many }) => ({
+  tenant: one(tenants, {
+    fields: [campaigns.tenantId],
+    references: [tenants.id],
+  }),
+  reels: many(reels),
+}));
+
+// Reels Relations
+export const reelsRelations = relations(reels, ({ one }) => ({
+  tenant: one(tenants, {
+    fields: [reels.tenantId],
+    references: [tenants.id],
+  }),
+  campaign: one(campaigns, {
+    fields: [reels.campaignId],
+    references: [campaigns.id],
+  }),
+}));
+
+// POS Terminals table
+export const posTerminals = pgTable(
+  "pos_terminals",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .references(() => tenants.id)
+      .notNull(),
+    name: varchar("name", { length: 100 }).notNull(),
+    terminalId: varchar("terminal_id", { length: 100 }).unique().notNull(), // Unique identifier for the terminal
+    status: varchar("status", { length: 20 }).notNull().default("active"), // 'active' | 'inactive' | 'maintenance'
+    location: varchar("location", { length: 200 }),
+    lastSync: timestamp("last_sync", { withTimezone: true }), // Last synchronization timestamp
+    metadata: jsonb("metadata"),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    tenantIdx: index("pos_terminals_tenant_idx").on(table.tenantId),
+    terminalIdIdx: uniqueIndex("pos_terminals_terminal_id_idx").on(table.terminalId),
+    statusIdx: index("pos_terminals_status_idx").on(table.status),
+  })
+);
+
+// MercadoPago tokens table
+export const mercadopagoTokens = pgTable(
+  "mercadopago_tokens",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .references(() => tenants.id)
+      .notNull(),
+    accessToken: text("access_token").notNull(),
+    refreshToken: text("refresh_token").notNull(),
+    expiresIn: integer("expires_in").notNull(), // Expiration in seconds
+    tokenType: varchar("token_type", { length: 20 }).notNull(), // Usually "bearer"
+    scope: text("scope"),
+    merchantId: varchar("merchant_id", { length: 100 }), // MercadoPago merchant ID
+    environment: varchar("environment", { length: 10 }).notNull().default("production"), // 'production' | 'sandbox'
+    expiresAt: timestamp("expires_at", { withTimezone: true }), // When the token expires
+    metadata: jsonb("metadata"),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    tenantIdx: index("mercadopago_tokens_tenant_idx").on(table.tenantId),
+    merchantIdIdx: index("mercadopago_tokens_merchant_id_idx").on(table.merchantId),
+  })
+);
+
+// MercadoPago payments table
+export const mercadopagoPayments = pgTable(
+  "mercadopago_payments",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .references(() => tenants.id)
+      .notNull(),
+    orderId: uuid("order_id").references(() => orders.id), // Link to our order
+    mercadopagoPaymentId: varchar("mercadopago_payment_id", { length: 100 }).unique().notNull(), // MP's payment ID
+    paymentIntentId: varchar("payment_intent_id", { length: 100 }).unique(), // For our internal reference
+    status: varchar("status", { length: 20 }).notNull(), // Status from MercadoPago
+    amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
+    currency: varchar("currency", { length: 3 }).notNull().default("MXN"),
+    paymentMethod: varchar("payment_method", { length: 50 }), // Payment method used
+    externalReference: varchar("external_reference", { length: 100 }), // Reference from MercadoPago
+    description: text("description"),
+    metadata: jsonb("metadata"), // Store MP's response and additional data
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    tenantIdx: index("mercadopago_payments_tenant_idx").on(table.tenantId),
+    orderIdIdx: index("mercadopago_payments_order_idx").on(table.orderId),
+    mpPaymentIdIdx: uniqueIndex("mercadopago_payments_mp_id_idx").on(table.mercadopagoPaymentId),
+    paymentIntentIdx: uniqueIndex("mercadopago_payments_intent_idx").on(table.paymentIntentId),
+  })
+);
+
+// POS Terminals Relations
+export const posTerminalsRelations = relations(posTerminals, ({ one }) => ({
+  tenant: one(tenants, {
+    fields: [posTerminals.tenantId],
+    references: [tenants.id],
+  }),
+}));
+
+// MercadoPago Tokens Relations
+export const mercadopagoTokensRelations = relations(mercadopagoTokens, ({ one }) => ({
+  tenant: one(tenants, {
+    fields: [mercadopagoTokens.tenantId],
+    references: [tenants.id],
+  }),
+}));
+
+// MercadoPago Payments Relations
+export const mercadopagoPaymentsRelations = relations(mercadopagoPayments, ({ one }) => ({
+  tenant: one(tenants, {
+    fields: [mercadopagoPayments.tenantId],
+    references: [tenants.id],
+  }),
+  order: one(orders, {
+    fields: [mercadopagoPayments.orderId],
+    references: [orders.id],
+  }),
+}));

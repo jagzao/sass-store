@@ -13,3 +13,6 @@ export const config = {
     monthlyBudget: parseFloat(process.env.MONTHLY_BUDGET || '5.00'),
   },
 };
+
+// Export auth functions from auth module
+export * from './src/auth';

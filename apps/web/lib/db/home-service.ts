@@ -1,4 +1,4 @@
-import { db } from '@sass-store/database';
+import { db, withTenantContext } from '@sass-store/database';
 import { products, services, bookings } from '@sass-store/database';
 import { eq, and, desc, sql } from 'drizzle-orm';
 
@@ -9,26 +9,28 @@ export class HomeService {
     try {
       // In a real app, this would query orders/purchases table
       // For now, we'll get featured products as "recent purchases"
-      const recentPurchases = await db
-        .select({
-          id: products.id,
-          name: products.name,
-          price: products.price,
-          image: sql<string>`${products.metadata}->>'image'`,
-          tenant: sql<string>`${tenantId}`,
-          tenantName: sql<string>`''`, // Will be filled from tenant context
-          lastPurchased: products.updatedAt,
-          sku: products.sku
-        })
-        .from(products)
-        .where(
-          and(
-            eq(products.tenantId, tenantId),
-            eq(products.active, true)
+      const recentPurchases = await withTenantContext(db, tenantId, async (db) => {
+        return await db
+          .select({
+            id: products.id,
+            name: products.name,
+            price: products.price,
+            image: sql<string>`${products.metadata}->>'image'`,
+            tenant: sql<string>`${tenantId}`,
+            tenantName: sql<string>`''`, // Will be filled from tenant context
+            lastPurchased: products.updatedAt,
+            sku: products.sku
+          })
+          .from(products)
+          .where(
+            and(
+              eq(products.tenantId, tenantId),
+              eq(products.active, true)
+            )
           )
-        )
-        .orderBy(desc(products.updatedAt))
-        .limit(limit);
+          .orderBy(desc(products.updatedAt))
+          .limit(limit);
+      });
 
       return recentPurchases.map(item => ({
         ...item,
@@ -45,27 +47,29 @@ export class HomeService {
     try {
       // In a real app, this would query cart/checkout sessions
       // For now, we'll simulate with some products
-      const unfinishedItems = await db
-        .select({
-          id: products.id,
-          name: products.name,
-          price: products.price,
-          image: sql<string>`${products.metadata}->>'image'`,
-          tenant: sql<string>`${tenantId}`,
-          tenantName: sql<string>`''`, // Will be filled from tenant context
-          addedToCart: products.createdAt,
-          progress: sql<string>`'cart'` // Mock progress state
-        })
-        .from(products)
-        .where(
-          and(
-            eq(products.tenantId, tenantId),
-            eq(products.active, true),
-            eq(products.featured, true)
+      const unfinishedItems = await withTenantContext(db, tenantId, async (db) => {
+        return await db
+          .select({
+            id: products.id,
+            name: products.name,
+            price: products.price,
+            image: sql<string>`${products.metadata}->>'image'`,
+            tenant: sql<string>`${tenantId}`,
+            tenantName: sql<string>`''`, // Will be filled from tenant context
+            addedToCart: products.createdAt,
+            progress: sql<string>`'cart'` // Mock progress state
+          })
+          .from(products)
+          .where(
+            and(
+              eq(products.tenantId, tenantId),
+              eq(products.active, true),
+              eq(products.featured, true)
+            )
           )
-        )
-        .orderBy(desc(products.createdAt))
-        .limit(limit);
+          .orderBy(desc(products.createdAt))
+          .limit(limit);
+      });
 
       return unfinishedItems.map(item => ({
         ...item,
@@ -82,28 +86,30 @@ export class HomeService {
   static async getRecentBookings(tenantId: string, limit: number = 3) {
     try {
       // Get services that could be booked again
-      const recentBookings = await db
-        .select({
-          id: services.id,
-          name: services.name,
-          price: services.price,
-          duration: services.duration,
-          image: sql<string>`${services.metadata}->>'image'`,
-          tenant: sql<string>`${tenantId}`,
-          tenantName: sql<string>`''`, // Will be filled from tenant context
-          preferredStaff: sql<string>`'Available Staff'`, // Mock staff
-          nextAvailableSlot: sql<string>`'14:30'`, // Mock time slot
-          lastBooked: services.updatedAt
-        })
-        .from(services)
-        .where(
-          and(
-            eq(services.tenantId, tenantId),
-            eq(services.active, true)
+      const recentBookings = await withTenantContext(db, tenantId, async (db) => {
+        return await db
+          .select({
+            id: services.id,
+            name: services.name,
+            price: services.price,
+            duration: services.duration,
+            image: sql<string>`${services.metadata}->>'image'`,
+            tenant: sql<string>`${tenantId}`,
+            tenantName: sql<string>`''`, // Will be filled from tenant context
+            preferredStaff: sql<string>`'Available Staff'`, // Mock staff
+            nextAvailableSlot: sql<string>`'14:30'`, // Mock time slot
+            lastBooked: services.updatedAt
+          })
+          .from(services)
+          .where(
+            and(
+              eq(services.tenantId, tenantId),
+              eq(services.active, true)
+            )
           )
-        )
-        .orderBy(desc(services.updatedAt))
-        .limit(limit);
+          .orderBy(desc(services.updatedAt))
+          .limit(limit);
+      });
 
       return recentBookings.map(item => ({
         ...item,
@@ -120,58 +126,64 @@ export class HomeService {
   // Get trending items for "Trending" section
   static async getTrendingItems(tenantId: string, limit: number = 5) {
     try {
-      // Get both products and services for trending
-      const [trendingProducts, trendingServices] = await Promise.all([
-        db
-          .select({
-            id: products.id,
-            name: products.name,
-            price: products.price,
-            originalPrice: sql<string>`null`, // Could be calculated from metadata
-            image: sql<string>`${products.metadata}->>'image'`,
-            tenant: sql<string>`${tenantId}`,
-            tenantName: sql<string>`''`, // Will be filled from tenant context
-            category: products.category,
-            type: sql<string>`'product'`,
-            discount: sql<number>`null`,
-            trending: sql<string>`'hot'`, // Mock trending status
-            salesCount: sql<number>`cast(random() * 100 + 10 as int)` // Mock sales count
-          })
-          .from(products)
-          .where(
-            and(
-              eq(products.tenantId, tenantId),
-              eq(products.active, true),
-              eq(products.featured, true)
-            )
-          )
-          .limit(Math.ceil(limit / 2)),
+      // Get both products and services for trending with RLS
+      const [trendingProducts, trendingServices] = await withTenantContext(
+        db,
+        tenantId,
+        async (db) => {
+          return await Promise.all([
+            db
+              .select({
+                id: products.id,
+                name: products.name,
+                price: products.price,
+                originalPrice: sql<string>`null`, // Could be calculated from metadata
+                image: sql<string>`${products.metadata}->>'image'`,
+                tenant: sql<string>`${tenantId}`,
+                tenantName: sql<string>`''`, // Will be filled from tenant context
+                category: products.category,
+                type: sql<string>`'product'`,
+                discount: sql<number>`null`,
+                trending: sql<string>`'hot'`, // Mock trending status
+                salesCount: sql<number>`cast(random() * 100 + 10 as int)` // Mock sales count
+              })
+              .from(products)
+              .where(
+                and(
+                  eq(products.tenantId, tenantId),
+                  eq(products.active, true),
+                  eq(products.featured, true)
+                )
+              )
+              .limit(Math.ceil(limit / 2)),
 
-        db
-          .select({
-            id: services.id,
-            name: services.name,
-            price: services.price,
-            originalPrice: sql<string>`null`,
-            image: sql<string>`${services.metadata}->>'image'`,
-            tenant: sql<string>`${tenantId}`,
-            tenantName: sql<string>`''`, // Will be filled from tenant context
-            category: sql<string>`${services.metadata}->>'category'`,
-            type: sql<string>`'service'`,
-            discount: sql<number>`null`,
-            trending: sql<string>`'hot'`,
-            salesCount: sql<number>`cast(random() * 50 + 5 as int)`
-          })
-          .from(services)
-          .where(
-            and(
-              eq(services.tenantId, tenantId),
-              eq(services.active, true),
-              eq(services.featured, true)
-            )
-          )
-          .limit(Math.floor(limit / 2))
-      ]);
+            db
+              .select({
+                id: services.id,
+                name: services.name,
+                price: services.price,
+                originalPrice: sql<string>`null`,
+                image: sql<string>`${services.metadata}->>'image'`,
+                tenant: sql<string>`${tenantId}`,
+                tenantName: sql<string>`''`, // Will be filled from tenant context
+                category: sql<string>`${services.metadata}->>'category'`,
+                type: sql<string>`'service'`,
+                discount: sql<number>`null`,
+                trending: sql<string>`'hot'`,
+                salesCount: sql<number>`cast(random() * 50 + 5 as int)`
+              })
+              .from(services)
+              .where(
+                and(
+                  eq(services.tenantId, tenantId),
+                  eq(services.active, true),
+                  eq(services.featured, true)
+                )
+              )
+              .limit(Math.floor(limit / 2))
+          ]);
+        }
+      );
 
       // Combine and shuffle
       const allItems = [...trendingProducts, ...trendingServices];

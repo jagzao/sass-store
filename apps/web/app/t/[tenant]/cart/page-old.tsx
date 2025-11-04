@@ -3,12 +3,14 @@ import { resolveTenant } from "@/lib/tenant/resolver";
 import { getTenantDataForPage } from "@/lib/db/tenant-service";
 
 interface PageProps {
-  params: {
+  params: Promise<{
     tenant: string;
-  };
+  }>;
 }
 
 export default async function CartPage({ params }: PageProps) {
+  const resolvedParams = await params;
+
   // Resolve tenant to ensure it exists and is valid
   const resolvedTenant = await resolveTenant();
 
@@ -17,7 +19,7 @@ export default async function CartPage({ params }: PageProps) {
   }
 
   // Fetch tenant data from database
-  const tenantData = await getTenantDataForPage(params.tenant);
+  const tenantData = await getTenantDataForPage(resolvedParams.tenant);
 
   // Mock cart data - in production this would come from database/session
   const mockCart = {
@@ -61,7 +63,7 @@ export default async function CartPage({ params }: PageProps) {
           <div className="flex items-center justify-between">
             <div>
               <a
-                href={`/t/${params.tenant}`}
+                href={`/t/${resolvedParams.tenant}`}
                 className="text-sm text-gray-600 hover:text-gray-900 mb-2 inline-block"
               >
                 ← Volver a {tenantData.name}
@@ -75,19 +77,19 @@ export default async function CartPage({ params }: PageProps) {
             </div>
             <nav className="flex space-x-4">
               <a
-                href={`/t/${params.tenant}/services`}
+                href={`/t/${resolvedParams.tenant}/services`}
                 className="text-gray-600 hover:text-gray-900"
               >
                 Servicios
               </a>
               <a
-                href={`/t/${params.tenant}/products`}
+                href={`/t/${resolvedParams.tenant}/products`}
                 className="text-gray-600 hover:text-gray-900"
               >
                 Productos
               </a>
               <a
-                href={`/t/${params.tenant}/login`}
+                href={`/t/${resolvedParams.tenant}/login`}
                 className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700"
               >
                 Login
@@ -185,7 +187,7 @@ export default async function CartPage({ params }: PageProps) {
                     {/* Continue Shopping */}
                     <div className="mt-6 pt-6 border-t border-gray-200">
                       <a
-                        href={`/t/${params.tenant}/products`}
+                        href={`/t/${resolvedParams.tenant}/products`}
                         className="inline-flex items-center text-indigo-600 hover:text-indigo-700 font-medium"
                       >
                         ← Continuar comprando
@@ -273,14 +275,14 @@ export default async function CartPage({ params }: PageProps) {
               </p>
               <div className="flex justify-center space-x-4">
                 <a
-                  href={`/t/${params.tenant}/products`}
+                  href={`/t/${resolvedParams.tenant}/products`}
                   className="inline-block bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors"
                 >
                   Ver Productos
                 </a>
                 {tenantData.mode === "booking" && (
                   <a
-                    href={`/t/${params.tenant}/services`}
+                    href={`/t/${resolvedParams.tenant}/services`}
                     className="inline-block bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors"
                   >
                     Ver Servicios

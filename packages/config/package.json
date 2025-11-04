@@ -3,12 +3,24 @@
   "version": "0.1.0",
   "main": "./index.ts",
   "types": "./index.ts",
+  "exports": {
+    ".": "./index.ts",
+    "./auth": "./src/auth.ts"
+  },
   "license": "MIT",
   "scripts": {
     "lint": "eslint *.ts*",
     "typecheck": "tsc --noEmit"
   },
+  "dependencies": {
+    "next-auth": "5.0.0-beta.24",
+    "bcryptjs": "^3.0.2",
+    "@sass-store/database": "^0.1.0",
+    "drizzle-orm": "^0.31.0",
+    "next": "14.2.33"
+  },
   "devDependencies": {
-    "typescript": "5.2.2"
+    "typescript": "5.2.2",
+    "@types/bcryptjs": "^2.4.6"
   }
 }

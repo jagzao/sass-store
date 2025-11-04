@@ -4,12 +4,14 @@ import { TopNav } from "@/components/navigation/top-nav";
 import { getTenantDataForPage } from "@/lib/db/tenant-service";
 
 interface PageProps {
-  params: {
+  params: Promise<{
     tenant: string;
-  };
+  }>;
 }
 
 export default async function FavoritesPage({ params }: PageProps) {
+  const resolvedParams = await params;
+
   // Resolve tenant to ensure it exists and is valid
   const resolvedTenant = await resolveTenant();
 
@@ -18,7 +20,7 @@ export default async function FavoritesPage({ params }: PageProps) {
   }
 
   // Fetch tenant data from database
-  const tenantData = await getTenantDataForPage(params.tenant);
+  const tenantData = await getTenantDataForPage(resolvedParams.tenant);
 
   // Mock favorites data - in production this would come from database
   const mockFavorites = {
@@ -85,7 +87,7 @@ export default async function FavoritesPage({ params }: PageProps) {
                 </p>
               </div>
               <a
-                href={`/t/${params.tenant}/account`}
+                href={`/t/${resolvedParams.tenant}/account`}
                 className="text-indigo-600 hover:text-indigo-700 font-medium"
               >
                 ← Volver a Mi Cuenta
@@ -199,7 +201,7 @@ export default async function FavoritesPage({ params }: PageProps) {
                 <h3 className="text-lg font-semibold mb-4">Acciones Rápidas</h3>
                 <div className="grid md:grid-cols-3 gap-4">
                   <a
-                    href={`/t/${params.tenant}/products`}
+                    href={`/t/${resolvedParams.tenant}/products`}
                     className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
                   >
                     <div className="text-2xl mr-3">🛍️</div>
@@ -213,7 +215,7 @@ export default async function FavoritesPage({ params }: PageProps) {
 
                   {tenantData.mode === "booking" && (
                     <a
-                      href={`/t/${params.tenant}/services`}
+                      href={`/t/${resolvedParams.tenant}/services`}
                       className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
                     >
                       <div className="text-2xl mr-3">📅</div>
@@ -227,7 +229,7 @@ export default async function FavoritesPage({ params }: PageProps) {
                   )}
 
                   <a
-                    href={`/t/${params.tenant}/orders`}
+                    href={`/t/${resolvedParams.tenant}/orders`}
                     className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
                   >
                     <div className="text-2xl mr-3">📦</div>
@@ -252,14 +254,14 @@ export default async function FavoritesPage({ params }: PageProps) {
               </p>
               <div className="flex justify-center space-x-4">
                 <a
-                  href={`/t/${params.tenant}/products`}
+                  href={`/t/${resolvedParams.tenant}/products`}
                   className="inline-block bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors"
                 >
                   Ver Productos
                 </a>
                 {tenantData.mode === "booking" && (
                   <a
-                    href={`/t/${params.tenant}/services`}
+                    href={`/t/${resolvedParams.tenant}/services`}
                     className="inline-block bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors"
                   >
                     Ver Servicios

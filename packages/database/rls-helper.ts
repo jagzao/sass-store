@@ -3,13 +3,13 @@
  * Ensures all database queries respect tenant isolation
  */
 
-import { drizzle } from 'drizzle-orm/node-postgres';
-import { Pool } from 'pg';
 import { sql } from 'drizzle-orm';
+import type { Database } from './connection';
 
 /**
  * Set the tenant context for RLS policies
  * MUST be called before any database queries in multi-tenant context
+ * NOTE: This sets context for the current transaction only (local=TRUE)
  */
 export async function setTenantContext(db: any, tenantId: string): Promise<void> {
   if (!tenantId) {
@@ -17,17 +17,17 @@ export async function setTenantContext(db: any, tenantId: string): Promise<void>
   }
 
   // Set the app.current_tenant_id session variable
-  // This is used by RLS policies to filter data
-  await db.execute(sql`SELECT set_config('app.current_tenant_id', ${tenantId}, FALSE)`);
+  // TRUE = local to current transaction (persists for the transaction only)
+  await db.execute(sql`SELECT set_config('app.current_tenant_id', ${tenantId}, TRUE)`);
 }
 
 /**
  * Get the current tenant from RLS context
  */
-export async function getCurrentTenant(db: any): Promise<string | null> {
+export async function getCurrentTenant(db: Database): Promise<string | null> {
   try {
-    const result = await db.execute(sql`SELECT get_current_tenant()`);
-    return result.rows[0]?.get_current_tenant || null;
+    const result: any = await db.execute(sql`SELECT get_current_tenant_id() as tenant_id`);
+    return (result[0]?.tenant_id as string) || null;
   } catch (error) {
     console.error('Failed to get current tenant:', error);
     return null;
@@ -35,21 +35,49 @@ export async function getCurrentTenant(db: any): Promise<string | null> {
 }
 
 /**
- * Execute a query with automatic tenant isolation
- * Use this wrapper to ensure RLS is always applied
+ * Execute a query with automatic tenant isolation using transactions
+ *
+ * DEFENSE IN DEPTH STRATEGY:
+ * 1. Sets RLS context in database (database-level protection)
+ * 2. Requires manual filters in queries (application-level protection)
+ *
+ * IMPORTANT: Always add manual .where(eq(table.tenantId, tenantId)) filters
+ * in your queries. This provides double protection against data leakage.
+ *
+ * Example:
+ * ```typescript
+ * await withTenantContext(db, tenantId, async (db) => {
+ *   return await db
+ *     .select()
+ *     .from(products)
+ *     .where(eq(products.tenantId, tenantId)); // ← Manual filter required!
+ * });
+ * ```
  */
 export async function withTenantContext<T>(
-  db: any,
+  db: Database,
   tenantId: string,
+  user: { id: string; role: string } | null,
   queryFn: (db: any) => Promise<T>
 ): Promise<T> {
-  // Set tenant context
-  await setTenantContext(db, tenantId);
+  if (!tenantId) {
+    throw new Error('SECURITY: tenantId is required for RLS');
+  }
 
-  // Execute query (RLS policies will automatically filter by tenant)
-  const result = await queryFn(db);
+  // Use a transaction to ensure context persists
+  return await db.transaction(async (tx) => {
+    // Set tenant context within transaction (local=TRUE)
+    await tx.execute(sql`SELECT set_config('app.current_tenant_id', ${tenantId}, TRUE)`);
 
-  return result;
+    // Set user context if provided
+    if (user?.id && user?.role) {
+      await tx.execute(sql`SELECT set_config('app.current_user_id', ${user.id}, TRUE)`);
+      await tx.execute(sql`SELECT set_config('app.current_user_role', ${user.role}, TRUE)`);
+    }
+
+    // Execute query with both RLS and manual filters applied
+    return await queryFn(tx);
+  });
 }
 
 /**

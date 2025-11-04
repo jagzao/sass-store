@@ -4,7 +4,7 @@ import { db } from "@sass-store/database";
 import { mediaAssets, tenantQuotas } from "@sass-store/database";
 import { eq, sql } from "drizzle-orm";
 import { resolveTenant } from "@/lib/tenant-resolver";
-import { validateApiKey } from "@/lib/auth";
+import { validateApiKey } from "@sass-store/config";
 import { checkRateLimit, checkTenantQuota } from "@/lib/rate-limit";
 import { createAuditLog } from "@/lib/audit";
 import { MediaProcessor, STANDARD_VARIANTS } from "@/lib/media/processor";
@@ -187,7 +187,7 @@ export async function POST(request: NextRequest) {
     // Create audit log
     await createAuditLog({
       tenantId: tenant.id,
-      actorId: authResult.userId,
+      actorId: "system", // For API-based actions, use a system actor
       action: "media:upload",
       targetTable: "media_assets",
       targetId: newAsset[0].id,

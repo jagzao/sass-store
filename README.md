@@ -353,8 +353,37 @@ MONTHLY_BUDGET=5.00
 ### Authentication & Authorization
 
 - **JWT**: Stateless authentication with tenant claims
-- **API Keys**: Service-to-service authentication
+- **API Keys**: Service-to-service authentication with validateApiKey function
 - **RBAC**: Role-based access control (Customer, Staff, Admin, Owner)
+
+#### API Key Authentication
+
+The application implements API key authentication for service-to-service communication. The `validateApiKey` function provides:
+
+- Validation of API keys in the `X-API-Key` header
+- Tenant identification via the `X-Tenant` header
+- Secure access to protected API endpoints
+
+Example usage:
+```typescript
+import { validateApiKey } from "@sass-store/config";
+
+// In your API route
+export async function POST(request: NextRequest) {
+  const authResult = await validateApiKey(request);
+  
+  if (!authResult.success) {
+    return NextResponse.json(
+      { error: authResult.error },
+      { status: 401 }
+    );
+  }
+  
+  // Process request for authenticated tenant
+  const { tenant } = authResult;
+  // ... your logic here
+}
+```
 
 ## 📱 Supported Tenants
 
@@ -398,6 +427,13 @@ npm run deploy:worker
 ```
 
 ## 🧩 API Reference
+
+### Authentication
+
+API endpoints require authentication using API keys. Include the following headers in your requests:
+
+- `X-Tenant`: The tenant slug (e.g., `wondernails`)
+- `X-API-Key`: The tenant-specific API key
 
 ### Products API
 

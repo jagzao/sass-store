@@ -26,7 +26,7 @@ INSERT INTO tenants (slug, name, description, mode, status, branding, contact, l
 
 -- 2. WONDER NAILS - Premium Nail Salon
 ('wondernails', 'Wonder Nails Studio', 'Salón de uñas premium especializado en manicure, pedicure y nail art de alta calidad', 'booking', 'active',
-  '{"primaryColor": "#EC4899", "secondaryColor": "#BE185D", "accentColor": "#FBCFE8", "logo": "/logos/wondernails.png"}',
+  '{"primaryColor": "#C026D3", "secondaryColor": "#7C3AED", "accentColor": "#F3E8FF", "logo": "/logos/wondernails.png"}',
   '{"email": "marialiciavh1984@gmail.mx", "phone": "+52 1 55 6406 8409", "website": "https://wondernails.mx", "address": "Manzana 012, San Lorenzo, 56140 Texcoco, State of Mexico, Mexico", "hours": {"monday": "10:00-20:00", "tuesday": "10:00-20:00", "wednesday": "10:00-20:00", "thursday": "10:00-20:00", "friday": "10:00-21:00", "saturday": "9:00-21:00", "sunday": "10:00-18:00"}}',
   '{"address": "Manzana 012, San Lorenzo", "city": "Texcoco", "state": "State of Mexico", "country": "México", "zipCode": "56140", "coordinates": {"lat": 19.5028458, "lng": -98.8833265}}',
   '{"maxProducts": 100, "maxServices": 50, "maxMedia": 1000, "maxBookings": 5000}'

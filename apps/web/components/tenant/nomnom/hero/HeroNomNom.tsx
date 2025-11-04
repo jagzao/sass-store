@@ -1,7 +1,9 @@
 "use client";
 import React, { useEffect, useRef, useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import gsap from "gsap";
 import styles from "./HeroNomNom.module.css";
+import { useCart } from "@/lib/cart/cart-store";
 
 type Slide = { id: string; img: string; title: string; desc: string; price: string; bgColor: string };
 
@@ -13,6 +15,8 @@ const defaultSlides: Slide[] = [
 ];
 
 export default function HeroNomNom({ slides = defaultSlides }: { slides?: Slide[] }) {
+  const router = useRouter();
+  const { addItem } = useCart();
   const len = slides.length;
   const [currIndex, setCurrIndex] = useState(0);
   const [textContent, setTextContent] = useState(slides[0]);
@@ -204,6 +208,28 @@ export default function HeroNomNom({ slides = defaultSlides }: { slides?: Slide[
   const currentSlide = slides[currIndex];
   const nextIndex = (currIndex + 1) % len;
 
+  const handleAddToCart = () => {
+    // Parse price (remove $ and convert to number)
+    const price = parseFloat(textContent.price.replace('$', '')) || 0;
+
+    // Add to cart
+    addItem({
+      sku: textContent.id,
+      name: textContent.title,
+      price: price,
+      image: '🌮', // Taco emoji for nom-nom
+      variant: {
+        tenant: 'nom-nom',
+        type: 'product'
+      }
+    }, 1);
+
+    // Navigate to cart
+    setTimeout(() => {
+      router.push('/t/nom-nom/cart');
+    }, 100);
+  };
+
   return (
     <section
       ref={containerRef}
@@ -226,7 +252,7 @@ export default function HeroNomNom({ slides = defaultSlides }: { slides?: Slide[
           <h1 ref={titleRef}>{textContent.title}</h1>
           <p ref={priceRef} className={styles.price}>{textContent.price}</p>
           <p ref={descRef} className={styles.description}>{textContent.desc}</p>
-          <button className={styles.addToCard}>Agregar</button>
+          <button onClick={handleAddToCart} className={styles.addToCard}>Agregar</button>
         </div>
       </div>
 

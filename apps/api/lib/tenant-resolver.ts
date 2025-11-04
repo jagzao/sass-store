@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server';
 import { db } from '@sass-store/database';
 import { tenants } from '@sass-store/database';
 import { eq } from 'drizzle-orm';
+import { tenantCache } from './cache';
 
 export interface ResolvedTenant {
   id: string;
@@ -26,7 +27,17 @@ export async function resolveTenant(request: NextRequest): Promise<ResolvedTenan
     if (tenant) return tenant;
   }
 
-  // 2. Check subdomain from host
+  // 2. Check query parameter 'tenant' (CRITICAL FIX)
+  const url = new URL(request.url);
+  const tenantParam = url.searchParams.get('tenant');
+  if (tenantParam) {
+    const tenant = await fetchTenantBySlug(tenantParam);
+    if (tenant) {
+      return tenant;
+    }
+  }
+
+  // 3. Check subdomain from host
   const host = request.headers.get('host');
   if (host) {
     const subdomain = extractSubdomain(host);
@@ -36,14 +47,14 @@ export async function resolveTenant(request: NextRequest): Promise<ResolvedTenan
     }
   }
 
-  // 3. Check path parameter (set by middleware)
+  // 4. Check path parameter (set by middleware)
   const tenantPath = request.headers.get('x-tenant-path');
   if (tenantPath) {
     const tenant = await fetchTenantBySlug(tenantPath);
     if (tenant) return tenant;
   }
 
-  // 4. Default fallback
+  // 5. Default fallback
   return await fetchTenantBySlug('zo-system');
 }
 
@@ -67,6 +78,12 @@ function extractSubdomain(host: string): string | null {
 
 async function fetchTenantBySlug(slug: string): Promise<ResolvedTenant | null> {
   try {
+    // Verificar cache primero
+    const cached = tenantCache.get(slug);
+    if (cached) {
+      return cached as ResolvedTenant;
+    }
+
     const tenant = await db
       .select({
         id: tenants.id,
@@ -83,13 +100,18 @@ async function fetchTenantBySlug(slug: string): Promise<ResolvedTenant | null> {
       return null;
     }
 
-    return {
+    const resolvedTenant = {
       id: tenant[0].id,
       slug: tenant[0].slug,
       name: tenant[0].name,
       mode: tenant[0].mode as 'catalog' | 'booking',
       status: tenant[0].status as 'active' | 'inactive' | 'suspended'
     };
+
+    // Cachear el resultado
+    tenantCache.set(slug, resolvedTenant);
+
+    return resolvedTenant;
   } catch (error) {
     console.error('Error fetching tenant:', error);
     return null;

@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useParams } from 'next/navigation';
 import ProductCard from '@/components/products/ProductCard';
+import TenantPageSkeleton from '@/components/ui/TenantPageSkeleton';
 import { useCart } from '@/lib/cart/cart-store';
 import { LiveRegionProvider } from '@/components/a11y/LiveRegion';
 
@@ -17,15 +18,54 @@ export default function ProductsPage() {
   useEffect(() => {
     const loadTenantData = async () => {
       try {
-        const response = await fetch(`/api/tenants/${tenantSlug}`);
-        if (response.ok) {
-          const data = await response.json();
-          setTenantData(data);
+        console.log('[PRODUCTS PAGE] Starting to load tenant data for:', tenantSlug);
+
+        // Cargar tenant y productos en paralelo para mejor performance
+        const [tenantResponse, productsResponse] = await Promise.all([
+          fetch(`/api/tenants/${tenantSlug}`).then(r => {
+            console.log('[PRODUCTS PAGE] Tenant API response:', r.ok, r.status);
+            return r.ok ? r.json() : null;
+          }),
+          fetch(`/api/v1/public/products?tenant=${tenantSlug}&limit=20`).then(r => {
+            console.log('[PRODUCTS PAGE] Products API response:', r.ok, r.status);
+            return r.ok ? r.json() : null;
+          })
+        ]);
+
+        console.log('[PRODUCTS PAGE] Tenant response:', tenantResponse);
+        console.log('[PRODUCTS PAGE] Products response:', productsResponse);
+
+        const tenantInfo = tenantResponse;
+        const products = productsResponse?.data || [];
+
+        console.log('[PRODUCTS PAGE] Processed - tenantInfo:', !!tenantInfo, 'products count:', products.length);
+
+        // Combine data
+        if (tenantInfo) {
+          console.log('[PRODUCTS PAGE] Setting tenant data with real tenant info');
+          setTenantData({
+            ...tenantInfo,
+            products: products
+          });
+        } else {
+          // Fallback: just products with mock tenant data
+          console.log('[PRODUCTS PAGE] Setting tenant data with fallback mock data');
+          setTenantData({
+            id: `tenant-${tenantSlug}`,
+            slug: tenantSlug,
+            name: tenantSlug.charAt(0).toUpperCase() + tenantSlug.slice(1),
+            products: products,
+            services: [],
+            branding: { primaryColor: '#DC2626', secondaryColor: '#991B1B' },
+            contact: { email: 'info@example.com', phone: '+52 55 1234 5678' }
+          });
         }
+        console.log('[PRODUCTS PAGE] Tenant data set successfully');
       } catch (error) {
-        console.error('Error loading tenant:', error);
+        console.error('[PRODUCTS PAGE] Error loading tenant data:', error);
       } finally {
         setLoading(false);
+        console.log('[PRODUCTS PAGE] Loading complete');
       }
     };
 
@@ -40,29 +80,21 @@ export default function ProductsPage() {
 
     const metadata = product.metadata as any;
 
+    // Add item to cart with specified quantity
     addItem({
       sku: product.id,
       name: product.name,
-      quantity,
+      price: Number(product.price),
+      image: metadata?.image || '📦',
       variant: {
-        id: product.id,
-        type: 'product',
         tenant: tenantSlug,
-        price: product.price,
-        image: metadata?.image || '📦'
+        type: 'product'
       }
-    });
+    }, quantity);
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-4xl mb-4">⏳</div>
-          <p className="text-gray-600">Cargando productos...</p>
-        </div>
-      </div>
-    );
+    return <TenantPageSkeleton />;
   }
 
   if (!tenantData) {

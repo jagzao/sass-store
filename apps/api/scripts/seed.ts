@@ -18,9 +18,9 @@ async function seed() {
     console.log("Seeding database...");
 
     // Read seed SQL file
-    const seedPath = path.join(
-      process.cwd(),
-      "../../packages/database/seed.sql"
+    const seedPath = path.resolve(
+      __dirname,
+      "../../../packages/database/seed.sql"
     );
     const seedSQL = fs.readFileSync(seedPath, "utf-8");
 

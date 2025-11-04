@@ -4,12 +4,14 @@ import { TopNav } from "@/components/navigation/top-nav";
 import { getTenantDataForPage } from "@/lib/db/tenant-service";
 
 interface PageProps {
-  params: {
+  params: Promise<{
     tenant: string;
-  };
+  }>;
 }
 
 export default async function CalendarAdminPage({ params }: PageProps) {
+  const resolvedParams = await params;
+
   // Resolve tenant to ensure it exists and is valid
   const resolvedTenant = await resolveTenant();
 
@@ -18,7 +20,7 @@ export default async function CalendarAdminPage({ params }: PageProps) {
   }
 
   // Fetch tenant data from database
-  const tenantData = await getTenantDataForPage(params.tenant);
+  const tenantData = await getTenantDataForPage(resolvedParams.tenant);
 
   // Only show calendar for booking-mode tenants
   if (tenantData.mode !== "booking") {
@@ -34,7 +36,7 @@ export default async function CalendarAdminPage({ params }: PageProps) {
             reservas.
           </p>
           <a
-            href={`/t/${params.tenant}/admin`}
+            href={`/t/${resolvedParams.tenant}/admin`}
             className="text-indigo-600 hover:text-indigo-700"
           >
             ← Volver al Panel de Admin
@@ -135,7 +137,7 @@ export default async function CalendarAdminPage({ params }: PageProps) {
               <div>
                 <div className="flex items-center space-x-3">
                   <a
-                    href={`/t/${params.tenant}/admin`}
+                    href={`/t/${resolvedParams.tenant}/admin`}
                     className="text-indigo-600 hover:text-indigo-700"
                   >
                     ← Panel Admin

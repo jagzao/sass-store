@@ -1,0 +1,80 @@
+name: 🔄 Rollback Deployment
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Environment to rollback"
+        required: true
+        default: "production"
+        type: choice
+        options:
+          - production
+          - qa
+          - dev
+      target_commit:
+        description: "Commit SHA to rollback to (leave empty for previous deployment)"
+        required: false
+
+jobs:
+  rollback:
+    name: Rollback ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.target_commit || 'HEAD~1' }}
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🏗️ Build application
+        run: npm run build
+        env:
+          NODE_ENV: production
+
+      - name: 🔄 Rollback Cloudflare Pages
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: sass-store-${{ inputs.environment }}
+          directory: apps/web/.next
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🔄 Rollback API
+        run: |
+          # Rollback Cloud Run to previous revision
+          gcloud run services update-traffic sass-store-api-${{ inputs.environment }} \
+            --to-revisions=LATEST=0,PREVIOUS=100 \
+            --region=us-central1 \
+            --project=${{ secrets.GCP_PROJECT_ID }}
+
+      - name: 🩺 Health Check
+        run: |
+          sleep 30
+          case ${{ inputs.environment }} in
+            production)
+              curl -f https://sassstore.com/api/health || exit 1
+              ;;
+            qa)
+              curl -f https://sass-store-qa.pages.dev/api/health || exit 1
+              ;;
+            dev)
+              curl -f https://sass-store-dev.pages.dev/api/health || exit 1
+              ;;
+          esac
+
+      - name: 📢 Notify rollback
+        run: |
+          echo "🔄 Rollback completed for ${{ inputs.environment }} environment"
+          echo "Target commit: ${{ inputs.target_commit || 'HEAD~1' }}"
+          echo "Health check: PASSED"

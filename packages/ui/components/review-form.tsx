@@ -76,7 +76,7 @@ export function ReviewForm({ productId, onSubmit, isLoading }: ReviewFormProps) 
                   className={`w-8 h-8 ${
                     i < (hoverRating || rating)
                       ? "fill-yellow-400 text-yellow-400"
-                      : "text-gray-300"
+                      : "text-gray-600"
                   }`}
                 />
               </button>

@@ -11,51 +11,48 @@
               - img "previous" [ref=e8]
             - generic [ref=e10]:
               - generic [ref=e11]: 1/
-              - generic [ref=e12]: "1"
-            - button "next" [disabled] [ref=e13]:
-              - img "next" [ref=e14]
+              - text: "1"
+            - button "next" [disabled] [ref=e12]:
+              - img "next" [ref=e13]
           - img
-        - generic [ref=e16]:
-          - generic [ref=e17]:
-            - img [ref=e18]
-            - generic "Latest available version is detected (15.5.4)." [ref=e20]: Next.js 15.5.4
-            - generic [ref=e21]: Webpack
+        - generic [ref=e15]:
+          - link "Next.js 15.5.6 (outdated) Webpack" [ref=e16] [cursor=pointer]:
+            - /url: https://nextjs.org/docs/messages/version-staleness
+            - img [ref=e17]
+            - generic "An outdated version detected (latest is 16.0.1), upgrade is highly recommended!" [ref=e19]: Next.js 15.5.6 (outdated)
+            - generic [ref=e20]: Webpack
           - img
-      - dialog "Build Error" [ref=e23]:
-        - generic [ref=e26]:
-          - generic [ref=e27]:
-            - generic [ref=e28]:
-              - generic [ref=e30]: Build Error
-              - generic [ref=e31]:
-                - button "Copy Error Info" [ref=e32] [cursor=pointer]:
-                  - img [ref=e33] [cursor=pointer]
-                - link "Go to related documentation" [ref=e35] [cursor=pointer]:
-                  - /url: https://nextjs.org/docs/messages/module-not-found
-                  - img [ref=e36] [cursor=pointer]
-                - link "Learn more about enabling Node.js inspector for server code with Chrome DevTools" [ref=e38] [cursor=pointer]:
+      - dialog "Build Error" [ref=e22]:
+        - generic [ref=e25]:
+          - generic [ref=e26]:
+            - generic [ref=e27]:
+              - generic [ref=e29]: Build Error
+              - generic [ref=e30]:
+                - button "Copy Error Info" [ref=e31] [cursor=pointer]:
+                  - img [ref=e32]
+                - button "No related documentation found" [disabled] [ref=e34]:
+                  - img [ref=e35]
+                - link "Learn more about enabling Node.js inspector for server code with Chrome DevTools" [ref=e37] [cursor=pointer]:
                   - /url: https://nextjs.org/docs/app/building-your-application/configuring/debugging#server-side-code
-                  - img [ref=e39] [cursor=pointer]
-            - paragraph [ref=e48]: "Module not found: Can't resolve '@/lib/hooks/use-cart'"
-          - generic [ref=e50]:
-            - generic [ref=e52]:
-              - img [ref=e54]
-              - generic [ref=e57]: ./components/home/trending.tsx (4:1)
-              - button "Open in editor" [ref=e58] [cursor=pointer]:
-                - img [ref=e60] [cursor=pointer]
-            - generic [ref=e64]:
-              - text: "Module not found: Can't resolve '@/lib/hooks/use-cart' 2 | 3 | import { useTenantSlug } from '@/lib/tenant/client-resolver'; > 4 | import { useCart } from '@/lib/hooks/use-cart'; | ^ 5 | import { StaggerContainer } from '@/components/animations/stagger-container'; 6 | import { motion } from 'framer-motion'; 7 | import { itemVariants } from '@/components/animations/stagger-container';"
-              - link "https://nextjs.org/docs/messages/module-not-found" [ref=e65] [cursor=pointer]:
-                - /url: https://nextjs.org/docs/messages/module-not-found
-        - generic [ref=e66]:
-          - generic [ref=e67]: "1"
-          - generic [ref=e68]: "2"
-    - generic [ref=e73] [cursor=pointer]:
-      - button "Open Next.js Dev Tools" [ref=e74] [cursor=pointer]:
-        - img [ref=e75] [cursor=pointer]
-      - button "Open issues overlay" [ref=e79] [cursor=pointer]:
-        - generic [ref=e80] [cursor=pointer]:
-          - generic [ref=e81] [cursor=pointer]: "0"
-          - generic [ref=e82] [cursor=pointer]: "1"
-        - generic [ref=e83] [cursor=pointer]: Issue
-  - alert [ref=e84]
+                  - img [ref=e38]
+            - paragraph [ref=e47]: "An error occurred in `next/font`."
+          - generic [ref=e49]:
+            - generic [ref=e51]:
+              - img [ref=e53]
+              - generic [ref=e56]: app\layout.tsx
+              - button "Open in editor" [ref=e57] [cursor=pointer]:
+                - img [ref=e59]
+            - generic [ref=e63]: "An error occurred in `next/font`. Error: Cannot find module 'object-hash' Require stack: - C:\\Dev\\Zo\\sass-store\\apps\\web\\node_modules\\tailwindcss\\lib\\util\\hashConfig.js - C:\\Dev\\Zo\\sass-store\\apps\\web\\node_modules\\tailwindcss\\lib\\lib\\setupTrackingContext.js - C:\\Dev\\Zo\\sass-store\\apps\\web\\node_modules\\tailwindcss\\lib\\plugin.js - C:\\Dev\\Zo\\sass-store\\apps\\web\\node_modules\\tailwindcss\\lib\\index.js - C:\\Dev\\Zo\\sass-store\\apps\\web\\node_modules\\next\\dist\\build\\webpack\\config\\blocks\\css\\plugins.js - C:\\Dev\\Zo\\sass-store\\apps\\web\\node_modules\\next\\dist\\build\\webpack\\config\\blocks\\css\\index.js - C:\\Dev\\Zo\\sass-store\\apps\\web\\node_modules\\next\\dist\\build\\webpack\\config\\index.js - C:\\Dev\\Zo\\sass-store\\apps\\web\\node_modules\\next\\dist\\build\\webpack-config.js - C:\\Dev\\Zo\\sass-store\\apps\\web\\node_modules\\next\\dist\\server\\dev\\hot-reloader-webpack.js - C:\\Dev\\Zo\\sass-store\\apps\\web\\node_modules\\next\\dist\\server\\lib\\router-utils\\setup-dev-bundler.js - C:\\Dev\\Zo\\sass-store\\apps\\web\\node_modules\\next\\dist\\server\\lib\\router-server.js - C:\\Dev\\Zo\\sass-store\\apps\\web\\node_modules\\next\\dist\\server\\lib\\start-server.js at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15) at C:\\Dev\\Zo\\sass-store\\apps\\web\\node_modules\\next\\dist\\server\\require-hook.js:57:36 at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19) at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22) at Function._load (node:internal/modules/cjs/loader:1211:37) at TracingChannel.traceSync (node:diagnostics_channel:322:14) at wrapModuleLoad (node:internal/modules/cjs/loader:235:24) at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12) at mod.require (C:\\Dev\\Zo\\sass-store\\apps\\web\\node_modules\\next\\dist\\server\\require-hook.js:68:28) at require (node:internal/modules/helpers:135:16) at Object.<anonymous> (C:\\Dev\\Zo\\sass-store\\apps\\web\\node_modules\\tailwindcss\\lib\\util\\hashConfig.js:11:60) at Module._compile (node:internal/modules/cjs/loader:1730:14) at Object..js (node:internal/modules/cjs/loader:1895:10) at Module.load (node:internal/modules/cjs/loader:1465:32) at Function._load (node:internal/modules/cjs/loader:1282:12) at TracingChannel.traceSync (node:diagnostics_channel:322:14) at wrapModuleLoad (node:internal/modules/cjs/loader:235:24) at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12) at mod.require (C:\\Dev\\Zo\\sass-store\\apps\\web\\node_modules\\next\\dist\\server\\require-hook.js:68:28) at require (node:internal/modules/helpers:135:16) at Object.<anonymous> (C:\\Dev\\Zo\\sass-store\\apps\\web\\node_modules\\tailwindcss\\lib\\lib\\setupTrackingContext.js:18:60) at Module._compile (node:internal/modules/cjs/loader:1730:14) at Object..js (node:internal/modules/cjs/loader:1895:10) at Module.load (node:internal/modules/cjs/loader:1465:32) at Function._load (node:internal/modules/cjs/loader:1282:12) at TracingChannel.traceSync (node:diagnostics_channel:322:14) at wrapModuleLoad (node:internal/modules/cjs/loader:235:24) at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12) at mod.require (C:\\Dev\\Zo\\sass-store\\apps\\web\\node_modules\\next\\dist\\server\\require-hook.js:68:28) at require (node:internal/modules/helpers:135:16) at Object.<anonymous> (C:\\Dev\\Zo\\sass-store\\apps\\web\\node_modules\\tailwindcss\\lib\\plugin.js:5:70) at Module._compile (node:internal/modules/cjs/loader:1730:14) at Object..js (node:internal/modules/cjs/loader:1895:10) at Module.load (node:internal/modules/cjs/loader:1465:32) at Function._load (node:internal/modules/cjs/loader:1282:12) at TracingChannel.traceSync (node:diagnostics_channel:322:14) at wrapModuleLoad (node:internal/modules/cjs/loader:235:24) at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12) at mod.require (C:\\Dev\\Zo\\sass-store\\apps\\web\\node_modules\\next\\dist\\server\\require-hook.js:68:28) at require (node:internal/modules/helpers:135:16) at Object.<anonymous> (C:\\Dev\\Zo\\sass-store\\apps\\web\\node_modules\\tailwindcss\\lib\\index.js:2:18) at Module._compile (node:internal/modules/cjs/loader:1730:14) at Object..js (node:internal/modules/cjs/loader:1895:10) at Module.load (node:internal/modules/cjs/loader:1465:32) at Function._load (node:internal/modules/cjs/loader:1282:12) at TracingChannel.traceSync (node:diagnostics_channel:322:14) at wrapModuleLoad (node:internal/modules/cjs/loader:235:24) at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12) at mod.require (C:\\Dev\\Zo\\sass-store\\apps\\web\\node_modules\\next\\dist\\server\\require-hook.js:68:28) at require (node:internal/modules/helpers:135:16)"
+        - generic [ref=e64]:
+          - generic [ref=e65]: "1"
+          - generic [ref=e66]: "2"
+    - generic [ref=e71] [cursor=pointer]:
+      - button "Open Next.js Dev Tools" [ref=e72]:
+        - img [ref=e73]
+      - button "Open issues overlay" [ref=e77]:
+        - generic [ref=e78]:
+          - generic [ref=e79]: "0"
+          - generic [ref=e80]: "1"
+        - generic [ref=e81]: Issue
+  - alert [ref=e82]
 ```

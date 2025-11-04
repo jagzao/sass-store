@@ -1,5 +1,39 @@
 # E2E Testing Guide - Sass Store
 
+## Guía Práctica para el Agente de QA
+
+Esta sección sirve como una guía de inicio rápido y un checklist para los agentes de QA al validar nuevas funcionalidades o realizar pruebas de regresión.
+
+### Checklist de QA para Nuevas Funcionalidades
+
+1.  **Ejecutar Pruebas Automatizadas:**
+    *   Correr el set completo de pruebas E2E para asegurar que no hay regresiones.
+    *   Comando: `npm run test:e2e:all`.
+
+2.  **Verificar Cobertura de la Nueva Funcionalidad:**
+    *   Revisar la sección `Test Structure` para confirmar que la nueva funcionalidad tiene tests E2E específicos.
+    *   Si no existen, reportarlo como un gap en la cobertura de pruebas.
+
+3.  **Pruebas Manuales Exploratorias:**
+    *   Navegar la nueva funcionalidad en los navegadores soportados (ver sección `CI/CD`).
+    *   Realizar pruebas en emulación de escritorio y móvil (`npm run test:e2e:mobile` o usando las herramientas de desarrollador del navegador).
+    *   Probar casos límite y entradas de datos inesperadas para intentar romper la funcionalidad.
+
+4.  **Validar Requisitos Clave de Negocio y UX:**
+    *   **Click Budgets:** Confirmar que los flujos de usuario principales se mantienen dentro de los presupuestos de clics definidos en la sección `Click Budget Compliance`.
+    *   **Performance Targets:** Verificar que la nueva funcionalidad no degrada las métricas de rendimiento listadas en `Performance Targets`. Usar herramientas como Lighthouse o los reportes de Playwright.
+    *   **Accesibilidad:** Realizar una pasada rápida de navegación con teclado y verificar que los elementos interactivos son accesibles.
+
+5.  **Reporte de Incidencias (Bugs):**
+    *   Para cada bug encontrado, es crucial proveer la mayor cantidad de información posible.
+    *   **Adjuntar Artefactos de Debug:**
+        *   Generar y adjuntar el `trace.zip` de Playwright. Es la herramienta más valiosa para el desarrollador.
+        *   Usar el comando `npx playwright show-trace trace.zip` para visualizarlo y confirmar que captura el error.
+    *   **Incluir Evidencia Visual:** Adjuntar screenshots y/o videos que Playwright genera automáticamente en las ejecuciones fallidas.
+    *   **Pasos para Reproducir:** Documentar claramente los pasos manuales o el test específico que falla.
+
+---
+
 ## Overview
 
 This guide covers the comprehensive E2E testing suite for the Sass Store multitenant platform. We have achieved **100% coverage** of all documented user flows and business requirements.
