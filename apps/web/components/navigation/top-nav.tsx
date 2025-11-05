@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useTenantSlug } from '@/lib/tenant/client-resolver';
 import { useCart } from '@/lib/cart/cart-store';
@@ -20,25 +21,36 @@ export function TopNav({ tenantInfo }: TopNavProps) {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
   const currentTenantSlug = useTenantSlug();
+  const router = useRouter();
   const items = useCart((state) => state.items);
   const _deduplicateItems = useCart((state) => state._deduplicateItems);
 
-  // Filter items for current tenant, deduplicate, and calculate total
-  const totalItems = _deduplicateItems(
-    items.filter((item) => item.variant?.tenant === currentTenantSlug)
-  ).reduce((total, item) => total + item.quantity, 0);
+  const isZoSystemTenant = currentTenantSlug === 'zo-system';
 
-  // Get tenant-specific categories from tenantInfo or default fallback
-  const categories = tenantInfo?.categories && tenantInfo.categories.length > 0
-    ? [{ value: 'all', label: 'Todo' }, ...tenantInfo.categories]
-    : [{ value: 'all', label: 'Todo' }];
+  // Memoize filtered and deduplicated items count
+  const totalItems = useMemo(() =>
+    _deduplicateItems(
+      items.filter((item) => item.variant?.tenant === currentTenantSlug)
+    ).reduce((total, item) => total + item.quantity, 0),
+    [items, currentTenantSlug, _deduplicateItems]
+  );
 
-  // Get tenant display name from tenantInfo or fallback
-  const getTenantDisplayName = () => {
-    return tenantInfo?.name || 'SaaS Store';
-  };
+  // Memoize tenant-specific categories
+  const categories = useMemo(() =>
+    tenantInfo?.categories && tenantInfo.categories.length > 0
+      ? [{ value: 'all', label: 'Todo' }, ...tenantInfo.categories]
+      : [{ value: 'all', label: 'Todo' }],
+    [tenantInfo?.categories]
+  );
 
-  const handleSearch = (e: React.FormEvent) => {
+  // Memoize tenant display name
+  const tenantDisplayName = useMemo(() =>
+    tenantInfo?.name || 'SaaS Store',
+    [tenantInfo?.name]
+  );
+
+  // Memoize search handler
+  const handleSearch = useCallback((e: React.FormEvent) => {
     e.preventDefault();
 
     if (!searchQuery.trim()) return;
@@ -53,10 +65,8 @@ export function TopNav({ tenantInfo }: TopNavProps) {
       ? `/search?${searchParams.toString()}`
       : `/t/${currentTenantSlug}/search?${searchParams.toString()}`;
 
-    window.location.href = searchUrl;
-  };
-
-  const isZoSystemTenant = currentTenantSlug === 'zo-system';
+    router.push(searchUrl);
+  }, [searchQuery, selectedCategory, isZoSystemTenant, currentTenantSlug, router]);
 
   return (
     <nav className="bg-gray-900 text-white shadow-lg border-b border-gray-800">
@@ -66,7 +76,7 @@ export function TopNav({ tenantInfo }: TopNavProps) {
           {/* Logo - Dynamic tenant name */}
           <Link href={isZoSystemTenant ? "/" : `/t/${currentTenantSlug}`} className="flex items-center space-x-2 hover:opacity-90 transition-opacity">
             <div className="text-2xl font-bold" style={{ color: 'var(--color-brand, #DC2626)' }}>
-              {getTenantDisplayName()}
+              {tenantDisplayName}
             </div>
           </Link>
 
