@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 
 interface CarouselHeroProps {
   tenantData: {
@@ -23,8 +23,8 @@ interface CarouselHeroProps {
 export function CarouselHero({ tenantData }: CarouselHeroProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  // Generic content that adapts to tenant data
-  const getGenericSlides = () => {
+  // Memoize slides generation to avoid recreation on every render
+  const slides = useMemo(() => {
     const modes = {
       booking: {
         icon: '📅',
@@ -68,9 +68,20 @@ export function CarouselHero({ tenantData }: CarouselHeroProps) {
         cta: 'Conocer Más'
       }
     ];
-  };
+  }, [tenantData.name, tenantData.mode, tenantData.description, tenantData.contact.phone, tenantData.contact.address]);
 
-  const slides = getGenericSlides();
+  // Memoize slide navigation handlers
+  const goToSlide = useCallback((index: number) => {
+    setCurrentSlide(index);
+  }, []);
+
+  const nextSlide = useCallback(() => {
+    setCurrentSlide((prev) => (prev + 1) % slides.length);
+  }, [slides.length]);
+
+  const prevSlide = useCallback(() => {
+    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
+  }, [slides.length]);
 
   // Auto-rotate slides
   useEffect(() => {
@@ -80,18 +91,6 @@ export function CarouselHero({ tenantData }: CarouselHeroProps) {
 
     return () => clearInterval(interval);
   }, [slides.length]);
-
-  const goToSlide = (index: number) => {
-    setCurrentSlide(index);
-  };
-
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % slides.length);
-  };
-
-  const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
-  };
 
   return (
     <div className="default-hero-carousel">
