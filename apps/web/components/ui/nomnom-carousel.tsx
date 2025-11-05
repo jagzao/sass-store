@@ -30,46 +30,47 @@ interface CarouselItem {
   backgroundColor: string;
 }
 
+// Move static items array outside component to prevent recreation
+const items: CarouselItem[] = [
+  {
+    id: 1,
+    title: "Caffe Latte",
+    subtitle: "Un nuevo producto",
+    price: "$20",
+    description: "Delicioso café latte preparado con los mejores granos arábicos y leche vaporizada a la perfección. Una experiencia única para tu paladar.",
+    image: "☕",
+    backgroundColor: "#9c4d2f"
+  },
+  {
+    id: 2,
+    title: "Strawberry Mocha",
+    subtitle: "Un nuevo producto",
+    price: "$22",
+    description: "Combinación perfecta de chocolate, café y fresas frescas. Una bebida dulce y refrescante que despertará todos tus sentidos.",
+    image: "🍓",
+    backgroundColor: "#f5bfaf"
+  },
+  {
+    id: 3,
+    title: "Doppio Espresso",
+    subtitle: "Un nuevo producto",
+    price: "$18",
+    description: "Doble shot de espresso italiano auténtico. Intenso, aromático y con el cuerpo perfecto para los verdaderos amantes del café.",
+    image: "☕",
+    backgroundColor: "#dedfe1"
+  },
+  {
+    id: 4,
+    title: "Matcha Latte Macchiato",
+    subtitle: "Un nuevo producto",
+    price: "$25",
+    description: "Té verde matcha premium de Japón combinado con leche cremosa. Una experiencia zen en cada sorbo con beneficios antioxidantes.",
+    image: "🍵",
+    backgroundColor: "#7eb63d"
+  }
+];
+
 export function NomNomCarousel({ tenantData }: NomNomCarouselProps) {
-  // Coffee products for NomNom (moved before hooks)
-  const items: CarouselItem[] = [
-    {
-      id: 1,
-      title: "Caffe Latte",
-      subtitle: "Un nuevo producto",
-      price: "$20",
-      description: "Delicioso café latte preparado con los mejores granos arábicos y leche vaporizada a la perfección. Una experiencia única para tu paladar.",
-      image: "☕",
-      backgroundColor: "#9c4d2f"
-    },
-    {
-      id: 2,
-      title: "Strawberry Mocha",
-      subtitle: "Un nuevo producto",
-      price: "$22",
-      description: "Combinación perfecta de chocolate, café y fresas frescas. Una bebida dulce y refrescante que despertará todos tus sentidos.",
-      image: "🍓",
-      backgroundColor: "#f5bfaf"
-    },
-    {
-      id: 3,
-      title: "Doppio Espresso",
-      subtitle: "Un nuevo producto",
-      price: "$18",
-      description: "Doble shot de espresso italiano auténtico. Intenso, aromático y con el cuerpo perfecto para los verdaderos amantes del café.",
-      image: "☕",
-      backgroundColor: "#dedfe1"
-    },
-    {
-      id: 4,
-      title: "Matcha Latte Macchiato",
-      subtitle: "Un nuevo producto",
-      price: "$25",
-      description: "Té verde matcha premium de Japón combinado con leche cremosa. Una experiencia zen en cada sorbo con beneficios antioxidantes.",
-      image: "🍵",
-      backgroundColor: "#7eb63d"
-    }
-  ];
 
   // State management
   const [isMounted, setIsMounted] = useState(false);
