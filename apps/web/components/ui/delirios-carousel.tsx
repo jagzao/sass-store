@@ -27,40 +27,41 @@ interface CarouselItem {
   description: string;
 }
 
+// Move static items array outside component to prevent recreation
+const items: CarouselItem[] = [
+  {
+    id: 1,
+    image: "🍰",
+    title: "Torta de Chocolate",
+    description: "Deliciosa torta de chocolate con crema batida y fresas frescas"
+  },
+  {
+    id: 2,
+    image: "🧁",
+    title: "Cupcakes Gourmet",
+    description: "Cupcakes artesanales con decoraciones únicas y sabores exóticos"
+  },
+  {
+    id: 3,
+    image: "🍪",
+    title: "Galletas Caseras",
+    description: "Galletas horneadas diariamente con ingredientes naturales"
+  },
+  {
+    id: 4,
+    image: "🥧",
+    title: "Tartas Frutales",
+    description: "Tartas con frutas de temporada y masa quebrada artesanal"
+  },
+  {
+    id: 5,
+    image: "🍮",
+    title: "Postres Cremosos",
+    description: "Flanes, mousses y cremas preparadas con recetas tradicionales"
+  }
+];
+
 export function DeliriosCarousel({ tenantData }: DeliriosCarouselProps) {
-  // Dessert items for Delirios (moved before hooks)
-  const items: CarouselItem[] = [
-    {
-      id: 1,
-      image: "🍰",
-      title: "Torta de Chocolate",
-      description: "Deliciosa torta de chocolate con crema batida y fresas frescas"
-    },
-    {
-      id: 2,
-      image: "🧁",
-      title: "Cupcakes Gourmet",
-      description: "Cupcakes artesanales con decoraciones únicas y sabores exóticos"
-    },
-    {
-      id: 3,
-      image: "🍪",
-      title: "Galletas Caseras",
-      description: "Galletas horneadas diariamente con ingredientes naturales"
-    },
-    {
-      id: 4,
-      image: "🥧",
-      title: "Tartas Frutales",
-      description: "Tartas con frutas de temporada y masa quebrada artesanal"
-    },
-    {
-      id: 5,
-      image: "🍮",
-      title: "Postres Cremosos",
-      description: "Flanes, mousses y cremas preparadas con recetas tradicionales"
-    }
-  ];
 
   // Modern state management with hooks BEFORE any conditional returns
   const [active, setActive] = useState(1);
