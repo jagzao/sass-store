@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@sass-store/ui';
 import {
   ShoppingCart,
@@ -59,8 +60,13 @@ export function QuickActionsDock() {
   const userRole = useUserRole();
   const { tenant } = useTenant();
   const { items } = useCart();
+  const router = useRouter();
 
-  const actions = roleActions[userRole as keyof typeof roleActions] || roleActions.customer;
+  // Memoize actions based on user role
+  const actions = useMemo(() =>
+    roleActions[userRole as keyof typeof roleActions] || roleActions.customer,
+    [userRole]
+  );
 
   // Auto-hide dock on scroll down, show on scroll up
   useEffect(() => {
@@ -80,11 +86,12 @@ export function QuickActionsDock() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [lastScrollY]);
 
-  const handleAction = (action: string, href?: string) => {
+  // Memoize action handler
+  const handleAction = useCallback((action: string, href?: string) => {
     switch (action) {
       case 'book':
         if (tenant.mode === 'booking') {
-          window.location.href = href || '/booking';
+          router.push(href || '/booking');
         }
         break;
       case 'reorder':
@@ -92,18 +99,18 @@ export function QuickActionsDock() {
         console.log('Reorder action');
         break;
       case 'favorites':
-        window.location.href = href || '/favorites';
+        router.push(href || '/favorites');
         break;
       case 'help':
-        window.location.href = href || '/help';
+        router.push(href || '/help');
         break;
       default:
         if (href) {
-          window.location.href = href;
+          router.push(href);
         }
         break;
     }
-  };
+  }, [tenant.mode, router]);
 
   if (!isVisible) return null;
 
