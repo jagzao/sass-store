@@ -1,5 +1,7 @@
 "use client";
 
+import { memo, useMemo, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { useTenantSlug } from "@/lib/tenant/client-resolver";
 import { useCart } from "@/lib/cart/cart-store";
 import { StaggerContainer } from "@/components/animations/stagger-container";
@@ -114,12 +116,143 @@ const trendingItems: TrendingItem[] = [
   },
 ];
 
+// Move pure function outside component to prevent recreation
+const getTrendingBadge = (trending: string) => {
+  switch (trending) {
+    case "hot":
+      return { text: "🔥 HOT", bg: "bg-red-100", color: "text-red-800" };
+    case "new":
+      return { text: "✨ NUEVO", bg: "bg-blue-100", color: "text-blue-800" };
+    case "deal":
+      return {
+        text: "💰 OFERTA",
+        bg: "bg-green-100",
+        color: "text-green-800",
+      };
+    default:
+      return { text: "", bg: "", color: "" };
+  }
+};
+
+interface TrendingCardProps {
+  item: TrendingItem;
+  onAction: (item: TrendingItem) => void;
+}
+
+// Memoized card component to prevent unnecessary re-renders
+const TrendingCard = memo<TrendingCardProps>(({ item, onAction }) => {
+  const badge = getTrendingBadge(item.trending);
+
+  const handleClick = useCallback(() => {
+    onAction(item);
+  }, [item, onAction]);
+
+  return (
+    <motion.div
+      key={item.id}
+      variants={itemVariants}
+      className="group bg-white border border-gray-200 rounded-2xl shadow-xs hover:shadow-panel transition-all duration-200 overflow-hidden relative"
+      style={{
+        borderTopColor: "var(--color-brand, #DC2626)",
+        borderTopWidth: "3px",
+      }}
+    >
+      {/* Badge Overlay */}
+      <div className="absolute top-3 left-3 z-10">
+        <div
+          className={`${badge.bg} ${badge.color} px-2 py-1 rounded-full text-xs font-bold shadow-sm`}
+        >
+          {badge.text}
+        </div>
+      </div>
+
+      {/* Discount Badge */}
+      {item.discount && (
+        <div className="absolute top-3 right-3 bg-red-600 text-white px-2 py-1 rounded-full text-xs font-bold shadow-sm z-10">
+          -{item.discount}%
+        </div>
+      )}
+
+      {/* Card Content */}
+      <div className="p-4 pt-8 text-center">
+        <div className="text-3xl mb-3">{item.image}</div>
+
+        <h3 className="text-sm font-semibold text-gray-900 line-clamp-2 mb-2">
+          {item.name}
+        </h3>
+
+        {/* Price Section */}
+        <div className="mb-4">
+          {item.originalPrice ? (
+            <div className="space-y-1">
+              <div className="flex items-center justify-center space-x-2">
+                <span
+                  className="text-lg font-bold"
+                  style={{ color: "var(--color-brand, #DC2626)" }}
+                >
+                  ${item.price}
+                </span>
+                <span className="text-sm text-gray-600 line-through">
+                  ${item.originalPrice}
+                </span>
+              </div>
+            </div>
+          ) : (
+            <span
+              className="text-lg font-bold"
+              style={{ color: "var(--color-brand, #DC2626)" }}
+            >
+              ${item.price}
+            </span>
+          )}
+        </div>
+
+        {/* Action Button */}
+        <button
+          onClick={handleClick}
+          className="w-full bg-red-600 hover:bg-red-700 text-white py-2.5 px-3 rounded-xl text-sm font-semibold transition-all duration-200 shadow-sm hover:shadow-md transform hover:translate-y-[-1px] mb-3"
+        >
+          {item.type === "service" ? "Reservar ahora" : "Comprar ahora"}
+        </button>
+
+        {/* Stats and Category */}
+        <div className="flex items-center justify-center space-x-2 text-xs text-gray-500">
+          <span className="inline-flex items-center">
+            <svg
+              className="w-3 h-3 mr-1"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+              />
+            </svg>
+            {item.salesCount}
+          </span>
+          <span>•</span>
+          <span className="capitalize">{item.category}</span>
+        </div>
+      </div>
+    </motion.div>
+  );
+});
+
+TrendingCard.displayName = 'TrendingCard';
+
 export function Trending() {
   // TENANT-AWARE: Only show trending items from current tenant
   const currentTenantSlug = useTenantSlug();
   const { addItem } = useCart();
-  const tenantFilteredItems = trendingItems.filter(
-    (item) => item.tenant === currentTenantSlug
+  const router = useRouter();
+
+  // Memoize filtered items
+  const tenantFilteredItems = useMemo(() =>
+    trendingItems.filter((item) => item.tenant === currentTenantSlug),
+    [currentTenantSlug]
   );
 
   // If no trending items for current tenant, don't render the section
@@ -127,27 +260,11 @@ export function Trending() {
     return null;
   }
 
-  const getTrendingBadge = (trending: string) => {
-    switch (trending) {
-      case "hot":
-        return { text: "🔥 HOT", bg: "bg-red-100", color: "text-red-800" };
-      case "new":
-        return { text: "✨ NUEVO", bg: "bg-blue-100", color: "text-blue-800" };
-      case "deal":
-        return {
-          text: "💰 OFERTA",
-          bg: "bg-green-100",
-          color: "text-green-800",
-        };
-      default:
-        return { text: "", bg: "", color: "" };
-    }
-  };
-
-  const handleAction = (item: TrendingItem) => {
+  // Memoize action handler
+  const handleAction = useCallback((item: TrendingItem) => {
     if (item.type === "service") {
       // Navigate to booking page for services
-      window.location.href = `/t/${item.tenant}/booking/new?service=${item.id}`;
+      router.push(`/t/${item.tenant}/booking/new?service=${item.id}`);
     } else {
       // Add product to cart
       addItem({
@@ -161,9 +278,9 @@ export function Trending() {
         },
       });
       // Navigate to cart
-      window.location.href = `/t/${item.tenant}/cart`;
+      router.push(`/t/${item.tenant}/cart`);
     }
-  };
+  }, [addItem, router]);
 
   return (
     <section className="mb-8">
@@ -175,102 +292,13 @@ export function Trending() {
       </div>
 
       <StaggerContainer className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-        {tenantFilteredItems.map((item) => {
-          const badge = getTrendingBadge(item.trending);
-
-          return (
-            <motion.div
-              key={item.id}
-              variants={itemVariants}
-              className="group bg-white border border-gray-200 rounded-2xl shadow-xs hover:shadow-panel transition-all duration-200 overflow-hidden relative"
-              style={{
-                borderTopColor: "var(--color-brand, #DC2626)",
-                borderTopWidth: "3px",
-              }}
-            >
-              {/* Badge Overlay */}
-              <div className="absolute top-3 left-3 z-10">
-                <div
-                  className={`${badge.bg} ${badge.color} px-2 py-1 rounded-full text-xs font-bold shadow-sm`}
-                >
-                  {badge.text}
-                </div>
-              </div>
-
-              {/* Discount Badge */}
-              {item.discount && (
-                <div className="absolute top-3 right-3 bg-red-600 text-white px-2 py-1 rounded-full text-xs font-bold shadow-sm z-10">
-                  -{item.discount}%
-                </div>
-              )}
-
-              {/* Card Content */}
-              <div className="p-4 pt-8 text-center">
-                <div className="text-3xl mb-3">{item.image}</div>
-
-                <h3 className="text-sm font-semibold text-gray-900 line-clamp-2 mb-2">
-                  {item.name}
-                </h3>
-
-                {/* Price Section */}
-                <div className="mb-4">
-                  {item.originalPrice ? (
-                    <div className="space-y-1">
-                      <div className="flex items-center justify-center space-x-2">
-                        <span
-                          className="text-lg font-bold"
-                          style={{ color: "var(--color-brand, #DC2626)" }}
-                        >
-                          ${item.price}
-                        </span>
-                        <span className="text-sm text-gray-600 line-through">
-                          ${item.originalPrice}
-                        </span>
-                      </div>
-                    </div>
-                  ) : (
-                    <span
-                      className="text-lg font-bold"
-                      style={{ color: "var(--color-brand, #DC2626)" }}
-                    >
-                      ${item.price}
-                    </span>
-                  )}
-                </div>
-
-                {/* Action Button */}
-                <button
-                  onClick={() => handleAction(item)}
-                  className="w-full bg-red-600 hover:bg-red-700 text-white py-2.5 px-3 rounded-xl text-sm font-semibold transition-all duration-200 shadow-sm hover:shadow-md transform hover:translate-y-[-1px] mb-3"
-                >
-                  {item.type === "service" ? "Reservar ahora" : "Comprar ahora"}
-                </button>
-
-                {/* Stats and Category */}
-                <div className="flex items-center justify-center space-x-2 text-xs text-gray-500">
-                  <span className="inline-flex items-center">
-                    <svg
-                      className="w-3 h-3 mr-1"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={1.5}
-                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-                      />
-                    </svg>
-                    {item.salesCount}
-                  </span>
-                  <span>•</span>
-                  <span className="capitalize">{item.category}</span>
-                </div>
-              </div>
-            </motion.div>
-          );
-        })}
+        {tenantFilteredItems.map((item) => (
+          <TrendingCard
+            key={item.id}
+            item={item}
+            onAction={handleAction}
+          />
+        ))}
       </StaggerContainer>
     </section>
   );
