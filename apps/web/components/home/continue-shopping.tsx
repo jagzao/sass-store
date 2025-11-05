@@ -1,5 +1,7 @@
 'use client';
 
+import { memo, useMemo, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { useTenantSlug } from '@/lib/tenant/client-resolver';
 
 interface UnfinishedItem {
@@ -66,11 +68,122 @@ const unfinishedItems: UnfinishedItem[] = [
   }
 ];
 
+// Move pure functions outside component to prevent recreation
+const getProgressInfo = (progress: string) => {
+  switch (progress) {
+    case 'cart':
+      return { text: 'En carrito', color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-200' };
+    case 'checkout':
+      return { text: 'En checkout', color: 'text-orange-600', bg: 'bg-orange-50', border: 'border-orange-200' };
+    case 'payment':
+      return { text: 'En pago', color: 'text-red-600', bg: 'bg-red-50', border: 'border-red-200' };
+    default:
+      return { text: 'Pendiente', color: 'text-gray-600', bg: 'bg-gray-50', border: 'border-gray-200' };
+  }
+};
+
+const getTimeAgo = (dateString: string) => {
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
+
+  if (diffInHours < 1) return 'Hace menos de 1 hora';
+  if (diffInHours < 24) return `Hace ${diffInHours} horas`;
+  return `Hace ${Math.floor(diffInHours / 24)} días`;
+};
+
+// Memoized card component to prevent unnecessary re-renders
+interface UnfinishedItemCardProps {
+  item: UnfinishedItem;
+  onContinue: (item: UnfinishedItem) => void;
+  onRemove: (item: UnfinishedItem) => void;
+}
+
+const UnfinishedItemCard = memo<UnfinishedItemCardProps>(({ item, onContinue, onRemove }) => {
+  const progressInfo = getProgressInfo(item.progress);
+
+  const handleContinueClick = useCallback(() => {
+    onContinue(item);
+  }, [item, onContinue]);
+
+  const handleRemoveClick = useCallback(() => {
+    onRemove(item);
+  }, [item, onRemove]);
+
+  return (
+    <div
+      className="group bg-white border border-gray-200 rounded-2xl shadow-xs hover:shadow-panel transition-all duration-200 overflow-hidden"
+      style={{ borderLeftColor: 'var(--color-brand, #DC2626)', borderLeftWidth: '4px' }}
+    >
+      {/* Ticket Header con Trophy Icon */}
+      <div className="bg-gray-50 px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+        <div className="flex items-center space-x-3">
+          <div className="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center">
+            <span className="text-amber-600 text-sm">🏆</span>
+          </div>
+          <div>
+            <h3 className="font-semibold text-base text-gray-900">{item.name}</h3>
+            <p className="text-xs text-gray-500">{item.tenantName}</p>
+          </div>
+        </div>
+
+        {/* Status Badge - Compact */}
+        <div className={`px-2 py-1 rounded-md text-xs font-medium ${progressInfo.color} ${progressInfo.bg}`}>
+          {progressInfo.text}
+        </div>
+      </div>
+
+      {/* Card Body */}
+      <div className="p-6">
+        <div className="flex items-center justify-between mb-4">
+          <div className="text-2xl">{item.image}</div>
+          <span className="text-xl font-bold" style={{ color: 'var(--color-brand, #DC2626)' }}>${item.price}</span>
+        </div>
+
+        {/* Time Chip */}
+        <div className="mb-4">
+          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-gray-100 text-gray-600">
+            <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6v6l4 2" />
+              <circle cx="12" cy="12" r="9" />
+            </svg>
+            {getTimeAgo(item.addedToCart)}
+          </span>
+        </div>
+
+        <div className="space-y-3">
+          {/* Continue Button - Rojo sólido */}
+          <button
+            onClick={handleContinueClick}
+            className="w-full bg-red-600 hover:bg-red-700 text-white py-3 px-4 rounded-xl font-semibold transition-all duration-200 shadow-sm hover:shadow-md transform hover:translate-y-[-1px]"
+          >
+            Continuar
+          </button>
+
+          {/* Secondary Link - Minimal */}
+          <button
+            onClick={handleRemoveClick}
+            className="w-full text-gray-500 hover:text-gray-700 text-sm font-medium transition-colors py-1"
+          >
+            Ver detalles
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+});
+
+UnfinishedItemCard.displayName = 'UnfinishedItemCard';
+
 export function ContinueShopping() {
   // TENANT-AWARE: Only show items from current tenant
   const currentTenantSlug = useTenantSlug();
-  const tenantFilteredItems = unfinishedItems.filter(
-    item => item.tenant === currentTenantSlug
+  const router = useRouter();
+
+  // Memoize filtered items
+  const tenantFilteredItems = useMemo(() =>
+    unfinishedItems.filter((item) => item.tenant === currentTenantSlug),
+    [currentTenantSlug]
   );
 
   // If no items for current tenant, don't render the section
@@ -78,20 +191,8 @@ export function ContinueShopping() {
     return null;
   }
 
-  const getProgressInfo = (progress: string) => {
-    switch (progress) {
-      case 'cart':
-        return { text: 'En carrito', color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-200' };
-      case 'checkout':
-        return { text: 'En checkout', color: 'text-orange-600', bg: 'bg-orange-50', border: 'border-orange-200' };
-      case 'payment':
-        return { text: 'En pago', color: 'text-red-600', bg: 'bg-red-50', border: 'border-red-200' };
-      default:
-        return { text: 'Pendiente', color: 'text-gray-600', bg: 'bg-gray-50', border: 'border-gray-200' };
-    }
-  };
-
-  const handleContinue = (item: UnfinishedItem) => {
+  // Memoize action handlers
+  const handleContinue = useCallback((item: UnfinishedItem) => {
     // Navigate to appropriate step based on progress
     let targetUrl: string;
 
@@ -109,10 +210,10 @@ export function ContinueShopping() {
         targetUrl = `/t/${item.tenant}/cart`;
     }
 
-    window.location.href = targetUrl;
-  };
+    router.push(targetUrl);
+  }, [router]);
 
-  const handleRemove = (item: UnfinishedItem) => {
+  const handleRemove = useCallback((item: UnfinishedItem) => {
     // Remove from saved items (tenant-scoped)
     // This would connect to an API endpoint in production
     if (confirm(`¿Eliminar "${item.name}" de tu lista?`)) {
@@ -120,19 +221,7 @@ export function ContinueShopping() {
       console.log(`Removing item ${item.id} for tenant ${item.tenant}`);
       // TODO: Connect to actual API endpoint when implemented
     }
-  };
-
-  const getTimeAgo = (dateString: string) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
-
-    if (diffInHours < 1) return 'Hace menos de 1 hora';
-    if (diffInHours < 24) return `Hace ${diffInHours} horas`;
-    return `Hace ${Math.floor(diffInHours / 24)} días`;
-  };
-
-  if (unfinishedItems.length === 0) return null;
+  }, []);
 
   return (
     <section className="mb-8">
@@ -144,72 +233,14 @@ export function ContinueShopping() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {tenantFilteredItems.map((item) => {
-          const progressInfo = getProgressInfo(item.progress);
-
-          return (
-            <div
-              key={item.id}
-              className="group bg-white border border-gray-200 rounded-2xl shadow-xs hover:shadow-panel transition-all duration-200 overflow-hidden"
-              style={{ borderLeftColor: 'var(--color-brand, #DC2626)', borderLeftWidth: '4px' }}
-            >
-              {/* Ticket Header con Trophy Icon */}
-              <div className="bg-gray-50 px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center">
-                    <span className="text-amber-600 text-sm">🏆</span>
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-base text-gray-900">{item.name}</h3>
-                    <p className="text-xs text-gray-500">{item.tenantName}</p>
-                  </div>
-                </div>
-
-                {/* Status Badge - Compact */}
-                <div className={`px-2 py-1 rounded-md text-xs font-medium ${progressInfo.color} ${progressInfo.bg}`}>
-                  {progressInfo.text}
-                </div>
-              </div>
-
-              {/* Card Body */}
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="text-2xl">{item.image}</div>
-                  <span className="text-xl font-bold" style={{ color: 'var(--color-brand, #DC2626)' }}>${item.price}</span>
-                </div>
-
-                {/* Time Chip */}
-                <div className="mb-4">
-                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-gray-100 text-gray-600">
-                    <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6v6l4 2" />
-                      <circle cx="12" cy="12" r="9" />
-                    </svg>
-                    {getTimeAgo(item.addedToCart)}
-                  </span>
-                </div>
-
-                <div className="space-y-3">
-                  {/* Continue Button - Rojo sólido */}
-                  <button
-                    onClick={() => handleContinue(item)}
-                    className="w-full bg-red-600 hover:bg-red-700 text-white py-3 px-4 rounded-xl font-semibold transition-all duration-200 shadow-sm hover:shadow-md transform hover:translate-y-[-1px]"
-                  >
-                    Continuar
-                  </button>
-
-                  {/* Secondary Link - Minimal */}
-                  <button
-                    onClick={() => handleRemove(item)}
-                    className="w-full text-gray-500 hover:text-gray-700 text-sm font-medium transition-colors py-1"
-                  >
-                    Ver detalles
-                  </button>
-                </div>
-              </div>
-            </div>
-          );
-        })}
+        {tenantFilteredItems.map((item) => (
+          <UnfinishedItemCard
+            key={item.id}
+            item={item}
+            onContinue={handleContinue}
+            onRemove={handleRemove}
+          />
+        ))}
       </div>
     </section>
   );
