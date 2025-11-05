@@ -8,9 +8,29 @@ import { resolvers } from '../../../graphql/resolvers';
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  introspection: true, // Enable GraphQL Playground in development
+  introspection: process.env.NODE_ENV === 'development', // Only enable in development
   formatError: (error) => {
-    console.error('GraphQL Error:', error);
+    // Only log full error details in development
+    if (process.env.NODE_ENV === 'development') {
+      console.error('GraphQL Error:', error);
+    } else {
+      // In production, log minimal info to avoid leaking sensitive data
+      console.error('GraphQL Error:', {
+        message: error.message,
+        path: error.path,
+      });
+    }
+
+    // In production, return sanitized error message
+    if (process.env.NODE_ENV === 'production') {
+      return {
+        message: 'Internal server error',
+        extensions: {
+          code: error.extensions?.code || 'INTERNAL_SERVER_ERROR',
+        },
+      };
+    }
+
     return error;
   },
 });

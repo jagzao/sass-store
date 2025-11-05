@@ -2,6 +2,7 @@
 
 import { useTenantSlug } from "@/lib/tenant/client-resolver";
 import { useCart } from "@/lib/cart/cart-store";
+import { useRouter } from "next/navigation";
 
 interface Product {
   id: string;
@@ -74,6 +75,7 @@ export function BuyAgain() {
   // TENANT-AWARE: Only show products from current tenant
   const currentTenantSlug = useTenantSlug();
   const { addItem } = useCart();
+  const router = useRouter();
 
   const tenantFilteredPurchases = recentPurchases.filter(
     (product) => product.tenant === currentTenantSlug
@@ -95,8 +97,8 @@ export function BuyAgain() {
         type: "product",
       },
     });
-    // Navigate to cart
-    window.location.href = `/t/${product.tenant}/cart`;
+    // Navigate to cart using Next.js router
+    router.push(`/t/${product.tenant}/cart`);
   };
 
   const handleAddToCart = (product: Product) => {

@@ -18,12 +18,14 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-    console.log('[Register API] Received body:', JSON.stringify(body, null, 2));
-
     // Validate with Zod
     const validated = registerSchema.parse(body);
-    console.log('[Register API] Validation passed:', validated);
     const { name, email, password, tenantSlug } = validated;
+
+    // Only log non-sensitive data in development
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[Register API] Registration attempt for email:', email);
+    }
 
     // Check if user already exists
     const existingUser = await db
@@ -42,8 +44,8 @@ export async function POST(request: NextRequest) {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create user - generate a unique ID (text format for compatibility with NextAuth)
-    const userId = `user_${Date.now()}_${crypto.randomUUID().replace(/-/g, '').substring(0, 9)}`;
+    // Create user - generate a secure unique ID using UUID
+    const userId = crypto.randomUUID();
 
     const [newUser] = await db
       .insert(users)

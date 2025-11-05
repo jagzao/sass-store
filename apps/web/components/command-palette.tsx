@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { Command } from 'cmdk';
 import { Search, Calendar, ShoppingBag, User, Settings, ArrowRight } from 'lucide-react';
 import { useTenant } from '@/lib/tenant/tenant-provider';
+import { useRouter } from 'next/navigation';
 
 interface CommandItem {
   id: string;
@@ -18,6 +19,7 @@ export function CommandPalette() {
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState('');
   const { tenant } = useTenant();
+  const router = useRouter();
 
   // Open with Cmd+K or Ctrl+K
   useEffect(() => {
@@ -47,7 +49,7 @@ export function CommandPalette() {
           description: `$${product.price} - ${product.category}`,
           action: () => {
             setIsOpen(false);
-            window.location.href = `/products/${product.sku}`;
+            router.push(`/products/${product.sku}`);
           },
           category: 'products',
           keywords: [product.name, product.category, product.description, product.sku]
@@ -64,7 +66,7 @@ export function CommandPalette() {
           description: `$${service.price} - ${service.duration} min`,
           action: () => {
             setIsOpen(false);
-            window.location.href = `/booking?service=${service.id}`;
+            router.push(`/booking?service=${service.id}`);
           },
           category: 'services',
           keywords: [service.name, service.description, 'book', 'appointment']
@@ -81,7 +83,7 @@ export function CommandPalette() {
           description: staff.role,
           action: () => {
             setIsOpen(false);
-            window.location.href = `/booking?staff=${staff.id}`;
+            router.push(`/booking?staff=${staff.id}`);
           },
           category: 'staff',
           keywords: [staff.name, staff.role, ...staff.specialties]
@@ -97,7 +99,7 @@ export function CommandPalette() {
         description: 'Schedule a new appointment',
         action: () => {
           setIsOpen(false);
-          window.location.href = '/booking';
+          router.push('/booking');
         },
         category: 'actions',
         keywords: ['book', 'appointment', 'schedule', 'reserve']
@@ -108,7 +110,7 @@ export function CommandPalette() {
         description: 'View all products',
         action: () => {
           setIsOpen(false);
-          window.location.href = '/products';
+          router.push('/products');
         },
         category: 'actions',
         keywords: ['products', 'shop', 'buy', 'browse']
@@ -119,7 +121,7 @@ export function CommandPalette() {
         description: 'See items in your cart',
         action: () => {
           setIsOpen(false);
-          window.location.href = '/cart';
+          router.push('/cart');
         },
         category: 'actions',
         keywords: ['cart', 'checkout', 'purchase', 'buy']
@@ -127,7 +129,7 @@ export function CommandPalette() {
     );
 
     return items;
-  }, [tenant]);
+  }, [tenant, router]);
 
   // Filter items based on query
   const filteredItems = useMemo(() => {

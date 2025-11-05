@@ -1,7 +1,17 @@
 import { NextRequest } from 'next/server';
 import { db } from '@sass-store/database';
-import { tenants } from '@sass-store/database/schema';
-import { eq } from 'drizzle-orm';
+import { tenants, apiKeys } from '@sass-store/database/schema';
+import { eq, and, or, gt, isNull } from 'drizzle-orm';
+import crypto from 'crypto';
+
+/**
+ * Hash an API key using SHA-256
+ * @param apiKey The raw API key
+ * @returns The hashed API key
+ */
+function hashApiKey(apiKey: string): string {
+  return crypto.createHash('sha256').update(apiKey).digest('hex');
+}
 
 /**
  * Validates the API key provided in the request headers
@@ -15,7 +25,6 @@ export async function validateApiKey(request: NextRequest) {
 
   // Check if API key is present
   if (!apiKey) {
-    console.log('[API Auth] No API key provided in request headers');
     return {
       success: false,
       error: 'API key is required',
@@ -23,74 +32,71 @@ export async function validateApiKey(request: NextRequest) {
     };
   }
 
-  // For now, we'll implement a basic API key validation system
-  // In a production environment, you would typically have:
-  // 1. A table storing API keys for each tenant
-  // 2. Encrypted API keys in the database
-  // 3. Additional validation like key expiration, permissions, etc.
-  
-  // For this implementation, we'll use a simple approach:
-  // - Validate that the API key matches a pattern indicating it belongs to the tenant
-  // - Check that the tenant exists
+  // Check if tenant slug is provided
+  if (!tenantSlug) {
+    return {
+      success: false,
+      error: 'Tenant slug is required',
+      tenant: null
+    };
+  }
+
   try {
-    // Find the tenant by slug
-    const [tenant] = await db
-      .select({ id: tenants.id, slug: tenants.slug, name: tenants.name })
-      .from(tenants)
-      .where(eq(tenants.slug, tenantSlug || ''))
+    // Hash the provided API key
+    const hashedKey = hashApiKey(apiKey);
+
+    // Query for the API key with tenant validation
+    const result = await db
+      .select({
+        apiKeyId: apiKeys.id,
+        apiKeyStatus: apiKeys.status,
+        apiKeyExpiresAt: apiKeys.expiresAt,
+        apiKeyPermissions: apiKeys.permissions,
+        tenantId: tenants.id,
+        tenantSlug: tenants.slug,
+        tenantName: tenants.name,
+      })
+      .from(apiKeys)
+      .innerJoin(tenants, eq(apiKeys.tenantId, tenants.id))
+      .where(
+        and(
+          eq(apiKeys.key, hashedKey),
+          eq(tenants.slug, tenantSlug),
+          eq(apiKeys.status, 'active'),
+          or(
+            isNull(apiKeys.expiresAt),
+            gt(apiKeys.expiresAt, new Date())
+          )
+        )
+      )
       .limit(1);
 
-    if (!tenant) {
-      console.log(`[API Auth] Tenant not found: ${tenantSlug}`);
+    if (result.length === 0) {
       return {
         success: false,
-        error: 'Invalid tenant',
+        error: 'Invalid API key or tenant',
         tenant: null
       };
     }
 
-    // In a real implementation, you would validate the actual API key
-    // against a database of stored API keys for this tenant.
-    // For now, we'll just ensure there's a valid tenant.
-    
-    // Example of how you would implement real API key validation:
-    // const [apiKeyRecord] = await db
-    //   .select()
-    //   .from(apiKeys)  // hypothetical api_keys table
-    //   .where(
-    //     and(
-    //       eq(apiKeys.key, apiKey),
-    //       eq(apiKeys.tenantId, tenant.id),
-    //       eq(apiKeys.status, 'active'),
-    //       or(
-    //         eq(apiKeys.expiresAt, null),
-    //         gt(apiKeys.expiresAt, new Date())
-    //       )
-    //     )
-    //   )
-    //   .limit(1);
-    //
-    // if (!apiKeyRecord) {
-    //   console.log(`[API Auth] Invalid API key for tenant: ${tenantSlug}`);
-    //   return {
-    //     success: false,
-    //     error: 'Invalid API key',
-    //     tenant: null
-    //   };
-    // }
+    const apiKeyRecord = result[0];
 
-    // For now, just returning success for any API key with a valid tenant
-    // This is a placeholder implementation - in production you should validate the API key properly
-    console.log(`[API Auth] API key validated for tenant: ${tenant.slug}`);
-    
+    // Update last used timestamp (fire and forget)
+    db.update(apiKeys)
+      .set({ lastUsedAt: new Date() })
+      .where(eq(apiKeys.id, apiKeyRecord.apiKeyId))
+      .then(() => {})
+      .catch((err) => console.error('[API Auth] Failed to update lastUsedAt:', err));
+
     return {
       success: true,
       error: null,
       tenant: {
-        id: tenant.id,
-        slug: tenant.slug,
-        name: tenant.name
-      }
+        id: apiKeyRecord.tenantId,
+        slug: apiKeyRecord.tenantSlug,
+        name: apiKeyRecord.tenantName
+      },
+      permissions: apiKeyRecord.apiKeyPermissions as string[]
     };
   } catch (error) {
     console.error('[API Auth] Error validating API key:', error);
@@ -107,29 +113,65 @@ export async function validateApiKey(request: NextRequest) {
  * @param request The Next.js API request object
  * @returns A boolean indicating if the API key is valid
  */
-export function validateSimpleApiKey(request: NextRequest) {
+export async function validateSimpleApiKey(request: NextRequest) {
   // Extract API key from the request headers
   const apiKey = request.headers.get('X-API-Key');
 
   // Check if API key is present
   if (!apiKey) {
-    console.log('[Simple API Auth] No API key provided in request headers');
     return {
       success: false,
       error: 'API key is required'
     };
   }
 
-  // For this simple validation, we just check if the API key exists
-  // In a real implementation, you would validate the key against a database
-  // of stored API keys with more sophisticated logic
-  
-  // For now, just returning success if the key exists
-  // This is a placeholder implementation - in production you should validate the API key properly
-  console.log('[Simple API Auth] API key present and validated');
-  
-  return {
-    success: true,
-    error: null
-  };
+  try {
+    // Hash the provided API key
+    const hashedKey = hashApiKey(apiKey);
+
+    // Query for the API key (no tenant validation)
+    const result = await db
+      .select({
+        id: apiKeys.id,
+        status: apiKeys.status,
+        expiresAt: apiKeys.expiresAt,
+      })
+      .from(apiKeys)
+      .where(
+        and(
+          eq(apiKeys.key, hashedKey),
+          eq(apiKeys.status, 'active'),
+          or(
+            isNull(apiKeys.expiresAt),
+            gt(apiKeys.expiresAt, new Date())
+          )
+        )
+      )
+      .limit(1);
+
+    if (result.length === 0) {
+      return {
+        success: false,
+        error: 'Invalid API key'
+      };
+    }
+
+    // Update last used timestamp (fire and forget)
+    db.update(apiKeys)
+      .set({ lastUsedAt: new Date() })
+      .where(eq(apiKeys.id, result[0].id))
+      .then(() => {})
+      .catch((err) => console.error('[Simple API Auth] Failed to update lastUsedAt:', err));
+
+    return {
+      success: true,
+      error: null
+    };
+  } catch (error) {
+    console.error('[Simple API Auth] Error validating API key:', error);
+    return {
+      success: false,
+      error: 'Internal server error'
+    };
+  }
 }

@@ -66,6 +66,32 @@ export const tenantConfigs = pgTable(
   })
 );
 
+// API Keys table for tenant API authentication
+export const apiKeys = pgTable(
+  "api_keys",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .references(() => tenants.id)
+      .notNull(),
+    key: varchar("key", { length: 64 }).unique().notNull(), // SHA-256 hash of the actual key
+    name: varchar("name", { length: 100 }).notNull(), // Friendly name for the key
+    prefix: varchar("prefix", { length: 16 }).notNull(), // First 8 chars for identification
+    status: varchar("status", { length: 20 }).notNull().default("active"), // 'active' | 'revoked'
+    permissions: jsonb("permissions").notNull().default("[]"), // Array of allowed operations
+    lastUsedAt: timestamp("last_used_at"),
+    expiresAt: timestamp("expires_at"), // null = never expires
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    keyIdx: uniqueIndex("api_key_key_idx").on(table.key),
+    tenantIdx: index("api_key_tenant_idx").on(table.tenantId),
+    statusIdx: index("api_key_status_idx").on(table.status),
+    prefixIdx: index("api_key_prefix_idx").on(table.prefix),
+  })
+);
+
 // Products table with RLS
 export const products = pgTable(
   "products",

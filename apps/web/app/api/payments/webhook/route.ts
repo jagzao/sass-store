@@ -5,20 +5,31 @@ import { orders, payments, bookings, disputes } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { sendPaymentConfirmation, sendPaymentFailedNotification, sendDisputeNotification } from '@/lib/email/email-service';
 
-// Initialize Stripe with fallback for build-time
-const stripeSecretKey = process.env.STRIPE_SECRET_KEY || 'sk_test_fallback_for_build';
-const stripe = new Stripe(stripeSecretKey, {
-  apiVersion: '2025-08-27.basil'
-});
+// Initialize Stripe - fail fast if credentials are missing
+const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || 'whsec_fallback_for_build';
+// Validate required credentials
+if (!stripeSecretKey) {
+  console.error('[Stripe] STRIPE_SECRET_KEY is not configured');
+}
+if (!webhookSecret) {
+  console.error('[Stripe] STRIPE_WEBHOOK_SECRET is not configured');
+}
+
+const stripe = stripeSecretKey
+  ? new Stripe(stripeSecretKey, { apiVersion: '2025-08-27.basil' })
+  : null;
 
 export async function POST(request: NextRequest) {
   try {
-    // Self-healing fallback for build-time when secrets aren't available
-    if (stripeSecretKey === 'sk_test_fallback_for_build') {
-      console.warn('[Self-Healing] Stripe webhook disabled during build');
-      return NextResponse.json({ message: 'Webhook disabled during build' }, { status: 200 });
+    // Fail fast if Stripe is not properly configured
+    if (!stripe || !webhookSecret) {
+      console.error('[Stripe] Webhook endpoint called but Stripe is not configured');
+      return NextResponse.json(
+        { error: 'Payment processing is not configured' },
+        { status: 503 }
+      );
     }
 
     const body = await request.text();

@@ -140,10 +140,11 @@ function createDatabaseInstance() {
   }
 
   try {
-    // Extract hostname for debugging
-    const url = new URL(connectionString.replace('postgresql://', 'http://'));
-    console.log('[DB] Connecting to host:', url.hostname);
-    console.log('[DB] Full connection string:', connectionString.substring(0, 80) + '...');
+    // Extract hostname for debugging (only in development)
+    if (process.env.NODE_ENV === 'development') {
+      const url = new URL(connectionString.replace('postgresql://', 'http://'));
+      console.log('[DB] Connecting to host:', url.hostname);
+    }
 
     const client = postgres(connectionString, {
       prepare: false,
