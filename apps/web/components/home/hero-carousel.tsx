@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import Link from 'next/link';
 import { useAtomValue } from 'jotai';
 import { tenantSlugAtom } from '@/lib/tenant/tenant-store';
@@ -43,48 +43,52 @@ export function HeroCarousel({ featuredServices = [], featuredProducts = [], ten
   const [currentSlide, setCurrentSlide] = useState(0);
   const tenantSlug = useAtomValue(tenantSlugAtom);
 
-  // Create slides from tenant's featured services and products
-  const slides: Slide[] = [];
+  // Memoize slides creation to prevent recreation on every render
+  const slides = useMemo<Slide[]>(() => {
+    const result: Slide[] = [];
 
-  // Add featured services if tenant is in booking mode
-  if (tenantData.mode === 'booking' && featuredServices.length > 0) {
-    featuredServices.forEach((service, index) => {
-      slides.push({
-        id: `service-${service.id}`,
-        title: service.name,
-        subtitle: `${service.description} - Desde $${service.price}`,
-        cta: 'Reservar ahora',
-        link: `/t/${tenantData.slug}/booking/${service.id}`,
-        background: `bg-gradient-to-r from-purple-500 to-blue-500`
+    // Add featured services if tenant is in booking mode
+    if (tenantData.mode === 'booking' && featuredServices.length > 0) {
+      featuredServices.forEach((service) => {
+        result.push({
+          id: `service-${service.id}`,
+          title: service.name,
+          subtitle: `${service.description} - Desde $${service.price}`,
+          cta: 'Reservar ahora',
+          link: `/t/${tenantData.slug}/booking/${service.id}`,
+          background: `bg-gradient-to-r from-purple-500 to-blue-500`
+        });
       });
-    });
-  }
+    }
 
-  // Add featured products
-  if (featuredProducts.length > 0) {
-    featuredProducts.forEach((product, index) => {
-      slides.push({
-        id: `product-${product.id}`,
-        title: product.name,
-        subtitle: `${product.description} - $${product.price}`,
-        cta: tenantData.mode === 'catalog' ? 'Comprar ahora' : 'Ver producto',
-        link: `/t/${tenantData.slug}/products/${product.id}`,
-        background: `bg-gradient-to-r from-green-500 to-emerald-500`
+    // Add featured products
+    if (featuredProducts.length > 0) {
+      featuredProducts.forEach((product) => {
+        result.push({
+          id: `product-${product.id}`,
+          title: product.name,
+          subtitle: `${product.description} - $${product.price}`,
+          cta: tenantData.mode === 'catalog' ? 'Comprar ahora' : 'Ver producto',
+          link: `/t/${tenantData.slug}/products/${product.id}`,
+          background: `bg-gradient-to-r from-green-500 to-emerald-500`
+        });
       });
-    });
-  }
+    }
 
-  // Fallback slide if no featured items
-  if (slides.length === 0) {
-    slides.push({
-      id: 'welcome',
-      title: tenantData.name,
-      subtitle: tenantData.description || 'Bienvenido a nuestro negocio',
-      cta: tenantData.mode === 'booking' ? 'Ver servicios' : 'Ver productos',
-      link: `/t/${tenantData.slug}/${tenantData.mode === 'booking' ? 'services' : 'products'}`,
-      background: 'bg-gradient-to-r from-blue-500 to-purple-500'
-    });
-  }
+    // Fallback slide if no featured items
+    if (result.length === 0) {
+      result.push({
+        id: 'welcome',
+        title: tenantData.name,
+        subtitle: tenantData.description || 'Bienvenido a nuestro negocio',
+        cta: tenantData.mode === 'booking' ? 'Ver servicios' : 'Ver productos',
+        link: `/t/${tenantData.slug}/${tenantData.mode === 'booking' ? 'services' : 'products'}`,
+        background: 'bg-gradient-to-r from-blue-500 to-purple-500'
+      });
+    }
+
+    return result;
+  }, [featuredServices, featuredProducts, tenantData]);
 
   useEffect(() => {
     if (slides.length === 0) return;
@@ -95,9 +99,10 @@ export function HeroCarousel({ featuredServices = [], featuredProducts = [], ten
     return () => clearInterval(timer);
   }, [slides.length]);
 
-  const goToSlide = (index: number) => {
+  // Memoize navigation callback
+  const goToSlide = useCallback((index: number) => {
     setCurrentSlide(index);
-  };
+  }, []);
 
   // Reset to first slide when slides change (tenant change)
   useEffect(() => {

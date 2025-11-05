@@ -64,6 +64,13 @@ logs
 .temp
 nul
 
+# Backup files
+*.bak
+*.backup
+*~
+*.swp
+*.swo
+
 # OS generated files
 .DS_Store
 .DS_Store?

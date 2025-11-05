@@ -1,8 +1,16 @@
 "use client";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { useState } from "react";
+import { useState, lazy, Suspense } from "react";
+
+// Lazy load devtools only in development to reduce bundle size
+const ReactQueryDevtoolsProduction = lazy(() =>
+  import("@tanstack/react-query-devtools/build/modern/production.js").then(
+    (d) => ({
+      default: d.ReactQueryDevtools,
+    })
+  )
+);
 
 interface ProvidersProps {
   children: React.ReactNode;
@@ -50,7 +58,12 @@ export function Providers({ children }: ProvidersProps) {
   return (
     <QueryClientProvider client={queryClient}>
       {children}
-      <ReactQueryDevtools initialIsOpen={false} />
+      {/* Only load devtools in development */}
+      {process.env.NODE_ENV === "development" && (
+        <Suspense fallback={null}>
+          <ReactQueryDevtoolsProduction initialIsOpen={false} />
+        </Suspense>
+      )}
     </QueryClientProvider>
   );
 }
