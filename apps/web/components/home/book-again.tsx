@@ -1,5 +1,7 @@
 'use client';
 
+import { memo, useMemo, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { useTenantSlug } from '@/lib/tenant/client-resolver';
 
 interface Service {
@@ -78,11 +80,105 @@ const recentBookings: Service[] = [
   }
 ];
 
+// Memoized service card component to prevent unnecessary re-renders
+interface ServiceCardProps {
+  service: Service;
+  onBookNow: (service: Service) => void;
+  onSeeSchedule: (service: Service) => void;
+}
+
+const ServiceCard = memo<ServiceCardProps>(({ service, onBookNow, onSeeSchedule }) => {
+  const handleBookClick = useCallback(() => {
+    onBookNow(service);
+  }, [service, onBookNow]);
+
+  const handleScheduleClick = useCallback(() => {
+    onSeeSchedule(service);
+  }, [service, onSeeSchedule]);
+
+  return (
+    <div
+      className="group bg-white border border-gray-200 rounded-2xl shadow-xs hover:shadow-panel transition-all duration-200 overflow-hidden"
+      style={{ borderLeftColor: 'var(--color-brand, #DC2626)', borderLeftWidth: '4px' }}
+    >
+      {/* Compact Header */}
+      <div className="px-6 py-4 border-b border-gray-100">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="text-2xl">{service.image}</div>
+            <div>
+              <h3 className="font-semibold text-base text-gray-900">{service.name}</h3>
+              <div className="flex items-center space-x-2 mt-1">
+                {/* Duration Chip */}
+                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-700 font-medium">
+                  {service.duration} min
+                </span>
+                <span className="text-xs text-gray-500">• {service.preferredStaff}</span>
+              </div>
+            </div>
+          </div>
+          <span className="text-lg font-bold" style={{ color: 'var(--color-brand, #DC2626)' }}>${service.price}</span>
+        </div>
+      </div>
+
+      {/* Card Body */}
+      <div className="p-6">
+        {/* Next Slot with Calendar Icon */}
+        <div className="flex items-center space-x-3 mb-4 p-3 bg-green-50 rounded-lg border border-green-200">
+          <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+            <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <div className="flex-1">
+            <p className="text-sm font-medium text-green-800">Siguiente slot</p>
+            <p className="text-lg font-bold text-green-900">Hoy {service.nextAvailableSlot}</p>
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          {/* Primary CTA - Reservar hoy con hora específica */}
+          <button
+            onClick={handleBookClick}
+            className="w-full bg-red-600 hover:bg-red-700 text-white py-3 px-4 rounded-xl font-semibold transition-all duration-200 shadow-sm hover:shadow-md transform hover:translate-y-[-1px]"
+          >
+            Reservar hoy {service.nextAvailableSlot}
+          </button>
+
+          {/* Secondary Link - Minimal */}
+          <button
+            onClick={handleScheduleClick}
+            className="w-full text-gray-500 hover:text-gray-700 text-sm font-medium transition-colors py-1"
+          >
+            Ver más horarios
+          </button>
+        </div>
+
+        {/* Last booking info */}
+        <div className="mt-4 pt-4 border-t border-gray-100">
+          <p className="text-xs text-gray-600">
+            Última reserva: {new Date(service.lastBooked).toLocaleDateString('es-ES', {
+              day: 'numeric',
+              month: 'short'
+            })}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+});
+
+ServiceCard.displayName = 'ServiceCard';
+
 export function BookAgain() {
   // TENANT-AWARE: Only show services from current tenant
   const currentTenantSlug = useTenantSlug();
-  const tenantFilteredServices = recentBookings.filter(
-    service => service.tenant === currentTenantSlug
+  const router = useRouter();
+
+  // Memoize filtered services
+  const tenantFilteredServices = useMemo(() =>
+    recentBookings.filter((service) => service.tenant === currentTenantSlug),
+    [currentTenantSlug]
   );
 
   // If no services for current tenant, don't render the section
@@ -90,17 +186,18 @@ export function BookAgain() {
     return null;
   }
 
-  const handleBookNow = (service: Service) => {
+  // Memoize action handlers
+  const handleBookNow = useCallback((service: Service) => {
     // Direct booking with preferred staff and time
     const bookingUrl = `/t/${service.tenant}/booking/${service.id}?staff=${encodeURIComponent(service.preferredStaff)}&time=${service.nextAvailableSlot}`;
-    window.location.href = bookingUrl;
-  };
+    router.push(bookingUrl);
+  }, [router]);
 
-  const handleSeeSchedule = (service: Service) => {
+  const handleSeeSchedule = useCallback((service: Service) => {
     // Show all available times for this service
     const scheduleUrl = `/t/${service.tenant}/services/${service.id}/schedule`;
-    window.location.href = scheduleUrl;
-  };
+    router.push(scheduleUrl);
+  }, [router]);
 
   return (
     <section className="mb-8">
@@ -113,75 +210,12 @@ export function BookAgain() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {tenantFilteredServices.map((service) => (
-          <div
+          <ServiceCard
             key={service.id}
-            className="group bg-white border border-gray-200 rounded-2xl shadow-xs hover:shadow-panel transition-all duration-200 overflow-hidden"
-            style={{ borderLeftColor: 'var(--color-brand, #DC2626)', borderLeftWidth: '4px' }}
-          >
-            {/* Compact Header */}
-            <div className="px-6 py-4 border-b border-gray-100">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className="text-2xl">{service.image}</div>
-                  <div>
-                    <h3 className="font-semibold text-base text-gray-900">{service.name}</h3>
-                    <div className="flex items-center space-x-2 mt-1">
-                      {/* Duration Chip */}
-                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-700 font-medium">
-                        {service.duration} min
-                      </span>
-                      <span className="text-xs text-gray-500">• {service.preferredStaff}</span>
-                    </div>
-                  </div>
-                </div>
-                <span className="text-lg font-bold" style={{ color: 'var(--color-brand, #DC2626)' }}>${service.price}</span>
-              </div>
-            </div>
-
-            {/* Card Body */}
-            <div className="p-6">
-              {/* Next Slot with Calendar Icon */}
-              <div className="flex items-center space-x-3 mb-4 p-3 bg-green-50 rounded-lg border border-green-200">
-                <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                  <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-green-800">Siguiente slot</p>
-                  <p className="text-lg font-bold text-green-900">Hoy {service.nextAvailableSlot}</p>
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                {/* Primary CTA - Reservar hoy con hora específica */}
-                <button
-                  onClick={() => handleBookNow(service)}
-                  className="w-full bg-red-600 hover:bg-red-700 text-white py-3 px-4 rounded-xl font-semibold transition-all duration-200 shadow-sm hover:shadow-md transform hover:translate-y-[-1px]"
-                >
-                  Reservar hoy {service.nextAvailableSlot}
-                </button>
-
-                {/* Secondary Link - Minimal */}
-                <button
-                  onClick={() => handleSeeSchedule(service)}
-                  className="w-full text-gray-500 hover:text-gray-700 text-sm font-medium transition-colors py-1"
-                >
-                  Ver más horarios
-                </button>
-              </div>
-
-              {/* Last booking info */}
-              <div className="mt-4 pt-4 border-t border-gray-100">
-                <p className="text-xs text-gray-600">
-                  Última reserva: {new Date(service.lastBooked).toLocaleDateString('es-ES', {
-                    day: 'numeric',
-                    month: 'short'
-                  })}
-                </p>
-              </div>
-            </div>
-          </div>
+            service={service}
+            onBookNow={handleBookNow}
+            onSeeSchedule={handleSeeSchedule}
+          />
         ))}
       </div>
     </section>
