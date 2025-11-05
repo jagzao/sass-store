@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { mercadoPagoService } from "@/lib/mercadopago";
 import { createAuditLog } from "@/lib/audit";
+import { validateOAuthState } from "@sass-store/core/security/oauth-state";
 
 /**
  * GET /api/mercadopago/callback
@@ -10,24 +11,37 @@ export async function GET(request: NextRequest) {
   try {
     const url = new URL(request.url);
     const code = url.searchParams.get("code");
-    const state = url.searchParams.get("state"); // tenantId
+    const state = url.searchParams.get("state");
     const error = url.searchParams.get("error");
 
     // Handle OAuth errors
     if (error) {
-      console.error("Mercado Pago OAuth error:", error);
+      console.error("[MercadoPago OAuth] Error from provider:", error);
       return NextResponse.redirect(
         new URL(
-          `/t/${state}/finance?error=oauth_failed`,
+          `/finance?error=oauth_failed`,
           request.nextUrl.origin
         )
       );
     }
 
     if (!code || !state) {
+      console.warn("[MercadoPago OAuth] Missing code or state parameter");
       return NextResponse.redirect(
         new URL(
-          `/t/${state}/finance?error=missing_params`,
+          `/finance?error=missing_params`,
+          request.nextUrl.origin
+        )
+      );
+    }
+
+    // SECURITY: Validate state token to prevent CSRF attacks
+    const tenantId = await validateOAuthState(state, "mercadopago");
+    if (!tenantId) {
+      console.error("[MercadoPago OAuth] Invalid or expired state token");
+      return NextResponse.redirect(
+        new URL(
+          `/finance?error=invalid_state`,
           request.nextUrl.origin
         )
       );
@@ -41,11 +55,11 @@ export async function GET(request: NextRequest) {
     );
 
     // Store tokens for tenant
-    await mercadoPagoService.storeTokens(state, tokens);
+    await mercadoPagoService.storeTokens(tenantId, tokens);
 
     // Create audit log
     await createAuditLog({
-      tenantId: state,
+      tenantId,
       actorId: "system", // OAuth callback
       action: "mercadopago.connected",
       targetTable: "mercadopago_tokens",
@@ -57,22 +71,19 @@ export async function GET(request: NextRequest) {
     });
 
     // Redirect to finance page with success
+    // Note: We should get the tenant slug from the DB using tenantId
     return NextResponse.redirect(
       new URL(
-        `/t/${state}/finance?success=mp_connected`,
+        `/finance?success=mp_connected`,
         request.nextUrl.origin
       )
     );
   } catch (error) {
-    console.error("Mercado Pago callback error:", error);
-
-    // Extract tenant from state if possible
-    const url = new URL(request.url);
-    const state = url.searchParams.get("state") || "unknown";
+    console.error("[MercadoPago OAuth] Callback error:", error);
 
     return NextResponse.redirect(
       new URL(
-        `/t/${state}/finance?error=callback_failed`,
+        `/finance?error=callback_failed`,
         request.nextUrl.origin
       )
     );

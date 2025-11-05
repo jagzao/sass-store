@@ -1,4 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
+import {
+  generateCsrfToken,
+  hashCsrfToken,
+  validateCsrfToken,
+  CSRF_COOKIE_NAME,
+  CSRF_HEADER_NAME,
+  CSRF_PROTECTED_METHODS,
+  isCsrfExempt,
+} from "@sass-store/core/security/csrf";
 
 // Known tenant slugs from seed data
 const KNOWN_TENANTS = [
@@ -26,8 +35,31 @@ export async function middleware(request: NextRequest) {
   const url = request.nextUrl;
   const pathname = url.pathname;
   const host = request.headers.get("host") || "";
+  const method = request.method;
 
   totalHostResolutions++;
+
+  // CSRF Protection (skip for exempt paths)
+  if (!isCsrfExempt(pathname)) {
+    // For protected methods, validate CSRF token
+    if (CSRF_PROTECTED_METHODS.includes(method)) {
+      const csrfTokenFromHeader = request.headers.get(CSRF_HEADER_NAME);
+      const cookieHeader = request.headers.get("cookie") || "";
+      const csrfTokenFromCookie = extractCookieValue(cookieHeader, CSRF_COOKIE_NAME);
+
+      if (!csrfTokenFromHeader || !csrfTokenFromCookie) {
+        console.warn(`[CSRF] Missing CSRF token for ${method} ${pathname}`);
+        return new NextResponse("CSRF token missing", { status: 403 });
+      }
+
+      // Validate the token
+      const isValid = validateCsrfToken(csrfTokenFromHeader, csrfTokenFromCookie);
+      if (!isValid) {
+        console.warn(`[CSRF] Invalid CSRF token for ${method} ${pathname}`);
+        return new NextResponse("Invalid CSRF token", { status: 403 });
+      }
+    }
+  }
 
   // 1. Resolve tenant following priority order
   const resolvedTenant = await resolveTenantStrict(request);
@@ -76,6 +108,30 @@ export async function middleware(request: NextRequest) {
   response.headers.set("x-tenant-mode", resolvedTenant.featureMode);
   response.headers.set("x-tenant-locale", resolvedTenant.locale);
   response.headers.set("x-tenant-currency", resolvedTenant.currency);
+
+  // Set CSRF token for GET requests if not already set
+  if (method === "GET" && !isCsrfExempt(pathname)) {
+    const cookieHeader = request.headers.get("cookie") || "";
+    const existingToken = extractCookieValue(cookieHeader, CSRF_COOKIE_NAME);
+
+    if (!existingToken) {
+      // Generate new CSRF token
+      const csrfToken = generateCsrfToken();
+      const csrfHash = hashCsrfToken(csrfToken);
+
+      // Set cookie with the hash
+      response.cookies.set(CSRF_COOKIE_NAME, csrfHash, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/",
+        maxAge: 60 * 60 * 24, // 24 hours
+      });
+
+      // Set header with the raw token for client-side access
+      response.headers.set(CSRF_HEADER_NAME, csrfToken);
+    }
+  }
 
   // 4. Log metrics for unknown hosts
   const unknownHostRate = (unknownHostCount / totalHostResolutions) * 100;

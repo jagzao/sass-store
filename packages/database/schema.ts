@@ -1217,6 +1217,27 @@ export const mercadopagoPayments = pgTable(
   })
 );
 
+// OAuth State Tokens table for CSRF protection during OAuth flows
+export const oauthStateTokens = pgTable(
+  "oauth_state_tokens",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    state: varchar("state", { length: 64 }).unique().notNull(), // Random state token
+    tenantId: uuid("tenant_id")
+      .references(() => tenants.id)
+      .notNull(),
+    provider: varchar("provider", { length: 50 }).notNull(), // 'mercadopago', 'google', etc.
+    used: boolean("used").notNull().default(false), // Prevent reuse
+    expiresAt: timestamp("expires_at").notNull(), // Expire after 10 minutes
+    createdAt: timestamp("created_at").defaultNow(),
+  },
+  (table) => ({
+    stateIdx: uniqueIndex("oauth_state_tokens_state_idx").on(table.state),
+    tenantIdx: index("oauth_state_tokens_tenant_idx").on(table.tenantId),
+    expiresIdx: index("oauth_state_tokens_expires_idx").on(table.expiresAt),
+  })
+);
+
 // POS Terminals Relations
 export const posTerminalsRelations = relations(posTerminals, ({ one }) => ({
   tenant: one(tenants, {

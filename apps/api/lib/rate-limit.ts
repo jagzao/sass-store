@@ -64,11 +64,12 @@ export async function checkRateLimit(
     };
 
   } catch (error) {
-    console.error('Rate limit check failed:', error);
-    // In case of Redis failure, allow the request but log the error
+    console.error('[Rate Limit] Redis failure - failing closed for security:', error);
+    // SECURITY: Fail closed - deny requests when Redis is unavailable
+    // This prevents bypassing rate limits during Redis outages
     return {
-      success: true,
-      remaining: config.maxRequests,
+      success: false,
+      remaining: 0,
       resetTime: Date.now() + config.windowMs
     };
   }
@@ -120,10 +121,11 @@ export async function checkBurstRateLimit(
     };
 
   } catch (error) {
-    console.error('Burst rate limit check failed:', error);
+    console.error('[Burst Rate Limit] Redis failure - failing closed for security:', error);
+    // SECURITY: Fail closed - deny requests when Redis is unavailable
     return {
-      success: true,
-      remaining: burstConfig.burstLimit,
+      success: false,
+      remaining: 0,
       resetTime: Date.now() + 1000
     };
   }
@@ -182,11 +184,12 @@ export async function checkTenantQuota(
     };
 
   } catch (error) {
-    console.error('Quota check failed:', error);
+    console.error('[Quota Check] Redis failure - failing closed for security:', error);
+    // SECURITY: Fail closed - deny requests when Redis is unavailable
     return {
-      allowed: true,
+      allowed: false,
       usage: 0,
-      limit: 10000,
+      limit: 0,
       resetDate: getNextMonthStart()
     };
   }

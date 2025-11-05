@@ -4,9 +4,7 @@ import { JotaiProvider } from "@/components/providers/jotai-provider";
 import { ToastProvider } from "@/components/ui/toast-provider";
 import { AuthSessionProvider } from "@/components/providers/session-provider";
 import { CartSyncProvider } from "@/components/cart/CartSyncProvider";
-import { registerServiceWorker } from "@/lib/sw-register";
-import { initWebVitals } from "@/lib/web-vitals";
-import { startMemoryLeakDetection } from "@/lib/memory-management";
+import { ClientInit } from "@/components/client-init";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -19,24 +17,20 @@ export const metadata = {
   description: "Multitenant SaaS platform for beauty salons",
 };
 
-// Force dynamic rendering to avoid useContext issues during build
-export const dynamic = "force-dynamic";
+// Removed force-dynamic to allow static optimization where possible
+// Individual routes can still use dynamic = "force-dynamic" if needed
 
 interface RootLayoutProps {
   children: React.ReactNode;
 }
 
 export default async function RootLayout({ children }: RootLayoutProps) {
-  // Registrar Service Worker, Web Vitals y memory leak detection en el cliente
-  if (typeof window !== 'undefined') {
-    registerServiceWorker();
-    initWebVitals();
-    startMemoryLeakDetection();
-  }
-
+  // Note: Service Worker, Web Vitals, and memory leak detection
+  // are initialized in ClientInit component (client-side)
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className} suppressHydrationWarning>
+        <ClientInit />
         <AuthSessionProvider>
           <JotaiProvider>
             <ToastProvider>
