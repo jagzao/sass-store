@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useMemo } from 'react';
+import { useCarousel } from '@/lib/hooks/use-carousel';
 
 interface CarouselHeroProps {
   tenantData: {
@@ -21,8 +22,6 @@ interface CarouselHeroProps {
 }
 
 export function CarouselHero({ tenantData }: CarouselHeroProps) {
-  const [currentSlide, setCurrentSlide] = useState(0);
-
   // Memoize slides generation to avoid recreation on every render
   const slides = useMemo(() => {
     const modes = {
@@ -70,27 +69,13 @@ export function CarouselHero({ tenantData }: CarouselHeroProps) {
     ];
   }, [tenantData.name, tenantData.mode, tenantData.description, tenantData.contact.phone, tenantData.contact.address]);
 
-  // Memoize slide navigation handlers
-  const goToSlide = useCallback((index: number) => {
-    setCurrentSlide(index);
-  }, []);
-
-  const nextSlide = useCallback(() => {
-    setCurrentSlide((prev) => (prev + 1) % slides.length);
-  }, [slides.length]);
-
-  const prevSlide = useCallback(() => {
-    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
-  }, [slides.length]);
-
-  // Auto-rotate slides
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, [slides.length]);
+  // Use shared carousel logic
+  const carousel = useCarousel({
+    itemCount: slides.length,
+    autoPlayInterval: 5000,
+    initialIndex: 0,
+    loop: true
+  });
 
   return (
     <div className="default-hero-carousel">
@@ -109,7 +94,7 @@ export function CarouselHero({ tenantData }: CarouselHeroProps) {
           height: 100%;
           display: flex;
           transition: transform 0.6s ease-in-out;
-          transform: translateX(-${currentSlide * 100}%);
+          transform: translateX(-${carousel.active * 100}%);
         }
 
         .slide {
@@ -285,7 +270,7 @@ export function CarouselHero({ tenantData }: CarouselHeroProps) {
       </div>
 
       <div className="controls">
-        <button className="arrow-btn" onClick={prevSlide} aria-label="Slide anterior">
+        <button className="arrow-btn" onClick={carousel.handlePrev} aria-label="Slide anterior">
           ←
         </button>
 
@@ -293,14 +278,14 @@ export function CarouselHero({ tenantData }: CarouselHeroProps) {
           {slides.map((_, index) => (
             <button
               key={index}
-              className={`indicator ${index === currentSlide ? 'active' : ''}`}
-              onClick={() => goToSlide(index)}
+              className={`indicator ${index === carousel.active ? 'active' : ''}`}
+              onClick={() => carousel.goToSlide(index)}
               aria-label={`Ir a slide ${index + 1}`}
             />
           ))}
         </div>
 
-        <button className="arrow-btn" onClick={nextSlide} aria-label="Slide siguiente">
+        <button className="arrow-btn" onClick={carousel.handleNext} aria-label="Slide siguiente">
           →
         </button>
       </div>

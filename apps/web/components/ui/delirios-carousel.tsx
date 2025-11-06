@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef } from 'react';
+import { useCarousel } from '@/lib/hooks/use-carousel';
 
 interface DeliriosCarouselProps {
   tenantData: {
@@ -63,9 +64,6 @@ const items: CarouselItem[] = [
 
 export function DeliriosCarousel({ tenantData }: DeliriosCarouselProps) {
 
-  // Modern state management with hooks BEFORE any conditional returns
-  const [active, setActive] = useState(1);
-  const [isMounted, setIsMounted] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
   const circleRef = useRef<HTMLDivElement>(null);
 
@@ -73,31 +71,24 @@ export function DeliriosCarousel({ tenantData }: DeliriosCarouselProps) {
   const widthItem = 300;
   const radius = widthItem;
 
-  // Ensure component only renders client-side
+  // Use shared carousel logic (start at index 1, no loop for Delirios style)
+  const carousel = useCarousel({
+    itemCount: count,
+    autoPlayInterval: 0, // Delirios doesn't auto-play
+    initialIndex: 1,
+    loop: false
+  });
+
+  // Custom transform for Delirios' horizontal sliding effect
   useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  const runCarousel = useCallback((newActive: number) => {
     if (!listRef.current) return;
-    const leftTransform = widthItem * (newActive - 1) * -1;
+    const leftTransform = widthItem * (carousel.active - 1) * -1;
     listRef.current.style.transform = `translateX(${leftTransform}px)`;
-    setActive(newActive);
-  }, [widthItem]);
-
-  const handleNext = useCallback(() => {
-    const newActive = active >= count - 1 ? count - 1 : active + 1;
-    runCarousel(newActive);
-  }, [active, count, runCarousel]);
-
-  const handlePrev = useCallback(() => {
-    const newActive = active <= 0 ? active : active - 1;
-    runCarousel(newActive);
-  }, [active, runCarousel]);
+  }, [carousel.active, widthItem]);
 
   // Initialize circular text
   useEffect(() => {
-    if (!circleRef.current || !isMounted) return;
+    if (!circleRef.current || !carousel.isMounted) return;
 
     const textCircle = "DELIRIOS BAKERY - SABORES ÚNICOS - POSTRES ARTESANALES - ";
     const textArray = textCircle.split('');
@@ -112,10 +103,10 @@ export function DeliriosCarousel({ tenantData }: DeliriosCarouselProps) {
       span.className = 'circle-char';
       circleRef.current?.appendChild(span);
     });
-  }, [isMounted]);
+  }, [carousel.isMounted]);
 
   // Early return AFTER all hooks are called
-  if (!isMounted) {
+  if (!carousel.isMounted) {
     return <div className="h-screen bg-gray-900 animate-pulse" />;
   }
 
@@ -152,11 +143,11 @@ export function DeliriosCarousel({ tenantData }: DeliriosCarouselProps) {
             <div
               key={item.id}
               className={`item text-center transition-transform duration-1000 ${
-                index === active ? 'active' : ''
+                index === carousel.active ? 'active' : ''
               }`}
               style={{
                 width: `${radius * 2}px`,
-                transform: index === active ? 'rotate(0deg)' : 'rotate(45deg)'
+                transform: index === carousel.active ? 'rotate(0deg)' : 'rotate(45deg)'
               }}
             >
               <div className="text-[200px] mb-4 filter drop-shadow-lg">
@@ -182,7 +173,7 @@ export function DeliriosCarousel({ tenantData }: DeliriosCarouselProps) {
         <div className="content absolute bottom-[5%] left-1/2 transform -translate-x-1/2 text-center text-white w-max">
           <div className="text-left uppercase transform translate-y-5">menú</div>
           <div className="text-6xl uppercase tracking-[10px] font-bold relative">
-            {items[active]?.title || 'DELIRIOS'}
+            {items[carousel.active]?.title || 'DELIRIOS'}
             <div
               className="absolute left-[60%] bottom-1/2 w-20 h-20 bg-contain bg-no-repeat opacity-60"
               style={{
@@ -191,7 +182,7 @@ export function DeliriosCarousel({ tenantData }: DeliriosCarouselProps) {
             />
           </div>
           <div className="text-sm mb-4 max-w-md mx-auto">
-            {items[active]?.description || tenantData.description}
+            {items[carousel.active]?.description || tenantData.description}
           </div>
           <button
             className="border border-white/50 bg-transparent text-white font-sans tracking-[5px] rounded-2xl px-5 py-3 hover:bg-white/10 transition-colors"
@@ -202,15 +193,15 @@ export function DeliriosCarousel({ tenantData }: DeliriosCarouselProps) {
 
         {/* Navigation Arrows */}
         <button
-          onClick={handlePrev}
-          disabled={active === 0}
+          onClick={carousel.handlePrev}
+          disabled={carousel.isFirst}
           className="absolute top-1/2 left-5 transform -translate-y-1/2 w-12 h-12 rounded-full bg-transparent border border-white/60 bg-white/30 text-white text-xl font-mono cursor-pointer z-10 hover:bg-white/40 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
         >
           &lt;
         </button>
         <button
-          onClick={handleNext}
-          disabled={active === count - 1}
+          onClick={carousel.handleNext}
+          disabled={carousel.isLast}
           className="absolute top-1/2 right-5 transform -translate-y-1/2 w-12 h-12 rounded-full bg-transparent border border-white/60 bg-white/30 text-white text-xl font-mono cursor-pointer z-10 hover:bg-white/40 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
         >
           &gt;

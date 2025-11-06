@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useEffect, useState } from 'react';
+import { useCarousel } from '@/lib/hooks/use-carousel';
 
 interface NomNomCarouselProps {
   tenantData: {
@@ -72,74 +73,45 @@ const items: CarouselItem[] = [
 
 export function NomNomCarousel({ tenantData }: NomNomCarouselProps) {
 
-  // State management
-  const [isMounted, setIsMounted] = useState(false);
-  const [active, setActive] = useState(1);
+  const countItem = items.length;
+
+  // Use shared carousel logic (start at index 1, loop enabled, auto-play 5s)
+  const carousel = useCarousel({
+    itemCount: countItem,
+    autoPlayInterval: 5000,
+    initialIndex: 1,
+    loop: true
+  });
+
+  // NomNom-specific: Track other visible slides for 3-slide layout
   const [other_1, setOther_1] = useState(0);
   const [other_2, setOther_2] = useState(2);
   const [carouselDirection, setCarouselDirection] = useState<'next' | 'prev' | null>(null);
-  const autoPlayRef = useRef<NodeJS.Timeout | null>(null);
 
-  const countItem = items.length;
-
-  // Ensure component only renders client-side
+  // Update other_1 and other_2 when active changes
   useEffect(() => {
-    setIsMounted(true);
-  }, []);
+    setOther_1(carousel.active - 1 < 0 ? countItem - 1 : carousel.active - 1);
+    setOther_2(carousel.active + 1 >= countItem ? 0 : carousel.active + 1);
+  }, [carousel.active, countItem]);
 
-  const changeSlider = useCallback(() => {
-    // Clear existing autoplay
-    if (autoPlayRef.current) {
-      clearInterval(autoPlayRef.current);
-    }
-
-    // Restart autoplay with next function
-    autoPlayRef.current = setInterval(() => {
-      setCarouselDirection('next');
-      setActive(prev => prev + 1 >= countItem ? 0 : prev + 1);
-      setOther_1(prev => prev - 1 < 0 ? countItem - 1 : prev - 1);
-      setOther_2(prev => prev + 1 >= countItem ? 0 : prev + 1);
-    }, 5000);
-  }, [countItem]);
-
-  const handleNext = useCallback(() => {
+  // Custom navigation with direction tracking
+  const handleNext = () => {
     setCarouselDirection('next');
-    setActive(prev => prev + 1 >= countItem ? 0 : prev + 1);
-    setOther_1(prev => prev - 1 < 0 ? countItem - 1 : prev - 1);
-    setOther_2(prev => prev + 1 >= countItem ? 0 : prev + 1);
-    changeSlider();
-  }, [countItem, changeSlider]);
+    carousel.handleNext();
+  };
 
-  const handlePrev = useCallback(() => {
+  const handlePrev = () => {
     setCarouselDirection('prev');
-    setActive(prev => prev - 1 < 0 ? countItem - 1 : prev - 1);
-    setOther_1(prev => prev + 1 >= countItem ? 0 : prev + 1);
-    setOther_2(prev => prev + 1 >= countItem ? 0 : prev + 1);
-    changeSlider();
-  }, [countItem, changeSlider]);
-
-  // Auto-play functionality
-  useEffect(() => {
-    if (!isMounted) return;
-
-    autoPlayRef.current = setInterval(() => {
-      handleNext();
-    }, 5000);
-
-    return () => {
-      if (autoPlayRef.current) {
-        clearInterval(autoPlayRef.current);
-      }
-    };
-  }, [isMounted, handleNext]);
+    carousel.handlePrev();
+  };
 
   // Early return AFTER all hooks are called
-  if (!isMounted) {
+  if (!carousel.isMounted) {
     return <div className="h-screen bg-gradient-to-br from-green-600 to-green-800 animate-pulse" />;
   }
 
   const getItemClass = (index: number) => {
-    if (index === active) return 'active';
+    if (index === carousel.active) return 'active';
     if (index === other_1) return 'other_1';
     if (index === other_2) return 'other_2';
     return '';
