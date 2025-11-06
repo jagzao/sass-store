@@ -1,18 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Next.js 16 configuration
+  // Next.js 14 compatible configuration
   experimental: {
-    // Enable Partial Prerendering (PPR) for better performance
-    ppr: true,
-    // Enable Turbopack for faster builds
-    turbo: {
-      rules: {
-        '*.svg': {
-          loaders: ['@svgr/webpack'],
-          as: '*.js',
-        },
-      },
-    },
+    // Experimental features for Next.js 14
   },
 
   // Basic configuration for development
