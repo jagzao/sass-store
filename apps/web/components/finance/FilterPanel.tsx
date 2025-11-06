@@ -43,13 +43,17 @@ const FilterPanel = ({
     "digital_wallet",
   ];
 
-  const handleFilterChange = (key: keyof FilterOptions, value: any) => {
+  const handleFilterChange = (
+    key: keyof FilterOptions,
+    value: string | Date | undefined
+  ) => {
     const newFilters = { ...filters };
 
     if (value === "" || value === undefined) {
       delete newFilters[key];
     } else {
-      newFilters[key] = value;
+      // Type assertion to match FilterOptions value types
+      (newFilters[key] as typeof value) = value;
     }
 
     onFiltersChange(newFilters);

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, memo } from 'react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 
@@ -26,6 +26,14 @@ interface PostsListProps {
   onEditPost: (postId: string) => void;
 }
 
+interface PostTarget {
+  platform: string;
+  status: string;
+  accountId?: string;
+  platformPostId?: string;
+  publishedAt?: string;
+}
+
 interface SocialPost {
   id: string;
   title?: string;
@@ -38,9 +46,9 @@ interface SocialPost {
   updatedAt: string;
 }
 
-export function PostsList({ onEditPost }: PostsListProps) {
+const PostsListComponent = ({ onEditPost }: PostsListProps) => {
   const [posts, setPosts] = useState<SocialPost[]>([]);
-  const [targets, setTargets] = useState<Record<string, any[]>>({});
+  const [targets, setTargets] = useState<Record<string, PostTarget[]>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [filters, setFilters] = useState({
     status: '',
@@ -72,7 +80,7 @@ export function PostsList({ onEditPost }: PostsListProps) {
       setTotalPages(result.meta?.totalPages || 1);
 
       // Fetch targets for each post
-      const targetsData: Record<string, any[]> = {};
+      const targetsData: Record<string, PostTarget[]> = {};
       await Promise.all(
         (result.data || []).map(async (post: SocialPost) => {
           try {
@@ -122,10 +130,10 @@ export function PostsList({ onEditPost }: PostsListProps) {
     }
   };
 
-  const truncateText = (text: string, maxLength: number = 150) => {
+  const truncateText = useCallback((text: string, maxLength: number = 150) => {
     if (text.length <= maxLength) return text;
     return text.substring(0, maxLength) + '...';
-  };
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -307,4 +315,8 @@ export function PostsList({ onEditPost }: PostsListProps) {
       )}
     </div>
   );
-}
+};
+
+PostsListComponent.displayName = 'PostsList';
+
+export const PostsList = memo(PostsListComponent);

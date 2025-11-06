@@ -14,6 +14,13 @@ const PLATFORMS = [
   { id: 'threads', name: 'Threads', emoji: '🧵', color: 'bg-gray-900', maxLength: 500 }
 ];
 
+interface PostTarget {
+  platform: string;
+  variantText?: string;
+  publishAtUtc?: string | null;
+  assetIds?: string[];
+}
+
 interface PostComposerProps {
   onCancel: () => void;
   onSuccess: () => void;
@@ -64,14 +71,15 @@ export function PostComposer({ onCancel, onSuccess, initialDate, postIdToEdit }:
         const targetsResponse = await fetch(`/api/v1/social/posts/${postIdToEdit}/targets`);
         if (targetsResponse.ok) {
           const targetsData = await targetsResponse.json();
-          
+
           // Set selected platforms
-          const platforms = targetsData.data.map((target: any) => target.platform);
+          const targets = targetsData.data as PostTarget[];
+          const platforms = targets.map((target) => target.platform);
           setSelectedPlatforms(platforms);
-          
+
           // Set platform variants
           const variants: Record<string, string> = {};
-          targetsData.data.forEach((target: any) => {
+          targets.forEach((target) => {
             if (target.variantText) {
               variants[target.platform] = target.variantText;
             }

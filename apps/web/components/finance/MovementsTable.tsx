@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, memo, useCallback } from "react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 
@@ -27,7 +27,7 @@ interface MovementsTableProps {
   onMovementClick?: (movement: Movement) => void;
 }
 
-const MovementsTable = ({
+const MovementsTable = memo(({
   movements,
   loading = false,
   onMovementClick,
@@ -39,32 +39,40 @@ const MovementsTable = ({
 
   const sortedMovements = useMemo(() => {
     return [...movements].sort((a, b) => {
-      let aValue: any = a[sortField];
-      let bValue: any = b[sortField];
-
       if (sortField === "movementDate") {
-        aValue = new Date(aValue).getTime();
-        bValue = new Date(bValue).getTime();
+        const aValue = new Date(a[sortField]).getTime();
+        const bValue = new Date(b[sortField]).getTime();
+        return sortDirection === "asc" ? aValue - bValue : bValue - aValue;
       }
 
-      if (sortDirection === "asc") {
-        return aValue > bValue ? 1 : -1;
-      } else {
-        return aValue < bValue ? 1 : -1;
+      if (sortField === "amount") {
+        const aValue = a[sortField];
+        const bValue = b[sortField];
+        return sortDirection === "asc" ? aValue - bValue : bValue - aValue;
       }
+
+      if (sortField === "type") {
+        const aValue = a[sortField];
+        const bValue = b[sortField];
+        return sortDirection === "asc"
+          ? aValue.localeCompare(bValue)
+          : bValue.localeCompare(aValue);
+      }
+
+      return 0;
     });
   }, [movements, sortField, sortDirection]);
 
-  const handleSort = (field: "movementDate" | "amount" | "type") => {
+  const handleSort = useCallback((field: "movementDate" | "amount" | "type") => {
     if (sortField === field) {
       setSortDirection(sortDirection === "asc" ? "desc" : "asc");
     } else {
       setSortField(field);
       setSortDirection("desc");
     }
-  };
+  }, [sortField, sortDirection]);
 
-  const getTypeLabel = (type: string) => {
+  const getTypeLabel = useCallback((type: string) => {
     const labels = {
       SETTLEMENT: {
         label: "Liquidación",
@@ -96,14 +104,14 @@ const MovementsTable = ({
         bg: "bg-gray-50",
       }
     );
-  };
+  }, []);
 
-  const formatCurrency = (amount: number, currency: string = "MXN") => {
+  const formatCurrency = useCallback((amount: number, currency: string = "MXN") => {
     return new Intl.NumberFormat("es-MX", {
       style: "currency",
       currency: currency,
     }).format(amount);
-  };
+  }, []);
 
   if (loading) {
     return (
@@ -270,6 +278,8 @@ const MovementsTable = ({
       )}
     </div>
   );
-};
+});
+
+MovementsTable.displayName = 'MovementsTable';
 
 export default MovementsTable;

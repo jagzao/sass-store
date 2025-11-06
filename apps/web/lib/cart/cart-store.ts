@@ -79,7 +79,12 @@ interface CartStoreWithSync extends CartStore {
 }
 
 // Cache for cart data to improve performance
-const cartCache = new Map<string, { data: any; timestamp: number }>();
+interface CartCacheData {
+  items: CartItem[];
+  timestamp: number;
+}
+
+const cartCache = new Map<string, CartCacheData>();
 
 // Cache timeout (5 minutes)
 const CACHE_TIMEOUT = 5 * 60 * 1000;
@@ -462,9 +467,9 @@ export const useCart = create<CartStoreWithSync>()(
                   mergedItems.push(item);
                 } else {
                   // If item exists in both, use the quantity from the cart with highest quantity
-                  const existingUserItem = userCartItems.find((userItem: any) => userItem.sku === item.sku);
+                  const existingUserItem = userCartItems.find((userItem: CartItem) => userItem.sku === item.sku);
                   if (existingUserItem && existingUserItem.quantity < item.quantity) {
-                    mergedItems[mergedItems.findIndex((i: any) => i.sku === item.sku)] = item;
+                    mergedItems[mergedItems.findIndex((i: CartItem) => i.sku === item.sku)] = item;
                   }
                 }
               });
