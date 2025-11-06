@@ -6,10 +6,24 @@ import React, {
   useRef,
   useState,
 } from "react";
-import Image from "next/image";
 import { gsap } from "gsap";
 import { Flip } from "gsap/Flip";
 import { useCart } from "@/lib/cart/cart-store";
+import { CarouselItem } from "./CarouselItem";
+import { CarouselNavigation } from "./CarouselNavigation";
+import {
+  CAROUSEL_POSITIONS,
+  ANIMATION_DURATIONS,
+  ANIMATION_EASING,
+  getAnimationDuration,
+  clearFlipInline,
+  applyBaseAnchor,
+  createTextStaggerTimeline,
+  applyParallax,
+  resetParallax,
+  DETAIL_IMAGE_POSITION,
+  DETAIL_STAGGER_DELAYS,
+} from "./wondernails-animations";
 import styles from "./HeroWondernailsGSAP.module.css";
 
 if (typeof window !== "undefined") {
@@ -138,11 +152,6 @@ const defaultSlides: WnSlide[] = [
   },
 ];
 
-// Helper: Limpia props inline que Flip deja (evita drift)
-const clearFlipInline = (nodes: NodeListOf<Element>) => {
-  gsap.set(nodes, { clearProps: "top,left,width,height,margin" }); // NO limpiar transform aquí
-};
-
 export default function WondernailsCarouselFinal({
   slides: initialSlides,
   className,
@@ -164,13 +173,6 @@ export default function WondernailsCarouselFinal({
     (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') &&
     (typeof (window as any).__playwright !== 'undefined' || typeof (window as any).__REACT_DEVTOOLS_GLOBAL_HOOK__ !== 'undefined');
 
-  // Animation durations based on environment
-  const getAnimationDuration = (baseSeconds: number) => {
-    if (isTestEnv) return baseSeconds * 0.15; // 85% faster in tests
-    if (prefersReducedMotion) return baseSeconds * 0.5; // 50% faster for reduced motion
-    return baseSeconds;
-  };
-
   // Detect reduced motion
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -191,80 +193,20 @@ export default function WondernailsCarouselFinal({
     const idx = Number(mainItem?.dataset.index ?? 0);
     const color = slides[idx]?.bgColor || "#FF2D6A";
     gsap.to(rootRef.current, {
-      duration: 0.35,
-      ease: "power2.out",
+      duration: ANIMATION_DURATIONS.BACKGROUND,
+      ease: ANIMATION_EASING.SMOOTH,
       "--accent": color,
     } as any);
   }, [slides]);
 
   // Stagger text animation for MAIN item
   const staggerMainText = useCallback((mainItem: HTMLElement) => {
-    const title = mainItem.querySelector(`.${styles.title}`) as HTMLElement;
-    const topic = mainItem.querySelector(`.${styles.topic}`) as HTMLElement;
-    const des = mainItem.querySelector(`.${styles.des}`) as HTMLElement;
-    const seeMore = mainItem.querySelector(`.${styles.seeMore}`) as HTMLElement;
+    const title = mainItem.querySelector(`.${styles.title}`) as HTMLElement | null;
+    const topic = mainItem.querySelector(`.${styles.topic}`) as HTMLElement | null;
+    const description = mainItem.querySelector(`.${styles.des}`) as HTMLElement | null;
+    const button = mainItem.querySelector(`.${styles.seeMore}`) as HTMLElement | null;
 
-    const tl = gsap.timeline();
-
-    if (title) {
-      tl.fromTo(
-        title,
-        { y: -30, opacity: 0, filter: "blur(10px)" },
-        {
-          y: 0,
-          opacity: 1,
-          filter: "blur(0px)",
-          duration: 0.5,
-          ease: "power2.out",
-        },
-        0
-      );
-    }
-
-    if (topic) {
-      tl.fromTo(
-        topic,
-        { y: -30, opacity: 0, filter: "blur(10px)" },
-        {
-          y: 0,
-          opacity: 1,
-          filter: "blur(0px)",
-          duration: 0.5,
-          ease: "power2.out",
-        },
-        0.1
-      );
-    }
-
-    if (des) {
-      tl.fromTo(
-        des,
-        { y: -30, opacity: 0, filter: "blur(10px)" },
-        {
-          y: 0,
-          opacity: 1,
-          filter: "blur(0px)",
-          duration: 0.5,
-          ease: "power2.out",
-        },
-        0.2
-      );
-    }
-
-    if (seeMore) {
-      tl.fromTo(
-        seeMore,
-        { y: -30, opacity: 0, filter: "blur(10px)" },
-        {
-          y: 0,
-          opacity: 1,
-          filter: "blur(0px)",
-          duration: 0.5,
-          ease: "power2.out",
-        },
-        0.3
-      );
-    }
+    createTextStaggerTimeline({ title, topic, description, button });
   }, []);
 
   // Apply exact stack positions using yPercent (no drift)
@@ -272,70 +214,20 @@ export default function WondernailsCarouselFinal({
     items.forEach((item, i) => {
       const el = item as HTMLElement;
 
-      // ANCLAJE BASE (siempre) - fuerza el anclaje para evitar drift con scale
-      gsap.set(el, {
-        position: "absolute",
-        top: "50%",
-        left: 0,
-        transformOrigin: "50% 50%",
-      });
+      // Apply base anchor to prevent drift with scale
+      applyBaseAnchor(el);
 
-      if (i === 0) {
-        // #1 Peek left - oculto a la izquierda
-        gsap.set(el, {
-          xPercent: -100,
-          yPercent: -55, // -5% ajustado por el anclaje en 50%
-          scale: 1.5,
-          opacity: 0,
-          filter: "blur(30px)",
-          zIndex: 10,
-          pointerEvents: "none",
-        });
-      } else if (i === 1) {
-        // #2 MAIN - centrado, nítido, dominante
-        gsap.set(el, {
-          xPercent: 0,
-          yPercent: -50, // centrado vertical perfecto
-          scale: 1,
-          opacity: 1,
-          filter: "blur(0px)",
-          zIndex: 20,
-          pointerEvents: "auto",
-        });
-      } else if (i === 2) {
-        // #3 Derecha cercana - 50% derecha, +10% abajo
-        gsap.set(el, {
-          xPercent: 50,
-          yPercent: -40, // -50% + 10% = -40%
-          scale: 0.8,
-          filter: "blur(10px)",
-          zIndex: 9,
-          opacity: 1,
-          pointerEvents: "none",
-        });
-      } else if (i === 3) {
-        // #4 Derecha lejana - 90% derecha, +20% abajo
-        gsap.set(el, {
-          xPercent: 90,
-          yPercent: -30, // -50% + 20% = -30%
-          scale: 0.5,
-          filter: "blur(30px)",
-          zIndex: 8,
-          opacity: 1,
-          pointerEvents: "none",
-        });
-      } else {
-        // #5 Fuera de foco - extremo derecho, +30% abajo
-        gsap.set(el, {
-          xPercent: 120,
-          yPercent: -20, // -50% + 30% = -20%
-          scale: 0.3,
-          filter: "blur(40px)",
-          opacity: 0,
-          zIndex: 7,
-          pointerEvents: "none",
-        });
-      }
+      // Apply position based on index
+      const positions = [
+        CAROUSEL_POSITIONS.PEEK_LEFT,    // #1 Peek left
+        CAROUSEL_POSITIONS.MAIN,          // #2 MAIN (active)
+        CAROUSEL_POSITIONS.RIGHT_NEAR,    // #3 Right near
+        CAROUSEL_POSITIONS.RIGHT_FAR,     // #4 Right far
+        CAROUSEL_POSITIONS.OUT_OF_FOCUS,  // #5 Out of focus
+      ];
+
+      const position = positions[i] || positions[4]; // Default to OUT_OF_FOCUS
+      gsap.set(el, position);
     });
   }, []);
 
@@ -355,7 +247,7 @@ export default function WondernailsCarouselFinal({
       autoRef.current = null;
     }
     if (!isPaused && !isDetail && !prefersReducedMotion && toNextRef.current) {
-      autoRef.current = gsap.delayedCall(5, toNextRef.current);
+      autoRef.current = gsap.delayedCall(ANIMATION_DURATIONS.AUTOPLAY, toNextRef.current);
     }
   }, [isPaused, isDetail, prefersReducedMotion]);
 
@@ -382,16 +274,13 @@ export default function WondernailsCarouselFinal({
     // Get elements for micro-parallax
     const mainImgWrap = items[1].querySelector(
       `.${styles.imgWrap}`
-    ) as HTMLElement;
+    ) as HTMLElement | null;
     const mainIntroduce = items[1].querySelector(
       `.${styles.introduce}`
-    ) as HTMLElement;
+    ) as HTMLElement | null;
 
-    // Micro-parallax en el MAIN saliente (12-14px)
-    if (mainImgWrap)
-      gsap.to(mainImgWrap, { x: 14, duration: 0.5, ease: "power2.out" });
-    if (mainIntroduce)
-      gsap.to(mainIntroduce, { x: -7, duration: 0.5, ease: "power2.out" });
+    // Apply micro-parallax effect
+    applyParallax(mainImgWrap, mainIntroduce, 'next');
 
     // Timeline para transiciones escalonadas
     const tl = gsap.timeline({
@@ -408,8 +297,7 @@ export default function WondernailsCarouselFinal({
         applyPositions(newItems);
 
         // Reset micro-parallax
-        if (mainImgWrap) gsap.set(mainImgWrap, { x: 0 });
-        if (mainIntroduce) gsap.set(mainIntroduce, { x: 0 });
+        resetParallax(mainImgWrap, mainIntroduce);
 
         // Descongela altura y actualiza fondo
         gsap.set(root, { clearProps: "height" });
@@ -425,65 +313,49 @@ export default function WondernailsCarouselFinal({
     });
 
     // Transiciones escalonadas con duraciones específicas
-    // #1 MAIN → peek izquierdo (0.5s)
+    // #1 MAIN → peek izquierdo
     tl.to(
       items[1],
       {
-        xPercent: -100,
-        yPercent: -55,
-        scale: 1.5,
-        opacity: 0,
-        filter: "blur(30px)",
-        duration: getAnimationDuration(0.5),
-        ease: "power2.inOut",
+        ...CAROUSEL_POSITIONS.PEEK_LEFT,
+        duration: getAnimationDuration(ANIMATION_DURATIONS.NEXT.MAIN_TO_PEEK, prefersReducedMotion, isTestEnv),
+        ease: ANIMATION_EASING.SHARP,
       },
       0
     );
 
-    // #2 Derecha cercana → MAIN (0.7s) - el más vistoso
+    // #2 Derecha cercana → MAIN - el más vistoso
     tl.to(
       items[2],
       {
-        xPercent: 0,
-        yPercent: -50,
-        scale: 1,
-        opacity: 1,
-        filter: "blur(0px)",
-        duration: getAnimationDuration(0.7),
-        ease: "power3.out",
+        ...CAROUSEL_POSITIONS.MAIN,
+        duration: getAnimationDuration(ANIMATION_DURATIONS.NEXT.RIGHT_TO_MAIN, prefersReducedMotion, isTestEnv),
+        ease: ANIMATION_EASING.BOUNCE,
       },
       0
     );
 
-    // #3 Derecha lejana → Derecha cercana (0.9s)
+    // #3 Derecha lejana → Derecha cercana
     if (items[3]) {
       tl.to(
         items[3],
         {
-          xPercent: 50,
-          yPercent: -40,
-          scale: 0.8,
-          opacity: 1,
-          filter: "blur(10px)",
-          duration: getAnimationDuration(0.9),
-          ease: "power2.inOut",
+          ...CAROUSEL_POSITIONS.RIGHT_NEAR,
+          duration: getAnimationDuration(ANIMATION_DURATIONS.NEXT.FAR_TO_NEAR, prefersReducedMotion, isTestEnv),
+          ease: ANIMATION_EASING.SHARP,
         },
         0
       );
     }
 
-    // #4 Fuera de foco → Derecha lejana (1.1s)
+    // #4 Fuera de foco → Derecha lejana
     if (items[4]) {
       tl.to(
         items[4],
         {
-          xPercent: 90,
-          yPercent: -30,
-          scale: 0.5,
-          opacity: 1,
-          filter: "blur(30px)",
-          duration: getAnimationDuration(1.1),
-          ease: "power2.inOut",
+          ...CAROUSEL_POSITIONS.RIGHT_FAR,
+          duration: getAnimationDuration(ANIMATION_DURATIONS.NEXT.OUT_TO_FAR, prefersReducedMotion, isTestEnv),
+          ease: ANIMATION_EASING.SHARP,
         },
         0
       );
@@ -521,19 +393,16 @@ export default function WondernailsCarouselFinal({
     const h = root.offsetHeight;
     gsap.set(root, { height: h });
 
-    // Get elements for micro-parallax invertido
+    // Get elements for micro-parallax
     const mainImgWrap = items[1].querySelector(
       `.${styles.imgWrap}`
-    ) as HTMLElement;
+    ) as HTMLElement | null;
     const mainIntroduce = items[1].querySelector(
       `.${styles.introduce}`
-    ) as HTMLElement;
+    ) as HTMLElement | null;
 
-    // Micro-parallax invertido en el MAIN saliente
-    if (mainImgWrap)
-      gsap.to(mainImgWrap, { x: -14, duration: 0.5, ease: "power2.out" });
-    if (mainIntroduce)
-      gsap.to(mainIntroduce, { x: 7, duration: 0.5, ease: "power2.out" });
+    // Apply micro-parallax effect (reversed)
+    applyParallax(mainImgWrap, mainIntroduce, 'prev');
 
     // Timeline para transiciones escalonadas inversas
     const tl = gsap.timeline({
@@ -550,8 +419,7 @@ export default function WondernailsCarouselFinal({
         applyPositions(newItems);
 
         // Reset micro-parallax
-        if (mainImgWrap) gsap.set(mainImgWrap, { x: 0 });
-        if (mainIntroduce) gsap.set(mainIntroduce, { x: 0 });
+        resetParallax(mainImgWrap, mainIntroduce);
 
         // Descongela altura y actualiza fondo
         gsap.set(root, { clearProps: "height" });
@@ -567,65 +435,49 @@ export default function WondernailsCarouselFinal({
     });
 
     // Transiciones escalonadas inversas con duraciones específicas
-    // #1 Peek izquierdo → MAIN (1.1s) - el más dramático
+    // #1 Peek izquierdo → MAIN - el más dramático
     tl.to(
       items[0],
       {
-        xPercent: 0,
-        yPercent: -50,
-        scale: 1,
-        opacity: 1,
-        filter: "blur(0px)",
-        duration: getAnimationDuration(1.1),
-        ease: "power3.out",
+        ...CAROUSEL_POSITIONS.MAIN,
+        duration: getAnimationDuration(ANIMATION_DURATIONS.PREV.PEEK_TO_MAIN, prefersReducedMotion, isTestEnv),
+        ease: ANIMATION_EASING.BOUNCE,
       },
       0
     );
 
-    // #2 MAIN → Derecha cercana (0.9s)
+    // #2 MAIN → Derecha cercana
     tl.to(
       items[1],
       {
-        xPercent: 50,
-        yPercent: -40,
-        scale: 0.8,
-        opacity: 1,
-        filter: "blur(10px)",
-        duration: getAnimationDuration(0.9),
-        ease: "power2.inOut",
+        ...CAROUSEL_POSITIONS.RIGHT_NEAR,
+        duration: getAnimationDuration(ANIMATION_DURATIONS.PREV.MAIN_TO_NEAR, prefersReducedMotion, isTestEnv),
+        ease: ANIMATION_EASING.SHARP,
       },
       0
     );
 
-    // #3 Derecha cercana → Derecha lejana (0.7s)
+    // #3 Derecha cercana → Derecha lejana
     if (items[2]) {
       tl.to(
         items[2],
         {
-          xPercent: 90,
-          yPercent: -30,
-          scale: 0.5,
-          opacity: 1,
-          filter: "blur(30px)",
-          duration: getAnimationDuration(0.7),
-          ease: "power2.inOut",
+          ...CAROUSEL_POSITIONS.RIGHT_FAR,
+          duration: getAnimationDuration(ANIMATION_DURATIONS.PREV.NEAR_TO_FAR, prefersReducedMotion, isTestEnv),
+          ease: ANIMATION_EASING.SHARP,
         },
         0
       );
     }
 
-    // #4 Derecha lejana → Fuera de foco (0.5s)
+    // #4 Derecha lejana → Fuera de foco
     if (items[3]) {
       tl.to(
         items[3],
         {
-          xPercent: 120,
-          yPercent: -20,
-          scale: 0.3,
-          opacity: 0,
-          filter: "blur(40px)",
-          duration: getAnimationDuration(0.5),
-          ease: "power2.inOut",
+          ...CAROUSEL_POSITIONS.OUT_OF_FOCUS,
+          duration: getAnimationDuration(ANIMATION_DURATIONS.PREV.FAR_TO_OUT, prefersReducedMotion, isTestEnv),
+          ease: ANIMATION_EASING.SHARP,
         },
         0
       );
@@ -682,19 +534,19 @@ export default function WondernailsCarouselFinal({
     detailTLRef.current = tl;
 
     // Expand main item
-    tl.to(mainItem, { width: "100%", duration: 0.6, ease: "power2.inOut" }, 0);
+    tl.to(mainItem, { width: "100%", duration: ANIMATION_DURATIONS.DETAIL.EXPAND, ease: ANIMATION_EASING.SHARP }, 0);
 
     // Hide other items
     if (items[2])
       tl.to(
         items[2],
-        { opacity: 0, xPercent: 200, pointerEvents: "none", duration: 0.5 },
+        { opacity: 0, xPercent: 200, pointerEvents: "none", duration: ANIMATION_DURATIONS.DETAIL.HIDE_OTHERS },
         0
       );
     if (items[3])
       tl.to(
         items[3],
-        { opacity: 0, xPercent: 200, pointerEvents: "none", duration: 0.5 },
+        { opacity: 0, xPercent: 200, pointerEvents: "none", duration: ANIMATION_DURATIONS.DETAIL.HIDE_OTHERS },
         0
       );
 
@@ -704,24 +556,20 @@ export default function WondernailsCarouselFinal({
       tl.to(
         mainImgWrap,
         {
-          left: "30%",
-          xPercent: -50,
-          top: "45%",
-          width: "55%",
-          height: "55%",
-          duration: 0.6,
-          ease: "power2.inOut",
+          ...DETAIL_IMAGE_POSITION,
+          duration: ANIMATION_DURATIONS.DETAIL.EXPAND,
+          ease: ANIMATION_EASING.SHARP,
         },
         0
       );
     }
 
     // Hide introduce
-    if (mainIntroduce) tl.to(mainIntroduce, { autoAlpha: 0, duration: 0.3 }, 0);
+    if (mainIntroduce) tl.to(mainIntroduce, { autoAlpha: 0, duration: ANIMATION_DURATIONS.DETAIL.SHOW_CONTENT * 0.75 }, 0);
 
     // Show detail with stagger
     if (mainDetail) {
-      tl.set(mainDetail, { display: "block" }, 0.3);
+      tl.set(mainDetail, { display: "block" }, ANIMATION_DURATIONS.DETAIL.SHOW_CONTENT * 0.75);
       const detailTitle = mainDetail.querySelector(`.${styles.detailTitle}`);
       const detailDes = mainDetail.querySelector(`.${styles.detailDes}`);
       const specs = mainDetail.querySelector(`.${styles.specifications}`);
@@ -730,36 +578,36 @@ export default function WondernailsCarouselFinal({
       tl.fromTo(
         mainDetail,
         { autoAlpha: 0 },
-        { autoAlpha: 1, duration: 0.4 },
-        0.4
+        { autoAlpha: 1, duration: ANIMATION_DURATIONS.DETAIL.SHOW_CONTENT },
+        DETAIL_STAGGER_DELAYS.FADE_IN
       );
       if (detailTitle)
         tl.fromTo(
           detailTitle,
           { y: 20, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.5 },
-          0.5
+          { y: 0, opacity: 1, duration: ANIMATION_DURATIONS.DETAIL.SHOW_CONTENT * 1.25 },
+          DETAIL_STAGGER_DELAYS.TITLE
         );
       if (detailDes)
         tl.fromTo(
           detailDes,
           { y: 20, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.5 },
-          0.6
+          { y: 0, opacity: 1, duration: ANIMATION_DURATIONS.DETAIL.SHOW_CONTENT * 1.25 },
+          DETAIL_STAGGER_DELAYS.DESCRIPTION
         );
       if (specs)
         tl.fromTo(
           specs,
           { y: 20, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.5 },
-          0.7
+          { y: 0, opacity: 1, duration: ANIMATION_DURATIONS.DETAIL.SHOW_CONTENT * 1.25 },
+          DETAIL_STAGGER_DELAYS.SPECS
         );
       if (buttons)
         tl.fromTo(
           buttons,
           { y: 20, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.5 },
-          0.8
+          { y: 0, opacity: 1, duration: ANIMATION_DURATIONS.DETAIL.SHOW_CONTENT * 1.25 },
+          DETAIL_STAGGER_DELAYS.BUTTONS
         );
     }
   }, [cancelAuto]);
@@ -896,116 +744,23 @@ export default function WondernailsCarouselFinal({
       <div className={styles.carousel}>
         <div className={styles.list} ref={listRef} data-testid="carousel-list">
           {slides.map((slide, idx) => (
-            <article
+            <CarouselItem
               key={slide.img}
-              className={styles.item}
-              data-testid="carousel-item"
-              data-index={idx}
-              role="tabpanel"
-              aria-label={`Slide ${idx + 1}: ${slide.topic || "Service"}`}
-            >
-              <div className={styles.introduce}>
-                {slide.badge && (
-                  <div className={styles.badge}>{slide.badge}</div>
-                )}
-                {slide.title && (
-                  <div className={styles.title}>{slide.title}</div>
-                )}
-                {slide.topic && (
-                  <div className={styles.topic}>{slide.topic}</div>
-                )}
-                {slide.description && (
-                  <div className={styles.des}>{slide.description}</div>
-                )}
-                <button
-                  className={styles.seeMore}
-                  onClick={openDetail}
-                  data-testid="see-more-button"
-                  aria-label="Ver más del producto"
-                >
-                  VER MÁS ↗
-                </button>
-              </div>
-
-              <div className={styles.imgWrap}>
-                <Image
-                  src={slide.img}
-                  alt={slide.topic || "Servicio Wonder Nails"}
-                  fill
-                  priority={idx === 1}
-                  sizes="(max-width:768px) 40vw, (max-width:1200px) 50vw, 800px"
-                />
-              </div>
-
-              <div className={styles.detail} data-testid="detail-view">
-                <div className={styles.detailTitle}>
-                  {slide.detailTitle || slide.title}
-                </div>
-                {slide.detail && (
-                  <div className={styles.detailDes}>{slide.detail}</div>
-                )}
-                {!!slide.specs?.length && (
-                  <div
-                    className={styles.specifications}
-                    data-testid="detail-specifications"
-                  >
-                    {slide.specs.map((sp, i) => (
-                      <div key={i} className={styles.spec}>
-                        <p className={styles.specLabel}>{sp.label}</p>
-                        <p className={styles.specValue}>{sp.value}</p>
-                      </div>
-                    ))}
-                  </div>
-                )}
-                <div className={styles.detailButtons}>
-                  {slide.type === "product" ? (
-                    <button
-                      className={styles.addToCart}
-                      onClick={handleAddToCart}
-                    >
-                      COMPRAR
-                    </button>
-                  ) : (
-                    <button
-                      className={styles.checkout}
-                      onClick={handleCheckout}
-                    >
-                      RESERVAR
-                    </button>
-                  )}
-                  <button
-                    className={styles.closeDetail}
-                    onClick={closeDetail}
-                    data-testid="back-button"
-                  >
-                    VER TODOS
-                  </button>
-                </div>
-              </div>
-            </article>
+              slide={slide}
+              index={idx}
+              onSeeMore={openDetail}
+              onAddToCart={handleAddToCart}
+              onCheckout={handleCheckout}
+              onCloseDetail={closeDetail}
+            />
           ))}
         </div>
 
-        <div className={styles.arrows}>
-          <button
-            className={styles.arrowBtn}
-            onClick={toPrev}
-            aria-label="Anterior"
-            data-testid="prev-button"
-            disabled={navLocked || isDetail}
-          >
-            ←
-          </button>
-          <button
-            className={styles.arrowBtn}
-            onClick={toNext}
-            aria-label="Siguiente"
-            data-testid="next-button"
-            disabled={navLocked || isDetail}
-          >
-            →
-          </button>
-        </div>
+        <CarouselNavigation
+          onPrev={toPrev}
+          onNext={toNext}
+          disabled={navLocked || isDetail}
+        />
       </div>
     </section>
   );
