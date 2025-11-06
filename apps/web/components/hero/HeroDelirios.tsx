@@ -5,7 +5,8 @@ import { useCircleText } from "./useCircleText";
 import styles from "./HeroDelirios.module.css";
 
 // GSAP SSR-safe imports
-let gsap: any;
+type GSAPType = typeof import("gsap").gsap;
+let gsap: GSAPType | null = null;
 
 if (typeof window !== 'undefined') {
   const GS = require("gsap");
@@ -48,8 +49,8 @@ export default function HeroDelirios({
   const titleRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef<HTMLElement>(null);
   const itemRefs = useRef<(HTMLElement | null)[]>([]);
-  const autoplayTimerRef = useRef<any>(null);
-  const ctxRef = useRef<any>(null);
+  const autoplayTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const ctxRef = useRef<ReturnType<typeof gsap.context> | null>(null);
   const isPausedRef = useRef(false);
   const veil1Ref = useRef<HTMLDivElement>(null);
   const veil2Ref = useRef<HTMLDivElement>(null);

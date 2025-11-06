@@ -12,14 +12,17 @@ const SUPPORTED_PLATFORMS = [
   "tiktok",
   "gbp",
   "threads",
-];
+] as const;
+
 const VALID_STATUSES = [
   "draft",
   "scheduled",
   "published",
   "failed",
   "canceled",
-];
+] as const;
+
+type PostStatus = typeof VALID_STATUSES[number];
 
 export async function GET(request: NextRequest) {
   try {
@@ -54,8 +57,8 @@ export async function GET(request: NextRequest) {
 
     const conditions = [eq(socialPosts.tenantId, tenantId)];
 
-    if (status && VALID_STATUSES.includes(status)) {
-      conditions.push(eq(socialPosts.status, status as any));
+    if (status && VALID_STATUSES.includes(status as PostStatus)) {
+      conditions.push(eq(socialPosts.status, status as PostStatus));
     }
 
     if (startDate) {

@@ -15,6 +15,14 @@ interface Slide {
   background: string;
 }
 
+interface TenantBranding {
+  primaryColor?: string;
+  secondaryColor?: string;
+  logo?: string;
+  favicon?: string;
+  [key: string]: string | undefined;
+}
+
 interface HeroCarouselProps {
   featuredServices?: Array<{
     id: string;
@@ -34,7 +42,7 @@ interface HeroCarouselProps {
     name: string;
     description: string;
     mode: 'booking' | 'catalog';
-    branding: any;
+    branding: TenantBranding;
   };
 }
 

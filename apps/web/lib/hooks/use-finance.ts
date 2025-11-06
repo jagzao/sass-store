@@ -13,9 +13,23 @@ interface KPIData {
   expenseTrend: number;
 }
 
+interface Movement {
+  id: string;
+  type: "SETTLEMENT" | "REFUND" | "CHARGEBACK" | "WITHDRAWAL" | "FEE" | "CARD_PURCHASE";
+  amount: number;
+  currency: string;
+  description: string;
+  referenceId?: string;
+  paymentMethod?: string;
+  counterparty?: string;
+  movementDate: string;
+  reconciled: boolean;
+  reconciliationId?: string;
+}
+
 interface FinanceData {
   kpis: KPIData;
-  movements: any[];
+  movements: Movement[];
   loading: boolean;
   error: string | null;
 }
