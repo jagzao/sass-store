@@ -14,6 +14,15 @@ const stripePromise = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
   ? loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
   : null;
 
+interface StripePaymentIntent {
+  id: string;
+  status: string;
+  amount: number;
+  currency: string;
+  created: number;
+  client_secret: string;
+}
+
 interface CheckoutFormProps {
   orderId: string;
   amount: number;
@@ -24,7 +33,7 @@ interface CheckoutFormProps {
     email: string;
     phone?: string;
   };
-  onSuccess: (paymentIntent: any) => void;
+  onSuccess: (paymentIntent: StripePaymentIntent) => void;
   onError: (error: string) => void;
 }
 
@@ -75,8 +84,8 @@ function PaymentForm({
 
       if (error) {
         onError(error.message || 'Payment failed');
-      } else if (paymentIntent.status === 'succeeded') {
-        onSuccess(paymentIntent);
+      } else if (paymentIntent && paymentIntent.status === 'succeeded') {
+        onSuccess(paymentIntent as StripePaymentIntent);
       } else {
         onError('Payment was not successful');
       }

@@ -2,95 +2,89 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Eye, EyeOff } from "lucide-react";
+import { FormInput, PasswordInput } from "@/components/ui/forms";
 
 interface RegisterFormProps {
   tenantSlug: string;
   primaryColor: string;
 }
 
+interface RegisterFormData {
+  name: string;
+  email: string;
+  phone: string;
+  password: string;
+  confirmPassword: string;
+  terms: boolean;
+}
+
 export function RegisterForm({ tenantSlug, primaryColor }: RegisterFormProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const [formData, setFormData] = useState<RegisterFormData>({
+    name: "",
+    email: "",
+    phone: "",
+    password: "",
+    confirmPassword: "",
+    terms: false,
+  });
+
+  const validateForm = (): string | null => {
+    if (!formData.name || formData.name.trim().length === 0) {
+      return "El nombre es requerido";
+    }
+
+    if (!formData.email || formData.email.trim().length === 0) {
+      return "El correo electrónico es requerido";
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      return "El email es inválido";
+    }
+
+    if (!formData.password || formData.password.length === 0) {
+      return "La contraseña es requerida";
+    }
+
+    if (formData.password.length < 8) {
+      return "La contraseña debe tener al menos 8 caracteres";
+    }
+
+    if (!/[A-Z]/.test(formData.password)) {
+      return "La contraseña debe contener al menos una mayúscula";
+    }
+
+    if (!/[a-z]/.test(formData.password)) {
+      return "La contraseña debe contener al menos una minúscula";
+    }
+
+    if (!/[0-9]/.test(formData.password)) {
+      return "La contraseña debe contener al menos un número";
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      return "Las contraseñas no coinciden";
+    }
+
+    if (!formData.terms) {
+      return "Debes aceptar los términos y condiciones";
+    }
+
+    return null;
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
 
-    const formData = new FormData(e.currentTarget);
-    const data = {
-      name: formData.get("name") as string,
-      email: formData.get("email") as string,
-      phone: formData.get("phone") as string,
-      password: formData.get("password") as string,
-      confirmPassword: formData.get("confirmPassword") as string,
-      terms: formData.get("terms") === "on",
-    };
-
-    // Validations
-    if (!data.name || data.name.trim().length === 0) {
-      setError("El nombre es requerido");
-      setIsLoading(false);
-      return;
-    }
-
-    if (!data.email || data.email.trim().length === 0) {
-      setError("El correo electrónico es requerido");
-      setIsLoading(false);
-      return;
-    }
-
-    // Email format validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(data.email)) {
-      setError("El email es inválido");
-      setIsLoading(false);
-      return;
-    }
-
-    if (!data.password || data.password.length === 0) {
-      setError("La contraseña es requerida");
-      setIsLoading(false);
-      return;
-    }
-
-    if (data.password.length < 8) {
-      setError("La contraseña debe tener al menos 8 caracteres");
-      setIsLoading(false);
-      return;
-    }
-
-    // Password complexity validation
-    if (!/[A-Z]/.test(data.password)) {
-      setError("La contraseña debe contener al menos una mayúscula");
-      setIsLoading(false);
-      return;
-    }
-
-    if (!/[a-z]/.test(data.password)) {
-      setError("La contraseña debe contener al menos una minúscula");
-      setIsLoading(false);
-      return;
-    }
-
-    if (!/[0-9]/.test(data.password)) {
-      setError("La contraseña debe contener al menos un número");
-      setIsLoading(false);
-      return;
-    }
-
-    if (data.password !== data.confirmPassword) {
-      setError("Las contraseñas no coinciden");
-      setIsLoading(false);
-      return;
-    }
-
-    if (!data.terms) {
-      setError("Debes aceptar los términos y condiciones");
+    const validationError = validateForm();
+    if (validationError) {
+      setError(validationError);
       setIsLoading(false);
       return;
     }
@@ -102,7 +96,7 @@ export function RegisterForm({ tenantSlug, primaryColor }: RegisterFormProps) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          ...data,
+          ...formData,
           tenantSlug,
         }),
       });
@@ -112,15 +106,20 @@ export function RegisterForm({ tenantSlug, primaryColor }: RegisterFormProps) {
         throw new Error(result.error || "Error al crear la cuenta");
       }
 
-      // Success - redirect to login
-      const result = await response.json().catch(() => ({ success: true }));
-      console.log('[RegisterForm] Registration successful, redirecting...', result);
+      console.log('[RegisterForm] Registration successful, redirecting...');
       router.push(`/t/${tenantSlug}/login?registered=true`);
-    } catch (err: any) {
+    } catch (err) {
       console.error('[RegisterForm] Registration error:', err);
-      setError(err.message || "Error al crear la cuenta");
+      setError(err instanceof Error ? err.message : "Error al crear la cuenta");
       setIsLoading(false);
     }
+  };
+
+  const updateField = <K extends keyof RegisterFormData>(
+    field: K,
+    value: RegisterFormData[K]
+  ) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   return (
@@ -134,148 +133,82 @@ export function RegisterForm({ tenantSlug, primaryColor }: RegisterFormProps) {
         </div>
       )}
 
-      {/* Name */}
-      <div>
-        <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-          Nombre completo
-        </label>
-        <div className="mt-1">
-          <input
-            id="name"
-            name="name"
-            type="text"
-            autoComplete="name"
-            required
-            disabled={isLoading}
-            className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 sm:text-sm disabled:opacity-50"
-            style={{
-              borderColor: primaryColor,
-            }}
-            placeholder="Tu nombre completo"
-          />
-        </div>
-      </div>
+      <FormInput
+        id="name"
+        name="name"
+        type="text"
+        label="Nombre completo"
+        placeholder="Tu nombre completo"
+        value={formData.name}
+        onChange={(e) => updateField("name", e.target.value)}
+        autoComplete="name"
+        required
+        disabled={isLoading}
+        inputClassName="focus:ring-2 focus:ring-offset-2"
+        style={{ borderColor: primaryColor }}
+      />
 
-      {/* Email */}
-      <div>
-        <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-          Correo electrónico
-        </label>
-        <div className="mt-1">
-          <input
-            id="email"
-            name="email"
-            type="email"
-            autoComplete="email"
-            required
-            disabled={isLoading}
-            className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 sm:text-sm disabled:opacity-50"
-            style={{
-              borderColor: primaryColor,
-            }}
-            placeholder="tu@email.com"
-          />
-        </div>
-      </div>
+      <FormInput
+        id="email"
+        name="email"
+        type="email"
+        label="Correo electrónico"
+        placeholder="tu@email.com"
+        value={formData.email}
+        onChange={(e) => updateField("email", e.target.value)}
+        autoComplete="email"
+        required
+        disabled={isLoading}
+        inputClassName="focus:ring-2 focus:ring-offset-2"
+        style={{ borderColor: primaryColor }}
+      />
 
-      {/* Phone */}
-      <div>
-        <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
-          Teléfono
-        </label>
-        <div className="mt-1">
-          <input
-            id="phone"
-            name="phone"
-            type="tel"
-            autoComplete="tel"
-            required
-            disabled={isLoading}
-            className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 sm:text-sm disabled:opacity-50"
-            style={{
-              borderColor: primaryColor,
-            }}
-            placeholder="55 1234 5678"
-            maxLength={10}
-            pattern="[0-9]{10}"
-            title="Número de teléfono de 10 dígitos"
-          />
-        </div>
-        <p className="mt-1 text-xs text-gray-500">
-          Ingresa tu número de teléfono sin espacios ni guiones (10 dígitos)
-        </p>
-      </div>
+      <FormInput
+        id="phone"
+        name="phone"
+        type="tel"
+        label="Teléfono"
+        placeholder="55 1234 5678"
+        value={formData.phone}
+        onChange={(e) => updateField("phone", e.target.value)}
+        autoComplete="tel"
+        required
+        disabled={isLoading}
+        maxLength={10}
+        pattern="[0-9]{10}"
+        helperText="Ingresa tu número de teléfono sin espacios ni guiones (10 dígitos)"
+        inputClassName="focus:ring-2 focus:ring-offset-2"
+        style={{ borderColor: primaryColor }}
+      />
 
-      {/* Password */}
-      <div>
-        <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-          Contraseña
-        </label>
-        <div className="mt-1 relative">
-          <input
-            id="password"
-            name="password"
-            type={showPassword ? "text" : "password"}
-            autoComplete="new-password"
-            required
-            disabled={isLoading}
-            className="appearance-none block w-full px-3 py-2 pr-10 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 sm:text-sm disabled:opacity-50"
-            style={{
-              borderColor: primaryColor,
-            }}
-            placeholder="••••••••"
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-600 hover:text-gray-600"
-            disabled={isLoading}
-          >
-            {showPassword ? (
-              <EyeOff className="h-5 w-5" aria-hidden="true" />
-            ) : (
-              <Eye className="h-5 w-5" aria-hidden="true" />
-            )}
-          </button>
-        </div>
-      </div>
+      <PasswordInput
+        id="password"
+        name="password"
+        label="Contraseña"
+        placeholder="••••••••"
+        value={formData.password}
+        onChange={(e) => updateField("password", e.target.value)}
+        autoComplete="new-password"
+        required
+        disabled={isLoading}
+        showStrengthIndicator
+        inputClassName="focus:ring-2 focus:ring-offset-2"
+        style={{ borderColor: primaryColor }}
+      />
 
-      {/* Confirm Password */}
-      <div>
-        <label
-          htmlFor="confirmPassword"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Confirmar contraseña
-        </label>
-        <div className="mt-1 relative">
-          <input
-            id="confirmPassword"
-            name="confirmPassword"
-            type={showConfirmPassword ? "text" : "password"}
-            autoComplete="new-password"
-            required
-            disabled={isLoading}
-            className="appearance-none block w-full px-3 py-2 pr-10 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 sm:text-sm disabled:opacity-50"
-            style={{
-              borderColor: primaryColor,
-            }}
-            placeholder="••••••••"
-          />
-          <button
-            type="button"
-            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-600 hover:text-gray-600"
-            disabled={isLoading}
-          >
-            {showConfirmPassword ? (
-              <EyeOff className="h-5 w-5" aria-hidden="true" />
-            ) : (
-              <Eye className="h-5 w-5" aria-hidden="true" />
-            )}
-          </button>
-        </div>
-      </div>
+      <PasswordInput
+        id="confirmPassword"
+        name="confirmPassword"
+        label="Confirmar contraseña"
+        placeholder="••••••••"
+        value={formData.confirmPassword}
+        onChange={(e) => updateField("confirmPassword", e.target.value)}
+        autoComplete="new-password"
+        required
+        disabled={isLoading}
+        inputClassName="focus:ring-2 focus:ring-offset-2"
+        style={{ borderColor: primaryColor }}
+      />
 
       {/* Terms and conditions */}
       <div className="flex items-center">
@@ -283,6 +216,8 @@ export function RegisterForm({ tenantSlug, primaryColor }: RegisterFormProps) {
           id="terms"
           name="terms"
           type="checkbox"
+          checked={formData.terms}
+          onChange={(e) => updateField("terms", e.target.checked)}
           required
           disabled={isLoading}
           className="h-4 w-4 rounded border-gray-300 focus:ring-2 focus:ring-offset-2 disabled:opacity-50"

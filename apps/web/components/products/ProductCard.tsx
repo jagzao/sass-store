@@ -5,6 +5,12 @@ import { useRouter } from "next/navigation";
 import { useAnnounce } from "@/components/a11y/LiveRegion";
 import { useCart } from "@/lib/cart/cart-store";
 
+interface ProductMetadata {
+  image?: string;
+  category?: string;
+  [key: string]: string | number | boolean | undefined;
+}
+
 export interface ProductCardProps {
   id: string;
   name: string;
@@ -14,7 +20,7 @@ export interface ProductCardProps {
   category?: string;
   primaryColor: string;
   tenantSlug: string;
-  metadata?: any;
+  metadata?: ProductMetadata;
   onAddToCart?: (productId: string, quantity: number) => void;
 }
 

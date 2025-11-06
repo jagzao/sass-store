@@ -3,6 +3,11 @@
 import { useState, memo } from "react";
 import { useRouter } from "next/navigation";
 
+interface ServiceMetadata {
+  image?: string;
+  [key: string]: string | number | boolean | undefined;
+}
+
 export interface ServiceCardProps {
   id: string;
   name: string;
@@ -13,7 +18,7 @@ export interface ServiceCardProps {
   category?: string;
   primaryColor: string;
   tenantSlug: string;
-  metadata?: any;
+  metadata?: ServiceMetadata;
   onBook?: (serviceId: string) => void;
 }
 
