@@ -1,6 +1,6 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { JotaiProvider } from "@/components/providers/jotai-provider";
+// JotaiProvider removed - migrated to Zustand
 import { ToastProvider } from "@/components/ui/toast-provider";
 import { AuthSessionProvider } from "@/components/providers/session-provider";
 import { CartSyncProvider } from "@/components/cart/CartSyncProvider";
@@ -32,13 +32,11 @@ export default async function RootLayout({ children }: RootLayoutProps) {
       <body className={inter.className} suppressHydrationWarning>
         <ClientInit />
         <AuthSessionProvider>
-          <JotaiProvider>
-            <ToastProvider>
-              <CartSyncProvider>
-                <div className="min-h-screen bg-background">{children}</div>
-              </CartSyncProvider>
-            </ToastProvider>
-          </JotaiProvider>
+          <ToastProvider>
+            <CartSyncProvider>
+              <div className="min-h-screen bg-background">{children}</div>
+            </CartSyncProvider>
+          </ToastProvider>
         </AuthSessionProvider>
       </body>
     </html>

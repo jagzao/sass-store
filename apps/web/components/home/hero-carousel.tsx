@@ -2,8 +2,7 @@
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import Link from 'next/link';
-import { useAtomValue } from 'jotai';
-import { tenantSlugAtom } from '@/lib/tenant/tenant-store';
+import { useTenantStore } from '@/lib/stores';
 import { motion } from 'framer-motion';
 import { heroVariants, heroItemVariants } from '@/components/animations/card-animations';
 
@@ -41,7 +40,8 @@ interface HeroCarouselProps {
 
 export function HeroCarousel({ featuredServices = [], featuredProducts = [], tenantData }: HeroCarouselProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const tenantSlug = useAtomValue(tenantSlugAtom);
+  // Migrated from Jotai to Zustand
+  const tenantSlug = useTenantStore((state) => state.slug);
 
   // Memoize slides creation to prevent recreation on every render
   const slides = useMemo<Slide[]>(() => {
