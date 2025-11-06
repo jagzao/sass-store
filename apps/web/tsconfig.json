@@ -1,11 +1,7 @@
 {
   "compilerOptions": {
     "target": "es2015",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "es6"
-    ],
+    "lib": ["dom", "dom.iterable", "es6"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -16,7 +12,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "downlevelIteration": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "incremental": true,
     "plugins": [
       {
@@ -25,30 +21,14 @@
     ],
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./"
-      ],
-      "@/lib/*": [
-        "./lib/*"
-      ],
-      "@/components/*": [
-        "./components/*"
-      ],
-      "@/app/*": [
-        "./app/*"
-      ],
-      "@sass-store/ui": [
-        "../../packages/ui"
-      ],
-      "@sass-store/database": [
-        "../../packages/database"
-      ],
-      "@sass-store/config": [
-        "../../packages/config"
-      ],
-      "@sass-store/shared": [
-        "../../packages/shared"
-      ]
+      "@/*": ["./"],
+      "@/lib/*": ["./lib/*"],
+      "@/components/*": ["./components/*"],
+      "@/app/*": ["./app/*"],
+      "@sass-store/ui": ["../../packages/ui"],
+      "@sass-store/database": ["../../packages/database"],
+      "@sass-store/config": ["../../packages/config"],
+      "@sass-store/shared": ["../../packages/shared"]
     }
   },
   "include": [
@@ -56,9 +36,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "next-env.d.ts",
-    "./.next/types/**/*.ts"
+    "./.next/types/**/*.ts",
+    ".next/dev/types/**/*.ts"
   ],
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"]
 }

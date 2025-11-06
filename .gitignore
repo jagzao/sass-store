@@ -81,4 +81,4 @@ ehthumbs.db
 Thumbs.db
 
 # Drizzle
-/migrations
+/migrationstest-results/
