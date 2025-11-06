@@ -3,7 +3,9 @@
 import { atom } from "jotai";
 import { atomWithStorage, atomWithReset } from "jotai/utils";
 
-// Tenant state management
+// ⚠️ DEPRECATED: Tenant state management
+// 🔄 MIGRATED TO ZUSTAND: Use useTenantStore from @/lib/stores
+// Migration guide: /MIGRATION_GUIDE_JOTAI_TO_ZUSTAND.md
 export interface TenantData {
   id: string;
   name: string;
@@ -39,23 +41,36 @@ export interface TenantData {
   };
 }
 
-// Core atoms - lightweight and reactive
+// ❌ DEPRECATED - Use useTenantStore().currentTenant
 export const currentTenantAtom = atom<TenantData | null>(null);
+
+// ❌ DEPRECATED - Use useTenantStore().slug
 export const tenantSlugAtom = atom<string | null>(null);
+
+// ❌ DEPRECATED - Use useTenantStore().isLoading
 export const isLoadingAtom = atom<boolean>(false);
 
-// Derived atoms - computed values without useEffect
+// ❌ DEPRECATED - Use useTenantStore().getBranding()
 export const tenantBrandingAtom = atom((get) => {
   const tenant = get(currentTenantAtom);
   return tenant?.branding;
 });
 
+// ❌ DEPRECATED - Use useTenantStore().getHeroConfig()
 export const heroConfigAtom = atom((get) => {
   const branding = get(tenantBrandingAtom);
   return branding?.heroConfig || {};
 });
 
-// Cart state management (persistent)
+// ⚠️ DEPRECATED: Cart state management (persistent)
+// 🔄 MIGRATED TO ZUSTAND: Use useCart from @/lib/stores instead
+//
+// These atoms are duplicates of the cart functionality in Zustand.
+// DO NOT USE - They will be removed in the next cleanup phase.
+//
+// Migration guide: /MIGRATION_GUIDE_JOTAI_TO_ZUSTAND.md
+//
+// Old interface kept for compatibility during migration:
 export interface CartItem {
   id: string;
   name: string;
@@ -64,41 +79,58 @@ export interface CartItem {
   metadata?: Record<string, any>;
 }
 
-export const cartItemsAtom = atomWithStorage<CartItem[]>("sass-store-cart", []);
+// ❌ DEPRECATED - Use useCart() from @/lib/stores
+export const cartItemsAtom = atomWithStorage<CartItem[]>("sass-store-cart-deprecated", []);
 
+// ❌ DEPRECATED - Use useCart().getSubtotal()
 export const cartTotalAtom = atom((get) => {
   const items = get(cartItemsAtom);
   return items.reduce((total, item) => total + item.price * item.quantity, 0);
 });
 
+// ❌ DEPRECATED - Use useCart().getTotalItems()
 export const cartCountAtom = atom((get) => {
   const items = get(cartItemsAtom);
   return items.reduce((count, item) => count + item.quantity, 0);
 });
 
-// UI state atoms
+// ⚠️ DEPRECATED: UI state atoms
+// 🔄 MIGRATED TO ZUSTAND: Use useUI from @/lib/stores instead
+// ❌ DEPRECATED - Use useUI().sidebarOpen / useUI().toggleSidebar()
 export const sidebarOpenAtom = atom(false);
+
+// ❌ DEPRECATED - Use useUI().searchQuery / useUI().setSearchQuery()
 export const searchQueryAtom = atomWithReset("");
+
+// ❌ DEPRECATED - Use useUI().currentPage / useUI().setCurrentPage()
 export const currentPageAtom = atom("home");
 
-// Performance optimized atoms for heavy computations
+// ⚠️ DEPRECATED: Performance metrics
+// 🔄 MIGRATED TO ZUSTAND: Use useUI().performanceMetrics
+// ❌ DEPRECATED - Use useUI().updatePerformanceMetrics()
 export const performanceMetricsAtom = atom({
   renderCount: 0,
   lastRenderTime: Date.now(),
   componentMountTime: Date.now(),
 });
 
-// Theme and preferences
+// ⚠️ DEPRECATED: Theme and preferences
+// 🔄 MIGRATED TO ZUSTAND: Use useUI from @/lib/stores
+// ❌ DEPRECATED - Use useUI().theme / useUI().setTheme()
 export const themeAtom = atomWithStorage<"light" | "dark" | "auto">(
   "theme",
   "auto",
 );
+
+// ❌ DEPRECATED - Use useUI().language / useUI().setLanguage()
 export const preferredLanguageAtom = atomWithStorage<"es" | "en">(
   "language",
   "es",
 );
 
-// Notification system
+// ⚠️ DEPRECATED: Notification system
+// 🔄 MIGRATED TO ZUSTAND: Use useNotifications from @/lib/stores
+// Or use notify.success(), notify.error(), etc.
 export interface Notification {
   id: string;
   type: "success" | "error" | "warning" | "info";
@@ -107,9 +139,10 @@ export interface Notification {
   duration?: number;
 }
 
+// ❌ DEPRECATED - Use useNotifications().notifications
 export const notificationsAtom = atom<Notification[]>([]);
 
-// Add notification action
+// ❌ DEPRECATED - Use notify.success(), notify.error(), etc.
 export const addNotificationAtom = atom(
   null,
   (get, set, notification: Omit<Notification, "id">) => {
@@ -126,7 +159,7 @@ export const addNotificationAtom = atom(
   },
 );
 
-// Remove notification action
+// ❌ DEPRECATED - Use useNotifications().removeNotification(id)
 export const removeNotificationAtom = atom(null, (get, set, id: string) => {
   const current = get(notificationsAtom);
   set(
