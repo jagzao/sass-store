@@ -81,4 +81,8 @@ ehthumbs.db
 Thumbs.db
 
 # Drizzle
-/migrationstest-results/
+/migrations
+
+# Playwright
+test-results/
+playwright-report/
