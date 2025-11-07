@@ -1,5 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { generateCsrfToken, hashCsrfToken, CSRF_COOKIE_NAME } from '@sass-store/core/security/csrf';
+import { NextRequest, NextResponse } from "next/server";
+import {
+  generateCsrfToken,
+  hashCsrfToken,
+  CSRF_COOKIE_NAME,
+} from "@sass-store/core";
 
 /**
  * API endpoint to get a CSRF token
@@ -8,7 +12,7 @@ import { generateCsrfToken, hashCsrfToken, CSRF_COOKIE_NAME } from '@sass-store/
 export async function GET(request: NextRequest) {
   // Generate a new CSRF token
   const csrfToken = generateCsrfToken();
-  const csrfHash = hashCsrfToken(csrfToken);
+  const csrfHash = await hashCsrfToken(csrfToken);
 
   // Create response with the token
   const response = NextResponse.json({
@@ -18,9 +22,9 @@ export async function GET(request: NextRequest) {
   // Set the hashed token in a cookie
   response.cookies.set(CSRF_COOKIE_NAME, csrfHash, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
-    path: '/',
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
     maxAge: 60 * 60 * 24, // 24 hours
   });
 

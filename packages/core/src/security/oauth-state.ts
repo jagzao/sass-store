@@ -1,4 +1,3 @@
-import crypto from "crypto";
 import { db } from "@sass-store/database";
 import { oauthStateTokens } from "@sass-store/database/schema";
 import { eq, and, gt, lt } from "drizzle-orm";
@@ -13,8 +12,12 @@ export async function generateOAuthState(
   tenantId: string,
   provider: string,
 ): Promise<string> {
-  // Generate a cryptographically secure random state token
-  const state = crypto.randomBytes(32).toString("hex");
+  // Generate a cryptographically secure random state token using Web Crypto API
+  const array = new Uint8Array(32);
+  crypto.getRandomValues(array);
+  const state = Array.from(array, (byte) =>
+    byte.toString(16).padStart(2, "0"),
+  ).join("");
 
   // Set expiration to 10 minutes from now
   const expiresAt = new Date(Date.now() + 10 * 60 * 1000);

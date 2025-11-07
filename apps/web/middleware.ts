@@ -56,7 +56,7 @@ export async function middleware(request: NextRequest) {
       }
 
       // Validate the token
-      const isValid = validateCsrfToken(
+      const isValid = await validateCsrfToken(
         csrfTokenFromHeader,
         csrfTokenFromCookie,
       );
@@ -123,7 +123,7 @@ export async function middleware(request: NextRequest) {
     if (!existingToken) {
       // Generate new CSRF token
       const csrfToken = generateCsrfToken();
-      const csrfHash = hashCsrfToken(csrfToken);
+      const csrfHash = await hashCsrfToken(csrfToken);
 
       // Set cookie with the hash
       response.cookies.set(CSRF_COOKIE_NAME, csrfHash, {

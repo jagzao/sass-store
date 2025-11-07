@@ -3,9 +3,8 @@
  * Provides real-time metrics and error reporting
  */
 
-import { NextApiRequest, NextApiResponse } from 'next';
-import { ErrorTracker } from '@sass-store/core/monitoring/error-tracker';
-import { MetricsService } from '@sass-store/core/monitoring/metrics-service';
+import { NextRequest, NextResponse } from "next/server";
+import { ErrorTracker, MetricsService } from "@sass-store/core";
 
 export interface MonitoringDashboardData {
   timestamp: Date;
@@ -33,19 +32,23 @@ export interface MonitoringDashboardData {
   };
 }
 
-// API route to get monitoring data
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== 'GET') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
-  // Verify admin access (this would require proper auth in production)
-  // For demo purposes, checking a simple header
-  if (!req.headers.authorization || req.headers.authorization !== `Bearer ${process.env.MONITORING_TOKEN}`) {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
-
+/**
+ * GET /api/monitoring/dashboard
+ * Get monitoring dashboard data
+ */
+export async function GET(request: NextRequest) {
   try {
+    // Verify admin access (this would require proper auth in production)
+    // For demo purposes, checking a simple header
+    const authorization = request.headers.get("authorization");
+
+    if (
+      !authorization ||
+      authorization !== `Bearer ${process.env.MONITORING_TOKEN}`
+    ) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const errorTracker = ErrorTracker.getInstance();
     const metricsService = MetricsService.getInstance();
 
@@ -53,12 +56,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const metricsReport = metricsService.getMetricsReport();
 
     // Get recent errors
-    const recentErrors = errorTracker.getRecentErrors(10).map(error => ({
+    const recentErrors = errorTracker.getRecentErrors(10).map((error) => ({
       id: error.id,
       message: error.message,
       timestamp: error.timestamp,
       type: error.type,
-      severity: error.severity
+      severity: error.severity,
     }));
 
     // Construct dashboard data
@@ -72,19 +75,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         dbConnections: metricsReport.dbConnections,
         cacheHits: metricsReport.cacheHits || 0,
         cacheMisses: metricsReport.cacheMisses || 0,
-        uptime: process.uptime() // In seconds
+        uptime: process.uptime(), // In seconds
       },
       recentErrors,
       systemHealth: {
         database: true, // Would check actual database connection
-        cache: true,    // Would check actual cache connection
-        externalServices: true // Would check external services
-      }
+        cache: true, // Would check actual cache connection
+        externalServices: true, // Would check external services
+      },
     };
 
-    res.status(200).json(dashboardData);
+    return NextResponse.json(dashboardData);
   } catch (error) {
-    console.error('Monitoring dashboard error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error("Monitoring dashboard error:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }

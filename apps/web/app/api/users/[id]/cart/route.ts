@@ -2,24 +2,20 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@sass-store/database";
 import { userCarts } from "@sass-store/database/schema";
 import { eq } from "drizzle-orm";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
+import { auth } from "@/lib/auth";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
 
     // Verify the requesting user matches the target user
-    const session = await getServerSession(authOptions);
+    const session = await auth();
 
     if (!session || session.user.id !== id) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Get user's cart from database
@@ -37,26 +33,23 @@ export async function GET(
     console.error("Error getting user cart:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
 
     // Verify the requesting user matches the target user
-    const session = await getServerSession(authOptions);
+    const session = await auth();
 
     if (!session || session.user.id !== id) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { cart } = await request.json();
@@ -65,7 +58,7 @@ export async function PUT(
     if (!Array.isArray(cart)) {
       return NextResponse.json(
         { error: "Invalid cart format" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -89,7 +82,7 @@ export async function PUT(
     console.error("Error updating user cart:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

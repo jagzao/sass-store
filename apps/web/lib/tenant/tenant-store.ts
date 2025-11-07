@@ -1,13 +1,15 @@
-import { atom } from "jotai";
+import { create } from "zustand";
 
-// Define the atom for tenant slug with default value
-export const tenantSlugAtom = atom<string>("zo-system");
+interface TenantStore {
+  slug: string;
+  setSlug: (slug: string) => void;
+}
 
-// Derived atom to get tenant data (can be extended later for full tenant object)
-export const tenantDataAtom = atom((get) => {
-  const slug = get(tenantSlugAtom);
-  return { slug };
-});
+// Create Zustand store for tenant state
+export const useTenantStore = create<TenantStore>((set) => ({
+  slug: "zo-system",
+  setSlug: (slug: string) => set({ slug }),
+}));
 
 // Server-side safe tenant resolver (no hooks)
 export function getTenantSlugFromPath(pathname?: string): string {
