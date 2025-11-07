@@ -3,6 +3,7 @@ import { tenants, services, products, staff } from "@sass-store/database";
 import { eq, and } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { getOrSetCache, CacheKeys } from "@/lib/cache/redis";
+import type { Product, Service } from "@/types/tenant";
 
 // Mock tenant data for self-healing when DB is not available
 const mockTenants = {
@@ -438,7 +439,7 @@ class TenantCache {
     return this.cache.get(key);
   }
 
-  static set(key: string, value: any) {
+  static set(key: string, value: unknown) {
     // Evict LRU entries if cache is full
     if (this.cache.size >= this.MAX_SIZE) {
       this.evictLRU();
@@ -548,7 +549,7 @@ export class TenantService {
             .select()
             .from(services)
             .where(eq(services.tenantId, tenantId));
-        }
+        },
       );
 
       if (Array.isArray(tenantServices)) {
@@ -556,7 +557,7 @@ export class TenantService {
           `[TenantService] Found ${tenantServices.length} services for tenant: ${tenantId}`,
         );
 
-        return tenantServices.map((service: any) => ({
+        return tenantServices.map((service: Service) => ({
           id: service.id,
           name: service.name,
           price: service.price,
@@ -593,7 +594,7 @@ export class TenantService {
             .select()
             .from(products)
             .where(eq(products.tenantId, tenantId));
-        }
+        },
       );
 
       if (Array.isArray(tenantProducts)) {
@@ -601,7 +602,7 @@ export class TenantService {
           `[TenantService] Found ${tenantProducts.length} products for tenant: ${tenantId}`,
         );
 
-        return tenantProducts.map((product: any) => ({
+        return tenantProducts.map((product: Product) => ({
           id: product.id,
           sku: product.sku,
           name: product.name,
@@ -639,7 +640,7 @@ export class TenantService {
             .select()
             .from(staff)
             .where(eq(staff.tenantId, tenantId));
-        }
+        },
       );
 
       if (Array.isArray(tenantStaff)) {
@@ -647,7 +648,7 @@ export class TenantService {
           `[TenantService] Found ${tenantStaff.length} staff members for tenant: ${tenantId}`,
         );
 
-        return tenantStaff.map((staffMember: any) => ({
+        return tenantStaff.map((staffMember: typeof staff.$inferSelect) => ({
           id: staffMember.id,
           name: staffMember.name,
           role: staffMember.role,
@@ -685,7 +686,9 @@ export class TenantService {
       redisCacheKey,
       async () => {
         try {
-          console.log(`[TenantService] Fetching complete tenant data for: ${slug}`);
+          console.log(
+            `[TenantService] Fetching complete tenant data for: ${slug}`,
+          );
 
           // Single optimized query to get tenant with all relations in one go
           const tenant = await db
@@ -707,11 +710,8 @@ export class TenantService {
           );
 
           // Parallel fetch of all related data with RLS context
-          const [tenantServices, tenantProducts, tenantStaff] = await withTenantContext(
-            db,
-            tenantData.id,
-            null,
-            async (db) => {
+          const [tenantServices, tenantProducts, tenantStaff] =
+            await withTenantContext(db, tenantData.id, null, async (db) => {
               return await Promise.all([
                 tenantData.mode === "booking"
                   ? db
@@ -719,13 +719,18 @@ export class TenantService {
                       .from(services)
                       .where(eq(services.tenantId, tenantData.id))
                   : Promise.resolve([]),
-                db.select().from(products).where(eq(products.tenantId, tenantData.id)),
+                db
+                  .select()
+                  .from(products)
+                  .where(eq(products.tenantId, tenantData.id)),
                 tenantData.mode === "booking"
-                  ? db.select().from(staff).where(eq(staff.tenantId, tenantData.id))
+                  ? db
+                      .select()
+                      .from(staff)
+                      .where(eq(staff.tenantId, tenantData.id))
                   : Promise.resolve([]),
               ]);
-            }
-          );
+            });
 
           console.log(
             `[TenantService] Loaded ${tenantServices.length} services, ${tenantProducts.length} products, ${tenantStaff.length} staff`,
@@ -742,7 +747,7 @@ export class TenantService {
             contact: tenantData.contact,
             location: tenantData.location,
             quotas: tenantData.quotas,
-            services: tenantServices.map((service: any) => ({
+            services: tenantServices.map((service: Service) => ({
               id: service.id,
               name: service.name,
               price: service.price,
@@ -752,7 +757,7 @@ export class TenantService {
               description: service.description,
               metadata: service.metadata,
             })),
-            products: tenantProducts.map((product: any) => ({
+            products: tenantProducts.map((product: Product) => ({
               id: product.id,
               sku: product.sku,
               name: product.name,
@@ -763,17 +768,19 @@ export class TenantService {
               description: product.description,
               metadata: product.metadata,
             })),
-            staff: tenantStaff.map((staffMember: any) => ({
-              id: staffMember.id,
-              name: staffMember.name,
-              role: staffMember.role,
-              email: staffMember.email,
-              phone: staffMember.phone,
-              specialties: staffMember.specialties,
-              photo: staffMember.photo,
-              active: staffMember.active,
-              metadata: staffMember.metadata,
-            })),
+            staff: tenantStaff.map(
+              (staffMember: typeof staff.$inferSelect) => ({
+                id: staffMember.id,
+                name: staffMember.name,
+                role: staffMember.role,
+                email: staffMember.email,
+                phone: staffMember.phone,
+                specialties: staffMember.specialties,
+                photo: staffMember.photo,
+                active: staffMember.active,
+                metadata: staffMember.metadata,
+              }),
+            ),
           };
 
           // Also cache in memory for ultra-fast subsequent access
@@ -795,7 +802,7 @@ export class TenantService {
           return mockData;
         }
       },
-      600 // 10 minutes TTL in Redis
+      600, // 10 minutes TTL in Redis
     );
   }
 
@@ -849,7 +856,7 @@ export class TenantService {
               )
               .limit(limit),
           ]);
-        }
+        },
       );
 
       return {

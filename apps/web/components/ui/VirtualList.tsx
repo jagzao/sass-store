@@ -81,3 +81,5 @@ function VirtualListComponent<T>({
 export const VirtualList = memo(VirtualListComponent) as <T>(
   props: VirtualListProps<T>,
 ) => React.ReactElement;
+
+VirtualList.displayName = "VirtualList";

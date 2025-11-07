@@ -7,32 +7,13 @@ import UserMenu from "@/components/auth/UserMenu";
 import { useFinance } from "@/lib/hooks/use-finance";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-
-interface SalesReport {
-  data: any[];
-  summary: {
-    totalSales: number;
-    totalRevenue: number;
-    averageOrderValue: number;
-    totalItems: number;
-    paymentMethodBreakdown: Record<string, number>;
-  };
-  filters: any;
-  generatedAt: string;
-}
-
-interface ProductsReport {
-  data: any[];
-  summary: {
-    totalProducts: number;
-    totalRevenue: number;
-    totalUnitsSold: number;
-    averagePrice: number;
-    topCategory: Record<string, number>;
-  };
-  filters: any;
-  generatedAt: string;
-}
+import type { Tenant } from "@/types/tenant";
+import type {
+  SalesReport,
+  ProductsReport,
+  SaleData,
+  ProductSalesData,
+} from "@/types/reports";
 
 export default function ReportsPage() {
   const { data: session, status } = useSession();
@@ -40,13 +21,13 @@ export default function ReportsPage() {
   const params = useParams();
   const tenantSlug = params.tenant as string;
 
-  const [currentTenant, setCurrentTenant] = useState<any>(null);
+  const [currentTenant, setCurrentTenant] = useState<Tenant | null>(null);
   const [activeTab, setActiveTab] = useState<
     "sales" | "products" | "financial"
   >("sales");
   const [salesReport, setSalesReport] = useState<SalesReport | null>(null);
   const [productsReport, setProductsReport] = useState<ProductsReport | null>(
-    null
+    null,
   );
   const [loading, setLoading] = useState(false);
 
@@ -142,7 +123,7 @@ export default function ReportsPage() {
       if (activeTab === "sales") {
         url = `/api/finance/reports/sales?${params}`;
       } else if (activeTab === "products") {
-        url = `/api/finance/reports/products?${params}`;  // Assuming a products report API exists
+        url = `/api/finance/reports/products?${params}`; // Assuming a products report API exists
       } else {
         throw new Error("Export not implemented for this report type");
       }
@@ -150,21 +131,23 @@ export default function ReportsPage() {
       // Make request to fetch the file
       const response = await fetch(url);
       if (!response.ok) {
-        throw new Error(`Failed to export ${format} report: ${response.statusText}`);
+        throw new Error(
+          `Failed to export ${format} report: ${response.statusText}`,
+        );
       }
 
       // Create blob from response
       const blob = await response.blob();
-      
+
       // Create download link
       const downloadUrl = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = downloadUrl;
-      
+
       // Set filename based on report type and current date
-      const dateStr = new Date().toISOString().split('T')[0];
-      link.download = `${activeTab}-report-${dateStr}.${format === 'pdf' ? 'pdf' : 'xlsx'}`;
-      
+      const dateStr = new Date().toISOString().split("T")[0];
+      link.download = `${activeTab}-report-${dateStr}.${format === "pdf" ? "pdf" : "xlsx"}`;
+
       // Trigger download
       document.body.appendChild(link);
       link.click();
@@ -172,7 +155,9 @@ export default function ReportsPage() {
       window.URL.revokeObjectURL(downloadUrl);
     } catch (error) {
       console.error(`Error exporting ${format} report:`, error);
-      alert(`Error al exportar el reporte a ${format.toUpperCase()}: ${(error as Error).message}`);
+      alert(
+        `Error al exportar el reporte a ${format.toUpperCase()}: ${(error as Error).message}`,
+      );
     } finally {
       setLoading(false);
     }
@@ -310,7 +295,9 @@ export default function ReportsPage() {
                 ].map((tab) => (
                   <button
                     key={tab.id}
-                    onClick={() => setActiveTab(tab.id as any)}
+                    onClick={() =>
+                      setActiveTab(tab.id as "sales" | "products" | "financial")
+                    }
                     className={`py-2 px-1 border-b-2 font-medium text-sm ${
                       activeTab === tab.id
                         ? "border-blue-500 text-blue-600"
@@ -425,7 +412,7 @@ export default function ReportsPage() {
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {Object.entries(
-                    salesReport.summary.paymentMethodBreakdown
+                    salesReport.summary.paymentMethodBreakdown,
                   ).map(([method, count]) => (
                     <div
                       key={method}
@@ -470,7 +457,7 @@ export default function ReportsPage() {
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                      {salesReport.data.map((sale: any) => (
+                      {salesReport.data.map((sale: SaleData) => (
                         <tr key={sale.orderId} className="hover:bg-gray-50">
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                             {sale.orderNumber}
@@ -491,7 +478,7 @@ export default function ReportsPage() {
                             {format(
                               new Date(sale.createdAt),
                               "dd/MM/yyyy HH:mm",
-                              { locale: es }
+                              { locale: es },
                             )}
                           </td>
                         </tr>
@@ -600,7 +587,7 @@ export default function ReportsPage() {
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                      {productsReport.data.map((product: any) => (
+                      {productsReport.data.map((product: ProductSalesData) => (
                         <tr
                           key={product.productId}
                           className="hover:bg-gray-50"
@@ -622,7 +609,7 @@ export default function ReportsPage() {
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-green-600">
                             {formatCurrency(
-                              parseFloat(product.totalRevenue || 0)
+                              parseFloat(product.totalRevenue || 0),
                             )}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">

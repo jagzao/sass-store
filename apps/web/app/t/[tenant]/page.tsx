@@ -13,6 +13,15 @@ import UserMenu from "@/components/auth/UserMenu";
 import { preloadCriticalResources } from "@/lib/preload";
 import { measureExecutionTime } from "@/lib/performance-monitoring";
 import { getLoadingStrategy, useABTest } from "@/lib/ab-testing";
+import type {
+  TenantData,
+  Product,
+  Service,
+  ProductMetadata,
+  ServiceMetadata,
+  TenantBranding,
+  TenantContact,
+} from "@/types/tenant";
 
 export default function TenantPage() {
   const params = useParams();
@@ -21,9 +30,10 @@ export default function TenantPage() {
   const totalItems = getTotalItems();
 
   // A/B Testing para estrategias de carga
-  const { variant: loadingVariant, trackResult } = useABTest('loading-strategy');
+  const { variant: loadingVariant, trackResult } =
+    useABTest("loading-strategy");
 
-  const [tenantData, setTenantData] = useState<any>(null);
+  const [tenantData, setTenantData] = useState<TenantData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -33,7 +43,7 @@ export default function TenantPage() {
     const loadTenantData = async () => {
       try {
         // Usar estrategia de carga basada en A/B test
-        const useParallel = loadingVariant === 'parallel';
+        const useParallel = loadingVariant === "parallel";
 
         const startTime = performance.now();
 
@@ -42,9 +52,13 @@ export default function TenantPage() {
           try {
             const [tenantInfo, productsResponse] = await Promise.all([
               // Using local API call for tenant info (this should exist in web app)
-              fetch(`/api/tenants/${tenantSlug}`).then(r => r.ok ? r.json() : null),
+              fetch(`/api/tenants/${tenantSlug}`).then((r) =>
+                r.ok ? r.json() : null,
+              ),
               // Using local API call for products
-              fetch(`/api/v1/public/products?tenant=${tenantSlug}&featured=true&limit=12`).then(r => r.ok ? r.json() : null)
+              fetch(
+                `/api/v1/public/products?tenant=${tenantSlug}&featured=true&limit=12`,
+              ).then((r) => (r.ok ? r.json() : null)),
             ]);
 
             const products = productsResponse?.data || [];
@@ -53,7 +67,7 @@ export default function TenantPage() {
             if (tenantInfo) {
               setTenantData({
                 ...tenantInfo,
-                products: products
+                products: products,
               });
             } else {
               // Fallback: just products with mock tenant data
@@ -63,8 +77,14 @@ export default function TenantPage() {
                 name: tenantSlug.charAt(0).toUpperCase() + tenantSlug.slice(1),
                 products: products,
                 services: [],
-                branding: { primaryColor: '#DC2626', secondaryColor: '#991B1B' },
-                contact: { email: 'info@example.com', phone: '+52 55 1234 5678' }
+                branding: {
+                  primaryColor: "#DC2626",
+                  secondaryColor: "#991B1B",
+                },
+                contact: {
+                  email: "info@example.com",
+                  phone: "+52 55 1234 5678",
+                },
               });
             }
           } catch (error) {
@@ -76,8 +96,8 @@ export default function TenantPage() {
               name: tenantSlug.charAt(0).toUpperCase() + tenantSlug.slice(1),
               products: [],
               services: [],
-              branding: { primaryColor: '#DC2626', secondaryColor: '#991B1B' },
-              contact: { email: 'info@example.com', phone: '+52 55 1234 5678' }
+              branding: { primaryColor: "#DC2626", secondaryColor: "#991B1B" },
+              contact: { email: "info@example.com", phone: "+52 55 1234 5678" },
             });
           }
         } else {
@@ -90,14 +110,16 @@ export default function TenantPage() {
             }
 
             // Luego cargar productos
-            const productsResponse = await fetch(`/api/v1/public/products?tenant=${tenantSlug}&featured=true&limit=12`).then(r => r.ok ? r.json() : null);
+            const productsResponse = await fetch(
+              `/api/v1/public/products?tenant=${tenantSlug}&featured=true&limit=12`,
+            ).then((r) => (r.ok ? r.json() : null));
             const products = productsResponse?.data || [];
 
             // Combine data
             if (tenantInfo) {
               setTenantData({
                 ...tenantInfo,
-                products: products
+                products: products,
               });
             } else {
               // Fallback
@@ -107,8 +129,14 @@ export default function TenantPage() {
                 name: tenantSlug.charAt(0).toUpperCase() + tenantSlug.slice(1),
                 products: products,
                 services: [],
-                branding: { primaryColor: '#DC2626', secondaryColor: '#991B1B' },
-                contact: { email: 'info@example.com', phone: '+52 55 1234 5678' }
+                branding: {
+                  primaryColor: "#DC2626",
+                  secondaryColor: "#991B1B",
+                },
+                contact: {
+                  email: "info@example.com",
+                  phone: "+52 55 1234 5678",
+                },
               });
             }
           } catch (error) {
@@ -120,8 +148,8 @@ export default function TenantPage() {
               name: tenantSlug.charAt(0).toUpperCase() + tenantSlug.slice(1),
               products: [],
               services: [],
-              branding: { primaryColor: '#DC2626', secondaryColor: '#991B1B' },
-              contact: { email: 'info@example.com', phone: '+52 55 1234 5678' }
+              branding: { primaryColor: "#DC2626", secondaryColor: "#991B1B" },
+              contact: { email: "info@example.com", phone: "+52 55 1234 5678" },
             });
           }
         }
@@ -129,7 +157,7 @@ export default function TenantPage() {
         const loadTime = performance.now() - startTime;
 
         // Trackear resultado del A/B test
-        trackResult('load_time', loadTime);
+        trackResult("load_time", loadTime);
       } catch (error) {
         console.error("Error loading tenant data:", error);
       } finally {
@@ -143,10 +171,12 @@ export default function TenantPage() {
   const handleAddToCart = (productId: string, quantity: number) => {
     if (!tenantData) return;
 
-    const product = tenantData.products.find((p: any) => p.id === productId);
+    const product = tenantData.products.find(
+      (p: Product) => p.id === productId,
+    );
     if (!product) return;
 
-    const metadata = product.metadata as any;
+    const metadata: ProductMetadata = product.metadata || {};
 
     // Add item to cart with specified quantity
     addItem(
@@ -154,13 +184,13 @@ export default function TenantPage() {
         sku: product.id,
         name: product.name,
         price: Number(product.price),
-        image: metadata?.image || "📦",
+        image: metadata.image || "📦",
         variant: {
           tenant: tenantSlug,
           type: "product",
         },
       },
-      quantity
+      quantity,
     );
   };
 
@@ -188,18 +218,18 @@ export default function TenantPage() {
   try {
     // Filter featured items
     const featuredServices = tenantData.services.filter(
-      (service: any) => service.featured
+      (service: Service) => service.featured,
     );
     const featuredProducts = tenantData.products.filter(
-      (product: any) => product.featured
+      (product: Product) => product.featured,
     );
 
     // Check if tenant has services
     const hasServices = tenantData.services.length > 0;
 
     // Parse branding and contact from JSONB
-    const branding = tenantData.branding as any;
-    const contact = tenantData.contact as any;
+    const branding: TenantBranding = tenantData.branding;
+    const contact: TenantContact = tenantData.contact;
 
     return (
       <LiveRegionProvider>
@@ -288,8 +318,8 @@ export default function TenantPage() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {featuredServices.map((service: any) => {
-                    const metadata = service.metadata as any;
+                  {featuredServices.map((service: Service) => {
+                    const metadata: ServiceMetadata = service.metadata || {};
                     return (
                       <ServiceCard
                         key={service.id}
@@ -298,8 +328,8 @@ export default function TenantPage() {
                         description={service.description}
                         price={service.price}
                         duration={service.duration}
-                        image={metadata?.image}
-                        category={metadata?.category}
+                        image={metadata.image}
+                        category={metadata.category}
                         primaryColor={branding.primaryColor}
                         tenantSlug={tenantSlug}
                         metadata={metadata}
@@ -326,8 +356,8 @@ export default function TenantPage() {
                 </div>
 
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                  {featuredProducts.map((product: any) => {
-                    const metadata = product.metadata as any;
+                  {featuredProducts.map((product: Product) => {
+                    const metadata: ProductMetadata = product.metadata || {};
                     return (
                       <ProductCard
                         key={product.id}
@@ -335,8 +365,8 @@ export default function TenantPage() {
                         name={product.name}
                         description={product.description}
                         price={product.price}
-                        image={metadata?.image}
-                        category={metadata?.category}
+                        image={metadata.image}
+                        category={metadata.category}
                         primaryColor={branding.primaryColor}
                         tenantSlug={tenantSlug}
                         metadata={metadata}
