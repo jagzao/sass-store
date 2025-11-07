@@ -1,10 +1,41 @@
-'use client';
+"use client";
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
+
+// Browser API type declarations
+type IdleRequestCallback = (deadline: IdleDeadline) => void;
+type IdleRequestOptions = { timeout?: number };
+type IdleDeadline = { timeRemaining: () => number; didTimeout: boolean };
+type FrameRequestCallback = (time: number) => void;
+type IntersectionObserverCallback = (
+  entries: IntersectionObserverEntry[],
+  observer: IntersectionObserver,
+) => void;
+type IntersectionObserverInit = {
+  root?: Element | null;
+  rootMargin?: string;
+  threshold?: number | number[];
+};
+
+// Extended Window and Navigator interfaces for browser APIs
+interface ExtendedWindow extends Window {
+  requestIdleCallback?: (
+    callback: IdleRequestCallback,
+    options?: IdleRequestOptions,
+  ) => number;
+  cancelIdleCallback?: (id: number) => void;
+}
+
+interface ExtendedNavigator extends Navigator {
+  deviceMemory?: number;
+}
+
+declare const window: ExtendedWindow;
+declare const navigator: ExtendedNavigator;
 
 /**
  * Hook para optimizar el rendimiento de animaciones y transiciones
- * 
+ *
  * Este hook implementa varias técnicas de optimización:
  * - Intersection Observer para lazy loading
  * - RequestIdleCallback para trabajo no urgente
@@ -23,10 +54,14 @@ export const usePerformanceOptimization = () => {
         cancelAnimationFrame(rafId.current);
         rafId.current = null;
       }
-      
+
       // Cancelar requestIdleCallback si está disponible
-      if (idleCallbackId.current !== null && typeof window !== 'undefined' && (window as any).cancelIdleCallback) {
-        (window as any).cancelIdleCallback(idleCallbackId.current);
+      if (
+        idleCallbackId.current !== null &&
+        typeof window !== "undefined" &&
+        window.cancelIdleCallback
+      ) {
+        window.cancelIdleCallback(idleCallbackId.current);
         idleCallbackId.current = null;
       }
     };
@@ -46,12 +81,15 @@ export const usePerformanceOptimization = () => {
   /**
    * Ejecutar trabajo en tiempo libre con requestIdleCallback
    */
-  const idleWork = (callback: IdleRequestCallback, options?: IdleRequestOptions) => {
-    if (typeof window !== 'undefined' && (window as any).requestIdleCallback) {
-      if (idleCallbackId.current !== null) {
-        (window as any).cancelIdleCallback(idleCallbackId.current);
+  const idleWork = (
+    callback: IdleRequestCallback,
+    options?: IdleRequestOptions,
+  ) => {
+    if (typeof window !== "undefined" && window.requestIdleCallback) {
+      if (idleCallbackId.current !== null && window.cancelIdleCallback) {
+        window.cancelIdleCallback(idleCallbackId.current);
       }
-      idleCallbackId.current = (window as any).requestIdleCallback(callback, options);
+      idleCallbackId.current = window.requestIdleCallback(callback, options);
       return idleCallbackId.current;
     }
     // Fallback: ejecutar inmediatamente si no está disponible
@@ -62,24 +100,30 @@ export const usePerformanceOptimization = () => {
   /**
    * Throttle - Limitar la frecuencia de ejecución de una función
    */
-  const throttle = <T extends (...args: any[]) => any>(func: T, limit: number): T => {
+  const throttle = <T extends (...args: unknown[]) => unknown>(
+    func: T,
+    limit: number,
+  ): T => {
     let inThrottle = false;
     let lastFunc: number;
     let lastRan: number;
 
-    return function (this: any, ...args: Parameters<T>) {
+    return function (this: ThisParameterType<T>, ...args: Parameters<T>) {
       if (!inThrottle) {
         func.apply(this, args);
         lastRan = Date.now();
         inThrottle = true;
       } else {
         clearTimeout(lastFunc);
-        lastFunc = window.setTimeout(() => {
-          if ((Date.now() - lastRan) >= limit) {
-            func.apply(this, args);
-            lastRan = Date.now();
-          }
-        }, limit - (Date.now() - lastRan));
+        lastFunc = window.setTimeout(
+          () => {
+            if (Date.now() - lastRan >= limit) {
+              func.apply(this, args);
+              lastRan = Date.now();
+            }
+          },
+          limit - (Date.now() - lastRan),
+        );
       }
     } as T;
   };
@@ -87,10 +131,13 @@ export const usePerformanceOptimization = () => {
   /**
    * Debounce - Retrasar la ejecución de una función
    */
-  const debounce = <T extends (...args: any[]) => any>(func: T, delay: number): T => {
+  const debounce = <T extends (...args: unknown[]) => unknown>(
+    func: T,
+    delay: number,
+  ): T => {
     let timeoutId: number;
 
-    return function (this: any, ...args: Parameters<T>) {
+    return function (this: ThisParameterType<T>, ...args: Parameters<T>) {
       window.clearTimeout(timeoutId);
       timeoutId = window.setTimeout(() => func.apply(this, args), delay);
     } as T;
@@ -101,16 +148,16 @@ export const usePerformanceOptimization = () => {
    */
   const createIntersectionObserver = (
     callback: IntersectionObserverCallback,
-    options?: IntersectionObserverInit
+    options?: IntersectionObserverInit,
   ): IntersectionObserver | null => {
-    if (typeof window === 'undefined' || !('IntersectionObserver' in window)) {
+    if (typeof window === "undefined" || !("IntersectionObserver" in window)) {
       return null;
     }
 
     const defaultOptions: IntersectionObserverInit = {
-      rootMargin: '100px', // Precargar antes de que esté visible
+      rootMargin: "100px", // Precargar antes de que esté visible
       threshold: 0.1,
-      ...options
+      ...options,
     };
 
     return new IntersectionObserver(callback, defaultOptions);
@@ -124,12 +171,12 @@ export const usePerformanceOptimization = () => {
 
     // Usar Intersection Observer para lazy loading
     const observer = createIntersectionObserver((entries) => {
-      entries.forEach(entry => {
+      entries.forEach((entry) => {
         if (entry.isIntersecting) {
           const image = entry.target as HTMLImageElement;
           if (image.dataset.src) {
             image.src = image.dataset.src;
-            image.removeAttribute('data-src');
+            image.removeAttribute("data-src");
           }
           observer?.unobserve(image);
         }
@@ -148,12 +195,12 @@ export const usePerformanceOptimization = () => {
    * Preconectar a recursos importantes
    */
   const preconnectToResources = (urls: string[]) => {
-    urls.forEach(url => {
-      const link = document.createElement('link');
-      link.rel = 'preconnect';
+    urls.forEach((url) => {
+      const link = document.createElement("link");
+      link.rel = "preconnect";
       link.href = url;
       document.head.appendChild(link);
-      
+
       // Remover después de un tiempo para evitar acumulación
       setTimeout(() => {
         if (link.parentNode) {
@@ -170,7 +217,7 @@ export const usePerformanceOptimization = () => {
     debounce,
     createIntersectionObserver,
     optimizeImageLoading,
-    preconnectToResources
+    preconnectToResources,
   };
 };
 
@@ -182,23 +229,26 @@ export const PerformanceOptimizer = () => {
     // Detectar capacidad del dispositivo
     const isLowEndDevice = () => {
       // Verificar memoria disponible
-      if (typeof navigator !== 'undefined' && (navigator as any).deviceMemory) {
-        return (navigator as any).deviceMemory < 2; // Menos de 2GB RAM
+      if (typeof navigator !== "undefined" && navigator.deviceMemory) {
+        return navigator.deviceMemory < 2; // Menos de 2GB RAM
       }
-      
+
       // Verificar número de núcleos de CPU
-      if (typeof navigator !== 'undefined' && navigator.hardwareConcurrency) {
+      if (typeof navigator !== "undefined" && navigator.hardwareConcurrency) {
         return navigator.hardwareConcurrency <= 4; // 4 o menos núcleos
       }
-      
+
       return false;
     };
 
     // Reducir calidad de animaciones en dispositivos de gama baja
     if (isLowEndDevice()) {
       // Reducir la frecuencia de actualización
-      if (typeof document !== 'undefined') {
-        document.documentElement.style.setProperty('--animation-duration-multiplier', '0.5');
+      if (typeof document !== "undefined") {
+        document.documentElement.style.setProperty(
+          "--animation-duration-multiplier",
+          "0.5",
+        );
       }
     }
 
@@ -206,21 +256,21 @@ export const PerformanceOptimizer = () => {
     const handleVisibilityChange = () => {
       if (document.hidden) {
         // Pausar animaciones cuando la pestaña no está visible
-        document.querySelectorAll('[data-animate]').forEach(el => {
-          (el as HTMLElement).style.animationPlayState = 'paused';
+        document.querySelectorAll("[data-animate]").forEach((el) => {
+          (el as HTMLElement).style.animationPlayState = "paused";
         });
       } else {
         // Reanudar animaciones cuando la pestaña vuelve a ser visible
-        document.querySelectorAll('[data-animate]').forEach(el => {
-          (el as HTMLElement).style.animationPlayState = 'running';
+        document.querySelectorAll("[data-animate]").forEach((el) => {
+          (el as HTMLElement).style.animationPlayState = "running";
         });
       }
     };
 
-    document.addEventListener('visibilitychange', handleVisibilityChange);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, []);
 
