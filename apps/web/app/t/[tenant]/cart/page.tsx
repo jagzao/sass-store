@@ -291,13 +291,15 @@ function CartPageInner({ tenantSlug, tenantData, loading }: {
 
   // Animate totals on change
   useEffect(() => {
-    const animateValue = (ref: React.RefObject<HTMLDivElement>, newValue: number) => {
+    const animateValue = async (ref: React.RefObject<HTMLDivElement>, newValue: number) => {
       if (!ref.current) return;
 
       const currentText = ref.current.textContent || '$0.00';
       const currentValue = parseFloat(currentText.replace(/[^0-9.-]+/g, ''));
 
       if (currentValue === newValue) return;
+
+      const gsap = await loadGsap();
 
       gsap.to({ val: currentValue }, {
         val: newValue,
