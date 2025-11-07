@@ -2,13 +2,21 @@
 
 import { useSession } from "next-auth/react";
 import { useRouter, useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, lazy, Suspense } from "react";
 import UserMenu from "@/components/auth/UserMenu";
-import KPICard from "@/components/finance/KPICard";
-import FilterPanel from "@/components/finance/FilterPanel";
-import MovementsTable from "@/components/finance/MovementsTable";
-import ReconciliationModal from "@/components/finance/ReconciliationModal";
 import { useFinance } from "@/lib/hooks/use-finance";
+import {
+  KPICardSkeleton,
+  FilterPanelSkeleton,
+  MovementsTableSkeleton,
+  ReconciliationModalSkeleton,
+} from "@/components/finance/FinanceSkeletons";
+
+// Lazy load heavy finance components to reduce initial bundle size
+const KPICard = lazy(() => import("@/components/finance/KPICard"));
+const FilterPanel = lazy(() => import("@/components/finance/FilterPanel"));
+const MovementsTable = lazy(() => import("@/components/finance/MovementsTable"));
+const ReconciliationModal = lazy(() => import("@/components/finance/ReconciliationModal"));
 
 export default function TenantFinancePage() {
   const { data: session, status } = useSession();
@@ -158,78 +166,90 @@ export default function TenantFinancePage() {
           )}
 
           {/* Financial Overview */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <KPICard
-              title="Ingresos Totales"
-              value={kpis.totalIncome}
-              change={kpis.incomeTrend}
-              icon="💰"
-              trend={
-                kpis.incomeTrend > 0
-                  ? "up"
-                  : kpis.incomeTrend < 0
-                    ? "down"
-                    : "neutral"
-              }
-              format="currency"
-              loading={loading}
-            />
+          <Suspense fallback={
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+              {[...Array(4)].map((_, i) => <KPICardSkeleton key={i} />)}
+            </div>
+          }>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+              <KPICard
+                title="Ingresos Totales"
+                value={kpis.totalIncome}
+                change={kpis.incomeTrend}
+                icon="💰"
+                trend={
+                  kpis.incomeTrend > 0
+                    ? "up"
+                    : kpis.incomeTrend < 0
+                      ? "down"
+                      : "neutral"
+                }
+                format="currency"
+                loading={loading}
+              />
 
-            <KPICard
-              title="Transacciones"
-              value={kpis.transactionCount}
-              icon="📦"
-              format="number"
-              loading={loading}
-            />
+              <KPICard
+                title="Transacciones"
+                value={kpis.transactionCount}
+                icon="📦"
+                format="number"
+                loading={loading}
+              />
 
-            <KPICard
-              title="Ticket Promedio"
-              value={kpis.averageTicket}
-              icon="🏷️"
-              format="currency"
-              loading={loading}
-            />
+              <KPICard
+                title="Ticket Promedio"
+                value={kpis.averageTicket}
+                icon="🏷️"
+                format="currency"
+                loading={loading}
+              />
 
-            <KPICard
-              title="Tasa de Aprobación"
-              value={kpis.approvalRate}
-              icon="✅"
-              format="percentage"
-              loading={loading}
-            />
-          </div>
+              <KPICard
+                title="Tasa de Aprobación"
+                value={kpis.approvalRate}
+                icon="✅"
+                format="percentage"
+                loading={loading}
+              />
+            </div>
+          </Suspense>
 
           {/* Additional KPIs Row */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <KPICard
-              title="Saldo Disponible"
-              value={kpis.availableBalance}
-              icon="🏦"
-              format="currency"
-              loading={loading}
-            />
+          <Suspense fallback={
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              {[...Array(3)].map((_, i) => <KPICardSkeleton key={i} />)}
+            </div>
+          }>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              <KPICard
+                title="Saldo Disponible"
+                value={kpis.availableBalance}
+                icon="🏦"
+                format="currency"
+                loading={loading}
+              />
 
-            <KPICard
-              title="Flujo de Caja Neto"
-              value={kpis.netCashFlow}
-              change={kpis.netCashFlow > 0 ? 5 : -5}
-              icon="📊"
-              trend={kpis.netCashFlow > 0 ? "up" : "down"}
-              format="currency"
-              loading={loading}
-            />
+              <KPICard
+                title="Flujo de Caja Neto"
+                value={kpis.netCashFlow}
+                change={kpis.netCashFlow > 0 ? 5 : -5}
+                icon="📊"
+                trend={kpis.netCashFlow > 0 ? "up" : "down"}
+                format="currency"
+                loading={loading}
+              />
 
-            <KPICard
-              title="Gastos Totales"
-              value={kpis.totalExpenses}
-              change={kpis.expenseTrend}
-              icon="💸"
-              trend={kpis.expenseTrend > 0 ? "down" : "up"}
-              format="currency"
-              loading={loading}
-            />
-          </div>
+              <KPICard
+                title="Gastos Totales"
+                value={kpis.totalExpenses}
+                change={kpis.expenseTrend}
+                icon="💸"
+                trend={kpis.expenseTrend > 0 ? "down" : "up"}
+                format="currency"
+                loading={loading}
+              />
+            </div>
+          </Suspense>
 
           {/* Charts and Details */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -383,30 +403,38 @@ export default function TenantFinancePage() {
 
           {/* Movements Section */}
           <div className="mt-8">
-            <FilterPanel
-              filters={movementFilters}
-              onFiltersChange={updateMovementFilters}
-              onReset={resetMovementFilters}
-              loading={loading}
-            />
+            <Suspense fallback={<FilterPanelSkeleton />}>
+              <FilterPanel
+                filters={movementFilters}
+                onFiltersChange={updateMovementFilters}
+                onReset={resetMovementFilters}
+                loading={loading}
+              />
+            </Suspense>
 
-            <MovementsTable
-              movements={movements}
-              loading={loading}
-              onMovementClick={handleMovementClick}
-            />
+            <Suspense fallback={<MovementsTableSkeleton />}>
+              <MovementsTable
+                movements={movements}
+                loading={loading}
+                onMovementClick={handleMovementClick}
+              />
+            </Suspense>
           </div>
         </div>
       </div>
 
       {/* Reconciliation Modal */}
-      <ReconciliationModal
-        movement={reconciliationModal.movement}
-        isOpen={reconciliationModal.isOpen}
-        onClose={closeReconciliationModal}
-        onReconcile={handleReconcileMovement}
-        loading={loading}
-      />
+      {reconciliationModal.isOpen && (
+        <Suspense fallback={<ReconciliationModalSkeleton />}>
+          <ReconciliationModal
+            movement={reconciliationModal.movement}
+            isOpen={reconciliationModal.isOpen}
+            onClose={closeReconciliationModal}
+            onReconcile={handleReconcileMovement}
+            loading={loading}
+          />
+        </Suspense>
+      )}
     </div>
   );
 }
