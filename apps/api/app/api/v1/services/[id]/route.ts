@@ -21,7 +21,7 @@ const updateServiceSchema = z.object({
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     // Resolve tenant
@@ -35,20 +35,25 @@ export async function GET(
     if (!rateLimitResult.success) {
       return NextResponse.json(
         { error: "Rate limit exceeded" },
-        { status: 429 }
+        { status: 429 },
       );
     }
 
     // Get service using RLS context
-    const serviceList = await withTenantContext(db, tenant.id, null,  async (db) => {
-      return await db
-        .select()
-        .from(services)
-        .where(
-          and(eq(services.id, params.id), eq(services.tenantId, tenant.id))
-        )
-        .limit(1);
-    });
+    const serviceList = await withTenantContext(
+      db,
+      tenant.id,
+      null,
+      async (db) => {
+        return await db
+          .select()
+          .from(services)
+          .where(
+            and(eq(services.id, params.id), eq(services.tenantId, tenant.id)),
+          )
+          .limit(1);
+      },
+    );
 
     if (serviceList.length === 0) {
       return NextResponse.json({ error: "Service not found" }, { status: 404 });
@@ -59,14 +64,14 @@ export async function GET(
     console.error("Service GET error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     // Validate API key for write operations
@@ -86,7 +91,7 @@ export async function PUT(
     if (!rateLimitResult.success) {
       return NextResponse.json(
         { error: "Rate limit exceeded" },
-        { status: 429 }
+        { status: 429 },
       );
     }
 
@@ -97,16 +102,17 @@ export async function PUT(
     // Check if service exists and belongs to tenant using RLS context
     const existingService = await withTenantContext(
       db,
-      tenant.id, null, 
+      tenant.id,
+      null,
       async (db) => {
         return await db
           .select()
           .from(services)
           .where(
-            and(eq(services.id, params.id), eq(services.tenantId, tenant.id))
+            and(eq(services.id, params.id), eq(services.tenantId, tenant.id)),
           )
           .limit(1);
-      }
+      },
     );
 
     if (existingService.length === 0) {
@@ -142,20 +148,20 @@ export async function PUT(
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: "Invalid request body", details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     // Validate API key for write operations
@@ -175,23 +181,24 @@ export async function DELETE(
     if (!rateLimitResult.success) {
       return NextResponse.json(
         { error: "Rate limit exceeded" },
-        { status: 429 }
+        { status: 429 },
       );
     }
 
     // Check if service exists and belongs to tenant using RLS context
     const existingService = await withTenantContext(
       db,
-      tenant.id, null, 
+      tenant.id,
+      null,
       async (db) => {
         return await db
           .select()
           .from(services)
           .where(
-            and(eq(services.id, params.id), eq(services.tenantId, tenant.id))
+            and(eq(services.id, params.id), eq(services.tenantId, tenant.id)),
           )
           .limit(1);
-      }
+      },
     );
 
     if (existingService.length === 0) {
@@ -218,7 +225,7 @@ export async function DELETE(
     console.error("Service DELETE error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

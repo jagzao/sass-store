@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { mercadoPagoService } from "@/lib/mercadopago";
 import { createAuditLog } from "@/lib/audit";
-import { validateOAuthState } from "@sass-store/core/security/oauth-state";
+import { validateOAuthState } from "@sass-store/core";
 
 /**
  * GET /api/mercadopago/callback
@@ -18,20 +18,14 @@ export async function GET(request: NextRequest) {
     if (error) {
       console.error("[MercadoPago OAuth] Error from provider:", error);
       return NextResponse.redirect(
-        new URL(
-          `/finance?error=oauth_failed`,
-          request.nextUrl.origin
-        )
+        new URL(`/finance?error=oauth_failed`, request.nextUrl.origin),
       );
     }
 
     if (!code || !state) {
       console.warn("[MercadoPago OAuth] Missing code or state parameter");
       return NextResponse.redirect(
-        new URL(
-          `/finance?error=missing_params`,
-          request.nextUrl.origin
-        )
+        new URL(`/finance?error=missing_params`, request.nextUrl.origin),
       );
     }
 
@@ -40,10 +34,7 @@ export async function GET(request: NextRequest) {
     if (!tenantId) {
       console.error("[MercadoPago OAuth] Invalid or expired state token");
       return NextResponse.redirect(
-        new URL(
-          `/finance?error=invalid_state`,
-          request.nextUrl.origin
-        )
+        new URL(`/finance?error=invalid_state`, request.nextUrl.origin),
       );
     }
 
@@ -51,7 +42,7 @@ export async function GET(request: NextRequest) {
     const redirectUri = `${request.nextUrl.origin}/api/mercadopago/callback`;
     const tokens = await mercadoPagoService.exchangeCodeForTokens(
       code,
-      redirectUri
+      redirectUri,
     );
 
     // Store tokens for tenant
@@ -73,19 +64,13 @@ export async function GET(request: NextRequest) {
     // Redirect to finance page with success
     // Note: We should get the tenant slug from the DB using tenantId
     return NextResponse.redirect(
-      new URL(
-        `/finance?success=mp_connected`,
-        request.nextUrl.origin
-      )
+      new URL(`/finance?success=mp_connected`, request.nextUrl.origin),
     );
   } catch (error) {
     console.error("[MercadoPago OAuth] Callback error:", error);
 
     return NextResponse.redirect(
-      new URL(
-        `/finance?error=callback_failed`,
-        request.nextUrl.origin
-      )
+      new URL(`/finance?error=callback_failed`, request.nextUrl.origin),
     );
   }
 }

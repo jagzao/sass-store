@@ -22,7 +22,7 @@ const updateProductSchema = z.object({
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     // Resolve tenant
@@ -36,20 +36,25 @@ export async function GET(
     if (!rateLimitResult.success) {
       return NextResponse.json(
         { error: "Rate limit exceeded" },
-        { status: 429 }
+        { status: 429 },
       );
     }
 
     // Get product using RLS context
-    const productList = await withTenantContext(db, tenant.id, null,  async (db) => {
-      return await db
-        .select()
-        .from(products)
-        .where(
-          and(eq(products.id, params.id), eq(products.tenantId, tenant.id))
-        )
-        .limit(1);
-    });
+    const productList = await withTenantContext(
+      db,
+      tenant.id,
+      null,
+      async (db) => {
+        return await db
+          .select()
+          .from(products)
+          .where(
+            and(eq(products.id, params.id), eq(products.tenantId, tenant.id)),
+          )
+          .limit(1);
+      },
+    );
 
     if (productList.length === 0) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
@@ -60,14 +65,14 @@ export async function GET(
     console.error("Product GET error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     // Validate API key for write operations
@@ -87,7 +92,7 @@ export async function PUT(
     if (!rateLimitResult.success) {
       return NextResponse.json(
         { error: "Rate limit exceeded" },
-        { status: 429 }
+        { status: 429 },
       );
     }
 
@@ -98,16 +103,17 @@ export async function PUT(
     // Check if product exists and belongs to tenant using RLS context
     const existingProduct = await withTenantContext(
       db,
-      tenant.id, null, 
+      tenant.id,
+      null,
       async (db) => {
         return await db
           .select()
           .from(products)
           .where(
-            and(eq(products.id, params.id), eq(products.tenantId, tenant.id))
+            and(eq(products.id, params.id), eq(products.tenantId, tenant.id)),
           )
           .limit(1);
-      }
+      },
     );
 
     if (existingProduct.length === 0) {
@@ -116,23 +122,28 @@ export async function PUT(
 
     // Check if SKU is being changed and if it conflicts
     if (productData.sku && productData.sku !== existingProduct[0].sku) {
-      const skuConflict = await withTenantContext(db, tenant.id, null,  async (db) => {
-        return await db
-          .select()
-          .from(products)
-          .where(
-            and(
-              eq(products.sku, productData.sku!),
-              eq(products.tenantId, tenant.id)
+      const skuConflict = await withTenantContext(
+        db,
+        tenant.id,
+        null,
+        async (db) => {
+          return await db
+            .select()
+            .from(products)
+            .where(
+              and(
+                eq(products.sku, productData.sku!),
+                eq(products.tenantId, tenant.id),
+              ),
             )
-          )
-          .limit(1);
-      });
+            .limit(1);
+        },
+      );
 
       if (skuConflict.length > 0) {
         return NextResponse.json(
           { error: "Product with this SKU already exists" },
-          { status: 409 }
+          { status: 409 },
         );
       }
     }
@@ -166,20 +177,20 @@ export async function PUT(
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: "Invalid request body", details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     // Validate API key for write operations
@@ -199,23 +210,24 @@ export async function DELETE(
     if (!rateLimitResult.success) {
       return NextResponse.json(
         { error: "Rate limit exceeded" },
-        { status: 429 }
+        { status: 429 },
       );
     }
 
     // Check if product exists and belongs to tenant using RLS context
     const existingProduct = await withTenantContext(
       db,
-      tenant.id, null, 
+      tenant.id,
+      null,
       async (db) => {
         return await db
           .select()
           .from(products)
           .where(
-            and(eq(products.id, params.id), eq(products.tenantId, tenant.id))
+            and(eq(products.id, params.id), eq(products.tenantId, tenant.id)),
           )
           .limit(1);
-      }
+      },
     );
 
     if (existingProduct.length === 0) {
@@ -242,7 +254,7 @@ export async function DELETE(
     console.error("Product DELETE error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

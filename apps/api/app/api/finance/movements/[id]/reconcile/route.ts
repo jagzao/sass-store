@@ -20,9 +20,12 @@ const reconcileSchema = z.object({
  */
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    // Resolve params (Next.js 16+ requirement)
+    const { id } = await params;
+
     // Resolve tenant
     const tenant = await resolveTenant(request);
     if (!tenant) {
@@ -32,21 +35,21 @@ export async function PATCH(
     // Check rate limits
     const rateLimitResult = await checkRateLimit(
       tenant.id,
-      "finance:reconcile"
+      "finance:reconcile",
     );
     if (!rateLimitResult.success) {
       return NextResponse.json(
         { error: "Rate limit exceeded" },
-        { status: 429 }
+        { status: 429 },
       );
     }
 
     // Validate movement ID
-    const movementId = params.id;
+    const movementId = id;
     if (!movementId) {
       return NextResponse.json(
         { error: "Movement ID is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -65,13 +68,13 @@ export async function PATCH(
           .from(financialMovements)
           .where(eq(financialMovements.id, movementId))
           .limit(1);
-      }
+      },
     )) as any[];
 
     if (existingMovement.length === 0) {
       return NextResponse.json(
         { error: "Movement not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -114,13 +117,13 @@ export async function PATCH(
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: "Invalid request body", details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -131,9 +134,12 @@ export async function PATCH(
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    // Resolve params (Next.js 16+ requirement)
+    const { id } = await params;
+
     // Resolve tenant
     const tenant = await resolveTenant(request);
     if (!tenant) {
@@ -141,11 +147,11 @@ export async function GET(
     }
 
     // Validate movement ID
-    const movementId = params.id;
+    const movementId = id;
     if (!movementId) {
       return NextResponse.json(
         { error: "Movement ID is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -164,13 +170,13 @@ export async function GET(
           .from(financialMovements)
           .where(eq(financialMovements.id, movementId))
           .limit(1);
-      }
+      },
     )) as any[];
 
     if (movement.length === 0) {
       return NextResponse.json(
         { error: "Movement not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -181,7 +187,7 @@ export async function GET(
     console.error("Finance movement reconcile status error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
