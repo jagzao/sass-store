@@ -7,7 +7,7 @@ import {
   CSRF_HEADER_NAME,
   CSRF_PROTECTED_METHODS,
   isCsrfExempt,
-} from "@sass-store/core/security/csrf";
+} from "@sass-store/core";
 
 // Known tenant slugs from seed data
 const KNOWN_TENANTS = [
@@ -45,7 +45,10 @@ export async function middleware(request: NextRequest) {
     if (CSRF_PROTECTED_METHODS.includes(method)) {
       const csrfTokenFromHeader = request.headers.get(CSRF_HEADER_NAME);
       const cookieHeader = request.headers.get("cookie") || "";
-      const csrfTokenFromCookie = extractCookieValue(cookieHeader, CSRF_COOKIE_NAME);
+      const csrfTokenFromCookie = extractCookieValue(
+        cookieHeader,
+        CSRF_COOKIE_NAME,
+      );
 
       if (!csrfTokenFromHeader || !csrfTokenFromCookie) {
         console.warn(`[CSRF] Missing CSRF token for ${method} ${pathname}`);
@@ -53,7 +56,10 @@ export async function middleware(request: NextRequest) {
       }
 
       // Validate the token
-      const isValid = validateCsrfToken(csrfTokenFromHeader, csrfTokenFromCookie);
+      const isValid = validateCsrfToken(
+        csrfTokenFromHeader,
+        csrfTokenFromCookie,
+      );
       if (!isValid) {
         console.warn(`[CSRF] Invalid CSRF token for ${method} ${pathname}`);
         return new NextResponse("Invalid CSRF token", { status: 403 });
