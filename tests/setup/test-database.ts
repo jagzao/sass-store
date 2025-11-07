@@ -3,9 +3,9 @@
  * Provides helpers for setting up and tearing down test database
  */
 
-import { drizzle } from 'drizzle-orm/postgres-js';
-import postgres from 'postgres';
-import * as schema from '@sass-store/database/schema';
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
+import * as schema from "@sass-store/database/schema";
 
 let testDb: ReturnType<typeof drizzle> | null = null;
 let testClient: ReturnType<typeof postgres> | null = null;
@@ -15,7 +15,9 @@ let testClient: ReturnType<typeof postgres> | null = null;
  */
 export function getTestDb() {
   if (!testDb) {
-    throw new Error('Test database not initialized. Call setupTestDatabase() first.');
+    throw new Error(
+      "Test database not initialized. Call setupTestDatabase() first.",
+    );
   }
   return testDb;
 }
@@ -24,25 +26,32 @@ export function getTestDb() {
  * Setup test database connection
  */
 export async function setupTestDatabase() {
-  const connectionString = process.env.TEST_DATABASE_URL || process.env.DATABASE_URL;
+  const connectionString =
+    process.env.TEST_DATABASE_URL || process.env.DATABASE_URL;
 
   if (!connectionString) {
-    throw new Error('TEST_DATABASE_URL or DATABASE_URL environment variable is required');
+    console.warn("⚠️  No DATABASE_URL found - database tests will be skipped");
+    return null;
   }
 
-  // Create postgres client
-  testClient = postgres(connectionString, {
-    max: 1,
-    onnotice: () => {}, // Suppress notices during tests
-  });
+  try {
+    // Create postgres client
+    testClient = postgres(connectionString, {
+      max: 1,
+      onnotice: () => {}, // Suppress notices during tests
+    });
 
-  // Create drizzle instance
-  testDb = drizzle(testClient, { schema });
+    // Create drizzle instance
+    testDb = drizzle(testClient, { schema });
 
-  // Run migrations if needed
-  // await migrate(testDb, { migrationsFolder: './drizzle' });
+    // Run migrations if needed
+    // await migrate(testDb, { migrationsFolder: './drizzle' });
 
-  return testDb;
+    return testDb;
+  } catch (error) {
+    console.error("Failed to setup test database:", error);
+    return null;
+  }
 }
 
 /**
@@ -65,14 +74,14 @@ export async function cleanupTestData() {
 
   // List of tables to clean (in order to avoid foreign key constraints)
   const tables = [
-    'product_reviews',
-    'bookings',
-    'user_carts',
-    'orders',
-    'products',
-    'services',
-    'oauth_state_tokens',
-    'users',
+    "product_reviews",
+    "bookings",
+    "user_carts",
+    "orders",
+    "products",
+    "services",
+    "oauth_state_tokens",
+    "users",
     // Note: Don't clean tenants table as it might have seed data
   ];
 
@@ -81,22 +90,24 @@ export async function cleanupTestData() {
       await testClient?.unsafe(`TRUNCATE TABLE "${table}" CASCADE`);
     }
   } catch (error) {
-    console.error('Error cleaning up test data:', error);
+    console.error("Error cleaning up test data:", error);
   }
 }
 
 /**
  * Create a test tenant
  */
-export async function createTestTenant(overrides: Partial<typeof schema.tenants.$inferInsert> = {}) {
+export async function createTestTenant(
+  overrides: Partial<typeof schema.tenants.$inferInsert> = {},
+) {
   const db = getTestDb();
 
   const [tenant] = await db
     .insert(schema.tenants)
     .values({
       slug: `test-${Date.now()}`,
-      name: 'Test Tenant',
-      mode: 'catalog',
+      name: "Test Tenant",
+      mode: "catalog",
       branding: {},
       contact: {},
       location: {},
@@ -113,7 +124,7 @@ export async function createTestTenant(overrides: Partial<typeof schema.tenants.
  */
 export async function createTestProduct(
   tenantId: string,
-  overrides: Partial<typeof schema.products.$inferInsert> = {}
+  overrides: Partial<typeof schema.products.$inferInsert> = {},
 ) {
   const db = getTestDb();
 
@@ -122,9 +133,9 @@ export async function createTestProduct(
     .values({
       tenantId,
       sku: `TEST-${Date.now()}`,
-      name: 'Test Product',
-      price: '99.99',
-      category: 'test',
+      name: "Test Product",
+      price: "99.99",
+      category: "test",
       active: true,
       featured: false,
       ...overrides,
@@ -139,7 +150,7 @@ export async function createTestProduct(
  */
 export async function createTestService(
   tenantId: string,
-  overrides: Partial<typeof schema.services.$inferInsert> = {}
+  overrides: Partial<typeof schema.services.$inferInsert> = {},
 ) {
   const db = getTestDb();
 
@@ -147,10 +158,10 @@ export async function createTestService(
     .insert(schema.services)
     .values({
       tenantId,
-      name: 'Test Service',
-      description: 'Test service description',
+      name: "Test Service",
+      description: "Test service description",
       duration: 60,
-      price: '49.99',
+      price: "49.99",
       active: true,
       ...overrides,
     })
@@ -162,15 +173,17 @@ export async function createTestService(
 /**
  * Create a test user
  */
-export async function createTestUser(overrides: Partial<typeof schema.users.$inferInsert> = {}) {
+export async function createTestUser(
+  overrides: Partial<typeof schema.users.$inferInsert> = {},
+) {
   const db = getTestDb();
 
   const [user] = await db
     .insert(schema.users)
     .values({
       email: `test-${Date.now()}@example.com`,
-      name: 'Test User',
-      password: 'hashed_password_here',
+      name: "Test User",
+      password: "hashed_password_here",
       ...overrides,
     })
     .returning();

@@ -31,21 +31,25 @@ tests/
 ## Running Tests
 
 ### All Tests
+
 ```bash
 npm test
 ```
 
 ### Watch Mode (development)
+
 ```bash
 npm run test:watch
 ```
 
 ### With UI
+
 ```bash
 npm run test:ui
 ```
 
 ### Specific Test Suites
+
 ```bash
 # Unit tests only
 npm run test:unit
@@ -61,6 +65,7 @@ npm run test:e2e
 ```
 
 ### Coverage
+
 ```bash
 npm run test:coverage
 ```
@@ -80,6 +85,27 @@ TEST_DATABASE_URL=postgresql://user:pass@localhost:5432/sass_store_test
 
 If `TEST_DATABASE_URL` is not set, it falls back to `DATABASE_URL`.
 
+### Running Tests Without Database
+
+**Tests that work without DATABASE_URL:**
+
+- `tests/unit/logger.spec.ts` - Logger utility tests (12 tests)
+- `tests/unit/alerts.spec.ts` - Alerts system tests (9 tests)
+
+**Tests that require DATABASE_URL:**
+
+- `tests/api/reviews.test.ts` - Product reviews API (8 tests)
+- `tests/unit/cart-operations.test.ts` - Cart operations (13 tests)
+- `tests/security/rls.test.ts` - Row-level security (9 tests)
+
+If DATABASE_URL is not configured, database-dependent tests will fail gracefully with:
+
+```
+Error: Test database not initialized. Call setupTestDatabase() first.
+```
+
+This is expected behavior - configure DATABASE_URL to run the full test suite.
+
 ### Helpers
 
 The test database helpers are available in `tests/setup/test-database.ts`:
@@ -91,7 +117,7 @@ import {
   createTestProduct,
   createTestService,
   createTestUser,
-} from '../setup/test-database';
+} from "../setup/test-database";
 
 // Use in your tests
 const tenant = await createTestTenant();
@@ -111,14 +137,15 @@ const product = await createTestProduct(tenant.id);
 For testing code that uses Redis/Upstash:
 
 ```typescript
-import { createMockRedis } from '../mocks/redis.mock';
+import { createMockRedis } from "../mocks/redis.mock";
 
 const redis = createMockRedis();
-await redis.set('key', 'value');
-const value = await redis.get('key');
+await redis.set("key", "value");
+const value = await redis.get("key");
 ```
 
 The mock implements common Redis commands:
+
 - `get`, `set`, `del`
 - `incr`, `incrby`, `decr`
 - `expire`, `ttl`
@@ -131,17 +158,17 @@ The mock implements common Redis commands:
 ### Basic Test Structure
 
 ```typescript
-import { describe, it, expect, beforeEach } from 'vitest';
-import { getTestDb, createTestTenant } from '../setup/test-database';
+import { describe, it, expect, beforeEach } from "vitest";
+import { getTestDb, createTestTenant } from "../setup/test-database";
 
-describe('Feature Name', () => {
+describe("Feature Name", () => {
   let tenant: Awaited<ReturnType<typeof createTestTenant>>;
 
   beforeEach(async () => {
     tenant = await createTestTenant();
   });
 
-  it('should do something', async () => {
+  it("should do something", async () => {
     const db = getTestDb();
     // ... test code
     expect(result).toBe(expected);
@@ -154,11 +181,11 @@ describe('Feature Name', () => {
 See `tests/security/rls.test.ts` for examples:
 
 ```typescript
-it('should only return products for the specified tenant', async () => {
+it("should only return products for the specified tenant", async () => {
   const db = getTestDb();
 
-  await createTestProduct(tenant1.id, { name: 'Product 1' });
-  await createTestProduct(tenant2.id, { name: 'Product 2' });
+  await createTestProduct(tenant1.id, { name: "Product 1" });
+  await createTestProduct(tenant2.id, { name: "Product 2" });
 
   const tenant1Products = await db
     .select()
@@ -175,8 +202,9 @@ it('should only return products for the specified tenant', async () => {
 2. **Cleanup**: Use `afterEach` to clean up test data
 3. **Naming**: Use descriptive test names that explain what is being tested
 4. **Arrange-Act-Assert**: Structure tests clearly:
+
    ```typescript
-   it('should calculate cart total', async () => {
+   it("should calculate cart total", async () => {
      // Arrange
      const product = await createTestProduct(tenant.id);
 
@@ -187,6 +215,7 @@ it('should only return products for the specified tenant', async () => {
      expect(total).toBe(199.99);
    });
    ```
+
 5. **Performance**: Tests should run quickly (<1s per test when possible)
 6. **Coverage**: Aim for:
    - Critical paths: >80%
@@ -196,16 +225,19 @@ it('should only return products for the specified tenant', async () => {
 ## Debugging Tests
 
 ### Run specific test file
+
 ```bash
 npm test tests/unit/cart-operations.test.ts
 ```
 
 ### Run tests matching pattern
+
 ```bash
 npm test -- --grep "should add product"
 ```
 
 ### Verbose output
+
 ```bash
 npm test -- --reporter=verbose
 ```
@@ -213,6 +245,7 @@ npm test -- --reporter=verbose
 ## CI/CD Integration
 
 Tests run automatically on:
+
 - Pull requests
 - Pushes to main branch
 - Before deployment
@@ -232,6 +265,7 @@ createdb sass_store_test
 ### Tests timing out
 
 Increase timeout in `vitest.config.ts`:
+
 ```typescript
 export default defineConfig({
   test: {
