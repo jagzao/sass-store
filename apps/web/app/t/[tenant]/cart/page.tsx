@@ -6,7 +6,16 @@ import { LiveRegionProvider, useAnnounce } from "@/components/a11y/LiveRegion";
 import { useCart } from "@/lib/cart/cart-store";
 import CartBadge from "@/components/cart/CartBadge";
 import UndoToast from "@/components/cart/UndoToast";
-import gsap from "gsap";
+
+// Lazy load gsap to reduce initial bundle size
+let gsapInstance: any = null;
+const loadGsap = async () => {
+  if (!gsapInstance) {
+    const gsapModule = await import('gsap');
+    gsapInstance = gsapModule.default;
+  }
+  return gsapInstance;
+};
 
 // Memoized Cart Item Component for performance
 const CartItem = memo(({
@@ -30,73 +39,83 @@ const CartItem = memo(({
 
   useEffect(() => {
     // Animate on mount
-    if (itemRef.current) {
-      gsap.fromTo(
-        itemRef.current,
-        { opacity: 0, y: 12, scale: 0.98 },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          duration: 0.22,
-          ease: 'power2.out'
-        }
-      );
-    }
+    const animateMount = async () => {
+      if (itemRef.current) {
+        const gsap = await loadGsap();
+        gsap.fromTo(
+          itemRef.current,
+          { opacity: 0, y: 12, scale: 0.98 },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.22,
+            ease: 'power2.out'
+          }
+        );
+      }
+    };
+    animateMount();
   }, []);
 
   useEffect(() => {
-    // Animate quantity changes with tick effect
-    if (quantityRef.current && item.quantity !== prevQuantity.current) {
-      gsap.timeline()
-        .to(quantityRef.current, {
-          scale: 0.95,
-          duration: 0.08
-        })
-        .to(quantityRef.current, {
-          scale: 1,
-          duration: 0.12,
-          ease: 'back.out(1.7)'
-        });
-      prevQuantity.current = item.quantity;
-    }
+    const animateChanges = async () => {
+      const gsap = await loadGsap();
 
-    // Animate price changes with number counter
-    const currentPrice = item.price * item.quantity;
-    if (priceRef.current && currentPrice !== prevPrice.current) {
-      const startValue = prevPrice.current;
-      const diff = currentPrice - startValue;
+      // Animate quantity changes with tick effect
+      if (quantityRef.current && item.quantity !== prevQuantity.current) {
+        gsap.timeline()
+          .to(quantityRef.current, {
+            scale: 0.95,
+            duration: 0.08
+          })
+          .to(quantityRef.current, {
+            scale: 1,
+            duration: 0.12,
+            ease: 'back.out(1.7)'
+          });
+        prevQuantity.current = item.quantity;
+      }
 
-      gsap.to({ val: 0 }, {
-        val: diff,
-        duration: 0.25,
-        ease: 'power2.out',
-        onUpdate: function() {
-          if (priceRef.current) {
-            const newValue = startValue + this.targets()[0].val;
-            priceRef.current.textContent = `$${newValue.toFixed(2)}`;
+      // Animate price changes with number counter
+      const currentPrice = item.price * item.quantity;
+      if (priceRef.current && currentPrice !== prevPrice.current) {
+        const startValue = prevPrice.current;
+        const diff = currentPrice - startValue;
+
+        gsap.to({ val: 0 }, {
+          val: diff,
+          duration: 0.25,
+          ease: 'power2.out',
+          onUpdate: function() {
+            if (priceRef.current) {
+              const newValue = startValue + this.targets()[0].val;
+              priceRef.current.textContent = `$${newValue.toFixed(2)}`;
+            }
           }
-        }
-      });
-
-      // Flash background
-      gsap.timeline()
-        .to(priceRef.current, {
-          backgroundColor: 'rgba(59, 130, 246, 0.1)',
-          duration: 0.1
-        })
-        .to(priceRef.current, {
-          backgroundColor: 'transparent',
-          duration: 0.15
         });
 
-      prevPrice.current = currentPrice;
-    }
+        // Flash background
+        gsap.timeline()
+          .to(priceRef.current, {
+            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+            duration: 0.1
+          })
+          .to(priceRef.current, {
+            backgroundColor: 'transparent',
+            duration: 0.15
+          });
+
+        prevPrice.current = currentPrice;
+      }
+    };
+    animateChanges();
   }, [item.quantity, item.price]);
 
-  const handleRemove = () => {
+  const handleRemove = async () => {
     // Stagger animation before removal
     if (itemRef.current) {
+      const gsap = await loadGsap();
       const children = itemRef.current.children;
       gsap.timeline()
         .to(Array.from(children), {
