@@ -7,12 +7,12 @@
  * - Detail view (expanded)
  */
 
-import React from 'react';
-import Image from 'next/image';
-import type { WnSlide } from './HeroWondernailsFinal';
-import { CarouselItemIntro } from './CarouselItemIntro';
-import { CarouselItemDetail } from './CarouselItemDetail';
-import styles from './HeroWondernailsGSAP.module.css';
+import React, { memo } from "react";
+import Image from "next/image";
+import type { WnSlide } from "./HeroWondernailsFinal";
+import { CarouselItemIntro } from "./CarouselItemIntro";
+import { CarouselItemDetail } from "./CarouselItemDetail";
+import styles from "./HeroWondernailsGSAP.module.css";
 
 export interface CarouselItemProps {
   slide: WnSlide;
@@ -23,14 +23,14 @@ export interface CarouselItemProps {
   onCloseDetail: () => void;
 }
 
-export function CarouselItem({
+export const CarouselItem = memo<CarouselItemProps>(function CarouselItem({
   slide,
   index,
   onSeeMore,
   onAddToCart,
   onCheckout,
   onCloseDetail,
-}: CarouselItemProps) {
+}) {
   return (
     <article
       key={slide.img}
@@ -38,17 +38,14 @@ export function CarouselItem({
       data-testid="carousel-item"
       data-index={index}
       role="tabpanel"
-      aria-label={`Slide ${index + 1}: ${slide.topic || 'Service'}`}
+      aria-label={`Slide ${index + 1}: ${slide.topic || "Service"}`}
     >
-      <CarouselItemIntro
-        slide={slide}
-        onSeeMore={onSeeMore}
-      />
+      <CarouselItemIntro slide={slide} onSeeMore={onSeeMore} />
 
       <div className={styles.imgWrap}>
         <Image
           src={slide.img}
-          alt={slide.topic || 'Servicio Wonder Nails'}
+          alt={slide.topic || "Servicio Wonder Nails"}
           fill
           priority={index === 1}
           sizes="(max-width:768px) 40vw, (max-width:1200px) 50vw, 800px"
@@ -63,4 +60,4 @@ export function CarouselItem({
       />
     </article>
   );
-}
+});

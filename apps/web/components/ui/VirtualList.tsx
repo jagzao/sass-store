@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect, useRef } from 'react';
-import { LazyLoad } from '@/components/ui/LazyLoad';
+import React, { useState, useEffect, useRef, useCallback, memo } from "react";
+import { LazyLoad } from "@/components/ui/LazyLoad";
 
 interface VirtualListProps<T> {
   items: T[];
@@ -15,40 +15,45 @@ interface VirtualListProps<T> {
 /**
  * Componente para listas virtuales que solo renderiza elementos visibles
  */
-export const VirtualList = <T extends any>({
+function VirtualListComponent<T>({
   items,
   renderItem,
   itemHeight = 200,
   containerHeight = 400,
-  className = '',
+  className = "",
   overscan = 5,
-}: VirtualListProps<T>) => {
+}: VirtualListProps<T>) {
   const [visibleStart, setVisibleStart] = useState(0);
-  const [visibleEnd, setVisibleEnd] = useState(Math.floor(containerHeight / itemHeight) + overscan);
+  const [visibleEnd, setVisibleEnd] = useState(
+    Math.floor(containerHeight / itemHeight) + overscan,
+  );
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const handleScroll = useCallback(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const scrollTop = container.scrollTop;
+    const start = Math.max(0, Math.floor(scrollTop / itemHeight) - overscan);
+    const visibleCount = Math.ceil(containerHeight / itemHeight);
+    const end = Math.min(items.length, start + visibleCount + overscan * 2);
+
+    setVisibleStart(start);
+    setVisibleEnd(end);
+  }, [itemHeight, containerHeight, overscan, items.length]);
 
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
-    const handleScroll = () => {
-      const scrollTop = container.scrollTop;
-      const start = Math.max(0, Math.floor(scrollTop / itemHeight) - overscan);
-      const visibleCount = Math.ceil(containerHeight / itemHeight);
-      const end = Math.min(items.length, start + visibleCount + (overscan * 2));
-
-      setVisibleStart(start);
-      setVisibleEnd(end);
-    };
-
-    container.addEventListener('scroll', handleScroll);
+    container.addEventListener("scroll", handleScroll);
     // Ejecutar una vez para establecer el estado inicial
     handleScroll();
 
     return () => {
-      container.removeEventListener('scroll', handleScroll);
+      container.removeEventListener("scroll", handleScroll);
     };
-  }, [items.length, itemHeight, containerHeight, overscan]);
+  }, [handleScroll]);
 
   // Calcular altura del espacio en blanco superior
   const topPadding = visibleStart * itemHeight;
@@ -56,7 +61,7 @@ export const VirtualList = <T extends any>({
   const bottomPadding = (items.length - visibleEnd) * itemHeight;
 
   return (
-    <div 
+    <div
       ref={containerRef}
       className={`overflow-y-auto ${className}`}
       style={{ height: containerHeight }}
@@ -70,4 +75,9 @@ export const VirtualList = <T extends any>({
       <div style={{ paddingBottom: `${bottomPadding}px` }} />
     </div>
   );
-};
+}
+
+// Export as generic component with memo
+export const VirtualList = memo(VirtualListComponent) as <T>(
+  props: VirtualListProps<T>,
+) => React.ReactElement;
