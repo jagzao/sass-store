@@ -1,8 +1,16 @@
-import { NextRequest } from 'next/server';
-import { db } from '@sass-store/database';
-import { tenants, apiKeys } from '@sass-store/database/schema';
-import { eq, and, or, gt, isNull } from 'drizzle-orm';
-import crypto from 'crypto';
+import { db } from "@sass-store/database";
+import { tenants, apiKeys } from "@sass-store/database/schema";
+import { eq, and, or, gt, isNull } from "drizzle-orm";
+import crypto from "crypto";
+
+/**
+ * Generic request interface to avoid Next.js version dependency issues
+ */
+export interface RequestWithHeaders {
+  headers: {
+    get(name: string): string | null;
+  };
+}
 
 /**
  * Hash an API key using SHA-256
@@ -10,25 +18,25 @@ import crypto from 'crypto';
  * @returns The hashed API key
  */
 function hashApiKey(apiKey: string): string {
-  return crypto.createHash('sha256').update(apiKey).digest('hex');
+  return crypto.createHash("sha256").update(apiKey).digest("hex");
 }
 
 /**
  * Validates the API key provided in the request headers
- * @param request The Next.js API request object
+ * @param request Any request object with a headers property
  * @returns An object with success status and tenant info if valid
  */
-export async function validateApiKey(request: NextRequest) {
+export async function validateApiKey(request: RequestWithHeaders) {
   // Extract API key from the request headers
-  const apiKey = request.headers.get('X-API-Key');
-  const tenantSlug = request.headers.get('X-Tenant');
+  const apiKey = request.headers.get("X-API-Key");
+  const tenantSlug = request.headers.get("X-Tenant");
 
   // Check if API key is present
   if (!apiKey) {
     return {
       success: false,
-      error: 'API key is required',
-      tenant: null
+      error: "API key is required",
+      tenant: null,
     };
   }
 
@@ -36,8 +44,8 @@ export async function validateApiKey(request: NextRequest) {
   if (!tenantSlug) {
     return {
       success: false,
-      error: 'Tenant slug is required',
-      tenant: null
+      error: "Tenant slug is required",
+      tenant: null,
     };
   }
 
@@ -62,20 +70,17 @@ export async function validateApiKey(request: NextRequest) {
         and(
           eq(apiKeys.key, hashedKey),
           eq(tenants.slug, tenantSlug),
-          eq(apiKeys.status, 'active'),
-          or(
-            isNull(apiKeys.expiresAt),
-            gt(apiKeys.expiresAt, new Date())
-          )
-        )
+          eq(apiKeys.status, "active"),
+          or(isNull(apiKeys.expiresAt), gt(apiKeys.expiresAt, new Date())),
+        ),
       )
       .limit(1);
 
     if (result.length === 0) {
       return {
         success: false,
-        error: 'Invalid API key or tenant',
-        tenant: null
+        error: "Invalid API key or tenant",
+        tenant: null,
       };
     }
 
@@ -86,7 +91,9 @@ export async function validateApiKey(request: NextRequest) {
       .set({ lastUsedAt: new Date() })
       .where(eq(apiKeys.id, apiKeyRecord.apiKeyId))
       .then(() => {})
-      .catch((err) => console.error('[API Auth] Failed to update lastUsedAt:', err));
+      .catch((err) =>
+        console.error("[API Auth] Failed to update lastUsedAt:", err),
+      );
 
     return {
       success: true,
@@ -94,16 +101,16 @@ export async function validateApiKey(request: NextRequest) {
       tenant: {
         id: apiKeyRecord.tenantId,
         slug: apiKeyRecord.tenantSlug,
-        name: apiKeyRecord.tenantName
+        name: apiKeyRecord.tenantName,
       },
-      permissions: apiKeyRecord.apiKeyPermissions as string[]
+      permissions: apiKeyRecord.apiKeyPermissions as string[],
     };
   } catch (error) {
-    console.error('[API Auth] Error validating API key:', error);
+    console.error("[API Auth] Error validating API key:", error);
     return {
       success: false,
-      error: 'Internal server error',
-      tenant: null
+      error: "Internal server error",
+      tenant: null,
     };
   }
 }
@@ -113,15 +120,15 @@ export async function validateApiKey(request: NextRequest) {
  * @param request The Next.js API request object
  * @returns A boolean indicating if the API key is valid
  */
-export async function validateSimpleApiKey(request: NextRequest) {
+export async function validateSimpleApiKey(request: RequestWithHeaders) {
   // Extract API key from the request headers
-  const apiKey = request.headers.get('X-API-Key');
+  const apiKey = request.headers.get("X-API-Key");
 
   // Check if API key is present
   if (!apiKey) {
     return {
       success: false,
-      error: 'API key is required'
+      error: "API key is required",
     };
   }
 
@@ -140,19 +147,16 @@ export async function validateSimpleApiKey(request: NextRequest) {
       .where(
         and(
           eq(apiKeys.key, hashedKey),
-          eq(apiKeys.status, 'active'),
-          or(
-            isNull(apiKeys.expiresAt),
-            gt(apiKeys.expiresAt, new Date())
-          )
-        )
+          eq(apiKeys.status, "active"),
+          or(isNull(apiKeys.expiresAt), gt(apiKeys.expiresAt, new Date())),
+        ),
       )
       .limit(1);
 
     if (result.length === 0) {
       return {
         success: false,
-        error: 'Invalid API key'
+        error: "Invalid API key",
       };
     }
 
@@ -161,17 +165,19 @@ export async function validateSimpleApiKey(request: NextRequest) {
       .set({ lastUsedAt: new Date() })
       .where(eq(apiKeys.id, result[0].id))
       .then(() => {})
-      .catch((err) => console.error('[Simple API Auth] Failed to update lastUsedAt:', err));
+      .catch((err) =>
+        console.error("[Simple API Auth] Failed to update lastUsedAt:", err),
+      );
 
     return {
       success: true,
-      error: null
+      error: null,
     };
   } catch (error) {
-    console.error('[Simple API Auth] Error validating API key:', error);
+    console.error("[Simple API Auth] Error validating API key:", error);
     return {
       success: false,
-      error: 'Internal server error'
+      error: "Internal server error",
     };
   }
 }

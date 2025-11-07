@@ -20,7 +20,7 @@ const changePasswordSchema = z.object({
 export async function GET(request: NextRequest) {
   try {
     // Validate API key
-    const authResult = validateSimpleApiKey(request);
+    const authResult = await validateSimpleApiKey(request);
     if (!authResult.success) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
     console.error("Users GET error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     // Validate API key
-    const authResult = validateSimpleApiKey(request);
+    const authResult = await validateSimpleApiKey(request);
     if (!authResult.success) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -118,13 +118,13 @@ export async function PUT(request: NextRequest) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: "Invalid request body", details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

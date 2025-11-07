@@ -1,7 +1,7 @@
-import crypto from 'crypto';
-import { db } from '@sass-store/database';
-import { oauthStateTokens } from '@sass-store/database/schema';
-import { eq, and, gt } from 'drizzle-orm';
+import crypto from "crypto";
+import { db } from "@sass-store/database";
+import { oauthStateTokens } from "@sass-store/database/schema";
+import { eq, and, gt, lt } from "drizzle-orm";
 
 /**
  * Generate a secure OAuth state token to prevent CSRF attacks
@@ -11,10 +11,10 @@ import { eq, and, gt } from 'drizzle-orm';
  */
 export async function generateOAuthState(
   tenantId: string,
-  provider: string
+  provider: string,
 ): Promise<string> {
   // Generate a cryptographically secure random state token
-  const state = crypto.randomBytes(32).toString('hex');
+  const state = crypto.randomBytes(32).toString("hex");
 
   // Set expiration to 10 minutes from now
   const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
@@ -39,10 +39,10 @@ export async function generateOAuthState(
  */
 export async function validateOAuthState(
   state: string,
-  provider: string
+  provider: string,
 ): Promise<string | null> {
   if (!state) {
-    console.warn('[OAuth] Missing state parameter');
+    console.warn("[OAuth] Missing state parameter");
     return null;
   }
 
@@ -56,13 +56,13 @@ export async function validateOAuthState(
           eq(oauthStateTokens.state, state),
           eq(oauthStateTokens.provider, provider),
           eq(oauthStateTokens.used, false),
-          gt(oauthStateTokens.expiresAt, new Date())
-        )
+          gt(oauthStateTokens.expiresAt, new Date()),
+        ),
       )
       .limit(1);
 
     if (!stateRecord) {
-      console.warn('[OAuth] Invalid, expired, or already used state token');
+      console.warn("[OAuth] Invalid, expired, or already used state token");
       return null;
     }
 
@@ -74,7 +74,7 @@ export async function validateOAuthState(
 
     return stateRecord.tenantId;
   } catch (error) {
-    console.error('[OAuth] Error validating state token:', error);
+    console.error("[OAuth] Error validating state token:", error);
     return null;
   }
 }
@@ -87,12 +87,10 @@ export async function cleanupExpiredOAuthStates(): Promise<void> {
   try {
     const result = await db
       .delete(oauthStateTokens)
-      .where(and(
-        gt(new Date(), oauthStateTokens.expiresAt)
-      ));
+      .where(lt(oauthStateTokens.expiresAt, new Date()));
 
-    console.log('[OAuth] Cleaned up expired state tokens');
+    console.log("[OAuth] Cleaned up expired state tokens");
   } catch (error) {
-    console.error('[OAuth] Error cleaning up state tokens:', error);
+    console.error("[OAuth] Error cleaning up state tokens:", error);
   }
 }

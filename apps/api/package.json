@@ -27,6 +27,7 @@
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.0",
+    "@types/minimatch": "^6.0.0",
     "@types/node": "20.8.0",
     "drizzle-kit": "^0.31.5",
     "eslint": "8.57.0",

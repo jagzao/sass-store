@@ -24,6 +24,9 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    // Resolve params (Next.js 16+ requirement)
+    const { id } = await params;
+
     // Resolve tenant
     const tenant = await resolveTenant(request);
     if (!tenant) {
@@ -48,9 +51,7 @@ export async function GET(
         return await db
           .select()
           .from(services)
-          .where(
-            and(eq(services.id, params.id), eq(services.tenantId, tenant.id)),
-          )
+          .where(and(eq(services.id, id), eq(services.tenantId, tenant.id)))
           .limit(1);
       },
     );
@@ -74,6 +75,9 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    // Resolve params (Next.js 16+ requirement)
+    const { id } = await params;
+
     // Validate API key for write operations
     const authResult = await validateApiKey(request);
     if (!authResult.success) {
@@ -108,9 +112,7 @@ export async function PUT(
         return await db
           .select()
           .from(services)
-          .where(
-            and(eq(services.id, params.id), eq(services.tenantId, tenant.id)),
-          )
+          .where(and(eq(services.id, id), eq(services.tenantId, tenant.id)))
           .limit(1);
       },
     );
@@ -128,7 +130,7 @@ export async function PUT(
     const updatedService = await db
       .update(services)
       .set(updateData)
-      .where(and(eq(services.id, params.id), eq(services.tenantId, tenant.id)))
+      .where(and(eq(services.id, id), eq(services.tenantId, tenant.id)))
       .returning();
 
     // Create audit log
@@ -137,7 +139,7 @@ export async function PUT(
       actorId: "system", // For API-based actions, use a system actor
       action: "service:update",
       targetTable: "services",
-      targetId: params.id,
+      targetId: id,
       data: { before: existingService[0], after: updatedService[0] },
     });
 
@@ -164,6 +166,9 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    // Resolve params (Next.js 16+ requirement)
+    const { id } = await params;
+
     // Validate API key for write operations
     const authResult = await validateApiKey(request);
     if (!authResult.success) {
@@ -194,9 +199,7 @@ export async function DELETE(
         return await db
           .select()
           .from(services)
-          .where(
-            and(eq(services.id, params.id), eq(services.tenantId, tenant.id)),
-          )
+          .where(and(eq(services.id, id), eq(services.tenantId, tenant.id)))
           .limit(1);
       },
     );
@@ -208,7 +211,7 @@ export async function DELETE(
     // Delete service
     await db
       .delete(services)
-      .where(and(eq(services.id, params.id), eq(services.tenantId, tenant.id)));
+      .where(and(eq(services.id, id), eq(services.tenantId, tenant.id)));
 
     // Create audit log
     await createAuditLog({
@@ -216,7 +219,7 @@ export async function DELETE(
       actorId: "system", // For API-based actions, use a system actor
       action: "service:delete",
       targetTable: "services",
-      targetId: params.id,
+      targetId: id,
       data: { deleted: existingService[0] },
     });
 

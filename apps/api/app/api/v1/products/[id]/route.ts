@@ -25,6 +25,9 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    // Resolve params (Next.js 16+ requirement)
+    const { id } = await params;
+
     // Resolve tenant
     const tenant = await resolveTenant(request);
     if (!tenant) {
@@ -49,9 +52,7 @@ export async function GET(
         return await db
           .select()
           .from(products)
-          .where(
-            and(eq(products.id, params.id), eq(products.tenantId, tenant.id)),
-          )
+          .where(and(eq(products.id, id), eq(products.tenantId, tenant.id)))
           .limit(1);
       },
     );
@@ -75,6 +76,9 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    // Resolve params (Next.js 16+ requirement)
+    const { id } = await params;
+
     // Validate API key for write operations
     const authResult = await validateApiKey(request);
     if (!authResult.success) {
@@ -109,9 +113,7 @@ export async function PUT(
         return await db
           .select()
           .from(products)
-          .where(
-            and(eq(products.id, params.id), eq(products.tenantId, tenant.id)),
-          )
+          .where(and(eq(products.id, id), eq(products.tenantId, tenant.id)))
           .limit(1);
       },
     );
@@ -157,7 +159,7 @@ export async function PUT(
     const updatedProduct = await db
       .update(products)
       .set(updateData)
-      .where(and(eq(products.id, params.id), eq(products.tenantId, tenant.id)))
+      .where(and(eq(products.id, id), eq(products.tenantId, tenant.id)))
       .returning();
 
     // Create audit log
@@ -166,7 +168,7 @@ export async function PUT(
       actorId: "system", // For API-based actions, use a system actor
       action: "product:update",
       targetTable: "products",
-      targetId: params.id,
+      targetId: id,
       data: { before: existingProduct[0], after: updatedProduct[0] },
     });
 
@@ -193,6 +195,9 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    // Resolve params (Next.js 16+ requirement)
+    const { id } = await params;
+
     // Validate API key for write operations
     const authResult = await validateApiKey(request);
     if (!authResult.success) {
@@ -223,9 +228,7 @@ export async function DELETE(
         return await db
           .select()
           .from(products)
-          .where(
-            and(eq(products.id, params.id), eq(products.tenantId, tenant.id)),
-          )
+          .where(and(eq(products.id, id), eq(products.tenantId, tenant.id)))
           .limit(1);
       },
     );
@@ -237,7 +240,7 @@ export async function DELETE(
     // Delete product
     await db
       .delete(products)
-      .where(and(eq(products.id, params.id), eq(products.tenantId, tenant.id)));
+      .where(and(eq(products.id, id), eq(products.tenantId, tenant.id)));
 
     // Create audit log
     await createAuditLog({
@@ -245,7 +248,7 @@ export async function DELETE(
       actorId: "system", // For API-based actions, use a system actor
       action: "product:delete",
       targetTable: "products",
-      targetId: params.id,
+      targetId: id,
       data: { deleted: existingProduct[0] },
     });
 
