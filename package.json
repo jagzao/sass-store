@@ -10,8 +10,12 @@
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
+    "build:cloudflare": "CF_PAGES=1 turbo run build",
     "start": "turbo run start",
     "lint": "turbo run lint",
+    "deploy": "npm run build:cloudflare && echo 'Build complete! Deploy to Cloudflare Pages via dashboard or wrangler'",
+    "deploy:preview": "npm run build:cloudflare && wrangler pages deploy apps/web/out --branch=preview",
+    "deploy:production": "npm run build:cloudflare && wrangler pages deploy apps/web/out --branch=main",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",

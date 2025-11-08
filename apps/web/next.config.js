@@ -4,6 +4,10 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Cloudflare Pages compatibility
+  // Use standalone output for Cloudflare Pages with @cloudflare/next-on-pages
+  output: process.env.CF_PAGES ? 'export' : undefined,
+
   // Next.js 14 compatible configuration
   experimental: {
     // Experimental features for Next.js 14
