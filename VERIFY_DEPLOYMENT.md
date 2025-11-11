@@ -2,7 +2,7 @@
 
 ## 🚀 Deployment Triggered!
 
-**Commit**: `16843fd` - fix: resolve package-lock.json sync issues
+**Commit**: `58bdf27` - fix: standardize to Next.js 14 + React 18
 **Branch**: `claude/app-analysis-review-011CUoKxCqQbQrJQrVPSFdae`
 **Timestamp**: 2025-11-09
 **Status**: ⏳ Building...
