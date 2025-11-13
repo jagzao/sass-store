@@ -12,7 +12,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "downlevelIteration": true,
-    "jsx": "react-jsx",
+    "jsx": "preserve",
     "incremental": true,
     "plugins": [
       {
@@ -28,7 +28,8 @@
       "@sass-store/ui": ["../../packages/ui"],
       "@sass-store/database": ["../../packages/database"],
       "@sass-store/config": ["../../packages/config"],
-      "@sass-store/shared": ["../../packages/shared"]
+      "@sass-store/shared": ["../../packages/shared"],
+      "@sass-store/cache": ["../../packages/cache"]
     }
   },
   "include": [

@@ -1,12 +1,18 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  type ReactNode,
+} from "react";
 import { Tenant, TenantContext } from "./types";
 
 const TenantContextImpl = createContext<TenantContext | null>(null);
 
 interface TenantProviderProps {
-  children: React.ReactNode;
+  children: ReactNode;
   tenant: Tenant;
 }
 

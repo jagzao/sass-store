@@ -14,9 +14,9 @@ export interface ValidationResult {
 export class InputValidator {
   private static sqlInjectionPatterns = [
     /(\bUNION\b|\bSELECT\b|\bINSERT\b|\bUPDATE\b|\bDELETE\b|\bDROP\b|\bCREATE\b|\bALTER\b)/i,
-    /('|(\\x27)|(\\x2D\\x2D)|(\\#)|(\\x23)|(\-\-)|(\;)|(\%3B)|(\%27)|(\%22)|(\%3D)|(\%2D)|(\%23))/i,
+    /('|(\\x27)|(\\x2D\\x2D)|(\\#)|(\\x23)|(--)|;|(%3B)|(%27)|(%22)|(%3D)|(%2D)|(%23))/i,
     /(\bOR\b|\bAND\b)\s+\d+\s*=\s*\d+/i,
-    /('|(\\x27)|(\\x2D\\x2D)|(\#)|(\\x23)|(\-\-)|(\;)|(\%3B)|(\%27)|(\%22)|(\%3D)|(\%2D)|(\%23))/i,
+    /('|(\\x27)|(\\x2D\\x2D)|(#)|(\\x23)|(--)|;|(%3B)|(%27)|(%22)|(%3D)|(%2D)|(%23))/i,
   ];
 
   private static xssPatterns = [
@@ -49,7 +49,7 @@ export class InputValidator {
       fieldName?: string;
       ipAddress?: string;
       userAgent?: string;
-    } = {}
+    } = {},
   ): ValidationResult {
     const errors: string[] = [];
     const warnings: string[] = [];
@@ -63,13 +63,13 @@ export class InputValidator {
     // Length validation
     if (options.maxLength && input.length > options.maxLength) {
       errors.push(
-        `${options.fieldName || "Field"} exceeds maximum length of ${options.maxLength} characters`
+        `${options.fieldName || "Field"} exceeds maximum length of ${options.maxLength} characters`,
       );
     }
 
     if (options.minLength && input.length < options.minLength) {
       errors.push(
-        `${options.fieldName || "Field"} must be at least ${options.minLength} characters long`
+        `${options.fieldName || "Field"} must be at least ${options.minLength} characters long`,
       );
     }
 
@@ -91,7 +91,7 @@ export class InputValidator {
             fieldName: options.fieldName,
             inputLength: input.length,
             pattern: pattern.source,
-          }
+          },
         );
         break;
       }
@@ -115,7 +115,7 @@ export class InputValidator {
 
     // Special characters validation
     if (!options.allowSpecialChars) {
-      const specialChars = /[<>\"'&]/;
+      const specialChars = /[<>"'&]/;
       if (specialChars.test(input)) {
         warnings.push("Special characters detected");
         if (riskLevel === "low") riskLevel = "medium";
@@ -150,7 +150,7 @@ export class InputValidator {
     options: {
       ipAddress?: string;
       userAgent?: string;
-    } = {}
+    } = {},
   ): ValidationResult {
     const errors: string[] = [];
     const warnings: string[] = [];
@@ -212,7 +212,7 @@ export class InputValidator {
       fieldName?: string;
       ipAddress?: string;
       userAgent?: string;
-    } = {}
+    } = {},
   ): ValidationResult {
     const errors: string[] = [];
     const warnings: string[] = [];
@@ -231,13 +231,13 @@ export class InputValidator {
 
     if (options.min !== undefined && num < options.min) {
       errors.push(
-        `${options.fieldName || "Field"} must be at least ${options.min}`
+        `${options.fieldName || "Field"} must be at least ${options.min}`,
       );
     }
 
     if (options.max !== undefined && num > options.max) {
       errors.push(
-        `${options.fieldName || "Field"} must be at most ${options.max}`
+        `${options.fieldName || "Field"} must be at most ${options.max}`,
       );
     }
 
@@ -265,7 +265,7 @@ export class InputValidator {
       allowedProtocols?: string[];
       ipAddress?: string;
       userAgent?: string;
-    } = {}
+    } = {},
   ): ValidationResult {
     const errors: string[] = [];
     const warnings: string[] = [];
@@ -360,7 +360,7 @@ export class InputValidator {
               return attrMatch;
             }
             return "";
-          }
+          },
         );
       }
       return "";

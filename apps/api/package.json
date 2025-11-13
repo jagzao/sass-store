@@ -19,7 +19,7 @@
     "@upstash/redis": "^1.24.0",
     "bcryptjs": "^2.4.3",
     "drizzle-orm": "^0.31.0",
-    "graphql": "^17.0.0-alpha.7",
+    "graphql": "^16.12.0",
     "graphql-tag": "^2.12.6",
     "jose": "^5.0.0",
     "next": "14.2.33",
@@ -40,8 +40,5 @@
     "eslint-config-next": "14.0.0",
     "tsx": "^4.0.0",
     "typescript": "5.2.2"
-  },
-  "optionalDependencies": {
-    "@yaacovcr/transform": "^0.0.8"
   }
 }

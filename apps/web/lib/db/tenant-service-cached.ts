@@ -3,7 +3,7 @@
  * Uses Redis for caching tenant data to reduce database load
  */
 
-import { tenantCache } from "@/../../packages/cache/redis";
+import { tenantCache } from "@sass-store/cache/redis";
 import { TenantService } from "./tenant-service";
 
 export const CachedTenantService = {

@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
-const CSRF_HEADER_NAME = 'x-csrf-token';
+const CSRF_HEADER_NAME = "x-csrf-token";
 
 /**
  * Hook to get the CSRF token for making protected requests
@@ -15,7 +15,7 @@ export function useCsrf() {
     // Try to get the token from a meta tag (set by the server)
     const metaTag = document.querySelector('meta[name="csrf-token"]');
     if (metaTag) {
-      const token = metaTag.getAttribute('content');
+      const token = metaTag.getAttribute("content");
       if (token) {
         setCsrfToken(token);
         return;
@@ -23,15 +23,15 @@ export function useCsrf() {
     }
 
     // If not in meta tag, fetch it from the server
-    fetch('/api/csrf-token')
-      .then(res => res.json())
-      .then(data => {
+    fetch("/api/csrf-token")
+      .then((res) => res.json())
+      .then((data) => {
         if (data.token) {
           setCsrfToken(data.token);
         }
       })
-      .catch(err => {
-        console.error('[CSRF] Failed to fetch CSRF token:', err);
+      .catch((err) => {
+        console.error("[CSRF] Failed to fetch CSRF token:", err);
       });
   }, []);
 
@@ -40,7 +40,7 @@ export function useCsrf() {
    */
   const getCsrfHeaders = () => {
     if (!csrfToken) {
-      console.warn('[CSRF] CSRF token not available');
+      console.warn("[CSRF] CSRF token not available");
       return {};
     }
 
@@ -52,6 +52,7 @@ export function useCsrf() {
   /**
    * Make a fetch request with CSRF token automatically included
    */
+  // eslint-disable-next-line no-undef
   const csrfFetch = async (url: string, options: RequestInit = {}) => {
     const headers = new Headers(options.headers);
 

@@ -4,8 +4,10 @@ const nextConfig = {
   // Use export for static site generation
   output: process.env.CF_PAGES ? 'export' : undefined,
 
-  // Basic configuration for development
-  serverExternalPackages: ["@sass-store/database"],
+  experimental: {
+    // Basic configuration for development
+    serverComponentsExternalPackages: ["@sass-store/database"],
+  },
 
   // Simple image configuration
   images: {
