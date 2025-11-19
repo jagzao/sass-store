@@ -1,9 +1,13 @@
-import type { Config } from 'drizzle-kit';
+import type { Config } from "drizzle-kit";
+import * as dotenv from "dotenv";
+
+// Load environment variables
+dotenv.config();
 
 export default {
-  schema: 'packages/database/schema.ts',
-  out: 'packages/database/migrations',
-  dialect: 'postgresql',
+  schema: "packages/database/schema.ts",
+  out: "packages/database/migrations",
+  dialect: "postgresql",
   dbCredentials: {
     url: process.env.DATABASE_URL!,
   },
