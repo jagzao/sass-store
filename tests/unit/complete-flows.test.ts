@@ -414,9 +414,10 @@ describe("Complete Business Flows", () => {
         return day === 0 || day === 6;
       };
 
-      expect(isWeekend(new Date("2025-01-18"))).toBe(true); // Saturday
-      expect(isWeekend(new Date("2025-01-19"))).toBe(true); // Sunday
-      expect(isWeekend(new Date("2025-01-20"))).toBe(false); // Monday
+      // Use explicit local dates to avoid timezone issues
+      expect(isWeekend(new Date(2025, 0, 18))).toBe(true); // Saturday (Month is 0-indexed)
+      expect(isWeekend(new Date(2025, 0, 19))).toBe(true); // Sunday
+      expect(isWeekend(new Date(2025, 0, 20))).toBe(false); // Monday
     });
 
     it("should calculate age from birthdate", () => {

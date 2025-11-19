@@ -16,6 +16,8 @@ export default defineConfig({
       "dist",
       ".next",
       "tests/e2e/**", // E2E tests run separately with Playwright
+      "tests/integration/wondernails-performance.int.spec.ts", // Playwright test
+      "tests/integration/api/tenant-api.spec.ts", // Playwright test
     ],
     coverage: {
       provider: "v8",
