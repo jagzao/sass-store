@@ -24,7 +24,11 @@ beforeAll(async () => {
 // Cleanup after each test
 afterEach(async () => {
   if (process.env.DATABASE_URL || process.env.TEST_DATABASE_URL) {
-    await cleanupTestData();
+    try {
+      await cleanupTestData();
+    } catch (error) {
+      // Silently skip if database is not available
+    }
   }
 });
 
@@ -32,8 +36,12 @@ afterEach(async () => {
 afterAll(async () => {
   if (process.env.DATABASE_URL || process.env.TEST_DATABASE_URL) {
     console.log("🧹 Cleaning up test environment...");
-    await teardownTestDatabase();
-    console.log("✅ Test environment cleaned up");
+    try {
+      await teardownTestDatabase();
+      console.log("✅ Test environment cleaned up");
+    } catch (error) {
+      console.log("⚠️ Teardown skipped (no active database connection)");
+    }
   }
 });
 

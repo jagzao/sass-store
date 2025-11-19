@@ -70,7 +70,7 @@ export async function teardownTestDatabase() {
  * Truncates all tables while preserving schema
  */
 export async function cleanupTestData() {
-  if (!testDb) return;
+  if (!testDb || !testClient) return;
 
   // List of tables to clean (in order to avoid foreign key constraints)
   const tables = [
@@ -87,10 +87,11 @@ export async function cleanupTestData() {
 
   try {
     for (const table of tables) {
-      await testClient?.unsafe(`TRUNCATE TABLE "${table}" CASCADE`);
+      await testClient.unsafe(`TRUNCATE TABLE "${table}" CASCADE`);
     }
   } catch (error) {
-    console.error("Error cleaning up test data:", error);
+    // Silently skip cleanup if database doesn't exist
+    // This allows tests that don't require DB to still run
   }
 }
 

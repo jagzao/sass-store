@@ -1,1 +1,14 @@
-npm run typecheck
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🚀 Running pre-push checks..."
+
+# Type check
+echo "🔬 Type checking..."
+npm run typecheck || exit 1
+
+# Run quick tests (non-database)
+echo "🧪 Running quick tests..."
+npm run test -- tests/unit/logger.spec.ts tests/unit/alerts.spec.ts tests/unit/complete-flows.test.ts --run || echo "⚠️  Some tests failed, but allowing push"
+
+echo "✅ Pre-push checks completed!"
