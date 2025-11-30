@@ -9,7 +9,7 @@ const nextConfig = {
     serverComponentsExternalPackages: ["@sass-store/database"],
   },
 
-  // Simple image configuration
+  // Optimized image configuration for performance
   images: {
     remotePatterns: [
       {
@@ -22,6 +22,13 @@ const nextConfig = {
       },
     ],
     formats: ["image/avif", "image/webp"],
+    // Performance optimizations
+    minimumCacheTTL: 31536000, // Cache images for 1 year
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920], // Common breakpoints
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384], // Icon and small image sizes
+    dangerouslyAllowSVG: false, // Security: prevent XSS via SVG
+    contentDispositionType: 'attachment', // Security: force download for unknown types
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
 
   // Security headers

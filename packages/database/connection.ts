@@ -24,8 +24,11 @@ if (!connectionString || connectionString === 'your-database-url-here') {
 // Singleton pattern to prevent connection pool exhaustion
 // CRITICAL: Supabase free tier has only 3-5 connection limit
 declare global {
+  // eslint-disable-next-line no-var
   var __db: ReturnType<typeof drizzle> | undefined;
+  // eslint-disable-next-line no-var
   var __client: postgres.Sql | undefined;
+  // eslint-disable-next-line no-var
   var __connectionString: string | undefined;
 }
 

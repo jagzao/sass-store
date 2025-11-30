@@ -379,6 +379,8 @@ export const tenantsRelations = relations(tenants, ({ many }) => ({
   movements: many(financialMovements),
   campaigns: many(campaigns),
   reels: many(reels),
+  customers: many(customers),
+  customerVisits: many(customerVisits),
 }));
 
 export const tenantConfigsRelations = relations(tenantConfigs, ({ one }) => ({
@@ -1237,6 +1239,141 @@ export const oauthStateTokens = pgTable(
     expiresIdx: index("oauth_state_tokens_expires_idx").on(table.expiresAt),
   })
 );
+
+// ========================================================================
+// CUSTOMER MANAGEMENT - Customer Files & Visit History
+// ========================================================================
+
+// Customer status enum
+export const customerStatus = pgEnum("customer_status", ["active", "inactive", "blocked"]);
+
+// Visit status enum
+export const visitStatus = pgEnum("visit_status", ["pending", "scheduled", "completed", "cancelled"]);
+
+// Customers table - Master customer data
+export const customers = pgTable(
+  "customers",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .references(() => tenants.id)
+      .notNull(),
+    name: varchar("name", { length: 200 }).notNull(),
+    phone: varchar("phone", { length: 20 }).notNull(),
+    email: varchar("email", { length: 255 }),
+    generalNotes: text("general_notes"), // "Acerca de la clienta"
+    tags: text("tags").array().default(sql`ARRAY[]::text[]`), // Tags: alergias, preferencias, tipo de piel, etc.
+    status: customerStatus("status").notNull().default("active"),
+    metadata: jsonb("metadata").default("{}"), // Additional flexible data
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    tenantIdx: index("customers_tenant_idx").on(table.tenantId),
+    phoneIdx: index("customers_phone_idx").on(table.phone),
+    emailIdx: index("customers_email_idx").on(table.email),
+    tenantPhoneIdx: index("customers_tenant_phone_idx").on(table.tenantId, table.phone),
+    statusIdx: index("customers_status_idx").on(table.status),
+  })
+);
+
+// Customer Visits table - Visit history per customer
+export const customerVisits = pgTable(
+  "customer_visits",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .references(() => tenants.id)
+      .notNull(),
+    customerId: uuid("customer_id")
+      .references(() => customers.id, { onDelete: "cascade" })
+      .notNull(),
+    appointmentId: uuid("appointment_id")
+      .references(() => bookings.id), // Link to calendar appointment (nullable)
+    visitNumber: integer("visit_number").notNull(), // Sequential number per customer
+    visitDate: timestamp("visit_date", { withTimezone: true }).notNull(),
+    totalAmount: decimal("total_amount", { precision: 10, scale: 2 }).notNull().default("0"),
+    notes: text("notes"), // Observaciones de la visita
+    nextVisitFrom: date("next_visit_from"), // Próxima cita sugerida (inicio rango)
+    nextVisitTo: date("next_visit_to"), // Próxima cita sugerida (fin rango)
+    status: visitStatus("status").notNull().default("completed"),
+    metadata: jsonb("metadata").default("{}"),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    tenantIdx: index("customer_visits_tenant_idx").on(table.tenantId),
+    customerIdx: index("customer_visits_customer_idx").on(table.customerId),
+    visitDateIdx: index("customer_visits_date_idx").on(table.visitDate),
+    statusIdx: index("customer_visits_status_idx").on(table.status),
+    tenantCustomerIdx: index("customer_visits_tenant_customer_idx").on(
+      table.tenantId,
+      table.customerId
+    ),
+    appointmentIdx: index("customer_visits_appointment_idx").on(table.appointmentId),
+  })
+);
+
+// Customer Visit Services table - Services performed per visit
+export const customerVisitServices = pgTable(
+  "customer_visit_services",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    visitId: uuid("visit_id")
+      .references(() => customerVisits.id, { onDelete: "cascade" })
+      .notNull(),
+    serviceId: uuid("service_id")
+      .references(() => services.id)
+      .notNull(),
+    description: text("description"), // Optional custom description
+    unitPrice: decimal("unit_price", { precision: 10, scale: 2 }).notNull(),
+    quantity: decimal("quantity", { precision: 5, scale: 2 }).notNull().default("1"),
+    subtotal: decimal("subtotal", { precision: 10, scale: 2 }).notNull(),
+    metadata: jsonb("metadata").default("{}"),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    visitIdx: index("customer_visit_services_visit_idx").on(table.visitId),
+    serviceIdx: index("customer_visit_services_service_idx").on(table.serviceId),
+  })
+);
+
+// Customer Management Relations
+export const customersRelations = relations(customers, ({ one, many }) => ({
+  tenant: one(tenants, {
+    fields: [customers.tenantId],
+    references: [tenants.id],
+  }),
+  visits: many(customerVisits),
+}));
+
+export const customerVisitsRelations = relations(customerVisits, ({ one, many }) => ({
+  tenant: one(tenants, {
+    fields: [customerVisits.tenantId],
+    references: [tenants.id],
+  }),
+  customer: one(customers, {
+    fields: [customerVisits.customerId],
+    references: [customers.id],
+  }),
+  appointment: one(bookings, {
+    fields: [customerVisits.appointmentId],
+    references: [bookings.id],
+  }),
+  services: many(customerVisitServices),
+}));
+
+export const customerVisitServicesRelations = relations(customerVisitServices, ({ one }) => ({
+  visit: one(customerVisits, {
+    fields: [customerVisitServices.visitId],
+    references: [customerVisits.id],
+  }),
+  service: one(services, {
+    fields: [customerVisitServices.serviceId],
+    references: [services.id],
+  }),
+}));
 
 // POS Terminals Relations
 export const posTerminalsRelations = relations(posTerminals, ({ one }) => ({

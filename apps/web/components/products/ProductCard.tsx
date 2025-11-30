@@ -1,6 +1,7 @@
+/* eslint-disable no-undef */
 'use client';
 
-import { useState, useRef, useEffect, memo } from "react";
+import React, { useState, useRef, useEffect, memo } from "react";
 import { useRouter } from "next/navigation";
 import { useAnnounce } from "@/components/a11y/LiveRegion";
 import { useCart } from "@/lib/cart/cart-store";
@@ -22,6 +23,7 @@ export interface ProductCardProps {
   tenantSlug: string;
   metadata?: ProductMetadata;
   onAddToCart?: (productId: string, quantity: number) => void;
+  variant?: 'default' | 'luxury';
 }
 
 const ProductCard = memo(function ProductCard({
@@ -34,7 +36,8 @@ const ProductCard = memo(function ProductCard({
   primaryColor,
   tenantSlug,
   metadata,
-  onAddToCart
+  onAddToCart,
+  variant = 'default'
 }: ProductCardProps) {
   const router = useRouter();
   const announce = useAnnounce();
@@ -156,25 +159,42 @@ const ProductCard = memo(function ProductCard({
     setShowModal(true);
   };
 
+  const isLuxury = variant === 'luxury';
+
   return (
     <>
-      <div data-testid="product-card" className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+      <div 
+        data-testid="product-card" 
+        className={`rounded-lg overflow-hidden transition-all duration-300 ${
+          isLuxury 
+            ? 'bg-[#1a1a1a]/60 backdrop-blur-md border border-[#D4AF37]/20 hover:border-[#D4AF37]/40 hover:shadow-[0_10px_30px_rgba(212,175,55,0.1)]' 
+            : 'bg-white shadow-md hover:shadow-lg'
+        }`}
+      >
         {/* Image - clickable for details */}
         <div
           className="p-6 cursor-pointer hover:opacity-90 transition-opacity"
           onClick={handleImageClick}
         >
           <div className="text-5xl mb-4 text-center" role="img" aria-label={`Imagen de ${name}`}>
-            {image || metadata?.image || '📦'}
+            {image || metadata?.image || (isLuxury ? '' : '📦')}
           </div>
-          <h3 className="text-xl font-semibold mb-2">{name}</h3>
-          <p className="text-gray-600 text-sm mb-4 line-clamp-2">{description}</p>
+          <h3 className={`text-xl font-semibold mb-2 ${isLuxury ? 'text-[#D4AF37] font-serif tracking-wide' : ''}`}>
+            {name}
+          </h3>
+          <p className={`text-sm mb-4 line-clamp-2 ${isLuxury ? 'text-gray-300 font-light' : 'text-gray-600'}`}>
+            {description}
+          </p>
 
           <div className="flex justify-between items-center mb-4">
-            <span className="text-2xl font-bold" style={{ color: primaryColor }}>
+            <span className={`text-2xl font-bold ${isLuxury ? 'text-white' : ''}`} style={!isLuxury ? { color: primaryColor } : undefined}>
               ${price}
             </span>
-            <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded capitalize">
+            <span className={`text-xs px-2 py-1 rounded capitalize ${
+              isLuxury 
+                ? 'text-[#D4AF37] bg-[#D4AF37]/10 border border-[#D4AF37]/20' 
+                : 'text-gray-500 bg-gray-100'
+            }`}>
               {category?.replace('-', ' ') || metadata?.category?.replace('-', ' ') || 'general'}
             </span>
           </div>
@@ -186,7 +206,11 @@ const ProductCard = memo(function ProductCard({
           <div className="flex items-center justify-center mb-3 gap-3">
             <button
               onClick={handleDecrement}
-              className="w-8 h-8 rounded-full border-2 border-gray-300 flex items-center justify-center hover:bg-gray-100 transition-colors font-bold text-lg"
+              className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-colors font-bold text-lg ${
+                isLuxury 
+                  ? 'border-[#D4AF37]/30 text-[#D4AF37] hover:bg-[#D4AF37]/10' 
+                  : 'border-gray-300 hover:bg-gray-100'
+              }`}
               aria-label="Decrease quantity"
             >
               -
@@ -195,13 +219,21 @@ const ProductCard = memo(function ProductCard({
               type="number"
               value={localQuantity}
               onChange={handleQuantityChange}
-              className="w-16 text-center font-semibold text-lg border-2 border-gray-200 rounded px-2 py-1 focus:border-gray-400 focus:outline-none"
+              className={`w-16 text-center font-semibold text-lg border-2 rounded px-2 py-1 focus:outline-none ${
+                isLuxury
+                  ? 'bg-transparent border-[#D4AF37]/30 text-white focus:border-[#D4AF37]'
+                  : 'border-gray-200 focus:border-gray-400'
+              }`}
               min="0"
               aria-label="Quantity"
             />
             <button
               onClick={handleIncrement}
-              className="w-8 h-8 rounded-full border-2 border-gray-300 flex items-center justify-center hover:bg-gray-100 transition-colors font-bold text-lg"
+              className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-colors font-bold text-lg ${
+                isLuxury 
+                  ? 'border-[#D4AF37]/30 text-[#D4AF37] hover:bg-[#D4AF37]/10' 
+                  : 'border-gray-300 hover:bg-gray-100'
+              }`}
               aria-label="Increase quantity"
             >
               +
@@ -213,8 +245,10 @@ const ProductCard = memo(function ProductCard({
             data-testid="add-to-cart-btn"
             onClick={handleComprarAhora}
             disabled={isAdding}
-            className="w-full py-3 px-6 rounded-lg text-white font-semibold hover:opacity-90 transition-opacity disabled:opacity-70 disabled:cursor-not-allowed"
-            style={{ backgroundColor: primaryColor }}
+            className={`w-full py-3 px-6 rounded-lg font-semibold hover:opacity-90 transition-opacity disabled:opacity-70 disabled:cursor-not-allowed ${
+              isLuxury ? 'text-[#121212]' : 'text-white'
+            }`}
+            style={{ backgroundColor: isLuxury ? '#D4AF37' : primaryColor }}
           >
             {isAdding ? 'Agregando...' : 'Comprar ahora'}
           </button>

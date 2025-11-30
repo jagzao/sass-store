@@ -1,0 +1,274 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { User, Phone, Mail, Edit, Save, X } from "lucide-react";
+
+interface Customer {
+  id: string;
+  name: string;
+  phone: string;
+  email?: string;
+  generalNotes?: string;
+  tags: string[];
+  status: "active" | "inactive" | "blocked";
+}
+
+interface CustomerFileHeaderProps {
+  tenantSlug: string;
+  customerId: string;
+}
+
+export default function CustomerFileHeader({ tenantSlug, customerId }: CustomerFileHeaderProps) {
+  const [customer, setCustomer] = useState<Customer | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [editing, setEditing] = useState(false);
+  const [editedNotes, setEditedNotes] = useState("");
+
+  useEffect(() => {
+    async function fetchCustomer() {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const response = await fetch(`/api/tenants/${tenantSlug}/customers/${customerId}`);
+        
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.error || `Error ${response.status}: ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        
+        if (!data.customer) {
+          throw new Error("No se encontraron datos de la clienta");
+        }
+        
+        setCustomer(data.customer);
+        setEditedNotes(data.customer.generalNotes || "");
+      } catch (error) {
+        console.error("Error fetching customer:", error);
+        setError(error instanceof Error ? error.message : "Error al cargar la información de la clienta");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchCustomer();
+  }, [tenantSlug, customerId]);
+
+  const handleSaveNotes = async () => {
+    if (!customer) return;
+
+    try {
+      const response = await fetch(`/api/tenants/${tenantSlug}/customers/${customerId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ generalNotes: editedNotes }),
+      });
+
+      if (!response.ok) throw new Error("Failed to update notes");
+
+      setCustomer({ ...customer, generalNotes: editedNotes });
+      setEditing(false);
+    } catch (error) {
+      console.error("Error updating notes:", error);
+      alert("Error al guardar las notas");
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="bg-white rounded-lg shadow p-6 mb-6">
+        <div className="animate-pulse flex items-center space-x-4">
+          <div className="w-16 h-16 bg-gray-200 rounded-full" />
+          <div className="flex-1">
+            <div className="h-6 bg-gray-200 rounded w-1/3 mb-2" />
+            <div className="h-4 bg-gray-200 rounded w-1/4" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!customer) {
+    return (
+      <div className="bg-red-50 border border-red-200 rounded-lg p-6 mb-6">
+        <div className="flex items-start justify-between">
+          <div>
+            <h3 className="text-lg font-medium text-red-800 mb-2">Error al cargar la información</h3>
+            <p className="text-red-700 mb-4">
+              {error || "No se pudo cargar la información de la clienta. Por favor, intente nuevamente."}
+            </p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => window.location.reload()}
+                className="px-3 py-1 bg-red-100 text-red-800 rounded-md text-sm hover:bg-red-200 transition-colors"
+              >
+                Recargar página
+              </button>
+              <button
+                onClick={() => {
+                  setLoading(true);
+                  setError(null);
+                  // Reintentar cargar los datos
+                  fetch(`/api/tenants/${tenantSlug}/customers/${customerId}`)
+                    .then(response => {
+                      if (!response.ok) throw new Error("Failed to fetch customer");
+                      return response.json();
+                    })
+                    .then(data => {
+                      setCustomer(data.customer);
+                      setEditedNotes(data.customer.generalNotes || "");
+                      setError(null);
+                    })
+                    .catch(err => {
+                      console.error("Error retrying fetch:", err);
+                      setError(err instanceof Error ? err.message : "Error al cargar la información de la clienta");
+                    })
+                    .finally(() => setLoading(false));
+                }}
+                className="px-3 py-1 bg-white text-red-800 border border-red-300 rounded-md text-sm hover:bg-red-50 transition-colors"
+              >
+                Reintentar
+              </button>
+              <a
+                href={`/t/${tenantSlug}/clientes`}
+                className="px-3 py-1 bg-white text-red-800 border border-red-300 rounded-md text-sm hover:bg-red-50 transition-colors"
+              >
+                Volver a clientas
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const isLuxury = tenantSlug === 'wondernails';
+
+  return (
+    <div className={`${isLuxury ? 'bg-[#1a1a1a]/60 border border-[#D4AF37]/20 backdrop-blur-md' : 'bg-white shadow'} rounded-lg p-6 mb-6`}>
+      <div className="flex items-start justify-between mb-4">
+        <div className="flex items-center space-x-4">
+          {/* Avatar */}
+          <div className="flex-shrink-0">
+            <div className={`w-16 h-16 rounded-full ${isLuxury ? 'bg-gradient-to-br from-[#D4AF37] to-[#b3932d]' : 'bg-gradient-to-br from-blue-400 to-blue-600'} flex items-center justify-center`}>
+              <User className={`h-8 w-8 ${isLuxury ? 'text-[#121212]' : 'text-white'}`} />
+            </div>
+          </div>
+
+          {/* Info */}
+          <div>
+            <h1 className={`text-2xl font-bold ${isLuxury ? 'text-white font-serif' : 'text-gray-900'}`}>{customer.name}</h1>
+            <div className="flex items-center gap-4 mt-2">
+              <div className={`flex items-center text-sm ${isLuxury ? 'text-gray-400' : 'text-gray-600'}`}>
+                <Phone className={`h-4 w-4 mr-1 ${isLuxury ? 'text-[#D4AF37]' : ''}`} />
+                {customer.phone}
+              </div>
+              {customer.email && (
+                <div className={`flex items-center text-sm ${isLuxury ? 'text-gray-400' : 'text-gray-600'}`}>
+                  <Mail className={`h-4 w-4 mr-1 ${isLuxury ? 'text-[#D4AF37]' : ''}`} />
+                  {customer.email}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Status Badge */}
+        <span
+          className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
+            isLuxury
+              ? customer.status === "active"
+                ? "bg-[#D4AF37]/20 text-[#D4AF37] border border-[#D4AF37]/30"
+                : customer.status === "inactive"
+                ? "bg-gray-800 text-gray-400 border border-gray-700"
+                : "bg-red-900/30 text-red-400 border border-red-800/50"
+              : customer.status === "active"
+              ? "bg-green-100 text-green-800"
+              : customer.status === "inactive"
+              ? "bg-gray-100 text-gray-800"
+              : "bg-red-100 text-red-800"
+          }`}
+        >
+          {customer.status === "active" ? "Activa" : customer.status === "inactive" ? "Inactiva" : "Bloqueada"}
+        </span>
+      </div>
+
+      {/* Tags */}
+      {customer.tags && customer.tags.length > 0 && (
+        <div className="mb-4">
+          <div className="flex flex-wrap gap-2">
+            {customer.tags.map((tag, index) => (
+              <span
+                key={index}
+                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                  isLuxury
+                    ? "bg-[#2a2a2a] text-gray-300 border border-gray-700"
+                    : "bg-purple-100 text-purple-800"
+                }`}
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* General Notes */}
+      <div className={`border-t pt-4 ${isLuxury ? 'border-gray-800' : 'border-gray-200'}`}>
+        <div className="flex items-center justify-between mb-2">
+          <h3 className={`text-sm font-medium ${isLuxury ? 'text-[#D4AF37]' : 'text-gray-700'}`}>Acerca de la clienta</h3>
+          {!editing ? (
+            <button
+              onClick={() => setEditing(true)}
+              className={`text-sm ${isLuxury ? 'text-[#D4AF37] hover:text-[#b3932d]' : 'text-blue-600 hover:text-blue-800'} flex items-center gap-1 transition-colors`}
+            >
+              <Edit className="h-4 w-4" />
+              Editar
+            </button>
+          ) : (
+            <div className="flex gap-2">
+              <button
+                onClick={handleSaveNotes}
+                className={`text-sm ${isLuxury ? 'text-green-400 hover:text-green-300' : 'text-green-600 hover:text-green-800'} flex items-center gap-1`}
+              >
+                <Save className="h-4 w-4" />
+                Guardar
+              </button>
+              <button
+                onClick={() => {
+                  setEditing(false);
+                  setEditedNotes(customer.generalNotes || "");
+                }}
+                className={`text-sm ${isLuxury ? 'text-gray-400 hover:text-gray-300' : 'text-gray-600 hover:text-gray-800'} flex items-center gap-1`}
+              >
+                <X className="h-4 w-4" />
+                Cancelar
+              </button>
+            </div>
+          )}
+        </div>
+
+        {editing ? (
+          <textarea
+            value={editedNotes}
+            onChange={(e) => setEditedNotes(e.target.value)}
+            rows={4}
+            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 text-sm ${
+              isLuxury
+                ? "bg-[#121212] border-gray-700 text-white focus:ring-[#D4AF37] placeholder-gray-600"
+                : "border-gray-300 focus:ring-blue-500"
+            }`}
+            placeholder="Notas sobre preferencias, alergias, observaciones especiales..."
+          />
+        ) : (
+          <p className={`text-sm whitespace-pre-wrap ${isLuxury ? 'text-gray-300' : 'text-gray-600'}`}>
+            {customer.generalNotes || "Sin notas"}
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}

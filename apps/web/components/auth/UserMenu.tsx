@@ -4,7 +4,7 @@ import { useSession, signOut } from "next-auth/react";
 import { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 
-export default function UserMenu({ tenantSlug }: { tenantSlug?: string }) {
+export default function UserMenu({ tenantSlug, variant = 'default' }: { tenantSlug?: string; variant?: 'default' | 'transparent' }) {
   const { data: session, status } = useSession();
   const loading = status === "loading";
   const [isOpen, setIsOpen] = useState(false);
@@ -61,6 +61,7 @@ export default function UserMenu({ tenantSlug }: { tenantSlug?: string }) {
 
   // If not authenticated
   if (!session?.user) {
+    const isTransparent = variant === 'transparent';
     return (
       <a
         href={
@@ -68,7 +69,11 @@ export default function UserMenu({ tenantSlug }: { tenantSlug?: string }) {
             ? `/t/${currentTenantSlug}/login`
             : "/t/zo-system/login"
         }
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        className={
+          isTransparent
+            ? "px-4 py-2 rounded border border-[#D4AF37] text-[#D4AF37] bg-transparent hover:bg-[#D4AF37] hover:text-black transition-colors font-medium"
+            : "bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        }
       >
         Iniciar Sesión
       </a>

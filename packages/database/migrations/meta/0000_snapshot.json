@@ -1,10 +1,8 @@
 {
-  "id": "81fa81e7-939a-4e3d-a68b-632ee089fb33",
-  "prevId": "00000000-0000-0000-0000-000000000000",
-  "version": "5",
-  "dialect": "pg",
+  "version": "7",
+  "dialect": "postgresql",
   "tables": {
-    "audit_logs": {
+    "public.audit_logs": {
       "name": "audit_logs",
       "schema": "",
       "columns": {
@@ -73,36 +71,70 @@
       },
       "indexes": {
         "audit_tenant_idx": {
+          "columns": [
+            {
+              "expression": "tenant_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "with": {},
           "name": "audit_tenant_idx",
-          "columns": ["tenant_id"],
-          "isUnique": false
+          "isUnique": false,
+          "method": "btree",
+          "concurrently": false
         },
         "audit_action_idx": {
+          "columns": [
+            {
+              "expression": "action",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "with": {},
           "name": "audit_action_idx",
-          "columns": ["action"],
-          "isUnique": false
+          "isUnique": false,
+          "method": "btree",
+          "concurrently": false
         },
         "audit_created_idx": {
+          "columns": [
+            {
+              "expression": "created_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "with": {},
           "name": "audit_created_idx",
-          "columns": ["created_at"],
-          "isUnique": false
+          "isUnique": false,
+          "method": "btree",
+          "concurrently": false
         }
       },
       "foreignKeys": {
         "audit_logs_tenant_id_tenants_id_fk": {
           "name": "audit_logs_tenant_id_tenants_id_fk",
           "tableFrom": "audit_logs",
+          "columnsFrom": [
+            "tenant_id"
+          ],
           "tableTo": "tenants",
-          "columnsFrom": ["tenant_id"],
-          "columnsTo": ["id"],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "bookings": {
+    "public.bookings": {
       "name": "bookings",
       "schema": "",
       "columns": {
@@ -209,64 +241,126 @@
       },
       "indexes": {
         "booking_tenant_idx": {
+          "columns": [
+            {
+              "expression": "tenant_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "with": {},
           "name": "booking_tenant_idx",
-          "columns": ["tenant_id"],
-          "isUnique": false
+          "isUnique": false,
+          "method": "btree",
+          "concurrently": false
         },
         "booking_service_idx": {
+          "columns": [
+            {
+              "expression": "service_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "with": {},
           "name": "booking_service_idx",
-          "columns": ["service_id"],
-          "isUnique": false
+          "isUnique": false,
+          "method": "btree",
+          "concurrently": false
         },
         "booking_staff_idx": {
+          "columns": [
+            {
+              "expression": "staff_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "with": {},
           "name": "booking_staff_idx",
-          "columns": ["staff_id"],
-          "isUnique": false
+          "isUnique": false,
+          "method": "btree",
+          "concurrently": false
         },
         "booking_time_idx": {
+          "columns": [
+            {
+              "expression": "start_time",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "with": {},
           "name": "booking_time_idx",
-          "columns": ["start_time"],
-          "isUnique": false
+          "isUnique": false,
+          "method": "btree",
+          "concurrently": false
         },
         "booking_status_idx": {
+          "columns": [
+            {
+              "expression": "status",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "with": {},
           "name": "booking_status_idx",
-          "columns": ["status"],
-          "isUnique": false
+          "isUnique": false,
+          "method": "btree",
+          "concurrently": false
         }
       },
       "foreignKeys": {
         "bookings_tenant_id_tenants_id_fk": {
           "name": "bookings_tenant_id_tenants_id_fk",
           "tableFrom": "bookings",
+          "columnsFrom": [
+            "tenant_id"
+          ],
           "tableTo": "tenants",
-          "columnsFrom": ["tenant_id"],
-          "columnsTo": ["id"],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "bookings_service_id_services_id_fk": {
           "name": "bookings_service_id_services_id_fk",
           "tableFrom": "bookings",
+          "columnsFrom": [
+            "service_id"
+          ],
           "tableTo": "services",
-          "columnsFrom": ["service_id"],
-          "columnsTo": ["id"],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "bookings_staff_id_staff_id_fk": {
           "name": "bookings_staff_id_staff_id_fk",
           "tableFrom": "bookings",
+          "columnsFrom": [
+            "staff_id"
+          ],
           "tableTo": "staff",
-          "columnsFrom": ["staff_id"],
-          "columnsTo": ["id"],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "media_assets": {
+    "public.media_assets": {
       "name": "media_assets",
       "schema": "",
       "columns": {
@@ -378,42 +472,90 @@
       },
       "indexes": {
         "media_tenant_type_idx": {
+          "columns": [
+            {
+              "expression": "tenant_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "asset_type",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "with": {},
           "name": "media_tenant_type_idx",
-          "columns": ["tenant_id", "asset_type"],
-          "isUnique": false
+          "isUnique": false,
+          "method": "btree",
+          "concurrently": false
         },
         "media_entity_idx": {
+          "columns": [
+            {
+              "expression": "tenant_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "entity_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "with": {},
           "name": "media_entity_idx",
-          "columns": ["tenant_id", "entity_id"],
-          "isUnique": false
+          "isUnique": false,
+          "method": "btree",
+          "concurrently": false
         },
         "media_hash_idx": {
+          "columns": [
+            {
+              "expression": "content_hash",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "with": {},
           "name": "media_hash_idx",
-          "columns": ["content_hash"],
-          "isUnique": true
+          "isUnique": true,
+          "method": "btree",
+          "concurrently": false
         }
       },
       "foreignKeys": {
         "media_assets_tenant_id_tenants_id_fk": {
           "name": "media_assets_tenant_id_tenants_id_fk",
           "tableFrom": "media_assets",
+          "columnsFrom": [
+            "tenant_id"
+          ],
           "tableTo": "tenants",
-          "columnsFrom": ["tenant_id"],
-          "columnsTo": ["id"],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "media_assets_content_hash_unique": {
           "name": "media_assets_content_hash_unique",
-          "nullsNotDistinct": false,
-          "columns": ["content_hash"]
+          "columns": [
+            "content_hash"
+          ],
+          "nullsNotDistinct": false
         }
       }
     },
-    "products": {
+    "public.products": {
       "name": "products",
       "schema": "",
       "columns": {
@@ -497,41 +639,91 @@
       },
       "indexes": {
         "product_tenant_sku_idx": {
+          "columns": [
+            {
+              "expression": "tenant_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "sku",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "with": {},
           "name": "product_tenant_sku_idx",
-          "columns": ["tenant_id", "sku"],
-          "isUnique": true
+          "isUnique": true,
+          "method": "btree",
+          "concurrently": false
         },
         "product_tenant_idx": {
+          "columns": [
+            {
+              "expression": "tenant_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "with": {},
           "name": "product_tenant_idx",
-          "columns": ["tenant_id"],
-          "isUnique": false
+          "isUnique": false,
+          "method": "btree",
+          "concurrently": false
         },
         "product_category_idx": {
+          "columns": [
+            {
+              "expression": "category",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "with": {},
           "name": "product_category_idx",
-          "columns": ["category"],
-          "isUnique": false
+          "isUnique": false,
+          "method": "btree",
+          "concurrently": false
         },
         "product_featured_idx": {
+          "columns": [
+            {
+              "expression": "featured",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "with": {},
           "name": "product_featured_idx",
-          "columns": ["featured"],
-          "isUnique": false
+          "isUnique": false,
+          "method": "btree",
+          "concurrently": false
         }
       },
       "foreignKeys": {
         "products_tenant_id_tenants_id_fk": {
           "name": "products_tenant_id_tenants_id_fk",
           "tableFrom": "products",
+          "columnsFrom": [
+            "tenant_id"
+          ],
           "tableTo": "tenants",
-          "columnsFrom": ["tenant_id"],
-          "columnsTo": ["id"],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "services": {
+    "public.services": {
       "name": "services",
       "schema": "",
       "columns": {
@@ -609,31 +801,55 @@
       },
       "indexes": {
         "service_tenant_idx": {
+          "columns": [
+            {
+              "expression": "tenant_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "with": {},
           "name": "service_tenant_idx",
-          "columns": ["tenant_id"],
-          "isUnique": false
+          "isUnique": false,
+          "method": "btree",
+          "concurrently": false
         },
         "service_featured_idx": {
+          "columns": [
+            {
+              "expression": "featured",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "with": {},
           "name": "service_featured_idx",
-          "columns": ["featured"],
-          "isUnique": false
+          "isUnique": false,
+          "method": "btree",
+          "concurrently": false
         }
       },
       "foreignKeys": {
         "services_tenant_id_tenants_id_fk": {
           "name": "services_tenant_id_tenants_id_fk",
           "tableFrom": "services",
+          "columnsFrom": [
+            "tenant_id"
+          ],
           "tableTo": "tenants",
-          "columnsFrom": ["tenant_id"],
-          "columnsTo": ["id"],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "staff": {
+    "public.staff": {
       "name": "staff",
       "schema": "",
       "columns": {
@@ -723,31 +939,55 @@
       },
       "indexes": {
         "staff_tenant_idx": {
+          "columns": [
+            {
+              "expression": "tenant_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "with": {},
           "name": "staff_tenant_idx",
-          "columns": ["tenant_id"],
-          "isUnique": false
+          "isUnique": false,
+          "method": "btree",
+          "concurrently": false
         },
         "staff_email_idx": {
+          "columns": [
+            {
+              "expression": "email",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "with": {},
           "name": "staff_email_idx",
-          "columns": ["email"],
-          "isUnique": false
+          "isUnique": false,
+          "method": "btree",
+          "concurrently": false
         }
       },
       "foreignKeys": {
         "staff_tenant_id_tenants_id_fk": {
           "name": "staff_tenant_id_tenants_id_fk",
           "tableFrom": "staff",
+          "columnsFrom": [
+            "tenant_id"
+          ],
           "tableTo": "tenants",
-          "columnsFrom": ["tenant_id"],
-          "columnsTo": ["id"],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "tenant_quotas": {
+    "public.tenant_quotas": {
       "name": "tenant_quotas",
       "schema": "",
       "columns": {
@@ -826,17 +1066,21 @@
         "tenant_quotas_tenant_id_tenants_id_fk": {
           "name": "tenant_quotas_tenant_id_tenants_id_fk",
           "tableFrom": "tenant_quotas",
+          "columnsFrom": [
+            "tenant_id"
+          ],
           "tableTo": "tenants",
-          "columnsFrom": ["tenant_id"],
-          "columnsTo": ["id"],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "tenants": {
+    "public.tenants": {
       "name": "tenants",
       "schema": "",
       "columns": {
@@ -920,14 +1164,34 @@
       },
       "indexes": {
         "tenant_slug_idx": {
+          "columns": [
+            {
+              "expression": "slug",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "with": {},
           "name": "tenant_slug_idx",
-          "columns": ["slug"],
-          "isUnique": true
+          "isUnique": true,
+          "method": "btree",
+          "concurrently": false
         },
         "tenant_status_idx": {
+          "columns": [
+            {
+              "expression": "status",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "with": {},
           "name": "tenant_status_idx",
-          "columns": ["status"],
-          "isUnique": false
+          "isUnique": false,
+          "method": "btree",
+          "concurrently": false
         }
       },
       "foreignKeys": {},
@@ -935,8 +1199,10 @@
       "uniqueConstraints": {
         "tenants_slug_unique": {
           "name": "tenants_slug_unique",
-          "nullsNotDistinct": false,
-          "columns": ["slug"]
+          "columns": [
+            "slug"
+          ],
+          "nullsNotDistinct": false
         }
       }
     }
@@ -944,8 +1210,10 @@
   "enums": {},
   "schemas": {},
   "_meta": {
-    "columns": {},
     "schemas": {},
-    "tables": {}
-  }
+    "tables": {},
+    "columns": {}
+  },
+  "id": "81fa81e7-939a-4e3d-a68b-632ee089fb33",
+  "prevId": "00000000-0000-0000-0000-000000000000"
 }

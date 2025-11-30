@@ -1,10 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@sass-store/database";
-import { tenants, userRoles, staff, users } from "@sass-store/database/schema";
-import { eq, and } from "drizzle-orm";
+import { tenants, users } from "@sass-store/database/schema";
+import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { assertTenantAccess, TenantAccessError } from "@/lib/auth/api-auth";
+import {
+  assignUserRole,
+  canAssignRole,
+  Role,
+  DatabaseRole,
+} from "@sass-store/database/rbac";
 
 const updateRoleSchema = z
   .object({
@@ -18,6 +24,14 @@ const updateRoleSchema = z
     }),
   })
   .strict();
+
+// Map database role strings to Role enum
+const roleMapping: Record<string, Role> = {
+  Admin: Role.TENANT_ADMIN,
+  Gerente: Role.MANAGER,
+  Personal: Role.STAFF,
+  Cliente: Role.CUSTOMER,
+};
 
 export async function PUT(request: NextRequest) {
   try {
@@ -48,15 +62,6 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const sessionUser = session.user;
-    const sessionRole = (sessionUser.role as string | undefined) ?? "Cliente";
-
-    // ✅ Verificar permisos - Un usuario puede cambiar su propio rol
-    // ✅ Solo admins pueden asignar roles a otros usuarios
-    if (sessionUser.id !== userId && sessionRole !== "Admin") {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
-
     // ✅ Resolver tenant
     const [tenant] = await db
       .select({ id: tenants.id, slug: tenants.slug })
@@ -72,7 +77,10 @@ export async function PUT(request: NextRequest) {
     try {
       assertTenantAccess(session, tenant.slug);
     } catch (accessError) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      return NextResponse.json(
+        { error: "No tienes acceso a este tenant" },
+        { status: 403 }
+      );
     }
 
     // ✅ Verificar que el usuario existe
@@ -86,91 +94,77 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // ✅ Ejecutar asignación con manejo de errores robusto
-    const now = new Date();
-
-    // ✅ Upsert seguro con validación
-    const result = await db
-      .insert(userRoles)
-      .values({
-        userId,
-        tenantId: tenant.id,
-        role: roleId,
-        updatedAt: now,
-      })
-      .onConflictDoUpdate({
-        target: [userRoles.userId, userRoles.tenantId],
-        set: {
-          role: roleId,
-          updatedAt: now,
-        },
-      })
-      .returning({
-        id: userRoles.id,
-        userId: userRoles.userId,
-        tenantId: userRoles.tenantId,
-        role: userRoles.role,
-        updatedAt: userRoles.updatedAt,
-      });
-
-    if (!result || result.length === 0) {
+    // ✅ Mapear el roleId string al enum Role
+    const targetRole = roleMapping[roleId];
+    if (!targetRole) {
       return NextResponse.json(
-        { error: "Role assignment failed" },
-        { status: 500 }
+        { error: "Invalid role specified" },
+        { status: 400 }
       );
     }
 
-    const [assignment] = result;
+    // ✅ Verificar si el usuario actual puede asignar este rol
+    const canAssign = await canAssignRole(
+      session.user.id,
+      targetRole,
+      tenantId
+    );
 
-    // ✅ Sincronizar staff (con verificación de existencia)
-    if (user.email) {
-      try {
-        await db
-          .update(staff)
-          .set({ role: roleId, updatedAt: now })
-          .where(
-            and(eq(staff.tenantId, tenant.id), eq(staff.email, user.email))
-          );
-      } catch (staffError) {
-        console.warn("Failed to update staff record:", staffError);
-        // No error fatal - continue with role assignment
-      }
+    if (!canAssign) {
+      return NextResponse.json(
+        {
+          error: "No tienes permisos para asignar este rol",
+          details:
+            "Solo los administradores pueden asignar roles a otros usuarios",
+        },
+        { status: 403 }
+      );
+    }
+
+    // ✅ Usar la función RBAC para asignar el rol (incluye validaciones y audit log)
+    const result = await assignUserRole({
+      userId,
+      tenantId,
+      role: targetRole,
+      assignedBy: session.user.id,
+    });
+
+    if (!result.success) {
+      return NextResponse.json(
+        { error: result.message },
+        { status: result.message.includes("not found") ? 404 : 400 }
+      );
     }
 
     // ✅ Respuesta exitosa
     return NextResponse.json({
       message: "Rol actualizado correctamente",
-      data: assignment,
+      data: {
+        userId,
+        tenantId,
+        role: roleId,
+        updatedBy: session.user.id,
+      },
     });
   } catch (error) {
     console.error("Role PUT error:", error);
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: "Invalid request body", details: error.errors },
+        { error: "Datos inválidos", details: error.errors },
         { status: 400 }
       );
     }
 
     if (error instanceof TenantAccessError) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
-
-    // ✅ Manejo específico de errores de base de datos
-    if (error instanceof Error) {
-      if (error.message === "User not found") {
-        return NextResponse.json({ error: "User not found" }, { status: 404 });
-      }
-      if (error.message === "Role assignment failed") {
-        return NextResponse.json(
-          { error: "Role assignment failed" },
-          { status: 500 }
-        );
-      }
+      return NextResponse.json(
+        { error: "No tienes acceso a este tenant" },
+        { status: 403 }
+      );
     }
 
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: "Error interno del servidor" },
       { status: 500 }
     );
   }

@@ -77,12 +77,18 @@ export async function cleanupTestData() {
     "product_reviews",
     "bookings",
     "user_carts",
+    "order_items",
     "orders",
+    "payments",
     "products",
     "services",
+    "staff",
+    "accounts",
+    "sessions",
     "oauth_state_tokens",
     "users",
-    // Note: Don't clean tenants table as it might have seed data
+    "tenant_configs",
+    "tenants", // Clean tenants to avoid duplicate slug errors
   ];
 
   try {
@@ -182,6 +188,7 @@ export async function createTestUser(
   const [user] = await db
     .insert(schema.users)
     .values({
+      id: `user-${Date.now()}-${Math.random().toString(36).substring(7)}`,
       email: `test-${Date.now()}@example.com`,
       name: "Test User",
       password: "hashed_password_here",

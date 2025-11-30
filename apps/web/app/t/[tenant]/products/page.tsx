@@ -12,6 +12,7 @@ import type {
   ProductMetadata,
   TenantBranding,
 } from "@/types/tenant";
+import TenantHeader from "@/components/ui/TenantHeader";
 
 export default function ProductsPage() {
   const params = useParams();
@@ -155,57 +156,7 @@ export default function ProductsPage() {
 
   return (
     <LiveRegionProvider>
-      <div
-        className="min-h-screen bg-gradient-to-b from-pink-50 to-white"
-        style={{
-          background: `linear-gradient(to bottom, ${branding.primaryColor}10, white)`,
-        }}
-      >
-        {/* Simple Header */}
-        <header className="bg-white shadow-sm border-b">
-          <div className="container mx-auto px-4 py-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <a
-                  href={`/t/${tenantSlug}`}
-                  className="text-sm text-gray-600 hover:text-gray-900 mb-2 inline-block"
-                >
-                  ← Volver a {tenantData.name}
-                </a>
-                <h1
-                  className="text-2xl font-bold"
-                  style={{ color: branding.primaryColor }}
-                >
-                  Productos
-                </h1>
-              </div>
-              <nav className="flex space-x-4">
-                {hasServices && (
-                  <a
-                    href={`/t/${tenantSlug}/services`}
-                    className="text-gray-600 hover:text-gray-900"
-                  >
-                    Servicios
-                  </a>
-                )}
-                <a
-                  href={`/t/${tenantSlug}/cart`}
-                  className="text-gray-600 hover:text-gray-900"
-                >
-                  Carrito
-                </a>
-                <a
-                  href={`/t/${tenantSlug}/login`}
-                  className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700"
-                >
-                  Login
-                </a>
-              </nav>
-            </div>
-          </div>
-        </header>
-
-        <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8">
           {/* Category Filter */}
           {categories.length > 1 && (
             <div className="mb-8">
@@ -241,7 +192,9 @@ export default function ProductsPage() {
                   primaryColor={branding.primaryColor}
                   tenantSlug={tenantSlug}
                   metadata={metadata}
+                  metadata={metadata}
                   onAddToCart={handleAddToCart}
+                  variant={tenantSlug === 'wondernails' ? 'luxury' : 'default'}
                 />
               );
             })}
@@ -290,7 +243,6 @@ export default function ProductsPage() {
             </div>
           </div>
         </div>
-      </div>
     </LiveRegionProvider>
   );
 }

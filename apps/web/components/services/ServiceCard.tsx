@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, memo } from "react";
+import React, { useState, memo } from "react";
 import { useRouter } from "next/navigation";
 
 interface ServiceMetadata {
@@ -20,6 +20,7 @@ export interface ServiceCardProps {
   tenantSlug: string;
   metadata?: ServiceMetadata;
   onBook?: (serviceId: string) => void;
+  variant?: 'default' | 'luxury';
 }
 
 const ServiceCard = memo(function ServiceCard({
@@ -34,6 +35,7 @@ const ServiceCard = memo(function ServiceCard({
   tenantSlug,
   metadata,
   onBook,
+  variant = 'default',
 }: ServiceCardProps) {
   const router = useRouter();
   const [showModal, setShowModal] = useState(false);
@@ -50,9 +52,18 @@ const ServiceCard = memo(function ServiceCard({
     setShowModal(true);
   };
 
+  const isLuxury = variant === 'luxury';
+
   return (
     <>
-      <div data-testid="service-card" className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl border border-gray-100 transition-shadow">
+      <div 
+        data-testid="service-card" 
+        className={`rounded-xl overflow-hidden transition-all duration-300 ${
+          isLuxury 
+            ? 'bg-[#1a1a1a]/60 backdrop-blur-md border border-[#D4AF37]/20 hover:border-[#D4AF37]/40 hover:shadow-[0_10px_30px_rgba(212,175,55,0.1)]' 
+            : 'bg-white shadow-lg hover:shadow-xl border border-gray-100'
+        }`}
+      >
         {/* Image - clickable for details */}
         <div
           className="p-6 cursor-pointer hover:opacity-90 transition-opacity"
@@ -63,23 +74,31 @@ const ServiceCard = memo(function ServiceCard({
             role="img"
             aria-label={`${name} - Servicio de ${category || "belleza"} por $${price} MXN. ${description}`}
           >
-            {image || metadata?.image || "⭐"}
+            {image || metadata?.image || (isLuxury ? '' : "⭐")}
           </div>
-          <h3 className="text-xl font-bold mb-3 text-gray-900">{name}</h3>
-          <p className="text-gray-600 mb-4 line-clamp-2">{description}</p>
+          <h3 className={`text-xl font-bold mb-3 ${isLuxury ? 'text-[#D4AF37] font-serif tracking-wide' : 'text-gray-900'}`}>
+            {name}
+          </h3>
+          <p className={`mb-4 line-clamp-2 ${isLuxury ? 'text-gray-300 font-light' : 'text-gray-600'}`}>
+            {description}
+          </p>
 
           <div className="flex items-center justify-between mb-6">
             <div>
               <span
-                className="text-3xl font-bold"
-                style={{ color: primaryColor }}
+                className={`text-3xl font-bold ${isLuxury ? 'text-white' : ''}`}
+                style={!isLuxury ? { color: primaryColor } : undefined}
               >
                 ${price}
               </span>
               <span className="text-sm text-gray-500 ml-2">MXN</span>
             </div>
             {duration && (
-              <span className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">
+              <span className={`px-3 py-1 rounded-full text-sm ${
+                isLuxury 
+                  ? 'text-[#D4AF37] bg-[#D4AF37]/10 border border-[#D4AF37]/20' 
+                  : 'bg-gray-100 text-gray-700'
+              }`}>
                 {duration} min
               </span>
             )}
@@ -90,8 +109,10 @@ const ServiceCard = memo(function ServiceCard({
         <div className="px-6 pb-6">
           <button
             onClick={handleReservarAhora}
-            className="w-full py-3 px-6 rounded-lg text-white font-semibold hover:opacity-90 shadow-md transition-opacity"
-            style={{ backgroundColor: primaryColor }}
+            className={`w-full py-3 px-6 rounded-lg font-semibold hover:opacity-90 shadow-md transition-opacity ${
+              isLuxury ? 'text-[#121212]' : 'text-white'
+            }`}
+            style={{ backgroundColor: isLuxury ? '#D4AF37' : primaryColor }}
             data-testid="reservar-ahora-button"
           >
             Reservar Ahora
@@ -124,7 +145,7 @@ const ServiceCard = memo(function ServiceCard({
                 role="img"
                 aria-label={`${name} - Vista detallada del servicio. ${description}. Precio: $${price} MXN`}
               >
-                {image || metadata?.image || "⭐"}
+                {image || metadata?.image || (isLuxury ? '' : "⭐")}
               </div>
 
               <h2 className="text-3xl font-bold mb-4">{name}</h2>
@@ -132,8 +153,8 @@ const ServiceCard = memo(function ServiceCard({
               <div className="mb-6 flex items-center gap-4">
                 <div>
                   <span
-                    className="text-4xl font-bold"
-                    style={{ color: primaryColor }}
+                    className={`text-4xl font-bold ${isLuxury ? 'text-[#121212]' : ''}`}
+                    style={!isLuxury ? { color: primaryColor } : undefined}
                   >
                     ${price}
                   </span>
@@ -179,8 +200,10 @@ const ServiceCard = memo(function ServiceCard({
               {/* Action Button */}
               <button
                 onClick={handleReservarAhora}
-                className="w-full py-4 px-6 rounded-lg text-white font-bold hover:opacity-90 transition-opacity shadow-lg"
-                style={{ backgroundColor: primaryColor }}
+                className={`w-full py-4 px-6 rounded-lg font-bold hover:opacity-90 transition-opacity shadow-lg ${
+                  isLuxury ? 'text-[#121212]' : 'text-white'
+                }`}
+                style={{ backgroundColor: isLuxury ? '#D4AF37' : primaryColor }}
                 data-testid="reservar-ahora-button"
               >
                 Reservar Ahora

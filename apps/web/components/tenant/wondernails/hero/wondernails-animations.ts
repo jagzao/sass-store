@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /**
  * Wondernails Carousel Animation Configuration
  *
@@ -73,40 +74,40 @@ export const CAROUSEL_POSITIONS = {
  */
 export const ANIMATION_DURATIONS = {
   /** Background color transition */
-  BACKGROUND: 0.35,
+  BACKGROUND: 0.5, // Slower background transition
 
   /** Micro-parallax effect */
-  PARALLAX: 0.5,
+  PARALLAX: 0.8, // Slower parallax
 
   /** Staggered text animations */
-  TEXT_STAGGER: 0.5,
+  TEXT_STAGGER: 0.8, // Slower text stagger
 
   /** Next slide transitions */
   NEXT: {
-    MAIN_TO_PEEK: 0.5,      // Main → Peek left (exit)
-    RIGHT_TO_MAIN: 0.7,     // Right near → Main (enter, most dramatic)
-    FAR_TO_NEAR: 0.9,       // Right far → Right near
-    OUT_TO_FAR: 1.1,        // Out of focus → Right far
+    MAIN_TO_PEEK: 0.8,      // Main → Peek left (exit)
+    RIGHT_TO_MAIN: 1.0,     // Right near → Main (enter, most dramatic)
+    FAR_TO_NEAR: 1.2,       // Right far → Right near
+    OUT_TO_FAR: 1.4,        // Out of focus → Right far
   },
 
   /** Previous slide transitions */
   PREV: {
-    PEEK_TO_MAIN: 1.1,      // Peek left → Main (enter, most dramatic)
-    MAIN_TO_NEAR: 0.9,      // Main → Right near
-    NEAR_TO_FAR: 0.7,       // Right near → Right far
-    FAR_TO_OUT: 0.5,        // Right far → Out of focus (exit)
+    PEEK_TO_MAIN: 1.4,      // Peek left → Main (enter, most dramatic)
+    MAIN_TO_NEAR: 1.2,      // Main → Right near
+    NEAR_TO_FAR: 1.0,       // Right near → Right far
+    FAR_TO_OUT: 0.8,        // Right far → Out of focus (exit)
   },
 
   /** Detail view transitions */
   DETAIL: {
-    EXPAND: 0.6,            // Expand main item to full width
-    HIDE_OTHERS: 0.5,       // Hide other carousel items
-    SHOW_CONTENT: 0.4,      // Fade in detail content
-    STAGGER_DELAY: 0.1,     // Delay between detail elements
+    EXPAND: 0.8,            // Expand main item to full width
+    HIDE_OTHERS: 0.6,       // Hide other carousel items
+    SHOW_CONTENT: 0.6,      // Fade in detail content
+    STAGGER_DELAY: 0.15,    // Delay between detail elements
   },
 
   /** Autoplay interval */
-  AUTOPLAY: 5,              // seconds between slides
+  AUTOPLAY: 7,              // seconds between slides
 };
 
 /**

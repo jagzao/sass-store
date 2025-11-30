@@ -1,0 +1,29 @@
+# Video Processing Dependencies
+moviepy>=1.0.3
+librosa>=0.9.2
+numpy>=1.21.0
+Pillow>=9.0.0
+
+# Database
+psycopg2-binary>=2.9.0
+
+# Storage
+boto3>=1.26.0
+
+# Environment & Configuration
+python-dotenv>=0.19.0
+
+# Logging & Monitoring
+structlog>=22.1.0
+
+# Audio Processing (for librosa)
+soundfile>=0.10.3
+
+# Image Processing
+opencv-python>=4.6.0
+
+# Progress Tracking
+tqdm>=4.64.0
+
+# HTTP Requests (for health checks)
+requests>=2.28.0

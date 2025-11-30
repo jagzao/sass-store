@@ -1,0 +1,5 @@
+# This is a placeholder for a golden frame overlay
+# In a real implementation, this would be a PNG image with a golden border
+# The frame should be 1080x1920 pixels with a transparent center
+# The border should be approximately 10px wide in gold color (#D4AF37)
+# This file would be used as the Z=3 layer in the video composition

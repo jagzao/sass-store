@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 "use client";
 import React, {
   useCallback,
@@ -57,7 +58,7 @@ const defaultSlides: WnSlide[] = [
     topic: "Manicure Premium",
     description: "Reserva en 2 clics · Garantía de acabado gel · Desde $35",
     badge: "-20% hoy",
-    bgColor: "#FF2D6A",
+    bgColor: "rgba(180, 140, 200, 0.15)", // Luxury Lilac
     type: "service",
     detailTitle: "Manicure Premium LED",
     detail:
@@ -74,7 +75,7 @@ const defaultSlides: WnSlide[] = [
     topic: "Nail Art",
     description: "Diseños únicos · Artistas certificados · Desde $45",
     badge: "Nuevo diseño",
-    bgColor: "#B025FF",
+    bgColor: "rgba(212, 175, 55, 0.1)", // Champagne Gold
     type: "service",
     detailTitle: "Nail Art Premium",
     detail:
@@ -90,7 +91,7 @@ const defaultSlides: WnSlide[] = [
     title: "WONDERNAILS PRO",
     topic: "Pedicure Spa",
     description: "Relajación total · Acabado perfecto · Desde $50",
-    bgColor: "#FF2D6A",
+    bgColor: "rgba(180, 140, 200, 0.15)", // Luxury Lilac
     type: "service",
     detailTitle: "Pedicure Spa Premium",
     detail:
@@ -102,12 +103,12 @@ const defaultSlides: WnSlide[] = [
     ],
   },
   {
-    img: `/tenants/wondernails/hero/img4.webp`,
+    img: `/tenants/wondernails/hero/img1.webp`, // Placeholder: img4.webp was incorrect (earbuds)
     title: "WONDERNAILS PRO",
     topic: "Acrílicas",
     description: "Resistentes y elegantes · Diseño incluido · Desde $60",
     badge: "Más popular",
-    bgColor: "#B025FF",
+    bgColor: "rgba(212, 175, 55, 0.1)", // Champagne Gold
     type: "product",
     detailTitle: "Uñas Acrílicas Premium",
     detail:
@@ -119,11 +120,11 @@ const defaultSlides: WnSlide[] = [
     ],
   },
   {
-    img: `/tenants/wondernails/hero/img5.webp`,
+    img: `/tenants/wondernails/hero/img5.jpg`,
     title: "WONDERNAILS PRO",
     topic: "Fortalecedor",
     description: "Recupera uñas dañadas · Resultados en 2 semanas · $80",
-    bgColor: "#FF2D6A",
+    bgColor: "rgba(180, 140, 200, 0.15)", // Luxury Lilac
     type: "product",
     detailTitle: "Tratamiento Fortalecedor",
     detail:
@@ -135,12 +136,12 @@ const defaultSlides: WnSlide[] = [
     ],
   },
   {
-    img: `/tenants/wondernails/hero/img6.webp`,
+    img: `/tenants/wondernails/hero/img6.jpg`,
     title: "WONDERNAILS PRO",
     topic: "Pack Novia",
     description: "Manicure + Pedicure · Diseño personalizado · $120",
     badge: "Especial",
-    bgColor: "#B025FF",
+    bgColor: "rgba(212, 175, 55, 0.1)", // Champagne Gold
     type: "service",
     detailTitle: "Pack Novia Premium",
     detail: "Todo lo que necesitas para lucir perfecta en tu día especial.",
@@ -148,6 +149,22 @@ const defaultSlides: WnSlide[] = [
       { label: "Incluye", value: "Manicure + Pedicure" },
       { label: "Duración", value: "4 semanas" },
       { label: "Precio", value: "$120" },
+    ],
+  },
+  {
+    img: `/tenants/wondernails/hero/img7.png`,
+    title: "WONDERNAILS PRO",
+    topic: "Gift Card",
+    description: "El regalo perfecto · Desde $25 · Válido por 1 año",
+    badge: "Regalo",
+    bgColor: "rgba(180, 140, 200, 0.15)", // Luxury Lilac
+    type: "product",
+    detailTitle: "Tarjeta de Regalo",
+    detail: "Regala belleza y bienestar con nuestras tarjetas de regalo digitales o físicas.",
+    specs: [
+      { label: "Valor", value: "Flexible" },
+      { label: "Validez", value: "12 meses" },
+      { label: "Precio", value: "desde $25" },
     ],
   },
 ];
@@ -370,6 +387,7 @@ export default function WondernailsCarouselFinal({
     prefersReducedMotion,
     updateBackground,
     staggerMainText,
+    isTestEnv,
   ]);
 
   toNextRef.current = toNext;
@@ -492,6 +510,7 @@ export default function WondernailsCarouselFinal({
     prefersReducedMotion,
     updateBackground,
     staggerMainText,
+    isTestEnv,
   ]);
 
   // Open detail (sin bloqueo por navLock)

@@ -31,11 +31,14 @@ export const resolvers = {
       return getTenantBySlug(slug);
     },
 
-    tenants: async (_: any, { status }: { status?: string }) => {
+    tenants: async (_: any, { status, limit = 50 }: { status?: string; limit?: number }) => {
+      // Performance: Always limit results, max 100
+      const maxLimit = Math.min(limit || 50, 100);
+
       if (status) {
-        return db.select().from(tenants).where(eq(tenants.status, status));
+        return db.select().from(tenants).where(eq(tenants.status, status)).limit(maxLimit);
       }
-      return db.select().from(tenants);
+      return db.select().from(tenants).limit(maxLimit);
     },
 
     // Product queries
@@ -53,8 +56,10 @@ export const resolvers = {
       return product;
     },
 
-    products: async (_: any, { tenantSlug, category, featured }: any) => {
+    products: async (_: any, { tenantSlug, category, featured, limit = 50 }: any) => {
       const tenant = await getTenantBySlug(tenantSlug);
+      // Performance: Always limit results, max 100
+      const maxLimit = Math.min(limit || 50, 100);
 
       return withTenantContext(db, tenant.id, null, async (db) => {
         let conditions = [];
@@ -70,7 +75,7 @@ export const resolvers = {
         const whereConditions =
           conditions.length > 0 ? and(...conditions) : undefined;
 
-        return db.select().from(products).where(whereConditions);
+        return db.select().from(products).where(whereConditions).limit(maxLimit);
       });
     },
 
@@ -89,8 +94,10 @@ export const resolvers = {
       return service;
     },
 
-    services: async (_: any, { tenantSlug, featured }: any) => {
+    services: async (_: any, { tenantSlug, featured, limit = 50 }: any) => {
       const tenant = await getTenantBySlug(tenantSlug);
+      // Performance: Always limit results, max 100
+      const maxLimit = Math.min(limit || 50, 100);
 
       return withTenantContext(db, tenant.id, null, async (db) => {
         let conditions = [];
@@ -102,12 +109,14 @@ export const resolvers = {
         const whereConditions =
           conditions.length > 0 ? and(...conditions) : undefined;
 
-        return db.select().from(services).where(whereConditions);
+        return db.select().from(services).where(whereConditions).limit(maxLimit);
       });
     },
 
     // Review queries
-    reviews: async (_: any, { productId, status }: any) => {
+    reviews: async (_: any, { productId, status, limit = 20 }: any) => {
+      // Performance: Always limit results, max 50 for reviews
+      const maxLimit = Math.min(limit || 20, 50);
       let conditions = [eq(productReviews.productId, productId)];
 
       if (status) {
@@ -117,7 +126,8 @@ export const resolvers = {
       return db
         .select()
         .from(productReviews)
-        .where(and(...conditions));
+        .where(and(...conditions))
+        .limit(maxLimit);
     },
 
     // Booking queries
@@ -135,8 +145,10 @@ export const resolvers = {
       return booking;
     },
 
-    bookings: async (_: any, { tenantSlug, status }: any) => {
+    bookings: async (_: any, { tenantSlug, status, limit = 50 }: any) => {
       const tenant = await getTenantBySlug(tenantSlug);
+      // Performance: Always limit results, max 100
+      const maxLimit = Math.min(limit || 50, 100);
 
       return withTenantContext(db, tenant.id, null, async (db) => {
         let conditions = [];
@@ -148,7 +160,7 @@ export const resolvers = {
         const whereConditions =
           conditions.length > 0 ? and(...conditions) : undefined;
 
-        return db.select().from(bookings).where(whereConditions);
+        return db.select().from(bookings).where(whereConditions).limit(maxLimit);
       });
     },
   },
