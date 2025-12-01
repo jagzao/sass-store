@@ -63,11 +63,12 @@ export default async function TenantLayout({
             --input: 249 249 249;
             --ring: 197 160 89;
           }
-          body {
-            background-color: #FFFFFF;
-            color: #333333;
-            background-image: radial-gradient(circle at 70% 30%, rgba(230, 215, 255, 0.5) 0%, rgba(255, 255, 255, 0) 60%);
-            background-attachment: fixed;
+          html, body, #root, #__next, main, [data-tenant-hero="wondernails"] {
+            background-color: #FFFFFF !important;
+            color: #333333 !important;
+            background-image: radial-gradient(circle at 70% 30%, rgba(230, 215, 255, 0.5) 0%, rgba(255, 255, 255, 0) 60%) !important;
+            background-attachment: fixed !important;
+            min-height: 100vh;
           }
           
           /* Frosted White Glass Component Style */

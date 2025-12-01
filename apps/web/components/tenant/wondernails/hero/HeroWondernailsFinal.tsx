@@ -160,7 +160,8 @@ const defaultSlides: WnSlide[] = [
     bgColor: "rgba(180, 140, 200, 0.15)", // Luxury Lilac
     type: "product",
     detailTitle: "Tarjeta de Regalo",
-    detail: "Regala belleza y bienestar con nuestras tarjetas de regalo digitales o físicas.",
+    detail:
+      "Regala belleza y bienestar con nuestras tarjetas de regalo digitales o físicas.",
     specs: [
       { label: "Valor", value: "Flexible" },
       { label: "Validez", value: "12 meses" },
@@ -186,9 +187,12 @@ export default function WondernailsCarouselFinal({
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
   // Detect test environment or reduced motion
-  const isTestEnv = typeof window !== 'undefined' &&
-    (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') &&
-    (typeof (window as any).__playwright !== 'undefined' || typeof (window as any).__REACT_DEVTOOLS_GLOBAL_HOOK__ !== 'undefined');
+  const isTestEnv =
+    typeof window !== "undefined" &&
+    (window.location.hostname === "localhost" ||
+      window.location.hostname === "127.0.0.1") &&
+    (typeof (window as any).__playwright !== "undefined" ||
+      typeof (window as any).__REACT_DEVTOOLS_GLOBAL_HOOK__ !== "undefined");
 
   // Detect reduced motion
   useEffect(() => {
@@ -202,8 +206,14 @@ export default function WondernailsCarouselFinal({
     return () => mediaQuery.removeEventListener("change", handleChange);
   }, []);
 
-  // Update background color reactively
+  // Update background color reactively - DISABLED for Light Theme consistency
   const updateBackground = useCallback(() => {
+    // We want to keep the global white/lilac background constant
+    // The previous logic animated the --accent variable which might be causing the "pale yellow" issue
+    // if the slide colors are not perfectly tuned for the light theme.
+    // For now, we'll just do nothing here to let the global CSS rule.
+    return;
+    /* 
     if (!rootRef.current || !listRef.current) return;
     const items = listRef.current.querySelectorAll(`.${styles.item}`);
     const mainItem = items[1] as HTMLElement | undefined;
@@ -214,14 +224,23 @@ export default function WondernailsCarouselFinal({
       ease: ANIMATION_EASING.SMOOTH,
       "--accent": color,
     } as any);
+    */
   }, [slides]);
 
   // Stagger text animation for MAIN item
   const staggerMainText = useCallback((mainItem: HTMLElement) => {
-    const title = mainItem.querySelector(`.${styles.title}`) as HTMLElement | null;
-    const topic = mainItem.querySelector(`.${styles.topic}`) as HTMLElement | null;
-    const description = mainItem.querySelector(`.${styles.des}`) as HTMLElement | null;
-    const button = mainItem.querySelector(`.${styles.seeMore}`) as HTMLElement | null;
+    const title = mainItem.querySelector(
+      `.${styles.title}`,
+    ) as HTMLElement | null;
+    const topic = mainItem.querySelector(
+      `.${styles.topic}`,
+    ) as HTMLElement | null;
+    const description = mainItem.querySelector(
+      `.${styles.des}`,
+    ) as HTMLElement | null;
+    const button = mainItem.querySelector(
+      `.${styles.seeMore}`,
+    ) as HTMLElement | null;
 
     createTextStaggerTimeline({ title, topic, description, button });
   }, []);
@@ -236,11 +255,11 @@ export default function WondernailsCarouselFinal({
 
       // Apply position based on index
       const positions = [
-        CAROUSEL_POSITIONS.PEEK_LEFT,    // #1 Peek left
-        CAROUSEL_POSITIONS.MAIN,          // #2 MAIN (active)
-        CAROUSEL_POSITIONS.RIGHT_NEAR,    // #3 Right near
-        CAROUSEL_POSITIONS.RIGHT_FAR,     // #4 Right far
-        CAROUSEL_POSITIONS.OUT_OF_FOCUS,  // #5 Out of focus
+        CAROUSEL_POSITIONS.PEEK_LEFT, // #1 Peek left
+        CAROUSEL_POSITIONS.MAIN, // #2 MAIN (active)
+        CAROUSEL_POSITIONS.RIGHT_NEAR, // #3 Right near
+        CAROUSEL_POSITIONS.RIGHT_FAR, // #4 Right far
+        CAROUSEL_POSITIONS.OUT_OF_FOCUS, // #5 Out of focus
       ];
 
       const position = positions[i] || positions[4]; // Default to OUT_OF_FOCUS
@@ -264,7 +283,10 @@ export default function WondernailsCarouselFinal({
       autoRef.current = null;
     }
     if (!isPaused && !isDetail && !prefersReducedMotion && toNextRef.current) {
-      autoRef.current = gsap.delayedCall(ANIMATION_DURATIONS.AUTOPLAY, toNextRef.current);
+      autoRef.current = gsap.delayedCall(
+        ANIMATION_DURATIONS.AUTOPLAY,
+        toNextRef.current,
+      );
     }
   }, [isPaused, isDetail, prefersReducedMotion]);
 
@@ -277,7 +299,7 @@ export default function WondernailsCarouselFinal({
     const list = listRef.current;
     const root = rootRef.current;
     const items = list.querySelectorAll(
-      `.${styles.item}`
+      `.${styles.item}`,
     ) as NodeListOf<HTMLElement>;
     if (items.length < 2) {
       setNavLocked(false);
@@ -290,14 +312,14 @@ export default function WondernailsCarouselFinal({
 
     // Get elements for micro-parallax
     const mainImgWrap = items[1].querySelector(
-      `.${styles.imgWrap}`
+      `.${styles.imgWrap}`,
     ) as HTMLElement | null;
     const mainIntroduce = items[1].querySelector(
-      `.${styles.introduce}`
+      `.${styles.introduce}`,
     ) as HTMLElement | null;
 
     // Apply micro-parallax effect
-    applyParallax(mainImgWrap, mainIntroduce, 'next');
+    applyParallax(mainImgWrap, mainIntroduce, "next");
 
     // Timeline para transiciones escalonadas
     const tl = gsap.timeline({
@@ -306,7 +328,7 @@ export default function WondernailsCarouselFinal({
         list.appendChild(items[0]);
 
         const newItems = list.querySelectorAll(
-          `.${styles.item}`
+          `.${styles.item}`,
         ) as NodeListOf<Element>;
 
         // Limpia y reaplica posiciones
@@ -335,10 +357,14 @@ export default function WondernailsCarouselFinal({
       items[1],
       {
         ...CAROUSEL_POSITIONS.PEEK_LEFT,
-        duration: getAnimationDuration(ANIMATION_DURATIONS.NEXT.MAIN_TO_PEEK, prefersReducedMotion, isTestEnv),
+        duration: getAnimationDuration(
+          ANIMATION_DURATIONS.NEXT.MAIN_TO_PEEK,
+          prefersReducedMotion,
+          isTestEnv,
+        ),
         ease: ANIMATION_EASING.SHARP,
       },
-      0
+      0,
     );
 
     // #2 Derecha cercana → MAIN - el más vistoso
@@ -346,10 +372,14 @@ export default function WondernailsCarouselFinal({
       items[2],
       {
         ...CAROUSEL_POSITIONS.MAIN,
-        duration: getAnimationDuration(ANIMATION_DURATIONS.NEXT.RIGHT_TO_MAIN, prefersReducedMotion, isTestEnv),
+        duration: getAnimationDuration(
+          ANIMATION_DURATIONS.NEXT.RIGHT_TO_MAIN,
+          prefersReducedMotion,
+          isTestEnv,
+        ),
         ease: ANIMATION_EASING.BOUNCE,
       },
-      0
+      0,
     );
 
     // #3 Derecha lejana → Derecha cercana
@@ -358,10 +388,14 @@ export default function WondernailsCarouselFinal({
         items[3],
         {
           ...CAROUSEL_POSITIONS.RIGHT_NEAR,
-          duration: getAnimationDuration(ANIMATION_DURATIONS.NEXT.FAR_TO_NEAR, prefersReducedMotion, isTestEnv),
+          duration: getAnimationDuration(
+            ANIMATION_DURATIONS.NEXT.FAR_TO_NEAR,
+            prefersReducedMotion,
+            isTestEnv,
+          ),
           ease: ANIMATION_EASING.SHARP,
         },
-        0
+        0,
       );
     }
 
@@ -371,10 +405,14 @@ export default function WondernailsCarouselFinal({
         items[4],
         {
           ...CAROUSEL_POSITIONS.RIGHT_FAR,
-          duration: getAnimationDuration(ANIMATION_DURATIONS.NEXT.OUT_TO_FAR, prefersReducedMotion, isTestEnv),
+          duration: getAnimationDuration(
+            ANIMATION_DURATIONS.NEXT.OUT_TO_FAR,
+            prefersReducedMotion,
+            isTestEnv,
+          ),
           ease: ANIMATION_EASING.SHARP,
         },
-        0
+        0,
       );
     }
   }, [
@@ -401,7 +439,7 @@ export default function WondernailsCarouselFinal({
     const list = listRef.current;
     const root = rootRef.current;
     const items = list.querySelectorAll(
-      `.${styles.item}`
+      `.${styles.item}`,
     ) as NodeListOf<HTMLElement>;
     if (items.length < 2) {
       setNavLocked(false);
@@ -413,14 +451,14 @@ export default function WondernailsCarouselFinal({
 
     // Get elements for micro-parallax
     const mainImgWrap = items[1].querySelector(
-      `.${styles.imgWrap}`
+      `.${styles.imgWrap}`,
     ) as HTMLElement | null;
     const mainIntroduce = items[1].querySelector(
-      `.${styles.introduce}`
+      `.${styles.introduce}`,
     ) as HTMLElement | null;
 
     // Apply micro-parallax effect (reversed)
-    applyParallax(mainImgWrap, mainIntroduce, 'prev');
+    applyParallax(mainImgWrap, mainIntroduce, "prev");
 
     // Timeline para transiciones escalonadas inversas
     const tl = gsap.timeline({
@@ -429,7 +467,7 @@ export default function WondernailsCarouselFinal({
         list.prepend(items[items.length - 1]);
 
         const newItems = list.querySelectorAll(
-          `.${styles.item}`
+          `.${styles.item}`,
         ) as NodeListOf<Element>;
 
         // Limpia y reaplica posiciones
@@ -458,10 +496,14 @@ export default function WondernailsCarouselFinal({
       items[0],
       {
         ...CAROUSEL_POSITIONS.MAIN,
-        duration: getAnimationDuration(ANIMATION_DURATIONS.PREV.PEEK_TO_MAIN, prefersReducedMotion, isTestEnv),
+        duration: getAnimationDuration(
+          ANIMATION_DURATIONS.PREV.PEEK_TO_MAIN,
+          prefersReducedMotion,
+          isTestEnv,
+        ),
         ease: ANIMATION_EASING.BOUNCE,
       },
-      0
+      0,
     );
 
     // #2 MAIN → Derecha cercana
@@ -469,10 +511,14 @@ export default function WondernailsCarouselFinal({
       items[1],
       {
         ...CAROUSEL_POSITIONS.RIGHT_NEAR,
-        duration: getAnimationDuration(ANIMATION_DURATIONS.PREV.MAIN_TO_NEAR, prefersReducedMotion, isTestEnv),
+        duration: getAnimationDuration(
+          ANIMATION_DURATIONS.PREV.MAIN_TO_NEAR,
+          prefersReducedMotion,
+          isTestEnv,
+        ),
         ease: ANIMATION_EASING.SHARP,
       },
-      0
+      0,
     );
 
     // #3 Derecha cercana → Derecha lejana
@@ -481,10 +527,14 @@ export default function WondernailsCarouselFinal({
         items[2],
         {
           ...CAROUSEL_POSITIONS.RIGHT_FAR,
-          duration: getAnimationDuration(ANIMATION_DURATIONS.PREV.NEAR_TO_FAR, prefersReducedMotion, isTestEnv),
+          duration: getAnimationDuration(
+            ANIMATION_DURATIONS.PREV.NEAR_TO_FAR,
+            prefersReducedMotion,
+            isTestEnv,
+          ),
           ease: ANIMATION_EASING.SHARP,
         },
-        0
+        0,
       );
     }
 
@@ -494,10 +544,14 @@ export default function WondernailsCarouselFinal({
         items[3],
         {
           ...CAROUSEL_POSITIONS.OUT_OF_FOCUS,
-          duration: getAnimationDuration(ANIMATION_DURATIONS.PREV.FAR_TO_OUT, prefersReducedMotion, isTestEnv),
+          duration: getAnimationDuration(
+            ANIMATION_DURATIONS.PREV.FAR_TO_OUT,
+            prefersReducedMotion,
+            isTestEnv,
+          ),
           ease: ANIMATION_EASING.SHARP,
         },
-        0
+        0,
       );
     }
   }, [
@@ -521,14 +575,14 @@ export default function WondernailsCarouselFinal({
 
     const list = listRef.current;
     const items = list.querySelectorAll(
-      `.${styles.item}`
+      `.${styles.item}`,
     ) as NodeListOf<HTMLElement>;
     const mainItem = items[1];
     if (!mainItem) return;
 
     // Scroll the button into view if it's outside viewport
     const seeMoreBtn = mainItem.querySelector(
-      `.${styles.seeMore}`
+      `.${styles.seeMore}`,
     ) as HTMLElement;
     if (seeMoreBtn) {
       const rect = seeMoreBtn.getBoundingClientRect();
@@ -538,13 +592,13 @@ export default function WondernailsCarouselFinal({
     }
 
     const mainImgWrap = mainItem.querySelector(
-      `.${styles.imgWrap}`
+      `.${styles.imgWrap}`,
     ) as HTMLElement;
     const mainIntroduce = mainItem.querySelector(
-      `.${styles.introduce}`
+      `.${styles.introduce}`,
     ) as HTMLElement;
     const mainDetail = mainItem.querySelector(
-      `.${styles.detail}`
+      `.${styles.detail}`,
     ) as HTMLElement;
 
     if (!mainDetail) return;
@@ -553,20 +607,38 @@ export default function WondernailsCarouselFinal({
     detailTLRef.current = tl;
 
     // Expand main item
-    tl.to(mainItem, { width: "100%", duration: ANIMATION_DURATIONS.DETAIL.EXPAND, ease: ANIMATION_EASING.SHARP }, 0);
+    tl.to(
+      mainItem,
+      {
+        width: "100%",
+        duration: ANIMATION_DURATIONS.DETAIL.EXPAND,
+        ease: ANIMATION_EASING.SHARP,
+      },
+      0,
+    );
 
     // Hide other items
     if (items[2])
       tl.to(
         items[2],
-        { opacity: 0, xPercent: 200, pointerEvents: "none", duration: ANIMATION_DURATIONS.DETAIL.HIDE_OTHERS },
-        0
+        {
+          opacity: 0,
+          xPercent: 200,
+          pointerEvents: "none",
+          duration: ANIMATION_DURATIONS.DETAIL.HIDE_OTHERS,
+        },
+        0,
       );
     if (items[3])
       tl.to(
         items[3],
-        { opacity: 0, xPercent: 200, pointerEvents: "none", duration: ANIMATION_DURATIONS.DETAIL.HIDE_OTHERS },
-        0
+        {
+          opacity: 0,
+          xPercent: 200,
+          pointerEvents: "none",
+          duration: ANIMATION_DURATIONS.DETAIL.HIDE_OTHERS,
+        },
+        0,
       );
 
     // Center image properly - clear right first, then set left
@@ -579,16 +651,28 @@ export default function WondernailsCarouselFinal({
           duration: ANIMATION_DURATIONS.DETAIL.EXPAND,
           ease: ANIMATION_EASING.SHARP,
         },
-        0
+        0,
       );
     }
 
     // Hide introduce
-    if (mainIntroduce) tl.to(mainIntroduce, { autoAlpha: 0, duration: ANIMATION_DURATIONS.DETAIL.SHOW_CONTENT * 0.75 }, 0);
+    if (mainIntroduce)
+      tl.to(
+        mainIntroduce,
+        {
+          autoAlpha: 0,
+          duration: ANIMATION_DURATIONS.DETAIL.SHOW_CONTENT * 0.75,
+        },
+        0,
+      );
 
     // Show detail with stagger
     if (mainDetail) {
-      tl.set(mainDetail, { display: "block" }, ANIMATION_DURATIONS.DETAIL.SHOW_CONTENT * 0.75);
+      tl.set(
+        mainDetail,
+        { display: "block" },
+        ANIMATION_DURATIONS.DETAIL.SHOW_CONTENT * 0.75,
+      );
       const detailTitle = mainDetail.querySelector(`.${styles.detailTitle}`);
       const detailDes = mainDetail.querySelector(`.${styles.detailDes}`);
       const specs = mainDetail.querySelector(`.${styles.specifications}`);
@@ -598,35 +682,51 @@ export default function WondernailsCarouselFinal({
         mainDetail,
         { autoAlpha: 0 },
         { autoAlpha: 1, duration: ANIMATION_DURATIONS.DETAIL.SHOW_CONTENT },
-        DETAIL_STAGGER_DELAYS.FADE_IN
+        DETAIL_STAGGER_DELAYS.FADE_IN,
       );
       if (detailTitle)
         tl.fromTo(
           detailTitle,
           { y: 20, opacity: 0 },
-          { y: 0, opacity: 1, duration: ANIMATION_DURATIONS.DETAIL.SHOW_CONTENT * 1.25 },
-          DETAIL_STAGGER_DELAYS.TITLE
+          {
+            y: 0,
+            opacity: 1,
+            duration: ANIMATION_DURATIONS.DETAIL.SHOW_CONTENT * 1.25,
+          },
+          DETAIL_STAGGER_DELAYS.TITLE,
         );
       if (detailDes)
         tl.fromTo(
           detailDes,
           { y: 20, opacity: 0 },
-          { y: 0, opacity: 1, duration: ANIMATION_DURATIONS.DETAIL.SHOW_CONTENT * 1.25 },
-          DETAIL_STAGGER_DELAYS.DESCRIPTION
+          {
+            y: 0,
+            opacity: 1,
+            duration: ANIMATION_DURATIONS.DETAIL.SHOW_CONTENT * 1.25,
+          },
+          DETAIL_STAGGER_DELAYS.DESCRIPTION,
         );
       if (specs)
         tl.fromTo(
           specs,
           { y: 20, opacity: 0 },
-          { y: 0, opacity: 1, duration: ANIMATION_DURATIONS.DETAIL.SHOW_CONTENT * 1.25 },
-          DETAIL_STAGGER_DELAYS.SPECS
+          {
+            y: 0,
+            opacity: 1,
+            duration: ANIMATION_DURATIONS.DETAIL.SHOW_CONTENT * 1.25,
+          },
+          DETAIL_STAGGER_DELAYS.SPECS,
         );
       if (buttons)
         tl.fromTo(
           buttons,
           { y: 20, opacity: 0 },
-          { y: 0, opacity: 1, duration: ANIMATION_DURATIONS.DETAIL.SHOW_CONTENT * 1.25 },
-          DETAIL_STAGGER_DELAYS.BUTTONS
+          {
+            y: 0,
+            opacity: 1,
+            duration: ANIMATION_DURATIONS.DETAIL.SHOW_CONTENT * 1.25,
+          },
+          DETAIL_STAGGER_DELAYS.BUTTONS,
         );
     }
   }, [cancelAuto]);
@@ -640,7 +740,7 @@ export default function WondernailsCarouselFinal({
       const list = listRef.current;
       if (!list) return;
       const items = list.querySelectorAll(
-        `.${styles.item}`
+        `.${styles.item}`,
       ) as NodeListOf<Element>;
       applyPositions(items);
 
@@ -657,7 +757,7 @@ export default function WondernailsCarouselFinal({
 
     const ctx = gsap.context(() => {
       const items = listRef.current!.querySelectorAll(
-        `.${styles.item}`
+        `.${styles.item}`,
       ) as NodeListOf<Element>;
       applyPositions(items);
       updateBackground();

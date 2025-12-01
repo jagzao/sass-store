@@ -37,7 +37,7 @@ export default function TenantHeader({
             ? isWondernails
               ? "bg-white/75 backdrop-blur-md border-b border-[#C5A059]/15 shadow-[0_20px_40px_-10px_rgba(200,180,220,0.2)]"
               : "bg-white/95 backdrop-blur-sm border-b border-gray-200 shadow-sm"
-            : "bg-transparent border-transparent"
+            : "bg-transparent border-transparent shadow-none"
           : "bg-white/95 backdrop-blur-sm border-b border-gray-200"
       } ${isTransparent ? "absolute w-full" : ""}`}
     >

@@ -153,7 +153,7 @@ export default function ServiceImageUpload({
                   type="button"
                   onClick={() => triggerFileInput("before")}
                   disabled={uploading && uploadType === "before"}
-                  className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+                  className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-[#C5A059] hover:bg-[#B08D45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#C5A059] disabled:opacity-50"
                 >
                   <Upload className="h-4 w-4 mr-2" />
                   Seleccionar
@@ -210,7 +210,7 @@ export default function ServiceImageUpload({
                   type="button"
                   onClick={() => triggerFileInput("after")}
                   disabled={uploading && uploadType === "after"}
-                  className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+                  className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-[#C5A059] hover:bg-[#B08D45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#C5A059] disabled:opacity-50"
                 >
                   <Upload className="h-4 w-4 mr-2" />
                   Seleccionar
