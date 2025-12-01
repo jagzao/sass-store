@@ -7,7 +7,7 @@ interface TenantNavigationProps {
   tenantSlug: string;
   primaryColor?: string;
   mode?: "booking" | "catalog";
-  variant?: 'default' | 'transparent';
+  variant?: "default" | "transparent";
 }
 
 export default function TenantNavigation({
@@ -17,7 +17,7 @@ export default function TenantNavigation({
   variant = "default",
 }: TenantNavigationProps) {
   const pathname = usePathname();
-  const isTransparent = variant === 'transparent';
+  const isTransparent = variant === "transparent";
 
   const links = [
     { name: "Inicio", href: `/t/${tenantSlug}` },
@@ -41,11 +41,17 @@ export default function TenantNavigation({
             key={link.href}
             href={link.href}
             className={`text-sm font-medium transition-colors hover:text-opacity-80 ${
-              isActive 
-                ? (isTransparent ? "text-white font-bold" : "text-gray-900") 
-                : (isTransparent ? "text-gray-200" : "text-gray-500")
+              isActive
+                ? isTransparent && tenantSlug !== "wondernails"
+                  ? "text-white font-bold"
+                  : "text-gray-900"
+                : isTransparent && tenantSlug !== "wondernails"
+                  ? "text-gray-200"
+                  : "text-gray-500"
             }`}
-            style={isActive && !isTransparent ? { color: primaryColor } : undefined}
+            style={
+              isActive && !isTransparent ? { color: primaryColor } : undefined
+            }
           >
             {link.name}
           </Link>

@@ -8,7 +8,7 @@ import { eq, and, desc, or, ilike, sql } from "drizzle-orm";
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { slug: string } }
+  { params }: { params: { slug: string } },
 ) {
   try {
     const { slug } = params;
@@ -26,15 +26,16 @@ export async function GET(
     }
 
     // Build where conditions
-    let whereConditions = [eq(customers.tenantId, tenant.id)];
+    const whereConditions = [eq(customers.tenantId, tenant.id)];
 
     if (search) {
       whereConditions.push(
         or(
           ilike(customers.name, `%${search}%`),
           ilike(customers.phone, `%${search}%`),
-          ilike(customers.email, `%${search}%`)
-        )!
+          ilike(customers.email, `%${search}%`),
+          ilike(customers.address, `%${search}%`),
+        )!,
       );
     }
 
@@ -49,6 +50,7 @@ export async function GET(
         name: customers.name,
         phone: customers.phone,
         email: customers.email,
+        address: customers.address,
         status: customers.status,
         createdAt: customers.createdAt,
       })
@@ -69,8 +71,8 @@ export async function GET(
           .where(
             and(
               eq(customerVisits.customerId, customer.id),
-              eq(customerVisits.status, "completed")
-            )
+              eq(customerVisits.status, "completed"),
+            ),
           );
 
         return {
@@ -79,7 +81,7 @@ export async function GET(
           totalSpent: parseFloat(visits[0]?.total?.toString() || "0"),
           lastVisit: visits[0]?.lastVisit || null,
         };
-      })
+      }),
     );
 
     return NextResponse.json({
@@ -90,7 +92,7 @@ export async function GET(
     console.error("[GET /api/tenants/[slug]/customers] Error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -101,7 +103,7 @@ export async function GET(
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: { slug: string } }
+  { params }: { params: { slug: string } },
 ) {
   try {
     const { slug } = params;
@@ -120,7 +122,7 @@ export async function POST(
     if (!body.name || !body.phone) {
       return NextResponse.json(
         { error: "Name and phone are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -132,6 +134,7 @@ export async function POST(
         name: body.name,
         phone: body.phone,
         email: body.email || null,
+        address: body.address || null,
         generalNotes: body.generalNotes || null,
         tags: body.tags || [],
         status: body.status || "active",
@@ -139,10 +142,12 @@ export async function POST(
       .returning();
 
     if (!newCustomer || !newCustomer.id) {
-      console.error("[POST /api/tenants/[slug]/customers] Error: Customer was not created properly");
+      console.error(
+        "[POST /api/tenants/[slug]/customers] Error: Customer was not created properly",
+      );
       return NextResponse.json(
         { error: "Failed to create customer" },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -151,7 +156,7 @@ export async function POST(
     console.error("[POST /api/tenants/[slug]/customers] Error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

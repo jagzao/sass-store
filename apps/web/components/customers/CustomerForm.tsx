@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Save, X, Plus, Trash2 } from "lucide-react";
 
@@ -11,6 +11,7 @@ interface CustomerFormProps {
     name: string;
     phone: string;
     email?: string;
+    address?: string;
     generalNotes?: string;
     tags?: string[];
     status?: "active" | "inactive" | "blocked";
@@ -30,11 +31,14 @@ export default function CustomerForm({
   const [name, setName] = useState(initialData?.name || "");
   const [phone, setPhone] = useState(initialData?.phone || "");
   const [email, setEmail] = useState(initialData?.email || "");
-  const [generalNotes, setGeneralNotes] = useState(initialData?.generalNotes || "");
+  const [address, setAddress] = useState(initialData?.address || "");
+  const [generalNotes, setGeneralNotes] = useState(
+    initialData?.generalNotes || "",
+  );
   const [tags, setTags] = useState<string[]>(initialData?.tags || []);
   const [newTag, setNewTag] = useState("");
   const [status, setStatus] = useState<"active" | "inactive" | "blocked">(
-    initialData?.status || "active"
+    initialData?.status || "active",
   );
 
   const handleAddTag = () => {
@@ -48,7 +52,7 @@ export default function CustomerForm({
     setTags(tags.filter((tag) => tag !== tagToRemove));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
     setError(null);
@@ -58,6 +62,7 @@ export default function CustomerForm({
         name: name.trim(),
         phone: phone.trim(),
         email: email.trim() || undefined,
+        address: address.trim() || undefined,
         generalNotes: generalNotes.trim() || undefined,
         tags,
         status,
@@ -77,21 +82,26 @@ export default function CustomerForm({
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        const errorMessage = errorData.error || `Error ${response.status}: ${response.statusText}`;
+        const errorMessage =
+          errorData.error || `Error ${response.status}: ${response.statusText}`;
         throw new Error(errorMessage);
       }
 
       const data = await response.json();
 
       if (!data.customer || !data.customer.id) {
-        throw new Error("La respuesta del servidor no contiene los datos esperados de la clienta");
+        throw new Error(
+          "La respuesta del servidor no contiene los datos esperados de la clienta",
+        );
       }
 
       // Redirect to customer file page
       router.push(`/t/${tenantSlug}/clientes/${data.customer.id}`);
     } catch (err) {
       console.error("Error saving customer:", err);
-      setError(err instanceof Error ? err.message : "Error al guardar la clienta");
+      setError(
+        err instanceof Error ? err.message : "Error al guardar la clienta",
+      );
     } finally {
       setSubmitting(false);
     }
@@ -151,6 +161,20 @@ export default function CustomerForm({
             onChange={(e) => setEmail(e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="Ej: maria@example.com"
+          />
+        </div>
+
+        {/* Address */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Dirección (Opcional)
+          </label>
+          <textarea
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            rows={2}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Ej: Calle Principal 123, Colonia Centro, Ciudad"
           />
         </div>
 
@@ -249,7 +273,11 @@ export default function CustomerForm({
           className="inline-flex items-center gap-2 px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
         >
           <Save className="h-4 w-4" />
-          {submitting ? "Guardando..." : customerId ? "Guardar Cambios" : "Crear Clienta"}
+          {submitting
+            ? "Guardando..."
+            : customerId
+              ? "Guardar Cambios"
+              : "Crear Clienta"}
         </button>
       </div>
     </form>

@@ -1,13 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { User, Phone, Mail, Edit, Save, X } from "lucide-react";
+import { User, Phone, Mail, Edit, Save, X, MapPin } from "lucide-react";
 
 interface Customer {
   id: string;
   name: string;
   phone: string;
   email?: string;
+  address?: string;
   generalNotes?: string;
   tags: string[];
   status: "active" | "inactive" | "blocked";
@@ -18,7 +19,10 @@ interface CustomerFileHeaderProps {
   customerId: string;
 }
 
-export default function CustomerFileHeader({ tenantSlug, customerId }: CustomerFileHeaderProps) {
+export default function CustomerFileHeader({
+  tenantSlug,
+  customerId,
+}: CustomerFileHeaderProps) {
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -30,25 +34,34 @@ export default function CustomerFileHeader({ tenantSlug, customerId }: CustomerF
       try {
         setLoading(true);
         setError(null);
-        
-        const response = await fetch(`/api/tenants/${tenantSlug}/customers/${customerId}`);
-        
+
+        const response = await fetch(
+          `/api/tenants/${tenantSlug}/customers/${customerId}`,
+        );
+
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
-          throw new Error(errorData.error || `Error ${response.status}: ${response.statusText}`);
+          throw new Error(
+            errorData.error ||
+              `Error ${response.status}: ${response.statusText}`,
+          );
         }
-        
+
         const data = await response.json();
-        
+
         if (!data.customer) {
           throw new Error("No se encontraron datos de la clienta");
         }
-        
+
         setCustomer(data.customer);
         setEditedNotes(data.customer.generalNotes || "");
       } catch (error) {
         console.error("Error fetching customer:", error);
-        setError(error instanceof Error ? error.message : "Error al cargar la información de la clienta");
+        setError(
+          error instanceof Error
+            ? error.message
+            : "Error al cargar la información de la clienta",
+        );
       } finally {
         setLoading(false);
       }
@@ -61,11 +74,14 @@ export default function CustomerFileHeader({ tenantSlug, customerId }: CustomerF
     if (!customer) return;
 
     try {
-      const response = await fetch(`/api/tenants/${tenantSlug}/customers/${customerId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ generalNotes: editedNotes }),
-      });
+      const response = await fetch(
+        `/api/tenants/${tenantSlug}/customers/${customerId}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ generalNotes: editedNotes }),
+        },
+      );
 
       if (!response.ok) throw new Error("Failed to update notes");
 
@@ -96,9 +112,12 @@ export default function CustomerFileHeader({ tenantSlug, customerId }: CustomerF
       <div className="bg-red-50 border border-red-200 rounded-lg p-6 mb-6">
         <div className="flex items-start justify-between">
           <div>
-            <h3 className="text-lg font-medium text-red-800 mb-2">Error al cargar la información</h3>
+            <h3 className="text-lg font-medium text-red-800 mb-2">
+              Error al cargar la información
+            </h3>
             <p className="text-red-700 mb-4">
-              {error || "No se pudo cargar la información de la clienta. Por favor, intente nuevamente."}
+              {error ||
+                "No se pudo cargar la información de la clienta. Por favor, intente nuevamente."}
             </p>
             <div className="flex gap-2">
               <button
@@ -113,18 +132,23 @@ export default function CustomerFileHeader({ tenantSlug, customerId }: CustomerF
                   setError(null);
                   // Reintentar cargar los datos
                   fetch(`/api/tenants/${tenantSlug}/customers/${customerId}`)
-                    .then(response => {
-                      if (!response.ok) throw new Error("Failed to fetch customer");
+                    .then((response) => {
+                      if (!response.ok)
+                        throw new Error("Failed to fetch customer");
                       return response.json();
                     })
-                    .then(data => {
+                    .then((data) => {
                       setCustomer(data.customer);
                       setEditedNotes(data.customer.generalNotes || "");
                       setError(null);
                     })
-                    .catch(err => {
+                    .catch((err) => {
                       console.error("Error retrying fetch:", err);
-                      setError(err instanceof Error ? err.message : "Error al cargar la información de la clienta");
+                      setError(
+                        err instanceof Error
+                          ? err.message
+                          : "Error al cargar la información de la clienta",
+                      );
                     })
                     .finally(() => setLoading(false));
                 }}
@@ -145,31 +169,59 @@ export default function CustomerFileHeader({ tenantSlug, customerId }: CustomerF
     );
   }
 
-  const isLuxury = tenantSlug === 'wondernails';
+  const isLuxury = tenantSlug === "wondernails";
 
   return (
-    <div className={`${isLuxury ? 'bg-[#1a1a1a]/60 border border-[#D4AF37]/20 backdrop-blur-md' : 'bg-white shadow'} rounded-lg p-6 mb-6`}>
+    <div
+      className={`${isLuxury ? "bg-[#1a1a1a]/60 border border-[#D4AF37]/20 backdrop-blur-md" : "bg-white shadow"} rounded-lg p-6 mb-6`}
+    >
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center space-x-4">
           {/* Avatar */}
           <div className="flex-shrink-0">
-            <div className={`w-16 h-16 rounded-full ${isLuxury ? 'bg-gradient-to-br from-[#D4AF37] to-[#b3932d]' : 'bg-gradient-to-br from-blue-400 to-blue-600'} flex items-center justify-center`}>
-              <User className={`h-8 w-8 ${isLuxury ? 'text-[#121212]' : 'text-white'}`} />
+            <div
+              className={`w-16 h-16 rounded-full ${isLuxury ? "bg-gradient-to-br from-[#D4AF37] to-[#b3932d]" : "bg-gradient-to-br from-blue-400 to-blue-600"} flex items-center justify-center`}
+            >
+              <User
+                className={`h-8 w-8 ${isLuxury ? "text-[#121212]" : "text-white"}`}
+              />
             </div>
           </div>
 
           {/* Info */}
           <div>
-            <h1 className={`text-2xl font-bold ${isLuxury ? 'text-white font-serif' : 'text-gray-900'}`}>{customer.name}</h1>
-            <div className="flex items-center gap-4 mt-2">
-              <div className={`flex items-center text-sm ${isLuxury ? 'text-gray-400' : 'text-gray-600'}`}>
-                <Phone className={`h-4 w-4 mr-1 ${isLuxury ? 'text-[#D4AF37]' : ''}`} />
+            <h1
+              className={`text-2xl font-bold ${isLuxury ? "text-white font-serif" : "text-gray-900"}`}
+            >
+              {customer.name}
+            </h1>
+            <div className="flex flex-wrap items-center gap-4 mt-2">
+              <div
+                className={`flex items-center text-sm ${isLuxury ? "text-gray-400" : "text-gray-600"}`}
+              >
+                <Phone
+                  className={`h-4 w-4 mr-1 ${isLuxury ? "text-[#D4AF37]" : ""}`}
+                />
                 {customer.phone}
               </div>
               {customer.email && (
-                <div className={`flex items-center text-sm ${isLuxury ? 'text-gray-400' : 'text-gray-600'}`}>
-                  <Mail className={`h-4 w-4 mr-1 ${isLuxury ? 'text-[#D4AF37]' : ''}`} />
+                <div
+                  className={`flex items-center text-sm ${isLuxury ? "text-gray-400" : "text-gray-600"}`}
+                >
+                  <Mail
+                    className={`h-4 w-4 mr-1 ${isLuxury ? "text-[#D4AF37]" : ""}`}
+                  />
                   {customer.email}
+                </div>
+              )}
+              {customer.address && (
+                <div
+                  className={`flex items-center text-sm ${isLuxury ? "text-gray-400" : "text-gray-600"}`}
+                >
+                  <MapPin
+                    className={`h-4 w-4 mr-1 ${isLuxury ? "text-[#D4AF37]" : ""}`}
+                  />
+                  {customer.address}
                 </div>
               )}
             </div>
@@ -183,16 +235,20 @@ export default function CustomerFileHeader({ tenantSlug, customerId }: CustomerF
               ? customer.status === "active"
                 ? "bg-[#D4AF37]/20 text-[#D4AF37] border border-[#D4AF37]/30"
                 : customer.status === "inactive"
-                ? "bg-gray-800 text-gray-400 border border-gray-700"
-                : "bg-red-900/30 text-red-400 border border-red-800/50"
+                  ? "bg-gray-800 text-gray-400 border border-gray-700"
+                  : "bg-red-900/30 text-red-400 border border-red-800/50"
               : customer.status === "active"
-              ? "bg-green-100 text-green-800"
-              : customer.status === "inactive"
-              ? "bg-gray-100 text-gray-800"
-              : "bg-red-100 text-red-800"
+                ? "bg-green-100 text-green-800"
+                : customer.status === "inactive"
+                  ? "bg-gray-100 text-gray-800"
+                  : "bg-red-100 text-red-800"
           }`}
         >
-          {customer.status === "active" ? "Activa" : customer.status === "inactive" ? "Inactiva" : "Bloqueada"}
+          {customer.status === "active"
+            ? "Activa"
+            : customer.status === "inactive"
+              ? "Inactiva"
+              : "Bloqueada"}
         </span>
       </div>
 
@@ -217,13 +273,19 @@ export default function CustomerFileHeader({ tenantSlug, customerId }: CustomerF
       )}
 
       {/* General Notes */}
-      <div className={`border-t pt-4 ${isLuxury ? 'border-gray-800' : 'border-gray-200'}`}>
+      <div
+        className={`border-t pt-4 ${isLuxury ? "border-gray-800" : "border-gray-200"}`}
+      >
         <div className="flex items-center justify-between mb-2">
-          <h3 className={`text-sm font-medium ${isLuxury ? 'text-[#D4AF37]' : 'text-gray-700'}`}>Acerca de la clienta</h3>
+          <h3
+            className={`text-sm font-medium ${isLuxury ? "text-[#D4AF37]" : "text-gray-700"}`}
+          >
+            Acerca de la clienta
+          </h3>
           {!editing ? (
             <button
               onClick={() => setEditing(true)}
-              className={`text-sm ${isLuxury ? 'text-[#D4AF37] hover:text-[#b3932d]' : 'text-blue-600 hover:text-blue-800'} flex items-center gap-1 transition-colors`}
+              className={`text-sm ${isLuxury ? "text-[#D4AF37] hover:text-[#b3932d]" : "text-blue-600 hover:text-blue-800"} flex items-center gap-1 transition-colors`}
             >
               <Edit className="h-4 w-4" />
               Editar
@@ -232,7 +294,7 @@ export default function CustomerFileHeader({ tenantSlug, customerId }: CustomerF
             <div className="flex gap-2">
               <button
                 onClick={handleSaveNotes}
-                className={`text-sm ${isLuxury ? 'text-green-400 hover:text-green-300' : 'text-green-600 hover:text-green-800'} flex items-center gap-1`}
+                className={`text-sm ${isLuxury ? "text-green-400 hover:text-green-300" : "text-green-600 hover:text-green-800"} flex items-center gap-1`}
               >
                 <Save className="h-4 w-4" />
                 Guardar
@@ -242,7 +304,7 @@ export default function CustomerFileHeader({ tenantSlug, customerId }: CustomerF
                   setEditing(false);
                   setEditedNotes(customer.generalNotes || "");
                 }}
-                className={`text-sm ${isLuxury ? 'text-gray-400 hover:text-gray-300' : 'text-gray-600 hover:text-gray-800'} flex items-center gap-1`}
+                className={`text-sm ${isLuxury ? "text-gray-400 hover:text-gray-300" : "text-gray-600 hover:text-gray-800"} flex items-center gap-1`}
               >
                 <X className="h-4 w-4" />
                 Cancelar
@@ -264,7 +326,9 @@ export default function CustomerFileHeader({ tenantSlug, customerId }: CustomerF
             placeholder="Notas sobre preferencias, alergias, observaciones especiales..."
           />
         ) : (
-          <p className={`text-sm whitespace-pre-wrap ${isLuxury ? 'text-gray-300' : 'text-gray-600'}`}>
+          <p
+            className={`text-sm whitespace-pre-wrap ${isLuxury ? "text-gray-300" : "text-gray-600"}`}
+          >
             {customer.generalNotes || "Sin notas"}
           </p>
         )}

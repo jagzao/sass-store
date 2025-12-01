@@ -8,7 +8,7 @@ import { eq, and } from "drizzle-orm";
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { slug: string; id: string } }
+  { params }: { params: { slug: string; id: string } },
 ) {
   try {
     const { slug, id } = params;
@@ -28,7 +28,10 @@ export async function GET(
     });
 
     if (!customer) {
-      return NextResponse.json({ error: "Customer not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Customer not found" },
+        { status: 404 },
+      );
     }
 
     return NextResponse.json({ customer });
@@ -36,7 +39,7 @@ export async function GET(
     console.error("[GET /api/tenants/[slug]/customers/[id]] Error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -47,7 +50,7 @@ export async function GET(
  */
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { slug: string; id: string } }
+  { params }: { params: { slug: string; id: string } },
 ) {
   try {
     const { slug, id } = params;
@@ -67,7 +70,9 @@ export async function PATCH(
     if (body.name !== undefined) updateData.name = body.name;
     if (body.phone !== undefined) updateData.phone = body.phone;
     if (body.email !== undefined) updateData.email = body.email;
-    if (body.generalNotes !== undefined) updateData.generalNotes = body.generalNotes;
+    if (body.address !== undefined) updateData.address = body.address;
+    if (body.generalNotes !== undefined)
+      updateData.generalNotes = body.generalNotes;
     if (body.tags !== undefined) updateData.tags = body.tags;
     if (body.status !== undefined) updateData.status = body.status;
 
@@ -82,7 +87,10 @@ export async function PATCH(
       .returning();
 
     if (!updatedCustomer) {
-      return NextResponse.json({ error: "Customer not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Customer not found" },
+        { status: 404 },
+      );
     }
 
     return NextResponse.json({ customer: updatedCustomer });
@@ -90,7 +98,7 @@ export async function PATCH(
     console.error("[PATCH /api/tenants/[slug]/customers/[id]] Error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -101,7 +109,7 @@ export async function PATCH(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { slug: string; id: string } }
+  { params }: { params: { slug: string; id: string } },
 ) {
   try {
     const { slug, id } = params;
@@ -125,7 +133,7 @@ export async function DELETE(
     console.error("[DELETE /api/tenants/[slug]/customers/[id]] Error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

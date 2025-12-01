@@ -17,7 +17,12 @@ import {
 } from "drizzle-orm/pg-core";
 import { relations, sql } from "drizzle-orm";
 
-export const roles = pgEnum("roles", ["Admin", "Gerente", "Personal", "Cliente"]);
+export const roles = pgEnum("roles", [
+  "Admin",
+  "Gerente",
+  "Personal",
+  "Cliente",
+]);
 
 // Tenants table - central to multitenant architecture
 export const tenants = pgTable(
@@ -29,7 +34,9 @@ export const tenants = pgTable(
     description: text("description"),
     mode: varchar("mode", { length: 20 }).notNull().default("catalog"), // 'catalog' | 'booking'
     status: varchar("status", { length: 20 }).notNull().default("active"), // 'active' | 'inactive' | 'suspended'
-    timezone: varchar("timezone", { length: 50 }).notNull().default("America/Mexico_City"),
+    timezone: varchar("timezone", { length: 50 })
+      .notNull()
+      .default("America/Mexico_City"),
     branding: jsonb("branding").notNull(),
     contact: jsonb("contact").notNull(),
     location: jsonb("location").notNull(),
@@ -40,7 +47,7 @@ export const tenants = pgTable(
   (table) => ({
     slugIdx: uniqueIndex("tenant_slug_idx").on(table.slug),
     statusIdx: index("tenant_status_idx").on(table.status),
-  })
+  }),
 );
 
 // Tenant Configs table
@@ -58,12 +65,10 @@ export const tenantConfigs = pgTable(
     updatedAt: timestamp("updated_at").defaultNow(),
   },
   (table) => ({
-    tenantCategoryKeyIdx: uniqueIndex("tenant_configs_tenant_category_key_idx").on(
-      table.tenantId,
-      table.category,
-      table.key
-    ),
-  })
+    tenantCategoryKeyIdx: uniqueIndex(
+      "tenant_configs_tenant_category_key_idx",
+    ).on(table.tenantId, table.category, table.key),
+  }),
 );
 
 // API Keys table for tenant API authentication
@@ -89,7 +94,7 @@ export const apiKeys = pgTable(
     tenantIdx: index("api_key_tenant_idx").on(table.tenantId),
     statusIdx: index("api_key_status_idx").on(table.status),
     prefixIdx: index("api_key_prefix_idx").on(table.prefix),
-  })
+  }),
 );
 
 // Products table with RLS
@@ -114,16 +119,22 @@ export const products = pgTable(
   (table) => ({
     tenantSkuIdx: uniqueIndex("product_tenant_sku_idx").on(
       table.tenantId,
-      table.sku
+      table.sku,
     ),
     tenantIdx: index("product_tenant_idx").on(table.tenantId),
     categoryIdx: index("product_category_idx").on(table.category),
     featuredIdx: index("product_featured_idx").on(table.featured),
     // Índices compuestos para optimización de consultas frecuentes
-    tenantFeaturedIdx: index("product_tenant_featured_idx").on(table.tenantId, table.featured),
-    tenantCategoryIdx: index("product_tenant_category_idx").on(table.tenantId, table.category),
+    tenantFeaturedIdx: index("product_tenant_featured_idx").on(
+      table.tenantId,
+      table.featured,
+    ),
+    tenantCategoryIdx: index("product_tenant_category_idx").on(
+      table.tenantId,
+      table.category,
+    ),
     createdAtIdx: index("product_created_at_idx").on(table.createdAt),
-  })
+  }),
 );
 
 // Services table
@@ -138,6 +149,8 @@ export const services = pgTable(
     description: text("description"),
     price: decimal("price", { precision: 10, scale: 2 }).notNull(),
     duration: integer("duration").notNull(), // minutes
+    beforeImage: text("before_image"), // URL de la imagen "antes" del servicio
+    afterImage: text("after_image"), // URL de la imagen "después" del servicio
     featured: boolean("featured").default(false),
     active: boolean("active").default(true),
     metadata: jsonb("metadata"),
@@ -147,7 +160,7 @@ export const services = pgTable(
   (table) => ({
     tenantIdx: index("service_tenant_idx").on(table.tenantId),
     featuredIdx: index("service_featured_idx").on(table.featured),
-  })
+  }),
 );
 
 // Staff table
@@ -173,7 +186,7 @@ export const staff = pgTable(
   (table) => ({
     tenantIdx: index("staff_tenant_idx").on(table.tenantId),
     emailIdx: index("staff_email_idx").on(table.email),
-  })
+  }),
 );
 
 // Bookings table
@@ -207,7 +220,7 @@ export const bookings = pgTable(
     staffIdx: index("booking_staff_idx").on(table.staffId),
     timeIdx: index("booking_time_idx").on(table.startTime),
     statusIdx: index("booking_status_idx").on(table.status),
-  })
+  }),
 );
 
 // Media Assets table
@@ -237,11 +250,11 @@ export const mediaAssets = pgTable(
   (table) => ({
     tenantTypeIdx: index("media_tenant_type_idx").on(
       table.tenantId,
-      table.assetType
+      table.assetType,
     ),
     entityIdx: index("media_entity_idx").on(table.tenantId, table.entityId),
     hashIdx: uniqueIndex("media_hash_idx").on(table.contentHash),
-  })
+  }),
 );
 
 // Tenant Quotas tracking
@@ -251,7 +264,7 @@ export const tenantQuotas = pgTable("tenant_quotas", {
     .references(() => tenants.id),
   storageUsedBytes: bigint("storage_used_bytes", { mode: "number" }).default(0),
   storageLimitBytes: bigint("storage_limit_bytes", { mode: "number" }).default(
-    5368709120
+    5368709120,
   ), // 5GB default
   mediaCount: integer("media_count").default(0),
   mediaLimit: integer("media_limit").default(1000),
@@ -262,7 +275,7 @@ export const tenantQuotas = pgTable("tenant_quotas", {
     mode: "number",
   }).default(53687091200), // 50GB default
   resetDate: date("reset_date").default(
-    sql`(CURRENT_DATE + INTERVAL '30 days')`
+    sql`(CURRENT_DATE + INTERVAL '30 days')`,
   ), // Next month
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
@@ -293,7 +306,7 @@ export const orders = pgTable(
     orderNumberIdx: uniqueIndex("order_number_idx").on(table.orderNumber),
     statusIdx: index("order_status_idx").on(table.status),
     createdIdx: index("order_created_idx").on(table.createdAt),
-  })
+  }),
 );
 
 // Order Items table
@@ -315,7 +328,7 @@ export const orderItems = pgTable(
   },
   (table) => ({
     orderIdx: index("order_item_order_idx").on(table.orderId),
-  })
+  }),
 );
 
 // Payments table
@@ -342,7 +355,7 @@ export const payments = pgTable(
     orderIdx: index("payment_order_idx").on(table.orderId),
     tenantIdx: index("payment_tenant_idx").on(table.tenantId),
     stripeIdx: index("payment_stripe_idx").on(table.stripePaymentIntentId),
-  })
+  }),
 );
 
 // Audit Trail - Enhanced for social planner
@@ -362,7 +375,7 @@ export const auditLogs = pgTable(
     tenantIdx: index("audit_logs_tenant_idx").on(table.tenantId),
     actionIdx: index("audit_logs_action_idx").on(table.action),
     createdIdx: index("audit_logs_created_idx").on(table.createdAt),
-  })
+  }),
 );
 
 // Relations
@@ -448,7 +461,10 @@ export const tenantChannels = pgTable(
     enabled: boolean("enabled").notNull().default(true),
     limitsPerDay: integer("limits_per_day").notNull().default(1),
     postingWindow: jsonb("posting_window").notNull().default("{}"), // { start:"19:00", end:"23:00", tz:"America/Mexico_City" }
-    defaultHashtags: text("default_hashtags").array().notNull().default(sql`ARRAY[]::text[]`),
+    defaultHashtags: text("default_hashtags")
+      .array()
+      .notNull()
+      .default(sql`ARRAY[]::text[]`),
     policy: jsonb("policy").notNull().default("{}"), // Channel-specific rules
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
@@ -456,10 +472,10 @@ export const tenantChannels = pgTable(
   (table) => ({
     tenantChannelUnique: uniqueIndex("tenant_channels_tenant_channel_idx").on(
       table.tenantId,
-      table.channel
+      table.channel,
     ),
     tenantIdx: index("tenant_channels_tenant_idx").on(table.tenantId),
-  })
+  }),
 );
 
 // 2. Channel accounts (FB page, IG business, LinkedIn org, etc.)
@@ -478,9 +494,9 @@ export const channelAccounts = pgTable(
   },
   (table) => ({
     tenantChannelIdx: index("channel_accounts_tenant_channel_idx").on(
-      table.tenantChannelId
+      table.tenantChannelId,
     ),
-  })
+  }),
 );
 
 // 3. Channel credentials (encrypted tokens)
@@ -503,7 +519,7 @@ export const channelCredentials = pgTable(
   },
   (table) => ({
     accountIdx: index("channel_credentials_account_idx").on(table.accountId),
-  })
+  }),
 );
 
 // 4. Social posts (channel-agnostic content)
@@ -516,8 +532,14 @@ export const socialPosts = pgTable(
       .notNull(),
     title: text("title"),
     bodyMd: text("body_md"),
-    mediaIds: uuid("media_ids").array().notNull().default(sql`ARRAY[]::uuid[]`),
-    tags: text("tags").array().notNull().default(sql`ARRAY[]::text[]`),
+    mediaIds: uuid("media_ids")
+      .array()
+      .notNull()
+      .default(sql`ARRAY[]::uuid[]`),
+    tags: text("tags")
+      .array()
+      .notNull()
+      .default(sql`ARRAY[]::text[]`),
     dueDate: date("due_date"),
     status: varchar("status", { length: 20 }).notNull().default("draft"), // draft|ready|archived
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
@@ -526,7 +548,7 @@ export const socialPosts = pgTable(
   (table) => ({
     tenantIdx: index("social_posts_tenant_idx").on(table.tenantId),
     statusIdx: index("social_posts_status_idx").on(table.status),
-  })
+  }),
 );
 
 // 5. Content variants (channel-specific versions)
@@ -540,7 +562,10 @@ export const contentVariants = pgTable(
     channel: varchar("channel", { length: 50 }).notNull(),
     title: text("title"),
     bodyMd: text("body_md"),
-    mediaIds: uuid("media_ids").array().notNull().default(sql`ARRAY[]::uuid[]`),
+    mediaIds: uuid("media_ids")
+      .array()
+      .notNull()
+      .default(sql`ARRAY[]::uuid[]`),
     payload: jsonb("payload").notNull().default("{}"), // { utm, first_comment, cover_sec }
     status: varchar("status", { length: 20 }).notNull().default("ready"), // ready|blocked
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
@@ -549,9 +574,9 @@ export const contentVariants = pgTable(
   (table) => ({
     socialPostChannelIdx: index("content_variants_post_channel_idx").on(
       table.socialPostId,
-      table.channel
+      table.channel,
     ),
-  })
+  }),
 );
 
 // 6. Posting rules (scheduling configuration)
@@ -566,14 +591,17 @@ export const postingRules = pgTable(
     frequency: text("frequency").notNull(), // cron or RRULE
     maxPerDay: integer("max_per_day").notNull().default(1),
     priority: integer("priority").notNull().default(0),
-    daysOff: integer("days_off").array().notNull().default(sql`ARRAY[]::integer[]`), // 0=sunday..6=saturday
+    daysOff: integer("days_off")
+      .array()
+      .notNull()
+      .default(sql`ARRAY[]::integer[]`), // 0=sunday..6=saturday
     enabled: boolean("enabled").notNull().default(true),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
   },
   (table) => ({
     tenantIdx: index("posting_rules_tenant_idx").on(table.tenantId),
-  })
+  }),
 );
 
 // 7. Post jobs (publication pipeline)
@@ -604,13 +632,13 @@ export const postJobs = pgTable(
     tenantStatusRunAtIdx: index("post_jobs_tenant_status_run_at_idx").on(
       table.tenantId,
       table.status,
-      table.runAt
+      table.runAt,
     ),
     statusRunAtIdx: index("post_jobs_status_run_at_idx").on(
       table.status,
-      table.runAt
+      table.runAt,
     ),
-  })
+  }),
 );
 
 // 8. Post results (publication outcomes)
@@ -629,7 +657,7 @@ export const postResults = pgTable(
   },
   (table) => ({
     postJobIdx: index("post_results_post_job_idx").on(table.postJobId),
-  })
+  }),
 );
 
 // 9. Media renditions (optional transformations)
@@ -649,7 +677,7 @@ export const mediaRenditions = pgTable(
   },
   (table) => ({
     mediaIdx: index("media_renditions_media_idx").on(table.mediaId),
-  })
+  }),
 );
 
 // Social Planner Relations
@@ -661,7 +689,7 @@ export const tenantChannelsRelations = relations(
       references: [tenants.id],
     }),
     accounts: many(channelAccounts),
-  })
+  }),
 );
 
 export const channelAccountsRelations = relations(
@@ -673,7 +701,7 @@ export const channelAccountsRelations = relations(
     }),
     credentials: many(channelCredentials),
     postJobs: many(postJobs),
-  })
+  }),
 );
 
 export const channelCredentialsRelations = relations(
@@ -683,7 +711,7 @@ export const channelCredentialsRelations = relations(
       fields: [channelCredentials.accountId],
       references: [channelAccounts.id],
     }),
-  })
+  }),
 );
 
 export const socialPostsRelations = relations(socialPosts, ({ one, many }) => ({
@@ -702,7 +730,7 @@ export const contentVariantsRelations = relations(
       references: [socialPosts.id],
     }),
     postJobs: many(postJobs),
-  })
+  }),
 );
 
 export const postingRulesRelations = relations(postingRules, ({ one }) => ({
@@ -735,12 +763,15 @@ export const postResultsRelations = relations(postResults, ({ one }) => ({
   }),
 }));
 
-export const mediaRenditionsRelations = relations(mediaRenditions, ({ one }) => ({
-  media: one(mediaAssets, {
-    fields: [mediaRenditions.mediaId],
-    references: [mediaAssets.id],
+export const mediaRenditionsRelations = relations(
+  mediaRenditions,
+  ({ one }) => ({
+    media: one(mediaAssets, {
+      fields: [mediaRenditions.mediaId],
+      references: [mediaAssets.id],
+    }),
   }),
-}));
+);
 
 export const ordersRelations = relations(orders, ({ one, many }) => ({
   tenant: one(tenants, {
@@ -808,9 +839,9 @@ export const accounts = pgTable(
     userIdIdx: index("accounts_user_id_idx").on(table.userId),
     providerIdx: index("accounts_provider_idx").on(table.provider),
     providerAccountIdIdx: index("accounts_provider_account_id_idx").on(
-      table.providerAccountId
+      table.providerAccountId,
     ),
-  })
+  }),
 );
 
 export const sessions = pgTable(
@@ -828,7 +859,7 @@ export const sessions = pgTable(
   (table) => ({
     userIdIdx: index("sessions_user_id_idx").on(table.userId),
     sessionTokenIdx: index("sessions_session_token_idx").on(table.sessionToken),
-  })
+  }),
 );
 
 export const verificationTokens = pgTable(
@@ -843,9 +874,9 @@ export const verificationTokens = pgTable(
   (table) => ({
     tokenIdx: index("verification_tokens_token_idx").on(table.token),
     identifierIdx: index("verification_tokens_identifier_idx").on(
-      table.identifier
+      table.identifier,
     ),
-  })
+  }),
 );
 
 // RBAC table for multitenancy
@@ -866,11 +897,11 @@ export const userRoles = pgTable(
   (table) => ({
     userTenantUnique: uniqueIndex("user_roles_user_tenant_unique_idx").on(
       table.userId,
-      table.tenantId
+      table.tenantId,
     ),
     userIdx: index("user_roles_user_idx").on(table.userId),
     tenantIdx: index("user_roles_tenant_idx").on(table.tenantId),
-  })
+  }),
 );
 
 // Authentication Relations
@@ -940,9 +971,9 @@ export const productReviews = pgTable(
     createdIdx: index("review_created_idx").on(table.createdAt),
     productStatusIdx: index("review_product_status_idx").on(
       table.productId,
-      table.status
+      table.status,
     ),
-  })
+  }),
 );
 
 // Financial KPIs table
@@ -955,21 +986,36 @@ export const financialKpis = pgTable(
       .notNull(),
     date: date("date").notNull(),
     totalIncome: decimal("total_income", { precision: 12, scale: 2 }).notNull(),
-    totalExpenses: decimal("total_expenses", { precision: 12, scale: 2 }).notNull(),
-    netCashFlow: decimal("net_cash_flow", { precision: 12, scale: 2 }).notNull(),
-    averageTicket: decimal("average_ticket", { precision: 10, scale: 2 }).notNull(),
-    approvalRate: decimal("approval_rate", { precision: 5, scale: 2 }).notNull(),
+    totalExpenses: decimal("total_expenses", {
+      precision: 12,
+      scale: 2,
+    }).notNull(),
+    netCashFlow: decimal("net_cash_flow", {
+      precision: 12,
+      scale: 2,
+    }).notNull(),
+    averageTicket: decimal("average_ticket", {
+      precision: 10,
+      scale: 2,
+    }).notNull(),
+    approvalRate: decimal("approval_rate", {
+      precision: 5,
+      scale: 2,
+    }).notNull(),
     transactionCount: integer("transaction_count").notNull(),
-    availableBalance: decimal("available_balance", { precision: 12, scale: 2 }).notNull(),
+    availableBalance: decimal("available_balance", {
+      precision: 12,
+      scale: 2,
+    }).notNull(),
     createdAt: timestamp("created_at").defaultNow(),
     updatedAt: timestamp("updated_at").defaultNow(),
   },
   (table) => ({
     tenantDateIdx: index("financial_kpis_tenant_date_idx").on(
       table.tenantId,
-      table.date
+      table.date,
     ),
-  })
+  }),
 );
 
 // Financial Movements table
@@ -995,29 +1041,26 @@ export const financialMovements = pgTable(
   (table) => ({
     tenantDateIdx: index("financial_movements_tenant_date_idx").on(
       table.tenantId,
-      table.movementDate
+      table.movementDate,
     ),
-  })
+  }),
 );
 
 // Review Relations
-export const productReviewsRelations = relations(
-  productReviews,
-  ({ one }) => ({
-    tenant: one(tenants, {
-      fields: [productReviews.tenantId],
-      references: [tenants.id],
-    }),
-    product: one(products, {
-      fields: [productReviews.productId],
-      references: [products.id],
-    }),
-    user: one(users, {
-      fields: [productReviews.userId],
-      references: [users.id],
-    }),
-  })
-);
+export const productReviewsRelations = relations(productReviews, ({ one }) => ({
+  tenant: one(tenants, {
+    fields: [productReviews.tenantId],
+    references: [tenants.id],
+  }),
+  product: one(products, {
+    fields: [productReviews.productId],
+    references: [products.id],
+  }),
+  user: one(users, {
+    fields: [productReviews.userId],
+    references: [users.id],
+  }),
+}));
 
 // Financial KPIs Relations
 export const financialKpisRelations = relations(financialKpis, ({ one }) => ({
@@ -1035,22 +1078,27 @@ export const userCarts = pgTable(
     userId: text("user_id")
       .references(() => users.id, { onDelete: "cascade" })
       .notNull(),
-    items: jsonb("items").notNull().default(sql`'[]'`), // Store cart items as JSON
+    items: jsonb("items")
+      .notNull()
+      .default(sql`'[]'`), // Store cart items as JSON
     createdAt: timestamp("created_at").defaultNow(),
     updatedAt: timestamp("updated_at").defaultNow(),
   },
   (table) => ({
     userIdx: uniqueIndex("user_carts_user_id_idx").on(table.userId),
-  })
+  }),
 );
 
 // Financial Movements Relations
-export const financialMovementsRelations = relations(financialMovements, ({ one }) => ({
-  tenant: one(tenants, {
-    fields: [financialMovements.tenantId],
-    references: [tenants.id],
+export const financialMovementsRelations = relations(
+  financialMovements,
+  ({ one }) => ({
+    tenant: one(tenants, {
+      fields: [financialMovements.tenantId],
+      references: [tenants.id],
+    }),
   }),
-}));
+);
 
 // User carts Relations
 export const userCartsRelations = relations(userCarts, ({ one }) => ({
@@ -1082,12 +1130,12 @@ export const campaigns = pgTable(
   (table) => ({
     tenantSlugUnique: uniqueIndex("campaigns_tenant_slug_idx").on(
       table.tenantId,
-      table.slug
+      table.slug,
     ),
     tenantIdx: index("campaigns_tenant_idx").on(table.tenantId),
     slugIdx: index("campaigns_slug_idx").on(table.slug),
     typeIdx: index("campaigns_type_idx").on(table.type),
-  })
+  }),
 );
 
 // Reels table - Instagram/TikTok reels content
@@ -1101,11 +1149,16 @@ export const reels = pgTable(
     campaignId: uuid("campaign_id").references(() => campaigns.id),
     title: text("title").notNull(),
     status: text("status").notNull().default("pending"), // 'pending' | 'processing' | 'completed' | 'failed'
-    imageUrls: text("image_urls").array().notNull().default(sql`ARRAY[]::text[]`),
+    imageUrls: text("image_urls")
+      .array()
+      .notNull()
+      .default(sql`ARRAY[]::text[]`),
     overlayType: text("overlay_type").notNull(), // Type of overlay/template to use
     musicFile: text("music_file").notNull(), // Path to background music
     duration: decimal("duration", { precision: 10, scale: 2 }).default("0"), // Duration in seconds
-    hashtags: text("hashtags").array().default(sql`ARRAY[]::text[]`),
+    hashtags: text("hashtags")
+      .array()
+      .default(sql`ARRAY[]::text[]`),
     caption: text("caption").default(""),
     metadata: jsonb("metadata").default("{}"),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
@@ -1116,7 +1169,7 @@ export const reels = pgTable(
     campaignIdx: index("reels_campaign_idx").on(table.campaignId),
     statusIdx: index("reels_status_idx").on(table.status),
     createdIdx: index("reels_created_idx").on(table.createdAt),
-  })
+  }),
 );
 
 // Campaigns Relations
@@ -1159,9 +1212,11 @@ export const posTerminals = pgTable(
   },
   (table) => ({
     tenantIdx: index("pos_terminals_tenant_idx").on(table.tenantId),
-    terminalIdIdx: uniqueIndex("pos_terminals_terminal_id_idx").on(table.terminalId),
+    terminalIdIdx: uniqueIndex("pos_terminals_terminal_id_idx").on(
+      table.terminalId,
+    ),
     statusIdx: index("pos_terminals_status_idx").on(table.status),
-  })
+  }),
 );
 
 // MercadoPago tokens table
@@ -1178,7 +1233,9 @@ export const mercadopagoTokens = pgTable(
     tokenType: varchar("token_type", { length: 20 }).notNull(), // Usually "bearer"
     scope: text("scope"),
     merchantId: varchar("merchant_id", { length: 100 }), // MercadoPago merchant ID
-    environment: varchar("environment", { length: 10 }).notNull().default("production"), // 'production' | 'sandbox'
+    environment: varchar("environment", { length: 10 })
+      .notNull()
+      .default("production"), // 'production' | 'sandbox'
     expiresAt: timestamp("expires_at", { withTimezone: true }), // When the token expires
     metadata: jsonb("metadata"),
     createdAt: timestamp("created_at").defaultNow(),
@@ -1186,8 +1243,10 @@ export const mercadopagoTokens = pgTable(
   },
   (table) => ({
     tenantIdx: index("mercadopago_tokens_tenant_idx").on(table.tenantId),
-    merchantIdIdx: index("mercadopago_tokens_merchant_id_idx").on(table.merchantId),
-  })
+    merchantIdIdx: index("mercadopago_tokens_merchant_id_idx").on(
+      table.merchantId,
+    ),
+  }),
 );
 
 // MercadoPago payments table
@@ -1199,7 +1258,9 @@ export const mercadopagoPayments = pgTable(
       .references(() => tenants.id)
       .notNull(),
     orderId: uuid("order_id").references(() => orders.id), // Link to our order
-    mercadopagoPaymentId: varchar("mercadopago_payment_id", { length: 100 }).unique().notNull(), // MP's payment ID
+    mercadopagoPaymentId: varchar("mercadopago_payment_id", { length: 100 })
+      .unique()
+      .notNull(), // MP's payment ID
     paymentIntentId: varchar("payment_intent_id", { length: 100 }).unique(), // For our internal reference
     status: varchar("status", { length: 20 }).notNull(), // Status from MercadoPago
     amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
@@ -1214,9 +1275,13 @@ export const mercadopagoPayments = pgTable(
   (table) => ({
     tenantIdx: index("mercadopago_payments_tenant_idx").on(table.tenantId),
     orderIdIdx: index("mercadopago_payments_order_idx").on(table.orderId),
-    mpPaymentIdIdx: uniqueIndex("mercadopago_payments_mp_id_idx").on(table.mercadopagoPaymentId),
-    paymentIntentIdx: uniqueIndex("mercadopago_payments_intent_idx").on(table.paymentIntentId),
-  })
+    mpPaymentIdIdx: uniqueIndex("mercadopago_payments_mp_id_idx").on(
+      table.mercadopagoPaymentId,
+    ),
+    paymentIntentIdx: uniqueIndex("mercadopago_payments_intent_idx").on(
+      table.paymentIntentId,
+    ),
+  }),
 );
 
 // OAuth State Tokens table for CSRF protection during OAuth flows
@@ -1237,7 +1302,7 @@ export const oauthStateTokens = pgTable(
     stateIdx: uniqueIndex("oauth_state_tokens_state_idx").on(table.state),
     tenantIdx: index("oauth_state_tokens_tenant_idx").on(table.tenantId),
     expiresIdx: index("oauth_state_tokens_expires_idx").on(table.expiresAt),
-  })
+  }),
 );
 
 // ========================================================================
@@ -1245,10 +1310,19 @@ export const oauthStateTokens = pgTable(
 // ========================================================================
 
 // Customer status enum
-export const customerStatus = pgEnum("customer_status", ["active", "inactive", "blocked"]);
+export const customerStatus = pgEnum("customer_status", [
+  "active",
+  "inactive",
+  "blocked",
+]);
 
 // Visit status enum
-export const visitStatus = pgEnum("visit_status", ["pending", "scheduled", "completed", "cancelled"]);
+export const visitStatus = pgEnum("visit_status", [
+  "pending",
+  "scheduled",
+  "completed",
+  "cancelled",
+]);
 
 // Customers table - Master customer data
 export const customers = pgTable(
@@ -1261,8 +1335,11 @@ export const customers = pgTable(
     name: varchar("name", { length: 200 }).notNull(),
     phone: varchar("phone", { length: 20 }).notNull(),
     email: varchar("email", { length: 255 }),
+    address: text("address"), // Dirección de la clienta
     generalNotes: text("general_notes"), // "Acerca de la clienta"
-    tags: text("tags").array().default(sql`ARRAY[]::text[]`), // Tags: alergias, preferencias, tipo de piel, etc.
+    tags: text("tags")
+      .array()
+      .default(sql`ARRAY[]::text[]`), // Tags: alergias, preferencias, tipo de piel, etc.
     status: customerStatus("status").notNull().default("active"),
     metadata: jsonb("metadata").default("{}"), // Additional flexible data
     createdAt: timestamp("created_at").defaultNow(),
@@ -1272,9 +1349,12 @@ export const customers = pgTable(
     tenantIdx: index("customers_tenant_idx").on(table.tenantId),
     phoneIdx: index("customers_phone_idx").on(table.phone),
     emailIdx: index("customers_email_idx").on(table.email),
-    tenantPhoneIdx: index("customers_tenant_phone_idx").on(table.tenantId, table.phone),
+    tenantPhoneIdx: index("customers_tenant_phone_idx").on(
+      table.tenantId,
+      table.phone,
+    ),
     statusIdx: index("customers_status_idx").on(table.status),
-  })
+  }),
 );
 
 // Customer Visits table - Visit history per customer
@@ -1288,11 +1368,12 @@ export const customerVisits = pgTable(
     customerId: uuid("customer_id")
       .references(() => customers.id, { onDelete: "cascade" })
       .notNull(),
-    appointmentId: uuid("appointment_id")
-      .references(() => bookings.id), // Link to calendar appointment (nullable)
+    appointmentId: uuid("appointment_id").references(() => bookings.id), // Link to calendar appointment (nullable)
     visitNumber: integer("visit_number").notNull(), // Sequential number per customer
     visitDate: timestamp("visit_date", { withTimezone: true }).notNull(),
-    totalAmount: decimal("total_amount", { precision: 10, scale: 2 }).notNull().default("0"),
+    totalAmount: decimal("total_amount", { precision: 10, scale: 2 })
+      .notNull()
+      .default("0"),
     notes: text("notes"), // Observaciones de la visita
     nextVisitFrom: date("next_visit_from"), // Próxima cita sugerida (inicio rango)
     nextVisitTo: date("next_visit_to"), // Próxima cita sugerida (fin rango)
@@ -1308,10 +1389,12 @@ export const customerVisits = pgTable(
     statusIdx: index("customer_visits_status_idx").on(table.status),
     tenantCustomerIdx: index("customer_visits_tenant_customer_idx").on(
       table.tenantId,
-      table.customerId
+      table.customerId,
     ),
-    appointmentIdx: index("customer_visits_appointment_idx").on(table.appointmentId),
-  })
+    appointmentIdx: index("customer_visits_appointment_idx").on(
+      table.appointmentId,
+    ),
+  }),
 );
 
 // Customer Visit Services table - Services performed per visit
@@ -1327,7 +1410,9 @@ export const customerVisitServices = pgTable(
       .notNull(),
     description: text("description"), // Optional custom description
     unitPrice: decimal("unit_price", { precision: 10, scale: 2 }).notNull(),
-    quantity: decimal("quantity", { precision: 5, scale: 2 }).notNull().default("1"),
+    quantity: decimal("quantity", { precision: 5, scale: 2 })
+      .notNull()
+      .default("1"),
     subtotal: decimal("subtotal", { precision: 10, scale: 2 }).notNull(),
     metadata: jsonb("metadata").default("{}"),
     createdAt: timestamp("created_at").defaultNow(),
@@ -1335,8 +1420,10 @@ export const customerVisitServices = pgTable(
   },
   (table) => ({
     visitIdx: index("customer_visit_services_visit_idx").on(table.visitId),
-    serviceIdx: index("customer_visit_services_service_idx").on(table.serviceId),
-  })
+    serviceIdx: index("customer_visit_services_service_idx").on(
+      table.serviceId,
+    ),
+  }),
 );
 
 // Customer Management Relations
@@ -1348,32 +1435,38 @@ export const customersRelations = relations(customers, ({ one, many }) => ({
   visits: many(customerVisits),
 }));
 
-export const customerVisitsRelations = relations(customerVisits, ({ one, many }) => ({
-  tenant: one(tenants, {
-    fields: [customerVisits.tenantId],
-    references: [tenants.id],
+export const customerVisitsRelations = relations(
+  customerVisits,
+  ({ one, many }) => ({
+    tenant: one(tenants, {
+      fields: [customerVisits.tenantId],
+      references: [tenants.id],
+    }),
+    customer: one(customers, {
+      fields: [customerVisits.customerId],
+      references: [customers.id],
+    }),
+    appointment: one(bookings, {
+      fields: [customerVisits.appointmentId],
+      references: [bookings.id],
+    }),
+    services: many(customerVisitServices),
   }),
-  customer: one(customers, {
-    fields: [customerVisits.customerId],
-    references: [customers.id],
-  }),
-  appointment: one(bookings, {
-    fields: [customerVisits.appointmentId],
-    references: [bookings.id],
-  }),
-  services: many(customerVisitServices),
-}));
+);
 
-export const customerVisitServicesRelations = relations(customerVisitServices, ({ one }) => ({
-  visit: one(customerVisits, {
-    fields: [customerVisitServices.visitId],
-    references: [customerVisits.id],
+export const customerVisitServicesRelations = relations(
+  customerVisitServices,
+  ({ one }) => ({
+    visit: one(customerVisits, {
+      fields: [customerVisitServices.visitId],
+      references: [customerVisits.id],
+    }),
+    service: one(services, {
+      fields: [customerVisitServices.serviceId],
+      references: [services.id],
+    }),
   }),
-  service: one(services, {
-    fields: [customerVisitServices.serviceId],
-    references: [services.id],
-  }),
-}));
+);
 
 // POS Terminals Relations
 export const posTerminalsRelations = relations(posTerminals, ({ one }) => ({
@@ -1384,21 +1477,27 @@ export const posTerminalsRelations = relations(posTerminals, ({ one }) => ({
 }));
 
 // MercadoPago Tokens Relations
-export const mercadopagoTokensRelations = relations(mercadopagoTokens, ({ one }) => ({
-  tenant: one(tenants, {
-    fields: [mercadopagoTokens.tenantId],
-    references: [tenants.id],
+export const mercadopagoTokensRelations = relations(
+  mercadopagoTokens,
+  ({ one }) => ({
+    tenant: one(tenants, {
+      fields: [mercadopagoTokens.tenantId],
+      references: [tenants.id],
+    }),
   }),
-}));
+);
 
 // MercadoPago Payments Relations
-export const mercadopagoPaymentsRelations = relations(mercadopagoPayments, ({ one }) => ({
-  tenant: one(tenants, {
-    fields: [mercadopagoPayments.tenantId],
-    references: [tenants.id],
+export const mercadopagoPaymentsRelations = relations(
+  mercadopagoPayments,
+  ({ one }) => ({
+    tenant: one(tenants, {
+      fields: [mercadopagoPayments.tenantId],
+      references: [tenants.id],
+    }),
+    order: one(orders, {
+      fields: [mercadopagoPayments.orderId],
+      references: [orders.id],
+    }),
   }),
-  order: one(orders, {
-    fields: [mercadopagoPayments.orderId],
-    references: [orders.id],
-  }),
-}));
+);
