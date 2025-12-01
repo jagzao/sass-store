@@ -6,7 +6,7 @@
  * across all carousel transitions and effects.
  */
 
-import { gsap } from 'gsap';
+import { gsap } from "gsap";
 
 /**
  * Animation positions for the 5-item carousel stack
@@ -19,9 +19,9 @@ export const CAROUSEL_POSITIONS = {
     yPercent: -55,
     scale: 1.5,
     opacity: 0,
-    filter: 'blur(30px)',
+    filter: "blur(30px)",
     zIndex: 10,
-    pointerEvents: 'none' as const,
+    pointerEvents: "none" as const,
   },
 
   /** Position #2: MAIN - centered, sharp, dominant */
@@ -30,9 +30,9 @@ export const CAROUSEL_POSITIONS = {
     yPercent: -50,
     scale: 1,
     opacity: 1,
-    filter: 'blur(0px)',
+    filter: "blur(0px)",
     zIndex: 20,
-    pointerEvents: 'auto' as const,
+    pointerEvents: "auto" as const,
   },
 
   /** Position #3: Right near - 50% right, +10% down */
@@ -40,10 +40,10 @@ export const CAROUSEL_POSITIONS = {
     xPercent: 50,
     yPercent: -40,
     scale: 0.8,
-    filter: 'blur(10px)',
+    filter: "blur(10px)",
     zIndex: 9,
     opacity: 1,
-    pointerEvents: 'none' as const,
+    pointerEvents: "none" as const,
   },
 
   /** Position #4: Right far - 90% right, +20% down */
@@ -51,10 +51,10 @@ export const CAROUSEL_POSITIONS = {
     xPercent: 90,
     yPercent: -30,
     scale: 0.5,
-    filter: 'blur(30px)',
+    filter: "blur(30px)",
     zIndex: 8,
     opacity: 1,
-    pointerEvents: 'none' as const,
+    pointerEvents: "none" as const,
   },
 
   /** Position #5: Out of focus - extreme right, +30% down */
@@ -62,10 +62,10 @@ export const CAROUSEL_POSITIONS = {
     xPercent: 120,
     yPercent: -20,
     scale: 0.3,
-    filter: 'blur(40px)',
+    filter: "blur(40px)",
     opacity: 0,
     zIndex: 7,
-    pointerEvents: 'none' as const,
+    pointerEvents: "none" as const,
   },
 };
 
@@ -74,58 +74,58 @@ export const CAROUSEL_POSITIONS = {
  */
 export const ANIMATION_DURATIONS = {
   /** Background color transition */
-  BACKGROUND: 0.5, // Slower background transition
+  BACKGROUND: 0.8, // Slower background transition
 
   /** Micro-parallax effect */
-  PARALLAX: 0.8, // Slower parallax
+  PARALLAX: 1.2, // Slower parallax
 
   /** Staggered text animations */
-  TEXT_STAGGER: 0.8, // Slower text stagger
+  TEXT_STAGGER: 1.2, // Slower text stagger
 
   /** Next slide transitions */
   NEXT: {
-    MAIN_TO_PEEK: 0.8,      // Main → Peek left (exit)
-    RIGHT_TO_MAIN: 1.0,     // Right near → Main (enter, most dramatic)
-    FAR_TO_NEAR: 1.2,       // Right far → Right near
-    OUT_TO_FAR: 1.4,        // Out of focus → Right far
+    MAIN_TO_PEEK: 1.5, // Main → Peek left (exit)
+    RIGHT_TO_MAIN: 1.8, // Right near → Main (enter, most dramatic)
+    FAR_TO_NEAR: 2.0, // Right far → Right near
+    OUT_TO_FAR: 2.2, // Out of focus → Right far
   },
 
   /** Previous slide transitions */
   PREV: {
-    PEEK_TO_MAIN: 1.4,      // Peek left → Main (enter, most dramatic)
-    MAIN_TO_NEAR: 1.2,      // Main → Right near
-    NEAR_TO_FAR: 1.0,       // Right near → Right far
-    FAR_TO_OUT: 0.8,        // Right far → Out of focus (exit)
+    PEEK_TO_MAIN: 2.2, // Peek left → Main (enter, most dramatic)
+    MAIN_TO_NEAR: 2.0, // Main → Right near
+    NEAR_TO_FAR: 1.8, // Right near → Right far
+    FAR_TO_OUT: 1.5, // Right far → Out of focus (exit)
   },
 
   /** Detail view transitions */
   DETAIL: {
-    EXPAND: 0.8,            // Expand main item to full width
-    HIDE_OTHERS: 0.6,       // Hide other carousel items
-    SHOW_CONTENT: 0.6,      // Fade in detail content
-    STAGGER_DELAY: 0.15,    // Delay between detail elements
+    EXPAND: 1.2, // Expand main item to full width
+    HIDE_OTHERS: 0.8, // Hide other carousel items
+    SHOW_CONTENT: 0.8, // Fade in detail content
+    STAGGER_DELAY: 0.2, // Delay between detail elements
   },
 
   /** Autoplay interval */
-  AUTOPLAY: 7,              // seconds between slides
+  AUTOPLAY: 8, // seconds between slides
 };
 
 /**
  * Animation easing curves
  */
 export const ANIMATION_EASING = {
-  SMOOTH: 'power2.out',
-  BOUNCE: 'power3.out',
-  SHARP: 'power2.inOut',
-  LINEAR: 'none',
+  SMOOTH: "power2.out",
+  BOUNCE: "power3.out",
+  SHARP: "power2.inOut",
+  LINEAR: "none",
 };
 
 /**
  * Micro-parallax offsets (in pixels)
  */
 export const PARALLAX_OFFSET = {
-  IMAGE: 14,      // Image container movement
-  TEXT: -7,       // Text container movement (opposite direction)
+  IMAGE: 14, // Image container movement
+  TEXT: -7, // Text container movement (opposite direction)
 };
 
 /**
@@ -153,11 +153,11 @@ export const DETAIL_STAGGER_DELAYS = {
  * Detail view position config for image centering
  */
 export const DETAIL_IMAGE_POSITION = {
-  left: '30%',
+  left: "30%",
   xPercent: -50,
-  top: '45%',
-  width: '55%',
-  height: '55%',
+  top: "45%",
+  width: "55%",
+  height: "55%",
 };
 
 /**
@@ -169,7 +169,7 @@ export const DETAIL_IMAGE_POSITION = {
 export function getAnimationDuration(
   baseSeconds: number,
   prefersReducedMotion: boolean = false,
-  isTestEnv: boolean = false
+  isTestEnv: boolean = false,
 ): number {
   if (isTestEnv) return baseSeconds * 0.15;
   if (prefersReducedMotion) return baseSeconds * 0.5;
@@ -181,7 +181,7 @@ export function getAnimationDuration(
  * Flip plugin leaves inline styles that can cause positioning drift
  */
 export function clearFlipInline(nodes: NodeListOf<Element>) {
-  gsap.set(nodes, { clearProps: 'top,left,width,height,margin' });
+  gsap.set(nodes, { clearProps: "top,left,width,height,margin" });
 }
 
 /**
@@ -190,10 +190,10 @@ export function clearFlipInline(nodes: NodeListOf<Element>) {
  */
 export function applyBaseAnchor(element: HTMLElement) {
   gsap.set(element, {
-    position: 'absolute',
-    top: '50%',
+    position: "absolute",
+    top: "50%",
     left: 0,
-    transformOrigin: '50% 50%',
+    transformOrigin: "50% 50%",
   });
 }
 
@@ -208,7 +208,7 @@ export function createTextStaggerTimeline(
     description?: HTMLElement | null;
     button?: HTMLElement | null;
   },
-  duration: number = ANIMATION_DURATIONS.TEXT_STAGGER
+  duration: number = ANIMATION_DURATIONS.TEXT_STAGGER,
 ): gsap.core.Timeline {
   const tl = gsap.timeline();
 
@@ -216,15 +216,15 @@ export function createTextStaggerTimeline(
     if (!el) return;
     tl.fromTo(
       el,
-      { y: -30, opacity: 0, filter: 'blur(10px)' },
+      { y: -30, opacity: 0, filter: "blur(10px)" },
       {
         y: 0,
         opacity: 1,
-        filter: 'blur(0px)',
+        filter: "blur(0px)",
         duration,
         ease: ANIMATION_EASING.SMOOTH,
       },
-      delay
+      delay,
     );
   };
 
@@ -243,24 +243,33 @@ export function createTextStaggerTimeline(
 export function applyParallax(
   imgWrap: HTMLElement | null,
   introduce: HTMLElement | null,
-  direction: 'next' | 'prev',
-  duration: number = ANIMATION_DURATIONS.PARALLAX
+  direction: "next" | "prev",
+  duration: number = ANIMATION_DURATIONS.PARALLAX,
 ) {
-  const imgOffset = direction === 'next' ? PARALLAX_OFFSET.IMAGE : -PARALLAX_OFFSET.IMAGE;
-  const textOffset = direction === 'next' ? PARALLAX_OFFSET.TEXT : -PARALLAX_OFFSET.TEXT;
+  const imgOffset =
+    direction === "next" ? PARALLAX_OFFSET.IMAGE : -PARALLAX_OFFSET.IMAGE;
+  const textOffset =
+    direction === "next" ? PARALLAX_OFFSET.TEXT : -PARALLAX_OFFSET.TEXT;
 
   if (imgWrap) {
     gsap.to(imgWrap, { x: imgOffset, duration, ease: ANIMATION_EASING.SMOOTH });
   }
   if (introduce) {
-    gsap.to(introduce, { x: textOffset, duration, ease: ANIMATION_EASING.SMOOTH });
+    gsap.to(introduce, {
+      x: textOffset,
+      duration,
+      ease: ANIMATION_EASING.SMOOTH,
+    });
   }
 }
 
 /**
  * Helper: Reset micro-parallax
  */
-export function resetParallax(imgWrap: HTMLElement | null, introduce: HTMLElement | null) {
+export function resetParallax(
+  imgWrap: HTMLElement | null,
+  introduce: HTMLElement | null,
+) {
   if (imgWrap) gsap.set(imgWrap, { x: 0 });
   if (introduce) gsap.set(introduce, { x: 0 });
 }
