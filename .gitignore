@@ -58,6 +58,7 @@ logs
 # Cache
 .cache
 .parcel-cache
+.turbo/
 
 # Temporary files
 .tmp
