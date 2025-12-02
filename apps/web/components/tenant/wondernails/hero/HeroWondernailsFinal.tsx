@@ -206,26 +206,10 @@ export default function WondernailsCarouselFinal({
     return () => mediaQuery.removeEventListener("change", handleChange);
   }, []);
 
-  // Update background color reactively - DISABLED for Light Theme consistency
+  // Background update removed to enforce global theme consistency
   const updateBackground = useCallback(() => {
-    // We want to keep the global white/lilac background constant
-    // The previous logic animated the --accent variable which might be causing the "pale yellow" issue
-    // if the slide colors are not perfectly tuned for the light theme.
-    // For now, we'll just do nothing here to let the global CSS rule.
-    return;
-    /* 
-    if (!rootRef.current || !listRef.current) return;
-    const items = listRef.current.querySelectorAll(`.${styles.item}`);
-    const mainItem = items[1] as HTMLElement | undefined;
-    const idx = Number(mainItem?.dataset.index ?? 0);
-    const color = slides[idx]?.bgColor || "#FF2D6A";
-    gsap.to(rootRef.current, {
-      duration: ANIMATION_DURATIONS.BACKGROUND,
-      ease: ANIMATION_EASING.SMOOTH,
-      "--accent": color,
-    } as any);
-    */
-  }, [slides]);
+    // No-op
+  }, []);
 
   // Stagger text animation for MAIN item
   const staggerMainText = useCallback((mainItem: HTMLElement) => {
@@ -338,9 +322,9 @@ export default function WondernailsCarouselFinal({
         // Reset micro-parallax
         resetParallax(mainImgWrap, mainIntroduce);
 
-        // Descongela altura y actualiza fondo
+        // Descongela altura
         gsap.set(root, { clearProps: "height" });
-        updateBackground();
+        // updateBackground(); // Removed
 
         // Stagger del nuevo MAIN (tras estar estable)
         const newMainItem = newItems[1] as HTMLElement;
@@ -477,9 +461,9 @@ export default function WondernailsCarouselFinal({
         // Reset micro-parallax
         resetParallax(mainImgWrap, mainIntroduce);
 
-        // Descongela altura y actualiza fondo
+        // Descongela altura
         gsap.set(root, { clearProps: "height" });
-        updateBackground();
+        // updateBackground(); // Removed
 
         // Stagger del nuevo MAIN (tras estar estable)
         const newMainItem = newItems[1] as HTMLElement;
@@ -760,7 +744,8 @@ export default function WondernailsCarouselFinal({
         `.${styles.item}`,
       ) as NodeListOf<Element>;
       applyPositions(items);
-      updateBackground();
+      applyPositions(items);
+      // updateBackground(); // Removed
 
       // Stagger initial MAIN text
       const mainItem = items[1] as HTMLElement;

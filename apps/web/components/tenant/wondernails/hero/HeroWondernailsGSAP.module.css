@@ -8,8 +8,8 @@
   isolation: isolate;
   contain: layout paint style;
   /* Transparent to let global white/lilac background show through */
-  background: transparent;
-  transition: background 0.35s ease;
+  background: transparent !important;
+  transition: none;
 }
 
 /* Noise/Grain Texture Overlay - Subtle for Light Theme */
@@ -27,12 +27,7 @@
 .glow {
   position: absolute;
   inset: 0;
-  background: radial-gradient(
-    ellipse at 50% 40%,
-    rgba(230, 215, 255, 0.4) 0%,
-    rgba(197, 160, 89, 0.1) 40%,
-    transparent 70%
-  );
+  background: transparent !important;
   pointer-events: none;
   z-index: 2;
   mix-blend-mode: normal; /* Screen doesn't work well on white */
@@ -45,11 +40,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(
-    circle at 25% 35%,
-    rgba(230, 215, 255, 0.3) 0%,
-    rgba(255, 255, 255, 0) 50%
-  );
+  background: transparent !important;
   z-index: 1;
   pointer-events: none;
   mix-blend-mode: normal;
@@ -493,4 +484,23 @@
     transition: none !important;
     animation: none !important;
   }
+}
+
+/* ==========================================================================
+   FORCE TRANSPARENCY ON EVERYTHING (User Request)
+   ========================================================================== */
+.wncRoot,
+.carousel,
+.list,
+.item,
+[class*="hero-"],
+[class*="slide-"] {
+  background-color: transparent !important;
+  background: transparent !important;
+}
+
+/* Ensure only the Glass Card has a background */
+.item {
+  background: rgba(255, 255, 255, 0.75) !important;
+  backdrop-filter: blur(25px) !important;
 }
