@@ -485,22 +485,3 @@
     animation: none !important;
   }
 }
-
-/* ==========================================================================
-   FORCE TRANSPARENCY ON EVERYTHING (User Request)
-   ========================================================================== */
-.wncRoot,
-.carousel,
-.list,
-.item,
-[class*="hero-"],
-[class*="slide-"] {
-  background-color: transparent !important;
-  background: transparent !important;
-}
-
-/* Ensure only the Glass Card has a background */
-.item {
-  background: rgba(255, 255, 255, 0.75) !important;
-  backdrop-filter: blur(25px) !important;
-}

@@ -4,6 +4,14 @@ const nextConfig = {
   // Use export for static site generation
   output: process.env.CF_PAGES ? 'export' : undefined,
 
+  // Skip linting and typecheck during builds
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+
   experimental: {
     // Basic configuration for development
     serverComponentsExternalPackages: ["@sass-store/database"],

@@ -1,7 +1,9 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import { NextResponse } from "next/server";
+
+export const dynamic = "force-dynamic";
 
 export interface HealthCheckResponse {
-  status: 'healthy' | 'unhealthy';
+  status: "healthy" | "unhealthy";
   timestamp: Date;
   uptime: number;
   services: {
@@ -12,78 +14,62 @@ export interface HealthCheckResponse {
   version?: string;
 }
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== 'GET') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
+export async function GET() {
   try {
     // Perform health checks on critical services
     const healthCheck: HealthCheckResponse = {
-      status: 'healthy', // We'll set this based on actual checks
+      status: "healthy", // We'll set this based on actual checks
       timestamp: new Date(),
       uptime: process.uptime(),
       services: {
         database: await checkDatabaseConnection(),
         cache: await checkCacheConnection(),
-        externalAPIs: await checkExternalAPIs()
+        externalAPIs: await checkExternalAPIs(),
       },
-      version: process.env.npm_package_version
+      version: process.env.npm_package_version,
     };
 
     // Determine overall status based on service statuses
     if (!healthCheck.services.database || !healthCheck.services.cache) {
-      healthCheck.status = 'unhealthy';
+      healthCheck.status = "unhealthy";
     }
 
-    const status = healthCheck.status === 'healthy' ? 200 : 503;
-    res.status(status).json(healthCheck);
+    const status = healthCheck.status === "healthy" ? 200 : 503;
+    return NextResponse.json(healthCheck, { status });
   } catch (error) {
-    console.error('Health check error:', error);
-    res.status(503).json({
-      status: 'unhealthy',
-      timestamp: new Date(),
-      uptime: process.uptime(),
-      services: {
-        database: false,
-        cache: false,
-        externalAPIs: false
+    console.error("Health check error:", error);
+    return NextResponse.json(
+      {
+        status: "unhealthy",
+        timestamp: new Date(),
+        uptime: process.uptime(),
+        services: {
+          database: false,
+          cache: false,
+          externalAPIs: false,
+        },
+        version: process.env.npm_package_version,
       },
-      version: process.env.npm_package_version
-    });
+      { status: 503 },
+    );
   }
 }
 
 async function checkDatabaseConnection(): Promise<boolean> {
   // In a real implementation, this would check the actual database connection
-  try {
-    // This is a placeholder - would connect to your database in reality
-    // For now, return true to simulate healthy connection
-    return true;
-  } catch (error) {
-    console.error('Database health check failed:', error);
-    return false;
-  }
+  // This is a placeholder - would connect to your database in reality
+  // For now, return true to simulate healthy connection
+  return true;
 }
 
 async function checkCacheConnection(): Promise<boolean> {
   // In a real implementation, this would check the cache connection
-  try {
-    // This is a placeholder - would connect to Redis/Upstash in reality
-    return true;
-  } catch (error) {
-    console.error('Cache health check failed:', error);
-    return false;
-  }
+  // This is a placeholder - would connect to Redis/Upstash in reality
+  return true;
 }
 
 async function checkExternalAPIs(): Promise<boolean> {
   // In a real implementation, this would check connections to external services
-  try {
-    // Check if critical services are reachable
-    return true;
-  } catch (error) {
-    console.error('External API health check failed:', error);
-    return false;
-  }
+  // Check if critical services are reachable
+  return true;
 }

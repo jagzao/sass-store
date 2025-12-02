@@ -1,9 +1,13 @@
-import { NextRequest, NextResponse } from 'next/server';
-import Stripe from 'stripe';
-import { db } from '@/lib/db/connection';
-import { orders, payments, bookings, disputes } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
-import { sendPaymentConfirmation, sendPaymentFailedNotification, sendDisputeNotification } from '@/lib/email/email-service';
+import { NextRequest, NextResponse } from "next/server";
+import Stripe from "stripe";
+import { db } from "@/lib/db/connection";
+import { orders, payments, bookings, disputes } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
+import {
+  sendPaymentConfirmation,
+  sendPaymentFailedNotification,
+  sendDisputeNotification,
+} from "@/lib/email/email-service";
 
 // Initialize Stripe - fail fast if credentials are missing
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
@@ -11,68 +15,67 @@ const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
 // Validate required credentials
 if (!stripeSecretKey) {
-  console.error('[Stripe] STRIPE_SECRET_KEY is not configured');
+  console.error("[Stripe] STRIPE_SECRET_KEY is not configured");
 }
 if (!webhookSecret) {
-  console.error('[Stripe] STRIPE_WEBHOOK_SECRET is not configured');
+  console.error("[Stripe] STRIPE_WEBHOOK_SECRET is not configured");
 }
 
 const stripe = stripeSecretKey
-  ? new Stripe(stripeSecretKey, { apiVersion: '2025-08-27.basil' })
+  ? new Stripe(stripeSecretKey, { apiVersion: "2025-08-27.basil" })
   : null;
 
 export async function POST(request: NextRequest) {
   try {
     // Fail fast if Stripe is not properly configured
     if (!stripe || !webhookSecret) {
-      console.error('[Stripe] Webhook endpoint called but Stripe is not configured');
+      console.error(
+        "[Stripe] Webhook endpoint called but Stripe is not configured",
+      );
       return NextResponse.json(
-        { error: 'Payment processing is not configured' },
-        { status: 503 }
+        { error: "Payment processing is not configured" },
+        { status: 503 },
       );
     }
 
     const body = await request.text();
-    const signature = request.headers.get('stripe-signature')!;
+    const signature = request.headers.get("stripe-signature")!;
 
     let event: Stripe.Event;
 
     try {
       event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
     } catch (err) {
-      console.error('Webhook signature verification failed:', err);
-      return NextResponse.json(
-        { error: 'Invalid signature' },
-        { status: 400 }
-      );
+      console.error("Webhook signature verification failed:", err);
+      return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
     }
 
     // Handle the event
     switch (event.type) {
-      case 'payment_intent.succeeded':
+      case "payment_intent.succeeded":
         await handlePaymentSucceeded(event.data.object as Stripe.PaymentIntent);
         break;
 
-      case 'payment_intent.payment_failed':
+      case "payment_intent.payment_failed":
         await handlePaymentFailed(event.data.object as Stripe.PaymentIntent);
         break;
 
-      case 'payment_intent.canceled':
+      case "payment_intent.canceled":
         await handlePaymentCanceled(event.data.object as Stripe.PaymentIntent);
         break;
 
-      case 'charge.dispute.created':
+      case "charge.dispute.created":
         await handleChargeDisputeCreated(event.data.object as Stripe.Dispute);
         break;
 
-      case 'invoice.payment_succeeded':
+      case "invoice.payment_succeeded":
         // Handle subscription payments if implemented
-        console.log('Invoice payment succeeded:', event.data.object);
+        console.log("Invoice payment succeeded:", event.data.object);
         break;
 
-      case 'customer.subscription.updated':
+      case "customer.subscription.updated":
         // Handle subscription updates if implemented
-        console.log('Subscription updated:', event.data.object);
+        console.log("Subscription updated:", event.data.object);
         break;
 
       default:
@@ -80,12 +83,11 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({ received: true });
-
   } catch (error) {
-    console.error('Webhook processing error:', error);
+    console.error("Webhook processing error:", error);
     return NextResponse.json(
-      { error: 'Webhook processing failed' },
-      { status: 500 }
+      { error: "Webhook processing failed" },
+      { status: 500 },
     );
   }
 }
@@ -96,16 +98,18 @@ async function handlePaymentSucceeded(paymentIntent: Stripe.PaymentIntent) {
     const tenantId = paymentIntent.metadata.tenantId;
 
     if (!orderId || !tenantId) {
-      throw new Error('Missing order ID or tenant ID in payment intent metadata');
+      throw new Error(
+        "Missing order ID or tenant ID in payment intent metadata",
+      );
     }
 
     // Update order status
     const [updatedOrder] = await db
       .update(orders)
       .set({
-        status: 'paid',
+        status: "paid",
         paidAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       })
       .where(eq(orders.id, orderId))
       .returning();
@@ -116,29 +120,26 @@ async function handlePaymentSucceeded(paymentIntent: Stripe.PaymentIntent) {
 
     // Create payment record
     await db.insert(payments).values({
-      id: crypto.randomUUID(),
       tenantId,
       orderId,
       stripePaymentIntentId: paymentIntent.id,
-      amount: paymentIntent.amount / 100, // Convert from cents
+      amount: (paymentIntent.amount / 100).toString(), // Convert from cents to string
       currency: paymentIntent.currency,
-      status: 'completed',
-      paymentMethod: paymentIntent.payment_method_types[0] || 'card',
+      status: "completed",
+      paymentMethod: paymentIntent.payment_method_types[0] || "card",
       metadata: {
-        stripeChargeId: paymentIntent.latest_charge as string || '',
-        receiptUrl: null // Will be populated by separate charge webhook if needed
-      },
-      createdAt: new Date(),
-      updatedAt: new Date()
+        stripeChargeId: (paymentIntent.latest_charge as string) || "",
+        receiptUrl: null, // Will be populated by separate charge webhook if needed
+      } as any,
     });
 
     // If this is a booking order, update booking status by customer email match
-    if (updatedOrder.type === 'booking' && updatedOrder.customerEmail) {
+    if (updatedOrder.type === "booking" && updatedOrder.customerEmail) {
       await db
         .update(bookings)
         .set({
-          status: 'confirmed',
-          updatedAt: new Date()
+          status: "confirmed",
+          updatedAt: new Date(),
         })
         .where(eq(bookings.customerEmail, updatedOrder.customerEmail));
     }
@@ -151,19 +152,20 @@ async function handlePaymentSucceeded(paymentIntent: Stripe.PaymentIntent) {
         amount: paymentIntent.amount / 100,
         currency: paymentIntent.currency.toUpperCase(),
         orderDetails: {
-          items: updatedOrder.items as any[] || [],
-          total: updatedOrder.total,
-          tenantId
-        }
-      }).catch(err => console.error('Failed to send confirmation email:', err));
+          items: (updatedOrder as any).items || [],
+          total: parseFloat(updatedOrder.total),
+          tenantId,
+        },
+      }).catch((err) =>
+        console.error("Failed to send confirmation email:", err),
+      );
     }
 
     // Update inventory if applicable
     // Note: Inventory management would be implemented based on order items
     console.log(`Payment succeeded for order ${orderId}`);
-
   } catch (error) {
-    console.error('Error handling payment success:', error);
+    console.error("Error handling payment success:", error);
     throw error;
   }
 }
@@ -174,33 +176,33 @@ async function handlePaymentFailed(paymentIntent: Stripe.PaymentIntent) {
     const tenantId = paymentIntent.metadata.tenantId;
 
     if (!orderId || !tenantId) {
-      throw new Error('Missing order ID or tenant ID in payment intent metadata');
+      throw new Error(
+        "Missing order ID or tenant ID in payment intent metadata",
+      );
     }
 
     // Update order status
     await db
       .update(orders)
       .set({
-        status: 'payment_failed',
-        updatedAt: new Date()
+        status: "payment_failed",
+        updatedAt: new Date(),
       })
       .where(eq(orders.id, orderId));
 
     // Create payment record for failed payment
     await db.insert(payments).values({
-      id: crypto.randomUUID(),
       tenantId,
       orderId,
       stripePaymentIntentId: paymentIntent.id,
-      amount: paymentIntent.amount / 100,
+      amount: (paymentIntent.amount / 100).toString(),
       currency: paymentIntent.currency,
-      status: 'failed',
-      paymentMethod: paymentIntent.payment_method_types[0] || 'card',
+      status: "failed",
+      paymentMethod: paymentIntent.payment_method_types[0] || "card",
       metadata: {
-        failureReason: paymentIntent.last_payment_error?.message || 'Unknown error'
-      },
-      createdAt: new Date(),
-      updatedAt: new Date()
+        failureReason:
+          paymentIntent.last_payment_error?.message || "Unknown error",
+      } as any,
     });
 
     // Send payment failed email to customer
@@ -214,16 +216,17 @@ async function handlePaymentFailed(paymentIntent: Stripe.PaymentIntent) {
       await sendPaymentFailedNotification({
         to: failedOrder.customerEmail,
         orderId,
-        reason: paymentIntent.last_payment_error?.message || 'Unknown error',
+        reason: paymentIntent.last_payment_error?.message || "Unknown error",
         amount: paymentIntent.amount / 100,
-        currency: paymentIntent.currency.toUpperCase()
-      }).catch(err => console.error('Failed to send failure notification:', err));
+        currency: paymentIntent.currency.toUpperCase(),
+      }).catch((err) =>
+        console.error("Failed to send failure notification:", err),
+      );
     }
 
     console.log(`Payment failed for order ${orderId}`);
-
   } catch (error) {
-    console.error('Error handling payment failure:', error);
+    console.error("Error handling payment failure:", error);
     throw error;
   }
 }
@@ -233,22 +236,21 @@ async function handlePaymentCanceled(paymentIntent: Stripe.PaymentIntent) {
     const orderId = paymentIntent.metadata.orderId;
 
     if (!orderId) {
-      throw new Error('Missing order ID in payment intent metadata');
+      throw new Error("Missing order ID in payment intent metadata");
     }
 
     // Update order status
     await db
       .update(orders)
       .set({
-        status: 'canceled',
-        updatedAt: new Date()
+        status: "canceled",
+        updatedAt: new Date(),
       })
       .where(eq(orders.id, orderId));
 
     console.log(`Payment canceled for order ${orderId}`);
-
   } catch (error) {
-    console.error('Error handling payment cancellation:', error);
+    console.error("Error handling payment cancellation:", error);
     throw error;
   }
 }
@@ -265,34 +267,33 @@ async function handleChargeDisputeCreated(dispute: Stripe.Dispute) {
 
     if (paymentResults.length > 0) {
       const payment = paymentResults[0];
-      
+
       // Update order status to disputed
       await db
         .update(orders)
         .set({
-          status: 'disputed',
-          updatedAt: new Date()
+          status: "disputed",
+          updatedAt: new Date(),
         })
         .where(eq(orders.id, payment.orderId));
 
       // Create dispute record for tracking
       await db.insert(disputes).values({
-        id: dispute.id,
         tenantId: payment.tenantId,
         paymentId: payment.id,
         orderId: payment.orderId,
         status: dispute.status,
         reason: dispute.reason,
-        amount: dispute.amount / 100, // Convert from cents
+        amount: (dispute.amount / 100).toString(), // Convert from cents to string
         currency: dispute.currency,
-        evidenceDueBy: dispute.evidence_details?.due_by ? new Date(dispute.evidence_details.due_by * 1000) : null,
+        evidenceDueBy: dispute.evidence_details?.due_by
+          ? new Date(dispute.evidence_details.due_by * 1000)
+          : null,
         metadata: {
           stripeDisputeId: dispute.id,
           stripeChargeId: chargeId,
-          ...dispute.metadata
-        },
-        createdAt: new Date(),
-        updatedAt: new Date()
+          ...dispute.metadata,
+        } as any,
       });
 
       // Notify tenant of dispute
@@ -310,15 +311,16 @@ async function handleChargeDisputeCreated(dispute: Stripe.Dispute) {
           amount: dispute.amount / 100,
           currency: dispute.currency.toUpperCase(),
           reason: dispute.reason,
-          status: dispute.status
-        }).catch(err => console.error('Failed to send dispute notification:', err));
+          status: dispute.status,
+        }).catch((err) =>
+          console.error("Failed to send dispute notification:", err),
+        );
       }
     }
 
     console.log(`Charge dispute created for charge ${chargeId}`);
-
   } catch (error) {
-    console.error('Error handling charge dispute:', error);
+    console.error("Error handling charge dispute:", error);
     throw error;
   }
 }

@@ -58,22 +58,37 @@ export default async function TenantLayout({
               box-shadow: none !important; /* Remove any yellow glow */
           }
 
-          /* Force Root to be White with Lilac Atmosphere */
-          body, html, #root, #app, .main-wrapper {
-              /* Base color fallback */
+          /* 1. Ensure the body handles the base white color */
+          body {
               background-color: #FFFFFF !important;
+              position: relative; /* Needed for absolute positioning context if not fixed */
+          }
+
+          /* 2. Create the Spotlight Layer using ::before */
+          body::before {
+              content: "";
+              position: fixed; /* Stays in place while scrolling */
+              top: 0;
+              left: 0;
+              width: 100vw;
+              height: 100vh;
+              z-index: -1; /* Puts it BEHIND everything */
               
-              /* The Lilac Spotlight - Centralized and soft */
-              background-image: radial-gradient(
-                  circle at 50% 35%, /* Positioned behind the hero card */
-                  rgba(190, 140, 255, 0.65) 0%, /* More vibrant Lilac center */
-                  rgba(255, 255, 255, 0) 70%   /* Fades to transparent white */
-              ) !important;
-              
-              /* Ensure it stays elegant while scrolling */
-              background-attachment: fixed !important;
-              background-repeat: no-repeat !important;
-              min-height: 100vh;
+              /* THE LILAC GLOW GRADIENT */
+              /* Increased opacity slightly to ensure visibility against white */
+              background: radial-gradient(
+                  circle at 50% 30%, 
+                  rgba(200, 160, 255, 0.25) 0%, /* Visible Soft Lilac */
+                  rgba(255, 255, 255, 0) 60%   /* Fade to transparent */
+              );
+              pointer-events: none; /* Let clicks pass through */
+          }
+
+          /* 3. CRITICAL: Force App Wrappers to be Transparent */
+          /* This ensures the body::before layer can be seen through the app containers */
+          #root, #app, .main-wrapper, .wncRoot {
+              background-color: transparent !important;
+              background: transparent !important;
           }
 
           /* 2. STANDARDIZE ALL CARDS (No more Black Cards) */
