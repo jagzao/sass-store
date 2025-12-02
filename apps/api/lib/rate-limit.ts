@@ -1,9 +1,9 @@
-import { Redis } from '@upstash/redis';
+import { Redis } from "@upstash/redis";
 
 // Initialize Redis client for rate limiting
 const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL || '',
-  token: process.env.UPSTASH_REDIS_REST_TOKEN || ''
+  url: process.env.UPSTASH_REDIS_REST_URL || "",
+  token: process.env.UPSTASH_REDIS_REST_TOKEN || "",
 });
 
 interface RateLimitConfig {
@@ -13,13 +13,13 @@ interface RateLimitConfig {
 
 // Rate limit configurations per endpoint type
 const rateLimitConfigs: Record<string, RateLimitConfig> = {
-  'products:list': { windowMs: 60 * 1000, maxRequests: 100 }, // 100 requests per minute
-  'products:create': { windowMs: 60 * 1000, maxRequests: 10 }, // 10 creates per minute
-  'products:update': { windowMs: 60 * 1000, maxRequests: 20 }, // 20 updates per minute
-  'bookings:list': { windowMs: 60 * 1000, maxRequests: 50 },
-  'bookings:create': { windowMs: 60 * 1000, maxRequests: 5 }, // 5 bookings per minute
-  'media:upload': { windowMs: 60 * 1000, maxRequests: 5 }, // 5 uploads per minute
-  'default': { windowMs: 60 * 1000, maxRequests: 60 }
+  "products:list": { windowMs: 60 * 1000, maxRequests: 100 }, // 100 requests per minute
+  "products:create": { windowMs: 60 * 1000, maxRequests: 10 }, // 10 creates per minute
+  "products:update": { windowMs: 60 * 1000, maxRequests: 20 }, // 20 updates per minute
+  "bookings:list": { windowMs: 60 * 1000, maxRequests: 50 },
+  "bookings:create": { windowMs: 60 * 1000, maxRequests: 5 }, // 5 bookings per minute
+  "media:upload": { windowMs: 60 * 1000, maxRequests: 5 }, // 5 uploads per minute
+  default: { windowMs: 60 * 1000, maxRequests: 60 },
 };
 
 export interface RateLimitResult {
@@ -31,22 +31,32 @@ export interface RateLimitResult {
 export async function checkRateLimit(
   tenantId: string,
   endpoint: string,
-  customConfig?: RateLimitConfig
+  customConfig?: RateLimitConfig,
 ): Promise<RateLimitResult> {
-  const config = customConfig || rateLimitConfigs[endpoint] || rateLimitConfigs.default;
+  const config =
+    customConfig || rateLimitConfigs[endpoint] || rateLimitConfigs.default;
   const key = `rate_limit:${tenantId}:${endpoint}`;
   const window = Math.floor(Date.now() / config.windowMs);
   const windowKey = `${key}:${window}`;
 
+  if (!process.env.UPSTASH_REDIS_REST_URL) {
+    // Bypass rate limit if Redis is not configured (dev mode)
+    return {
+      success: true,
+      remaining: 100,
+      resetTime: (window + 1) * config.windowMs,
+    };
+  }
+
   try {
     // Get current count for this window
-    const current = await redis.get(windowKey) as number || 0;
+    const current = ((await redis.get(windowKey)) as number) || 0;
 
     if (current >= config.maxRequests) {
       return {
         success: false,
         remaining: 0,
-        resetTime: (window + 1) * config.windowMs
+        resetTime: (window + 1) * config.windowMs,
       };
     }
 
@@ -60,17 +70,19 @@ export async function checkRateLimit(
     return {
       success: true,
       remaining: Math.max(0, config.maxRequests - newCount),
-      resetTime: (window + 1) * config.windowMs
+      resetTime: (window + 1) * config.windowMs,
     };
-
   } catch (error) {
-    console.error('[Rate Limit] Redis failure - failing closed for security:', error);
+    console.error(
+      "[Rate Limit] Redis failure - failing closed for security:",
+      error,
+    );
     // SECURITY: Fail closed - deny requests when Redis is unavailable
     // This prevents bypassing rate limits during Redis outages
     return {
       success: false,
       remaining: 0,
-      resetTime: Date.now() + config.windowMs
+      resetTime: Date.now() + config.windowMs,
     };
   }
 }
@@ -79,20 +91,32 @@ export async function checkRateLimit(
 export async function checkBurstRateLimit(
   tenantId: string,
   endpoint: string,
-  burstConfig: { burstLimit: number; refillRate: number }
+  burstConfig: { burstLimit: number; refillRate: number },
 ): Promise<RateLimitResult> {
   const key = `burst_rate_limit:${tenantId}:${endpoint}`;
 
+  if (!process.env.UPSTASH_REDIS_REST_URL) {
+    return {
+      success: true,
+      remaining: burstConfig.burstLimit,
+      resetTime: Date.now(),
+    };
+  }
+
   try {
     const now = Date.now();
-    const bucket = await redis.hmget(key, 'tokens', 'lastRefill') as unknown as [string | null, string | null];
+    const bucket = (await redis.hmget(
+      key,
+      "tokens",
+      "lastRefill",
+    )) as unknown as [string | null, string | null];
 
     let tokens = bucket[0] ? parseInt(bucket[0], 10) : burstConfig.burstLimit;
-    let lastRefill = bucket[1] ? parseInt(bucket[1], 10) : now;
+    const lastRefill = bucket[1] ? parseInt(bucket[1], 10) : now;
 
     // Calculate tokens to add based on time elapsed
     const timeDelta = now - lastRefill;
-    const tokensToAdd = Math.floor(timeDelta / 1000 * burstConfig.refillRate);
+    const tokensToAdd = Math.floor((timeDelta / 1000) * burstConfig.refillRate);
 
     tokens = Math.min(burstConfig.burstLimit, tokens + tokensToAdd);
 
@@ -100,7 +124,7 @@ export async function checkBurstRateLimit(
       return {
         success: false,
         remaining: 0,
-        resetTime: now + (1000 / burstConfig.refillRate)
+        resetTime: now + 1000 / burstConfig.refillRate,
       };
     }
 
@@ -110,23 +134,27 @@ export async function checkBurstRateLimit(
     // Update bucket
     await redis.hmset(key, {
       tokens: tokens.toString(),
-      lastRefill: now.toString()
+      lastRefill: now.toString(),
     });
     await redis.expire(key, 3600); // 1 hour expiration
 
     return {
       success: true,
       remaining: tokens,
-      resetTime: now + ((burstConfig.burstLimit - tokens) * 1000 / burstConfig.refillRate)
+      resetTime:
+        now +
+        ((burstConfig.burstLimit - tokens) * 1000) / burstConfig.refillRate,
     };
-
   } catch (error) {
-    console.error('[Burst Rate Limit] Redis failure - failing closed for security:', error);
+    console.error(
+      "[Burst Rate Limit] Redis failure - failing closed for security:",
+      error,
+    );
     // SECURITY: Fail closed - deny requests when Redis is unavailable
     return {
       success: false,
       remaining: 0,
-      resetTime: Date.now() + 1000
+      resetTime: Date.now() + 1000,
     };
   }
 }
@@ -141,21 +169,30 @@ export interface QuotaResult {
 
 export async function checkTenantQuota(
   tenantId: string,
-  quotaType: 'api_calls' | 'storage' | 'bandwidth',
-  amount: number = 1
+  quotaType: "api_calls" | "storage" | "bandwidth",
+  amount: number = 1,
 ): Promise<QuotaResult> {
   const key = `quota:${tenantId}:${quotaType}`;
   const monthKey = new Date().toISOString().slice(0, 7); // YYYY-MM format
 
+  if (!process.env.UPSTASH_REDIS_REST_URL) {
+    return {
+      allowed: true,
+      usage: 0,
+      limit: 1000000,
+      resetDate: getNextMonthStart(),
+    };
+  }
+
   try {
     const quotaKey = `${key}:${monthKey}`;
-    const usage = await redis.get(quotaKey) as number || 0;
+    const usage = ((await redis.get(quotaKey)) as number) || 0;
 
     // Get tenant limits (these would normally come from database)
     const limits = {
       api_calls: 10000, // per month
       storage: 5 * 1024 * 1024 * 1024, // 5GB
-      bandwidth: 50 * 1024 * 1024 * 1024 // 50GB
+      bandwidth: 50 * 1024 * 1024 * 1024, // 50GB
     };
 
     const limit = limits[quotaType];
@@ -166,7 +203,7 @@ export async function checkTenantQuota(
         allowed: false,
         usage,
         limit,
-        resetDate: getNextMonthStart()
+        resetDate: getNextMonthStart(),
       };
     }
 
@@ -180,17 +217,19 @@ export async function checkTenantQuota(
       allowed: true,
       usage: newUsage,
       limit,
-      resetDate: getNextMonthStart()
+      resetDate: getNextMonthStart(),
     };
-
   } catch (error) {
-    console.error('[Quota Check] Redis failure - failing closed for security:', error);
+    console.error(
+      "[Quota Check] Redis failure - failing closed for security:",
+      error,
+    );
     // SECURITY: Fail closed - deny requests when Redis is unavailable
     return {
       allowed: false,
       usage: 0,
       limit: 0,
-      resetDate: getNextMonthStart()
+      resetDate: getNextMonthStart(),
     };
   }
 }
@@ -203,6 +242,13 @@ function getNextMonthStart(): string {
 
 function getSecondsUntilEndOfMonth(): number {
   const now = new Date();
-  const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+  const endOfMonth = new Date(
+    now.getFullYear(),
+    now.getMonth() + 1,
+    0,
+    23,
+    59,
+    59,
+  );
   return Math.ceil((endOfMonth.getTime() - now.getTime()) / 1000);
 }
