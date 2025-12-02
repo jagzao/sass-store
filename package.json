@@ -10,7 +10,7 @@
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
-    "build:cloudflare": "CF_PAGES=1 turbo run build",
+    "build:cloudflare": "cross-env CF_PAGES=1 turbo run build",
     "start": "turbo run start",
     "lint": "turbo run lint",
     "deploy": "npm run build:cloudflare && echo 'Build complete! Deploy to Cloudflare Pages via dashboard or wrangler'",
@@ -79,6 +79,7 @@
     "@vitest/ui": "^3.2.4",
     "autoprefixer": "^10.4.21",
     "critters": "^0.0.20",
+    "cross-env": "^10.1.0",
     "dotenv": "^17.2.3",
     "drizzle-kit": "^0.22.8",
     "eslint": "^8.57.0",
