@@ -84,6 +84,7 @@ class VideoProcessor:
                     database=self.config.get('db_name', 'sass_store'),
                     user=self.config.get('db_user', 'postgres'),
                     password=self.config.get('db_password', ''),
+                    port=self.config.get('db_port', '5432'),
                     cursor_factory=RealDictCursor
                 )
                 self.logger.info("✅ Database connection established")
@@ -674,21 +675,20 @@ class VideoProcessor:
 
 def main():
     """Main worker loop"""
-    # Configuration from environment variables
+    # Initialize processor with configuration
     config = {
         'db_host': os.getenv('DB_HOST', 'localhost'),
         'db_name': os.getenv('DB_NAME', 'sass_store'),
         'db_user': os.getenv('DB_USER', 'postgres'),
         'db_password': os.getenv('DB_PASSWORD', ''),
-        's3_endpoint': os.getenv('S3_ENDPOINT', ''),
-        's3_access_key': os.getenv('S3_ACCESS_KEY', ''),
-        's3_secret_key': os.getenv('S3_SECRET_KEY', ''),
+        'db_port': os.getenv('DB_PORT', '5432'),
+        's3_endpoint': os.getenv('S3_ENDPOINT'),
+        's3_access_key': os.getenv('S3_ACCESS_KEY'),
+        's3_secret_key': os.getenv('S3_SECRET_KEY')
     }
     
     processor = VideoProcessor(config)
-    
-    # Main processing loop
-    processor.logger.info("🚀 Video processor worker started")
+    processor.logger.info("🚀 Starting video processor worker...")
     
     while True:
         try:
@@ -696,6 +696,8 @@ def main():
             if not processor.db_conn:
                 processor.logger.error("❌ No database connection, waiting...")
                 time.sleep(10)
+                # Try to reconnect
+                processor.setup_connections()
                 continue
                 
             query = """
@@ -725,7 +727,7 @@ def main():
                         processor.update_job_status(job['id'], 'failed')
             else:
                 # No jobs available, wait
-                processor.logger.debug("💤 No pending jobs, waiting...")
+                # processor.logger.debug("💤 No pending jobs, waiting...")
                 time.sleep(5)
                 
         except KeyboardInterrupt:

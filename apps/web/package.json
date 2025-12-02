@@ -4,10 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 3001",
-    "build": "next build || echo 'Build completed with warnings - continuing with available pages'",
-    "build:strict": "next build",
+    "build": "next build",
+    "build:cloudflare": "next build",
     "analyze": "ANALYZE=true next build",
-    "start": "next start",
+    "start": "next start -p 3001",
     "lint": "next lint",
     "typecheck": "echo \"Skipping typecheck for web package\""
   },

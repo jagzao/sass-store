@@ -86,14 +86,14 @@ export default async function TenantLayout({
 
           /* 3. CRITICAL: Force App Wrappers to be Transparent */
           /* This ensures the body::before layer can be seen through the app containers */
-          #root, #app, .main-wrapper, .wncRoot {
+          #root, #app, .main-wrapper, [data-tenant-hero="wondernails"] {
               background-color: transparent !important;
               background: transparent !important;
           }
 
           /* 2. STANDARDIZE ALL CARDS (No more Black Cards) */
-          /* Target every possible card container */
-          [class*="card"], [class*="slide"], .hero-card-container, .swiper-slide {
+          /* Target every possible card container using data attributes where possible */
+          [class*="card"], [class*="slide"], .hero-card-container, .swiper-slide, [data-testid="carousel-item"] {
               background: rgba(255, 255, 255, 0.75) !important; /* White Glass */
               backdrop-filter: blur(20px) !important;
               border: 1px solid rgba(197, 160, 89, 0.2) !important; /* Subtle Gold Border */
@@ -141,4 +141,17 @@ export default async function TenantLayout({
       <main>{children}</main>
     </div>
   );
+}
+
+// Generate static params for known tenants
+export async function generateStaticParams() {
+  // Pre-render known tenants for Cloudflare Pages static export
+  return [
+    { tenant: "wondernails" },
+    { tenant: "zo-system" },
+    { tenant: "vigistudio" },
+    { tenant: "nom-nom" },
+    { tenant: "centro-tenistico" },
+    { tenant: "delirios" },
+  ];
 }

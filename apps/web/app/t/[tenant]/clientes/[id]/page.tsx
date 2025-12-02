@@ -23,20 +23,25 @@ export default async function CustomerFilePage({ params }: PageProps) {
   let tenantData: TenantData | null = null;
 
   try {
-    tenantData = await fetchStatic<TenantData>(
-      `/api/tenants/${tenantSlug}`,
-      ['tenant', tenantSlug]
-    );
+    tenantData = await fetchStatic<TenantData>(`/api/tenants/${tenantSlug}`, [
+      "tenant",
+      tenantSlug,
+    ]);
   } catch (error) {
-    console.error(`[CustomerFilePage] Failed to fetch tenant ${tenantSlug}:`, error);
+    console.error(
+      `[CustomerFilePage] Failed to fetch tenant ${tenantSlug}:`,
+      error,
+    );
     notFound();
   }
 
-  const isLuxury = tenantSlug === 'wondernails';
+  const isLuxury = tenantSlug === "wondernails";
 
   return (
     <LiveRegionProvider>
-      <div className={`min-h-screen ${isLuxury ? 'bg-[#121212]' : 'bg-gradient-to-b from-white to-gray-50'}`}>
+      <div
+        className={`min-h-screen ${isLuxury ? "bg-[#121212]" : "bg-gradient-to-b from-white to-gray-50"}`}
+      >
         {/* Main Content */}
         <main className="container mx-auto px-4 py-8">
           {/* Breadcrumb */}
@@ -45,17 +50,21 @@ export default async function CustomerFilePage({ params }: PageProps) {
               <li className="inline-flex items-center">
                 <a
                   href={`/t/${tenantSlug}`}
-                  className={`${isLuxury ? 'text-gray-400 hover:text-[#D4AF37]' : 'text-gray-700 hover:text-blue-600'} inline-flex items-center`}
+                  className={`${isLuxury ? "text-gray-400 hover:text-[#D4AF37]" : "text-gray-700 hover:text-blue-600"} inline-flex items-center`}
                 >
                   Inicio
                 </a>
               </li>
               <li>
                 <div className="flex items-center">
-                  <span className={`mx-2 ${isLuxury ? 'text-gray-600' : 'text-gray-400'}`}>/</span>
+                  <span
+                    className={`mx-2 ${isLuxury ? "text-gray-600" : "text-gray-400"}`}
+                  >
+                    /
+                  </span>
                   <a
                     href={`/t/${tenantSlug}/clientes`}
-                    className={`${isLuxury ? 'text-gray-400 hover:text-[#D4AF37]' : 'text-gray-700 hover:text-blue-600'}`}
+                    className={`${isLuxury ? "text-gray-400 hover:text-[#D4AF37]" : "text-gray-700 hover:text-blue-600"}`}
                   >
                     Clientas
                   </a>
@@ -63,8 +72,16 @@ export default async function CustomerFilePage({ params }: PageProps) {
               </li>
               <li aria-current="page">
                 <div className="flex items-center">
-                  <span className={`mx-2 ${isLuxury ? 'text-gray-600' : 'text-gray-400'}`}>/</span>
-                  <span className={`${isLuxury ? 'text-[#D4AF37]' : 'text-gray-500'}`}>Expediente</span>
+                  <span
+                    className={`mx-2 ${isLuxury ? "text-gray-600" : "text-gray-400"}`}
+                  >
+                    /
+                  </span>
+                  <span
+                    className={`${isLuxury ? "text-[#D4AF37]" : "text-gray-500"}`}
+                  >
+                    Expediente
+                  </span>
                 </div>
               </li>
             </ol>
@@ -153,10 +170,10 @@ export async function generateMetadata({ params }: PageProps) {
   const tenantSlug = params.tenant;
 
   try {
-    const tenant = await fetchStatic<TenantData>(
-      `/api/tenants/${tenantSlug}`,
-      ['tenant', tenantSlug]
-    );
+    const tenant = await fetchStatic<TenantData>(`/api/tenants/${tenantSlug}`, [
+      "tenant",
+      tenantSlug,
+    ]);
 
     return {
       title: `Expediente de Clienta - ${tenant.name}`,
@@ -164,7 +181,13 @@ export async function generateMetadata({ params }: PageProps) {
     };
   } catch (error) {
     return {
-      title: 'Expediente de Clienta',
+      title: "Expediente de Clienta",
     };
   }
+}
+
+// Generate static params for Cloudflare Pages export
+export async function generateStaticParams() {
+  // Return empty array - pages will be generated on-demand
+  return [];
 }

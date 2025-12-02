@@ -1,0 +1,54 @@
+╔══════════════════════════════════════════════════════════╗
+║                                                          ║
+║   🚀 DEPLOY A VERCEL - PASOS RÁPIDOS                    ║
+║                                                          ║
+╚══════════════════════════════════════════════════════════╝
+
+📋 CHECKLIST PRE-DEPLOYMENT:
+
+  ☐ Crear cuenta en Neon.tech (Database) - GRATIS
+  ☐ Crear cuenta en Upstash.com (Redis) - GRATIS  
+  ☐ Generar NEXTAUTH_SECRET
+  ☐ Subir código a GitHub
+  ☐ Crear cuenta en Vercel.com - GRATIS
+
+═══════════════════════════════════════════════════════════
+
+🎯 DEPLOYMENT:
+
+  1. Ve a: https://vercel.com/new
+  
+  2. Import tu repo de GitHub
+  
+  3. Configuración:
+     • Root Directory: apps/web
+     • Build Command: npm run build
+     • Output Directory: .next
+  
+  4. Agrega Environment Variables:
+     DATABASE_URL=...
+     UPSTASH_REDIS_REST_URL=...
+     UPSTASH_REDIS_REST_TOKEN=...
+     NEXTAUTH_SECRET=...
+     NEXTAUTH_URL=https://tu-app.vercel.app
+     NEXT_PUBLIC_API_URL=https://tu-app.vercel.app
+  
+  5. Click "Deploy"
+  
+  6. Espera 2-3 minutos
+  
+  7. ¡Listo! 🎉
+
+═══════════════════════════════════════════════════════════
+
+📚 Guías Detalladas:
+
+  • DEPLOY_NOW.md - Guía paso a paso (10 min)
+  • VERCEL_DEPLOYMENT.md - Guía completa
+  • .env.vercel.template - Template de variables
+
+═══════════════════════════════════════════════════════════
+
+💰 COSTO: $0/mes para 5,000 visitas/mes
+
+═══════════════════════════════════════════════════════════

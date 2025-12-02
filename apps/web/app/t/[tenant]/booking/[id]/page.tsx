@@ -67,3 +67,6 @@ export default async function BookingPage({ params }: PageProps) {
     </div>
   );
 }
+export async function generateStaticParams() {
+  return [];
+}
