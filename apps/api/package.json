@@ -22,10 +22,10 @@
     "graphql": "^16.12.0",
     "graphql-tag": "^2.12.6",
     "jose": "^5.0.0",
-    "next": "14.2.33",
+    "next": "^16.0.7",
     "postgres": "^3.4.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "react": "^19.2.1",
+    "react-dom": "^19.2.1",
     "sharp": "^0.32.0",
     "zod": "^3.22.0"
   },
@@ -33,11 +33,11 @@
     "@types/bcryptjs": "^2.4.0",
     "@types/minimatch": "^6.0.0",
     "@types/node": "20.8.0",
-    "@types/react": "^18.3.0",
-    "@types/react-dom": "^18.3.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
     "drizzle-kit": "^0.31.5",
     "eslint": "8.57.0",
-    "eslint-config-next": "14.0.0",
+    "eslint-config-next": "^16.0.7",
     "tsx": "^4.0.0",
     "typescript": "5.2.2"
   }
