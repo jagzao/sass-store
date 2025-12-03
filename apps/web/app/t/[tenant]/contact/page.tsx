@@ -4,6 +4,10 @@ import { fetchStatic } from "@/lib/api/fetch-with-cache";
 import type { TenantData } from "@/types/tenant";
 import { Mail, Phone, MapPin, Clock } from "lucide-react";
 
+// Force dynamic rendering - don't generate at build time
+export const dynamic = 'force-dynamic';
+export const revalidate = 3600; // Revalidate every hour
+
 interface PageProps {
   params: {
     tenant: string;

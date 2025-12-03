@@ -23,7 +23,6 @@ export default async function ServicesPage({ params }: ServicesPageProps) {
           branding: tenantData.branding
         }}
       />
-      />
     </div>
   );
 }

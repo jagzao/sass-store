@@ -4,6 +4,10 @@ import TenantHeader from "@/components/ui/TenantHeader";
 import { fetchStatic } from "@/lib/api/fetch-with-cache";
 import type { TenantData } from "@/types/tenant";
 
+// Force dynamic rendering for all tenant pages
+export const dynamic = 'force-dynamic';
+export const revalidate = 3600; // Revalidate every hour
+
 interface TenantLayoutProps {
   children: ReactNode;
   params: {
@@ -143,15 +147,9 @@ export default async function TenantLayout({
   );
 }
 
-// Generate static params for known tenants
-export async function generateStaticParams() {
-  // Pre-render known tenants for Cloudflare Pages static export
-  return [
-    { tenant: "wondernails" },
-    { tenant: "zo-system" },
-    { tenant: "vigistudio" },
-    { tenant: "nom-nom" },
-    { tenant: "centro-tenistico" },
-    { tenant: "delirios" },
-  ];
-}
+// Disable static generation at build time for Vercel
+// Pages will be rendered on-demand (ISR/SSR)
+// This prevents build failures when API is not available during build
+// export async function generateStaticParams() {
+//   return [];
+// }

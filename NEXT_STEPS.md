@@ -3,8 +3,9 @@
 ## 🎉 Lo que acabamos de hacer:
 
 ✅ Movimos rutas de clientes a `apps/api`
-✅ Eliminamos todas las rutas API de `apps/web` (incompatibles con Cloudflare)  
-✅ Configuramos `generateStaticParams()` para rutas dinámicas
+✅ Eliminamos todas las rutas API de `apps/web` (incompatibles con Cloudflare)
+✅ Deshabilitamos `generateStaticParams()` para evitar errores en build time
+✅ Configuramos `dynamic = 'force-dynamic'` para rendering on-demand
 ✅ Creamos archivos de configuración de Vercel
 ✅ Documentación completa de deployment
 ✅ Commit realizado: `feat: prepare project for Vercel deployment`
@@ -71,9 +72,9 @@ openssl rand -base64 32
 
 4. Environment Variables (agrega todas):
    DATABASE_URL=postgresql://...?sslmode=require
-   UPSTASH_REDIS_REST_URL=https://...
-   UPSTASH_REDIS_REST_TOKEN=AXxxx...
-   NEXTAUTH_SECRET=tu-secret-generado
+   UPSTASH_REDIS_REST_URL=https://cute-hog-43747.upstash.io
+   UPSTASH_REDIS_REST_TOKEN=AarjAAIncDIwZWY3ZTUyMmVkYTI0N2NhYjI3NTBmOWU0Y2UzMTQ4Y3AyNDM3NDc
+   NEXTAUTH_SECRET=scIPpz9mlT64l0U1eUZLsea7+ogTh+FV9uYqnHHRZZE=
    NEXTAUTH_URL=https://tu-app.vercel.app
    NEXT_PUBLIC_API_URL=https://tu-app.vercel.app
 
