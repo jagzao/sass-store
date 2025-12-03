@@ -1,8 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Cloudflare Pages compatibility
-  // Use export for static site generation
-  output: process.env.CF_PAGES ? 'export' : undefined,
+  // Use export for static site generation, standalone for Vercel
+  output: process.env.CF_PAGES ? 'export' : 'standalone',
 
   // Skip linting and typecheck during builds
   eslint: {
