@@ -1,4 +1,0 @@
-{
-  "buildCommand": "cd ../.. && turbo run build --filter=@sass-store/api... && cd apps/api",
-  "installCommand": "cd ../.. && npm install --legacy-peer-deps"
-}
