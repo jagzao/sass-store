@@ -1,4 +1,6 @@
 {
-  "buildCommand": "cd ../.. && turbo run build --filter=@sass-store/api...",
-  "installCommand": "cd ../.. && npm install --legacy-peer-deps"
+  "buildCommand": "cd $VERCEL_ROOT_DIR && turbo run build --filter=@sass-store/api...",
+  "installCommand": "cd $VERCEL_ROOT_DIR && npm install --legacy-peer-deps",
+  "framework": "nextjs",
+  "outputDirectory": ".next"
 }
