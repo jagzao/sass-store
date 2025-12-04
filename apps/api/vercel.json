@@ -1,12 +1,4 @@
 {
-  "version": 2,
   "buildCommand": "cd ../.. && turbo run build --filter=@sass-store/api...",
-  "framework": "nextjs",
-  "installCommand": "cd ../.. && npm install --legacy-peer-deps",
-  "outputDirectory": "apps/api/.next",
-  "git": {
-    "deploymentEnabled": {
-      "master": true
-    }
-  }
+  "installCommand": "cd ../.. && npm install --legacy-peer-deps"
 }
