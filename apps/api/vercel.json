@@ -1,5 +1,5 @@
 {
-  "buildCommand": "cd ../.. && npm install --legacy-peer-deps && turbo run build --filter=@sass-store/api...",
-  "installCommand": "echo 'Skipping default install'",
+  "buildCommand": "cd ../.. && turbo run build --filter=@sass-store/api...",
+  "installCommand": "cd ../.. && npm install --legacy-peer-deps",
   "framework": "nextjs"
 }
