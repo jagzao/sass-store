@@ -7,15 +7,16 @@ export const dynamic = "force-dynamic";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { slug: string } }
+  context: { params: Promise<{ slug: string }> },
 ) {
   try {
-    const slug = params.slug;
+    const resolvedParams = await context.params;
+    const slug = resolvedParams?.slug;
 
     if (!slug) {
       return NextResponse.json(
         { error: "Tenant slug is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -24,10 +25,7 @@ export async function GET(
     });
 
     if (!tenant) {
-      return NextResponse.json(
-        { error: "Tenant not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Tenant not found" }, { status: 404 });
     }
 
     return NextResponse.json(tenant);
@@ -35,7 +33,7 @@ export async function GET(
     console.error("[API] Error fetching tenant:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
