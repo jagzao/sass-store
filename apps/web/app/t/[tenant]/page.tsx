@@ -8,16 +8,16 @@ import TenantPageSkeleton from "@/components/ui/TenantPageSkeleton";
 import { LiveRegionProvider } from "@/components/a11y/LiveRegion";
 import UserMenu from "@/components/auth/UserMenu";
 import { fetchStatic, fetchRevalidating } from "@/lib/api/fetch-with-cache";
-import type {
-  TenantData,
-  Product,
-  Service,
-} from "@/types/tenant";
+import type { TenantData, Product, Service } from "@/types/tenant";
+
+// Force dynamic rendering
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 interface PageProps {
-  params: {
+  params: Promise<{
     tenant: string;
-  };
+  }>;
 }
 
 /**
@@ -30,16 +30,16 @@ interface PageProps {
  * - Streaming with Suspense boundaries
  */
 export default async function TenantPageServer({ params }: PageProps) {
-  const tenantSlug = params.tenant;
+  const { tenant: tenantSlug } = await params;
 
   // Fetch tenant data on the server (cached for 1 hour)
   let tenantData: TenantData | null = null;
 
   try {
-    tenantData = await fetchStatic<TenantData>(
-      `/api/tenants/${tenantSlug}`,
-      ['tenant', tenantSlug]
-    );
+    tenantData = await fetchStatic<TenantData>(`/api/tenants/${tenantSlug}`, [
+      "tenant",
+      tenantSlug,
+    ]);
   } catch (error) {
     console.error(`[TenantPage] Failed to fetch tenant ${tenantSlug}:`, error);
     // Return 404 if tenant not found
@@ -48,35 +48,33 @@ export default async function TenantPageServer({ params }: PageProps) {
 
   return (
     <LiveRegionProvider>
-    <>
-      {/* Hero Section - renders immediately */}
-      <section className="relative">
-        <TenantHero
-          tenantData={tenantData}
-        />
-      </section>
+      <>
+        {/* Hero Section - renders immediately */}
+        <section className="relative">
+          <TenantHero tenantData={tenantData} />
+        </section>
 
         {/* Products Section - streamed after hero */}
         <Suspense fallback={<ProductsSkeleton />}>
-          <ProductsSection 
-            tenantSlug={tenantSlug} 
-            tenantMode={tenantData.mode} 
+          <ProductsSection
+            tenantSlug={tenantSlug}
+            tenantMode={tenantData.mode}
             primaryColor={tenantData.branding.primaryColor}
-            variant={tenantSlug === 'wondernails' ? 'luxury' : 'default'}
+            variant={tenantSlug === "wondernails" ? "luxury" : "default"}
           />
         </Suspense>
 
-      {/* Services Section - only for booking tenants */}
-      {tenantData.mode === 'booking' && (
-        <Suspense fallback={<ServicesSkeleton />}>
-          <ServicesSection 
-            tenantSlug={tenantSlug} 
-            primaryColor={tenantData.branding.primaryColor}
-            variant={tenantSlug === 'wondernails' ? 'luxury' : 'default'}
-          />
-        </Suspense>
-      )}
-    </>
+        {/* Services Section - only for booking tenants */}
+        {tenantData.mode === "booking" && (
+          <Suspense fallback={<ServicesSkeleton />}>
+            <ServicesSection
+              tenantSlug={tenantSlug}
+              primaryColor={tenantData.branding.primaryColor}
+              variant={tenantSlug === "wondernails" ? "luxury" : "default"}
+            />
+          </Suspense>
+        )}
+      </>
     </LiveRegionProvider>
   );
 }
@@ -89,17 +87,17 @@ async function ProductsSection({
   tenantSlug,
   tenantMode,
   primaryColor,
-  variant = 'default'
+  variant = "default",
 }: {
   tenantSlug: string;
-  tenantMode: 'booking' | 'catalog';
+  tenantMode: "booking" | "catalog";
   primaryColor: string;
-  variant?: 'default' | 'luxury';
+  variant?: "default" | "luxury";
 }) {
   // Fetch products (cached for 5 minutes)
   const productsResponse = await fetchRevalidating<{ data: Product[] }>(
     `/api/v1/public/products?tenant=${tenantSlug}&limit=12`,
-    ['products', tenantSlug]
+    ["products", tenantSlug],
   );
 
   const products = productsResponse?.data || [];
@@ -110,8 +108,12 @@ async function ProductsSection({
 
   return (
     <section className="container mx-auto px-4 py-12">
-      <h2 className={`text-3xl font-bold mb-8 ${variant === 'luxury' ? 'text-[#D4AF37] font-serif' : ''}`}>
-        {tenantMode === 'catalog' ? 'Productos Destacados' : 'Nuestros Productos'}
+      <h2
+        className={`text-3xl font-bold mb-8 ${variant === "luxury" ? "text-[#D4AF37] font-serif" : ""}`}
+      >
+        {tenantMode === "catalog"
+          ? "Productos Destacados"
+          : "Nuestros Productos"}
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {products.map((product) => (
@@ -138,19 +140,19 @@ async function ProductsSection({
  * Services Section - async Server Component
  * Fetches and renders services independently
  */
-async function ServicesSection({ 
+async function ServicesSection({
   tenantSlug,
   primaryColor,
-  variant = 'default'
-}: { 
+  variant = "default",
+}: {
   tenantSlug: string;
   primaryColor: string;
-  variant?: 'default' | 'luxury';
+  variant?: "default" | "luxury";
 }) {
   // Fetch services (cached for 5 minutes)
   const servicesResponse = await fetchRevalidating<{ data: Service[] }>(
     `/api/v1/public/services?tenant=${tenantSlug}&featured=true&limit=8`,
-    ['services', tenantSlug]
+    ["services", tenantSlug],
   );
 
   const services = servicesResponse?.data || [];
@@ -160,8 +162,14 @@ async function ServicesSection({
   }
 
   return (
-    <section className={`container mx-auto px-4 py-12 ${variant === 'luxury' ? '' : 'bg-white'}`}>
-      <h2 className={`text-3xl font-bold mb-8 ${variant === 'luxury' ? 'text-[#D4AF37] font-serif' : ''}`}>Servicios Destacados</h2>
+    <section
+      className={`container mx-auto px-4 py-12 ${variant === "luxury" ? "" : "bg-white"}`}
+    >
+      <h2
+        className={`text-3xl font-bold mb-8 ${variant === "luxury" ? "text-[#D4AF37] font-serif" : ""}`}
+      >
+        Servicios Destacados
+      </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {services.map((service) => (
           <ServiceCard
@@ -219,27 +227,30 @@ function ServicesSkeleton() {
  * Metadata generation for SEO
  */
 export async function generateMetadata({ params }: PageProps) {
-  const tenantSlug = params.tenant;
+  const { tenant: tenantSlug } = await params;
 
   try {
-    const tenant = await fetchStatic<TenantData>(
-      `/api/tenants/${tenantSlug}`,
-      ['tenant', tenantSlug]
-    );
+    const tenant = await fetchStatic<TenantData>(`/api/tenants/${tenantSlug}`, [
+      "tenant",
+      tenantSlug,
+    ]);
 
     return {
-      title: `${tenant.name} - ${tenant.description || 'Inicio'}`,
+      title: `${tenant.name} - ${tenant.description || "Inicio"}`,
       description: tenant.description || `Bienvenido a ${tenant.name}`,
       openGraph: {
         title: tenant.name,
         description: tenant.description,
-        type: 'website',
+        type: "website",
       },
     };
   } catch (error) {
-    console.error(`[generateMetadata] Error fetching tenant ${tenantSlug}:`, error);
+    console.error(
+      `[generateMetadata] Error fetching tenant ${tenantSlug}:`,
+      error,
+    );
     return {
-      title: 'Página no encontrada',
+      title: "Página no encontrada",
     };
   }
 }
