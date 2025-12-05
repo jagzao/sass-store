@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 "use client";
 
 import React, { useState, useRef, useEffect, memo } from "react";
@@ -187,11 +186,19 @@ const ProductCard = memo(
             onClick={handleImageClick}
           >
             <div
-              className="text-5xl mb-4 text-center"
+              className="mb-4 text-center"
               role="img"
               aria-label={`Imagen de ${name}`}
             >
-              {image || metadata?.image || (isLuxury ? "" : "📦")}
+              {image || metadata?.image ? (
+                <img
+                  src={image || metadata?.image}
+                  alt={name}
+                  className="w-full h-48 object-cover rounded-lg"
+                />
+              ) : (
+                <div className="text-5xl">{isLuxury ? "" : "📦"}</div>
+              )}
             </div>
             <h3
               className={`text-xl font-semibold mb-2 ${isLuxury ? "text-[#C5A059] font-serif tracking-wide" : ""}`}
