@@ -31,7 +31,7 @@ export default function TenantHeader({
 
   return (
     <header
-      className={`sticky top-0 z-50 transition-all duration-300 ${
+      className={`sticky top-0 z-50 transition-all duration-300 w-full ${
         isTransparent
           ? isScrolled
             ? isWondernails
@@ -39,7 +39,8 @@ export default function TenantHeader({
               : "bg-white/95 backdrop-blur-sm border-b border-gray-200 shadow-sm"
             : "bg-transparent border-transparent shadow-none"
           : "bg-white/95 backdrop-blur-sm border-b border-gray-200"
-      } ${isTransparent ? "absolute w-full" : ""}`}
+      }`}
+      style={{ position: "sticky", top: 0 }}
     >
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         <TenantLogo
