@@ -69,6 +69,7 @@ export interface Product {
   name: string;
   description?: string;
   price: string | number;
+  imageUrl?: string;
   category: string;
   featured?: boolean;
   active?: boolean;
@@ -84,6 +85,9 @@ export interface Service {
   description?: string;
   price: string | number;
   duration: number; // minutes
+  imageUrl?: string;
+  beforeImage?: string;
+  afterImage?: string;
   featured?: boolean;
   active?: boolean;
   metadata?: ServiceMetadata;

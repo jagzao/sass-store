@@ -123,8 +123,8 @@ async function ProductsSection({
             name={product.name}
             description={product.description}
             price={Number(product.price)}
-            image={product.metadata?.image}
-            category={product.metadata?.category}
+            image={product.imageUrl || product.metadata?.image}
+            category={product.category || product.metadata?.category}
             primaryColor={primaryColor}
             tenantSlug={tenantSlug}
             metadata={product.metadata}
