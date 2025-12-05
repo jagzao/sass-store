@@ -101,11 +101,19 @@ const ServiceCard = memo(
             )}
 
             <div
-              className="text-5xl mb-4 text-center"
+              className="mb-4 text-center"
               role="img"
               aria-label={`${name} - Servicio de ${category || "belleza"} por $${price} MXN. ${description}`}
             >
-              {image || metadata?.image || (isLuxury ? "" : "⭐")}
+              {image || metadata?.image ? (
+                <img
+                  src={image || metadata?.image}
+                  alt={name}
+                  className="w-full h-48 object-cover rounded-lg"
+                />
+              ) : (
+                <div className="text-5xl">{isLuxury ? "" : "⭐"}</div>
+              )}
             </div>
             <h3
               className={`text-xl font-bold mb-3 ${isLuxury ? "text-[#D4AF37] font-serif tracking-wide" : "text-gray-900"}`}
@@ -213,11 +221,19 @@ const ServiceCard = memo(
                 )}
 
                 <div
-                  className="text-7xl mb-6 text-center"
+                  className="mb-6 text-center"
                   role="img"
                   aria-label={`${name} - Vista detallada del servicio. ${description}. Precio: $${price} MXN`}
                 >
-                  {image || metadata?.image || (isLuxury ? "" : "⭐")}
+                  {image || metadata?.image ? (
+                    <img
+                      src={image || metadata?.image}
+                      alt={name}
+                      className="w-full h-64 object-cover rounded-lg"
+                    />
+                  ) : (
+                    <div className="text-7xl">{isLuxury ? "" : "⭐"}</div>
+                  )}
                 </div>
 
                 <h2 className="text-3xl font-bold mb-4">{name}</h2>
