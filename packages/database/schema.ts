@@ -109,6 +109,7 @@ export const products = pgTable(
     name: varchar("name", { length: 200 }).notNull(),
     description: text("description"),
     price: decimal("price", { precision: 10, scale: 2 }).notNull(),
+    imageUrl: text("image_url"), // URL de la imagen del producto
     category: varchar("category", { length: 50 }).notNull(),
     featured: boolean("featured").default(false),
     active: boolean("active").default(true),
@@ -149,6 +150,7 @@ export const services = pgTable(
     description: text("description"),
     price: decimal("price", { precision: 10, scale: 2 }).notNull(),
     duration: integer("duration").notNull(), // minutes
+    imageUrl: text("image_url"), // URL principal de la imagen del servicio
     beforeImage: text("before_image"), // URL de la imagen "antes" del servicio
     afterImage: text("after_image"), // URL de la imagen "después" del servicio
     featured: boolean("featured").default(false),
