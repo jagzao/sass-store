@@ -11,10 +11,10 @@ interface PageProps {
   params: Promise<{
     tenant: string;
   }>;
-  searchParams: {
+  searchParams: Promise<{
     search?: string;
     status?: string;
-  };
+  }>;
 }
 
 export default async function CustomersPage({
@@ -26,6 +26,9 @@ export default async function CustomersPage({
   console.log("[CustomersPage] Resolved params:", resolvedParams);
   const { tenant: tenantSlug } = resolvedParams;
   console.log("[CustomersPage] Extracted tenantSlug:", tenantSlug);
+
+  const resolvedSearchParams = await searchParams;
+  console.log("[CustomersPage] Resolved searchParams:", resolvedSearchParams);
 
   // Fetch tenant data
   let tenantData: TenantData | null = null;
@@ -69,7 +72,7 @@ export default async function CustomersPage({
           >
             <CustomersFilters
               tenantSlug={tenantSlug}
-              searchParams={searchParams}
+              searchParams={resolvedSearchParams}
             />
           </Suspense>
 
@@ -77,7 +80,7 @@ export default async function CustomersPage({
           <Suspense fallback={<CustomersListSkeleton />}>
             <CustomersList
               tenantSlug={tenantSlug}
-              searchParams={searchParams}
+              searchParams={resolvedSearchParams}
             />
           </Suspense>
         </main>
