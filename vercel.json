@@ -1,12 +1,3 @@
 {
-  "version": 2,
-  "buildCommand": "turbo run build --filter=@sass-store/web...",
-  "framework": "nextjs",
-  "installCommand": "npm install",
-  "outputDirectory": "apps/web/.next",
-  "git": {
-    "deploymentEnabled": {
-      "main": true
-    }
-  }
+  "version": 2
 }
