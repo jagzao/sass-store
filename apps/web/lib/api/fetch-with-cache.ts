@@ -3,14 +3,20 @@
  * Optimized for Next.js App Router
  */
 
-export type CacheStrategy = 'static' | 'dynamic' | 'revalidate' | 'no-cache';
+export type CacheStrategy = "static" | "dynamic" | "revalidate" | "no-cache";
 
 interface CacheConfig {
   next?: {
     revalidate?: number;
     tags?: string[];
   };
-  cache?: 'default' | 'no-store' | 'reload' | 'no-cache' | 'force-cache' | 'only-if-cached';
+  cache?:
+    | "default"
+    | "no-store"
+    | "reload"
+    | "no-cache"
+    | "force-cache"
+    | "only-if-cached";
 }
 
 const CACHE_STRATEGIES: Record<CacheStrategy, CacheConfig> = {
@@ -29,12 +35,12 @@ const CACHE_STRATEGIES: Record<CacheStrategy, CacheConfig> = {
   // Dynamic data (cart, user session, live inventory)
   // No cache
   dynamic: {
-    cache: 'no-store',
+    cache: "no-store",
   },
 
   // Explicitly no cache (for testing or debugging)
-  'no-cache': {
-    cache: 'no-cache',
+  "no-cache": {
+    cache: "no-cache",
   },
 };
 
@@ -62,9 +68,9 @@ interface FetchOptions {
  */
 export async function fetchWithCache<T = unknown>(
   url: string,
-  options: FetchOptions = {}
+  options: FetchOptions = {},
 ): Promise<T> {
-  const { strategy = 'revalidate', tags, ...fetchOptions } = options;
+  const { strategy = "revalidate", tags, ...fetchOptions } = options;
 
   // Get cache configuration for strategy
   const cacheConfig = CACHE_STRATEGIES[strategy];
@@ -83,10 +89,14 @@ export async function fetchWithCache<T = unknown>(
   }
 
   // Determine full URL
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000';
-  const fullUrl = url.startsWith('http') ? url : `${baseUrl}${url}`;
+  // Use API_URL for server-side, NEXT_PUBLIC_API_URL for client-side
+  const baseUrl =
+    process.env.API_URL ||
+    process.env.NEXT_PUBLIC_API_URL ||
+    "http://127.0.0.1:4000";
+  const fullUrl = url.startsWith("http") ? url : `${baseUrl}${url}`;
   // eslint-disable-next-line no-console
-  console.log(`[fetchWithCache] Fetching: ${fullUrl}`);
+  console.log(`[fetchWithCache] Fetching: ${fullUrl} (baseUrl: ${baseUrl})`);
 
   try {
     const response = await fetch(fullUrl, finalConfig);
@@ -94,7 +104,7 @@ export async function fetchWithCache<T = unknown>(
     if (!response.ok) {
       throw new Error(
         `Fetch failed: ${response.status} ${response.statusText}`,
-        { cause: response }
+        { cause: response },
       );
     }
 
@@ -111,13 +121,13 @@ export async function fetchWithCache<T = unknown>(
  */
 
 export const fetchStatic = <T>(url: string, tags?: string[]) =>
-  fetchWithCache<T>(url, { strategy: 'static', tags });
+  fetchWithCache<T>(url, { strategy: "static", tags });
 
 export const fetchRevalidating = <T>(url: string, tags?: string[]) =>
-  fetchWithCache<T>(url, { strategy: 'revalidate', tags });
+  fetchWithCache<T>(url, { strategy: "revalidate", tags });
 
 export const fetchDynamic = <T>(url: string) =>
-  fetchWithCache<T>(url, { strategy: 'dynamic' });
+  fetchWithCache<T>(url, { strategy: "dynamic" });
 
 export const fetchNoCache = <T>(url: string) =>
-  fetchWithCache<T>(url, { strategy: 'no-cache' });
+  fetchWithCache<T>(url, { strategy: "no-cache" });
