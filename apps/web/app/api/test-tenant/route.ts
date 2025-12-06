@@ -1,42 +1,50 @@
 import { NextResponse } from "next/server";
+import { fetchStatic } from "@/lib/api/fetch-with-cache";
+import type { TenantData } from "@/types/tenant";
+
+export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:4000";
-  const tenantUrl = `${apiUrl}/api/tenants/wondernails`;
+  const tenantSlug = "wondernails";
 
+  // Test what URL will be used
+  const apiUrl =
+    process.env.API_URL ||
+    process.env.NEXT_PUBLIC_API_URL ||
+    "http://127.0.0.1:4000";
+  const expectedUrl = `${apiUrl}/api/tenants/${tenantSlug}`;
+
+  console.log(`[test-tenant] API_URL: ${process.env.API_URL}`);
+  console.log(
+    `[test-tenant] NEXT_PUBLIC_API_URL: ${process.env.NEXT_PUBLIC_API_URL}`,
+  );
+  console.log(`[test-tenant] Expected URL: ${expectedUrl}`);
+
+  // Try using fetchStatic (same as layout)
   try {
-    console.log(`[test-tenant] Fetching from: ${tenantUrl}`);
+    console.log(`[test-tenant] Calling fetchStatic...`);
+    const tenantData = await fetchStatic<TenantData>(
+      `/api/tenants/${tenantSlug}`,
+      ["tenant", tenantSlug],
+    );
 
-    const response = await fetch(tenantUrl, {
-      next: { revalidate: 3600 },
-    });
-
-    console.log(`[test-tenant] Response status: ${response.status}`);
-
-    if (!response.ok) {
-      const text = await response.text();
-      return NextResponse.json({
-        success: false,
-        status: response.status,
-        statusText: response.statusText,
-        body: text,
-        url: tenantUrl,
-      });
-    }
-
-    const data = await response.json();
+    console.log(`[test-tenant] Success! Got tenant: ${tenantData?.name}`);
 
     return NextResponse.json({
       success: true,
-      status: response.status,
-      data: data,
-      url: tenantUrl,
+      tenantName: tenantData?.name,
+      tenantSlug: tenantData?.slug,
+      method: "fetchStatic",
+      expectedUrl,
     });
   } catch (error) {
+    console.error(`[test-tenant] Error:`, error);
+
     return NextResponse.json({
       success: false,
       error: error instanceof Error ? error.message : String(error),
-      url: tenantUrl,
+      method: "fetchStatic",
+      expectedUrl,
     });
   }
 }
