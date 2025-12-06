@@ -8,22 +8,44 @@ import { eq, and, desc, or, ilike, sql } from "drizzle-orm";
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { slug: string } },
+  { params }: { params: Promise<{ slug: string }> },
 ) {
   try {
-    const { slug } = params;
+    console.log(
+      "[GET /api/tenants/[slug]/customers] START - Request URL:",
+      request.url,
+    );
+
+    const { slug } = await params;
+    console.log("[GET /api/tenants/[slug]/customers] Slug:", slug);
+
     const { searchParams } = new URL(request.url);
     const search = searchParams.get("search");
     const status = searchParams.get("status");
+    console.log("[GET /api/tenants/[slug]/customers] Query params:", {
+      search,
+      status,
+    });
 
     // First, get the tenant ID from slug
+    console.log("[GET /api/tenants/[slug]/customers] Finding tenant...");
     const tenant = await db.query.tenants.findFirst({
       where: (tenants, { eq }) => eq(tenants.slug, slug),
     });
 
     if (!tenant) {
+      console.error(
+        "[GET /api/tenants/[slug]/customers] Tenant not found:",
+        slug,
+      );
       return NextResponse.json({ error: "Tenant not found" }, { status: 404 });
     }
+
+    console.log(
+      "[GET /api/tenants/[slug]/customers] Found tenant:",
+      tenant.name,
+      tenant.id,
+    );
 
     // Build where conditions
     const whereConditions = [eq(customers.tenantId, tenant.id)];
@@ -34,23 +56,34 @@ export async function GET(
           ilike(customers.name, `%${search}%`),
           ilike(customers.phone, `%${search}%`),
           ilike(customers.email, `%${search}%`),
-          ilike(customers.address, `%${search}%`),
         )!,
       );
     }
 
     if (status && status !== "all") {
-      whereConditions.push(eq(customers.status, status as any));
+      // Validate that status is one of the allowed enum values
+      const validStatuses = ["active", "inactive", "blocked"];
+      if (validStatuses.includes(status)) {
+        whereConditions.push(eq(customers.status, status as any));
+      } else {
+        console.warn(
+          `[GET /api/tenants/[slug]/customers] Invalid status filter: ${status}`,
+        );
+        // Skip invalid status filters instead of erroring
+      }
     }
 
     // Fetch customers
+    console.log(
+      "[GET /api/tenants/[slug]/customers] Fetching customers with conditions:",
+      whereConditions.length,
+    );
     const customersList = await db
       .select({
         id: customers.id,
         name: customers.name,
         phone: customers.phone,
         email: customers.email,
-        address: customers.address,
         status: customers.status,
         createdAt: customers.createdAt,
       })
@@ -58,7 +91,14 @@ export async function GET(
       .where(and(...whereConditions))
       .orderBy(desc(customers.createdAt));
 
+    console.log(
+      "[GET /api/tenants/[slug]/customers] Found",
+      customersList.length,
+      "customers",
+    );
+
     // For each customer, get visit stats
+    console.log("[GET /api/tenants/[slug]/customers] Fetching visit stats...");
     const customersWithStats = await Promise.all(
       customersList.map(async (customer) => {
         const visits = await db
@@ -84,6 +124,12 @@ export async function GET(
       }),
     );
 
+    console.log(
+      "[GET /api/tenants/[slug]/customers] SUCCESS - Returning",
+      customersWithStats.length,
+      "customers",
+    );
+
     return NextResponse.json({
       customers: customersWithStats,
       count: customersWithStats.length,
@@ -103,10 +149,10 @@ export async function GET(
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: { slug: string } },
+  { params }: { params: Promise<{ slug: string }> },
 ) {
   try {
-    const { slug } = params;
+    const { slug } = await params;
     const body = await request.json();
 
     // Get tenant ID
