@@ -2,7 +2,7 @@
 const nextConfig = {
   // Cloudflare Pages compatibility
   // Use export for static site generation, standalone for Vercel
-  output: process.env.CF_PAGES ? 'export' : 'standalone',
+  output: process.env.CF_PAGES ? 'export' : undefined,
 
   // Skip linting and typecheck during builds
   eslint: {
@@ -87,6 +87,15 @@ const nextConfig = {
             ].join("; "),
           },
         ],
+      },
+    ];
+  },
+
+  async rewrites() {
+    return [
+      {
+        source: "/api/:path*",
+        destination: "http://localhost:4000/api/:path*",
       },
     ];
   },
