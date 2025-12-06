@@ -50,6 +50,22 @@ const ProductCard = memo(
     const [isAdding, setIsAdding] = useState(false);
     const addTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+    // Validate if image is a valid URL (not an emoji or other text)
+    const isValidImageUrl = (url?: string) => {
+      if (!url) return false;
+      return (
+        url.startsWith("http://") ||
+        url.startsWith("https://") ||
+        url.startsWith("/")
+      );
+    };
+
+    const validImage = isValidImageUrl(image) ? image : undefined;
+    const validMetadataImage = isValidImageUrl(metadata?.image as string)
+      ? (metadata?.image as string)
+      : undefined;
+    const imageUrl = validImage || validMetadataImage;
+
     // Sync local quantity with cart
     useEffect(() => {
       const itemInCart = items.find((item) => item.sku === id);
@@ -71,7 +87,7 @@ const ProductCard = memo(
             sku: id,
             name,
             price: Number(price), // Ensure price is a number
-            image: image || metadata?.image || "📦",
+            image: imageUrl || "📦",
             variant: {
               tenant: tenantSlug,
               type: "product",
@@ -112,7 +128,7 @@ const ProductCard = memo(
             sku: id,
             name,
             price: Number(price),
-            image: image || metadata?.image || "📦",
+            image: imageUrl || "📦",
             variant: {
               tenant: tenantSlug,
               type: "product",
@@ -153,7 +169,7 @@ const ProductCard = memo(
             sku: id,
             name,
             price: Number(price), // Ensure price is a number
-            image: image || metadata?.image || "📦",
+            image: imageUrl || "📦",
             variant: {
               tenant: tenantSlug,
               type: "product",
@@ -190,9 +206,9 @@ const ProductCard = memo(
               role="img"
               aria-label={`Imagen de ${name}`}
             >
-              {image || metadata?.image ? (
+              {imageUrl ? (
                 <img
-                  src={image || metadata?.image}
+                  src={imageUrl}
                   alt={name}
                   className="w-full h-48 object-cover rounded-lg"
                 />

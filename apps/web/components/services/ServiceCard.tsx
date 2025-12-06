@@ -59,6 +59,22 @@ const ServiceCard = memo(
 
     const isLuxury = variant === "luxury";
 
+    // Validate if image is a valid URL (not an emoji or other text)
+    const isValidImageUrl = (url?: string) => {
+      if (!url) return false;
+      return (
+        url.startsWith("http://") ||
+        url.startsWith("https://") ||
+        url.startsWith("/")
+      );
+    };
+
+    const validImage = isValidImageUrl(image) ? image : undefined;
+    const validMetadataImage = isValidImageUrl(metadata?.image as string)
+      ? (metadata?.image as string)
+      : undefined;
+    const imageUrl = validImage || validMetadataImage;
+
     return (
       <>
         <div
@@ -105,9 +121,9 @@ const ServiceCard = memo(
               role="img"
               aria-label={`${name} - Servicio de ${category || "belleza"} por $${price} MXN. ${description}`}
             >
-              {image || metadata?.image ? (
+              {imageUrl ? (
                 <img
-                  src={image || metadata?.image}
+                  src={imageUrl}
                   alt={name}
                   className="w-full h-48 object-cover rounded-lg"
                 />
@@ -225,9 +241,9 @@ const ServiceCard = memo(
                   role="img"
                   aria-label={`${name} - Vista detallada del servicio. ${description}. Precio: $${price} MXN`}
                 >
-                  {image || metadata?.image ? (
+                  {imageUrl ? (
                     <img
-                      src={image || metadata?.image}
+                      src={imageUrl}
                       alt={name}
                       className="w-full h-64 object-cover rounded-lg"
                     />
