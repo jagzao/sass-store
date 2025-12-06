@@ -8,28 +8,42 @@ import CustomersList from "@/components/customers/CustomersList";
 import CustomersFilters from "@/components/customers/CustomersFilters";
 
 interface PageProps {
-  params: {
+  params: Promise<{
     tenant: string;
-  };
+  }>;
   searchParams: {
     search?: string;
     status?: string;
   };
 }
 
-export default async function CustomersPage({ params, searchParams }: PageProps) {
-  const tenantSlug = params.tenant;
+export default async function CustomersPage({
+  params,
+  searchParams,
+}: PageProps) {
+  console.log("[CustomersPage] Received params:", params);
+  const resolvedParams = await params;
+  console.log("[CustomersPage] Resolved params:", resolvedParams);
+  const { tenant: tenantSlug } = resolvedParams;
+  console.log("[CustomersPage] Extracted tenantSlug:", tenantSlug);
 
   // Fetch tenant data
   let tenantData: TenantData | null = null;
 
   try {
-    tenantData = await fetchStatic<TenantData>(
-      `/api/tenants/${tenantSlug}`,
-      ['tenant', tenantSlug]
+    console.log(`[CustomersPage] Fetching tenant data for: ${tenantSlug}`);
+    tenantData = await fetchStatic<TenantData>(`/api/tenants/${tenantSlug}`, [
+      "tenant",
+      tenantSlug,
+    ]);
+    console.log(
+      `[CustomersPage] Successfully fetched tenant: ${tenantData?.name}`,
     );
   } catch (error) {
-    console.error(`[CustomersPage] Failed to fetch tenant ${tenantSlug}:`, error);
+    console.error(
+      `[CustomersPage] Failed to fetch tenant ${tenantSlug}:`,
+      error,
+    );
     notFound();
   }
 
@@ -48,7 +62,11 @@ export default async function CustomersPage({ params, searchParams }: PageProps)
           </div>
 
           {/* Filters */}
-          <Suspense fallback={<div className="h-12 bg-gray-100 rounded-lg animate-pulse" />}>
+          <Suspense
+            fallback={
+              <div className="h-12 bg-gray-100 rounded-lg animate-pulse" />
+            }
+          >
             <CustomersFilters
               tenantSlug={tenantSlug}
               searchParams={searchParams}
@@ -96,13 +114,13 @@ function CustomersListSkeleton() {
 }
 
 export async function generateMetadata({ params }: PageProps) {
-  const tenantSlug = params.tenant;
+  const { tenant: tenantSlug } = await params;
 
   try {
-    const tenant = await fetchStatic<TenantData>(
-      `/api/tenants/${tenantSlug}`,
-      ['tenant', tenantSlug]
-    );
+    const tenant = await fetchStatic<TenantData>(`/api/tenants/${tenantSlug}`, [
+      "tenant",
+      tenantSlug,
+    ]);
 
     return {
       title: `Clientas - ${tenant.name}`,
@@ -110,7 +128,7 @@ export async function generateMetadata({ params }: PageProps) {
     };
   } catch (error) {
     return {
-      title: 'Clientas',
+      title: "Clientas",
     };
   }
 }
