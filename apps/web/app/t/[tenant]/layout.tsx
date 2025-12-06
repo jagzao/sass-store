@@ -5,21 +5,25 @@ import { fetchStatic } from "@/lib/api/fetch-with-cache";
 import type { TenantData } from "@/types/tenant";
 
 // Force dynamic rendering for all tenant pages
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 export const revalidate = 3600; // Revalidate every hour
 
 interface TenantLayoutProps {
   children: ReactNode;
-  params: {
+  params: Promise<{
     tenant: string;
-  };
+  }>;
 }
 
 export default async function TenantLayout({
   children,
   params,
 }: TenantLayoutProps) {
-  const tenantSlug = params.tenant;
+  console.log("[TenantLayout] Received params:", params);
+  const resolvedParams = await params;
+  console.log("[TenantLayout] Resolved params:", resolvedParams);
+  const { tenant: tenantSlug } = resolvedParams;
+  console.log("[TenantLayout] Extracted tenantSlug:", tenantSlug);
 
   // Fetch tenant data (cached)
   let tenantData: TenantData | null = null;
@@ -50,10 +54,10 @@ export default async function TenantLayout({
     <div
       className={`min-h-screen ${isWondernails ? "bg-white text-[#333333]" : "bg-gray-50"}`}
     >
-      {isWondernails && (
-        <style
-          dangerouslySetInnerHTML={{
-            __html: `
+      <style
+        dangerouslySetInnerHTML={{
+          __html: isWondernails
+            ? `
           /* 1. KILL THE YELLOW BACKGROUNDS (Urgent) */
           /* Force Header to be clear so the body gradient shows through */
           header, nav, .navbar-container {
@@ -81,7 +85,7 @@ export default async function TenantLayout({
               /* THE LILAC GLOW GRADIENT */
               /* Increased opacity slightly to ensure visibility against white */
               background: radial-gradient(
-                  circle at 50% 30%, 
+                  circle at 50% 30%,
                   rgba(200, 160, 255, 0.25) 0%, /* Visible Soft Lilac */
                   rgba(255, 255, 255, 0) 60%   /* Fade to transparent */
               );
@@ -134,10 +138,42 @@ export default async function TenantLayout({
             color: white !important;
             border: none !important;
           }
+        `
+            : `
+          /* Default styles for non-wondernails tenants */
+          body {
+            background-color: #F9FAFB !important;
+          }
+          
+          [class*="card"] {
+            background: white !important;
+            border: 1px solid #E5E7EB !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+          }
+          
+          :root {
+            --background: 249 250 251;
+            --foreground: 31 41 55;
+            --primary: 59 130 246;
+            --primary-foreground: 255 255 255;
+          }
+          
+          h1, h2, h3, h4, h5, h6 {
+            color: #1F2937 !important;
+          }
+          
+          p, span, div, li {
+             color: #374151;
+          }
+          
+          .btn-primary, button[type="submit"], .bg-primary {
+            background-color: #3B82F6 !important;
+            color: white !important;
+            border: none !important;
+          }
         `,
-          }}
-        />
-      )}
+        }}
+      />
       <TenantHeader
         tenantData={tenantData}
         variant={isWondernails ? "transparent" : "default"}
