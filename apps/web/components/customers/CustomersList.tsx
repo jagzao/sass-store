@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { User, Phone, Mail, Calendar, DollarSign, Eye } from "lucide-react";
+import { buildApiUrl } from "@/lib/api/client-config";
 
 interface Customer {
   id: string;
@@ -24,7 +25,10 @@ interface CustomersListProps {
   };
 }
 
-export default function CustomersList({ tenantSlug, searchParams }: CustomersListProps) {
+export default function CustomersList({
+  tenantSlug,
+  searchParams,
+}: CustomersListProps) {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -37,9 +41,11 @@ export default function CustomersList({ tenantSlug, searchParams }: CustomersLis
         if (searchParams.search) queryParams.set("search", searchParams.search);
         if (searchParams.status) queryParams.set("status", searchParams.status);
 
-        const response = await fetch(
-          `/api/tenants/${tenantSlug}/customers?${queryParams.toString()}`
+        const url = buildApiUrl(
+          `/api/tenants/${tenantSlug}/customers?${queryParams.toString()}`,
         );
+        console.log("[CustomersList] Fetching from:", url);
+        const response = await fetch(url);
 
         if (!response.ok) {
           throw new Error("Failed to fetch customers");
@@ -112,25 +118,46 @@ export default function CustomersList({ tenantSlug, searchParams }: CustomersLis
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
                 Clienta
               </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
                 Contacto
               </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
                 Visitas
               </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
                 Total Gastado
               </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
                 Última Visita
               </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
                 Estado
               </th>
-              <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th
+                scope="col"
+                className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
                 Acciones
               </th>
             </tr>
@@ -165,12 +192,14 @@ export default function CustomersList({ tenantSlug, searchParams }: CustomersLis
                   )}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-900">{customer.visitCount} visitas</div>
+                  <div className="text-sm text-gray-900">
+                    {customer.visitCount} visitas
+                  </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm font-medium text-gray-900 flex items-center gap-1">
-                    <DollarSign className="h-4 w-4 text-green-600" />
-                    ${customer.totalSpent.toFixed(2)}
+                    <DollarSign className="h-4 w-4 text-green-600" />$
+                    {customer.totalSpent.toFixed(2)}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
@@ -187,11 +216,15 @@ export default function CustomersList({ tenantSlug, searchParams }: CustomersLis
                       customer.status === "active"
                         ? "bg-green-100 text-green-800"
                         : customer.status === "inactive"
-                        ? "bg-gray-100 text-gray-800"
-                        : "bg-red-100 text-red-800"
+                          ? "bg-gray-100 text-gray-800"
+                          : "bg-red-100 text-red-800"
                     }`}
                   >
-                    {customer.status === "active" ? "Activa" : customer.status === "inactive" ? "Inactiva" : "Bloqueada"}
+                    {customer.status === "active"
+                      ? "Activa"
+                      : customer.status === "inactive"
+                        ? "Inactiva"
+                        : "Bloqueada"}
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
