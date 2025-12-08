@@ -37,7 +37,6 @@ export default function AdminServicesPage() {
     active: true,
   });
 
-
   /*
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -51,14 +50,134 @@ export default function AdminServicesPage() {
     loadServices();
   }, [tenantSlug]);
 
-  // ... (rest of methods)
+  const loadTenantData = async () => {
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+      const response = await fetch(`${apiUrl}/api/tenants/${tenantSlug}`);
+      if (response.ok) {
+        const data = await response.json();
+        setCurrentTenant(data);
+      }
+    } catch (error) {
+      console.error("Error loading tenant data:", error);
+    }
+  };
+
+  const loadServices = async () => {
+    try {
+      setLoading(true);
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+      const response = await fetch(
+        `${apiUrl}/api/v1/public/services?tenant=${tenantSlug}`,
+      );
+      if (response.ok) {
+        const data = await response.json();
+        setServices(data.data || []);
+      }
+    } catch (error) {
+      console.error("Error loading services:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleEdit = (service: Service) => {
+    setEditingService(service);
+    setFormData({
+      name: service.name,
+      description: service.description || "",
+      price: service.price,
+      duration: service.duration.toString(),
+      featured: service.featured,
+      active: service.active,
+    });
+    setShowCreateModal(true);
+  };
+
+  const handleDelete = async (serviceId: string) => {
+    if (!confirm("¿Estás seguro de que deseas eliminar este servicio?")) {
+      return;
+    }
+
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+      const response = await fetch(
+        `${apiUrl}/api/tenants/${tenantSlug}/services/${serviceId}`,
+        {
+          method: "DELETE",
+        },
+      );
+
+      if (response.ok) {
+        alert("Servicio eliminado exitosamente");
+        loadServices();
+      } else {
+        alert("Error al eliminar el servicio");
+      }
+    } catch (error) {
+      console.error("Error deleting service:", error);
+      alert("Error al eliminar el servicio");
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+      const url = editingService
+        ? `${apiUrl}/api/tenants/${tenantSlug}/services/${editingService.id}`
+        : `${apiUrl}/api/tenants/${tenantSlug}/services`;
+
+      const method = editingService ? "PATCH" : "POST";
+
+      const response = await fetch(url, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...formData,
+          price: parseFloat(formData.price),
+          duration: parseInt(formData.duration),
+        }),
+      });
+
+      if (response.ok) {
+        alert(
+          editingService
+            ? "Servicio actualizado exitosamente"
+            : "Servicio creado exitosamente",
+        );
+        closeModal();
+        loadServices();
+      } else {
+        alert("Error al guardar el servicio");
+      }
+    } catch (error) {
+      console.error("Error saving service:", error);
+      alert("Error al guardar el servicio");
+    }
+  };
+
+  const closeModal = () => {
+    setShowCreateModal(false);
+    setEditingService(null);
+    setFormData({
+      name: "",
+      description: "",
+      price: "",
+      duration: "",
+      featured: false,
+      active: true,
+    });
+  };
 
   /*
   if (!session?.user) {
     return null;
   }
   */
-
 
   return (
     <div className="min-h-screen bg-gray-50">
