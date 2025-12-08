@@ -41,9 +41,7 @@ export default function CustomersList({
         if (searchParams.search) queryParams.set("search", searchParams.search);
         if (searchParams.status) queryParams.set("status", searchParams.status);
 
-        const url = buildApiUrl(
-          `/api/tenants/${tenantSlug}/customers?${queryParams.toString()}`,
-        );
+        const url = `/api/tenants/${tenantSlug}/customers?${queryParams.toString()}`;
         console.log("[CustomersList] Fetching from:", url);
         const response = await fetch(url);
 

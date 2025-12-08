@@ -51,7 +51,11 @@ export default function AdminProductsPage() {
 
   const loadProducts = async () => {
     try {
-      const response = await fetch(`/api/v1/products?limit=100`);
+      const response = await fetch(`/api/v1/products?limit=100`, {
+        headers: {
+          "x-api-key": process.env.NEXT_PUBLIC_API_KEY || "",
+        },
+      });
       if (response.ok) {
         const data = await response.json();
         setProducts(data.data || []);

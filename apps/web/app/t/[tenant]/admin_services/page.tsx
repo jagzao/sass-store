@@ -52,8 +52,7 @@ export default function AdminServicesPage() {
 
   const loadTenantData = async () => {
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
-      const response = await fetch(`${apiUrl}/api/tenants/${tenantSlug}`);
+      const response = await fetch(`/api/tenants/${tenantSlug}`);
       if (response.ok) {
         const data = await response.json();
         setCurrentTenant(data);
@@ -66,9 +65,8 @@ export default function AdminServicesPage() {
   const loadServices = async () => {
     try {
       setLoading(true);
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
       const response = await fetch(
-        `${apiUrl}/api/v1/public/services?tenant=${tenantSlug}`,
+        `/api/v1/public/services?tenant=${tenantSlug}`,
       );
       if (response.ok) {
         const data = await response.json();
