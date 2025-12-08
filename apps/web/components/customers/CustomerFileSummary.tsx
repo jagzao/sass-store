@@ -101,14 +101,14 @@ export default function CustomerFileSummary({ tenantSlug, customerId }: Customer
       {stats.map((stat) => {
         const Icon = stat.icon;
         return (
-          <div key={stat.name} className={`${isLuxury ? 'bg-[#1a1a1a]/60 border border-[#D4AF37]/20 backdrop-blur-md' : 'bg-white shadow'} rounded-lg p-6`}>
+          <div key={stat.name} className={`${isLuxury ? 'bg-white/80 border border-[#D4AF37]/20 backdrop-blur-md shadow-sm' : 'bg-white shadow'} rounded-lg p-6`}>
             <div className="flex items-center">
               <div className={`flex-shrink-0 ${isLuxury ? 'bg-[#D4AF37]/10' : stat.bgColor} rounded-md p-3`}>
-                <Icon className={`h-6 w-6 ${isLuxury ? 'text-[#D4AF37]' : stat.color}`} />
+                <Icon className={`h-6 w-6 ${isLuxury ? 'text-[#b3932d]' : stat.color}`} />
               </div>
               <div className="ml-4">
-                <p className={`text-sm font-medium ${isLuxury ? 'text-gray-400' : 'text-gray-500'}`}>{stat.name}</p>
-                <p className={`text-2xl font-semibold ${isLuxury ? 'text-white font-serif' : 'text-gray-900'}`}>{stat.value}</p>
+                <p className={`text-sm font-medium ${isLuxury ? 'text-gray-500' : 'text-gray-500'}`}>{stat.name}</p>
+                <p className={`text-2xl font-semibold ${isLuxury ? 'text-[#1a1a1a] font-serif' : 'text-gray-900'}`}>{stat.value}</p>
               </div>
             </div>
           </div>

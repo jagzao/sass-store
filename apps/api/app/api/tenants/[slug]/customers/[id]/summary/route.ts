@@ -8,10 +8,10 @@ import { eq, and, desc, sql } from "drizzle-orm";
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { slug: string; id: string } },
+  { params }: { params: Promise<{ slug: string; id: string }> },
 ) {
   try {
-    const { slug, id } = params;
+    const { slug, id } = await params;
 
     // Get tenant ID
     const tenant = await db.query.tenants.findFirst({
@@ -50,27 +50,27 @@ export async function GET(
       );
 
     // Get next appointment from bookings table
-    const nextAppointment = await db
-      .select({
-        startTime: bookings.startTime,
-      })
-      .from(bookings)
-      .where(
-        and(
-          eq(bookings.tenantId, tenant.id),
-          eq(bookings.customerName, customer.name), // Match by name for now
-          sql`${bookings.startTime} > NOW()`,
-          sql`${bookings.status} IN ('pending', 'confirmed')`,
-        ),
-      )
-      .orderBy(bookings.startTime)
-      .limit(1);
+    // const nextAppointment = await db
+    //   .select({
+    //     startTime: bookings.startTime,
+    //   })
+    //   .from(bookings)
+    //   .where(
+    //     and(
+    //       eq(bookings.tenantId, tenant.id),
+    //       eq(bookings.customerName, customer.name), // Match by name for now
+    //       sql`${bookings.startTime} > NOW()`,
+    //       sql`${bookings.status} IN ('pending', 'confirmed')`,
+    //     ),
+    //   )
+    //   .orderBy(bookings.startTime)
+    //   .limit(1);
 
     const summary = {
       totalSpent: parseFloat(visitStats[0]?.totalSpent?.toString() || "0"),
       visitCount: visitStats[0]?.count || 0,
       lastVisit: visitStats[0]?.lastVisit || null,
-      nextAppointment: nextAppointment[0]?.startTime || null,
+      nextAppointment: null, // nextAppointment[0]?.startTime || null,
     };
 
     return NextResponse.json({ summary });
@@ -80,7 +80,7 @@ export async function GET(
       error,
     );
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: "Internal server error", details: error instanceof Error ? error.message : String(error), stack: error instanceof Error ? error.stack : undefined },
       { status: 500 },
     );
   }

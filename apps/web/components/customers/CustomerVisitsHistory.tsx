@@ -141,14 +141,14 @@ export default function CustomerVisitsHistory({
 
   return (
     <>
-      <div className={`${isLuxury ? 'bg-[#1a1a1a]/60 border border-[#D4AF37]/20 backdrop-blur-md' : 'bg-white shadow'} rounded-lg overflow-hidden`}>
+      <div className={`${isLuxury ? 'bg-white/80 border border-[#D4AF37]/20 backdrop-blur-md shadow-sm' : 'bg-white shadow'} rounded-lg overflow-hidden`}>
         <div className={`p-6 border-b ${isLuxury ? 'border-[#D4AF37]/10' : 'border-gray-200'} flex justify-between items-center`}>
-          <h2 className={`text-xl font-semibold ${isLuxury ? 'text-[#D4AF37] font-serif' : 'text-gray-900'}`}>
+          <h2 className={`text-xl font-semibold ${isLuxury ? 'text-[#1a1a1a] font-serif' : 'text-gray-900'}`}>
             Historial de Visitas ({visits.length})
           </h2>
           <button
             onClick={handleAddVisit}
-            className={`inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium ${isLuxury ? 'text-[#121212] bg-[#D4AF37] hover:bg-[#b3932d]' : 'text-white bg-blue-600 hover:bg-blue-700'} transition-colors`}
+            className={`inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium ${isLuxury ? 'text-white bg-[#D4AF37] hover:bg-[#b3932d]' : 'text-white bg-blue-600 hover:bg-blue-700'} transition-colors`}
           >
             <Plus className="h-4 w-4 mr-2" />
             Nueva Visita
@@ -157,16 +157,16 @@ export default function CustomerVisitsHistory({
 
         {visits.length === 0 ? (
           <div className="p-12 text-center">
-            <Calendar className={`mx-auto h-12 w-12 ${isLuxury ? 'text-[#D4AF37]/50' : 'text-gray-400'} mb-4`} />
-            <h3 className={`text-lg font-medium ${isLuxury ? 'text-white' : 'text-gray-900'} mb-2`}>
+            <Calendar className={`mx-auto h-12 w-12 ${isLuxury ? 'text-[#D4AF37]/30' : 'text-gray-400'} mb-4`} />
+            <h3 className={`text-lg font-medium ${isLuxury ? 'text-gray-900' : 'text-gray-900'} mb-2`}>
               Sin visitas registradas
             </h3>
-            <p className={`${isLuxury ? 'text-gray-400' : 'text-gray-600'} mb-6`}>
+            <p className={`${isLuxury ? 'text-gray-500' : 'text-gray-600'} mb-6`}>
               Registra la primera visita de esta clienta para comenzar su historial.
             </p>
             <button
               onClick={handleAddVisit}
-              className={`inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium ${isLuxury ? 'text-[#121212] bg-[#D4AF37] hover:bg-[#b3932d]' : 'text-white bg-blue-600 hover:bg-blue-700'} transition-colors`}
+              className={`inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium ${isLuxury ? 'text-white bg-[#D4AF37] hover:bg-[#b3932d]' : 'text-white bg-blue-600 hover:bg-blue-700'} transition-colors`}
             >
               <Plus className="h-4 w-4 mr-2" />
               Registrar Primera Visita
@@ -174,39 +174,39 @@ export default function CustomerVisitsHistory({
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className={`min-w-full divide-y ${isLuxury ? 'divide-gray-800' : 'divide-gray-200'}`}>
-              <thead className={isLuxury ? 'bg-[#121212]/50' : 'bg-gray-50'}>
+            <table className={`min-w-full divide-y ${isLuxury ? 'divide-[#D4AF37]/10' : 'divide-gray-200'}`}>
+              <thead className={isLuxury ? 'bg-[#f9f9f9]' : 'bg-gray-50'}>
                 <tr>
-                  <th className={`px-6 py-3 text-left text-xs font-medium ${isLuxury ? 'text-[#D4AF37]' : 'text-gray-500'} uppercase tracking-wider`}>
+                  <th className={`px-6 py-3 text-left text-xs font-medium ${isLuxury ? 'text-[#b3932d]' : 'text-gray-500'} uppercase tracking-wider`}>
                     Nº Visita
                   </th>
-                  <th className={`px-6 py-3 text-left text-xs font-medium ${isLuxury ? 'text-[#D4AF37]' : 'text-gray-500'} uppercase tracking-wider`}>
+                  <th className={`px-6 py-3 text-left text-xs font-medium ${isLuxury ? 'text-[#b3932d]' : 'text-gray-500'} uppercase tracking-wider`}>
                     Fecha de Atención
                   </th>
-                  <th className={`px-6 py-3 text-left text-xs font-medium ${isLuxury ? 'text-[#D4AF37]' : 'text-gray-500'} uppercase tracking-wider`}>
+                  <th className={`px-6 py-3 text-left text-xs font-medium ${isLuxury ? 'text-[#b3932d]' : 'text-gray-500'} uppercase tracking-wider`}>
                     Servicios
                   </th>
-                  <th className={`px-6 py-3 text-left text-xs font-medium ${isLuxury ? 'text-[#D4AF37]' : 'text-gray-500'} uppercase tracking-wider`}>
+                  <th className={`px-6 py-3 text-left text-xs font-medium ${isLuxury ? 'text-[#b3932d]' : 'text-gray-500'} uppercase tracking-wider`}>
                     Total
                   </th>
-                  <th className={`px-6 py-3 text-left text-xs font-medium ${isLuxury ? 'text-[#D4AF37]' : 'text-gray-500'} uppercase tracking-wider`}>
+                  <th className={`px-6 py-3 text-left text-xs font-medium ${isLuxury ? 'text-[#b3932d]' : 'text-gray-500'} uppercase tracking-wider`}>
                     Próxima Cita
                   </th>
-                  <th className={`px-6 py-3 text-left text-xs font-medium ${isLuxury ? 'text-[#D4AF37]' : 'text-gray-500'} uppercase tracking-wider`}>
+                  <th className={`px-6 py-3 text-left text-xs font-medium ${isLuxury ? 'text-[#b3932d]' : 'text-gray-500'} uppercase tracking-wider`}>
                     Estado
                   </th>
-                  <th className={`px-6 py-3 text-right text-xs font-medium ${isLuxury ? 'text-[#D4AF37]' : 'text-gray-500'} uppercase tracking-wider`}>
+                  <th className={`px-6 py-3 text-right text-xs font-medium ${isLuxury ? 'text-[#b3932d]' : 'text-gray-500'} uppercase tracking-wider`}>
                     Acciones
                   </th>
                 </tr>
               </thead>
-              <tbody className={`${isLuxury ? 'bg-transparent divide-y divide-gray-800' : 'bg-white divide-y divide-gray-200'}`}>
+              <tbody className={`${isLuxury ? 'bg-transparent divide-y divide-[#D4AF37]/10' : 'bg-white divide-y divide-gray-200'}`}>
                 {visits.map((visit) => (
                   <tr key={visit.id} className={isLuxury ? 'hover:bg-[#D4AF37]/5' : 'hover:bg-gray-50'}>
-                    <td className={`px-6 py-4 whitespace-nowrap text-sm font-medium ${isLuxury ? 'text-white' : 'text-gray-900'}`}>
+                    <td className={`px-6 py-4 whitespace-nowrap text-sm font-medium ${isLuxury ? 'text-[#1a1a1a]' : 'text-gray-900'}`}>
                       #{visit.visitNumber}
                     </td>
-                    <td className={`px-6 py-4 whitespace-nowrap text-sm ${isLuxury ? 'text-gray-300' : 'text-gray-900'}`}>
+                    <td className={`px-6 py-4 whitespace-nowrap text-sm ${isLuxury ? 'text-gray-600' : 'text-gray-900'}`}>
                       {new Date(visit.visitDate).toLocaleDateString("es-MX", {
                         year: "numeric",
                         month: "long",
@@ -215,7 +215,7 @@ export default function CustomerVisitsHistory({
                         minute: "2-digit",
                       })}
                     </td>
-                    <td className={`px-6 py-4 text-sm ${isLuxury ? 'text-gray-300' : 'text-gray-900'}`}>
+                    <td className={`px-6 py-4 text-sm ${isLuxury ? 'text-gray-600' : 'text-gray-900'}`}>
                       {visit.services.length > 0
                         ? `${visit.services[0].serviceName}${
                             visit.services.length > 1
@@ -227,7 +227,7 @@ export default function CustomerVisitsHistory({
                     <td className={`px-6 py-4 whitespace-nowrap text-sm font-medium ${isLuxury ? 'text-[#D4AF37]' : 'text-gray-900'}`}>
                       ${visit.totalAmount.toFixed(2)}
                     </td>
-                    <td className={`px-6 py-4 whitespace-nowrap text-sm ${isLuxury ? 'text-gray-300' : 'text-gray-900'}`}>
+                    <td className={`px-6 py-4 whitespace-nowrap text-sm ${isLuxury ? 'text-gray-600' : 'text-gray-900'}`}>
                       {visit.nextVisitFrom
                         ? new Date(visit.nextVisitFrom).toLocaleDateString("es-MX")
                         : "Sin fecha"}
@@ -239,21 +239,21 @@ export default function CustomerVisitsHistory({
                       <div className="flex justify-end gap-2">
                         <button
                           onClick={() => handleViewDetail(visit)}
-                          className={`${isLuxury ? 'text-[#D4AF37] hover:text-[#b3932d]' : 'text-blue-600 hover:text-blue-900'}`}
+                          className={`${isLuxury ? 'text-[#b3932d] hover:text-[#8a7022]' : 'text-blue-600 hover:text-blue-900'}`}
                           title="Ver detalle"
                         >
                           <Eye className="h-4 w-4" />
                         </button>
                         <button
                           onClick={() => handleEditVisit(visit)}
-                          className={`${isLuxury ? 'text-green-400 hover:text-green-300' : 'text-green-600 hover:text-green-900'}`}
+                          className={`${isLuxury ? 'text-green-600 hover:text-green-700' : 'text-green-600 hover:text-green-900'}`}
                           title="Editar"
                         >
                           <Edit className="h-4 w-4" />
                         </button>
                         <button
                           onClick={() => handleDeleteVisit(visit.id)}
-                          className={`${isLuxury ? 'text-red-400 hover:text-red-300' : 'text-red-600 hover:text-red-900'}`}
+                          className={`${isLuxury ? 'text-red-500 hover:text-red-600' : 'text-red-600 hover:text-red-900'}`}
                           title="Eliminar"
                         >
                           <Trash2 className="h-4 w-4" />

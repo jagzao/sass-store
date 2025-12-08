@@ -173,7 +173,7 @@ export default function CustomerFileHeader({
 
   return (
     <div
-      className={`${isLuxury ? "bg-[#1a1a1a]/60 border border-[#D4AF37]/20 backdrop-blur-md" : "bg-white shadow"} rounded-lg p-6 mb-6`}
+      className={`${isLuxury ? "bg-white/80 border border-[#D4AF37]/20 backdrop-blur-md shadow-sm" : "bg-white shadow"} rounded-lg p-6 mb-6`}
     >
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center space-x-4">
@@ -183,7 +183,7 @@ export default function CustomerFileHeader({
               className={`w-16 h-16 rounded-full ${isLuxury ? "bg-gradient-to-br from-[#D4AF37] to-[#b3932d]" : "bg-gradient-to-br from-blue-400 to-blue-600"} flex items-center justify-center`}
             >
               <User
-                className={`h-8 w-8 ${isLuxury ? "text-[#121212]" : "text-white"}`}
+                className={`h-8 w-8 ${isLuxury ? "text-white" : "text-white"}`}
               />
             </div>
           </div>
@@ -191,13 +191,13 @@ export default function CustomerFileHeader({
           {/* Info */}
           <div>
             <h1
-              className={`text-2xl font-bold ${isLuxury ? "text-white font-serif" : "text-gray-900"}`}
+              className={`text-2xl font-bold ${isLuxury ? "text-[#1a1a1a] font-serif" : "text-gray-900"}`}
             >
               {customer.name}
             </h1>
             <div className="flex flex-wrap items-center gap-4 mt-2">
               <div
-                className={`flex items-center text-sm ${isLuxury ? "text-gray-400" : "text-gray-600"}`}
+                className={`flex items-center text-sm ${isLuxury ? "text-gray-600" : "text-gray-600"}`}
               >
                 <Phone
                   className={`h-4 w-4 mr-1 ${isLuxury ? "text-[#D4AF37]" : ""}`}
@@ -206,7 +206,7 @@ export default function CustomerFileHeader({
               </div>
               {customer.email && (
                 <div
-                  className={`flex items-center text-sm ${isLuxury ? "text-gray-400" : "text-gray-600"}`}
+                  className={`flex items-center text-sm ${isLuxury ? "text-gray-600" : "text-gray-600"}`}
                 >
                   <Mail
                     className={`h-4 w-4 mr-1 ${isLuxury ? "text-[#D4AF37]" : ""}`}
@@ -216,7 +216,7 @@ export default function CustomerFileHeader({
               )}
               {customer.address && (
                 <div
-                  className={`flex items-center text-sm ${isLuxury ? "text-gray-400" : "text-gray-600"}`}
+                  className={`flex items-center text-sm ${isLuxury ? "text-gray-600" : "text-gray-600"}`}
                 >
                   <MapPin
                     className={`h-4 w-4 mr-1 ${isLuxury ? "text-[#D4AF37]" : ""}`}
@@ -233,10 +233,10 @@ export default function CustomerFileHeader({
           className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
             isLuxury
               ? customer.status === "active"
-                ? "bg-[#D4AF37]/20 text-[#D4AF37] border border-[#D4AF37]/30"
+                ? "bg-[#D4AF37]/10 text-[#b3932d] border border-[#D4AF37]/20"
                 : customer.status === "inactive"
-                  ? "bg-gray-800 text-gray-400 border border-gray-700"
-                  : "bg-red-900/30 text-red-400 border border-red-800/50"
+                  ? "bg-gray-100 text-gray-500 border border-gray-200"
+                  : "bg-red-50 text-red-600 border border-red-100"
               : customer.status === "active"
                 ? "bg-green-100 text-green-800"
                 : customer.status === "inactive"
@@ -261,7 +261,7 @@ export default function CustomerFileHeader({
                 key={index}
                 className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                   isLuxury
-                    ? "bg-[#2a2a2a] text-gray-300 border border-gray-700"
+                    ? "bg-[#f9f9f9] text-gray-600 border border-gray-200"
                     : "bg-purple-100 text-purple-800"
                 }`}
               >
@@ -274,18 +274,18 @@ export default function CustomerFileHeader({
 
       {/* General Notes */}
       <div
-        className={`border-t pt-4 ${isLuxury ? "border-gray-800" : "border-gray-200"}`}
+        className={`border-t pt-4 ${isLuxury ? "border-[#D4AF37]/10" : "border-gray-200"}`}
       >
         <div className="flex items-center justify-between mb-2">
           <h3
-            className={`text-sm font-medium ${isLuxury ? "text-[#D4AF37]" : "text-gray-700"}`}
+            className={`text-sm font-medium ${isLuxury ? "text-[#b3932d]" : "text-gray-700"}`}
           >
             Acerca de la clienta
           </h3>
           {!editing ? (
             <button
               onClick={() => setEditing(true)}
-              className={`text-sm ${isLuxury ? "text-[#D4AF37] hover:text-[#b3932d]" : "text-blue-600 hover:text-blue-800"} flex items-center gap-1 transition-colors`}
+              className={`text-sm ${isLuxury ? "text-[#b3932d] hover:text-[#8a7022]" : "text-blue-600 hover:text-blue-800"} flex items-center gap-1 transition-colors`}
             >
               <Edit className="h-4 w-4" />
               Editar
@@ -294,7 +294,7 @@ export default function CustomerFileHeader({
             <div className="flex gap-2">
               <button
                 onClick={handleSaveNotes}
-                className={`text-sm ${isLuxury ? "text-green-400 hover:text-green-300" : "text-green-600 hover:text-green-800"} flex items-center gap-1`}
+                className={`text-sm ${isLuxury ? "text-green-600 hover:text-green-700" : "text-green-600 hover:text-green-800"} flex items-center gap-1`}
               >
                 <Save className="h-4 w-4" />
                 Guardar
@@ -304,7 +304,7 @@ export default function CustomerFileHeader({
                   setEditing(false);
                   setEditedNotes(customer.generalNotes || "");
                 }}
-                className={`text-sm ${isLuxury ? "text-gray-400 hover:text-gray-300" : "text-gray-600 hover:text-gray-800"} flex items-center gap-1`}
+                className={`text-sm ${isLuxury ? "text-gray-500 hover:text-gray-700" : "text-gray-600 hover:text-gray-800"} flex items-center gap-1`}
               >
                 <X className="h-4 w-4" />
                 Cancelar
@@ -320,14 +320,14 @@ export default function CustomerFileHeader({
             rows={4}
             className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 text-sm ${
               isLuxury
-                ? "bg-[#121212] border-gray-700 text-white focus:ring-[#D4AF37] placeholder-gray-600"
+                ? "bg-white border-gray-200 text-gray-800 focus:ring-[#D4AF37] placeholder-gray-400"
                 : "border-gray-300 focus:ring-blue-500"
             }`}
             placeholder="Notas sobre preferencias, alergias, observaciones especiales..."
           />
         ) : (
           <p
-            className={`text-sm whitespace-pre-wrap ${isLuxury ? "text-gray-300" : "text-gray-600"}`}
+            className={`text-sm whitespace-pre-wrap ${isLuxury ? "text-gray-600" : "text-gray-600"}`}
           >
             {customer.generalNotes || "Sin notas"}
           </p>

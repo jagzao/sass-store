@@ -549,6 +549,34 @@ export async function seedTenantData() {
       })
     );
 
+    // 4. Seed Staff
+    const staffData = [
+      {
+        tenantId: tenantMap["wondernails"],
+        name: "Marialicia Villafuerte Hurtado",
+        role: "Admin",
+        email: "marialiciavh1984@gmail.com",
+        phone: "+52 55 6406 8409",
+        active: true,
+        specialties: ["manicure", "pedicure", "nail-art", "gel-extensions"],
+      }
+    ];
+
+    await Promise.all(
+      staffData.map(async (member) => {
+        const [existing] = await db
+          .select()
+          .from(staff)
+          .where(eq(staff.email, member.email))
+          .limit(1);
+
+        if (!existing) {
+          await db.insert(staff).values(member);
+          console.log(`✅ Created staff: ${member.name}`);
+        }
+      })
+    );
+
     console.log("🎉 Database seed completed successfully!");
     return { success: true, tenantCount: insertedTenants.length };
   } catch (error) {

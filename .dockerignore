@@ -1,87 +1,24 @@
-# Dependencies
-node_modules/
+node_modules
 npm-debug.log
-yarn-error.log
-pnpm-debug.log
-.pnpm-store/
-
-# Build outputs
-.next/
-.turbo/
-dist/
-build/
-out/
-*.tsbuildinfo
-
-# Testing
-coverage/
-.nyc_output/
-tests/
-**/*.test.ts
-**/*.test.tsx
-**/*.spec.ts
-**/*.spec.tsx
-playwright.config.ts
-vitest.config.ts
-
-# Environment and secrets
-.env
-.env.local
-.env.*.local
-.env.development
-.env.test
-*.env
-
-# Git
-.git/
-.gitignore
-.gitattributes
-
-# Documentation
-README.md
-*.md
-CONTRIBUTING.md
-LICENSE
-
-# IDE configs
-.vscode/
-.idea/
-*.sw[op]
-.editorconfig
-
-# Logs
-logs/
-*.log
-
-# OS files
-.DS_Store
-Thumbs.db
-desktop.ini
-
-# Misc
-.cache/
-tmp/
-temp/
-.temp/
-
-# CI/CD
-.github/
-.gitlab-ci.yml
-.travis.yml
-
-# Docker
-docker-compose*.yml
-Dockerfile.dev
+Dockerfile
 .dockerignore
-
-# Database
-*.sql
-*.sqlite
-*.db
-postgres_data/
-redis_data/
-drizzle/
-migrations/
-
-# Turbo
-.turbo/
+.git
+.gitignore
+README.md
+.env
+.nyc_output
+coverage
+.nyc_output
+.vscode
+.idea
+*.log
+.next
+.turbo
+dist
+build
+out
+apps/web/.next
+apps/api/.next
+restart-app.ps1
+restart-app.cmd
+RESTART_APP_README.md

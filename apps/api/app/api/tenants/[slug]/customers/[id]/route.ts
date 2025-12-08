@@ -8,10 +8,10 @@ import { eq, and } from "drizzle-orm";
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { slug: string; id: string } },
+  { params }: { params: Promise<{ slug: string; id: string }> },
 ) {
   try {
-    const { slug, id } = params;
+    const { slug, id } = await params;
 
     // Get tenant ID
     const tenant = await db.query.tenants.findFirst({
@@ -50,10 +50,10 @@ export async function GET(
  */
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { slug: string; id: string } },
+  { params }: { params: Promise<{ slug: string; id: string }> },
 ) {
   try {
-    const { slug, id } = params;
+    const { slug, id } = await params;
     const body = await request.json();
 
     // Get tenant ID
@@ -109,10 +109,10 @@ export async function PATCH(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { slug: string; id: string } },
+  { params }: { params: Promise<{ slug: string; id: string }> },
 ) {
   try {
-    const { slug, id } = params;
+    const { slug, id } = await params;
 
     // Get tenant ID
     const tenant = await db.query.tenants.findFirst({

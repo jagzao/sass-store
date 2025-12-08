@@ -14,10 +14,10 @@ import { eq, and, desc, sql } from "drizzle-orm";
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { slug: string; id: string } },
+  { params }: { params: Promise<{ slug: string; id: string }> },
 ) {
   try {
-    const { slug, id } = params;
+    const { slug, id } = await params;
 
     // Get tenant ID
     const tenant = await db.query.tenants.findFirst({
@@ -40,21 +40,45 @@ export async function GET(
       );
     }
 
-    // Get visits with services
-    const visits = await db.query.customerVisits.findMany({
-      where: eq(customerVisits.customerId, id),
-      orderBy: [desc(customerVisits.visitDate)],
-      with: {
-        services: {
-          with: {
-            service: true,
-          },
-        },
-      },
+    // Get visits using Core Query Builder to avoid aliasing issues
+    const visitsData = await db
+      .select({
+        visit: customerVisits,
+        service: services,
+        visitService: customerVisitServices,
+      })
+      .from(customerVisits)
+      .leftJoin(
+        customerVisitServices,
+        eq(customerVisits.id, customerVisitServices.visitId)
+      )
+      .leftJoin(services, eq(customerVisitServices.serviceId, services.id))
+      .where(eq(customerVisits.customerId, id))
+      .orderBy(desc(customerVisits.visitDate));
+
+    // Group by visit
+    const visitsMap = new Map();
+
+    visitsData.forEach((row) => {
+      if (!visitsMap.has(row.visit.id)) {
+        visitsMap.set(row.visit.id, {
+          ...row.visit,
+          services: [],
+        });
+      }
+
+      if (row.service && row.visitService) {
+        visitsMap.get(row.visit.id).services.push({
+          id: row.visitService.id,
+          serviceName: row.service.name,
+          quantity: parseFloat(row.visitService.quantity),
+          unitPrice: parseFloat(row.visitService.unitPrice),
+          subtotal: parseFloat(row.visitService.subtotal),
+        });
+      }
     });
 
-    // Format visits
-    const formattedVisits = visits.map((visit) => ({
+    const formattedVisits = Array.from(visitsMap.values()).map((visit) => ({
       id: visit.id,
       visitNumber: visit.visitNumber,
       visitDate: visit.visitDate,
@@ -63,13 +87,7 @@ export async function GET(
       nextVisitFrom: visit.nextVisitFrom,
       nextVisitTo: visit.nextVisitTo,
       status: visit.status,
-      services: visit.services.map((vs) => ({
-        id: vs.id,
-        serviceName: vs.service.name,
-        quantity: parseFloat(vs.quantity),
-        unitPrice: parseFloat(vs.unitPrice),
-        subtotal: parseFloat(vs.subtotal),
-      })),
+      services: visit.services,
     }));
 
     return NextResponse.json({ visits: formattedVisits });
@@ -79,7 +97,7 @@ export async function GET(
       error,
     );
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: "Internal server error", details: error instanceof Error ? error.message : String(error), stack: error instanceof Error ? error.stack : undefined },
       { status: 500 },
     );
   }
@@ -91,10 +109,10 @@ export async function GET(
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: { slug: string; id: string } },
+  { params }: { params: Promise<{ slug: string; id: string }> },
 ) {
   try {
-    const { slug, id } = params;
+    const { slug, id } = await params;
     const body = await request.json();
 
     // Get tenant ID

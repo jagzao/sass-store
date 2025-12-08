@@ -1,72 +1,38 @@
 version: '3.8'
 
 services:
-  web:
+  # Aplicación Web SASS Store
+  sass-store:
     build:
       context: .
-      dockerfile: ./apps/web/Dockerfile
+      dockerfile: Dockerfile
+    container_name: sass-store-app
     ports:
-      - "3000:3000"
+      - "3001:3001"  # Aplicación web
+      - "4000:4000"  # API
     environment:
-      - NODE_ENV=development
-      - NEXT_PUBLIC_API_URL=http://localhost:3001
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://postgres.jedryjmljffuvegggjmw:TSGmf_3G-rbLbz!@aws-1-us-east-2.pooler.supabase.com:6543/postgres?pgbouncer=true
+      - NEXTAUTH_SECRET=9OrDVuyxjGORZjtd9+4sHMJrPLcp5EI1iAb2bAtPjts=
+      - NEXTAUTH_URL=http://localhost:3001
+      - NEXT_PUBLIC_DOMAIN=localhost:3001
+      - NEXT_PUBLIC_TENANT_DOMAIN_PATTERN=*.localhost:3001
+    restart: unless-stopped
+    networks:
+      - sass-store-network
+
+  # Cloudflare Tunnel
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: sass-store-tunnel
+    restart: unless-stopped
+    environment:
+      - TUNNEL_TOKEN=${TUNNEL_TOKEN}
+    networks:
+      - sass-store-network
     depends_on:
-      - api
-      - postgres
-    volumes:
-      - ./apps/web:/app/apps/web
-      - /app/node_modules
+      - sass-store
 
-  api:
-    build:
-      context: .
-      dockerfile: ./apps/api/Dockerfile
-    ports:
-      - "3001:3001"
-    environment:
-      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/sass_store
-      - JWT_SECRET=dev-jwt-secret-change-in-production
-      - UPSTASH_REDIS_REST_URL=${UPSTASH_REDIS_REST_URL}
-      - UPSTASH_REDIS_REST_TOKEN=${UPSTASH_REDIS_REST_TOKEN}
-    depends_on:
-      - postgres
-      - redis
-    volumes:
-      - ./apps/api:/app/apps/api
-      - /app/node_modules
-
-  postgres:
-    image: postgres:15-alpine
-    ports:
-      - "5434:5432"
-    environment:
-      - POSTGRES_DB=sass_store
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
-
-  redis:
-    image: redis:7-alpine
-    ports:
-      - "6382:6379"
-    command: redis-server --appendonly yes
-    volumes:
-      - redis_data:/data
-
-  # Cost monitoring worker (simulated with cron)
-  cost-monitor:
-    image: alpine:latest
-    command: >
-      sh -c "echo '0 0 * * * /app/cost-check.sh' | crontab - && crond -f"
-    volumes:
-      - ./scripts/cost-check.sh:/app/cost-check.sh
-    environment:
-      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/sass_store
-    depends_on:
-      - postgres
-
-volumes:
-  postgres_data:
-  redis_data:
+networks:
+  sass-store-network:
+    driver: bridge

@@ -9,15 +9,14 @@ import CustomerFileSummary from "@/components/customers/CustomerFileSummary";
 import CustomerVisitsHistory from "@/components/customers/CustomerVisitsHistory";
 
 interface PageProps {
-  params: {
+  params: Promise<{
     tenant: string;
     id: string;
-  };
+  }>;
 }
 
 export default async function CustomerFilePage({ params }: PageProps) {
-  const tenantSlug = params.tenant;
-  const customerId = params.id;
+  const { tenant: tenantSlug, id: customerId } = await params;
 
   // Fetch tenant data
   let tenantData: TenantData | null = null;
@@ -40,7 +39,7 @@ export default async function CustomerFilePage({ params }: PageProps) {
   return (
     <LiveRegionProvider>
       <div
-        className={`min-h-screen ${isLuxury ? "bg-[#121212]" : "bg-gradient-to-b from-white to-gray-50"}`}
+        className={`min-h-screen ${isLuxury ? "bg-white" : "bg-gray-50"}`}
       >
         {/* Main Content */}
         <main className="container mx-auto px-4 py-8">
@@ -50,7 +49,7 @@ export default async function CustomerFilePage({ params }: PageProps) {
               <li className="inline-flex items-center">
                 <a
                   href={`/t/${tenantSlug}`}
-                  className={`${isLuxury ? "text-gray-400 hover:text-[#D4AF37]" : "text-gray-700 hover:text-blue-600"} inline-flex items-center`}
+                  className={`${isLuxury ? "text-gray-500 hover:text-[#D4AF37]" : "text-gray-700 hover:text-blue-600"} inline-flex items-center transition-colors`}
                 >
                   Inicio
                 </a>
@@ -58,13 +57,13 @@ export default async function CustomerFilePage({ params }: PageProps) {
               <li>
                 <div className="flex items-center">
                   <span
-                    className={`mx-2 ${isLuxury ? "text-gray-600" : "text-gray-400"}`}
+                    className={`mx-2 ${isLuxury ? "text-gray-300" : "text-gray-400"}`}
                   >
                     /
                   </span>
                   <a
                     href={`/t/${tenantSlug}/clientes`}
-                    className={`${isLuxury ? "text-gray-400 hover:text-[#D4AF37]" : "text-gray-700 hover:text-blue-600"}`}
+                    className={`${isLuxury ? "text-gray-500 hover:text-[#D4AF37]" : "text-gray-700 hover:text-blue-600"} transition-colors`}
                   >
                     Clientas
                   </a>
@@ -73,12 +72,12 @@ export default async function CustomerFilePage({ params }: PageProps) {
               <li aria-current="page">
                 <div className="flex items-center">
                   <span
-                    className={`mx-2 ${isLuxury ? "text-gray-600" : "text-gray-400"}`}
+                    className={`mx-2 ${isLuxury ? "text-gray-300" : "text-gray-400"}`}
                   >
                     /
                   </span>
                   <span
-                    className={`${isLuxury ? "text-[#D4AF37]" : "text-gray-500"}`}
+                    className={`${isLuxury ? "text-[#D4AF37] font-medium" : "text-gray-500"}`}
                   >
                     Expediente
                   </span>
@@ -167,7 +166,7 @@ function VisitsHistorySkeleton() {
 }
 
 export async function generateMetadata({ params }: PageProps) {
-  const tenantSlug = params.tenant;
+  const { tenant: tenantSlug } = await params;
 
   try {
     const tenant = await fetchStatic<TenantData>(`/api/tenants/${tenantSlug}`, [

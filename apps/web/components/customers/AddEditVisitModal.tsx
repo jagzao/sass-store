@@ -2,6 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { X, Plus, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import FormInput from "@/components/ui/forms/FormInput";
+import FormSelect from "@/components/ui/forms/FormSelect";
+import FormTextarea from "@/components/ui/forms/FormTextarea";
+import { cn } from "@/lib/utils";
 
 interface Service {
   id: string;
@@ -72,7 +77,7 @@ export default function AddEditVisitModal({
       try {
         setLoading(true);
         setServicesError(null);
-        const response = await fetch(`/api/services?tenant=${tenantSlug}`);
+        const response = await fetch(`/api/v1/public/services?tenant=${tenantSlug}`);
         
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
@@ -213,96 +218,81 @@ export default function AddEditVisitModal({
     }
   };
 
-  const isLuxury = tenantSlug === 'wondernails';
-
   return (
-    <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
-      <div className={`${isLuxury ? 'bg-[#1a1a1a] border border-[#D4AF37]/20' : 'bg-white'} rounded-lg shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto`}>
+    <div className="fixed inset-0 z-50 bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 flex items-center justify-center p-4">
+      <div className="fixed left-[50%] top-[50%] z-50 grid w-full max-w-4xl max-h-[90vh] overflow-y-auto translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 sm:rounded-lg">
         {/* Header */}
-        <div className={`flex items-center justify-between p-6 border-b ${isLuxury ? 'border-[#D4AF37]/10' : 'border-gray-200'}`}>
-          <h2 className={`text-xl font-semibold ${isLuxury ? 'text-[#D4AF37] font-serif tracking-wide' : 'text-gray-900'}`}>
-            {visit ? "Editar Visita" : "Nueva Visita"}
-          </h2>
-          <button
-            onClick={() => onClose()}
-            className={`${isLuxury ? 'text-gray-400 hover:text-[#D4AF37]' : 'text-gray-400 hover:text-gray-500'} transition-colors`}
-          >
-            <X className="h-6 w-6" />
-          </button>
+        <div className="flex flex-col space-y-1.5 text-center sm:text-left">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-semibold leading-none tracking-tight">
+              {visit ? "Editar Visita" : "Nueva Visita"}
+            </h2>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => onClose()}
+              className="h-6 w-6 rounded-full p-0"
+            >
+              <X className="h-4 w-4" />
+              <span className="sr-only">Close</span>
+            </Button>
+          </div>
         </div>
 
         {/* Body */}
-        <form onSubmit={handleSubmit} className="p-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
           {/* Basic Info */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <div>
-              <label className={`block text-sm font-medium ${isLuxury ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
-                Fecha y Hora de Atención *
-              </label>
-              <input
-                type="datetime-local"
-                value={visitDate}
-                onChange={(e) => setVisitDate(e.target.value)}
-                required
-                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 transition-all ${
-                  isLuxury 
-                    ? 'bg-[#121212] border-gray-700 text-white focus:ring-[#D4AF37]/50 focus:border-[#D4AF37] [color-scheme:dark]' 
-                    : 'border-gray-300 focus:ring-blue-500'
-                }`}
-              />
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <FormInput
+              label="Fecha y Hora de Atención *"
+              type="datetime-local"
+              value={visitDate}
+              onChange={(e) => setVisitDate(e.target.value)}
+              required
+            />
 
-            <div>
-              <label className={`block text-sm font-medium ${isLuxury ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
-                Estado *
-              </label>
-              <select
-                value={status}
-                onChange={(e) => setStatus(e.target.value as Visit["status"])}
-                required
-                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 transition-all ${
-                  isLuxury 
-                    ? 'bg-[#121212] border-gray-700 text-white focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]' 
-                    : 'border-gray-300 focus:ring-blue-500'
-                }`}
-              >
-                <option value="pending">Pendiente</option>
-                <option value="scheduled">Programada</option>
-                <option value="completed">Completada</option>
-                <option value="cancelled">Cancelada</option>
-              </select>
-            </div>
+            <FormSelect
+              label="Estado *"
+              value={status}
+              onChange={(e) => setStatus(e.target.value as Visit["status"])}
+              required
+              options={[
+                { value: "pending", label: "Pendiente" },
+                { value: "scheduled", label: "Programada" },
+                { value: "completed", label: "Completada" },
+                { value: "cancelled", label: "Cancelada" },
+              ]}
+            />
           </div>
 
           {/* Services */}
-          <div className="mb-6">
+          <div>
             <div className="flex items-center justify-between mb-4">
-              <h3 className={`text-lg font-medium ${isLuxury ? 'text-white' : 'text-gray-900'}`}>Servicios</h3>
-              <button
+              <h3 className="text-lg font-medium">Servicios</h3>
+              <Button
                 type="button"
+                variant="outline"
+                size="sm"
                 onClick={handleAddService}
                 disabled={availableServices.length === 0}
-                className={`inline-flex items-center px-3 py-1.5 border text-sm font-medium rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-all ${
-                  isLuxury
-                    ? 'border-[#D4AF37] text-[#D4AF37] bg-transparent hover:bg-[#D4AF37]/10'
-                    : 'border-transparent text-blue-700 bg-blue-100 hover:bg-blue-200'
-                }`}
               >
                 <Plus className="h-4 w-4 mr-1" />
                 Agregar Servicio
-              </button>
+              </Button>
             </div>
 
             {servicesError ? (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
-                <p className="text-red-800 text-sm mb-2">Error al cargar los servicios:</p>
-                <p className="text-red-700 text-sm mb-3">{servicesError}</p>
-                <button
+              <div className="bg-destructive/15 border-destructive/50 text-destructive p-4 rounded-md mb-4 flex flex-col items-start gap-2">
+                <p className="text-sm font-medium">Error al cargar los servicios:</p>
+                <p className="text-sm">{servicesError}</p>
+                <Button
                   type="button"
+                  variant="outline"
+                  size="sm"
                   onClick={() => {
                     setLoading(true);
                     setServicesError(null);
-                    fetch(`/api/services?tenant=${tenantSlug}`)
+                    fetch(`/api/v1/public/services?tenant=${tenantSlug}`)
                       .then(response => {
                         if (!response.ok) throw new Error("Failed to fetch services");
                         return response.json();
@@ -317,57 +307,46 @@ export default function AddEditVisitModal({
                       })
                       .finally(() => setLoading(false));
                   }}
-                  className="px-3 py-1 bg-red-100 text-red-800 rounded-md text-sm hover:bg-red-200 transition-colors"
                 >
                   Reintentar
-                </button>
+                </Button>
               </div>
             ) : loading ? (
-              <div className={`text-center py-8 rounded-lg border-2 border-dashed ${isLuxury ? 'bg-[#121212] border-gray-800' : 'bg-gray-50 border-gray-300'}`}>
-                <p className={isLuxury ? 'text-gray-400' : 'text-gray-500'}>Cargando servicios...</p>
+              <div className="text-center py-8 rounded-lg border-2 border-dashed">
+                <p className="text-muted-foreground">Cargando servicios...</p>
               </div>
             ) : availableServices.length === 0 ? (
-              <div className="text-center py-8 bg-yellow-50 rounded-lg border-2 border-dashed border-yellow-300">
-                <p className="text-yellow-800 mb-2">No hay servicios disponibles</p>
-                <p className="text-yellow-700 text-sm">Contacta al administrador para agregar servicios a tu catálogo</p>
+              <div className="text-center py-8 bg-muted/50 rounded-lg border-2 border-dashed">
+                <p className="text-foreground font-medium mb-2">No hay servicios disponibles</p>
+                <p className="text-muted-foreground text-sm">Contacta al administrador para agregar servicios a tu catálogo</p>
               </div>
             ) : services.length === 0 ? (
-              <div className={`text-center py-8 rounded-lg border-2 border-dashed ${isLuxury ? 'bg-[#121212] border-gray-800' : 'bg-gray-50 border-gray-300'}`}>
-                <p className={isLuxury ? 'text-gray-400' : 'text-gray-500'}>No hay servicios agregados</p>
+              <div className="text-center py-8 rounded-lg border-2 border-dashed">
+                <p className="text-muted-foreground">No hay servicios agregados</p>
               </div>
             ) : (
               <div className="space-y-4">
                 {services.map((service, index) => (
-                  <div key={index} className={`${isLuxury ? 'bg-[#121212]/50 border border-gray-800 rounded-lg' : 'bg-gray-50 rounded-lg'} p-4`}>
+                  <div key={index} className="bg-muted/50 rounded-lg p-4 border">
                     <div className="grid grid-cols-12 gap-4 items-start">
                       <div className="col-span-5">
-                        <label className={`block text-xs font-medium ${isLuxury ? 'text-gray-400' : 'text-gray-700'} mb-1`}>
-                          Servicio
-                        </label>
-                        <select
+                        <FormSelect
+                          label="Servicio"
                           value={service.serviceId}
                           onChange={(e) => handleServiceChange(index, e.target.value)}
                           required
-                          className={`w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 transition-all ${
-                            isLuxury
-                              ? 'bg-[#1a1a1a] border-gray-700 text-white focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]'
-                              : 'border-gray-300 focus:ring-blue-500'
-                          }`}
-                        >
-                          <option value="">Seleccionar servicio...</option>
-                          {availableServices.map((s) => (
-                            <option key={s.id} value={s.id}>
-                              {s.name} - ${Number(s.price).toFixed(2)}
-                            </option>
-                          ))}
-                        </select>
+                          placeholder="Seleccionar servicio..."
+                          options={availableServices.map((s) => ({
+                            value: s.id,
+                            label: `${s.name} - $${Number(s.price).toFixed(2)}`
+                          }))}
+                          selectClassName="text-sm"
+                        />
                       </div>
 
                       <div className="col-span-2">
-                        <label className={`block text-xs font-medium ${isLuxury ? 'text-gray-400' : 'text-gray-700'} mb-1`}>
-                          Precio
-                        </label>
-                        <input
+                        <FormInput
+                          label="Precio"
                           type="number"
                           step="0.01"
                           value={service.unitPrice}
@@ -375,19 +354,13 @@ export default function AddEditVisitModal({
                             handlePriceChange(index, parseFloat(e.target.value) || 0)
                           }
                           required
-                          className={`w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 transition-all ${
-                            isLuxury
-                              ? 'bg-[#1a1a1a] border-gray-700 text-white focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]'
-                              : 'border-gray-300 focus:ring-blue-500'
-                          }`}
+                          inputClassName="text-sm"
                         />
                       </div>
 
                       <div className="col-span-2">
-                        <label className={`block text-xs font-medium ${isLuxury ? 'text-gray-400' : 'text-gray-700'} mb-1`}>
-                          Cantidad
-                        </label>
-                        <input
+                        <FormInput
+                          label="Cantidad"
                           type="number"
                           step="0.01"
                           value={service.quantity}
@@ -395,36 +368,30 @@ export default function AddEditVisitModal({
                             handleQuantityChange(index, parseFloat(e.target.value) || 1)
                           }
                           required
-                          min="0.01"
-                          className={`w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 transition-all ${
-                            isLuxury
-                              ? 'bg-[#1a1a1a] border-gray-700 text-white focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]'
-                              : 'border-gray-300 focus:ring-blue-500'
-                          }`}
+                          min={0.01}
+                          inputClassName="text-sm"
                         />
                       </div>
 
                       <div className="col-span-2">
-                        <label className={`block text-xs font-medium ${isLuxury ? 'text-gray-400' : 'text-gray-700'} mb-1`}>
+                        <label className="block text-sm font-medium text-muted-foreground mb-1">
                           Subtotal
                         </label>
-                        <div className={`px-3 py-2 border rounded-md text-sm font-medium ${
-                          isLuxury
-                            ? 'bg-[#121212] border-gray-700 text-[#D4AF37]'
-                            : 'bg-gray-100 border-gray-300 text-gray-900'
-                        }`}>
+                        <div className="px-3 py-2 border rounded-md text-sm font-medium bg-secondary text-secondary-foreground">
                           ${service.subtotal.toFixed(2)}
                         </div>
                       </div>
 
-                      <div className="col-span-1 flex items-end">
-                        <button
+                      <div className="col-span-1 flex items-end pt-7">
+                        <Button
                           type="button"
+                          variant="ghost"
+                          size="icon"
                           onClick={() => handleRemoveService(index)}
-                          className={`p-2 ${isLuxury ? 'text-red-400 hover:text-red-300' : 'text-red-600 hover:text-red-800'}`}
+                          className="text-destructive hover:text-destructive hover:bg-destructive/10"
                         >
                           <Trash2 className="h-4 w-4" />
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   </div>
@@ -434,9 +401,9 @@ export default function AddEditVisitModal({
 
             {/* Total */}
             <div className="mt-4 flex justify-end items-center">
-              <div className={`${isLuxury ? 'bg-transparent border border-[#D4AF37]/20' : 'bg-blue-50'} px-6 py-3 rounded-lg`}>
-                <span className={`text-sm font-medium ${isLuxury ? 'text-gray-300' : 'text-gray-700'} mr-4`}>Total:</span>
-                <span className={`text-xl font-bold ${isLuxury ? 'text-[#D4AF37]' : 'text-blue-600'}`}>
+              <div className="bg-primary/5 px-6 py-3 rounded-lg border border-primary/10">
+                <span className="text-sm font-medium mr-4">Total:</span>
+                <span className="text-xl font-bold text-primary">
                   ${calculateTotal().toFixed(2)}
                 </span>
               </div>
@@ -444,84 +411,48 @@ export default function AddEditVisitModal({
           </div>
 
           {/* Notes */}
-          <div className="mb-6">
-            <label className={`block text-sm font-medium ${isLuxury ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
-              Observaciones
-            </label>
-            <textarea
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              rows={3}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 transition-all ${
-                isLuxury
-                  ? 'bg-[#121212] border-gray-700 text-white focus:ring-[#D4AF37]/50 focus:border-[#D4AF37] placeholder-gray-600'
-                  : 'border-gray-300 focus:ring-blue-500'
-              }`}
-              placeholder="Notas sobre la visita, tratamientos realizados, observaciones especiales..."
-            />
-          </div>
+          <FormTextarea
+            label="Observaciones"
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            rows={3}
+            placeholder="Notas sobre la visita, tratamientos realizados, observaciones especiales..."
+          />
 
           {/* Next Visit */}
-          <div className="mb-6">
-            <h3 className={`text-sm font-medium ${isLuxury ? 'text-gray-300' : 'text-gray-700'} mb-3`}>Próxima Cita (Opcional)</h3>
+          <div>
+            <h3 className="text-sm font-medium mb-3">Próxima Cita (Opcional)</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className={`block text-xs font-medium ${isLuxury ? 'text-gray-400' : 'text-gray-600'} mb-1`}>
-                  Desde
-                </label>
-                <input
-                  type="date"
-                  value={nextVisitFrom}
-                  onChange={(e) => setNextVisitFrom(e.target.value)}
-                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 transition-all ${
-                    isLuxury
-                      ? 'bg-[#121212] border-gray-700 text-white focus:ring-[#D4AF37]/50 focus:border-[#D4AF37] [color-scheme:dark]'
-                      : 'border-gray-300 focus:ring-blue-500'
-                  }`}
-                />
-              </div>
-              <div>
-                <label className={`block text-xs font-medium ${isLuxury ? 'text-gray-400' : 'text-gray-600'} mb-1`}>
-                  Hasta
-                </label>
-                <input
-                  type="date"
-                  value={nextVisitTo}
-                  onChange={(e) => setNextVisitTo(e.target.value)}
-                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 transition-all ${
-                    isLuxury
-                      ? 'bg-[#121212] border-gray-700 text-white focus:ring-[#D4AF37]/50 focus:border-[#D4AF37] [color-scheme:dark]'
-                      : 'border-gray-300 focus:ring-blue-500'
-                  }`}
-                />
-              </div>
+              <FormInput
+                label="Desde"
+                type="date"
+                value={nextVisitFrom}
+                onChange={(e) => setNextVisitFrom(e.target.value)}
+              />
+              <FormInput
+                label="Hasta"
+                type="date"
+                value={nextVisitTo}
+                onChange={(e) => setNextVisitTo(e.target.value)}
+              />
             </div>
           </div>
 
           {/* Actions */}
-          <div className={`flex justify-end gap-3 pt-4 border-t ${isLuxury ? 'border-gray-800' : 'border-gray-200'}`}>
-            <button
+          <div className="flex justify-end gap-3 pt-4 border-t">
+            <Button
               type="button"
+              variant="outline"
               onClick={() => onClose()}
-              className={`px-4 py-2 border rounded-md text-sm font-medium transition-colors ${
-                isLuxury
-                  ? 'border-gray-700 text-gray-300 hover:bg-[#2a2a2a] hover:text-white'
-                  : 'border-gray-300 text-gray-700 hover:bg-gray-50'
-              }`}
             >
               Cancelar
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
               disabled={submitting || services.length === 0}
-              className={`px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
-                isLuxury
-                  ? 'bg-[#D4AF37] text-[#121212] hover:bg-[#b3932d] hover:shadow-lg hover:shadow-[#D4AF37]/20'
-                  : 'text-white bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300'
-              }`}
             >
               {submitting ? "Guardando..." : visit ? "Guardar Cambios" : "Crear Visita"}
-            </button>
+            </Button>
           </div>
         </form>
       </div>

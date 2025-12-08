@@ -849,7 +849,7 @@ export default function WondernailsCarouselFinal({
         <div className={styles.list} ref={listRef} data-testid="carousel-list">
           {slides.map((slide, idx) => (
             <CarouselItem
-              key={slide.img}
+              key={`${slide.img}-${idx}`}
               slide={slide}
               index={idx}
               onSeeMore={openDetail}
