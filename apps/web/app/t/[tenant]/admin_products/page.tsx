@@ -21,8 +21,16 @@ interface Product {
 }
 
 export default function AdminProductsPage() {
-  useTenantGuard();
+  // useTenantGuard();
   const { data: session, status } = useSession();
+
+  // ... (rest of code) ...
+
+  /*
+  if (!session?.user) {
+    return null;
+  }
+  */
 
   useEffect(() => {
     loadTenantData();

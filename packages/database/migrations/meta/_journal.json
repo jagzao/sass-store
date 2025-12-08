@@ -15,6 +15,13 @@
       "when": 1759431035222,
       "tag": "0001_zippy_kronos",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1765214043645,
+      "tag": "0002_nasty_christian_walker",
+      "breakpoints": true
     }
   ]
 }
