@@ -65,7 +65,8 @@
     "test:e2e:report": "playwright show-report",
     "test:e2e:codegen": "playwright codegen http://localhost:3001",
     "prepare": "husky || true",
-    "postinstall": "node -e \"console.log('✓ Dependencies installed with React', require('./node_modules/react/package.json').version)\""
+    "postinstall": "node -e \"console.log('✓ Dependencies installed with React', require('./node_modules/react/package.json').version)\"",
+    "postbuild": "node scripts/postbuild-seed.js"
   },
   "devDependencies": {
     "@jest/globals": "^30.2.0",

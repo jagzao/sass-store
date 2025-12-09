@@ -36,11 +36,16 @@ interface Visit {
   nextVisitTo?: string;
   status: "pending" | "scheduled" | "completed" | "cancelled";
   services: {
-    id: string;
+    id: string; // This should be the service definition ID
     serviceName: string;
     quantity: number;
     unitPrice: number;
     subtotal: number;
+  }[];
+  photos?: {
+    id?: string;
+    url: string;
+    type: "BEFORE" | "AFTER";
   }[];
 }
 
@@ -105,11 +110,13 @@ export default function AddEditVisitModal({
 
   // Efecto para inicializar los servicios de la visita después de cargar los servicios disponibles
   useEffect(() => {
+    // Load services
     if (availableServices.length > 0 && visit && services.length === 0) {
       const visitServices = visit.services.map((s) => {
-        const service = availableServices.find(avail => avail.id === s.id);
+        // Try to find by ID (assuming s.id is serviceId) or name match as fallback
+        const service = availableServices.find(avail => avail.id === s.id || avail.name === s.serviceName);
         return {
-          serviceId: s.id || "",
+          serviceId: service ? service.id : s.id, // Use matched ID or fallback to provided ID
           serviceName: service ? service.name : s.serviceName,
           description: "",
           unitPrice: s.unitPrice,
@@ -119,7 +126,15 @@ export default function AddEditVisitModal({
       });
       setServices(visitServices);
     }
-  }, [availableServices, visit, services.length]);
+
+    // Load photos
+    if (visit && visit.photos && photos.length === 0) {
+        setPhotos(visit.photos.map(p => ({
+            url: p.url,
+            type: p.type
+        })));
+    }
+  }, [availableServices, visit]);
 
   const handleAddService = () => {
     setServices([

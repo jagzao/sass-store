@@ -43,7 +43,8 @@ export async function PATCH(
     // Update service
     const updateData: any = { ...serviceData };
     if (serviceData.price !== undefined) {
-      updateData.price = serviceData.price.toString();
+      // Format price to ensure it has 2 decimal places
+      updateData.price = serviceData.price.toFixed(2);
     }
 
     const [updatedService] = await db

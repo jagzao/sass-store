@@ -75,13 +75,16 @@ export async function POST(
     const serviceData = createServiceSchema.parse(body);
 
     // Create service
+    // Format price to ensure it has 2 decimal places
+    const formattedPrice = serviceData.price.toFixed(2);
+
     const [newService] = await db
       .insert(services)
       .values({
         tenantId: tenant.id,
         name: serviceData.name,
         description: serviceData.description || null,
-        price: serviceData.price.toString(),
+        price: formattedPrice,
         imageUrl: serviceData.imageUrl || null,
         duration: serviceData.duration,
         featured: serviceData.featured,
@@ -93,6 +96,8 @@ export async function POST(
     return NextResponse.json({ data: newService }, { status: 201 });
   } catch (error) {
     console.error("Services POST error:", error);
+    console.error("Error details:", error instanceof Error ? error.message : "Unknown error");
+    console.error("Stack trace:", error instanceof Error ? error.stack : "No stack trace");
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(

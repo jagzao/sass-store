@@ -21,6 +21,11 @@ interface Visit {
     unitPrice: number;
     subtotal: number;
   }[];
+  photos?: {
+    id: string;
+    url: string;
+    type: "BEFORE" | "AFTER";
+  }[];
 }
 
 interface CustomerVisitsHistoryProps {
