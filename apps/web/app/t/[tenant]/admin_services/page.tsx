@@ -98,9 +98,8 @@ export default function AdminServicesPage() {
     }
 
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
       const response = await fetch(
-        `${apiUrl}/api/tenants/${tenantSlug}/services/${serviceId}`,
+        `/api/tenants/${tenantSlug}/services/${serviceId}`,
         {
           method: "DELETE",
         },
@@ -122,10 +121,9 @@ export default function AdminServicesPage() {
     e.preventDefault();
 
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
       const url = editingService
-        ? `${apiUrl}/api/tenants/${tenantSlug}/services/${editingService.id}`
-        : `${apiUrl}/api/tenants/${tenantSlug}/services`;
+        ? `/api/tenants/${tenantSlug}/services/${editingService.id}`
+        : `/api/tenants/${tenantSlug}/services`;
 
       const method = editingService ? "PATCH" : "POST";
 
