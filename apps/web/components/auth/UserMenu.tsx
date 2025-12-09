@@ -4,7 +4,13 @@ import { useSession, signOut } from "next-auth/react";
 import { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 
-export default function UserMenu({ tenantSlug, variant = 'default' }: { tenantSlug?: string; variant?: 'default' | 'transparent' }) {
+export default function UserMenu({
+  tenantSlug,
+  variant = "default",
+}: {
+  tenantSlug?: string;
+  variant?: "default" | "transparent";
+}) {
   const { data: session, status } = useSession();
   const loading = status === "loading";
   const [isOpen, setIsOpen] = useState(false);
@@ -61,7 +67,7 @@ export default function UserMenu({ tenantSlug, variant = 'default' }: { tenantSl
 
   // If not authenticated
   if (!session?.user) {
-    const isTransparent = variant === 'transparent';
+    const isTransparent = variant === "transparent";
     return (
       <a
         href={
@@ -82,8 +88,7 @@ export default function UserMenu({ tenantSlug, variant = 'default' }: { tenantSl
 
   const user = session.user;
   const isAdminOrManager =
-    (user as any)?.role === "Admin" ||
-    (user as any)?.role === "Gerente";
+    (user as any)?.role === "Admin" || (user as any)?.role === "Gerente";
 
   return (
     <div className="relative" ref={menuRef}>
@@ -98,7 +103,7 @@ export default function UserMenu({ tenantSlug, variant = 'default' }: { tenantSl
             user.email?.charAt(0).toUpperCase()}
         </div>
         <span className="font-medium">
-          Hola, {user.name || user.email?.split("@")[0]}
+          Hola, {user.name?.split(" ")[0] || user.email?.split("@")[0]}
         </span>
         <svg
           className={`w-4 h-4 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}

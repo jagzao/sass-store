@@ -8,7 +8,7 @@
 -- npx dotenv-cli -e ../../.env.local -- npx tsx scripts/seed.ts
 
 -- Clean existing data
-TRUNCATE TABLE bookings, order_items, orders, products, services, staff, tenants CASCADE;
+TRUNCATE TABLE bookings, order_items, orders, products, services, staff, tenants, users CASCADE;
 
 -- =====================================================
 -- TENANTS
@@ -326,7 +326,7 @@ FROM tenants t WHERE t.slug = 'nom-nom';
 -- WONDER NAILS Customers
 INSERT INTO customers (id, tenant_id, name, phone, email, address, general_notes, tags, status, metadata)
 SELECT
-  '08bbc488-117e-4712-9479-825c4f916deb'::uuid,
+  gen_random_uuid(),
   t.id,
   'Ana García López',
   '+52 55 1234 5678',
@@ -443,5 +443,41 @@ SELECT
 FROM tenants t
 JOIN customers c ON c.tenant_id = t.id
 WHERE t.slug = 'wondernails' AND c.name = 'Laura Martínez Gómez';
+
+-- =====================================================
+-- USERS
+-- =====================================================
+
+-- WONDER NAILS Users
+-- Password for all users: admin
+INSERT INTO users (id, name, email, email_verified, password, phone, created_at, updated_at)
+VALUES
+  ('user_wondernails_owner', 'Marialicia Villafuerte Hurtado', 'marialiciavh1984@gmail.com', NOW(), '$2a$10$RXR.739/OopVznvyRfNGlust3pZC1sBxdpduCf3.4lZlESB.Ln2NS', '+52 1 55 6406 8409', NOW(), NOW()),
+  ('user_wondernails_admin', 'Admin Wonder Nails', 'admin@wondernails.mx', NOW(), '$2a$10$RXR.739/OopVznvyRfNGlust3pZC1sBxdpduCf3.4lZlESB.Ln2NS', NULL, NOW(), NOW());
+
+-- ZO SYSTEM Users
+INSERT INTO users (id, name, email, email_verified, password, phone, created_at, updated_at)
+VALUES
+  ('user_zo_admin', 'Jairo García', 'jagzao@gmail.com', NOW(), '$2a$10$RXR.739/OopVznvyRfNGlust3pZC1sBxdpduCf3.4lZlESB.Ln2NS', '+52 55 4926 4189', NOW(), NOW());
+
+-- VIGI STUDIO Users
+INSERT INTO users (id, name, email, email_verified, password, phone, created_at, updated_at)
+VALUES
+  ('user_vigi_admin', 'Admin Vigi Studio', 'hola@vigistudio.mx', NOW(), '$2a$10$RXR.739/OopVznvyRfNGlust3pZC1sBxdpduCf3.4lZlESB.Ln2NS', '+525621990000', NOW(), NOW());
+
+-- CENTRO TENÍSTICO Users
+INSERT INTO users (id, name, email, email_verified, password, phone, created_at, updated_at)
+VALUES
+  ('user_tennis_admin', 'Admin Centro Tenístico', 'info@tenisticoelite.mx', NOW(), '$2a$10$RXR.739/OopVznvyRfNGlust3pZC1sBxdpduCf3.4lZlESB.Ln2NS', '+52 55 3690 1478', NOW(), NOW());
+
+-- DELIRIOS Users
+INSERT INTO users (id, name, email, email_verified, password, phone, created_at, updated_at)
+VALUES
+  ('user_delirios_admin', 'Fernando Villafuerte', 'pedidos@delirios.mx', NOW(), '$2a$10$RXR.739/OopVznvyRfNGlust3pZC1sBxdpduCf3.4lZlESB.Ln2NS', '+52 1 56 1079 9217', NOW(), NOW());
+
+-- NOM NOM TACOS Users
+INSERT INTO users (id, name, email, email_verified, password, phone, created_at, updated_at)
+VALUES
+  ('user_nomnom_admin', 'Admin Nom Nom', 'pedidos@nomnom.mx', NOW(), '$2a$10$RXR.739/OopVznvyRfNGlust3pZC1sBxdpduCf3.4lZlESB.Ln2NS', '+525531001475', NOW(), NOW());
 
 COMMIT;
