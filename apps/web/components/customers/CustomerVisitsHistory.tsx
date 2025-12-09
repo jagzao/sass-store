@@ -236,27 +236,27 @@ export default function CustomerVisitsHistory({
                       {getStatusBadge(visit.status)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <div className="flex justify-end gap-2">
+                      <div className="flex justify-end gap-3 sm:gap-2">
                         <button
                           onClick={() => handleViewDetail(visit)}
-                          className={`${isLuxury ? 'text-[#b3932d] hover:text-[#8a7022]' : 'text-blue-600 hover:text-blue-900'}`}
+                          className={`p-2 rounded-full transition-colors ${isLuxury ? 'text-[#b3932d] hover:bg-[#D4AF37]/10' : 'text-blue-600 hover:bg-blue-50'}`}
                           title="Ver detalle"
                         >
-                          <Eye className="h-4 w-4" />
+                          <Eye className="h-5 w-5 sm:h-4 sm:w-4" />
                         </button>
                         <button
                           onClick={() => handleEditVisit(visit)}
-                          className={`${isLuxury ? 'text-green-600 hover:text-green-700' : 'text-green-600 hover:text-green-900'}`}
+                          className={`p-2 rounded-full transition-colors ${isLuxury ? 'text-green-600 hover:bg-green-50' : 'text-green-600 hover:bg-green-50'}`}
                           title="Editar"
                         >
-                          <Edit className="h-4 w-4" />
+                          <Edit className="h-5 w-5 sm:h-4 sm:w-4" />
                         </button>
                         <button
                           onClick={() => handleDeleteVisit(visit.id)}
-                          className={`${isLuxury ? 'text-red-500 hover:text-red-600' : 'text-red-600 hover:text-red-900'}`}
+                          className={`p-2 rounded-full transition-colors ${isLuxury ? 'text-red-500 hover:bg-red-50' : 'text-red-600 hover:bg-red-50'}`}
                           title="Eliminar"
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <Trash2 className="h-5 w-5 sm:h-4 sm:w-4" />
                         </button>
                       </div>
                     </td>

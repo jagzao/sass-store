@@ -7,6 +7,8 @@ import FormInput from "@/components/ui/forms/FormInput";
 import FormSelect from "@/components/ui/forms/FormSelect";
 import FormTextarea from "@/components/ui/forms/FormTextarea";
 import { cn } from "@/lib/utils";
+import { DateTimePicker } from "@/components/ui/date-time-picker";
+import VisitPhotosUpload, { VisitPhoto } from "./VisitPhotosUpload";
 
 interface Service {
   id: string;
@@ -61,16 +63,15 @@ export default function AddEditVisitModal({
   const [submitting, setSubmitting] = useState(false);
 
   // Form state
-  const [visitDate, setVisitDate] = useState(
-    visit?.visitDate
-      ? new Date(visit.visitDate).toISOString().slice(0, 16)
-      : new Date().toISOString().slice(0, 16)
+  const [visitDate, setVisitDate] = useState<Date>(
+    visit?.visitDate ? new Date(visit.visitDate) : new Date()
   );
   const [notes, setNotes] = useState(visit?.notes || "");
   const [nextVisitFrom, setNextVisitFrom] = useState(visit?.nextVisitFrom || "");
   const [nextVisitTo, setNextVisitTo] = useState(visit?.nextVisitTo || "");
   const [status, setStatus] = useState<Visit["status"]>(visit?.status || "completed");
   const [services, setServices] = useState<VisitService[]>([]);
+  const [photos, setPhotos] = useState<VisitPhoto[]>([]); // Initialize with existing photos if available
 
   useEffect(() => {
     async function fetchServices() {
@@ -177,12 +178,13 @@ export default function AddEditVisitModal({
 
     try {
       const visitData = {
-        visitDate,
+        visitDate: visitDate.toISOString(),
         totalAmount: calculateTotal(),
         notes,
         nextVisitFrom: nextVisitFrom || null,
         nextVisitTo: nextVisitTo || null,
         status,
+        photos: photos.map(p => ({ url: p.url, type: p.type })), // Send photos to API
         services: services.map((s) => ({
           serviceId: s.serviceId,
           description: s.description,
@@ -243,12 +245,10 @@ export default function AddEditVisitModal({
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Basic Info */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <FormInput
+            <DateTimePicker
               label="Fecha y Hora de Atención *"
-              type="datetime-local"
-              value={visitDate}
-              onChange={(e) => setVisitDate(e.target.value)}
-              required
+              date={visitDate}
+              setDate={setVisitDate}
             />
 
             <FormSelect
@@ -362,13 +362,13 @@ export default function AddEditVisitModal({
                         <FormInput
                           label="Cantidad"
                           type="number"
-                          step="0.01"
+                          step="1"
                           value={service.quantity}
                           onChange={(e) =>
-                            handleQuantityChange(index, parseFloat(e.target.value) || 1)
+                            handleQuantityChange(index, parseInt(e.target.value, 10) || 1)
                           }
                           required
-                          min={0.01}
+                          min={1}
                           inputClassName="text-sm"
                         />
                       </div>
@@ -436,6 +436,12 @@ export default function AddEditVisitModal({
                 onChange={(e) => setNextVisitTo(e.target.value)}
               />
             </div>
+          </div>
+
+          {/* Photos */}
+          <div>
+            <h3 className="text-sm font-medium mb-3">Fotos de la Visita</h3>
+            <VisitPhotosUpload photos={photos} onChange={setPhotos} />
           </div>
 
           {/* Actions */}

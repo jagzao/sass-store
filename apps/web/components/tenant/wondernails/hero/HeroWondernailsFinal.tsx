@@ -176,8 +176,54 @@ export default function WondernailsCarouselFinal({
   onAddToCart,
   onCheckout,
 }: WondernailsCarouselProps) {
-  const slides = initialSlides?.length ? initialSlides : defaultSlides;
+  const [slides, setSlides] = useState<WnSlide[]>(initialSlides?.length ? initialSlides : defaultSlides);
   const rootRef = useRef<HTMLDivElement>(null);
+  
+  // Fetch featured services if no initial slides
+  useEffect(() => {
+    if (initialSlides?.length) return;
+
+    const fetchFeaturedServices = async () => {
+      try {
+        const response = await fetch('/api/v1/public/services?tenant=wondernails&featured=true');
+        if (response.ok) {
+           const data = await response.json();
+           const services = data.data || [];
+           
+           if (services.length > 0) {
+             const mappedSlides: WnSlide[] = services.map((s: any) => ({
+               img: s.imageUrl || '/tenants/wondernails/hero/img1.webp',
+               title: "WONDERNAILS PRO",
+               topic: s.name,
+               description: s.description || "Servicio Premium",
+               badge: "Destacado",
+               bgColor: "rgba(180, 140, 200, 0.15)",
+               type: "service",
+               detailTitle: s.name,
+               detail: s.description,
+               specs: [
+                 { label: "Duración", value: `${s.duration} min` },
+                 { label: "Precio", value: `$${s.price}` }
+               ]
+             }));
+             // If we have enough slides, use them. Otherwise mix with defaults or just use defaults.
+             // Carousel needs at least 5 items for best effect usually.
+             if (mappedSlides.length >= 3) {
+                setSlides(mappedSlides);
+             } else {
+                // Prepend to defaults
+                setSlides([...mappedSlides, ...defaultSlides]);
+             }
+           }
+        }
+      } catch (err) {
+        console.error("Error loading featured services for carousel", err);
+      }
+    };
+
+    fetchFeaturedServices();
+  }, [initialSlides]);
+
   const listRef = useRef<HTMLDivElement>(null);
   const autoRef = useRef<gsap.core.Tween | null>(null);
   const detailTLRef = useRef<gsap.core.Timeline | null>(null);

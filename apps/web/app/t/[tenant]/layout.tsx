@@ -152,10 +152,22 @@ export default async function TenantLayout({
              color: #333333;
           }
           
-          .btn-primary, button[type="submit"], .bg-primary {
+          .btn-primary, button[type="submit"] {
             background-color: #C5A059 !important;
             color: white !important;
             border: none !important;
+          }
+          
+          /* Fix for modal background - ensure modals have white background */
+          .modal, .modal-content, [role="dialog"], .dialog-panel, .ReactModal__Content {
+            background-color: #FFFFFF !important;
+            background: #FFFFFF !important;
+          }
+          
+          /* Override bg-primary for modals specifically */
+          .bg-primary.modal, .bg-primary.modal-content, .bg-primary[role="dialog"], .bg-primary.dialog-panel, .bg-primary.ReactModal__Content {
+            background-color: #FFFFFF !important;
+            background: #FFFFFF !important;
           }
         `
             : `

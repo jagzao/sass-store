@@ -1399,6 +1399,26 @@ export const customerVisits = pgTable(
   }),
 );
 
+// Visit Photos Enum
+export const visitPhotoType = pgEnum("visit_photo_type", ["BEFORE", "AFTER"]);
+
+// Visit Photos table
+export const visitPhotos = pgTable(
+  "visit_photos",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    visitId: uuid("visit_id")
+      .references(() => customerVisits.id, { onDelete: "cascade" })
+      .notNull(),
+    url: text("url").notNull(),
+    type: visitPhotoType("type").notNull(),
+    createdAt: timestamp("created_at").defaultNow(),
+  },
+  (table) => ({
+    visitIdx: index("visit_photos_visit_idx").on(table.visitId),
+  }),
+);
+
 // Customer Visit Services table - Services performed per visit
 export const customerVisitServices = pgTable(
   "customer_visit_services",
@@ -1453,8 +1473,16 @@ export const customerVisitsRelations = relations(
       references: [bookings.id],
     }),
     services: many(customerVisitServices),
+    photos: many(visitPhotos),
   }),
 );
+
+export const visitPhotosRelations = relations(visitPhotos, ({ one }) => ({
+  visit: one(customerVisits, {
+    fields: [visitPhotos.visitId],
+    references: [customerVisits.id],
+  }),
+}));
 
 export const customerVisitServicesRelations = relations(
   customerVisitServices,

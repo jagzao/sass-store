@@ -4,12 +4,14 @@ import { useSession } from "next-auth/react";
 import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import UserMenu from "@/components/auth/UserMenu";
+import SingleImageUpload from "@/components/ui/single-image-upload";
 
 interface Service {
   id: string;
   name: string;
   description: string;
   price: string;
+  imageUrl?: string;
   duration: number;
   featured: boolean;
   active: boolean;
@@ -32,6 +34,7 @@ export default function AdminServicesPage() {
     name: "",
     description: "",
     price: "",
+    imageUrl: "",
     duration: "",
     featured: false,
     active: true,
@@ -85,6 +88,7 @@ export default function AdminServicesPage() {
       name: service.name,
       description: service.description || "",
       price: service.price,
+      imageUrl: service.imageUrl || "",
       duration: service.duration.toString(),
       featured: service.featured,
       active: service.active,
@@ -163,6 +167,7 @@ export default function AdminServicesPage() {
       name: "",
       description: "",
       price: "",
+      imageUrl: "",
       duration: "",
       featured: false,
       active: true,
@@ -338,6 +343,14 @@ export default function AdminServicesPage() {
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Descripción detallada del servicio"
                   />
+                </div>
+
+                <div>
+                   <SingleImageUpload
+                    value={formData.imageUrl}
+                    onChange={(url) => setFormData({ ...formData, imageUrl: url })}
+                    label="Imagen del Servicio (Opcional)"
+                   />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
