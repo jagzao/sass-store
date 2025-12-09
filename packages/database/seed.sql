@@ -7,8 +7,32 @@
 -- cd apps/api
 -- npx dotenv-cli -e ../../.env.local -- npx tsx scripts/seed.ts
 
--- Clean existing data
-TRUNCATE TABLE bookings, order_items, orders, products, services, staff, tenants, users CASCADE;
+-- =====================================================
+-- CLEAN ALL EXISTING DATA
+-- =====================================================
+-- Order matters: Delete dependent tables first, then parent tables
+-- CASCADE will handle foreign key constraints automatically
+
+TRUNCATE TABLE
+  -- Content & Media
+  mediaRenditions, mediaAssets, contentVariants, socialPosts, postResults, postJobs, reels, visitPhotos,
+  -- Financial & Payments
+  financialMovements, financialKpis, mercadopagoPayments, mercadopagoTokens, payments, posTerminals, postingRules,
+  -- Booking & Orders
+  orderItems, orders, bookings,
+  -- Customer & Visits
+  customerVisitServices, customerVisits, customers,
+  -- Products & Services & Reviews
+  productReviews, products, services,
+  -- Campaigns & Channels
+  campaigns, channelAccounts, channelCredentials, tenantChannels,
+  -- User & Auth
+  accounts, sessions, verificationTokens, oauthStateTokens, apiKeys, userRoles, userCarts, users,
+  -- Audit & Config
+  auditLogs, tenantConfigs, tenantQuotas,
+  -- Staff & Tenants
+  staff, tenants
+CASCADE;
 
 -- =====================================================
 -- TENANTS
