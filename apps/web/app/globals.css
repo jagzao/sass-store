@@ -92,6 +92,61 @@
   }
 }
 
+/* CRITICAL: Modal & Dialog Fixes - Force White Background */
+@layer components {
+  /* Target all modal/dialog containers regardless of library */
+  [role="dialog"],
+  .modal,
+  .modal-content,
+  .ReactModal__Content,
+  .dialog-panel,
+  [data-headlessui-state="open"] {
+    background-color: #ffffff !important;
+    background: #ffffff !important;
+    color: #333333 !important;
+    border: 1px solid rgba(197, 160, 89, 0.3) !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+  }
+
+  /* Kill neon yellow backgrounds specifically */
+  div[style*="background-color: yellow"],
+  div[style*="background-color: #FFFF00"],
+  div[style*="background-color: rgb(255, 255, 0)"],
+  div[style*="background: yellow"],
+  div[style*="background: #FFFF00"] {
+    background-color: #ffffff !important;
+    background: #ffffff !important;
+  }
+
+  /* Force Header/Navbar Transparency */
+  header,
+  nav,
+  .navbar-container {
+    background-color: transparent !important;
+    background: transparent !important;
+  }
+
+  /* If header has a direct child that is colored, kill it */
+  header > div,
+  nav > div {
+    background-color: transparent !important;
+  }
+
+  /* Ensure input fields in modals are visible */
+  [role="dialog"] input,
+  [role="dialog"] select,
+  [role="dialog"] textarea {
+    background-color: #f9f9f9 !important;
+    border: 1px solid #e5e5e5 !important;
+    color: #333333 !important;
+  }
+
+  /* Modal buttons should have proper contrast */
+  [role="dialog"] button {
+    color: inherit !important;
+  }
+}
+
 .tenant-secondary-bg {
   background-color: var(--color-secondary);
 }
@@ -256,4 +311,54 @@
   .animate-pulse {
     animation: none;
   }
+}
+
+/* ==========================================================================
+   🚨 CRITICAL UI OVERRIDES - EMERGENCY FIXES 🚨
+   ========================================================================== */
+
+/* 1. SANITIZE THE MODAL (Targeting Portals) */
+/* Target any fixed/absolute container that looks like a modal/dialog */
+[role="dialog"],
+.modal,
+.modal-content,
+.ReactModal__Content,
+.dialog-panel {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  color: #333333 !important; /* Force text to dark gray */
+  border: 1px solid rgba(197, 160, 89, 0.3) !important; /* Gold border */
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+}
+
+/* Kill the neon yellow specifically */
+div[style*="background-color: yellow"],
+div[style*="background-color: #FFFF00"],
+div[style*="background-color: rgb(255, 255, 0)"] {
+  background-color: #ffffff !important;
+}
+
+/* 2. SANITIZE THE NAVBAR (The "Cream" Killer) */
+/* Force Header Transparency globally */
+header,
+nav,
+.navbar-container {
+  background-color: transparent !important;
+  background: transparent !important;
+}
+
+/* If the header has a direct child that is colored, kill it too */
+header > div,
+nav > div {
+  background-color: transparent !important;
+}
+
+/* 3. VERIFY INPUT FIELDS IN MODAL */
+/* Ensure input fields inside the modal have a light gray background so they are visible against the new white modal background. */
+[role="dialog"] input,
+[role="dialog"] select,
+[role="dialog"] textarea {
+  background-color: #f9f9f9 !important;
+  border: 1px solid #e5e5e5 !important;
+  color: #333333 !important;
 }

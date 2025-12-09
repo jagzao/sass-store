@@ -82,7 +82,7 @@ const nextConfig = {
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: https: blob:",
               "font-src 'self' data:",
-              "connect-src 'self' https://api.stripe.com https://upstash.io https://*.upstash.io https://api.mercadopago.com",
+              "connect-src 'self' https://api.stripe.com https://upstash.io https://*.upstash.io https://api.mercadopago.com https://sass-store-api.vercel.app",
               "frame-src 'self' https://js.stripe.com https://challenges.cloudflare.com",
               "object-src 'none'",
               "base-uri 'self'",
@@ -98,12 +98,14 @@ const nextConfig = {
 
   async rewrites() {
     const apiUrl = process.env.API_URL || "http://localhost:4000";
-    return [
-      {
-        source: "/api/:path*",
-        destination: `${apiUrl}/api/:path*`,
-      },
-    ];
+    return {
+      fallback: [
+        {
+          source: "/api/:path*",
+          destination: `${apiUrl}/api/:path*`,
+        },
+      ],
+    };
   },
 };
 
