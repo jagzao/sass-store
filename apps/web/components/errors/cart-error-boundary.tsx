@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { ReactNode } from 'react';
-import { ErrorBoundary } from '../error-boundary';
-import { Button } from '@sass-store/ui';
+import { ReactNode } from "react";
+import { ErrorBoundary } from "@/components/error-boundary";
+import { Button } from "@sass-store/ui";
 
 interface CartErrorBoundaryProps {
   children: ReactNode;
@@ -13,8 +13,8 @@ export function CartErrorBoundary({ children }: CartErrorBoundaryProps) {
     <ErrorBoundary
       onError={(error, errorInfo) => {
         // Log cart-specific errors
-        console.error('[Cart Error]:', error);
-        console.error('[Cart Error Info]:', errorInfo);
+        console.error("[Cart Error]:", error);
+        console.error("[Cart Error Info]:", errorInfo);
 
         // TODO: Send to analytics/monitoring
         // analytics.track('cart_error', {
@@ -46,7 +46,8 @@ export function CartErrorBoundary({ children }: CartErrorBoundaryProps) {
                 Error en el carrito
               </h3>
               <p className="text-sm text-red-700 mb-3">
-                Hubo un problema al cargar tu carrito. Tus productos están seguros.
+                Hubo un problema al cargar tu carrito. Tus productos están
+                seguros.
               </p>
               <div className="flex gap-2">
                 <Button
@@ -56,10 +57,7 @@ export function CartErrorBoundary({ children }: CartErrorBoundaryProps) {
                 >
                   Recargar página
                 </Button>
-                <Button
-                  size="sm"
-                  onClick={() => window.location.href = '/'}
-                >
+                <Button size="sm" onClick={() => (window.location.href = "/")}>
                   Ir al inicio
                 </Button>
               </div>

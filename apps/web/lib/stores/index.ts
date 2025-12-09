@@ -6,11 +6,22 @@
  */
 
 // Cart store (already existed)
-export { useCart } from '../cart/cart-store';
-export type { CartItem, CartStore, CouponCode, DeletedItem } from '../cart/cart-store';
+export { useCart } from "@/lib/cart/cart-store";
+export type {
+  CartItem,
+  CartStore,
+  CouponCode,
+  DeletedItem,
+} from "@/lib/cart/cart-store";
 
 // UI store
-export { useUI, selectSidebarOpen, selectSearchQuery, selectTheme, selectLanguage } from './ui-store';
+export {
+  useUI,
+  selectSidebarOpen,
+  selectSearchQuery,
+  selectTheme,
+  selectLanguage,
+} from "./ui-store";
 
 // Notifications store
 export {
@@ -18,8 +29,8 @@ export {
   notify,
   selectNotifications,
   selectNotificationCount,
-} from './notifications-store';
-export type { Notification } from './notifications-store';
+} from "./notifications-store";
+export type { Notification } from "./notifications-store";
 
 // Analytics store
 export {
@@ -27,7 +38,7 @@ export {
   selectPageViews,
   selectSessionDuration,
   selectUserInteractions,
-} from './analytics-store';
+} from "./analytics-store";
 
 // Tenant store
 export {
@@ -40,5 +51,5 @@ export {
   selectHeroConfig,
   selectFeaturedProducts,
   selectFeaturedServices,
-} from './tenant-store-new';
-export type { TenantData, SEOData } from './tenant-store-new';
+} from "./tenant-store-new";
+export type { TenantData, SEOData } from "./tenant-store-new";

@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { ReactNode } from 'react';
-import { ErrorBoundary } from '../error-boundary';
-import { Button } from '@sass-store/ui';
+import { ReactNode } from "react";
+import { ErrorBoundary } from "@/components/error-boundary";
+import { Button } from "@sass-store/ui";
 
 interface PaymentErrorBoundaryProps {
   children: ReactNode;
@@ -13,8 +13,8 @@ export function PaymentErrorBoundary({ children }: PaymentErrorBoundaryProps) {
     <ErrorBoundary
       onError={(error, errorInfo) => {
         // Log payment-specific errors with high priority
-        console.error('[CRITICAL - Payment Error]:', error);
-        console.error('[Payment Error Info]:', errorInfo);
+        console.error("[CRITICAL - Payment Error]:", error);
+        console.error("[Payment Error Info]:", errorInfo);
 
         // TODO: Send to monitoring with high priority alert
         // Sentry.captureException(error, {
@@ -48,8 +48,9 @@ export function PaymentErrorBoundary({ children }: PaymentErrorBoundaryProps) {
                 Error en el procesamiento de pago
               </h3>
               <p className="text-gray-700 mb-4">
-                Ocurrió un problema al procesar tu pago. <strong>No te preocupes</strong>,
-                no se realizó ningún cargo a tu tarjeta.
+                Ocurrió un problema al procesar tu pago.{" "}
+                <strong>No te preocupes</strong>, no se realizó ningún cargo a
+                tu tarjeta.
               </p>
 
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
@@ -70,12 +71,12 @@ export function PaymentErrorBoundary({ children }: PaymentErrorBoundaryProps) {
                 >
                   Reintentar
                 </Button>
-                <Button onClick={() => window.location.href = '/cart'}>
+                <Button onClick={() => (window.location.href = "/cart")}>
                   Volver al carrito
                 </Button>
                 <Button
                   variant="ghost"
-                  onClick={() => window.location.href = '/help'}
+                  onClick={() => (window.location.href = "/help")}
                 >
                   Contactar soporte
                 </Button>

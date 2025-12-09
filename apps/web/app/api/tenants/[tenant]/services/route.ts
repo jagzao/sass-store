@@ -17,10 +17,10 @@ const createServiceSchema = z.object({
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { tenant: string } },
+  { params }: { params: Promise<{ tenant: string }> },
 ) {
   try {
-    const tenantSlug = params.tenant;
+    const { tenant: tenantSlug } = await params;
 
     // Find tenant
     const [tenant] = await db

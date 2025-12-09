@@ -21,7 +21,7 @@ import {
   type TenantData,
   type CartItem,
   type Notification,
-} from "../store/atoms";
+} from "@/lib/store/atoms";
 
 // Lightweight tenant management
 export const useTenant = () => {
