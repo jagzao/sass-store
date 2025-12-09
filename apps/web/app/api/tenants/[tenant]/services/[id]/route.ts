@@ -4,6 +4,9 @@ import { services, tenants } from "@sass-store/database/schema";
 import { eq, and } from "drizzle-orm";
 import { z } from "zod";
 
+// Force dynamic rendering
+export const dynamic = "force-dynamic";
+
 const updateServiceSchema = z.object({
   name: z.string().min(1).max(200).optional(),
   description: z.string().optional(),
