@@ -99,20 +99,21 @@ function MobileMenu({
     <>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`p-2 rounded-md ${
+        className={`p-2 rounded-md hover:bg-gray-100 transition-colors ${
           isTransparent && tenantSlug !== "wondernails"
-            ? "text-white"
+            ? "text-white hover:bg-white/10"
             : "text-gray-900"
         }`}
-        aria-label="Menu"
+        aria-label={isOpen ? "Cerrar menú" : "Abrir menú"}
+        style={{ minWidth: '44px', minHeight: '44px' }}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
-          strokeWidth={1.5}
+          strokeWidth={2}
           stroke="currentColor"
-          className="w-6 h-6"
+          className="w-7 h-7"
         >
           <path
             strokeLinecap="round"
@@ -127,26 +128,35 @@ function MobileMenu({
       </button>
 
       {isOpen && (
-        <div className="absolute top-16 left-0 w-full bg-white shadow-lg border-t border-gray-100 p-4 flex flex-col space-y-4 z-50">
-          {links.map((link) => {
-            const isActive = pathname === link.href;
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`text-base font-medium transition-colors p-2 rounded-md hover:bg-gray-50 ${
-                  isActive
-                    ? "text-gray-900 font-bold bg-gray-50"
-                    : "text-gray-600"
-                }`}
-                style={isActive ? { color: primaryColor } : undefined}
-                onClick={() => setIsOpen(false)}
-              >
-                {link.name}
-              </Link>
-            );
-          })}
-        </div>
+        <>
+          {/* Overlay para cerrar al hacer click afuera */}
+          <div
+            className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40"
+            onClick={() => setIsOpen(false)}
+            aria-hidden="true"
+          />
+
+          <div className="fixed top-16 left-0 right-0 bg-white shadow-2xl border-t border-gray-200 p-6 flex flex-col space-y-2 z-50 animate-slideDown">
+            {links.map((link) => {
+              const isActive = pathname === link.href;
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`text-lg font-medium transition-all p-3 rounded-lg hover:bg-gray-50 hover:shadow-sm ${
+                    isActive
+                      ? "text-gray-900 font-bold bg-gray-100 shadow-sm"
+                      : "text-gray-700"
+                  }`}
+                  style={isActive ? { color: primaryColor, borderLeft: `4px solid ${primaryColor}` } : undefined}
+                  onClick={() => setIsOpen(false)}
+                >
+                  {link.name}
+                </Link>
+              );
+            })}
+          </div>
+        </>
       )}
     </>
   );

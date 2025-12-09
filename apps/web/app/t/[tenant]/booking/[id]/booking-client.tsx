@@ -35,7 +35,11 @@ export function BookingClient({ tenantData, serviceId }: BookingClientProps) {
     email: "",
     notes: "",
   });
+  const [paymentProof, setPaymentProof] = useState<File | null>(null);
+  const [paymentProofPreview, setPaymentProofPreview] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const DEPOSIT_AMOUNT = 100; // MXN
 
   // Mock service data - in production this would come from database
   const service = {
@@ -115,11 +119,42 @@ export function BookingClient({ tenantData, serviceId }: BookingClientProps) {
     setSelectedTime(time);
   };
 
+  const handlePaymentProofChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        alert("Por favor sube una imagen válida (JPG, PNG, etc.)");
+        return;
+      }
+
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert("El archivo es muy grande. Máximo 5MB permitido.");
+        return;
+      }
+
+      setPaymentProof(file);
+
+      // Create preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPaymentProofPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!selectedTime || !customerInfo.name || !customerInfo.phone) {
       alert("Por favor completa todos los campos requeridos");
+      return;
+    }
+
+    if (!paymentProof) {
+      alert("Por favor sube el comprobante de pago del depósito de $100 MXN");
       return;
     }
 
@@ -186,15 +221,44 @@ Te enviaremos una confirmación por SMS.`);
                 <span className="font-medium">{service.duration} minutos</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Precio:</span>
+                <span className="text-gray-600">Precio Total:</span>
                 <span className="font-semibold text-green-600">
-                  ${service.price}
+                  ${service.price} MXN
+                </span>
+              </div>
+              <div className="flex justify-between border-t pt-2">
+                <span className="text-gray-600 font-medium">Depósito Requerido:</span>
+                <span className="font-bold text-blue-600">
+                  ${DEPOSIT_AMOUNT} MXN
                 </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Incluye:</span>
                 <span className="font-medium">Limado, cutículas, gel</span>
               </div>
+            </div>
+
+            {/* Deposit Info */}
+            <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <h4 className="font-semibold text-blue-900 mb-2 flex items-center">
+                <span className="mr-2">💳</span>
+                Información de Pago
+              </h4>
+              <p className="text-sm text-blue-800 mb-2">
+                <strong>Depósito requerido: ${DEPOSIT_AMOUNT} MXN</strong>
+              </p>
+              <p className="text-sm text-blue-700">
+                Transferencia/depósito a la cuenta:
+              </p>
+              <div className="mt-2 p-2 bg-white rounded border border-blue-300 text-sm">
+                <p><strong>Banco:</strong> BBVA</p>
+                <p><strong>Cuenta:</strong> 1234 5678 9012 3456</p>
+                <p><strong>CLABE:</strong> 012 180 0123 4567 8901 23</p>
+                <p><strong>Titular:</strong> Wonder Nails Studio</p>
+              </div>
+              <p className="text-xs text-blue-600 mt-2">
+                Después de realizar el depósito, sube tu comprobante de pago en el formulario.
+              </p>
             </div>
 
             {/* Staff Selection */}
@@ -358,6 +422,61 @@ Te enviaremos una confirmación por SMS.`);
                     placeholder="Alguna preferencia especial..."
                   />
                 </div>
+
+                {/* Payment Proof Upload */}
+                <div className="pt-4 border-t">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Comprobante de Pago del Depósito ($100 MXN) *
+                  </label>
+                  <div className="flex items-center justify-center w-full">
+                    <label className="flex flex-col w-full h-32 border-2 border-dashed rounded-lg cursor-pointer hover:bg-gray-50 hover:border-gray-400 transition-colors">
+                      <div className="flex flex-col items-center justify-center pt-7">
+                        {paymentProofPreview ? (
+                          <div className="relative">
+                            <img
+                              src={paymentProofPreview}
+                              alt="Comprobante de pago"
+                              className="h-20 object-contain rounded"
+                            />
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                setPaymentProof(null);
+                                setPaymentProofPreview("");
+                              }}
+                              className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600"
+                            >
+                              ×
+                            </button>
+                          </div>
+                        ) : (
+                          <>
+                            <svg className="w-10 h-10 mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                            </svg>
+                            <p className="mb-2 text-sm text-gray-500">
+                              <span className="font-semibold">Click para subir</span> o arrastra la imagen
+                            </p>
+                            <p className="text-xs text-gray-500">PNG, JPG (MAX. 5MB)</p>
+                          </>
+                        )}
+                      </div>
+                      <input
+                        type="file"
+                        className="hidden"
+                        accept="image/*"
+                        onChange={handlePaymentProofChange}
+                        required
+                      />
+                    </label>
+                  </div>
+                  {paymentProof && (
+                    <p className="text-sm text-green-600 mt-2">
+                      ✓ Comprobante cargado: {paymentProof.name}
+                    </p>
+                  )}
+                </div>
               </div>
 
               {/* Submit Button */}
@@ -367,7 +486,8 @@ Te enviaremos una confirmación por SMS.`);
                   isSubmitting ||
                   !selectedTime ||
                   !customerInfo.name ||
-                  !customerInfo.phone
+                  !customerInfo.phone ||
+                  !paymentProof
                 }
                 className="w-full text-white py-3 px-4 rounded-lg font-semibold hover:opacity-90 transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                 style={{ backgroundColor: tenantData.branding.primaryColor }}
@@ -393,7 +513,18 @@ Te enviaremos una confirmación por SMS.`);
               </h4>
               <p className="text-sm text-yellow-700">
                 Puedes cancelar o reprogramar tu cita hasta 4 horas antes sin
-                costo adicional.
+                costo adicional. <strong>El depósito de $100 MXN es reembolsable</strong> si cancelas con al menos 4 horas de anticipación.
+              </p>
+            </div>
+
+            {/* Deposit Note */}
+            <div className="mt-4 p-4 bg-green-50 rounded-lg border border-green-200">
+              <h4 className="font-medium text-green-800 mb-2 flex items-center">
+                <span className="mr-2">💰</span>
+                Sobre tu Depósito
+              </h4>
+              <p className="text-sm text-green-700">
+                El depósito de <strong>$100 MXN</strong> se aplicará al costo total del servicio. Pagarás el restante (<strong>${service.price - DEPOSIT_AMOUNT} MXN</strong>) el día de tu cita.
               </p>
             </div>
           </div>

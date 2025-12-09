@@ -148,13 +148,13 @@ const CartItem = memo(({
       aria-label={`${item.name}, cantidad: ${item.quantity}`}
     >
       {/* Image */}
-      <div className="flex-shrink-0 w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center text-3xl">
+      <div className="flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 bg-gray-100 rounded-lg flex items-center justify-center text-2xl sm:text-3xl">
         {item.image}
       </div>
 
       {/* Details */}
       <div className="flex-1 min-w-0">
-        <h3 className="text-lg font-medium text-gray-900 truncate">
+        <h3 className="text-base sm:text-lg font-medium text-gray-900 truncate">
           {item.name}
         </h3>
         {item.variant?.type && (
@@ -177,18 +177,18 @@ const CartItem = memo(({
       </div>
 
       {/* Quantity Controls */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1 sm:gap-2">
         <button
           onClick={onDecrement}
-          className="w-9 h-9 rounded-full border-2 border-gray-300 flex items-center justify-center hover:bg-gray-50 hover:border-gray-400 transition-all focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-blue-500"
+          className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border-2 border-gray-300 flex items-center justify-center hover:bg-gray-50 hover:border-gray-400 transition-all focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-blue-500 active:scale-95"
           style={{ minWidth: '44px', minHeight: '44px' }}
           aria-label={`Disminuir cantidad de ${item.name}`}
         >
-          <span className="text-lg font-bold">−</span>
+          <span className="text-base sm:text-lg font-bold">−</span>
         </button>
         <span
           ref={quantityRef}
-          className="w-10 text-center font-semibold text-lg"
+          className="w-8 sm:w-10 text-center font-semibold text-base sm:text-lg"
           aria-live="polite"
           aria-label={`Cantidad: ${item.quantity}`}
         >
@@ -196,18 +196,18 @@ const CartItem = memo(({
         </span>
         <button
           onClick={onIncrement}
-          className="w-9 h-9 rounded-full border-2 border-gray-300 flex items-center justify-center hover:bg-gray-50 hover:border-gray-400 transition-all focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-blue-500"
+          className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border-2 border-gray-300 flex items-center justify-center hover:bg-gray-50 hover:border-gray-400 transition-all focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-blue-500 active:scale-95"
           style={{ minWidth: '44px', minHeight: '44px' }}
           aria-label={`Aumentar cantidad de ${item.name}`}
         >
-          <span className="text-lg font-bold">+</span>
+          <span className="text-base sm:text-lg font-bold">+</span>
         </button>
       </div>
 
       {/* Price */}
       <div
         ref={priceRef}
-        className="text-right font-semibold text-lg text-gray-900 min-w-[80px] px-2 py-1 rounded transition-colors"
+        className="text-right font-semibold text-base sm:text-lg text-gray-900 min-w-[70px] sm:min-w-[80px] px-1 sm:px-2 py-1 rounded transition-colors"
       >
         ${(Number(item.price) * item.quantity).toFixed(2)}
       </div>
@@ -215,11 +215,11 @@ const CartItem = memo(({
       {/* Remove */}
       <button
         onClick={handleRemove}
-        className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-red-500"
+        className="p-1.5 sm:p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-red-500 active:scale-95"
         style={{ minWidth: '44px', minHeight: '44px' }}
         aria-label={`Eliminar ${item.name} del carrito`}
       >
-        <span className="text-xl">🗑️</span>
+        <span className="text-lg sm:text-xl">🗑️</span>
       </button>
     </div>
   );

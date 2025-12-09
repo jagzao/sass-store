@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import Link from "next/link";
 import { useTenantStore } from "@/lib/stores";
 import { motion } from "framer-motion";
@@ -55,6 +55,9 @@ export function HeroCarousel({
   tenantData,
 }: HeroCarouselProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
+  const carouselRef = useRef<HTMLDivElement>(null);
   // Migrated from Jotai to Zustand
   const tenantSlug = useTenantStore((state) => state.slug);
 
@@ -124,6 +127,32 @@ export function HeroCarousel({
     setCurrentSlide(0);
   }, [tenantSlug]);
 
+  // Handle touch start
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  // Handle touch move
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  // Handle touch end - detect swipe direction
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > 50;
+    const isRightSwipe = distance < -50;
+
+    if (isLeftSwipe) {
+      goToSlide((currentSlide + 1) % slides.length);
+    }
+    if (isRightSwipe) {
+      goToSlide(currentSlide === 0 ? slides.length - 1 : currentSlide - 1);
+    }
+  };
+
   if (slides.length === 0) {
     return null; // Don't render if no slides for tenant
   }
@@ -132,24 +161,28 @@ export function HeroCarousel({
 
   return (
     <motion.div
-      className="relative h-80 overflow-hidden rounded-lg mb-8"
+      ref={carouselRef}
+      className="relative h-96 sm:h-80 overflow-hidden rounded-lg mb-8"
       variants={heroVariants}
       initial="hidden"
       animate="visible"
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
     >
       {/* Slide Content */}
       <div
-        className={`${currentSlideData.background} h-full flex items-center justify-center text-white relative`}
+        className={`${currentSlideData.background} h-full flex items-center justify-center text-white relative px-4`}
       >
-        <motion.div className="text-center z-10" variants={heroItemVariants}>
+        <motion.div className="text-center z-10 w-full max-w-4xl" variants={heroItemVariants}>
           <motion.h2
-            className="text-4xl font-bold mb-4"
+            className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 px-2 leading-tight"
             variants={heroItemVariants}
           >
             {currentSlideData.title}
           </motion.h2>
           <motion.p
-            className="text-xl mb-6 max-w-2xl"
+            className="text-sm sm:text-base md:text-xl mb-4 sm:mb-6 max-w-2xl mx-auto px-4 leading-relaxed"
             variants={heroItemVariants}
           >
             {currentSlideData.subtitle}
@@ -157,7 +190,7 @@ export function HeroCarousel({
           <motion.div variants={heroItemVariants}>
             <Link
               href={currentSlideData.link}
-              className="bg-white text-gray-900 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors inline-block"
+              className="bg-white text-gray-900 px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg text-sm sm:text-base font-semibold hover:bg-gray-100 transition-colors inline-block shadow-lg"
               data-testid="reservar-ahora-button"
             >
               {currentSlideData.cta}
