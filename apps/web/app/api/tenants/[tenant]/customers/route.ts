@@ -1,4 +1,3 @@
-
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@sass-store/database";
 import { customers, tenants } from "@sass-store/database/schema";
@@ -17,10 +16,10 @@ const createCustomerSchema = z.object({
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { tenant: string } }
+  { params }: { params: Promise<{ tenant: string }> },
 ) {
   try {
-    const tenantSlug = params.tenant;
+    const { tenant: tenantSlug } = await params;
 
     // Find tenant
     const [tenant] = await db
@@ -59,23 +58,23 @@ export async function POST(
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: "Invalid request body", details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { tenant: string } }
+  { params }: { params: Promise<{ tenant: string }> },
 ) {
   try {
-    const tenantSlug = params.tenant;
+    const { tenant: tenantSlug } = await params;
 
     // Find tenant
     const [tenant] = await db
@@ -90,17 +89,17 @@ export async function GET(
 
     // Fetch customers
     const tenantCustomers = await db
-        .select()
-        .from(customers)
-        .where(eq(customers.tenantId, tenant.id))
-        .orderBy(desc(customers.createdAt));
+      .select()
+      .from(customers)
+      .where(eq(customers.tenantId, tenant.id))
+      .orderBy(desc(customers.createdAt));
 
     return NextResponse.json({ customers: tenantCustomers });
   } catch (error) {
     console.error("Customers GET error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
