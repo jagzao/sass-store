@@ -8,7 +8,7 @@ const createServiceSchema = z.object({
   name: z.string().min(1).max(200),
   description: z.string().optional(),
   price: z.number().positive(),
-  imageUrl: z.string().optional(),
+  imageUrl: z.string().url().optional(),
   duration: z.number().int().positive(),
   featured: z.boolean().default(false),
   active: z.boolean().default(true),
@@ -38,18 +38,35 @@ export async function POST(
     const serviceData = createServiceSchema.parse(body);
 
     // Create service
+    // Format price to ensure it has 2 decimal places
+    const formattedPrice = serviceData.price.toFixed(2);
+
     const [newService] = await db
       .insert(services)
       .values({
         tenantId: tenant.id,
-        ...serviceData,
-        price: serviceData.price.toString(),
+        name: serviceData.name,
+        description: serviceData.description || null,
+        price: formattedPrice,
+        imageUrl: serviceData.imageUrl || null,
+        duration: serviceData.duration,
+        featured: serviceData.featured,
+        active: serviceData.active,
+        metadata: serviceData.metadata || null,
       })
       .returning();
 
     return NextResponse.json({ data: newService }, { status: 201 });
   } catch (error) {
     console.error("Services POST error:", error);
+    console.error(
+      "Error details:",
+      error instanceof Error ? error.message : "Unknown error",
+    );
+    console.error(
+      "Stack trace:",
+      error instanceof Error ? error.stack : "No stack trace",
+    );
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(

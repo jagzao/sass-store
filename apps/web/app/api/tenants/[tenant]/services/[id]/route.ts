@@ -11,6 +11,7 @@ const updateServiceSchema = z.object({
   name: z.string().min(1).max(200).optional(),
   description: z.string().optional(),
   price: z.number().positive().optional(),
+  imageUrl: z.string().url().optional().nullable(),
   duration: z.number().int().positive().optional(),
   featured: z.boolean().optional(),
   active: z.boolean().optional(),
@@ -42,7 +43,8 @@ export async function PATCH(
     // Update service
     const updateData: any = { ...serviceData };
     if (serviceData.price !== undefined) {
-      updateData.price = serviceData.price.toString();
+      // Format price to ensure it has 2 decimal places
+      updateData.price = serviceData.price.toFixed(2);
     }
 
     const [updatedService] = await db
