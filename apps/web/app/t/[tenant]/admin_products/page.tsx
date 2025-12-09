@@ -24,7 +24,24 @@ export default function AdminProductsPage() {
   // useTenantGuard();
   const { data: session, status } = useSession();
 
-  // ... (rest of code) ...
+  const router = useRouter();
+  const params = useParams();
+  const tenantSlug = params.tenant as string;
+
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [currentTenant, setCurrentTenant] = useState<any>(null);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [formData, setFormData] = useState({
+    sku: "",
+    name: "",
+    description: "",
+    price: "",
+    category: "",
+    featured: false,
+    active: true,
+  });
 
   /*
   if (!session?.user) {
@@ -181,24 +198,6 @@ export default function AdminProductsPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <a
-                href={`/t/${tenantSlug}`}
-                className="text-sm text-gray-600 hover:text-gray-900 mb-2 inline-block"
-              >
-                ← Volver a {currentTenant?.name || "Inicio"}
-              </a>
-              <h1 className="text-2xl font-bold text-gray-900">
-                Administración de Productos - {currentTenant?.name || "Negocio"}
-              </h1>
-            </div>
-            <UserMenu tenantSlug={tenantSlug} />
-          </div>
-        </div>
-      </header>
 
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-8">

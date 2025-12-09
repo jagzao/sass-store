@@ -59,12 +59,39 @@ export default async function TenantLayout({
         dangerouslySetInnerHTML={{
           __html: isWondernails
             ? `
-          /* 1. KILL THE YELLOW BACKGROUNDS (Urgent) */
-          /* Force Header to be clear so the body gradient shows through */
+          /* 1. FIX THE MODAL (Emergency) */
+          /* Target: The modal container, dialog box, or popup form */
+          .modal-content, .modal-body, [role="dialog"], .dialog-container {
+              background-color: #FFFFFF !important;
+              background: #FFFFFF !important;
+              color: #333333 !important; /* Force text to dark gray */
+          }
+          /* Kill the yellow */
+          *[style*="background-color: yellow"], *[style*="background: yellow"] {
+              background-color: #FFFFFF !important;
+          }
+
+          /* 2. NEUTRALIZE THE SLIDES (Kill Black & Cream) */
+          /* Target: Every single slide in the Hero Carousel */
+          .swiper-slide, .carousel-item, [class*="slide-"] {
+              background-color: transparent !important;
+              background: transparent !important;
+          }
+
+          /* Force the CARD inside the slide to be White Glass */
+          .swiper-slide > div, .carousel-item > div, .hero-card {
+              background: rgba(255, 255, 255, 0.75) !important;
+              backdrop-filter: blur(20px) !important;
+              border: 1px solid rgba(197, 160, 89, 0.2) !important;
+              box-shadow: 0 10px 40px rgba(160, 130, 180, 0.15) !important; /* Lilac Shadow */
+          }
+
+          /* 3. CLEAN THE HEADER */
+          /* Target: The Navigation Bar */
           header, nav, .navbar-container {
               background-color: transparent !important;
               background: transparent !important;
-              box-shadow: none !important; /* Remove any yellow glow */
+              box-shadow: none !important;
           }
 
           /* 1. Ensure the body handles the base white color */
@@ -98,15 +125,6 @@ export default async function TenantLayout({
           #root, #app, .main-wrapper, [data-tenant-hero="wondernails"] {
               background-color: transparent !important;
               background: transparent !important;
-          }
-
-          /* 2. STANDARDIZE ALL CARDS (No more Black Cards) */
-          /* Target every possible card container using data attributes where possible */
-          [class*="card"], [class*="slide"], .hero-card-container, .swiper-slide, [data-testid="carousel-item"] {
-              background: rgba(255, 255, 255, 0.75) !important; /* White Glass */
-              backdrop-filter: blur(20px) !important;
-              border: 1px solid rgba(197, 160, 89, 0.2) !important; /* Subtle Gold Border */
-              box-shadow: 0 10px 40px rgba(160, 130, 180, 0.15) !important; /* Lilac Shadow */
           }
 
           /* 3. FIX TEXT CONTRAST (Invisible Text Fix) */
