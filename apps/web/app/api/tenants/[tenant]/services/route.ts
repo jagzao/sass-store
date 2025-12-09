@@ -8,6 +8,7 @@ const createServiceSchema = z.object({
   name: z.string().min(1).max(200),
   description: z.string().optional(),
   price: z.number().positive(),
+  imageUrl: z.string().optional(),
   duration: z.number().int().positive(),
   featured: z.boolean().default(false),
   active: z.boolean().default(true),
