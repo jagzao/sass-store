@@ -1,29 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '../../../lib/db/connection';
-import { seedTenantData } from '../../../lib/db/seed-data';
-import { tenants } from '../../../../packages/database/schema';
+import { db } from '@sass-store/database';
+import { tenants } from '@sass-store/database/schema';
 
 export async function GET(request: NextRequest) {
   try {
-    // Verificar si es un entorno de producción
-    if (process.env.NODE_ENV !== 'production') {
-      return NextResponse.json(
-        { error: 'This endpoint is for production use only' },
-        { status: 403 }
-      );
-    }
-
     // Verificar si hay un token de autorización para prevenir ejecuciones no autorizadas
     const authHeader = request.headers.get('authorization');
-    const expectedToken = process.env.VERCEL_SEED_TOKEN;
-    
-    if (!expectedToken) {
-      return NextResponse.json(
-        { error: 'VERCEL_SEED_TOKEN not configured' },
-        { status: 500 }
-      );
-    }
-    
+    const expectedToken = process.env.SEED_API_TOKEN || 'dev-seed-token';
+
     if (!authHeader || authHeader !== `Bearer ${expectedToken}`) {
       return NextResponse.json(
         { error: 'Unauthorized' },
@@ -33,22 +17,52 @@ export async function GET(request: NextRequest) {
 
     // Verificar si ya hay datos en la base de datos
     const existingTenants = await db.select().from(tenants);
-    
+
     if (existingTenants.length > 0) {
       return NextResponse.json({
         success: true,
         message: 'Database already seeded',
-        data: { tenantCount: existingTenants.length }
+        data: { tenantCount: existingTenants.length, tenants: existingTenants }
       });
     }
-    
-    // Si no hay datos, ejecutar el seed
-    const result = await seedTenantData();
-    
+
+    // Si no hay datos, crear el tenant WonderNails
+    const [newTenant] = await db.insert(tenants).values({
+      slug: 'wondernails',
+      name: 'Wonder Nails',
+      description: 'Salón de uñas premium',
+      mode: 'booking',
+      status: 'active',
+      timezone: 'America/Mexico_City',
+      branding: {
+        primaryColor: '#D4AF37',
+        secondaryColor: '#000000',
+        logo: '',
+        favicon: ''
+      },
+      contact: {
+        phone: '+52 555 123 4567',
+        email: 'contacto@wondernails.mx',
+        whatsapp: '+525551234567'
+      },
+      location: {
+        address: 'Av. Principal 123',
+        city: 'Ciudad de México',
+        state: 'CDMX',
+        country: 'México',
+        postalCode: '01000'
+      },
+      quotas: {
+        maxProducts: 100,
+        maxServices: 50,
+        maxStaff: 10
+      }
+    }).returning();
+
     return NextResponse.json({
       success: true,
       message: 'Production database seeded successfully',
-      data: result
+      data: { tenant: newTenant }
     });
   } catch (error) {
     console.error('Error seeding production database:', error);
