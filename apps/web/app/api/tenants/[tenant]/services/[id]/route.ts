@@ -16,11 +16,10 @@ const updateServiceSchema = z.object({
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { tenant: string; id: string } },
+  { params }: { params: Promise<{ tenant: string; id: string }> },
 ) {
   try {
-    const tenantSlug = params.tenant;
-    const serviceId = params.id;
+    const { tenant: tenantSlug, id: serviceId } = await params;
 
     // Find tenant
     const [tenant] = await db
@@ -73,11 +72,10 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { tenant: string; id: string } },
+  { params }: { params: Promise<{ tenant: string; id: string }> },
 ) {
   try {
-    const tenantSlug = params.tenant;
-    const serviceId = params.id;
+    const { tenant: tenantSlug, id: serviceId } = await params;
 
     // Find tenant
     const [tenant] = await db
