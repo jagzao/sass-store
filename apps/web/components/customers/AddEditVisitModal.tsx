@@ -220,22 +220,32 @@ export default function AddEditVisitModal({
     }
   };
 
+  const isLuxury = tenantSlug === "wondernails";
+
   return (
     <div className="fixed inset-0 z-50 bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 flex items-center justify-center p-4">
-      <div className="fixed left-[50%] top-[50%] z-50 grid w-full max-w-4xl max-h-[90vh] overflow-y-auto translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 sm:rounded-lg">
+      <div className={cn(
+        "fixed left-[50%] top-[50%] z-50 grid w-full max-w-4xl max-h-[90vh] overflow-y-auto translate-x-[-50%] translate-y-[-50%] gap-4 border p-6 shadow-lg duration-200 sm:rounded-lg",
+        isLuxury 
+          ? "bg-white border-[#D4AF37]/40 shadow-2xl" 
+          : "bg-background shadow-lg"
+      )}>
         {/* Header */}
         <div className="flex flex-col space-y-1.5 text-center sm:text-left">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold leading-none tracking-tight">
+            <h2 className={cn(
+              "text-lg font-semibold leading-none tracking-tight",
+              isLuxury ? "text-[#1a1a1a] font-serif uppercase tracking-widest" : ""
+            )}>
               {visit ? "Editar Visita" : "Nueva Visita"}
             </h2>
             <Button
               variant="ghost"
               size="icon"
               onClick={() => onClose()}
-              className="h-6 w-6 rounded-full p-0"
+              className="h-6 w-6 rounded-full p-0 hover:bg-black/5"
             >
-              <X className="h-4 w-4" />
+              <X className={cn("h-4 w-4", isLuxury ? "text-[#D4AF37]" : "")} />
               <span className="sr-only">Close</span>
             </Button>
           </div>
@@ -445,17 +455,22 @@ export default function AddEditVisitModal({
           </div>
 
           {/* Actions */}
-          <div className="flex justify-end gap-3 pt-4 border-t">
+          <div className={cn("flex justify-end gap-3 pt-4 border-t", isLuxury ? "border-[#D4AF37]/20" : "")}>
             <Button
               type="button"
               variant="outline"
               onClick={() => onClose()}
+              className={isLuxury ? "border-gray-200 text-gray-600 hover:bg-gray-50" : ""}
             >
               Cancelar
             </Button>
             <Button
               type="submit"
               disabled={submitting || services.length === 0}
+              className={isLuxury 
+                ? "bg-[#D4AF37] hover:bg-[#b3932d] text-white border-0" 
+                : ""
+              }
             >
               {submitting ? "Guardando..." : visit ? "Guardar Cambios" : "Crear Visita"}
             </Button>

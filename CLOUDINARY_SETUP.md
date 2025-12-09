@@ -27,9 +27,10 @@ After signing up:
 
 **Local Development (.env):**
 ```bash
-CLOUDINARY_CLOUD_NAME=your-cloud-name
-CLOUDINARY_API_KEY=your-api-key
-CLOUDINARY_API_SECRET=your-api-secret
+CLOUDINARY_CLOUD_NAME=drxcxttn0
+CLOUDINARY_API_KEY=966499136954939
+CLOUDINARY_URL=cloudinary://966499136954939GBR-yN_5Z7iBlN2Rv7-U1EiP3Xo@drxcxttn0
+CLOUDINARY_API_SECRET=GBR-yN_5Z7iBlN2Rv7-U1EiP3Xo
 ```
 
 **Vercel Production:**
