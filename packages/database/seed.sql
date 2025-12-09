@@ -8,30 +8,24 @@
 -- npx dotenv-cli -e ../../.env.local -- npx tsx scripts/seed.ts
 
 -- =====================================================
--- CLEAN ALL EXISTING DATA
+-- CLEAN EXISTING DATA (Only tables used by this seed)
 -- =====================================================
 -- Order matters: Delete dependent tables first, then parent tables
 -- CASCADE will handle foreign key constraints automatically
 
 TRUNCATE TABLE
-  -- Content & Media
-  mediaRenditions, mediaAssets, contentVariants, socialPosts, postResults, postJobs, reels, visitPhotos,
-  -- Financial & Payments
-  financialMovements, financialKpis, mercadopagoPayments, mercadopagoTokens, payments, posTerminals, postingRules,
-  -- Booking & Orders
-  orderItems, orders, bookings,
-  -- Customer & Visits
-  customerVisitServices, customerVisits, customers,
-  -- Products & Services & Reviews
-  productReviews, products, services,
-  -- Campaigns & Channels
-  campaigns, channelAccounts, channelCredentials, tenantChannels,
-  -- User & Auth
-  accounts, sessions, verificationTokens, oauthStateTokens, apiKeys, userRoles, userCarts, users,
-  -- Audit & Config
-  auditLogs, tenantConfigs, tenantQuotas,
-  -- Staff & Tenants
-  staff, tenants
+  -- Customer & Visits (dependent on tenants, customers, services)
+  customer_visit_services, customer_visits,
+  -- Customers (dependent on tenants)
+  customers,
+  -- Products & Services (dependent on tenants)
+  products, services,
+  -- Staff (dependent on tenants)
+  staff,
+  -- Users (independent)
+  users,
+  -- Tenants (parent table)
+  tenants
 CASCADE;
 
 -- =====================================================
