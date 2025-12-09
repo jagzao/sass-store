@@ -1,10 +1,13 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
-import Link from 'next/link';
-import { useTenantStore } from '@/lib/stores';
-import { motion } from 'framer-motion';
-import { heroVariants, heroItemVariants } from '@/components/animations/card-animations';
+import { useState, useEffect, useMemo, useCallback } from "react";
+import Link from "next/link";
+import { useTenantStore } from "@/lib/stores";
+import { motion } from "framer-motion";
+import {
+  heroVariants,
+  heroItemVariants,
+} from "@/components/animations/card-animations";
 
 interface Slide {
   id: string;
@@ -41,12 +44,16 @@ interface HeroCarouselProps {
     slug: string;
     name: string;
     description: string;
-    mode: 'booking' | 'catalog';
+    mode: "booking" | "catalog";
     branding: TenantBranding;
   };
 }
 
-export function HeroCarousel({ featuredServices = [], featuredProducts = [], tenantData }: HeroCarouselProps) {
+export function HeroCarousel({
+  featuredServices = [],
+  featuredProducts = [],
+  tenantData,
+}: HeroCarouselProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
   // Migrated from Jotai to Zustand
   const tenantSlug = useTenantStore((state) => state.slug);
@@ -56,15 +63,15 @@ export function HeroCarousel({ featuredServices = [], featuredProducts = [], ten
     const result: Slide[] = [];
 
     // Add featured services if tenant is in booking mode
-    if (tenantData.mode === 'booking' && featuredServices.length > 0) {
+    if (tenantData.mode === "booking" && featuredServices.length > 0) {
       featuredServices.forEach((service) => {
         result.push({
           id: `service-${service.id}`,
           title: service.name,
           subtitle: `${service.description} - Desde $${service.price}`,
-          cta: 'Reservar ahora',
+          cta: "Reservar ahora",
           link: `/t/${tenantData.slug}/booking/${service.id}`,
-          background: `bg-gradient-to-r from-purple-500 to-blue-500`
+          background: `bg-gradient-to-r from-purple-500 to-blue-500`,
         });
       });
     }
@@ -76,9 +83,9 @@ export function HeroCarousel({ featuredServices = [], featuredProducts = [], ten
           id: `product-${product.id}`,
           title: product.name,
           subtitle: `${product.description} - $${product.price}`,
-          cta: tenantData.mode === 'catalog' ? 'Comprar ahora' : 'Ver producto',
+          cta: tenantData.mode === "catalog" ? "Comprar ahora" : "Ver producto",
           link: `/t/${tenantData.slug}/products/${product.id}`,
-          background: `bg-gradient-to-r from-green-500 to-emerald-500`
+          background: `bg-gradient-to-r from-green-500 to-emerald-500`,
         });
       });
     }
@@ -86,12 +93,12 @@ export function HeroCarousel({ featuredServices = [], featuredProducts = [], ten
     // Fallback slide if no featured items
     if (result.length === 0) {
       result.push({
-        id: 'welcome',
+        id: "welcome",
         title: tenantData.name,
-        subtitle: tenantData.description || 'Bienvenido a nuestro negocio',
-        cta: tenantData.mode === 'booking' ? 'Ver servicios' : 'Ver productos',
-        link: `/t/${tenantData.slug}/${tenantData.mode === 'booking' ? 'services' : 'products'}`,
-        background: 'bg-gradient-to-r from-blue-500 to-purple-500'
+        subtitle: tenantData.description || "Bienvenido a nuestro negocio",
+        cta: tenantData.mode === "booking" ? "Ver servicios" : "Ver productos",
+        link: `/t/${tenantData.slug}/${tenantData.mode === "booking" ? "services" : "products"}`,
+        background: "bg-gradient-to-r from-blue-500 to-purple-500",
       });
     }
 
@@ -131,7 +138,9 @@ export function HeroCarousel({ featuredServices = [], featuredProducts = [], ten
       animate="visible"
     >
       {/* Slide Content */}
-      <div className={`${currentSlideData.background} h-full flex items-center justify-center text-white relative`}>
+      <div
+        className={`${currentSlideData.background} h-full flex items-center justify-center text-white relative`}
+      >
         <motion.div className="text-center z-10" variants={heroItemVariants}>
           <motion.h2
             className="text-4xl font-bold mb-4"
@@ -149,6 +158,7 @@ export function HeroCarousel({ featuredServices = [], featuredProducts = [], ten
             <Link
               href={currentSlideData.link}
               className="bg-white text-gray-900 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors inline-block"
+              data-testid="reservar-ahora-button"
             >
               {currentSlideData.cta}
             </Link>
@@ -169,7 +179,7 @@ export function HeroCarousel({ featuredServices = [], featuredProducts = [], ten
             key={index}
             onClick={() => goToSlide(index)}
             className={`w-3 h-3 rounded-full transition-colors ${
-              index === currentSlide ? 'bg-white' : 'bg-white bg-opacity-50'
+              index === currentSlide ? "bg-white" : "bg-white bg-opacity-50"
             }`}
           />
         ))}
@@ -177,7 +187,9 @@ export function HeroCarousel({ featuredServices = [], featuredProducts = [], ten
 
       {/* Previous/Next Buttons */}
       <button
-        onClick={() => goToSlide(currentSlide === 0 ? slides.length - 1 : currentSlide - 1)}
+        onClick={() =>
+          goToSlide(currentSlide === 0 ? slides.length - 1 : currentSlide - 1)
+        }
         className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 p-2 rounded-full transition-colors z-20"
       >
         <span className="text-gray-800">←</span>
