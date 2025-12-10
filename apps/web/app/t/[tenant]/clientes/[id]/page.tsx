@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import TenantHeader from "@/components/ui/TenantHeader";
 import { LiveRegionProvider } from "@/components/a11y/LiveRegion";
-import { fetchStatic } from "@/lib/api/fetch-with-cache";
+import { getTenantBySlug } from "@/lib/server/get-tenant";
 import type { TenantData } from "@/types/tenant";
 import CustomerFileHeader from "@/components/customers/CustomerFileHeader";
 import CustomerFileSummary from "@/components/customers/CustomerFileSummary";
@@ -18,19 +18,11 @@ interface PageProps {
 export default async function CustomerFilePage({ params }: PageProps) {
   const { tenant: tenantSlug, id: customerId } = await params;
 
-  // Fetch tenant data
-  let tenantData: TenantData | null = null;
+  // Get tenant data directly from database (server-side only, no HTTP calls)
+  const tenant = await getTenantBySlug(tenantSlug);
 
-  try {
-    tenantData = await fetchStatic<TenantData>(`/api/tenants/${tenantSlug}`, [
-      "tenant",
-      tenantSlug,
-    ]);
-  } catch (error) {
-    console.error(
-      `[CustomerFilePage] Failed to fetch tenant ${tenantSlug}:`,
-      error,
-    );
+  if (!tenant) {
+    console.error(`[CustomerFilePage] Tenant not found: ${tenantSlug}`);
     notFound();
   }
 
@@ -38,9 +30,7 @@ export default async function CustomerFilePage({ params }: PageProps) {
 
   return (
     <LiveRegionProvider>
-      <div
-        className={`min-h-screen ${isLuxury ? "bg-white" : "bg-gray-50"}`}
-      >
+      <div className={`min-h-screen ${isLuxury ? "bg-white" : "bg-gray-50"}`}>
         {/* Main Content */}
         <main className="container mx-auto px-4 py-8">
           {/* Breadcrumb */}
@@ -168,21 +158,18 @@ function VisitsHistorySkeleton() {
 export async function generateMetadata({ params }: PageProps) {
   const { tenant: tenantSlug } = await params;
 
-  try {
-    const tenant = await fetchStatic<TenantData>(`/api/tenants/${tenantSlug}`, [
-      "tenant",
-      tenantSlug,
-    ]);
+  const tenant = await getTenantBySlug(tenantSlug);
 
-    return {
-      title: `Expediente de Clienta - ${tenant.name}`,
-      description: `Historial completo de visitas y servicios`,
-    };
-  } catch (error) {
+  if (!tenant) {
     return {
       title: "Expediente de Clienta",
     };
   }
+
+  return {
+    title: `Expediente de Clienta - ${tenant.name}`,
+    description: `Historial completo de visitas y servicios`,
+  };
 }
 
 // Generate static params for Cloudflare Pages export
