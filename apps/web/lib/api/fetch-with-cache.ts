@@ -102,12 +102,13 @@ export async function fetchWithCache<T = unknown>(
       url.startsWith("/api/users")
     ) {
       // IMPORTANT: For internal API routes, Next.js needs absolute URLs
-      // Vercel sets VERCEL_URL automatically (without protocol)
-      const baseUrl = process.env.VERCEL_URL
-        ? `https://${process.env.VERCEL_URL}`
-        : process.env.NEXTAUTH_URL ||
-          process.env.NEXT_PUBLIC_SITE_URL ||
-          "http://localhost:3000";
+      // Priority: Use explicit production URL over VERCEL_URL (which can be preview URL with auth)
+      const baseUrl =
+        process.env.NEXTAUTH_URL ||
+        process.env.NEXT_PUBLIC_SITE_URL ||
+        (process.env.VERCEL_URL
+          ? `https://${process.env.VERCEL_URL}`
+          : "http://localhost:3000");
 
       fullUrl = `${baseUrl}${url}`;
       // eslint-disable-next-line no-console
