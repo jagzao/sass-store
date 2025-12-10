@@ -20,8 +20,9 @@ export function getApiUrl(): string {
 
 /**
  * Build full API URL from a path
+ * Note: Web app uses internal endpoints, this is for client-side API calls if needed
  * @example
- * buildApiUrl('/api/tenants/wondernails') // => 'https://sass-store-api.vercel.app/api/tenants/wondernails'
+ * buildApiUrl('/api/tenants/wondernails') // => 'https://sass-store-web.vercel.app/api/tenants/wondernails'
  */
 export function buildApiUrl(path: string): string {
   const baseUrl = getApiUrl();
