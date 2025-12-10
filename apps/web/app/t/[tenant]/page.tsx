@@ -4,7 +4,8 @@ import TenantHero from "@/components/ui/TenantHero";
 import ProductCard from "@/components/products/ProductCard";
 import ServiceCard from "@/components/services/ServiceCard";
 import { LiveRegionProvider } from "@/components/a11y/LiveRegion";
-import { fetchStatic, fetchRevalidating } from "@/lib/api/fetch-with-cache";
+import { getTenantBySlug } from "@/lib/server/get-tenant";
+import { fetchRevalidating } from "@/lib/api/fetch-with-cache";
 import type { TenantData, Product, Service } from "@/types/tenant";
 
 // Force dynamic rendering
@@ -29,18 +30,20 @@ interface PageProps {
 export default async function TenantPageServer({ params }: PageProps) {
   const { tenant: tenantSlug } = await params;
 
-  // Fetch tenant data from API endpoint (server-side, uses internal routes)
-  let tenantData: TenantData | null = null;
+  // Get tenant data directly from database (server-side only, no HTTP calls)
+  const tenant = await getTenantBySlug(tenantSlug);
 
-  try {
-    tenantData = await fetchStatic<TenantData>(`/api/tenants/${tenantSlug}`, [
-      "tenant",
-      tenantSlug,
-    ]);
-  } catch (error) {
-    console.error(`[TenantPage] Failed to fetch tenant ${tenantSlug}:`, error);
+  if (!tenant) {
+    console.error(`[TenantPage] Tenant not found: ${tenantSlug}`);
     notFound();
   }
+
+  // Construct TenantData object
+  const tenantData: TenantData = {
+    ...tenant,
+    products: [],
+    services: [],
+  };
 
   return (
     <LiveRegionProvider>
@@ -225,28 +228,21 @@ function ServicesSkeleton() {
 export async function generateMetadata({ params }: PageProps) {
   const { tenant: tenantSlug } = await params;
 
-  try {
-    const tenant = await fetchStatic<TenantData>(`/api/tenants/${tenantSlug}`, [
-      "tenant",
-      tenantSlug,
-    ]);
+  const tenant = await getTenantBySlug(tenantSlug);
 
-    return {
-      title: `${tenant.name} - ${tenant.description || "Inicio"}`,
-      description: tenant.description || `Bienvenido a ${tenant.name}`,
-      openGraph: {
-        title: tenant.name,
-        description: tenant.description,
-        type: "website",
-      },
-    };
-  } catch (error) {
-    console.error(
-      `[generateMetadata] Error fetching tenant ${tenantSlug}:`,
-      error,
-    );
+  if (!tenant) {
     return {
       title: "Página no encontrada",
     };
   }
+
+  return {
+    title: `${tenant.name} - ${tenant.description || "Inicio"}`,
+    description: tenant.description || `Bienvenido a ${tenant.name}`,
+    openGraph: {
+      title: tenant.name,
+      description: tenant.description,
+      type: "website",
+    },
+  };
 }

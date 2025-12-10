@@ -1,8 +1,7 @@
 import { Suspense, type ReactNode } from "react";
 import { notFound } from "next/navigation";
 import TenantHeader from "@/components/ui/TenantHeader";
-import { fetchStatic } from "@/lib/api/fetch-with-cache";
-import type { TenantData } from "@/types/tenant";
+import { getTenantBySlug } from "@/lib/server/get-tenant";
 import TemporaryAdminMenu from "@/components/admin/TemporaryAdminMenu";
 
 // Force dynamic rendering for all tenant pages
@@ -26,26 +25,16 @@ export default async function TenantLayout({
   const { tenant: tenantSlug } = resolvedParams;
   console.log("[TenantLayout] Extracted tenantSlug:", tenantSlug);
 
-  // Fetch tenant data from API endpoint (server-side, uses internal routes)
-  let tenantData: TenantData | null = null;
+  // Get tenant data directly from database (server-side only, no HTTP calls)
+  const tenantData = await getTenantBySlug(tenantSlug);
 
-  try {
-    console.log(`[TenantLayout] Fetching tenant data for: ${tenantSlug}`);
-    tenantData = await fetchStatic<TenantData>(`/api/tenants/${tenantSlug}`, [
-      "tenant",
-      tenantSlug,
-    ]);
-    console.log(
-      `[TenantLayout] Successfully loaded tenant: ${tenantData?.name}`,
-    );
-  } catch (error) {
-    console.error(
-      `[TenantLayout] Failed to fetch tenant ${tenantSlug}:`,
-      error,
-    );
+  if (!tenantData) {
+    console.error(`[TenantLayout] Tenant not found: ${tenantSlug}`);
     // If we can't get tenant data at the layout level, it's likely a 404
     return <>{children}</>;
   }
+
+  console.log(`[TenantLayout] Successfully loaded tenant: ${tenantData.name}`);
 
   const isWondernails = tenantSlug === "wondernails";
 
