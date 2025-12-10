@@ -2,8 +2,7 @@ import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import TenantHeader from "@/components/ui/TenantHeader";
 import { LiveRegionProvider } from "@/components/a11y/LiveRegion";
-import { fetchStatic } from "@/lib/api/fetch-with-cache";
-import type { TenantData } from "@/types/tenant";
+import { getTenantBySlug } from "@/lib/db/get-tenant";
 import CustomersList from "@/components/customers/CustomersList";
 import CustomersFilters from "@/components/customers/CustomersFilters";
 
@@ -30,25 +29,16 @@ export default async function CustomersPage({
   const resolvedSearchParams = await searchParams;
   console.log("[CustomersPage] Resolved searchParams:", resolvedSearchParams);
 
-  // Fetch tenant data
-  let tenantData: TenantData | null = null;
+  // Get tenant data directly from database (server-side)
+  console.log(`[CustomersPage] Getting tenant data for: ${tenantSlug}`);
+  const tenantData = await getTenantBySlug(tenantSlug);
 
-  try {
-    console.log(`[CustomersPage] Fetching tenant data for: ${tenantSlug}`);
-    tenantData = await fetchStatic<TenantData>(`/api/tenants/${tenantSlug}`, [
-      "tenant",
-      tenantSlug,
-    ]);
-    console.log(
-      `[CustomersPage] Successfully fetched tenant: ${tenantData?.name}`,
-    );
-  } catch (error) {
-    console.error(
-      `[CustomersPage] Failed to fetch tenant ${tenantSlug}:`,
-      error,
-    );
+  if (!tenantData) {
+    console.error(`[CustomersPage] Tenant not found: ${tenantSlug}`);
     notFound();
   }
+
+  console.log(`[CustomersPage] Successfully loaded tenant: ${tenantData.name}`);
 
   return (
     <LiveRegionProvider>
@@ -119,19 +109,16 @@ function CustomersListSkeleton() {
 export async function generateMetadata({ params }: PageProps) {
   const { tenant: tenantSlug } = await params;
 
-  try {
-    const tenant = await fetchStatic<TenantData>(`/api/tenants/${tenantSlug}`, [
-      "tenant",
-      tenantSlug,
-    ]);
+  const tenant = await getTenantBySlug(tenantSlug);
 
-    return {
-      title: `Clientas - ${tenant.name}`,
-      description: `Gestión de clientas y expedientes para ${tenant.name}`,
-    };
-  } catch (error) {
+  if (!tenant) {
     return {
       title: "Clientas",
     };
   }
+
+  return {
+    title: `Clientas - ${tenant.name}`,
+    description: `Gestión de clientas y expedientes para ${tenant.name}`,
+  };
 }

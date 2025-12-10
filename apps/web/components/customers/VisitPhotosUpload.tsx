@@ -36,13 +36,13 @@ export default function VisitPhotosUpload({
     // Mock upload or real upload logic here
     // For now, we simulate a "local preview" URL
     // In a real app, you'd upload here and get a remote URL
-    
+
     // We will simulate upload for now to keep it UI-functional
     const processFile = async (file: File) => {
-       // Ideally: const url = await uploadFile(file);
-       // Mock:
-       const url = URL.createObjectURL(file); 
-       return { url, type: activeType, file };
+      // Ideally: const url = await uploadFile(file);
+      // Mock:
+      const url = URL.createObjectURL(file);
+      return { url, type: activeType, file };
     };
 
     try {
@@ -100,17 +100,24 @@ export default function VisitPhotosUpload({
               Agregar
             </Button>
           </div>
-          
+
           <div className="grid grid-cols-2 gap-2">
             {beforePhotos.length === 0 && (
-               <div className="col-span-2 border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center text-muted-foreground bg-muted/30">
-                 <ImageIcon className="h-8 w-8 mb-2 opacity-50" />
-                 <span className="text-xs">Sin fotos</span>
-               </div>
+              <div className="col-span-2 border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center text-muted-foreground bg-muted/30">
+                <ImageIcon className="h-8 w-8 mb-2 opacity-50" />
+                <span className="text-xs">Sin fotos</span>
+              </div>
             )}
             {beforePhotos.map((photo, idx) => (
-              <div key={`before-${idx}`} className="relative group aspect-square rounded-md overflow-hidden border bg-muted">
-                <img src={photo.url} alt="Before" className="w-full h-full object-cover" />
+              <div
+                key={`before-${idx}`}
+                className="relative group aspect-square rounded-md overflow-hidden border bg-muted max-w-[200px] max-h-[200px]"
+              >
+                <img
+                  src={photo.url}
+                  alt="Before"
+                  className="w-full h-full object-cover"
+                />
                 <button
                   type="button"
                   onClick={() => handleRemove(photos.indexOf(photo))}
@@ -125,8 +132,10 @@ export default function VisitPhotosUpload({
 
         {/* After Photos */}
         <div className="space-y-3">
-           <div className="flex items-center justify-between">
-            <h4 className="text-sm font-medium text-muted-foreground">Después</h4>
+          <div className="flex items-center justify-between">
+            <h4 className="text-sm font-medium text-muted-foreground">
+              Después
+            </h4>
             <Button
               type="button"
               variant="outline"
@@ -141,15 +150,22 @@ export default function VisitPhotosUpload({
 
           <div className="grid grid-cols-2 gap-2">
             {afterPhotos.length === 0 && (
-               <div className="col-span-2 border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center text-muted-foreground bg-muted/30">
-                 <ImageIcon className="h-8 w-8 mb-2 opacity-50" />
-                 <span className="text-xs">Sin fotos</span>
-               </div>
+              <div className="col-span-2 border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center text-muted-foreground bg-muted/30">
+                <ImageIcon className="h-8 w-8 mb-2 opacity-50" />
+                <span className="text-xs">Sin fotos</span>
+              </div>
             )}
             {afterPhotos.map((photo, idx) => (
-              <div key={`after-${idx}`} className="relative group aspect-square rounded-md overflow-hidden border bg-muted">
-                <img src={photo.url} alt="After" className="w-full h-full object-cover" />
-                 <button
+              <div
+                key={`after-${idx}`}
+                className="relative group aspect-square rounded-md overflow-hidden border bg-muted max-w-[200px] max-h-[200px]"
+              >
+                <img
+                  src={photo.url}
+                  alt="After"
+                  className="w-full h-full object-cover"
+                />
+                <button
                   type="button"
                   onClick={() => handleRemove(photos.indexOf(photo))}
                   className="absolute top-1 right-1 bg-destructive/90 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"

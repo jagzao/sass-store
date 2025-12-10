@@ -1,8 +1,7 @@
 import { Suspense, type ReactNode } from "react";
 import { notFound } from "next/navigation";
 import TenantHeader from "@/components/ui/TenantHeader";
-import { fetchStatic } from "@/lib/api/fetch-with-cache";
-import type { TenantData } from "@/types/tenant";
+import { getTenantBySlug } from "@/lib/db/get-tenant";
 import TemporaryAdminMenu from "@/components/admin/TemporaryAdminMenu";
 
 // Force dynamic rendering for all tenant pages
@@ -26,28 +25,16 @@ export default async function TenantLayout({
   const { tenant: tenantSlug } = resolvedParams;
   console.log("[TenantLayout] Extracted tenantSlug:", tenantSlug);
 
-  // Fetch tenant data (cached)
-  let tenantData: TenantData | null = null;
-
-  try {
-    tenantData = await fetchStatic<TenantData>(`/api/tenants/${tenantSlug}`, [
-      "tenant",
-      tenantSlug,
-    ]);
-  } catch (error) {
-    console.error(
-      `[TenantLayout] Failed to fetch tenant ${tenantSlug}:`,
-      error,
-    );
-    // We don't return notFound() here to allow individual pages to handle errors if needed,
-    // or we could redirect. For now, let's allow the page to render if data fails,
-    // but the header might be empty. Ideally, we should handle this gracefully.
-  }
+  // Get tenant data directly from database (server-side)
+  const tenantData = await getTenantBySlug(tenantSlug);
 
   if (!tenantData) {
+    console.error(`[TenantLayout] Tenant not found: ${tenantSlug}`);
     // If we can't get tenant data at the layout level, it's likely a 404
     return <>{children}</>;
   }
+
+  console.log(`[TenantLayout] Successfully loaded tenant: ${tenantData.name}`);
 
   const isWondernails = tenantSlug === "wondernails";
 

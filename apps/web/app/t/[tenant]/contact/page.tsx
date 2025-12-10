@@ -1,7 +1,6 @@
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
-import { fetchStatic } from "@/lib/api/fetch-with-cache";
-import type { TenantData } from "@/types/tenant";
+import { getTenantBySlug } from "@/lib/db/get-tenant";
 import { Mail, Phone, MapPin, Clock } from "lucide-react";
 
 // Force dynamic rendering - don't generate at build time
@@ -18,16 +17,11 @@ export default async function ContactPage({ params }: PageProps) {
   const resolvedParams = await params;
   const tenantSlug = resolvedParams.tenant;
 
-  // Fetch tenant data
-  let tenantData: TenantData | null = null;
+  // Get tenant data directly from database (server-side)
+  const tenantData = await getTenantBySlug(tenantSlug);
 
-  try {
-    tenantData = await fetchStatic<TenantData>(`/api/tenants/${tenantSlug}`, [
-      "tenant",
-      tenantSlug,
-    ]);
-  } catch (error) {
-    console.error(`[ContactPage] Failed to fetch tenant ${tenantSlug}:`, error);
+  if (!tenantData) {
+    console.error(`[ContactPage] Tenant not found: ${tenantSlug}`);
     notFound();
   }
 
@@ -148,19 +142,16 @@ export async function generateMetadata({ params }: PageProps) {
   const resolvedParams = await params;
   const tenantSlug = resolvedParams.tenant;
 
-  try {
-    const tenant = await fetchStatic<TenantData>(`/api/tenants/${tenantSlug}`, [
-      "tenant",
-      tenantSlug,
-    ]);
+  const tenant = await getTenantBySlug(tenantSlug);
 
-    return {
-      title: `Contacto - ${tenant.name}`,
-      description: `Ponte en contacto con ${tenant.name}`,
-    };
-  } catch (error) {
+  if (!tenant) {
     return {
       title: "Contacto",
     };
   }
+
+  return {
+    title: `Contacto - ${tenant.name}`,
+    description: `Ponte en contacto con ${tenant.name}`,
+  };
 }
