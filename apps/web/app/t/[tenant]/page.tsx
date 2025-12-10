@@ -1,12 +1,9 @@
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import TenantHero from "@/components/ui/TenantHero";
-import TenantHeader from "@/components/ui/TenantHeader";
 import ProductCard from "@/components/products/ProductCard";
 import ServiceCard from "@/components/services/ServiceCard";
-import TenantPageSkeleton from "@/components/ui/TenantPageSkeleton";
 import { LiveRegionProvider } from "@/components/a11y/LiveRegion";
-import UserMenu from "@/components/auth/UserMenu";
 import { fetchStatic, fetchRevalidating } from "@/lib/api/fetch-with-cache";
 import type { TenantData, Product, Service } from "@/types/tenant";
 
@@ -32,7 +29,7 @@ interface PageProps {
 export default async function TenantPageServer({ params }: PageProps) {
   const { tenant: tenantSlug } = await params;
 
-  // Fetch tenant data on the server (cached for 1 hour)
+  // Fetch tenant data from API endpoint (server-side, uses internal routes)
   let tenantData: TenantData | null = null;
 
   try {
@@ -42,7 +39,6 @@ export default async function TenantPageServer({ params }: PageProps) {
     ]);
   } catch (error) {
     console.error(`[TenantPage] Failed to fetch tenant ${tenantSlug}:`, error);
-    // Return 404 if tenant not found
     notFound();
   }
 

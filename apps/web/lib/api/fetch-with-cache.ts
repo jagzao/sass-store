@@ -89,14 +89,39 @@ export async function fetchWithCache<T = unknown>(
   }
 
   // Determine full URL
-  // Use API_URL for server-side, NEXT_PUBLIC_API_URL for client-side
-  const baseUrl =
-    process.env.API_URL ||
-    process.env.NEXT_PUBLIC_API_URL ||
-    "http://127.0.0.1:4000";
+  // Server-side: Use internal endpoints from same app
+  // Client-side: Use NEXT_PUBLIC_API_URL for external API calls
+  let baseUrl: string;
+
+  if (typeof window === "undefined") {
+    // SERVER-SIDE: Use same web app endpoints
+    // Check if URL is for internal /api routes
+    if (
+      url.startsWith("/api/tenants") ||
+      url.startsWith("/api/v1/public") ||
+      url.startsWith("/api/users")
+    ) {
+      // Use internal web app URL
+      baseUrl = process.env.VERCEL_URL
+        ? `https://${process.env.VERCEL_URL}`
+        : process.env.NEXTAUTH_URL || "http://localhost:3000";
+    } else {
+      // External API calls (if ever needed)
+      baseUrl =
+        process.env.API_URL ||
+        process.env.NEXT_PUBLIC_API_URL ||
+        "http://localhost:4000";
+    }
+  } else {
+    // CLIENT-SIDE: Use public API URL
+    baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+  }
+
   const fullUrl = url.startsWith("http") ? url : `${baseUrl}${url}`;
   // eslint-disable-next-line no-console
-  console.log(`[fetchWithCache] Fetching: ${fullUrl} (baseUrl: ${baseUrl})`);
+  console.log(
+    `[fetchWithCache] ${typeof window === "undefined" ? "SERVER" : "CLIENT"} - Fetching: ${fullUrl} (baseUrl: ${baseUrl})`,
+  );
 
   try {
     const response = await fetch(fullUrl, finalConfig);

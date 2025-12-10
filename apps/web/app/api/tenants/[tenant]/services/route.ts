@@ -54,7 +54,20 @@ export async function POST(
         active: serviceData.active,
         metadata: serviceData.metadata || null,
       })
-      .returning();
+      .returning({
+        id: services.id,
+        tenantId: services.tenantId,
+        name: services.name,
+        description: services.description,
+        price: services.price,
+        imageUrl: services.imageUrl,
+        duration: services.duration,
+        featured: services.featured,
+        active: services.active,
+        metadata: services.metadata,
+        createdAt: services.createdAt,
+        updatedAt: services.updatedAt,
+      });
 
     return NextResponse.json({ data: newService }, { status: 201 });
   } catch (error) {
