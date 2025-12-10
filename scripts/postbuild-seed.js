@@ -17,8 +17,9 @@ try {
 
   // Verificar si tenemos el token de seed
   if (!process.env.VERCEL_SEED_TOKEN) {
-    console.error('❌ VERCEL_SEED_TOKEN environment variable is required');
-    process.exit(1);
+    console.log('⏭️  VERCEL_SEED_TOKEN not set, skipping seed...');
+    console.log('ℹ️  To enable automatic seeding, set VERCEL_SEED_TOKEN in your environment');
+    process.exit(0);
   }
 
   console.log('🔄 Running database seed...');
