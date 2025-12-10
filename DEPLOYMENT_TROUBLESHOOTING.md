@@ -128,6 +128,45 @@ Params no están usando Promise o falta await
 
 ## Errores de Base de Datos
 
+### ❌ Error: "Something went wrong" en páginas de tenant
+
+**Síntomas:**
+
+- Páginas muestran "Something went wrong"
+- Error genérico sin detalles específicos
+- El tenant existe en la DB pero no se carga
+
+**Causa raíz:**
+`NEXT_PUBLIC_API_URL` apunta a `https://sass-store-api.vercel.app` (API app), pero el endpoint `/api/tenants/[tenant]` está en la WEB app. Cuando el servidor hace `fetchStatic` para obtener tenant data, hace HTTP fetch al API app (donde no existe el endpoint) en lugar de consultar directamente la base de datos.
+
+**Solución:**
+Usar acceso directo a la base de datos en Server Components en lugar de HTTP fetch:
+
+```typescript
+// ❌ INCORRECTO - HTTP fetch a API externa
+import { fetchStatic } from "@/lib/api/fetch-with-cache";
+const tenantData = await fetchStatic<TenantData>(`/api/tenants/${tenantSlug}`, [
+  "tenant",
+  tenantSlug,
+]);
+
+// ✅ CORRECTO - Acceso directo a DB
+import { getTenantBySlug } from "@/lib/db/get-tenant";
+const tenantData = await getTenantBySlug(tenantSlug);
+```
+
+**Archivos afectados:**
+
+- `apps/web/app/t/[tenant]/layout.tsx`
+- `apps/web/app/t/[tenant]/clientes/page.tsx`
+- `apps/web/app/t/[tenant]/contact/page.tsx`
+- `apps/web/app/t/[tenant]/page.tsx` (pendiente)
+- `apps/web/app/t/[tenant]/clientes/[id]/page.tsx` (pendiente)
+
+**Documentado en commit:** e539539
+
+---
+
 ### ❌ Error: "Tenant not found" en producción
 
 **Síntomas:**
@@ -282,6 +321,11 @@ curl https://sass-store-web.vercel.app/api/tenants/wondernails/customers
 
 ### 2025-12-09
 
+- ✅ **CRITICAL FIX**: Replaced `fetchStatic` HTTP calls with direct database access for tenant data (commit e539539)
+  - **Root Cause**: `NEXT_PUBLIC_API_URL` pointed to API app, but `/api/tenants/[tenant]` endpoint exists in web app
+  - **Solution**: Created `getTenantBySlug` helper for server-side direct DB queries
+  - **Files Fixed**: layout.tsx, clientes/page.tsx, contact/page.tsx
+  - **Impact**: Fixes "Something went wrong" error on all tenant pages
 - ✅ Fixed seed-production import paths (commit 7f259dd)
 - ✅ Seeded production database with WonderNails tenant
 - ✅ Fixed web API service endpoints with imageUrl support (commit 51473d2)
