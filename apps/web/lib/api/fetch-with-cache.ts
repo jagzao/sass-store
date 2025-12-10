@@ -91,7 +91,7 @@ export async function fetchWithCache<T = unknown>(
   // Determine full URL
   // Server-side: Use internal endpoints from same app
   // Client-side: Use NEXT_PUBLIC_API_URL for external API calls
-  let baseUrl: string;
+  let fullUrl: string;
 
   if (typeof window === "undefined") {
     // SERVER-SIDE: Use same web app endpoints
@@ -101,27 +101,34 @@ export async function fetchWithCache<T = unknown>(
       url.startsWith("/api/v1/public") ||
       url.startsWith("/api/users")
     ) {
-      // Use internal web app URL
-      baseUrl = process.env.VERCEL_URL
+      // IMPORTANT: For internal API routes, Next.js needs absolute URLs
+      // Vercel sets VERCEL_URL automatically (without protocol)
+      const baseUrl = process.env.VERCEL_URL
         ? `https://${process.env.VERCEL_URL}`
-        : process.env.NEXTAUTH_URL || "http://localhost:3000";
+        : process.env.NEXTAUTH_URL ||
+          process.env.NEXT_PUBLIC_SITE_URL ||
+          "http://localhost:3000";
+
+      fullUrl = `${baseUrl}${url}`;
+      // eslint-disable-next-line no-console
+      console.log(`[fetchWithCache] SERVER - Internal API: ${fullUrl}`);
     } else {
       // External API calls (if ever needed)
-      baseUrl =
+      const baseUrl =
         process.env.API_URL ||
         process.env.NEXT_PUBLIC_API_URL ||
         "http://localhost:4000";
+      fullUrl = url.startsWith("http") ? url : `${baseUrl}${url}`;
+      // eslint-disable-next-line no-console
+      console.log(`[fetchWithCache] SERVER - External API: ${fullUrl}`);
     }
   } else {
     // CLIENT-SIDE: Use public API URL
-    baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+    fullUrl = url.startsWith("http") ? url : `${baseUrl}${url}`;
+    // eslint-disable-next-line no-console
+    console.log(`[fetchWithCache] CLIENT - API: ${fullUrl}`);
   }
-
-  const fullUrl = url.startsWith("http") ? url : `${baseUrl}${url}`;
-  // eslint-disable-next-line no-console
-  console.log(
-    `[fetchWithCache] ${typeof window === "undefined" ? "SERVER" : "CLIENT"} - Fetching: ${fullUrl} (baseUrl: ${baseUrl})`,
-  );
 
   try {
     const response = await fetch(fullUrl, finalConfig);
