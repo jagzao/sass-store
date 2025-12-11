@@ -87,14 +87,27 @@ export async function GET(
       return NextResponse.json({ error: "Tenant not found" }, { status: 404 });
     }
 
-    // Fetch customers
+    // Fetch customers with calculated fields
     const tenantCustomers = await db
       .select()
       .from(customers)
       .where(eq(customers.tenantId, tenant.id))
       .orderBy(desc(customers.createdAt));
 
-    return NextResponse.json({ customers: tenantCustomers });
+    // Transform to include required fields for frontend
+    const customersWithStats = tenantCustomers.map((customer) => ({
+      id: customer.id,
+      name: customer.name,
+      phone: customer.phone,
+      email: customer.email || undefined,
+      status: customer.status,
+      totalSpent: 0, // TODO: Calculate from visits when we have visit data
+      visitCount: 0, // TODO: Calculate from visits when we have visit data
+      lastVisit: undefined, // TODO: Get from visits when we have visit data
+      nextAppointment: undefined, // TODO: Get from bookings when we have booking data
+    }));
+
+    return NextResponse.json({ customers: customersWithStats });
   } catch (error) {
     console.error("Customers GET error:", error);
     return NextResponse.json(
