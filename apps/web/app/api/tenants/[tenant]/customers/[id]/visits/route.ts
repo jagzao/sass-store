@@ -1,4 +1,3 @@
-
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@sass-store/database";
 import {
@@ -17,7 +16,9 @@ const createVisitSchema = z.object({
   notes: z.string().optional(),
   nextVisitFrom: z.string().nullable().optional(),
   nextVisitTo: z.string().nullable().optional(),
-  status: z.enum(["pending", "scheduled", "completed", "cancelled"]).default("completed"),
+  status: z
+    .enum(["pending", "scheduled", "completed", "cancelled"])
+    .default("completed"),
   services: z.array(
     z.object({
       serviceId: z.string(),
@@ -25,19 +26,21 @@ const createVisitSchema = z.object({
       unitPrice: z.number(),
       quantity: z.number(),
       subtotal: z.number(),
-    })
+    }),
   ),
-  photos: z.array(
-    z.object({
-      url: z.string(),
-      type: z.enum(["BEFORE", "AFTER"]),
-    })
-  ).optional(),
+  photos: z
+    .array(
+      z.object({
+        url: z.string(),
+        type: z.enum(["BEFORE", "AFTER"]),
+      }),
+    )
+    .optional(),
 });
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ tenant: string; id: string }> }
+  { params }: { params: Promise<{ tenant: string; id: string }> },
 ) {
   try {
     const { tenant: tenantSlug, id: customerId } = await params;
@@ -57,7 +60,7 @@ export async function GET(
     const visits = await db.query.customerVisits.findMany({
       where: and(
         eq(customerVisits.customerId, customerId),
-        eq(customerVisits.tenantId, tenant.id)
+        eq(customerVisits.tenantId, tenant.id),
       ),
       with: {
         services: {
@@ -73,6 +76,7 @@ export async function GET(
     // Transform scans to match frontend expectations
     const formattedVisits = visits.map((visit) => ({
       ...visit,
+      totalAmount: Number(visit.totalAmount), // Convert decimal string to number
       services: visit.services.map((vs) => ({
         id: vs.serviceId, // CRITICAL: Frontend expects Service Definition ID here
         serviceName: vs.service.name,
@@ -87,14 +91,14 @@ export async function GET(
     console.error("Visits GET error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ tenant: string; id: string }> }
+  { params }: { params: Promise<{ tenant: string; id: string }> },
 ) {
   try {
     const { tenant: tenantSlug, id: customerId } = await params;
@@ -141,7 +145,7 @@ export async function POST(
             unitPrice: s.unitPrice.toString(),
             quantity: s.quantity.toString(),
             subtotal: s.subtotal.toString(),
-          }))
+          })),
         );
       }
 
@@ -152,7 +156,7 @@ export async function POST(
             visitId: visit.id,
             url: p.url,
             type: p.type,
-          }))
+          })),
         );
       }
 
@@ -166,13 +170,13 @@ export async function POST(
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: "Invalid request body", details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
