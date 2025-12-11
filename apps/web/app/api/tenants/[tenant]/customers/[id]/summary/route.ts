@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@sass-store/database";
-import { customers, tenants, visits } from "@sass-store/database/schema";
-import { eq, and, desc, sql } from "drizzle-orm";
+import {
+  customers,
+  tenants,
+  customerVisits,
+} from "@sass-store/database/schema";
+import { eq, and, desc } from "drizzle-orm";
 
 export async function GET(
   request: NextRequest,
@@ -38,21 +42,20 @@ export async function GET(
     }
 
     // Get all visits for this customer
-    const customerVisits = await db
+    const allVisits = await db
       .select()
-      .from(visits)
-      .where(eq(visits.customerId, customerId))
-      .orderBy(desc(visits.visitDate));
+      .from(customerVisits)
+      .where(eq(customerVisits.customerId, customerId))
+      .orderBy(desc(customerVisits.visitDate));
 
     // Calculate summary statistics
-    const totalSpent = customerVisits.reduce((sum, visit) => {
-      return sum + parseFloat(visit.totalCost || "0");
+    const totalSpent = allVisits.reduce((sum, visit) => {
+      return sum + parseFloat(visit.totalAmount || "0");
     }, 0);
 
-    const visitCount = customerVisits.length;
+    const visitCount = allVisits.length;
 
-    const lastVisit =
-      customerVisits.length > 0 ? customerVisits[0].visitDate : undefined;
+    const lastVisit = allVisits.length > 0 ? allVisits[0].visitDate : undefined;
 
     // TODO: Implement nextAppointment when bookings table is created
     const nextAppointment = undefined;
