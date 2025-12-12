@@ -17,11 +17,26 @@ import TenantHeader from "@/components/ui/TenantHeader";
 
 export default function ProductsPage() {
   const params = useParams();
-  const tenantSlug = params.tenant as string;
   const { addItem } = useCart();
 
+  const [tenantSlug, setTenantSlug] = useState<string>("");
   const [tenantData, setTenantData] = useState<TenantData | null>(null);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const resolveParams = async () => {
+      try {
+        const resolvedParams = await params;
+        setTenantSlug(resolvedParams.tenant as string);
+      } catch (error) {
+        console.error("[PRODUCTS PAGE] Error resolving params:", error);
+        // Fallback to a default tenant if params resolution fails
+        setTenantSlug("unknown");
+      }
+    };
+
+    resolveParams();
+  }, [params]);
 
   useEffect(() => {
     const loadTenantData = async () => {

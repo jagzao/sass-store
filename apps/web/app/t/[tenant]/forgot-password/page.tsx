@@ -6,7 +6,22 @@ import Link from "next/link";
 
 export default function ForgotPasswordPage() {
   const params = useParams();
-  const tenantSlug = params?.tenant as string;
+  // In client components, we need to handle the params Promise properly
+  const [tenantSlug, setTenantSlug] = useState<string>("");
+
+  useEffect(() => {
+    // Since params is a Promise, we need to unwrap it
+    const unwrapParams = async () => {
+      try {
+        const resolvedParams = await params;
+        setTenantSlug(resolvedParams.tenant as string);
+      } catch (error) {
+        console.error("Error resolving params:", error);
+      }
+    };
+
+    unwrapParams();
+  }, [params]);
   const [tenantData, setTenantData] = useState<any>(null);
 
   const [email, setEmail] = useState("");
@@ -42,15 +57,17 @@ export default function ForgotPasswordPage() {
       });
 
       if (!response.ok) {
-        const data = await response.json().catch(() => ({ error: "Error al enviar el correo" }));
+        const data = await response
+          .json()
+          .catch(() => ({ error: "Error al enviar el correo" }));
         throw new Error(data.error || "Error al enviar el correo");
       }
 
       const data = await response.json().catch(() => ({ success: true }));
-      console.log('[ForgotPassword] Success response:', data);
+      console.log("[ForgotPassword] Success response:", data);
       setSuccess(true);
     } catch (err: any) {
-      console.error('[ForgotPassword] Error:', err);
+      console.error("[ForgotPassword] Error:", err);
       setError(err.message);
     } finally {
       setIsLoading(false);

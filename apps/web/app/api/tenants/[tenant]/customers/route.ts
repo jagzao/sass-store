@@ -3,6 +3,11 @@ import { db } from "@sass-store/database";
 import { customers, tenants } from "@sass-store/database/schema";
 import { eq, desc } from "drizzle-orm";
 import { z } from "zod";
+import {
+  applyRateLimit,
+  createRateLimitHeaders,
+  rateLimitMiddleware,
+} from "@sass-store/core/rate-limit";
 
 const createCustomerSchema = z.object({
   name: z.string().min(1).max(200),
@@ -18,6 +23,12 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ tenant: string }> },
 ) {
+  // Apply rate limiting
+  const rateLimitResponse = await rateLimitMiddleware(request, "customers");
+  if (rateLimitResponse) {
+    return rateLimitResponse;
+  }
+
   try {
     const { tenant: tenantSlug } = await params;
 
@@ -51,6 +62,19 @@ export async function POST(
       })
       .returning();
 
+    // Apply rate limiting headers
+    const rateLimitResult = await applyRateLimit(request, "customers");
+    if (rateLimitResult) {
+      const headers = createRateLimitHeaders(rateLimitResult);
+      return NextResponse.json(
+        { customer: newCustomer },
+        {
+          status: 201,
+          headers,
+        },
+      );
+    }
+
     return NextResponse.json({ customer: newCustomer }, { status: 201 });
   } catch (error) {
     console.error("Customers POST error:", error);
@@ -73,6 +97,12 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ tenant: string }> },
 ) {
+  // Apply rate limiting
+  const rateLimitResponse = await rateLimitMiddleware(request, "customers");
+  if (rateLimitResponse) {
+    return rateLimitResponse;
+  }
+
   try {
     const { tenant: tenantSlug } = await params;
 
@@ -106,6 +136,18 @@ export async function GET(
       lastVisit: undefined, // TODO: Get from visits when we have visit data
       nextAppointment: undefined, // TODO: Get from bookings when we have booking data
     }));
+
+    // Apply rate limiting headers
+    const rateLimitResult = await applyRateLimit(request, "customers");
+    if (rateLimitResult) {
+      const headers = createRateLimitHeaders(rateLimitResult);
+      return NextResponse.json(
+        { customers: customersWithStats },
+        {
+          headers,
+        },
+      );
+    }
 
     return NextResponse.json({ customers: customersWithStats });
   } catch (error) {

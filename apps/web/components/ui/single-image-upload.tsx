@@ -45,7 +45,12 @@ export default function SingleImageUpload({
       });
 
       if (!response.ok) {
-        throw new Error("Upload failed");
+        const errorText = await response.text();
+        console.error(
+          `Upload failed: ${response.status} ${response.statusText}`,
+          errorText,
+        );
+        throw new Error(`Upload failed: ${response.status}`);
       }
 
       const data = await response.json();
@@ -65,10 +70,8 @@ export default function SingleImageUpload({
 
   return (
     <div className={cn("space-y-2", className)}>
-      <label className="block text-sm font-medium text-gray-700">
-        {label}
-      </label>
-      
+      <label className="block text-sm font-medium text-gray-700">{label}</label>
+
       <input
         ref={inputRef}
         type="file"
@@ -79,11 +82,11 @@ export default function SingleImageUpload({
       />
 
       {!value ? (
-        <div 
+        <div
           onClick={() => !disabled && !uploading && inputRef.current?.click()}
           className={cn(
             "border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors",
-            (disabled || uploading) && "opacity-50 cursor-not-allowed"
+            (disabled || uploading) && "opacity-50 cursor-not-allowed",
           )}
         >
           {uploading ? (
@@ -97,10 +100,14 @@ export default function SingleImageUpload({
         </div>
       ) : (
         <div className="relative aspect-video w-full rounded-lg overflow-hidden border border-gray-200 group">
-          <img src={value} alt="Uploaded" className="w-full h-full object-cover" />
+          <img
+            src={value}
+            alt="Uploaded"
+            className="w-full h-full object-cover"
+          />
           {!disabled && (
             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-               <Button
+              <Button
                 type="button"
                 variant="destructive"
                 size="icon"
@@ -109,7 +116,6 @@ export default function SingleImageUpload({
                 <X className="h-4 w-4" />
               </Button>
             </div>
-             
           )}
         </div>
       )}
