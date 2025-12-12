@@ -49,6 +49,7 @@ export async function seedTenantData() {
           address:
             "Cda. 1-a Rtno. 21-3, San Lorenzo, 56140 Texcoco de Mora, 56140 México, Méx.",
           website: "https://wondernails.local",
+          googleMaps: "https://maps.app.goo.gl/FS471vtXdFdPTyjEA",
           hours: {
             monday: "9:00-19:00",
             tuesday: "9:00-19:00",
@@ -146,7 +147,8 @@ export async function seedTenantData() {
       {
         slug: "delirios",
         name: "Delirios",
-        description: "Restaurante gourmet con cocina fusión y experiencias culinarias únicas",
+        description:
+          "Restaurante gourmet con cocina fusión y experiencias culinarias únicas",
         mode: "booking",
         status: "active",
         branding: {
@@ -271,18 +273,18 @@ export async function seedTenantData() {
 
         console.log(`✅ Created tenant: ${tenant.slug}`);
         return newTenant;
-      })
+      }),
     );
 
     // Create lookup map (filter out undefined values)
     const tenantMap = insertedTenants
-      .filter(t => t && t.slug && t.id)
+      .filter((t) => t && t.slug && t.id)
       .reduce(
         (acc, tenant) => {
           acc[tenant.slug] = tenant.id;
           return acc;
         },
-        {} as Record<string, string>
+        {} as Record<string, string>,
       );
 
     // 2. Seed Services
@@ -427,7 +429,7 @@ export async function seedTenantData() {
           await db.insert(services).values(service);
           console.log(`✅ Created service: ${service.name}`);
         }
-      })
+      }),
     );
 
     // 3. Seed Products
@@ -546,7 +548,7 @@ export async function seedTenantData() {
           await db.insert(products).values(product);
           console.log(`✅ Created product: ${product.name}`);
         }
-      })
+      }),
     );
 
     // 4. Seed Staff
@@ -559,7 +561,7 @@ export async function seedTenantData() {
         phone: "+52 55 6406 8409",
         active: true,
         specialties: ["manicure", "pedicure", "nail-art", "gel-extensions"],
-      }
+      },
     ];
 
     await Promise.all(
@@ -574,7 +576,7 @@ export async function seedTenantData() {
           await db.insert(staff).values(member);
           console.log(`✅ Created staff: ${member.name}`);
         }
-      })
+      }),
     );
 
     console.log("🎉 Database seed completed successfully!");
