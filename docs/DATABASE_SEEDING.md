@@ -53,6 +53,25 @@ El script `seed.sql` ejecuta `TRUNCATE TABLE ... CASCADE` que **BORRA TODOS LOS 
 
 Este comando era **EXTREMADAMENTE PELIGROSO** si se ejecutaba accidentalmente con `DATABASE_URL` apuntando a producción.
 
+## ⚠️ MEDIDAS DE SEGURIDAD ADICIONALES (2024-12-12)
+
+Después de identificar pérdida de datos en producción, se tomaron medidas adicionales:
+
+1. **✅ Archivo `seed.sql` renombrado a `seed.sql.DANGEROUS-DO-NOT-USE`**
+   - Ya NO puede ser ejecutado accidentalmente
+   - Conservado para referencia histórica solamente
+
+2. **✅ Scripts destructivos eliminados completamente:**
+   - ❌ `apps/api/scripts/seed.ts` - ELIMINADO
+   - ❌ `apps/api/scripts/seed-custom.ts` - ELIMINADO
+
+3. **⚠️ Scripts seguros que SÍ permanecen:**
+   - ✅ `apps/web/lib/db/seed-data.ts` - SEGURO (solo hace INSERT si no existe)
+   - ✅ `scripts/vercel-seed-production.ts` - SEGURO (verifica datos existentes primero)
+   - ✅ `apps/web/app/system/seed/route.ts` - SEGURO (endpoint manual, no destructivo)
+
+**NINGUNO DE ESTOS SCRIPTS SE EJECUTA AUTOMÁTICAMENTE EN DEPLOY.**
+
 ## Recomendaciones
 
 ### Para Producción (Vercel/Supabase)
