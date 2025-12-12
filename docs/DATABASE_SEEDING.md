@@ -35,28 +35,52 @@ A pesar de hacer el script opcional, el mecanismo de seed automático causaba co
 - 🔒 Los datos en producción están 100% protegidos
 - 📝 Todos los deploys mantienen los datos existentes intactos
 
+## Comando db:seed ELIMINADO (2024-12-11)
+
+**El comando `npm run db:seed` ha sido COMPLETAMENTE ELIMINADO** para proteger los datos de producción.
+
+### ⚠️ Razón de la eliminación
+
+El script `seed.sql` ejecuta `TRUNCATE TABLE ... CASCADE` que **BORRA TODOS LOS DATOS** de:
+
+- Tenants
+- Usuarios
+- Clientes
+- Visitas
+- Productos
+- Servicios
+- Personal
+
+Este comando era **EXTREMADAMENTE PELIGROSO** si se ejecutaba accidentalmente con `DATABASE_URL` apuntando a producción.
+
 ## Recomendaciones
 
-### Para Producción (Vercel)
+### Para Producción (Vercel/Supabase)
 
 1. ✅ Los datos se mantienen persistentes entre deploys
 2. ✅ Para agregar nuevos tenants, usar la UI o API directamente
 3. ✅ NO hay riesgo de pérdida de datos por seed automático
+4. ✅ Para datos iniciales, ejecutar SQL manualmente en Supabase SQL Editor
 
 ### Para Desarrollo Local
 
+Si necesitas seed de datos en desarrollo local:
+
+**Opción A (Recomendada)**: Crear datos manualmente desde la UI
+**Opción B**: Ejecutar el SQL directamente (SOLO en BD local):
+
 ```bash
-# Seed manual cuando sea necesario
-npm run db:seed
+# Asegúrate que DATABASE_URL apunte a BD LOCAL, NO Supabase
+cd apps/api
+npx tsx scripts/seed.ts
 ```
+
+⚠️ **ADVERTENCIA**: El script `apps/api/scripts/seed.ts` sigue existiendo pero **NO está expuesto como comando npm** para evitar ejecución accidental.
 
 ### Para Nueva Instancia (Primera vez)
 
 1. **Opción A (Recomendada)**: Crear datos manualmente usando la UI/API
-2. **Opción B**: Ejecutar seed manualmente una sola vez:
-   ```bash
-   npx tsx scripts/vercel-seed-production.ts
-   ```
+2. **Opción B**: Insertar datos iniciales vía Supabase SQL Editor
 3. ✅ Los datos permanecerán intactos en todos los deploys subsecuentes
 
 ## Archivos Involucrados

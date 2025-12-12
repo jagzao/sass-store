@@ -29,7 +29,6 @@
     "db:generate": "drizzle-kit generate",
     "db:introspect": "drizzle-kit introspect",
     "db:push": "drizzle-kit push --config ./drizzle.config.ts",
-    "db:seed": "cd apps/api && npm run db:seed",
     "autoresume": "ts-node ./tools/autoresume.ts",
     "autoresume:daemon": "ts-node ./tools/autoresume-daemon.ts",
     "autoresume:start": "ts-node ./tools/autoresume-daemon.ts",
