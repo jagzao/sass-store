@@ -17,6 +17,7 @@ export interface TenantContact {
   whatsapp?: string;
   facebook?: string;
   instagram?: string;
+  googleMaps?: string;
 }
 
 export interface TenantLocation {

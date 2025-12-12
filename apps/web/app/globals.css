@@ -324,18 +324,30 @@
 .modal-content,
 .ReactModal__Content,
 .dialog-panel {
-  background-color: #ffffff !important;
   background: #ffffff !important;
-  color: #333333 !important; /* Force text to dark gray */
-  border: 1px solid #e5e5e5 !important; /* Light gray border */
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+  background-color: #ffffff !important;
+  color: #333333 !important;
+  border: 1px solid #c5a059 !important; /* Gold Border */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
 }
 
-/* Kill the neon yellow specifically */
+/* Kill neon yellow backgrounds specifically */
 div[style*="background-color: yellow"],
 div[style*="background-color: #FFFF00"],
-div[style*="background-color: rgb(255, 255, 0)"] {
+div[style*="background-color: rgb(255, 255, 0)"],
+div[style*="background: yellow"],
+div[style*="background: #FFFF00"],
+*[style*="background-color: yellow"],
+*[style*="#ffff00"] {
   background-color: #ffffff !important;
+  background: #ffffff !important;
+}
+
+/* 3. MAP PLACEHOLDER GLOBAL FIX */
+.map-placeholder,
+.google-map-container {
+  background-color: #f0f0f0 !important;
+  border: 1px solid #e0e0e0 !important;
 }
 
 /* 2. SANITIZE THE NAVBAR (The "Cream" Killer) */
