@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Multitenant SaaS platform for beauty salons with 10/10 UX",
   "private": true,
+  "packageManager": "npm@9.8.1",
   "workspaces": [
     "apps/*",
     "packages/*"

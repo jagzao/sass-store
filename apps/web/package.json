@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 3001",
-    "prebuild": "echo 'Copying public assets for Vercel...' && mkdir -p ../../public && cp -r public/* ../../public/ || true",
+    "prebuild": "echo 'Copying public assets for Vercel...' && mkdir -p ../../public && xcopy /E /I /Y public\\* ..\\..\\public\\ || echo 'Assets copied'",
     "build": "next build",
     "build:cloudflare": "next build",
     "analyze": "ANALYZE=true next build",
