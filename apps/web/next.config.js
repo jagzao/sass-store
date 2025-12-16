@@ -17,16 +17,15 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
 
-  // Transpile internal monorepo packages
+  // Transpile internal monorepo packages (excluding database - it's external)
   transpilePackages: [
     "@sass-store/core",
-    "@sass-store/database",
     "@sass-store/ui",
     "@sass-store/config",
     "@sass-store/validation"
   ],
 
-  // Moved from experimental (Next.js 16 recommendation)
+  // Database has native dependencies, keep it external (don't bundle it)
   serverExternalPackages: ["@sass-store/database"],
 
   // Optimized image configuration for performance
