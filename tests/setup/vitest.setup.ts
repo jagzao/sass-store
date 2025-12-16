@@ -22,13 +22,16 @@ beforeAll(async () => {
 });
 
 // Cleanup after each test
+// 🚨 DISABLED FOR SAFETY - Only cleanup if TEST_DATABASE_URL is explicitly set
 afterEach(async () => {
-  if (process.env.DATABASE_URL || process.env.TEST_DATABASE_URL) {
+  if (process.env.TEST_DATABASE_URL) {
     try {
       await cleanupTestData();
     } catch (error) {
       // Silently skip if database is not available
     }
+  } else {
+    // Skip cleanup if not using dedicated test database (prevents production wipes)
   }
 });
 

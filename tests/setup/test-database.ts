@@ -68,8 +68,19 @@ export async function teardownTestDatabase() {
 /**
  * Clean up test data after each test
  * Truncates all tables while preserving schema
+ *
+ * ⚠️ SAFETY: Only runs if TEST_DATABASE_URL is explicitly set
+ * This prevents accidentally wiping production data
  */
 export async function cleanupTestData() {
+  // 🚨 CRITICAL SAFETY CHECK: Only cleanup if using explicit test database
+  if (!process.env.TEST_DATABASE_URL) {
+    console.warn(
+      "⚠️  SKIPPING cleanup - TEST_DATABASE_URL not set (safety protection)",
+    );
+    return;
+  }
+
   if (!testDb || !testClient) return;
 
   // List of tables to clean (in order to avoid foreign key constraints)
