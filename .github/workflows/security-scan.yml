@@ -15,100 +15,26 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  security-agent-scan:
-    name: Security Agent 2025 SAST/DAST
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-
-    steps:
-      - name: 📥 Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0 # Full history for better analysis
-
-      - name: 🔧 Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-          cache: 'npm'
-
-      - name: 📦 Install dependencies
-        run: npm ci
-
-      - name: 🔍 Run Security Agent 2025
-        id: security_scan
-        run: |
-          npm run swarm:start "automated security scan" || true
-          echo "scan_completed=true" >> $GITHUB_OUTPUT
-        continue-on-error: true
-
-      - name: 📊 Parse Security Results
-        id: parse_results
-        run: |
-          # Find latest session file
-          SESSION_FILE=$(ls -t agents/swarm/sessions/*.json 2>/dev/null | head -1)
-
-          if [ -f "$SESSION_FILE" ]; then
-            CRITICAL=$(jq '.tasks[] | select(.agent == "SECURITY") | .output.critical // 0' "$SESSION_FILE")
-            HIGH=$(jq '.tasks[] | select(.agent == "SECURITY") | .output.high // 0' "$SESSION_FILE")
-            MEDIUM=$(jq '.tasks[] | select(.agent == "SECURITY") | .output.medium // 0' "$SESSION_FILE")
-            PASSED=$(jq '.tasks[] | select(.agent == "SECURITY") | .output.passed // false' "$SESSION_FILE")
-
-            echo "critical=$CRITICAL" >> $GITHUB_OUTPUT
-            echo "high=$HIGH" >> $GITHUB_OUTPUT
-            echo "medium=$MEDIUM" >> $GITHUB_OUTPUT
-            echo "passed=$PASSED" >> $GITHUB_OUTPUT
-
-            # Extract report
-            jq -r '.tasks[] | select(.agent == "SECURITY") | .output.report // ""' "$SESSION_FILE" > security-report.md
-          else
-            echo "critical=0" >> $GITHUB_OUTPUT
-            echo "high=0" >> $GITHUB_OUTPUT
-            echo "medium=0" >> $GITHUB_OUTPUT
-            echo "passed=true" >> $GITHUB_OUTPUT
-          fi
-
-      - name: 📤 Upload Security Report
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: security-scan-report
-          path: |
-            agents/swarm/sessions/
-            security-report.md
-          retention-days: 30
-
-      - name: 💬 Comment on PR
-        if: github.event_name == 'pull_request' && steps.parse_results.outputs.passed == 'false'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const fs = require('fs');
-            let report = '## 🔒 Security Scan Results\n\n';
-
-            if (fs.existsSync('security-report.md')) {
-              report += fs.readFileSync('security-report.md', 'utf8');
-            } else {
-              report += '⚠️ Security scan completed with issues. Check artifacts for details.';
-            }
-
-            report += `\n\n---\n`;
-            report += `🔴 Critical: ${{ steps.parse_results.outputs.critical }}\n`;
-            report += `🟠 High: ${{ steps.parse_results.outputs.high }}\n`;
-            report += `🟡 Medium: ${{ steps.parse_results.outputs.medium }}\n`;
-
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: report
-            });
-
-      - name: ❌ Fail if Critical Issues
-        if: steps.parse_results.outputs.critical > 0
-        run: |
-          echo "::error::Security scan failed with ${{ steps.parse_results.outputs.critical }} critical issue(s)"
-          exit 1
+  # Temporarily disabled - Swarm agent has crypto compatibility issues with Node 18+
+  # Re-enable after fixing crypto imports in agents/swarm/
+  # security-agent-scan:
+  #   name: Security Agent 2025 SAST/DAST
+  #   runs-on: ubuntu-latest
+  #   timeout-minutes: 30
+  #   steps:
+  #     - name: 📥 Checkout code
+  #       uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 0
+  #     - name: 🔧 Setup Node.js
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: '18'
+  #         cache: 'npm'
+  #     - name: 📦 Install dependencies
+  #       run: npm ci
+  #     - name: 🔍 Run Security Agent 2025
+  #       run: npm run swarm:start "automated security scan" || true
 
   dependency-scan:
     name: Dependency Vulnerability Scan
@@ -202,7 +128,7 @@ jobs:
   summary:
     name: 📊 Security Summary
     runs-on: ubuntu-latest
-    needs: [security-agent-scan, dependency-scan, secret-scan]
+    needs: [dependency-scan, secret-scan]
     if: always()
 
     steps:
@@ -212,13 +138,14 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
           echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
-          echo "| Security Agent 2025 | ${{ needs.security-agent-scan.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Dependency Scan | ${{ needs.dependency-scan.result == 'success' && '✅ Passed' || '⚠️ Review' }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Secret Detection | ${{ needs.secret-scan.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
+          echo "ℹ️ Security Agent 2025 temporarily disabled - see workflow for details" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
 
-          if [ "${{ needs.security-agent-scan.result }}" != "success" ]; then
-            echo "⚠️ Security scan found critical issues. Review the artifacts for details." >> $GITHUB_STEP_SUMMARY
+          if [ "${{ needs.dependency-scan.result }}" == "success" ] && [ "${{ needs.secret-scan.result }}" == "success" ]; then
+            echo "✅ All active security checks passed!" >> $GITHUB_STEP_SUMMARY
           else
-            echo "✅ All security checks passed!" >> $GITHUB_STEP_SUMMARY
+            echo "⚠️ Some security checks need attention. Review the results above." >> $GITHUB_STEP_SUMMARY
           fi
