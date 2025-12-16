@@ -68,11 +68,8 @@ export default function AdminProductsPage() {
 
   const loadProducts = async () => {
     try {
-      const response = await fetch(`/api/v1/products?limit=100`, {
-        headers: {
-          "x-api-key": process.env.NEXT_PUBLIC_API_KEY || "",
-        },
-      });
+      // Session-based auth - API routes will verify session server-side
+      const response = await fetch(`/api/v1/products?limit=100`);
       if (response.ok) {
         const data = await response.json();
         setProducts(data.data || []);
@@ -98,7 +95,6 @@ export default function AdminProductsPage() {
         method,
         headers: {
           "Content-Type": "application/json",
-          "x-api-key": process.env.NEXT_PUBLIC_API_KEY || "",
         },
         body: JSON.stringify({
           ...formData,
@@ -143,9 +139,6 @@ export default function AdminProductsPage() {
     try {
       const response = await fetch(`/api/v1/products/${productId}`, {
         method: "DELETE",
-        headers: {
-          "x-api-key": process.env.NEXT_PUBLIC_API_KEY || "",
-        },
       });
 
       if (response.ok) {

@@ -86,15 +86,23 @@ jobs:
         run: |
           echo "Scanning for hardcoded secrets..."
 
-          # Check for common secret patterns
-          if git diff-tree --no-commit-id --name-only -r ${{ github.sha }} | xargs grep -iE "(password|secret|api[_-]?key)\s*[:=]\s*['\"][^'\"]{8,}" 2>/dev/null; then
+          # Check for common secret patterns (excluding .env.example files)
+          if git diff-tree --no-commit-id --name-only -r ${{ github.sha }} | grep -v "\.env\.example$" | xargs grep -iE "(password|secret|api[_-]?key)\s*[:=]\s*['\"][^'\"]{8,}" 2>/dev/null; then
             echo "::error::Potential hardcoded secrets detected!"
             exit 1
           fi
 
-          # Check for NEXT_PUBLIC_ secrets
-          if git diff-tree --no-commit-id --name-only -r ${{ github.sha }} | xargs grep -E "NEXT_PUBLIC_.*(SECRET|PRIVATE|KEY|TOKEN|PASSWORD)" 2>/dev/null; then
+          # Check for NEXT_PUBLIC_ secrets (excluding PUBLISHABLE_KEY which is safe by design)
+          if git diff-tree --no-commit-id --name-only -r ${{ github.sha }} | xargs grep -E "NEXT_PUBLIC_.*(SECRET|PRIVATE|TOKEN|PASSWORD)" 2>/dev/null; then
             echo "::error::Secret exposed via NEXT_PUBLIC_ prefix!"
+            exit 1
+          fi
+
+          # Check specifically for API keys (but allow in documentation/templates)
+          if git diff-tree --no-commit-id --name-only -r ${{ github.sha }} | grep -v -E "\.(md|example|template)$" | xargs grep -E "NEXT_PUBLIC_.*API.*KEY" 2>/dev/null; then
+            echo "::warning::API key found with NEXT_PUBLIC prefix - verify this is intentional"
+            echo "Files with NEXT_PUBLIC_API_KEY detected. Please review:"
+            git diff-tree --no-commit-id --name-only -r ${{ github.sha }} | grep -v -E "\.(md|example|template)$" | xargs grep -l "NEXT_PUBLIC_.*API.*KEY" 2>/dev/null || true
             exit 1
           fi
 
