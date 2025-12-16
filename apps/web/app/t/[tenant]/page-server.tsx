@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
-import TenantHeroCarousel from "@/components/ui/TenantHeroCarousel";
+import TenantHero from "@/components/ui/TenantHero";
 import TenantLogo from "@/components/ui/TenantLogo";
 import ProductCard from "@/components/products/ProductCard";
 import ServiceCard from "@/components/services/ServiceCard";
@@ -8,11 +8,7 @@ import TenantPageSkeleton from "@/components/ui/TenantPageSkeleton";
 import { LiveRegionProvider } from "@/components/a11y/LiveRegion";
 import UserMenu from "@/components/auth/UserMenu";
 import { fetchStatic, fetchRevalidating } from "@/lib/api/fetch-with-cache";
-import type {
-  TenantData,
-  Product,
-  Service,
-} from "@/types/tenant";
+import type { TenantData, Product, Service } from "@/types/tenant";
 
 interface PageProps {
   params: {
@@ -36,10 +32,10 @@ export default async function TenantPageServer({ params }: PageProps) {
   let tenantData: TenantData | null = null;
 
   try {
-    tenantData = await fetchStatic<TenantData>(
-      `/api/tenants/${tenantSlug}`,
-      ['tenant', tenantSlug]
-    );
+    tenantData = await fetchStatic<TenantData>(`/api/tenants/${tenantSlug}`, [
+      "tenant",
+      tenantSlug,
+    ]);
   } catch (error) {
     console.error(`[TenantPage] Failed to fetch tenant ${tenantSlug}:`, error);
     // Return 404 if tenant not found
@@ -48,33 +44,84 @@ export default async function TenantPageServer({ params }: PageProps) {
 
   return (
     <LiveRegionProvider>
-      <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+      <div
+        className="min-h-screen bg-gradient-to-b from-white to-gray-50"
+        data-testid="tenant-page"
+      >
+        {/* Skip to main content link for screen readers */}
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-blue-600 text-white px-4 py-2 rounded"
+          data-testid="skip-link"
+        >
+          Saltar al contenido principal
+        </a>
+
         {/* Header with logo and user menu */}
-        <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200">
+        <header
+          className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200"
+          role="banner"
+          data-testid="page-header"
+        >
           <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-            <TenantLogo tenant={tenantData} />
+            <TenantLogo
+              tenantSlug={tenantData.slug}
+              tenantName={tenantData.name}
+              primaryColor={tenantData.branding?.primaryColor || "#000000"}
+            />
             <UserMenu />
           </div>
         </header>
 
         {/* Hero Section - renders immediately */}
-        <section className="relative">
-          <TenantHeroCarousel
-            tenantData={tenantData}
-            featuredProducts={[]}
-            featuredServices={[]}
-          />
-        </section>
+        <main role="main" id="main-content" className="relative">
+          {/* Visible H1 for accessibility and SEO */}
+          <h1
+            className="text-4xl font-bold text-center py-8"
+            data-testid="page-title"
+          >
+            {tenantData.name}
+          </h1>
+          <div className="sr-only" aria-live="polite">
+            Bienvenido a {tenantData.name} -{" "}
+            {tenantData.description || "Inicio"}
+          </div>
+          <TenantHero tenantData={tenantData} />
+        </main>
+
+        {/* Footer with proper ARIA landmark */}
+        <footer
+          role="contentinfo"
+          className="bg-gray-100 py-8 mt-12"
+          data-testid="page-footer"
+        >
+          <div className="container mx-auto px-4 text-center text-gray-600">
+            <p>
+              &copy; {new Date().getFullYear()} {tenantData.name}. Todos los
+              derechos reservados.
+            </p>
+            <div className="sr-only" aria-live="polite">
+              Pie de página con información de derechos de autor
+            </div>
+          </div>
+        </footer>
 
         {/* Products Section - streamed after hero */}
         <Suspense fallback={<ProductsSkeleton />}>
-          <ProductsSection tenantSlug={tenantSlug} tenantMode={tenantData.mode} />
+          <ProductsSection
+            tenantSlug={tenantSlug}
+            tenantMode={tenantData.mode}
+            branding={tenantData.branding}
+          />
         </Suspense>
 
         {/* Services Section - only for booking tenants */}
-        {tenantData.mode === 'booking' && (
+        {tenantData.mode === "booking" && (
           <Suspense fallback={<ServicesSkeleton />}>
-            <ServicesSection tenantSlug={tenantSlug} />
+            <ServicesSection
+              tenantSlug={tenantSlug}
+              branding={tenantData.branding}
+            />
           </Suspense>
         )}
       </div>
@@ -88,15 +135,17 @@ export default async function TenantPageServer({ params }: PageProps) {
  */
 async function ProductsSection({
   tenantSlug,
-  tenantMode
+  tenantMode,
+  branding,
 }: {
   tenantSlug: string;
-  tenantMode: 'booking' | 'catalog';
+  tenantMode: "booking" | "catalog";
+  branding: { primaryColor?: string };
 }) {
   // Fetch products (cached for 5 minutes)
   const productsResponse = await fetchRevalidating<{ data: Product[] }>(
     `/api/v1/public/products?tenant=${tenantSlug}&featured=true&limit=12`,
-    ['products', tenantSlug]
+    ["products", tenantSlug],
   );
 
   const products = productsResponse?.data || [];
@@ -106,16 +155,33 @@ async function ProductsSection({
   }
 
   return (
-    <section className="container mx-auto px-4 py-12">
-      <h2 className="text-3xl font-bold mb-8">
-        {tenantMode === 'catalog' ? 'Productos Destacados' : 'Nuestros Productos'}
+    <section
+      className="container mx-auto px-4 py-12"
+      data-testid="products-section"
+    >
+      <h2 className="text-3xl font-bold mb-8" data-testid="products-title">
+        {tenantMode === "catalog"
+          ? "Productos Destacados"
+          : "Nuestros Productos"}
       </h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+        data-testid="products-grid"
+      >
         {products.map((product) => (
           <ProductCard
             key={product.id}
-            product={product}
+            id={product.id}
+            name={product.name}
+            description={product.description || ""}
+            price={
+              typeof product.price === "string"
+                ? parseFloat(product.price)
+                : product.price
+            }
+            image={product.imageUrl || ""}
             tenantSlug={tenantSlug}
+            primaryColor={branding?.primaryColor || "#000000"}
           />
         ))}
       </div>
@@ -127,11 +193,17 @@ async function ProductsSection({
  * Services Section - async Server Component
  * Fetches and renders services independently
  */
-async function ServicesSection({ tenantSlug }: { tenantSlug: string }) {
+async function ServicesSection({
+  tenantSlug,
+  branding,
+}: {
+  tenantSlug: string;
+  branding: { primaryColor?: string };
+}) {
   // Fetch services (cached for 5 minutes)
   const servicesResponse = await fetchRevalidating<{ data: Service[] }>(
     `/api/v1/public/services?tenant=${tenantSlug}&featured=true&limit=8`,
-    ['services', tenantSlug]
+    ["services", tenantSlug],
   );
 
   const services = servicesResponse?.data || [];
@@ -141,14 +213,31 @@ async function ServicesSection({ tenantSlug }: { tenantSlug: string }) {
   }
 
   return (
-    <section className="container mx-auto px-4 py-12 bg-white">
-      <h2 className="text-3xl font-bold mb-8">Servicios Destacados</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <section
+      className="container mx-auto px-4 py-12 bg-white"
+      data-testid="services-section"
+    >
+      <h2 className="text-3xl font-bold mb-8" data-testid="services-title">
+        Servicios Destacados
+      </h2>
+      <div
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+        data-testid="services-grid"
+      >
         {services.map((service) => (
           <ServiceCard
             key={service.id}
-            service={service}
+            id={service.id}
+            name={service.name}
+            description={service.description || ""}
+            price={
+              typeof service.price === "string"
+                ? parseFloat(service.price)
+                : service.price
+            }
+            duration={service.duration}
             tenantSlug={tenantSlug}
+            primaryColor={branding?.primaryColor || "#000000"}
           />
         ))}
       </div>
@@ -200,23 +289,23 @@ export async function generateMetadata({ params }: PageProps) {
   const tenantSlug = params.tenant;
 
   try {
-    const tenant = await fetchStatic<TenantData>(
-      `/api/tenants/${tenantSlug}`,
-      ['tenant', tenantSlug]
-    );
+    const tenant = await fetchStatic<TenantData>(`/api/tenants/${tenantSlug}`, [
+      "tenant",
+      tenantSlug,
+    ]);
 
     return {
-      title: `${tenant.name} - ${tenant.description || 'Inicio'}`,
+      title: `${tenant.name} - ${tenant.description || "Inicio"}`,
       description: tenant.description || `Bienvenido a ${tenant.name}`,
       openGraph: {
         title: tenant.name,
         description: tenant.description,
-        type: 'website',
+        type: "website",
       },
     };
   } catch {
     return {
-      title: 'Página no encontrada',
+      title: "Página no encontrada",
     };
   }
 }

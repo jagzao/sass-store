@@ -6,24 +6,27 @@ import type { TenantData } from "@/types/tenant";
 import CustomerForm from "@/components/customers/CustomerForm";
 
 interface PageProps {
-  params: {
+  params: Promise<{
     tenant: string;
-  };
+  }>;
 }
 
 export default async function NewCustomerPage({ params }: PageProps) {
-  const tenantSlug = params.tenant;
+  const { tenant: tenantSlug } = await params;
 
   // Fetch tenant data
   let tenantData: TenantData | null = null;
 
   try {
-    tenantData = await fetchStatic<TenantData>(
-      `/api/tenants/${tenantSlug}`,
-      ['tenant', tenantSlug]
-    );
+    tenantData = await fetchStatic<TenantData>(`/api/tenants/${tenantSlug}`, [
+      "tenant",
+      tenantSlug,
+    ]);
   } catch (error) {
-    console.error(`[NewCustomerPage] Failed to fetch tenant ${tenantSlug}:`, error);
+    console.error(
+      `[NewCustomerPage] Failed to fetch tenant ${tenantSlug}:`,
+      error,
+    );
     notFound();
   }
 
@@ -87,13 +90,13 @@ export default async function NewCustomerPage({ params }: PageProps) {
 }
 
 export async function generateMetadata({ params }: PageProps) {
-  const tenantSlug = params.tenant;
+  const { tenant: tenantSlug } = await params;
 
   try {
-    const tenant = await fetchStatic<TenantData>(
-      `/api/tenants/${tenantSlug}`,
-      ['tenant', tenantSlug]
-    );
+    const tenant = await fetchStatic<TenantData>(`/api/tenants/${tenantSlug}`, [
+      "tenant",
+      tenantSlug,
+    ]);
 
     return {
       title: `Nueva Clienta - ${tenant.name}`,
@@ -101,7 +104,7 @@ export async function generateMetadata({ params }: PageProps) {
     };
   } catch (error) {
     return {
-      title: 'Nueva Clienta',
+      title: "Nueva Clienta",
     };
   }
 }

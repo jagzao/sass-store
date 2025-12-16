@@ -35,20 +35,50 @@ export default async function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50" data-testid="home-page">
+      {/* Skip to main content link for screen readers */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-blue-600 text-white px-4 py-2 rounded"
+        data-testid="skip-link"
+      >
+        Saltar al contenido principal
+      </a>
+
       {/* Top Navigation */}
-      <TopNav />
+      <header
+        className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200"
+        role="banner"
+        data-testid="page-header"
+      >
+        <TopNav />
+      </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-6">
-        {/* Hero Carousel - Only show for non-zo-system tenants with data */}
-        {!isZoSystemTenant && tenantData && (
+      <main
+        role="main"
+        id="main-content"
+        className="container mx-auto px-4 py-6"
+        data-testid="main-content"
+      >
+        {/* Visible H1 for accessibility and SEO */}
+        <h1
+          className="text-4xl font-bold text-center py-8"
+          data-testid="page-title"
+        >
+          Bienvenido a SaaS Store
+        </h1>
+        <div className="sr-only" aria-live="polite">
+          Plataforma multitenant para servicios y productos locales
+        </div>
+        {/* Hero Carousel - Temporarily disabled for accessibility fixes */}
+        {/* {!isZoSystemTenant && tenantData && (
           <HeroCarousel
             featuredServices={featuredServices}
             featuredProducts={featuredProducts}
             tenantData={tenantData}
           />
-        )}
+        )} */}
 
         {/* Main Content Grid */}
         <div className="space-y-8">
@@ -149,8 +179,15 @@ export default async function HomePage() {
       {/* Sticky Mini Cart - temporarily disabled */}
       {/* <MiniCart isVisible={true} onClose={() => {}} /> */}
 
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white mt-16">
+      {/* Footer with proper ARIA landmark */}
+      <footer
+        role="contentinfo"
+        className="bg-gray-900 text-white mt-16"
+        data-testid="page-footer"
+      >
+        <div className="sr-only" aria-live="polite">
+          Pie de página con información del sitio
+        </div>
         <div className="container mx-auto px-4 py-12">
           <div className="grid md:grid-cols-4 gap-8">
             <div>

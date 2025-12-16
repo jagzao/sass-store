@@ -113,3 +113,46 @@ export async function PATCH(
     );
   }
 }
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ tenant: string; id: string }> },
+) {
+  try {
+    const { tenant: tenantSlug, id: customerId } = await params;
+
+    // Find tenant
+    const [tenant] = await db
+      .select({ id: tenants.id })
+      .from(tenants)
+      .where(eq(tenants.slug, tenantSlug))
+      .limit(1);
+
+    if (!tenant) {
+      return NextResponse.json({ error: "Tenant not found" }, { status: 404 });
+    }
+
+    // Delete customer
+    const [deletedCustomer] = await db
+      .delete(customers)
+      .where(
+        and(eq(customers.id, customerId), eq(customers.tenantId, tenant.id)),
+      )
+      .returning();
+
+    if (!deletedCustomer) {
+      return NextResponse.json(
+        { error: "Customer not found" },
+        { status: 404 },
+      );
+    }
+
+    return NextResponse.json({ message: "Customer deleted successfully" });
+  } catch (error) {
+    console.error("Customer DELETE error:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
+  }
+}

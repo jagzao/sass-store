@@ -81,7 +81,7 @@ export default function SingleImageUpload({
         disabled={disabled || uploading}
       />
 
-      {!value ? (
+      {!value || value === null || value === undefined ? (
         <div
           onClick={() => !disabled && !uploading && inputRef.current?.click()}
           className={cn(

@@ -1,7 +1,19 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { User, Phone, Mail, Edit, Save, X, MapPin } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { User, Phone, Mail, Edit, Save, X, MapPin, Trash2 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface Customer {
   id: string;
@@ -28,6 +40,8 @@ export default function CustomerFileHeader({
   const [error, setError] = useState<string | null>(null);
   const [editing, setEditing] = useState(false);
   const [editedNotes, setEditedNotes] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     async function fetchCustomer() {
@@ -90,6 +104,29 @@ export default function CustomerFileHeader({
     } catch (error) {
       console.error("Error updating notes:", error);
       alert("Error al guardar las notas");
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!customer) return;
+
+    try {
+      setIsDeleting(true);
+      const response = await fetch(
+        `/api/tenants/${tenantSlug}/customers/${customerId}`,
+        {
+          method: "DELETE",
+        },
+      );
+
+      if (!response.ok) throw new Error("Failed to delete customer");
+
+      router.push(`/t/${tenantSlug}/clientes`);
+      router.refresh();
+    } catch (error) {
+      console.error("Error deleting customer:", error);
+      alert("Error al eliminar la clienta");
+      setIsDeleting(false);
     }
   };
 
@@ -250,6 +287,44 @@ export default function CustomerFileHeader({
               ? "Inactiva"
               : "Bloqueada"}
         </span>
+
+        {/* Delete Button */}
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <button
+              className={`ml-4 p-2 rounded-full transition-colors ${
+                isLuxury
+                  ? "text-red-400 hover:text-red-600 hover:bg-red-50"
+                  : "text-red-400 hover:text-red-600 hover:bg-red-50"
+              }`}
+              title="Eliminar clienta"
+            >
+              <Trash2 className="h-5 w-5" />
+            </button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>
+                ¿Está seguro de eliminar esta clienta?
+              </AlertDialogTitle>
+              <AlertDialogDescription>
+                Esta acción no se puede deshacer. Se eliminará permanentemente
+                la clienta "{customer.name}" y todo su historial de visitas y
+                servicios.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleDelete}
+                className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
+                disabled={isDeleting}
+              >
+                {isDeleting ? "Eliminando..." : "Eliminar"}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
 
       {/* Tags */}

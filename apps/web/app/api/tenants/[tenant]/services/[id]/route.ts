@@ -11,7 +11,10 @@ const updateServiceSchema = z.object({
   name: z.string().min(1).max(200).optional(),
   description: z.string().optional(),
   price: z.number().positive().optional(),
-  imageUrl: z.string().url().optional().nullable(),
+  imageUrl: z.preprocess(
+    (val) => (val === "" ? null : val),
+    z.string().url().optional().nullable(),
+  ),
   duration: z.number().int().positive().optional(),
   featured: z.boolean().optional(),
   active: z.boolean().optional(),
