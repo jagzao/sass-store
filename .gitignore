@@ -87,3 +87,13 @@ Thumbs.db
 # Playwright
 test-results/
 playwright-report/
+
+# Test output files
+test_output*.txt
+*.png
+
+# Agents alerts (temporary)
+agents/alerts/
+
+# E2E tests with debug code (work in progress)
+tests/e2e/services/

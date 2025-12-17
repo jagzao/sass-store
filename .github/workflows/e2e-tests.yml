@@ -47,6 +47,22 @@ jobs:
         env:
           DATABASE_URL: postgresql://test:test@localhost:5432/sassstore_test
 
+      - name: Start application
+        run: npm run dev &
+        env:
+          DATABASE_URL: postgresql://test:test@localhost:5432/sassstore_test
+
+      - name: Wait for application to be ready
+        run: |
+          for i in {1..30}; do
+            if curl -s http://localhost:3001 > /dev/null; then
+              echo "Application is ready"
+              break
+            fi
+            echo "Waiting for application to be ready..."
+            sleep 2
+          done
+
       - name: Run E2E tests
         run: npx playwright test --project=${{ matrix.browser }}
         env:
@@ -107,6 +123,22 @@ jobs:
         run: npm run db:push
         env:
           DATABASE_URL: postgresql://test:test@localhost:5432/sassstore_test
+
+      - name: Start application
+        run: npm run dev &
+        env:
+          DATABASE_URL: postgresql://test:test@localhost:5432/sassstore_test
+
+      - name: Wait for application to be ready
+        run: |
+          for i in {1..30}; do
+            if curl -s http://localhost:3001 > /dev/null; then
+              echo "Application is ready"
+              break
+            fi
+            echo "Waiting for application to be ready..."
+            sleep 2
+          done
 
       - name: Run Mobile E2E tests
         run: npx playwright test --project="${{ matrix.device }}"

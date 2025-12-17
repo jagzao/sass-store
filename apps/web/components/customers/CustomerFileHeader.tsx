@@ -14,6 +14,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { buttonVariants } from "@/components/ui/button";
 
 interface Customer {
   id: string;
@@ -317,7 +318,7 @@ export default function CustomerFileHeader({
               <AlertDialogCancel>Cancelar</AlertDialogCancel>
               <AlertDialogAction
                 onClick={handleDelete}
-                className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
+                className={buttonVariants({ variant: "destructive" })}
                 disabled={isDeleting}
               >
                 {isDeleting ? "Eliminando..." : "Eliminar"}

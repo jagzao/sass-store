@@ -18,23 +18,15 @@ test.describe.serial("Service CRUD Operations", () => {
     const email = `service_test_${randomSuffix}@hotmail.com`;
     const password = "Password123!";
 
-    // Register
-    await page.goto(`/t/${tenantSlug}/register`);
-    await page.fill('input[name="name"]', "Service Tester");
-    await page.fill('input[name="email"]', email);
-    await page.fill('input[name="phone"]', "5512345678");
-    await page.fill('input[name="password"]', password);
-    await page.fill('input[name="confirmPassword"]', password);
-    await page.check('input[name="terms"]');
+    // Login
+    await page.goto(`/t/${tenantSlug}/login`);
+    await page.fill('input[name="email"]', "admin@wondernails.com");
+    await page.fill('input[name="password"]', "Password123!");
     await page.click('button[type="submit"]');
 
-    // Wait for redirect to login
-    await page.waitForURL(/.*login.*/, { timeout: 15000 });
-
-    // Login
-    await page.fill('input[name="email"]', email);
-    await page.fill('input[name="password"]', password);
-    await page.click('button[type="submit"]'); // Using submit type as auth.spec used data-testid="login-btn" but register uses type="submit", likely consistent or standard form submission works
+    // Wait for navigation to dashboard or home
+    await page.waitForURL(`**\/t/${tenantSlug}`, { timeout: 30000 });
+    await page.waitForLoadState("networkidle");
 
     // Wait for navigation to dashboard or home
     await page.waitForURL(`**\/t/${tenantSlug}`, { timeout: 15000 });

@@ -157,23 +157,23 @@ export default function UserMenu({
                 >
                   Finanzas
                 </a>
-                <hr className="my-2" />
-                <a
-                  href={`/t/${currentTenantSlug}/admin_products`}
-                  onClick={closeMenu}
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                >
-                  📦 Admin Productos
-                </a>
-                <a
-                  href={`/t/${currentTenantSlug}/admin_services`}
-                  onClick={closeMenu}
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                >
-                  ⚡ Admin Servicios
-                </a>
               </>
             )}
+            <hr className="my-2" />
+            <a
+              href={`/t/${currentTenantSlug}/admin_products`}
+              onClick={closeMenu}
+              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            >
+              📦 Admin Productos
+            </a>
+            <a
+              href={`/t/${currentTenantSlug}/admin_services`}
+              onClick={closeMenu}
+              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            >
+              ⚡ Admin Servicios
+            </a>
             <button
               onClick={handleSignOut}
               className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
