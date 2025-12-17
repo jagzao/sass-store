@@ -5,6 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import UserMenu from "@/components/auth/UserMenu";
 import SingleImageUpload from "@/components/ui/single-image-upload";
+import { useFormPersist } from "@/hooks/useFormPersist";
 
 interface Service {
   id: string;
@@ -12,6 +13,7 @@ interface Service {
   description: string;
   price: string;
   imageUrl?: string;
+  videoUrl?: string;
   duration: number;
   featured: boolean;
   active: boolean;
@@ -30,14 +32,28 @@ export default function AdminServicesPage() {
   const [currentTenant, setCurrentTenant] = useState<any>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [editingService, setEditingService] = useState<Service | null>(null);
-  const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    price: "",
-    imageUrl: "",
-    duration: "",
-    featured: false,
-    active: true,
+
+  // Form persistence with localStorage
+  const {
+    values: formData,
+    setValues: setFormData,
+    setFieldValue,
+    clearPersistedData,
+    hasDraft,
+    isRestored,
+  } = useFormPersist({
+    key: `service-form-${tenantSlug}`,
+    initialValues: {
+      name: "",
+      description: "",
+      price: "",
+      imageUrl: "",
+      videoUrl: "",
+      duration: "",
+      featured: false,
+      active: true,
+    },
+    excludeFields: [], // No sensitive data in this form
   });
 
   /*
@@ -89,6 +105,7 @@ export default function AdminServicesPage() {
       description: service.description || "",
       price: service.price,
       imageUrl: service.imageUrl || "",
+      videoUrl: service.videoUrl || "",
       duration: service.duration.toString(),
       featured: service.featured,
       active: service.active,
@@ -139,7 +156,7 @@ export default function AdminServicesPage() {
         body: JSON.stringify({
           ...formData,
           price: parseFloat(formData.price),
-          duration: parseInt(formData.duration),
+          duration: parseFloat(formData.duration),
         }),
       });
 
@@ -168,10 +185,12 @@ export default function AdminServicesPage() {
       description: "",
       price: "",
       imageUrl: "",
+      videoUrl: "",
       duration: "",
       featured: false,
       active: true,
     });
+    clearPersistedData(); // Clear persisted draft
   };
 
   /*
@@ -241,7 +260,7 @@ export default function AdminServicesPage() {
                         {service.description || "Sin descripción"}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {service.duration} min
+                        {service.duration} h
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         ${service.price}
@@ -302,9 +321,38 @@ export default function AdminServicesPage() {
           <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-8">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">
-                  {editingService ? "Editar Servicio" : "Crear Nuevo Servicio"}
-                </h2>
+                <div className="flex-1">
+                  <h2 className="text-2xl font-bold text-gray-900">
+                    {editingService
+                      ? "Editar Servicio"
+                      : "Crear Nuevo Servicio"}
+                  </h2>
+                  {hasDraft && !editingService && (
+                    <div className="flex items-center gap-2 mt-2">
+                      <span className="text-sm text-green-600 flex items-center gap-1">
+                        <svg
+                          className="w-4 h-4"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                        Borrador guardado
+                      </span>
+                      <button
+                        type="button"
+                        onClick={clearPersistedData}
+                        className="text-xs text-gray-500 hover:text-gray-700 underline"
+                      >
+                        Limpiar
+                      </button>
+                    </div>
+                  )}
+                </div>
                 <button
                   onClick={closeModal}
                   className="text-gray-600 hover:text-gray-600 text-2xl font-bold"
@@ -322,9 +370,7 @@ export default function AdminServicesPage() {
                     type="text"
                     required
                     value={formData.name}
-                    onChange={(e) =>
-                      setFormData({ ...formData, name: e.target.value })
-                    }
+                    onChange={(e) => setFieldValue("name", e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Ej: Manicure Premium"
                   />
@@ -337,7 +383,7 @@ export default function AdminServicesPage() {
                   <textarea
                     value={formData.description}
                     onChange={(e) =>
-                      setFormData({ ...formData, description: e.target.value })
+                      setFieldValue("description", e.target.value)
                     }
                     rows={3}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -346,11 +392,19 @@ export default function AdminServicesPage() {
                 </div>
 
                 <div>
-                   <SingleImageUpload
+                  <SingleImageUpload
                     value={formData.imageUrl}
-                    onChange={(url) => setFormData({ ...formData, imageUrl: url })}
+                    onChange={(url) => setFieldValue("imageUrl", url)}
                     label="Imagen del Servicio (Opcional)"
-                   />
+                  />
+                </div>
+
+                <div>
+                  <SingleImageUpload
+                    value={formData.videoUrl}
+                    onChange={(url) => setFieldValue("videoUrl", url)}
+                    label="Video del Servicio (Opcional - MP4, WebM)"
+                  />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -363,9 +417,7 @@ export default function AdminServicesPage() {
                       step="0.01"
                       required
                       value={formData.price}
-                      onChange={(e) =>
-                        setFormData({ ...formData, price: e.target.value })
-                      }
+                      onChange={(e) => setFieldValue("price", e.target.value)}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       placeholder="0.00"
                     />
@@ -373,17 +425,18 @@ export default function AdminServicesPage() {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Duración (minutos) *
+                      Duración (Horas) *
                     </label>
                     <input
                       type="number"
+                      step="0.5"
                       required
                       value={formData.duration}
                       onChange={(e) =>
-                        setFormData({ ...formData, duration: e.target.value })
+                        setFieldValue("duration", e.target.value)
                       }
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="60"
+                      placeholder="1.5"
                     />
                   </div>
                 </div>
@@ -394,7 +447,7 @@ export default function AdminServicesPage() {
                       type="checkbox"
                       checked={formData.featured}
                       onChange={(e) =>
-                        setFormData({ ...formData, featured: e.target.checked })
+                        setFieldValue("featured", e.target.checked)
                       }
                       className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                     />
@@ -408,7 +461,7 @@ export default function AdminServicesPage() {
                       type="checkbox"
                       checked={formData.active}
                       onChange={(e) =>
-                        setFormData({ ...formData, active: e.target.checked })
+                        setFieldValue("active", e.target.checked)
                       }
                       className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                     />

@@ -149,10 +149,11 @@ export const services = pgTable(
     name: varchar("name", { length: 200 }).notNull(),
     description: text("description"),
     price: decimal("price", { precision: 10, scale: 2 }).notNull(),
-    duration: integer("duration").notNull(), // minutes
+    duration: decimal("duration", { precision: 4, scale: 1 }).notNull(), // hours
     imageUrl: text("image_url"), // URL principal de la imagen del servicio
     beforeImage: text("before_image"), // URL de la imagen "antes" del servicio
     afterImage: text("after_image"), // URL de la imagen "después" del servicio
+    videoUrl: text("video_url"), // URL del video del servicio
     featured: boolean("featured").default(false),
     active: boolean("active").default(true),
     metadata: jsonb("metadata"),

@@ -1,96 +1,222 @@
-# E2E Tests - Playwright
+# E2E Tests - Guía Completa
 
-Tests end-to-end modernos y limpios para Sass Store.
+## 🚀 Configuración Inicial
 
-## Estructura
-
-```
-tests/e2e/
-├── README.md           # Este archivo
-├── fixtures/           # Fixtures y helpers reutilizables
-├── auth.setup.ts       # Setup de autenticación (proyecto dependency)
-└── *.spec.ts           # Tests organizados por feature
-```
-
-## Ejecutar tests
+### 1. Ejecutar Setup Automático
 
 ```bash
-# Todos los tests
+npm run test:e2e:setup
+```
+
+Este script verifica:
+
+- ✅ Navegadores de Playwright instalados
+- ✅ Archivo `.env.test` configurado
+- ✅ Variables de entorno requeridas
+- ✅ `.gitignore` configurado correctamente
+
+### 2. Configurar Credenciales de Test
+
+Edita `.env.test` con credenciales de tu base de datos de test:
+
+```env
+# ⚠️ IMPORTANTE: Usa una BD separada para tests!
+TEST_DATABASE_URL="postgresql://user:password@localhost:5432/sass_store_test"
+
+TEST_ADMIN_EMAIL="admin@wondernails.com"
+TEST_ADMIN_PASSWORD="Password123!"
+TEST_TENANT_SLUG="wondernails"
+```
+
+## 📋 Scripts Disponibles
+
+### Ejecutar Tests
+
+```bash
+# Ejecutar todos los tests E2E (headless)
 npm run test:e2e
 
-# Solo Chrome
-npm run test:e2e:chromium
-
-# Con interfaz visual
+# Ejecutar con UI interactiva (recomendado para desarrollo)
 npm run test:e2e:ui
 
-# Modo debug
+# Ejecutar con navegador visible
+npm run test:e2e:headed
+
+# Ejecutar con debugger
 npm run test:e2e:debug
-
-# Ver último reporte
-npm run test:e2e:report
 ```
 
-## Escribir tests
+### Ejecutar Tests Específicos
 
-### Test básico
+```bash
+# Solo smoke tests
+npx playwright test tests/e2e/example.spec.ts
+
+# Solo tests de servicios
+npx playwright test tests/e2e/admin/services.spec.ts
+
+# Un test específico por nombre
+npx playwright test -g "should create a new service"
+```
+
+## 🎯 Features Implementadas
+
+### 1. **Form Persistence (localStorage)**
+
+Los formularios guardan automáticamente:
+
+- ✅ Auto-save con debounce (500ms)
+- ✅ Restauración automática al reabrir
+- ✅ Indicador visual "Borrador guardado"
+- ✅ Botón "Limpiar" para eliminar borrador
+- ✅ TTL de 24h (limpieza automática)
+
+**Test:** `tests/e2e/admin/services.spec.ts` - "should validate form persistence"
+
+### 2. **Helpers Reutilizables**
+
+Ubicación: `tests/e2e/helpers/test-helpers.ts`
 
 ```typescript
-import { test, expect } from "@playwright/test";
+// Login como admin
+await loginAsAdmin(page);
 
-test.describe("Feature Name", () => {
-  test("should do something", async ({ page }) => {
-    await page.goto("/");
-    await expect(page.getByRole("heading")).toBeVisible();
-  });
+// Navegar a servicios
+await navigateToAdminServices(page);
+
+// Crear servicio
+await createService(page, {
+  name: "Mi Servicio",
+  price: "50.00",
+  duration: "45",
 });
+
+// Generar nombre único para tests
+const name = generateTestName("Service");
+
+// Manejar diálogos (alert/confirm)
+setupDialogHandler(page, "accept");
 ```
 
-### Con autenticación
+### 3. **Performance Optimizada**
 
-```typescript
-import { test, expect } from "./fixtures/auth.fixture";
+- ✅ Solo Chromium por defecto (otros navegadores opcionales)
+- ✅ Workers en paralelo (50% CPUs)
+- ✅ Timeouts inteligentes (no arbitrarios)
+- ✅ Reutilización de servidor en dev
+- ✅ Screenshots/videos solo en fallos
 
-test.describe("Protected Feature", () => {
-  test.use({ storageState: "playwright/.auth/user.json" });
+### 4. **Seguridad**
 
-  test("should access protected page", async ({ page }) => {
-    await page.goto("/dashboard");
-    // Usuario ya está autenticado
-  });
-});
-```
+- ✅ Credenciales en `.env.test` (no hardcodeadas)
+- ✅ `.env.test` en `.gitignore`
+- ✅ BD de test separada
+- ✅ No expone credenciales en logs
 
-## Mejores prácticas
-
-1. **Usar selectores semánticos**: `getByRole`, `getByLabel`, `getByText`
-2. **Evitar selectores CSS frágiles**: No usar `.class-name` o `#id`
-3. **Tests independientes**: Cada test debe poder ejecutarse solo
-4. **Datos de prueba**: Limpiar después de cada test
-5. **Esperas automáticas**: Playwright espera automáticamente, no usar `sleep()`
-
-## Organización sugerida
+## 📂 Estructura de Tests
 
 ```
 tests/e2e/
+├── README.md                    # Esta guía
+├── helpers/
+│   └── test-helpers.ts          # Funciones reutilizables
+├── admin/
+│   └── services.spec.ts         # CRUD de servicios
 ├── auth/
-│   ├── login.spec.ts
-│   └── register.spec.ts
-├── products/
-│   ├── list.spec.ts
-│   └── details.spec.ts
-├── cart/
-│   └── checkout.spec.ts
-└── admin/
-    └── dashboard.spec.ts
+│   └── full-auth.spec.ts        # Tests de autenticación
+├── customers/
+│   └── customer-workflow.spec.ts # Flujo de clientes
+└── example.spec.ts              # Smoke tests básicos
 ```
 
-## Configuración
+## 🔧 Configuración Avanzada
 
-Ver `playwright.config.ts` en la raíz del proyecto.
+### Timeout Personalizado
 
-- **Base URL**: http://localhost:3001
-- **Navegadores**: Chrome, Firefox, Safari, Mobile
-- **Reintentos**: 2 en CI, 0 en local
-- **Videos**: Solo en fallos
-- **Screenshots**: Solo en fallos
+```typescript
+test("mi test largo", async ({ page }) => {
+  test.setTimeout(60000); // 60 segundos
+  // ... tu código
+});
+```
+
+### Ejecutar en Múltiples Navegadores
+
+Edita `playwright.config.ts` y descomenta:
+
+```typescript
+projects: [
+  { name: "chromium", use: devices["Desktop Chrome"] },
+  { name: "firefox", use: devices["Desktop Firefox"] },  // Descomentar
+  { name: "webkit", use: devices["Desktop Safari"] },    // Descomentar
+],
+```
+
+## 🐛 Debugging
+
+### Ver Tests en Slow Motion
+
+```bash
+npx playwright test --headed --slow-mo=1000
+```
+
+### Generar Trace para Análisis
+
+```bash
+npx playwright test --trace on
+npx playwright show-trace trace.zip
+```
+
+### Ver Screenshots de Fallos
+
+Los screenshots se guardan en: `test-results/`
+
+## ⚠️ Consideraciones Importantes
+
+### 1. Base de Datos de Test
+
+**NUNCA uses la BD de producción**. Los tests pueden:
+
+- Crear datos de prueba
+- Modificar registros
+- Eliminar datos
+
+### 2. Dev Server
+
+Los tests esperan que el dev server esté en `http://localhost:3001`.
+Playwright lo inicia automáticamente.
+
+### 3. Limpieza de Datos
+
+Los tests crean y eliminan datos automáticamente, pero si fallan
+pueden dejar datos residuales. Usa BD de test limpia regularmente.
+
+## 📊 Performance Esperado
+
+En una máquina moderna:
+
+- **Smoke tests:** ~20 segundos
+- **Service CRUD:** ~60 segundos
+- **Suite completa:** ~2-3 minutos
+
+## 🆘 Troubleshooting
+
+### Error: "Browsers not installed"
+
+```bash
+npx playwright install chromium
+```
+
+### Error: ".env.test not found"
+
+```bash
+npm run test:e2e:setup
+```
+
+### Error: "Cannot connect to database"
+
+Verifica que `TEST_DATABASE_URL` en `.env.test` sea correcto.
+
+---
+
+**Última actualización:** 2025-12-17
