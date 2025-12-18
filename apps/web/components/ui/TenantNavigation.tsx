@@ -20,7 +20,6 @@ export default function TenantNavigation({
   const isTransparent = variant === "transparent";
 
   const links = [
-    { name: "Inicio", href: `/t/${tenantSlug}` },
     { name: "Productos", href: `/t/${tenantSlug}/products` },
   ];
 

@@ -6,6 +6,7 @@ import React, {
   useRef,
   useState,
 } from "react";
+import { useRouter } from "next/navigation";
 import { gsap } from "gsap";
 import { Flip } from "gsap/Flip";
 import { useCart } from "@/lib/cart/cart-store";
@@ -41,6 +42,7 @@ export type WnSlide = {
   detail?: string;
   specs?: { label: string; value: string }[];
   bgColor?: string;
+  id?: string;
   type?: "product" | "service"; // producto o servicio
 };
 
@@ -196,16 +198,17 @@ export default function WondernailsCarouselFinal({
 
           if (services.length > 0) {
             const mappedSlides: WnSlide[] = services.map((s: any) => ({
+              id: s.id,
               img: s.imageUrl || "/tenants/wondernails/hero/img1.webp",
               videoUrl: s.videoUrl,
               title: "WONDERNAILS PRO",
               topic: s.name,
-              description: s.description || "Servicio Premium",
+              description: s.shortDescription || s.description || "Servicio Premium",
               badge: "Destacado",
               bgColor: "rgba(180, 140, 200, 0.15)",
               type: "service",
               detailTitle: s.name,
-              detail: s.description,
+              detail: s.longDescription || s.description,
               specs: [
                 { label: "Duración", value: `${s.duration} h` },
                 { label: "Precio", value: `$${s.price}` },
@@ -858,27 +861,30 @@ export default function WondernailsCarouselFinal({
     }
   }, [onAddToCart, slides, addItem]);
 
-  const handleCheckout = useCallback(() => {
-    if (!listRef.current) return;
-    const items = listRef.current.querySelectorAll(`.${styles.item}`);
-    const mainIdx = Number((items[1] as HTMLElement)?.dataset.index ?? 0);
+  const router = useRouter();
 
-    if (onCheckout) {
-      onCheckout(mainIdx);
-    } else {
-      const slide = slides[mainIdx];
-      const priceStr =
-        slide.specs?.find((s) => s.label === "Precio")?.value || "0";
-      const price = parseFloat(priceStr.replace(/[^0-9.]/g, ""));
+  const handleCheckout = useCallback(
+    (idx?: number) => {
+      if (!listRef.current) return;
+      const items = listRef.current.querySelectorAll(`.${styles.item}`);
+      // Default to main item (index 1) if no index provided (e.g. from keyboard)
+      const mainIdx = Number((items[1] as HTMLElement)?.dataset.index ?? 0);
+      const targetIdx = typeof idx === "number" ? idx : mainIdx;
 
-      addItem({
-        sku: `wondernails-service-${mainIdx}`,
-        name: slide.detailTitle || slide.topic || "",
-        price: price,
-        image: slide.img,
-      });
-    }
-  }, [onCheckout, slides, addItem]);
+      // For service booking ("RESERVAR"), navigate to booking page
+      if (onCheckout) {
+        onCheckout(targetIdx);
+      } else {
+        const slide = slides[targetIdx];
+        if (slide?.id) {
+          router.push(`/t/wondernails/booking/${slide.id}`);
+        } else {
+          router.push("/t/wondernails/book");
+        }
+      }
+    },
+    [onCheckout, router, slides],
+  );
 
   // Handle touch start for swipe
   const handleTouchStart = useCallback((e: React.TouchEvent) => {

@@ -39,18 +39,21 @@ export function BookingClient({ tenantData, serviceId }: BookingClientProps) {
   const [paymentProofPreview, setPaymentProofPreview] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const DEPOSIT_AMOUNT = 100; // MXN
-
   // Mock service data - in production this would come from database
   const service = {
     id: serviceId,
     name: "Gel Manicure",
-    price: 44.0,
+    price: 450.0, // Fixed: price > deposit
     duration: 60,
     description:
       "Manicura con gel de larga duración que mantiene tus uñas perfectas por semanas.",
     image: "✨",
   };
+
+  const DEPOSIT_AMOUNT = 100; // MXN
+  // VALIDATION: Deposit cannot exceed total price
+  const safeDeposit = Math.min(DEPOSIT_AMOUNT, service.price);
+  const remainingBalance = Math.max(service.price - safeDeposit, 0);
 
   // Use the specialist from tenant data
   const specialist = tenantData.staff[0] || {
@@ -154,7 +157,7 @@ export function BookingClient({ tenantData, serviceId }: BookingClientProps) {
     }
 
     if (!paymentProof) {
-      alert("Por favor sube el comprobante de pago del depósito de $100 MXN");
+      alert(`Por favor sube el comprobante de pago del depósito de $${safeDeposit} MXN`);
       return;
     }
 
@@ -184,6 +187,8 @@ Te enviaremos una confirmación por SMS.`);
         email: "",
         notes: "",
       });
+      setPaymentProof(null);
+      setPaymentProofPreview("");
     } catch (error) {
       console.error("Booking error:", error);
       alert("Error al crear la reserva. Por favor intenta nuevamente.");
@@ -229,7 +234,7 @@ Te enviaremos una confirmación por SMS.`);
               <div className="flex justify-between border-t pt-2">
                 <span className="text-gray-600 font-medium">Depósito Requerido:</span>
                 <span className="font-bold text-blue-600">
-                  ${DEPOSIT_AMOUNT} MXN
+                  ${safeDeposit} MXN
                 </span>
               </div>
               <div className="flex justify-between">
@@ -245,7 +250,7 @@ Te enviaremos una confirmación por SMS.`);
                 Información de Pago
               </h4>
               <p className="text-sm text-blue-800 mb-2">
-                <strong>Depósito requerido: ${DEPOSIT_AMOUNT} MXN</strong>
+                <strong>Depósito requerido: ${safeDeposit} MXN</strong>
               </p>
               <p className="text-sm text-blue-700">
                 Transferencia/depósito a la cuenta:
@@ -426,7 +431,7 @@ Te enviaremos una confirmación por SMS.`);
                 {/* Payment Proof Upload */}
                 <div className="pt-4 border-t">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Comprobante de Pago del Depósito ($100 MXN) *
+                    Comprobante de Pago del Depósito (${safeDeposit} MXN) *
                   </label>
                   <div className="flex items-center justify-center w-full">
                     <label className="flex flex-col w-full h-32 border-2 border-dashed rounded-lg cursor-pointer hover:bg-gray-50 hover:border-gray-400 transition-colors">
@@ -513,7 +518,7 @@ Te enviaremos una confirmación por SMS.`);
               </h4>
               <p className="text-sm text-yellow-700">
                 Puedes cancelar o reprogramar tu cita hasta 4 horas antes sin
-                costo adicional. <strong>El depósito de $100 MXN es reembolsable</strong> si cancelas con al menos 4 horas de anticipación.
+                costo adicional. <strong>El depósito de ${safeDeposit} MXN es reembolsable</strong> si cancelas con al menos 4 horas de anticipación.
               </p>
             </div>
 
@@ -524,7 +529,7 @@ Te enviaremos una confirmación por SMS.`);
                 Sobre tu Depósito
               </h4>
               <p className="text-sm text-green-700">
-                El depósito de <strong>$100 MXN</strong> se aplicará al costo total del servicio. Pagarás el restante (<strong>${service.price - DEPOSIT_AMOUNT} MXN</strong>) el día de tu cita.
+                El depósito de <strong>${safeDeposit} MXN</strong> se aplicará al costo total del servicio. Pagarás el restante (<strong>${remainingBalance} MXN</strong>) el día de tu cita.
               </p>
             </div>
           </div>

@@ -19,7 +19,7 @@ export interface CarouselItemProps {
   index: number;
   onSeeMore: () => void;
   onAddToCart: () => void;
-  onCheckout: () => void;
+  onCheckout: (index?: number) => void;
   onCloseDetail: () => void;
 }
 
@@ -30,9 +30,9 @@ export const CarouselItem = memo<CarouselItemProps>(
       if (slide.type === "product") {
         onAddToCart();
       } else {
-        onCheckout();
+        onCheckout(index);
       }
-    }, [slide.type, onAddToCart, onCheckout]);
+    }, [slide.type, onAddToCart, onCheckout, index]);
 
     return (
       <article

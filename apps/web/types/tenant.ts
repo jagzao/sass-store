@@ -84,6 +84,8 @@ export interface Service {
   tenantId: string;
   name: string;
   description?: string;
+  shortDescription?: string;
+  longDescription?: string;
   price: string | number;
   duration: number; // minutes
   imageUrl?: string;

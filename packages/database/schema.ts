@@ -154,6 +154,8 @@ export const services = pgTable(
       .notNull(),
     name: varchar("name", { length: 200 }).notNull(),
     description: text("description"),
+    shortDescription: varchar("short_description", { length: 140 }), // Breve descripción para tarjetas (SEO/UI)
+    longDescription: text("long_description"), // Descripción detallada para modal/página
     price: decimal("price", { precision: 10, scale: 2 }).notNull(),
     duration: decimal("duration", { precision: 4, scale: 1 }).notNull(), // hours
     imageUrl: text("image_url"), // URL principal de la imagen del servicio

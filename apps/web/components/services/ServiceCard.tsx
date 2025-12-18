@@ -12,6 +12,8 @@ export interface ServiceCardProps {
   id: string;
   name: string;
   description: string;
+  shortDescription?: string;
+  longDescription?: string;
   price: number;
   duration?: number;
   image?: string;
@@ -30,6 +32,8 @@ const ServiceCard = memo(
     id,
     name,
     description,
+    shortDescription,
+    longDescription,
     price,
     duration,
     image,
@@ -139,7 +143,7 @@ const ServiceCard = memo(
             <p
               className={`mb-4 line-clamp-2 ${isLuxury ? "text-gray-600 font-normal" : "text-gray-600"}`}
             >
-              {description}
+              {shortDescription || description}
             </p>
 
             <div className="flex items-center justify-between mb-6">
@@ -275,7 +279,7 @@ const ServiceCard = memo(
                   <h3 className="text-lg font-semibold mb-2 text-gray-900">
                     Descripción
                   </h3>
-                  <p className="text-gray-600 leading-relaxed">{description}</p>
+                  <p className="text-gray-600 leading-relaxed">{longDescription || description}</p>
                 </div>
 
                 {metadata && Object.keys(metadata).length > 0 && (

@@ -7,6 +7,8 @@ interface Service {
   id: string;
   name: string;
   description: string;
+  shortDescription?: string;
+  longDescription?: string;
   price: number;
   duration: number;
   metadata?: any;
@@ -67,7 +69,7 @@ export function ServicesClient({ services, tenantData }: ServicesClientProps) {
                 </div>
                 <h3 className="text-xl font-semibold mb-2">{service.name}</h3>
                 <p className="text-gray-600 text-sm mb-4">
-                  {service.description}
+                  {service.shortDescription || service.description}
                 </p>
                 <div className="flex justify-between items-center mb-4">
                   <span

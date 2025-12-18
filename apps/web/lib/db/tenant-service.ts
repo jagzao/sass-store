@@ -565,6 +565,8 @@ export class TenantService {
           featured: service.featured,
           active: service.active,
           description: service.description,
+          shortDescription: service.shortDescription,
+          longDescription: service.longDescription,
           metadata: service.metadata,
         }));
       }
@@ -755,6 +757,8 @@ export class TenantService {
               featured: service.featured,
               active: service.active,
               description: service.description,
+              shortDescription: service.shortDescription,
+              longDescription: service.longDescription,
               metadata: service.metadata,
             })),
             products: tenantProducts.map((product: Product) => ({
