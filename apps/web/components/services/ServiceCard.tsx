@@ -81,7 +81,7 @@ const ServiceCard = memo(
           data-testid="service-card"
           className={`rounded-xl overflow-hidden transition-all duration-300 ${
             isLuxury
-              ? "bg-[#1a1a1a]/60 backdrop-blur-md border border-[#D4AF37]/20 hover:border-[#D4AF37]/40 hover:shadow-[0_10px_30px_rgba(212,175,55,0.1)]"
+              ? "bg-white/70 backdrop-blur-md border border-[#D4AF37]/30 hover:border-[#D4AF37]/60 hover:shadow-[0_10px_30px_rgba(212,175,55,0.15)]"
               : "bg-white shadow-lg hover:shadow-xl border border-gray-100"
           }`}
         >
@@ -125,7 +125,7 @@ const ServiceCard = memo(
                 <img
                   src={imageUrl}
                   alt={name}
-                  className="w-full h-48 object-cover rounded-lg"
+                  className="w-full h-48 object-cover rounded-lg shadow-sm"
                 />
               ) : (
                 <div className="text-5xl">{isLuxury ? "" : "⭐"}</div>
@@ -137,7 +137,7 @@ const ServiceCard = memo(
               {name}
             </h3>
             <p
-              className={`mb-4 line-clamp-2 ${isLuxury ? "text-gray-300 font-light" : "text-gray-600"}`}
+              className={`mb-4 line-clamp-2 ${isLuxury ? "text-gray-600 font-normal" : "text-gray-600"}`}
             >
               {description}
             </p>
@@ -145,7 +145,7 @@ const ServiceCard = memo(
             <div className="flex items-center justify-between mb-6">
               <div>
                 <span
-                  className={`text-3xl font-bold ${isLuxury ? "text-white" : ""}`}
+                  className={`text-3xl font-bold ${isLuxury ? "text-[#333333]" : ""}`}
                   style={!isLuxury ? { color: primaryColor } : undefined}
                 >
                   ${price}

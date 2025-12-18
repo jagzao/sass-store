@@ -1,0 +1,1 @@
+ALTER TABLE "services" ADD COLUMN "video_url" text;

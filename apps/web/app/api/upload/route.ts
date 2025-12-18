@@ -26,18 +26,21 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
 
-    // Check if file is an image
-    if (!file.type.startsWith("image/")) {
+    // Check if file is an image or video
+    if (!file.type.startsWith("image/") && !file.type.startsWith("video/")) {
       return NextResponse.json(
-        { error: "File must be an image" },
+        { error: "File must be an image or video" },
         { status: 400 },
       );
     }
 
-    // Check file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
+    // Check file size (max 50MB for videos, 5MB for images)
+    const isVideo = file.type.startsWith("video/");
+    const maxSize = isVideo ? 50 * 1024 * 1024 : 5 * 1024 * 1024;
+
+    if (file.size > maxSize) {
       return NextResponse.json(
-        { error: "File size must be less than 5MB" },
+        { error: `File size must be less than ${isVideo ? "50MB" : "5MB"}` },
         { status: 400 },
       );
     }
@@ -59,7 +62,7 @@ export async function POST(request: NextRequest) {
             const uploadStream = cloudinary.uploader.upload_stream(
               {
                 folder: `sass-store/${folder}`,
-                resource_type: "image",
+                resource_type: "auto",
               },
               (error, result) => {
                 if (error) reject(error);

@@ -15,7 +15,11 @@ const updateServiceSchema = z.object({
     (val) => (val === "" ? null : val),
     z.string().url().optional().nullable(),
   ),
-  duration: z.number().int().positive().optional(),
+  videoUrl: z.preprocess(
+    (val) => (val === "" ? null : val),
+    z.string().url().optional().nullable(),
+  ),
+  duration: z.number().positive().optional(),
   featured: z.boolean().optional(),
   active: z.boolean().optional(),
   metadata: z.record(z.any()).optional(),

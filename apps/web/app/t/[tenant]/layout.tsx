@@ -2,7 +2,6 @@ import { Suspense, type ReactNode } from "react";
 import { notFound } from "next/navigation";
 import TenantHeader from "@/components/ui/TenantHeader";
 import { getTenantBySlug } from "@/lib/server/get-tenant";
-import TemporaryAdminMenu from "@/components/admin/TemporaryAdminMenu";
 
 // Force dynamic rendering for all tenant pages
 export const dynamic = "force-dynamic";
@@ -197,7 +196,6 @@ export default async function TenantLayout({
         variant={isWondernails ? "transparent" : "default"}
       />
       <main>{children}</main>
-      <TemporaryAdminMenu tenantSlug={tenantSlug} />
     </div>
   );
 }

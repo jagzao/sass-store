@@ -107,6 +107,49 @@
   overflow: hidden;
 }
 
+.clickableImgWrap {
+  pointer-events: auto;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.clickableImgWrap:hover {
+  filter: brightness(1.05);
+}
+
+.imgOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0);
+  transition: background 0.3s ease;
+  pointer-events: none;
+}
+
+.clickableImgWrap:hover .imgOverlay {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.imgOverlayText {
+  color: white;
+  font-weight: 700;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+  pointer-events: none;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.clickableImgWrap:hover .imgOverlayText {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 .imgWrap img {
   object-fit: cover !important;
   width: 100%;
@@ -175,6 +218,15 @@
   margin-bottom: 2rem;
   max-width: 400px;
   color: #666666; /* Medium Slate Gray */
+
+  /* Text Clamping for Mobile/Overflow Safety */
+  display: -webkit-box;
+  -webkit-line-clamp: 6; /* Show only 6 lines max */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-height: 10em; /* Fallback height safety */
+  margin-bottom: 20px !important; /* Force space between text and button */
 }
 
 .seeMore {
@@ -369,38 +421,6 @@
   outline-offset: 4px;
 }
 
-.changeBtn {
-  padding: 0.75rem 1.5rem;
-  border-radius: 50px;
-  background: #c5a059;
-  backdrop-filter: blur(10px);
-  border: none;
-  color: white;
-  font-size: 0.85rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  white-space: nowrap;
-}
-
-.changeBtn:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(197, 160, 89, 0.3);
-  background: #b08d45;
-}
-
-.changeBtn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.changeBtn:focus-visible {
-  outline: 2px solid #c5a059;
-  outline-offset: 4px;
-}
-
 /* Responsive */
 @media (max-width: 1024px) {
   .item {
@@ -422,25 +442,56 @@
 }
 
 @media (max-width: 768px) {
+  /* 1. Change Layout to Vertical Stack */
   .item {
-    width: 95%;
-    flex-direction: column;
+    flex-direction: column !important;
+    height: auto !important;
+    min-height: 600px !important;
+    width: 95% !important;
+    margin: 0 auto !important;
     padding: 1.5rem;
   }
 
-  .imgWrap {
+  .item > .imgWrap {
+    order: 1 !important;
+  }
+
+  .item > .introduce {
+    order: 2 !important;
+  }
+
+  /* 2. Fix the Image Area */
+  .imgWrap,
+  .clickableImgWrap {
     position: relative;
-    width: 100%;
-    height: 200px;
+    width: 100% !important;
+    height: 250px !important; /* Fixed height for visual impact */
+    flex: none !important;
     margin-bottom: 1.5rem;
   }
 
+  /* 3. Fix the Text Area */
   .introduce {
+    width: 100% !important;
     max-width: 100%;
+    padding: 20px !important;
+    text-align: center !important; /* Center text for mobile elegance */
   }
 
+  /* 4. Font Sizing Adjustments */
   .topic {
-    font-size: 2rem;
+    font-size: 2rem !important; /* Slightly smaller title */
+  }
+
+  .des {
+    font-size: 0.9rem !important;
+  }
+
+  /* 5. Handle Long Lists (if present) */
+  .introduce ul,
+  .introduce .description-list {
+    text-align: left !important;
+    padding-left: 20px !important;
   }
 
   .detail {

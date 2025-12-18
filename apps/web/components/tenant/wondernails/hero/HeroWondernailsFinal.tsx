@@ -32,6 +32,7 @@ if (typeof window !== "undefined") {
 
 export type WnSlide = {
   img: string;
+  videoUrl?: string;
   title?: string;
   topic?: string;
   description?: string;
@@ -196,6 +197,7 @@ export default function WondernailsCarouselFinal({
           if (services.length > 0) {
             const mappedSlides: WnSlide[] = services.map((s: any) => ({
               img: s.imageUrl || "/tenants/wondernails/hero/img1.webp",
+              videoUrl: s.videoUrl,
               title: "WONDERNAILS PRO",
               topic: s.name,
               description: s.description || "Servicio Premium",
@@ -205,7 +207,7 @@ export default function WondernailsCarouselFinal({
               detailTitle: s.name,
               detail: s.description,
               specs: [
-                { label: "Duración", value: `${s.duration} min` },
+                { label: "Duración", value: `${s.duration} h` },
                 { label: "Precio", value: `$${s.price}` },
               ],
             }));
@@ -234,6 +236,10 @@ export default function WondernailsCarouselFinal({
   const [isDetail, setIsDetail] = useState(false);
   const [navLocked, setNavLocked] = useState(false);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+  // Touch swipe state
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
 
   // Detect test environment or reduced motion
   const isTestEnv =
@@ -874,6 +880,32 @@ export default function WondernailsCarouselFinal({
     }
   }, [onCheckout, slides, addItem]);
 
+  // Handle touch start for swipe
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientX);
+  }, []);
+
+  // Handle touch move for swipe
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  }, []);
+
+  // Handle touch end - detect swipe direction
+  const handleTouchEnd = useCallback(() => {
+    if (!touchStart || !touchEnd) return;
+
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > 50;
+    const isRightSwipe = distance < -50;
+
+    if (isLeftSwipe) {
+      toNext();
+    }
+    if (isRightSwipe) {
+      toPrev();
+    }
+  }, [touchStart, touchEnd, toNext, toPrev]);
+
   return (
     <section
       data-tenant-hero="wondernails"
@@ -892,6 +924,9 @@ export default function WondernailsCarouselFinal({
         if (e.key === "ArrowRight") toNext();
         if (e.key === "ArrowLeft") toPrev();
       }}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
     >
       <div className={styles.glow} />
       <div className={styles.carousel}>

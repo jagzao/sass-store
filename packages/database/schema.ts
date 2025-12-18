@@ -41,6 +41,12 @@ export const tenants = pgTable(
     contact: jsonb("contact").notNull(),
     location: jsonb("location").notNull(),
     quotas: jsonb("quotas").notNull(),
+    // Google Calendar Integration
+    googleCalendarId: varchar("google_calendar_id", { length: 255 }),
+    googleCalendarTokens: jsonb("google_calendar_tokens"), // Stores { access_token, refresh_token, expiry_date, scope, token_type }
+    googleCalendarConnected: boolean("google_calendar_connected")
+      .default(false)
+      .notNull(),
     createdAt: timestamp("created_at").defaultNow(),
     updatedAt: timestamp("updated_at").defaultNow(),
   },
@@ -204,6 +210,7 @@ export const bookings = pgTable(
       .references(() => services.id)
       .notNull(),
     staffId: uuid("staff_id").references(() => staff.id),
+    customerId: uuid("customer_id").references(() => customers.id), // Optional link to registered customer
     customerName: varchar("customer_name", { length: 100 }).notNull(),
     customerEmail: varchar("customer_email", { length: 255 }),
     customerPhone: varchar("customer_phone", { length: 20 }),
@@ -441,6 +448,10 @@ export const bookingsRelations = relations(bookings, ({ one }) => ({
   staff: one(staff, {
     fields: [bookings.staffId],
     references: [staff.id],
+  }),
+  customer: one(customers, {
+    fields: [bookings.customerId],
+    references: [customers.id],
   }),
 }));
 

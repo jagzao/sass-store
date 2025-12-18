@@ -41,7 +41,8 @@ export function RegisterForm({ tenantSlug, primaryColor }: RegisterFormProps) {
       return "El correo electrónico es requerido";
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailRegex =
+      /^[a-zA-Z0-9ñÑáéíóúÁÉÍÓÚüÜ._%+-]+@[a-zA-Z0-9ñÑáéíóúÁÉÍÓÚüÜ.-]+\.[a-zA-Z]{2,}$/;
     if (!emailRegex.test(formData.email)) {
       return "El email es inválido";
     }
@@ -102,14 +103,16 @@ export function RegisterForm({ tenantSlug, primaryColor }: RegisterFormProps) {
       });
 
       if (!response.ok) {
-        const result = await response.json().catch(() => ({ error: "Error al crear la cuenta" }));
+        const result = await response
+          .json()
+          .catch(() => ({ error: "Error al crear la cuenta" }));
         throw new Error(result.error || "Error al crear la cuenta");
       }
 
-      console.log('[RegisterForm] Registration successful, redirecting...');
+      console.log("[RegisterForm] Registration successful, redirecting...");
       router.push(`/t/${tenantSlug}/login?registered=true`);
     } catch (err) {
-      console.error('[RegisterForm] Registration error:', err);
+      console.error("[RegisterForm] Registration error:", err);
       setError(err instanceof Error ? err.message : "Error al crear la cuenta");
       setIsLoading(false);
     }
@@ -117,9 +120,9 @@ export function RegisterForm({ tenantSlug, primaryColor }: RegisterFormProps) {
 
   const updateField = <K extends keyof RegisterFormData>(
     field: K,
-    value: RegisterFormData[K]
+    value: RegisterFormData[K],
   ) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   return (

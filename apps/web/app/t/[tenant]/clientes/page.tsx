@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
-import TenantHeader from "@/components/ui/TenantHeader";
+
 import { LiveRegionProvider } from "@/components/a11y/LiveRegion";
 import { getTenantBySlug } from "@/lib/server/get-tenant";
 import CustomersList from "@/components/customers/CustomersList";

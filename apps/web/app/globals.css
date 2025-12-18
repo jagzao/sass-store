@@ -110,10 +110,11 @@
 
   /* Kill neon yellow backgrounds specifically */
   div[style*="background-color: yellow"],
-  div[style*="background-color: #FFFF00"],
-  div[style*="background-color: rgb(255, 255, 0)"],
   div[style*="background: yellow"],
-  div[style*="background: #FFFF00"] {
+  *[style*="yellow"],
+  .bg-yellow-500,
+  .bg-yellow-400,
+  .bg-yellow-400 {
     background-color: #ffffff !important;
     background: #ffffff !important;
   }
@@ -369,8 +370,26 @@ nav > div {
 /* Ensure input fields inside the modal have a light gray background so they are visible against the new white modal background. */
 [role="dialog"] input,
 [role="dialog"] select,
-[role="dialog"] textarea {
+[role="dialog"] textarea,
+[role="dialog"] button.justify-start {
   background-color: #f9f9f9 !important;
   border: 1px solid #e5e5e5 !important;
   color: #333333 !important;
+}
+
+[role="dialog"] button[variant="outline"],
+[role="dialog"] button.border-input {
+  background-color: #ffffff !important;
+  color: #333333 !important;
+  border: 1px solid #e5e5e5 !important;
+}
+
+[role="dialog"] button[variant="outline"]:hover,
+[role="dialog"] button.border-input:hover {
+  background-color: #f5f5f5 !important;
+}
+
+/* Force white background on the specific date picker trigger */
+[role="dialog"] [data-slot="trigger"] {
+  background-color: #ffffff !important;
 }

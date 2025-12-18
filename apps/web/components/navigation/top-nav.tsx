@@ -10,6 +10,10 @@ interface TenantInfo {
   id: string;
   name: string;
   categories: { value: string; label: string }[];
+  branding?: {
+    logo?: string;
+    primaryColor?: string;
+  };
 }
 
 interface TopNavProps {
@@ -87,17 +91,25 @@ export function TopNav({ tenantInfo }: TopNavProps) {
     >
       <div className="max-w-screen-xl mx-auto px-4">
         <div className="flex items-center justify-between py-3">
-          {/* Logo - Dynamic tenant name */}
+          {/* Logo - Dynamic based on tenant branding */}
           <Link
             href={isZoSystemTenant ? "/" : `/t/${currentTenantSlug}`}
             className="flex items-center space-x-2 hover:opacity-90 transition-opacity"
           >
-            <div
-              className="text-2xl font-bold"
-              style={{ color: "var(--color-brand, #DC2626)" }}
-            >
-              {tenantDisplayName}
-            </div>
+            {tenantInfo?.branding?.logo ? (
+              <img
+                src={tenantInfo.branding.logo}
+                alt={tenantDisplayName}
+                className="h-10 w-auto object-contain max-w-[200px]"
+              />
+            ) : (
+              <div
+                className="text-2xl font-bold"
+                style={{ color: "var(--color-brand, #DC2626)" }}
+              >
+                {tenantDisplayName}
+              </div>
+            )}
           </Link>
 
           {/* Search Bar - Estilo Amazon */}

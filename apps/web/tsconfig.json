@@ -25,6 +25,7 @@
       "@/lib/*": ["./lib/*"],
       "@/components/*": ["./components/*"],
       "@/app/*": ["./app/*"],
+      "@/hooks/*": ["./hooks/*"],
       "@/types/*": ["./types/*"],
       "@sass-store/ui": ["../../packages/ui"],
       "@sass-store/database": ["../../packages/database"],
@@ -39,7 +40,8 @@
     ".next/types/**/*.ts",
     "next-env.d.ts",
     "./.next/types/**/*.ts",
-    ".next/dev/types/**/*.ts"
+    ".next/dev/types/**/*.ts",
+    ".next/dev/dev/types/**/*.ts"
   ],
   "exclude": ["node_modules"]
 }

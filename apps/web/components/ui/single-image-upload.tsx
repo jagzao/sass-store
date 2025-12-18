@@ -17,18 +17,23 @@ export default function SingleImageUpload({
   value,
   onChange,
   disabled,
-  label = "Imagen",
+  label = "Imagen o Video",
   className,
 }: SingleImageUploadProps) {
   const [uploading, setUploading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const isVideo = (url?: string) => {
+    if (!url) return false;
+    return url.match(/\.(mp4|webm|ogg|mov)$/i);
+  };
+
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (!file.type.startsWith("image/")) {
-      alert("Por favor selecciona una imagen válida.");
+    if (!file.type.startsWith("image/") && !file.type.startsWith("video/")) {
+      alert("Por favor selecciona una imagen o video válido.");
       return;
     }
 
@@ -56,8 +61,8 @@ export default function SingleImageUpload({
       const data = await response.json();
       onChange(data.url);
     } catch (error) {
-      console.error("Error uploading image:", error);
-      alert("Error al subir la imagen. Inténtalo de nuevo.");
+      console.error("Error uploading file:", error);
+      alert("Error al subir el archivo. Inténtalo de nuevo.");
     } finally {
       setUploading(false);
       if (inputRef.current) inputRef.current.value = "";
@@ -75,7 +80,7 @@ export default function SingleImageUpload({
       <input
         ref={inputRef}
         type="file"
-        accept="image/*"
+        accept="image/*,video/*"
         onChange={handleFileChange}
         className="hidden"
         disabled={disabled || uploading}
@@ -95,16 +100,24 @@ export default function SingleImageUpload({
             <ImageIcon className="h-8 w-8 text-gray-400 mb-2" />
           )}
           <span className="text-sm text-gray-500">
-            {uploading ? "Subiendo..." : "Click para subir imagen"}
+            {uploading ? "Subiendo..." : "Click para subir imagen o video"}
           </span>
         </div>
       ) : (
         <div className="relative aspect-video w-full rounded-lg overflow-hidden border border-gray-200 group">
-          <img
-            src={value}
-            alt="Uploaded"
-            className="w-full h-full object-cover"
-          />
+          {isVideo(value) ? (
+            <video
+              src={value}
+              controls
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <img
+              src={value}
+              alt="Uploaded"
+              className="w-full h-full object-cover"
+            />
+          )}
           {!disabled && (
             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
               <Button

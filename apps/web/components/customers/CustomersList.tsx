@@ -183,9 +183,9 @@ export default function CustomersList({
                     {customer.phone}
                   </div>
                   {customer.email && (
-                    <div className="text-sm text-gray-500 flex items-center gap-1 mt-1">
-                      <Mail className="h-4 w-4 text-gray-400" />
-                      {customer.email}
+                    <div className="text-sm text-gray-500 flex items-center gap-1 mt-1 max-w-[180px] sm:max-w-none truncate">
+                      <Mail className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                      <span className="truncate">{customer.email}</span>
                     </div>
                   )}
                 </td>

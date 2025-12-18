@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@sass-store/database";
-import { customers, tenants } from "@sass-store/database/schema";
-import { eq, desc } from "drizzle-orm";
+import {
+  customers,
+  tenants,
+  customerVisits,
+} from "@sass-store/database/schema";
+import { eq, desc, sql } from "drizzle-orm";
 import { z } from "zod";
 import {
   applyRateLimit,
@@ -117,23 +121,31 @@ export async function GET(
       return NextResponse.json({ error: "Tenant not found" }, { status: 404 });
     }
 
-    // Fetch customers with calculated fields
-    const tenantCustomers = await db
-      .select()
+    // Fetch customers with calculated fields using aggregation
+    const customersWithStats = await db
+      .select({
+        id: customers.id,
+        name: customers.name,
+        phone: customers.phone,
+        email: customers.email,
+        status: customers.status,
+        totalSpent:
+          sql<number>`COALESCE(SUM(${customerVisits.totalAmount}), 0)`.mapWith(
+            Number,
+          ),
+        visitCount: sql<number>`COUNT(${customerVisits.id})`.mapWith(Number),
+        lastVisit: sql<string>`MAX(${customerVisits.visitDate})`,
+      })
       .from(customers)
+      .leftJoin(customerVisits, eq(customers.id, customerVisits.customerId))
       .where(eq(customers.tenantId, tenant.id))
+      .groupBy(customers.id)
       .orderBy(desc(customers.createdAt));
 
-    // Transform to include required fields for frontend
-    const customersWithStats = tenantCustomers.map((customer) => ({
-      id: customer.id,
-      name: customer.name,
-      phone: customer.phone,
-      email: customer.email || undefined,
-      status: customer.status,
-      totalSpent: 0, // TODO: Calculate from visits when we have visit data
-      visitCount: 0, // TODO: Calculate from visits when we have visit data
-      lastVisit: undefined, // TODO: Get from visits when we have visit data
+    // map undefined email to match interface if needed, although the query handles it
+    const formattedCustomers = customersWithStats.map((c) => ({
+      ...c,
+      email: c.email || undefined,
       nextAppointment: undefined, // TODO: Get from bookings when we have booking data
     }));
 

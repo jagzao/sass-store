@@ -4,10 +4,18 @@ import { users, tenants, userRoles } from "@sass-store/database/schema";
 import { eq, and } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
+import { randomUUID } from "crypto";
+
+const emailRegex =
+  /^[a-zA-Z0-9ñÑáéíóúÁÉÍÓÚüÜ._%+-]+@[a-zA-Z0-9ñÑáéíóúÁÉÍÓÚüÜ.-]+\.[a-zA-Z]{2,}$/;
 
 const registerSchema = z.object({
   name: z.string().min(2),
-  email: z.string().email(),
+  email: z
+    .string()
+    .regex(emailRegex, {
+      message: "El formato del correo electrónico es inválido",
+    }),
   password: z.string().min(8),
   tenantSlug: z.string(),
   phone: z.string().optional(),
@@ -56,9 +64,11 @@ export async function POST(request: NextRequest) {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // 4. Create user
+    const userId = randomUUID();
     const [newUser] = await db
       .insert(users)
       .values({
+        id: userId,
         name,
         email,
         password: hashedPassword,
