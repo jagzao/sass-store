@@ -4,7 +4,7 @@ import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { db } from "@sass-store/database";
 import { users, tenants, staff, userRoles } from "@sass-store/database/schema";
-import { eq, and } from "drizzle-orm";
+import { eq, and, sql } from "@sass-store/database";
 import { validateApiKey, validateSimpleApiKey } from "./auth-api";
 
 const RBAC_ROLES = ["Admin", "Gerente", "Personal", "Cliente"] as const;
@@ -73,7 +73,11 @@ const { handlers, auth, signIn, signOut } = NextAuth({
           tenantSlug: credentials?.tenantSlug,
         });
 
-        if (!credentials?.email || !credentials?.password || !credentials?.tenantSlug) {
+        if (
+          !credentials?.email ||
+          !credentials?.password ||
+          !credentials?.tenantSlug
+        ) {
           console.log("[NextAuth] Missing credentials or tenantSlug");
           return null;
         }
@@ -96,7 +100,7 @@ const { handlers, auth, signIn, signOut } = NextAuth({
           // Verify password
           const passwordMatch = await bcrypt.compare(
             credentials.password as string,
-            user.password
+            user.password,
           );
 
           console.log("[NextAuth] Password match:", passwordMatch);
@@ -121,8 +125,8 @@ const { handlers, auth, signIn, signOut } = NextAuth({
               .where(
                 and(
                   eq(userRoles.userId, user.id),
-                  eq(userRoles.tenantId, tenant.id)
-                )
+                  eq(userRoles.tenantId, tenant.id),
+                ),
               )
               .limit(1);
 
@@ -135,8 +139,8 @@ const { handlers, auth, signIn, signOut } = NextAuth({
                 .where(
                   and(
                     eq(staff.tenantId, tenant.id),
-                    eq(staff.email, user.email!)
-                  )
+                    eq(staff.email, user.email!),
+                  ),
                 )
                 .limit(1);
 
@@ -176,7 +180,7 @@ const { handlers, auth, signIn, signOut } = NextAuth({
 
           console.log(
             "[NextAuth] Authentication successful, returning:",
-            userData
+            userData,
           );
 
           return userData;
@@ -210,7 +214,7 @@ const { handlers, auth, signIn, signOut } = NextAuth({
       ) {
         console.log(
           "[NextAuth] SignIn allowed for provider:",
-          account?.provider
+          account?.provider,
         );
         return true;
       }
@@ -230,7 +234,11 @@ const { handlers, auth, signIn, signOut } = NextAuth({
         session.user.id = token.id;
         session.user.role = token.role;
         session.user.tenantSlug = token.tenantSlug;
-        console.log("[NextAuth] Session updated with user data:", { id: token.id, role: token.role, tenantSlug: token.tenantSlug });
+        console.log("[NextAuth] Session updated with user data:", {
+          id: token.id,
+          role: token.role,
+          tenantSlug: token.tenantSlug,
+        });
       }
 
       console.log("[NextAuth] Returning session:", {
@@ -255,10 +263,18 @@ const { handlers, auth, signIn, signOut } = NextAuth({
         token.id = user.id;
         token.role = user.role;
         token.tenantSlug = user.tenantSlug;
-        console.log("[NextAuth] JWT token updated with user data:", { id: user.id, role: user.role, tenantSlug: user.tenantSlug });
+        console.log("[NextAuth] JWT token updated with user data:", {
+          id: user.id,
+          role: user.role,
+          tenantSlug: user.tenantSlug,
+        });
       }
 
-      console.log("[NextAuth] Returning JWT token:", { id: token?.id, role: token?.role, tenantSlug: token?.tenantSlug });
+      console.log("[NextAuth] Returning JWT token:", {
+        id: token?.id,
+        role: token?.role,
+        tenantSlug: token?.tenantSlug,
+      });
       return token;
     },
   },
@@ -277,4 +293,11 @@ const { handlers, auth, signIn, signOut } = NextAuth({
 });
 
 export const { GET, POST } = handlers;
-export { auth, signIn, signOut, handlers, validateApiKey, validateSimpleApiKey };
+export {
+  auth,
+  signIn,
+  signOut,
+  handlers,
+  validateApiKey,
+  validateSimpleApiKey,
+};

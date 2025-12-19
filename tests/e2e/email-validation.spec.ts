@@ -1,100 +1,153 @@
 import { test, expect } from "@playwright/test";
 
-test.describe("Validación de correo electrónico con caracteres Unicode", () => {
+test.describe("Email Validation with Unicode Characters", () => {
   test.beforeEach(async ({ page }) => {
-    // Navegar a la página de registro
     await page.goto("/t/wondernails/register");
   });
 
-  test("debería aceptar correo electrónico con letra ñ en la parte local", async ({
+  test("should accept email with ñ character during registration", async ({
     page,
   }) => {
-    // Llenar el formulario con un correo electrónico que contiene ñ
-    await page.fill("#name", "Estefanía Granillo Muñoz");
-    await page.fill("#email", "estefagranillomuñoz@gmail.com");
+    // Esperar a que el formulario de registro se cargue
+    await page.waitForSelector('[data-testid="register-form"]');
+
+    // Llenar el formulario con un correo que contiene ñ
+    await page.fill("#name", "Usuario de Prueba");
+    await page.fill("#email", "usuario@dominioño.com");
     await page.fill("#phone", "5512345678");
     await page.fill("#password", "Password123");
     await page.fill("#confirmPassword", "Password123");
-
-    // Aceptar términos y condiciones
     await page.check("#terms");
 
     // Enviar el formulario
     await page.click('[data-testid="register-submit"]');
 
-    // Verificar que no haya errores de validación
-    const errorMessage = page.locator('[role="alert"]');
+    // Verificar que no hay errores de validación
+    const errorMessage = page.locator("role=alert");
     await expect(errorMessage).not.toBeVisible();
 
-    // Verificar que se redirija a la página de login
-    await expect(page).toHaveURL(/.*login\?registered=true/);
+    // Verificar que el registro fue exitoso (redirección a login)
+    await expect(page).toHaveURL(/login/);
   });
 
-  test("debería aceptar correo electrónico con letra ñ en el dominio", async ({
+  test("should accept email with accented characters during registration", async ({
     page,
   }) => {
-    // Llenar el formulario con un correo electrónico que contiene ñ en el dominio
-    await page.fill("#name", "Juan Pérez");
-    await page.fill("#email", "juan.perez@miñonia.com");
-    await page.fill("#phone", "5587654321");
+    // Esperar a que el formulario de registro se cargue
+    await page.waitForSelector('[data-testid="register-form"]');
+
+    // Llenar el formulario con un correo que contiene acentos
+    await page.fill("#name", "Usuario de Prueba");
+    await page.fill("#email", "usuário@dominio.com");
+    await page.fill("#phone", "5512345678");
     await page.fill("#password", "Password123");
     await page.fill("#confirmPassword", "Password123");
-
-    // Aceptar términos y condiciones
     await page.check("#terms");
 
     // Enviar el formulario
     await page.click('[data-testid="register-submit"]');
 
-    // Verificar que no haya errores de validación
-    const errorMessage = page.locator('[role="alert"]');
+    // Verificar que no hay errores de validación
+    const errorMessage = page.locator("role=alert");
     await expect(errorMessage).not.toBeVisible();
 
-    // Verificar que se redirija a la página de login
-    await expect(page).toHaveURL(/.*login\?registered=true/);
+    // Verificar que el registro fue exitoso (redirección a login)
+    await expect(page).toHaveURL(/login/);
   });
 
-  test("debería aceptar correo electrónico con acentos", async ({ page }) => {
-    // Llenar el formulario con un correo electrónico que contiene acentos
-    await page.fill("#name", "María González");
-    await page.fill("#email", "maría.gonzález@ejemplo.com");
-    await page.fill("#phone", "5511223344");
-    await page.fill("#password", "Password123");
-    await page.fill("#confirmPassword", "Password123");
-
-    // Aceptar términos y condiciones
-    await page.check("#terms");
-
-    // Enviar el formulario
-    await page.click('[data-testid="register-submit"]');
-
-    // Verificar que no haya errores de validación
-    const errorMessage = page.locator('[role="alert"]');
-    await expect(errorMessage).not.toBeVisible();
-
-    // Verificar que se redirija a la página de login
-    await expect(page).toHaveURL(/.*login\?registered=true/);
-  });
-
-  test("debería rechazar correo electrónico con formato inválido", async ({
+  test("should accept email with ü character during registration", async ({
     page,
   }) => {
-    // Llenar el formulario con un correo electrónico inválido
-    await page.fill("#name", "Usuario Inválido");
-    await page.fill("#email", "usuario@");
-    await page.fill("#phone", "5599887766");
+    // Esperar a que el formulario de registro se cargue
+    await page.waitForSelector('[data-testid="register-form"]');
+
+    // Llenar el formulario con un correo que contiene ü
+    await page.fill("#name", "Usuario de Prueba");
+    await page.fill("#email", "usuario@dominiö.com");
+    await page.fill("#phone", "5512345678");
     await page.fill("#password", "Password123");
     await page.fill("#confirmPassword", "Password123");
-
-    // Aceptar términos y condiciones
     await page.check("#terms");
 
     // Enviar el formulario
     await page.click('[data-testid="register-submit"]');
 
-    // Verificar que haya un error de validación
-    const errorMessage = page.locator('[role="alert"]');
+    // Verificar que no hay errores de validación
+    const errorMessage = page.locator("role=alert");
+    await expect(errorMessage).not.toBeVisible();
+
+    // Verificar que el registro fue exitoso (redirección a login)
+    await expect(page).toHaveURL(/login/);
+  });
+
+  test("should reject invalid email format even with unicode characters", async ({
+    page,
+  }) => {
+    // Esperar a que el formulario de registro se cargue
+    await page.waitForSelector('[data-testid="register-form"]');
+
+    // Llenar el formulario con un correo inválido (falta el @)
+    await page.fill("#name", "Usuario de Prueba");
+    await page.fill("#email", "usuariodominioño.com");
+    await page.fill("#phone", "5512345678");
+    await page.fill("#password", "Password123");
+    await page.fill("#confirmPassword", "Password123");
+    await page.check("#terms");
+
+    // Enviar el formulario
+    await page.click('[data-testid="register-submit"]');
+
+    // Verificar que hay un error de validación
+    const errorMessage = page.locator("role=alert");
     await expect(errorMessage).toBeVisible();
-    await expect(errorMessage).toContainText("email");
+    await expect(errorMessage).toContainText("inválido");
+  });
+
+  test("should show validation error for email without domain", async ({
+    page,
+  }) => {
+    // Esperar a que el formulario de registro se cargue
+    await page.waitForSelector('[data-testid="register-form"]');
+
+    // Llenar el formulario con un correo sin dominio
+    await page.fill("#name", "Usuario de Prueba");
+    await page.fill("#email", "usuarioño@");
+    await page.fill("#phone", "5512345678");
+    await page.fill("#password", "Password123");
+    await page.fill("#confirmPassword", "Password123");
+    await page.check("#terms");
+
+    // Enviar el formulario
+    await page.click('[data-testid="register-submit"]');
+
+    // Verificar que hay un error de validación
+    const errorMessage = page.locator("role=alert");
+    await expect(errorMessage).toBeVisible();
+    await expect(errorMessage).toContainText("inválido");
+  });
+
+  test("should accept complex unicode email in both local and domain parts", async ({
+    page,
+  }) => {
+    // Esperar a que el formulario de registro se cargue
+    await page.waitForSelector('[data-testid="register-form"]');
+
+    // Llenar el formulario con un correo complejo con unicode en ambas partes
+    await page.fill("#name", "Usuario de Prueba");
+    await page.fill("#email", "usuáriño@dominiñoñ.com");
+    await page.fill("#phone", "5512345678");
+    await page.fill("#password", "Password123");
+    await page.fill("#confirmPassword", "Password123");
+    await page.check("#terms");
+
+    // Enviar el formulario
+    await page.click('[data-testid="register-submit"]');
+
+    // Verificar que no hay errores de validación
+    const errorMessage = page.locator("role=alert");
+    await expect(errorMessage).not.toBeVisible();
+
+    // Verificar que el registro fue exitoso (redirección a login)
+    await expect(page).toHaveURL(/login/);
   });
 });

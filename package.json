@@ -66,7 +66,9 @@
     "test:e2e:report": "playwright show-report",
     "test:e2e:codegen": "playwright codegen http://localhost:3001",
     "prepare": "husky || true",
-    "postinstall": "node -e \"console.log('✓ Dependencies installed with React', require('./node_modules/react/package.json').version)\""
+    "postinstall": "node -e \"console.log('✓ Dependencies installed with React', require('./node_modules/react/package.json').version)\"",
+    "db:backup": "node scripts/backup-database.js",
+    "db:restore": "node scripts/restore-database.js"
   },
   "devDependencies": {
     "@jest/globals": "^30.2.0",
@@ -135,5 +137,9 @@
     "resend": "^6.1.2",
     "web-vitals": "^5.1.0",
     "zod": "^3.25.76"
+  },
+  "optionalDependencies": {
+    "@supabase/supabase-js": "^2.39.0",
+    "@octokit/rest": "^19.0.13"
   }
 }

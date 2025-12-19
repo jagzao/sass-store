@@ -17,21 +17,47 @@ export default function TenantLogo({
   variant = "default",
 }: TenantLogoProps) {
   const [imageError, setImageError] = useState(false);
+  // Retry state: 0 = gold, 1 = flat, 2 = svg, 3 = text (error)
+  const [retryStage, setRetryStage] = useState(0);
 
   const handleImageError = () => {
+    if (tenantSlug === "wondernails") {
+      // If gold fails (0), try flat (1). If flat fails (1), try svg (2). Else error.
+      if (retryStage < 2) {
+        setRetryStage((prev) => prev + 1);
+        return;
+      }
+    }
     setImageError(true);
   };
 
+  const getSrc = () => {
+    if (tenantSlug !== "wondernails") {
+      return `/tenants/${tenantSlug}/logo/logo.svg`;
+    }
+
+    switch (retryStage) {
+      case 0:
+        return `/tenants/${tenantSlug}/logo/logo-gold.png`;
+      case 1:
+        return `/tenants/${tenantSlug}/logo/logo-flat.png`;
+      case 2:
+        return `/tenants/${tenantSlug}/logo/logo.svg`;
+      default:
+        return `/tenants/${tenantSlug}/logo/logo-gold.png`;
+    }
+  };
+
   return (
-    <Link href={`/t/${tenantSlug}`} className="hover:opacity-80 transition-opacity block">
+    <Link
+      href={`/t/${tenantSlug}`}
+      className="hover:opacity-80 transition-opacity block"
+    >
       <div className="flex items-center gap-4">
         {!imageError ? (
           <img
-            src={
-              tenantSlug === "wondernails"
-                ? `/tenants/${tenantSlug}/logo/logo-gold.png`
-                : `/tenants/${tenantSlug}/logo/logo.svg`
-            }
+            key={retryStage} // Force re-render on stage change
+            src={getSrc()}
             alt={`${tenantName} logo`}
             className={`h-16 md:h-20 w-auto transition-all duration-300 ${variant === "transparent" && tenantSlug !== "wondernails" ? "brightness-0 invert" : ""}`}
             onError={handleImageError}

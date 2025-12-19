@@ -15,7 +15,6 @@
   "dependencies": {
     "@sass-store/database": "^0.1.0",
     "bcryptjs": "^3.0.2",
-    "drizzle-orm": "^0.31.0",
     "next": "^16.0.10",
     "next-auth": "^5.0.0-beta.30"
   },

@@ -1,6 +1,6 @@
 import { db } from "@sass-store/database";
 import { tenants, apiKeys } from "@sass-store/database/schema";
-import { eq, and, or, gt, isNull } from "drizzle-orm";
+import { eq, and, or, gt, isNull, sql } from "@sass-store/database";
 import crypto from "crypto";
 
 /**

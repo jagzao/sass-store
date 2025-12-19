@@ -87,7 +87,9 @@ export default function TenantProfilePage() {
     loadTenantData();
   }, [tenantSlug]);
 
-  const [currentRole, setCurrentRole] = useState(session?.user?.role || "Cliente");
+  const [currentRole, setCurrentRole] = useState(
+    (session?.user as any)?.role || "Cliente",
+  );
 
   const handleRoleChange = (newRole: string) => {
     setPendingRole(newRole);
@@ -122,21 +124,23 @@ export default function TenantProfilePage() {
       });
 
       const result = await response.json();
-      
+
       if (response.ok) {
         setCurrentRole(pendingRole);
         // Actualizar la sesión con el nuevo rol
-        await update({ 
-          ...session.user, 
-          role: pendingRole 
+        await update({
+          ...session.user,
+          role: pendingRole,
         });
 
-        const roleName = AVAILABLE_ROLES.find((r) => r.id === pendingRole)?.name;
+        const roleName = AVAILABLE_ROLES.find(
+          (r) => r.id === pendingRole,
+        )?.name;
         showToast(
           roleName
             ? `Tu rol ha sido cambiado a ${roleName}`
             : "Tu rol ha sido actualizado",
-          "success"
+          "success",
         );
       } else {
         showToast(result.error || "Error al actualizar el rol", "error");
@@ -174,14 +178,14 @@ export default function TenantProfilePage() {
       if (response.ok) {
         await update({ name: formData.name.trim() });
         setIsEditing(false);
-        showToast("Tu nombre ha sido actualizado correctamente", 'success');
+        showToast("Tu nombre ha sido actualizado correctamente", "success");
       } else {
         const error = await response.json();
-        showToast(error.error || "Error al actualizar el nombre", 'error');
+        showToast(error.error || "Error al actualizar el nombre", "error");
       }
     } catch (error) {
       console.error("Error updating name:", error);
-      showToast("Error al actualizar el nombre", 'error');
+      showToast("Error al actualizar el nombre", "error");
     } finally {
       setIsLoading(false);
     }
@@ -195,12 +199,15 @@ export default function TenantProfilePage() {
     e.preventDefault();
 
     if (passwordData.newPassword !== passwordData.confirmPassword) {
-      showToast("Las contraseñas no coinciden", 'error');
+      showToast("Las contraseñas no coinciden", "error");
       return;
     }
 
     if (passwordData.newPassword.length < 8) {
-      showToast("La nueva contraseña debe tener al menos 8 caracteres", 'error');
+      showToast(
+        "La nueva contraseña debe tener al menos 8 caracteres",
+        "error",
+      );
       return;
     }
 
@@ -225,14 +232,14 @@ export default function TenantProfilePage() {
           newPassword: "",
           confirmPassword: "",
         });
-        showToast("Tu contraseña ha sido cambiada correctamente", 'success');
+        showToast("Tu contraseña ha sido cambiada correctamente", "success");
       } else {
         const error = await response.json();
-        showToast(error.error || "Error al cambiar la contraseña", 'error');
+        showToast(error.error || "Error al cambiar la contraseña", "error");
       }
     } catch (error) {
       console.error("Error changing password:", error);
-      showToast("Error al cambiar la contraseña", 'error');
+      showToast("Error al cambiar la contraseña", "error");
     } finally {
       setIsLoading(false);
     }
@@ -256,25 +263,18 @@ export default function TenantProfilePage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <a
-                href={`/t/${tenantSlug}`}
-                className="text-sm text-gray-600 hover:text-gray-900 mb-2 inline-block"
-              >
-                ← Volver a {currentTenant?.name || "Inicio"}
-              </a>
-              <h1 className="text-2xl font-bold text-gray-900">Mi Perfil</h1>
-            </div>
-            <UserMenu tenantSlug={tenantSlug} />
-          </div>
-        </div>
-      </header>
-
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
+          <div className="mb-8">
+            <a
+              href={`/t/${tenantSlug}`}
+              className="text-sm text-gray-600 hover:text-gray-900 mb-2 inline-block"
+            >
+              ← Volver a {currentTenant?.name || "Inicio"}
+            </a>
+            <h1 className="text-3xl font-bold text-gray-900">Mi Perfil</h1>
+          </div>
+
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Profile Info */}
             <div className="lg:col-span-2">
@@ -510,13 +510,8 @@ export default function TenantProfilePage() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isLoading}>
-              Cancelar
-            </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={confirmRoleChange}
-              disabled={isLoading}
-            >
+            <AlertDialogCancel disabled={isLoading}>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmRoleChange} disabled={isLoading}>
               {isLoading ? "Actualizando..." : "Confirmar"}
             </AlertDialogAction>
           </AlertDialogFooter>
