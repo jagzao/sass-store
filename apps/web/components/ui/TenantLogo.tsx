@@ -8,6 +8,7 @@ interface TenantLogoProps {
   tenantName: string;
   primaryColor: string;
   variant?: "default" | "transparent";
+  logoUrl?: string; // Add optional logoUrl prop
 }
 
 export default function TenantLogo({
@@ -15,12 +16,17 @@ export default function TenantLogo({
   tenantName,
   primaryColor,
   variant = "default",
+  logoUrl,
 }: TenantLogoProps) {
   const [imageError, setImageError] = useState(false);
   // Retry state: 0 = gold, 1 = flat, 2 = svg, 3 = text (error)
   const [retryStage, setRetryStage] = useState(0);
 
   const handleImageError = () => {
+    if (logoUrl) {
+      setImageError(true);
+      return;
+    }
     if (tenantSlug === "wondernails") {
       // If gold fails (0), try flat (1). If flat fails (1), try svg (2). Else error.
       if (retryStage < 2) {
@@ -32,6 +38,8 @@ export default function TenantLogo({
   };
 
   const getSrc = () => {
+    if (logoUrl) return logoUrl;
+
     if (tenantSlug !== "wondernails") {
       return `/tenants/${tenantSlug}/logo/logo.svg`;
     }
@@ -56,10 +64,10 @@ export default function TenantLogo({
       <div className="flex items-center gap-4">
         {!imageError ? (
           <img
-            key={retryStage} // Force re-render on stage change
+            key={logoUrl || retryStage} // Force re-render on stage change
             src={getSrc()}
             alt={`${tenantName} logo`}
-            className={`h-16 md:h-20 w-auto transition-all duration-300 ${variant === "transparent" && tenantSlug !== "wondernails" ? "brightness-0 invert" : ""}`}
+            className={`h-16 md:h-20 w-auto transition-all duration-300 object-contain ${variant === "transparent" && tenantSlug !== "wondernails" && !logoUrl ? "brightness-0 invert" : ""}`}
             onError={handleImageError}
           />
         ) : (

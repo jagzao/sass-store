@@ -5,6 +5,8 @@ import { eq, and } from "drizzle-orm";
 import { z } from "zod";
 
 const updateCustomerSchema = z.object({
+  name: z.string().min(1, "El nombre es requerido").optional(),
+  phone: z.string().min(1, "El teléfono es requerido").optional(),
   generalNotes: z.string().optional(),
   address: z.string().optional(),
   status: z.enum(["active", "inactive", "blocked"]).optional(),

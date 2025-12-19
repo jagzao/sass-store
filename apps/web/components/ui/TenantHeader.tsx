@@ -48,6 +48,7 @@ export default function TenantHeader({
           tenantName={tenantData.name}
           primaryColor={tenantData.branding.primaryColor}
           variant={variant}
+          logoUrl={tenantData.branding.logo}
         />
         <TenantNavigation
           tenantSlug={tenantData.slug}

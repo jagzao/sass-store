@@ -251,10 +251,12 @@ const { handlers, auth, signIn, signOut } = NextAuth({
 
       return session;
     },
-    async jwt({ token, user }: any) {
+    async jwt({ token, user, trigger, session }: any) {
       console.log("[NextAuth] JWT callback called:", {
+        trigger,
         hasToken: !!token,
         hasUser: !!user,
+        hasSession: !!session,
         tokenId: token?.id,
         userId: user?.id,
       });
@@ -268,6 +270,13 @@ const { handlers, auth, signIn, signOut } = NextAuth({
           role: user.role,
           tenantSlug: user.tenantSlug,
         });
+      }
+
+      if (trigger === "update" && session) {
+        console.log("[NextAuth] JWT update triggered:", session);
+        if (session.role) token.role = session.role;
+        if (session.name) token.name = session.name;
+        // Allows updating other fields if necessary
       }
 
       console.log("[NextAuth] Returning JWT token:", {

@@ -2,7 +2,17 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { User, Phone, Mail, Edit, Save, X, MapPin, Trash2 } from "lucide-react";
+import {
+  User,
+  Phone,
+  Mail,
+  Edit,
+  Save,
+  X,
+  MapPin,
+  Trash2,
+  Plus,
+} from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,7 +24,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 interface Customer {
   id: string;
@@ -41,6 +52,11 @@ export default function CustomerFileHeader({
   const [error, setError] = useState<string | null>(null);
   const [editing, setEditing] = useState(false);
   const [editedNotes, setEditedNotes] = useState("");
+  const [editedName, setEditedName] = useState("");
+  const [editedPhone, setEditedPhone] = useState("");
+  const [editedAddress, setEditedAddress] = useState("");
+  const [editedTags, setEditedTags] = useState<string[]>([]);
+  const [newTag, setNewTag] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
   const router = useRouter();
 
@@ -70,6 +86,10 @@ export default function CustomerFileHeader({
 
         setCustomer(data.customer);
         setEditedNotes(data.customer.generalNotes || "");
+        setEditedName(data.customer.name || "");
+        setEditedPhone(data.customer.phone || "");
+        setEditedAddress(data.customer.address || "");
+        setEditedTags(data.customer.tags || []);
       } catch (error) {
         console.error("Error fetching customer:", error);
         setError(
@@ -85,7 +105,7 @@ export default function CustomerFileHeader({
     fetchCustomer();
   }, [tenantSlug, customerId]);
 
-  const handleSaveNotes = async () => {
+  const handleSave = async () => {
     if (!customer) return;
 
     try {
@@ -94,18 +114,37 @@ export default function CustomerFileHeader({
         {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ generalNotes: editedNotes }),
+          body: JSON.stringify({
+            name: editedName,
+            phone: editedPhone,
+            address: editedAddress,
+            generalNotes: editedNotes,
+            tags: editedTags,
+          }),
         },
       );
 
-      if (!response.ok) throw new Error("Failed to update notes");
+      if (!response.ok) throw new Error("Failed to update customer");
 
-      setCustomer({ ...customer, generalNotes: editedNotes });
+      const updatedData = await response.json();
+
+      setCustomer(updatedData.customer);
       setEditing(false);
     } catch (error) {
-      console.error("Error updating notes:", error);
-      alert("Error al guardar las notas");
+      console.error("Error updating customer:", error);
+      alert("Error al guardar los cambios");
     }
+  };
+
+  const addTag = () => {
+    if (newTag && !editedTags.includes(newTag)) {
+      setEditedTags([...editedTags, newTag]);
+      setNewTag("");
+    }
+  };
+
+  const removeTag = (tagToRemove: string) => {
+    setEditedTags(editedTags.filter((tag) => tag !== tagToRemove));
   };
 
   const handleDelete = async () => {
@@ -228,39 +267,77 @@ export default function CustomerFileHeader({
 
           {/* Info */}
           <div>
-            <h1
-              className={`text-2xl font-bold ${isLuxury ? "text-[#1a1a1a] font-serif" : "text-gray-900"}`}
-            >
-              {customer.name}
-            </h1>
-            <div className="flex flex-wrap items-center gap-4 mt-2">
-              <div
-                className={`flex items-center text-sm ${isLuxury ? "text-gray-600" : "text-gray-600"}`}
+            {editing ? (
+              <Input
+                value={editedName}
+                onChange={(e) => setEditedName(e.target.value)}
+                className={`text-2xl font-bold h-auto py-1 px-2 mb-2 ${
+                  isLuxury
+                    ? "text-[#1a1a1a] font-serif border-[#D4AF37]/50 focus-visible:ring-[#D4AF37]"
+                    : "text-gray-900"
+                }`}
+              />
+            ) : (
+              <h1
+                className={`text-2xl font-bold ${isLuxury ? "text-[#1a1a1a] font-serif" : "text-gray-900"}`}
               >
-                <Phone
-                  className={`h-4 w-4 mr-1 ${isLuxury ? "text-[#D4AF37]" : ""}`}
-                />
-                {customer.phone}
-              </div>
-              {customer.email && (
-                <div
-                  className={`flex items-center text-sm ${isLuxury ? "text-gray-600" : "text-gray-600"}`}
-                >
-                  <Mail
-                    className={`h-4 w-4 mr-1 ${isLuxury ? "text-[#D4AF37]" : ""}`}
-                  />
-                  {customer.email}
+                {customer.name}
+              </h1>
+            )}
+
+            <div className="flex flex-wrap items-center gap-4 mt-2">
+              {editing ? (
+                <div className="flex flex-col gap-2 w-full max-w-md">
+                  <div className="flex items-center gap-2">
+                    <Phone className="h-4 w-4 text-gray-400" />
+                    <Input
+                      value={editedPhone}
+                      onChange={(e) => setEditedPhone(e.target.value)}
+                      placeholder="Teléfono"
+                      className="h-8"
+                    />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <MapPin className="h-4 w-4 text-gray-400" />
+                    <Input
+                      value={editedAddress}
+                      onChange={(e) => setEditedAddress(e.target.value)}
+                      placeholder="Dirección completa"
+                      className="h-8"
+                    />
+                  </div>
                 </div>
-              )}
-              {customer.address && (
-                <div
-                  className={`flex items-center text-sm ${isLuxury ? "text-gray-600" : "text-gray-600"}`}
-                >
-                  <MapPin
-                    className={`h-4 w-4 mr-1 ${isLuxury ? "text-[#D4AF37]" : ""}`}
-                  />
-                  {customer.address}
-                </div>
+              ) : (
+                <>
+                  <div
+                    className={`flex items-center text-sm ${isLuxury ? "text-gray-600" : "text-gray-600"}`}
+                  >
+                    <Phone
+                      className={`h-4 w-4 mr-1 ${isLuxury ? "text-[#D4AF37]" : ""}`}
+                    />
+                    {customer.phone}
+                  </div>
+                  {customer.email && (
+                    <div
+                      className={`flex items-center text-sm ${isLuxury ? "text-gray-600" : "text-gray-600"}`}
+                    >
+                      <Mail
+                        className={`h-4 w-4 mr-1 ${isLuxury ? "text-[#D4AF37]" : ""}`}
+                      />
+                      {customer.email}
+                    </div>
+                  )}
+                  {customer.address && (
+                    <div
+                      className={`flex items-center text-sm ${isLuxury ? "text-gray-600" : "text-gray-600"}`}
+                    >
+                      <MapPin
+                        className={`h-4 w-4 mr-1 ${isLuxury ? "text-[#D4AF37]" : ""}`}
+                      />
+                      {customer.address}
+                    </div>
+                  )}
+                </>
               )}
             </div>
           </div>
@@ -329,10 +406,10 @@ export default function CustomerFileHeader({
       </div>
 
       {/* Tags */}
-      {customer.tags && customer.tags.length > 0 && (
+      {(customer.tags?.length > 0 || editing) && (
         <div className="mb-4">
-          <div className="flex flex-wrap gap-2">
-            {customer.tags.map((tag, index) => (
+          <div className="flex flex-wrap gap-2 items-center">
+            {(editing ? editedTags : customer.tags).map((tag, index) => (
               <span
                 key={index}
                 className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
@@ -342,8 +419,40 @@ export default function CustomerFileHeader({
                 }`}
               >
                 {tag}
+                {editing && (
+                  <button
+                    onClick={() => removeTag(tag)}
+                    className="ml-1 text-gray-400 hover:text-red-500"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                )}
               </span>
             ))}
+            {editing && (
+              <div className="flex items-center gap-1">
+                <Input
+                  value={newTag}
+                  onChange={(e) => setNewTag(e.target.value)}
+                  placeholder="Nuevo tag..."
+                  className="h-6 w-32 text-xs"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      addTag();
+                    }
+                  }}
+                />
+                <Button
+                  onClick={addTag}
+                  size="sm"
+                  variant="ghost"
+                  className="h-6 w-6 p-0"
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -369,7 +478,7 @@ export default function CustomerFileHeader({
           ) : (
             <div className="flex gap-2">
               <button
-                onClick={handleSaveNotes}
+                onClick={handleSave}
                 className={`text-sm ${isLuxury ? "text-green-600 hover:text-green-700" : "text-green-600 hover:text-green-800"} flex items-center gap-1`}
               >
                 <Save className="h-4 w-4" />

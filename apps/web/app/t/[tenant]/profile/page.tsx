@@ -14,6 +14,18 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import {
+  User,
+  Settings,
+  Shield,
+  Key,
+  LogOut,
+  ChevronRight,
+  Loader2,
+  Camera,
+  Store,
+} from "lucide-react";
+import TenantLogoUpload from "@/components/tenant/TenantLogoUpload";
 import { useToast } from "@/components/ui/toast-provider";
 import { useTenantGuard } from "@/lib/auth/hooks/useTenantGuard";
 
@@ -245,6 +257,32 @@ export default function TenantProfilePage() {
     }
   };
 
+  const handleLogoUpdate = async (newUrl: string | null) => {
+    if (!currentTenant?.id) return;
+
+    try {
+      const response = await fetch(`/api/tenants/${tenantSlug}/branding`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ logo: newUrl }),
+      });
+
+      if (response.ok) {
+        showToast("Logo actualizado correctamente", "success");
+        router.refresh();
+        setCurrentTenant((prev: any) => ({
+          ...prev,
+          branding: { ...prev.branding, logo: newUrl },
+        }));
+      } else {
+        showToast("Error al actualizar el logo", "error");
+      }
+    } catch (error) {
+      console.error("Error updating logo:", error);
+      showToast("Error al actualizar el logo", "error");
+    }
+  };
+
   if (status === "loading") {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -265,16 +303,6 @@ export default function TenantProfilePage() {
       {/* Header */}
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
-          <div className="mb-8">
-            <a
-              href={`/t/${tenantSlug}`}
-              className="text-sm text-gray-600 hover:text-gray-900 mb-2 inline-block"
-            >
-              ← Volver a {currentTenant?.name || "Inicio"}
-            </a>
-            <h1 className="text-3xl font-bold text-gray-900">Mi Perfil</h1>
-          </div>
-
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Profile Info */}
             <div className="lg:col-span-2">
@@ -491,6 +519,28 @@ export default function TenantProfilePage() {
                   ))}
                 </div>
               </div>
+
+              {/* Tenant Branding (Admin Only) - Sidebar */}
+              {currentRole === "Admin" && currentTenant && (
+                <div className="mt-8">
+                  <div className="bg-white rounded-lg shadow-md p-6">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="p-2 bg-purple-50 rounded-lg">
+                        <Store className="w-5 h-5 text-purple-600" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-900">
+                          Logo Tenant
+                        </h3>
+                      </div>
+                    </div>
+                    <TenantLogoUpload
+                      currentLogo={currentTenant.branding?.logo}
+                      onLogoChange={handleLogoUpdate}
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
