@@ -7,7 +7,7 @@ import {
   customers,
   services,
 } from "@sass-store/database/schema";
-import { eq, and } from "drizzle-orm";
+import { eq, and, sql } from "drizzle-orm";
 
 /**
  * Google Calendar Sync Endpoint
@@ -287,21 +287,14 @@ export async function GET(
       return NextResponse.json({ error: "Tenant not found" }, { status: 404 });
     }
 
-    // Count synced bookings
+    // Count synced bookings (only those with googleEventId)
     const syncedBookings = await db
       .select()
       .from(bookings)
       .where(
         and(
           eq(bookings.tenantId, tenant.id),
-          // Only count bookings with googleEventId
-          eq(
-            db
-              .select()
-              .from(bookings)
-              .where(eq(bookings.googleEventId, null)) as any,
-            false,
-          ),
+          sql`${bookings.googleEventId} IS NOT NULL`,
         ),
       );
 
