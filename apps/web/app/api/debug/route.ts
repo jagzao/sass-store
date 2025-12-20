@@ -2,17 +2,17 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   return NextResponse.json({
-    // Server-side variable
-    apiUrl: process.env.API_URL,
-    // Client-side variable
-    nextPublicApiUrl: process.env.NEXT_PUBLIC_API_URL,
-    // Environment
-    nodeEnv: process.env.NODE_ENV,
+    env: {
+      hasClientId: !!process.env.GOOGLE_CALENDAR_CLIENT_ID,
+      hasClientSecret: !!process.env.GOOGLE_CALENDAR_CLIENT_SECRET,
+      hasRedirectUri: !!process.env.GOOGLE_CALENDAR_REDIRECT_URI,
+      hasPublicClientId: !!process.env.NEXT_PUBLIC_GOOGLE_CALENDAR_CLIENT_ID,
+      hasPublicRedirectUri:
+        !!process.env.NEXT_PUBLIC_GOOGLE_CALENDAR_REDIRECT_URI,
+      clientIdPreview: process.env.GOOGLE_CALENDAR_CLIENT_ID?.substring(0, 10),
+      publicClientIdPreview:
+        process.env.NEXT_PUBLIC_GOOGLE_CALENDAR_CLIENT_ID?.substring(0, 10),
+    },
     timestamp: new Date().toISOString(),
-    // What fetch-with-cache would use
-    effectiveUrl:
-      process.env.API_URL ||
-      process.env.NEXT_PUBLIC_API_URL ||
-      "http://127.0.0.1:4000",
   });
 }

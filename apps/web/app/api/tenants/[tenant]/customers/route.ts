@@ -139,7 +139,14 @@ export async function GET(
       .from(customers)
       .leftJoin(customerVisits, eq(customers.id, customerVisits.customerId))
       .where(eq(customers.tenantId, tenant.id))
-      .groupBy(customers.id)
+      .groupBy(
+        customers.id,
+        customers.name,
+        customers.phone,
+        customers.email,
+        customers.status,
+        customers.createdAt,
+      )
       .orderBy(desc(customers.createdAt));
 
     // map undefined email to match interface if needed, although the query handles it

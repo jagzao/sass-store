@@ -11,7 +11,7 @@ const updateBrandingSchema = z.object({
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: Promise<{ slug: string }> },
+  { params }: { params: Promise<{ tenant: string }> },
 ) {
   try {
     const session = await auth();
@@ -20,7 +20,7 @@ export async function PUT(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { slug } = await params;
+    const { tenant: slug } = await params;
 
     // Verify tenant exists and get ID
     const tenant = await db.query.tenants.findFirst({
