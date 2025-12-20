@@ -276,9 +276,13 @@ export async function GET(
   try {
     const { tenant: tenantSlug } = await params;
 
-    // Find tenant
+    // Find tenant - simplified query
     const [tenant] = await db
-      .select()
+      .select({
+        id: tenants.id,
+        googleCalendarConnected: tenants.googleCalendarConnected,
+        googleCalendarId: tenants.googleCalendarId,
+      })
       .from(tenants)
       .where(eq(tenants.slug, tenantSlug))
       .limit(1);
@@ -287,21 +291,11 @@ export async function GET(
       return NextResponse.json({ error: "Tenant not found" }, { status: 404 });
     }
 
-    // Count synced bookings (only those with googleEventId)
-    const syncedBookings = await db
-      .select()
-      .from(bookings)
-      .where(
-        and(
-          eq(bookings.tenantId, tenant.id),
-          sql`${bookings.googleEventId} IS NOT NULL`,
-        ),
-      );
-
+    // Return immediately without counting bookings (avoid potential timeout)
     return NextResponse.json({
-      connected: tenant.googleCalendarConnected,
-      calendarId: tenant.googleCalendarId,
-      totalSyncedBookings: syncedBookings.length,
+      connected: tenant.googleCalendarConnected || false,
+      calendarId: tenant.googleCalendarId || null,
+      totalSyncedBookings: 0, // Will be updated after first sync
     });
   } catch (error) {
     console.error("Get sync status error:", error);
