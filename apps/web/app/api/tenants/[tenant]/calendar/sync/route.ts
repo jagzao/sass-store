@@ -274,9 +274,20 @@ export async function GET(
   { params }: { params: Promise<{ tenant: string }> },
 ) {
   try {
+    // TEMPORARY: Return mock data without DB query to test if endpoint works
+    return NextResponse.json({
+      connected: false,
+      calendarId: null,
+      totalSyncedBookings: 0,
+      debug: {
+        message: "Endpoint is working",
+        timestamp: new Date().toISOString(),
+      },
+    });
+
+    /* TODO: Re-enable after testing
     const { tenant: tenantSlug } = await params;
 
-    // Find tenant - simplified query
     const [tenant] = await db
       .select({
         id: tenants.id,
@@ -291,16 +302,19 @@ export async function GET(
       return NextResponse.json({ error: "Tenant not found" }, { status: 404 });
     }
 
-    // Return immediately without counting bookings (avoid potential timeout)
     return NextResponse.json({
       connected: tenant.googleCalendarConnected || false,
       calendarId: tenant.googleCalendarId || null,
-      totalSyncedBookings: 0, // Will be updated after first sync
+      totalSyncedBookings: 0,
     });
+    */
   } catch (error) {
     console.error("Get sync status error:", error);
     return NextResponse.json(
-      { error: "Failed to get sync status" },
+      {
+        error: "Failed to get sync status",
+        details: error instanceof Error ? error.message : "Unknown error",
+      },
       { status: 500 },
     );
   }
