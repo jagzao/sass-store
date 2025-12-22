@@ -22,6 +22,7 @@ export default function CalendarSettingsPage() {
   const [connected, setConnected] = useState(false);
   const [syncStats, setSyncStats] = useState<any>(null);
   const [syncResult, setSyncResult] = useState<any>(null);
+  const [calendarEmail, setCalendarEmail] = useState("");
 
   // Check for OAuth callback success/error
   useEffect(() => {
@@ -76,9 +77,44 @@ export default function CalendarSettingsPage() {
       return;
     }
 
-    const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${encodeURIComponent("https://www.googleapis.com/auth/calendar.readonly")}&access_type=offline&state=${tenantSlug}&prompt=consent`;
+    // Build state object with tenant slug and optional calendar email
+    const stateData = {
+      tenantSlug,
+      calendarId: calendarEmail.trim() || null,
+    };
+    const state = encodeURIComponent(JSON.stringify(stateData));
+
+    const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${encodeURIComponent("https://www.googleapis.com/auth/calendar.readonly")}&access_type=offline&state=${state}&prompt=consent`;
 
     window.location.href = authUrl;
+  };
+
+  const handleDisconnectCalendar = async () => {
+    if (!confirm("Are you sure you want to disconnect Google Calendar?")) {
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `/api/tenants/${tenantSlug}/calendar/disconnect`,
+        {
+          method: "POST",
+        },
+      );
+
+      if (response.ok) {
+        setConnected(false);
+        setSyncStats(null);
+        setSyncResult(null);
+        alert("Google Calendar disconnected successfully");
+      } else {
+        const data = await response.json();
+        alert(`Failed to disconnect: ${data.error || "Unknown error"}`);
+      }
+    } catch (error) {
+      console.error("Disconnect error:", error);
+      alert("Failed to disconnect calendar");
+    }
   };
 
   const handleSyncCalendar = async () => {
@@ -148,20 +184,50 @@ export default function CalendarSettingsPage() {
         )}
 
         {!connected ? (
-          <button
-            onClick={handleConnectCalendar}
-            className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition"
-          >
-            Connect Google Calendar
-          </button>
+          <div className="space-y-4">
+            <div>
+              <label
+                htmlFor="calendarEmail"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Calendar Email (Optional)
+              </label>
+              <input
+                id="calendarEmail"
+                type="email"
+                value={calendarEmail}
+                onChange={(e) => setCalendarEmail(e.target.value)}
+                placeholder="e.g., marialiciavh1984@gmail.com"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+              />
+              <p className="mt-1 text-sm text-gray-500">
+                Leave empty to use the primary calendar of the account you
+                connect with
+              </p>
+            </div>
+            <button
+              onClick={handleConnectCalendar}
+              className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition"
+            >
+              Connect Google Calendar
+            </button>
+          </div>
         ) : (
-          <button
-            onClick={handleSyncCalendar}
-            disabled={syncing}
-            className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 transition disabled:bg-gray-400"
-          >
-            {syncing ? "Syncing..." : "Sync Calendar Now"}
-          </button>
+          <div className="flex gap-3">
+            <button
+              onClick={handleSyncCalendar}
+              disabled={syncing}
+              className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 transition disabled:bg-gray-400"
+            >
+              {syncing ? "Syncing..." : "Sync Calendar Now"}
+            </button>
+            <button
+              onClick={handleDisconnectCalendar}
+              className="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700 transition"
+            >
+              Disconnect
+            </button>
+          </div>
         )}
       </div>
 

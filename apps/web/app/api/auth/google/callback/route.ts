@@ -64,8 +64,19 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Extract tenant slug from state
-    const tenantSlug = state;
+    // Extract tenant slug and optional calendar ID from state
+    let tenantSlug = state;
+    let requestedCalendarId: string | null = null;
+
+    try {
+      // Try to parse state as JSON (format: { tenantSlug, calendarId })
+      const stateData = JSON.parse(state);
+      tenantSlug = stateData.tenantSlug;
+      requestedCalendarId = stateData.calendarId || null;
+    } catch {
+      // If parsing fails, assume state is just the tenant slug (backward compatible)
+      tenantSlug = state;
+    }
 
     // Find tenant
     const [tenant] = await db
@@ -80,6 +91,9 @@ export async function GET(request: NextRequest) {
     }
 
     console.log(`Found tenant: ${tenant.id} (${tenant.name})`);
+    if (requestedCalendarId) {
+      console.log(`Requested calendar ID: ${requestedCalendarId}`);
+    }
 
     // Initialize OAuth2 client
     const oauth2Client = new google.auth.OAuth2(
@@ -97,21 +111,42 @@ export async function GET(request: NextRequest) {
       expiryDate: tokens.expiry_date,
     });
 
-    // Get calendar list to find the primary calendar ID
+    // Determine which calendar ID to use
     oauth2Client.setCredentials(tokens);
     const calendar = google.calendar({ version: "v3", auth: oauth2Client });
 
-    let calendarId = "primary";
-    try {
-      const calendarList = await calendar.calendarList.list();
-      const primaryCalendar = calendarList.data.items?.find(
-        (cal) => cal.primary,
-      );
-      if (primaryCalendar?.id) {
-        calendarId = primaryCalendar.id;
+    let calendarId = requestedCalendarId || "primary";
+
+    // If a specific calendar was requested, verify the user has access to it
+    if (requestedCalendarId) {
+      try {
+        const calendarList = await calendar.calendarList.list();
+        const hasAccess = calendarList.data.items?.some(
+          (cal) => cal.id === requestedCalendarId,
+        );
+        if (!hasAccess) {
+          console.warn(
+            `User does not have access to requested calendar: ${requestedCalendarId}`,
+          );
+          // Fall back to primary calendar
+          calendarId = "primary";
+        }
+      } catch (err) {
+        console.warn("Could not verify calendar access:", err);
       }
-    } catch (err) {
-      console.warn("Could not fetch calendar list, using 'primary':", err);
+    } else {
+      // No specific calendar requested, find the primary one
+      try {
+        const calendarList = await calendar.calendarList.list();
+        const primaryCalendar = calendarList.data.items?.find(
+          (cal) => cal.primary,
+        );
+        if (primaryCalendar?.id) {
+          calendarId = primaryCalendar.id;
+        }
+      } catch (err) {
+        console.warn("Could not fetch calendar list, using 'primary':", err);
+      }
     }
 
     console.log(`Selected Calendar ID: ${calendarId}`);
