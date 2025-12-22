@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+
+export const dynamic = "force-dynamic";
 import { google } from "googleapis";
 import { db } from "@sass-store/database";
 import {
@@ -189,7 +191,7 @@ export async function POST(
                 tenantId: tenant.id,
                 name: customerName,
                 email: customerEmail,
-                phone: customerPhone || null,
+                phone: customerPhone || "",
               })
               .returning();
             customerId = newCustomer.id;
@@ -274,18 +276,6 @@ export async function GET(
   { params }: { params: Promise<{ tenant: string }> },
 ) {
   try {
-    // TEMPORARY: Return mock data without DB query to test if endpoint works
-    return NextResponse.json({
-      connected: false,
-      calendarId: null,
-      totalSyncedBookings: 0,
-      debug: {
-        message: "Endpoint is working",
-        timestamp: new Date().toISOString(),
-      },
-    });
-
-    /* TODO: Re-enable after testing
     const { tenant: tenantSlug } = await params;
 
     const [tenant] = await db
@@ -302,12 +292,19 @@ export async function GET(
       return NextResponse.json({ error: "Tenant not found" }, { status: 404 });
     }
 
+    // Determine the calendar ID to display
+    // If we have a stored ID, use it. If not, and we are connected, it defaults to 'primary'
+    // but the UI might want to see 'primary' or the actual email if we had it.
+    // For now we just return what we have.
+    const calendarId =
+      tenant.googleCalendarId ||
+      (tenant.googleCalendarConnected ? "primary" : null);
+
     return NextResponse.json({
       connected: tenant.googleCalendarConnected || false,
-      calendarId: tenant.googleCalendarId || null,
-      totalSyncedBookings: 0,
+      calendarId: calendarId,
+      totalSyncedBookings: 0, // TODO: Implement count from DB if needed
     });
-    */
   } catch (error) {
     console.error("Get sync status error:", error);
     return NextResponse.json(

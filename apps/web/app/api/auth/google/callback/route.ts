@@ -49,6 +49,13 @@ export async function GET(request: NextRequest) {
     const clientSecret = process.env.GOOGLE_CALENDAR_CLIENT_SECRET;
     const redirectUri = process.env.GOOGLE_CALENDAR_REDIRECT_URI;
 
+    console.log("OAuth Callback Debug:", {
+      hasClientId: !!clientId,
+      hasClientSecret: !!clientSecret,
+      redirectUri,
+      tenantSlug: state,
+    });
+
     if (!clientId || !clientSecret || !redirectUri) {
       console.error("Missing Google Calendar environment variables");
       return NextResponse.json(
@@ -68,8 +75,11 @@ export async function GET(request: NextRequest) {
       .limit(1);
 
     if (!tenant) {
+      console.error(`Tenant not found for slug: ${tenantSlug}`);
       return NextResponse.json({ error: "Tenant not found" }, { status: 404 });
     }
+
+    console.log(`Found tenant: ${tenant.id} (${tenant.name})`);
 
     // Initialize OAuth2 client
     const oauth2Client = new google.auth.OAuth2(
@@ -79,7 +89,13 @@ export async function GET(request: NextRequest) {
     );
 
     // Exchange authorization code for tokens
+    console.log("Exchanging code for tokens...");
     const { tokens } = await oauth2Client.getToken(code);
+    console.log("Tokens received:", {
+      hasAccessToken: !!tokens.access_token,
+      hasRefreshToken: !!tokens.refresh_token,
+      expiryDate: tokens.expiry_date,
+    });
 
     // Get calendar list to find the primary calendar ID
     oauth2Client.setCredentials(tokens);
@@ -98,15 +114,24 @@ export async function GET(request: NextRequest) {
       console.warn("Could not fetch calendar list, using 'primary':", err);
     }
 
+    console.log(`Selected Calendar ID: ${calendarId}`);
+
     // Update tenant with tokens and calendar ID
-    await db
+    console.log("Updating database...");
+    const updateResult = await db
       .update(tenants)
       .set({
         googleCalendarId: calendarId,
         googleCalendarTokens: tokens as any,
         googleCalendarConnected: true,
       })
-      .where(eq(tenants.id, tenant.id));
+      .where(eq(tenants.id, tenant.id))
+      .returning();
+
+    console.log(
+      "Database update result:",
+      updateResult.length > 0 ? "Success" : "Failed",
+    );
 
     // Redirect back to calendar settings page with success message
     return NextResponse.redirect(
