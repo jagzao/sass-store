@@ -161,6 +161,14 @@ export default function UserMenu({
             )}
             <hr className="my-2" />
             <a
+              href={`/t/${currentTenantSlug}/clientes`}
+              onClick={closeMenu}
+              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            >
+              👥 Clientes
+            </a>
+            <hr className="my-2" />
+            <a
               href={`/t/${currentTenantSlug}/admin_products`}
               onClick={closeMenu}
               className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"

@@ -19,16 +19,13 @@ export default function TenantNavigation({
   const pathname = usePathname();
   const isTransparent = variant === "transparent";
 
-  const links = [
-    { name: "Productos", href: `/t/${tenantSlug}/products` },
-  ];
+  const links = [{ name: "Productos", href: `/t/${tenantSlug}/products` }];
 
   if (mode === "booking") {
     links.push({ name: "Servicios", href: `/t/${tenantSlug}/services` });
     links.push({ name: "Reservar", href: `/t/${tenantSlug}/book` });
   }
 
-  links.push({ name: "Clientes", href: `/t/${tenantSlug}/clientes` });
   links.push({ name: "Contacto", href: `/t/${tenantSlug}/contact` });
 
   return (
@@ -104,7 +101,7 @@ function MobileMenu({
             : "text-gray-900"
         }`}
         aria-label={isOpen ? "Cerrar menú" : "Abrir menú"}
-        style={{ minWidth: '44px', minHeight: '44px' }}
+        style={{ minWidth: "44px", minHeight: "44px" }}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -147,7 +144,14 @@ function MobileMenu({
                       ? "text-gray-900 font-bold bg-gray-100 shadow-sm"
                       : "text-gray-700"
                   }`}
-                  style={isActive ? { color: primaryColor, borderLeft: `4px solid ${primaryColor}` } : undefined}
+                  style={
+                    isActive
+                      ? {
+                          color: primaryColor,
+                          borderLeft: `4px solid ${primaryColor}`,
+                        }
+                      : undefined
+                  }
                   onClick={() => setIsOpen(false)}
                 >
                   {link.name}

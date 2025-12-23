@@ -29,10 +29,18 @@ export default function TenantLogoUpload({
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
   const [isCropping, setIsCropping] = useState(false);
+  const [aspect, setAspect] = useState(3 / 2);
 
   const onCropComplete = useCallback(
     (croppedArea: Area, croppedAreaPixels: Area) => {
       setCroppedAreaPixels(croppedAreaPixels);
+    },
+    [],
+  );
+
+  const onMediaLoaded = useCallback(
+    (mediaSize: { naturalWidth: number; naturalHeight: number }) => {
+      setAspect(mediaSize.naturalWidth / mediaSize.naturalHeight);
     },
     [],
   );
@@ -194,10 +202,11 @@ export default function TenantLogoUpload({
                 image={imageSrc}
                 crop={crop}
                 zoom={zoom}
-                aspect={3 / 2}
+                aspect={aspect}
                 onCropChange={setCrop}
                 onCropComplete={onCropComplete}
                 onZoomChange={setZoom}
+                onMediaLoaded={onMediaLoaded}
                 objectFit="contain"
               />
             </div>
