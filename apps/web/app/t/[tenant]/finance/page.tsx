@@ -15,8 +15,12 @@ import {
 // Lazy load heavy finance components to reduce initial bundle size
 const KPICard = lazy(() => import("@/components/finance/KPICard"));
 const FilterPanel = lazy(() => import("@/components/finance/FilterPanel"));
-const MovementsTable = lazy(() => import("@/components/finance/MovementsTable"));
-const ReconciliationModal = lazy(() => import("@/components/finance/ReconciliationModal"));
+const MovementsTable = lazy(
+  () => import("@/components/finance/MovementsTable"),
+);
+const ReconciliationModal = lazy(
+  () => import("@/components/finance/ReconciliationModal"),
+);
 
 export default function TenantFinancePage() {
   const { data: session, status } = useSession();
@@ -88,7 +92,7 @@ export default function TenantFinancePage() {
   const handleReconcileMovement = async (
     movementId: string,
     reconciled: boolean,
-    reconciliationId?: string
+    reconciliationId?: string,
   ) => {
     await reconcileMovement(movementId, reconciled, reconciliationId);
   };
@@ -118,27 +122,12 @@ export default function TenantFinancePage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <a
-                href={`/t/${tenantSlug}`}
-                className="text-sm text-gray-600 hover:text-gray-900 mb-2 inline-block"
-              >
-                ← Volver a {currentTenant?.name || "Inicio"}
-              </a>
-              <h1 className="text-2xl font-bold text-gray-900">
-                Panel Financiero - {currentTenant?.name || "Negocio"}
-              </h1>
-            </div>
-            <UserMenu tenantSlug={tenantSlug} />
-          </div>
-        </div>
-      </header>
 
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-6xl mx-auto">
+          <h1 className="text-2xl font-bold text-gray-900 mb-6">
+            Panel Financiero - {currentTenant?.name || "Negocio"}
+          </h1>
           {/* Mercado Pago Connection Status */}
           {mercadoPagoStatus && !mercadoPagoStatus.connected && (
             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
@@ -166,11 +155,15 @@ export default function TenantFinancePage() {
           )}
 
           {/* Financial Overview */}
-          <Suspense fallback={
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-              {[...Array(4)].map((_, i) => <KPICardSkeleton key={i} />)}
-            </div>
-          }>
+          <Suspense
+            fallback={
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                {[...Array(4)].map((_, i) => (
+                  <KPICardSkeleton key={i} />
+                ))}
+              </div>
+            }
+          >
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
               <KPICard
                 title="Ingresos Totales"
@@ -215,11 +208,15 @@ export default function TenantFinancePage() {
           </Suspense>
 
           {/* Additional KPIs Row */}
-          <Suspense fallback={
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-              {[...Array(3)].map((_, i) => <KPICardSkeleton key={i} />)}
-            </div>
-          }>
+          <Suspense
+            fallback={
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                {[...Array(3)].map((_, i) => (
+                  <KPICardSkeleton key={i} />
+                ))}
+              </div>
+            }
+          >
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
               <KPICard
                 title="Saldo Disponible"

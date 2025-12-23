@@ -139,15 +139,17 @@ export default function TenantProfilePage() {
 
       if (response.ok) {
         setCurrentRole(pendingRole);
+
         // Actualizar la sesión con el nuevo rol
+        // Pasamos solo el rol para que el callback JWT lo valide contra la BD
         await update({
-          ...session.user,
           role: pendingRole,
         });
 
         const roleName = AVAILABLE_ROLES.find(
           (r) => r.id === pendingRole,
         )?.name;
+
         showToast(
           roleName
             ? `Tu rol ha sido cambiado a ${roleName}`

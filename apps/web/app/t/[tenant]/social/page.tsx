@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import UserMenu from "@/components/auth/UserMenu";
+import SocialCalendar from "@/components/social/SocialCalendar";
 
 export default function TenantSocialPage() {
   const { data: session, status } = useSession();
@@ -53,27 +54,12 @@ export default function TenantSocialPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <a
-                href={`/t/${tenantSlug}`}
-                className="text-sm text-gray-600 hover:text-gray-900 mb-2 inline-block"
-              >
-                ← Volver a {currentTenant?.name || "Inicio"}
-              </a>
-              <h1 className="text-2xl font-bold text-gray-900">
-                Gestión de Redes Sociales - {currentTenant?.name || "Negocio"}
-              </h1>
-            </div>
-            <UserMenu tenantSlug={tenantSlug} />
-          </div>
-        </div>
-      </header>
 
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-6xl mx-auto">
+          <h1 className="text-2xl font-bold text-gray-900 mb-6">
+            Gestión de Redes Sociales - {currentTenant?.name || "Negocio"}
+          </h1>
           {/* Social Media Overview */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <div className="bg-white rounded-lg shadow-md p-6">
@@ -111,6 +97,14 @@ export default function TenantSocialPage() {
               <div className="text-2xl font-bold text-gray-600">--</div>
               <p className="text-sm text-gray-600">No conectado</p>
             </div>
+          </div>
+
+          {/* Content Calendar */}
+          <div className="mb-8">
+            <h2 className="text-xl font-bold mb-6 text-gray-900">
+              Calendario de Contenidos
+            </h2>
+            <SocialCalendar />
           </div>
 
           {/* Content Management */}

@@ -261,6 +261,7 @@ const { handlers, auth, signIn, signOut } = NextAuth({
         userId: user?.id,
       });
 
+      // Initial sign in - set token from user object
       if (user) {
         token.id = user.id;
         token.role = user.role;
@@ -272,11 +273,61 @@ const { handlers, auth, signIn, signOut } = NextAuth({
         });
       }
 
+      // Handle session updates (e.g., role change from profile page)
       if (trigger === "update" && session) {
         console.log("[NextAuth] JWT update triggered:", session);
-        if (session.role) token.role = session.role;
+
+        // If role is being updated, verify it against the database
+        if (session.role && token.id && token.tenantSlug) {
+          try {
+            // Find the tenant ID
+            const [tenant] = await db
+              .select({ id: tenants.id })
+              .from(tenants)
+              .where(eq(tenants.slug, token.tenantSlug))
+              .limit(1);
+
+            if (tenant) {
+              // Fetch the latest role from database
+              const [roleAssignment] = await db
+                .select({ role: userRoles.role })
+                .from(userRoles)
+                .where(
+                  and(
+                    eq(userRoles.userId, token.id),
+                    eq(userRoles.tenantId, tenant.id),
+                  ),
+                )
+                .limit(1);
+
+              if (roleAssignment) {
+                // Use the database value as source of truth
+                token.role = roleAssignment.role;
+                console.log(
+                  "[NextAuth] Role updated from database:",
+                  roleAssignment.role,
+                );
+              } else {
+                // Fallback to session value if no DB record (shouldn't happen)
+                token.role = session.role;
+                console.log(
+                  "[NextAuth] Role updated from session (no DB record):",
+                  session.role,
+                );
+              }
+            }
+          } catch (error) {
+            console.error(
+              "[NextAuth] Error fetching role from database:",
+              error,
+            );
+            // Fallback to session value on error
+            if (session.role) token.role = session.role;
+          }
+        }
+
+        // Update other fields
         if (session.name) token.name = session.name;
-        // Allows updating other fields if necessary
       }
 
       console.log("[NextAuth] Returning JWT token:", {
