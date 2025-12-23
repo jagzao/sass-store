@@ -277,7 +277,12 @@ const { handlers, auth, signIn, signOut } = NextAuth({
       if (trigger === "update" && session) {
         console.log("[NextAuth] JWT update triggered:", session);
 
-        // If role is being updated, verify it against the database
+        // Optimistically update from session first
+        if (session.role) {
+          token.role = session.role;
+        }
+
+        // Verify against database for security and persistence
         if (session.role && token.id && token.tenantSlug) {
           try {
             // Find the tenant ID
@@ -304,25 +309,17 @@ const { handlers, auth, signIn, signOut } = NextAuth({
                 // Use the database value as source of truth
                 token.role = roleAssignment.role;
                 console.log(
-                  "[NextAuth] Role updated from database:",
+                  "[NextAuth] Role verified/updated from database:",
                   roleAssignment.role,
-                );
-              } else {
-                // Fallback to session value if no DB record (shouldn't happen)
-                token.role = session.role;
-                console.log(
-                  "[NextAuth] Role updated from session (no DB record):",
-                  session.role,
                 );
               }
             }
           } catch (error) {
             console.error(
-              "[NextAuth] Error fetching role from database:",
+              "[NextAuth] Error verifying role from database:",
               error,
             );
-            // Fallback to session value on error
-            if (session.role) token.role = session.role;
+            // Token already has session.role from optimistic update
           }
         }
 
