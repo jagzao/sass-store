@@ -118,31 +118,33 @@ export default function CustomersList({
             <tr>
               <th
                 scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[250px] min-w-[200px]"
               >
                 Clienta
               </th>
               <th
                 scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[200px] min-w-[150px]"
               >
                 Contacto
               </th>
               <th
                 scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap"
               >
                 Visitas
               </th>
               <th
                 scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                // Hide on smaller tablets, show on large tablets and desktop
+                className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap"
               >
                 Total Gastado
               </th>
               <th
                 scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                // Hide on smaller tablets
+                className="hidden sm:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap"
               >
                 Última Visita
               </th>
@@ -163,29 +165,34 @@ export default function CustomersList({
           <tbody className="bg-white divide-y divide-gray-200">
             {customers.map((customer) => (
               <tr key={customer.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap">
+                <td className="px-6 py-4 whitespace-nowrap max-w-[250px]">
                   <div className="flex items-center">
                     <div className="flex-shrink-0 h-10 w-10">
                       <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
                         <User className="h-5 w-5 text-blue-600" />
                       </div>
                     </div>
-                    <div className="ml-4">
-                      <div className="text-sm font-medium text-gray-900">
+                    <div className="ml-4 overflow-hidden">
+                      <div
+                        className="text-sm font-medium text-gray-900 truncate"
+                        title={customer.name}
+                      >
                         {customer.name}
                       </div>
                     </div>
                   </div>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-900 flex items-center gap-1">
-                    <Phone className="h-4 w-4 text-gray-400" />
+                <td className="px-6 py-4 whitespace-nowrap max-w-[200px]">
+                  <div className="text-sm text-gray-900 flex items-center gap-1 truncate">
+                    <Phone className="h-4 w-4 text-gray-400 flex-shrink-0" />
                     {customer.phone}
                   </div>
                   {customer.email && (
-                    <div className="text-sm text-gray-500 flex items-center gap-1 mt-1 max-w-[180px] sm:max-w-none truncate">
+                    <div className="text-sm text-gray-500 flex items-center gap-1 mt-1 truncate">
                       <Mail className="h-4 w-4 text-gray-400 flex-shrink-0" />
-                      <span className="truncate">{customer.email}</span>
+                      <span className="truncate" title={customer.email}>
+                        {customer.email}
+                      </span>
                     </div>
                   )}
                 </td>
@@ -194,13 +201,13 @@ export default function CustomersList({
                     {customer.visitCount} visitas
                   </div>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
+                <td className="hidden md:table-cell px-6 py-4 whitespace-nowrap">
                   <div className="text-sm font-medium text-gray-900 flex items-center gap-1">
                     <DollarSign className="h-4 w-4 text-green-600" />$
                     {customer.totalSpent.toFixed(2)}
                   </div>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
+                <td className="hidden sm:table-cell px-6 py-4 whitespace-nowrap">
                   <div className="text-sm text-gray-900 flex items-center gap-1">
                     <Calendar className="h-4 w-4 text-gray-400" />
                     {customer.lastVisit

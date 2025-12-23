@@ -161,8 +161,8 @@ export default function CustomerFileHeader({
 
       if (!response.ok) throw new Error("Failed to delete customer");
 
-      router.push(`/t/${tenantSlug}/clientes`);
-      router.refresh();
+      // Use window.location.href to ensure a hard refresh and avoid stale cache
+      window.location.href = `/t/${tenantSlug}/clientes`;
     } catch (error) {
       console.error("Error deleting customer:", error);
       alert("Error al eliminar la clienta");
