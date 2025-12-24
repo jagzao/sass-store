@@ -46,6 +46,12 @@ const STATUS_COLORS: Record<string, string> = {
 
 export default function SocialCalendar() {
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [newPost, setNewPost] = useState({
+    platform: "facebook" as Post["platform"],
+    content: "",
+  });
 
   // Mock Data
   const posts: Post[] = [
@@ -99,6 +105,33 @@ export default function SocialCalendar() {
   const nextMonth = () => setCurrentDate(addMonths(currentDate, 1));
   const prevMonth = () => setCurrentDate(subMonths(currentDate, 1));
   const today = () => setCurrentDate(new Date());
+
+  const handleAddPost = (date: Date) => {
+    setSelectedDate(date);
+    setNewPost({ platform: "facebook", content: "" });
+    setIsModalOpen(true);
+  };
+
+  const handleEditPost = (post: Post) => {
+    setSelectedDate(post.date);
+    setNewPost({ platform: post.platform, content: post.content });
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedDate(null);
+    setNewPost({ platform: "facebook", content: "" });
+  };
+
+  const handleSavePost = () => {
+    // TODO: Implement save to backend
+    console.log("Saving post:", {
+      date: selectedDate,
+      ...newPost,
+    });
+    handleCloseModal();
+  };
 
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden">
@@ -170,6 +203,7 @@ export default function SocialCalendar() {
                 {dayPosts.map((post) => (
                   <div
                     key={post.id}
+                    onClick={() => handleEditPost(post)}
                     className={`text-xs p-1 rounded border truncate cursor-pointer transition-transform hover:scale-105 ${
                       STATUS_COLORS[post.status]
                     }`}
@@ -183,7 +217,10 @@ export default function SocialCalendar() {
               </div>
 
               {/* Add Button on Hover */}
-              <button className="absolute bottom-1 right-1 opacity-0 group-hover:opacity-100 p-1 bg-blue-50 text-blue-600 rounded-full hover:bg-blue-100 transition-opacity">
+              <button
+                onClick={() => handleAddPost(day)}
+                className="absolute bottom-1 right-1 opacity-0 group-hover:opacity-100 p-1 bg-blue-50 text-blue-600 rounded-full hover:bg-blue-100 transition-opacity"
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-4 w-4"
@@ -203,6 +240,95 @@ export default function SocialCalendar() {
           );
         })}
       </div>
+
+      {/* Modal for Add/Edit Post */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-bold text-gray-900">
+                {selectedDate
+                  ? format(selectedDate, "d 'de' MMMM, yyyy", { locale: es })
+                  : "Nueva Publicación"}
+              </h3>
+              <button
+                onClick={handleCloseModal}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Plataforma
+                </label>
+                <select
+                  value={newPost.platform}
+                  onChange={(e) =>
+                    setNewPost({
+                      ...newPost,
+                      platform: e.target.value as Post["platform"],
+                    })
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="facebook">📘 Facebook</option>
+                  <option value="instagram">📷 Instagram</option>
+                  <option value="twitter">🐦 Twitter</option>
+                  <option value="tiktok">🎵 TikTok</option>
+                  <option value="youtube">▶️ YouTube</option>
+                  <option value="linkedin">💼 LinkedIn</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Contenido
+                </label>
+                <textarea
+                  value={newPost.content}
+                  onChange={(e) =>
+                    setNewPost({ ...newPost, content: e.target.value })
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent h-32 resize-none"
+                  placeholder="Escribe tu publicación aquí..."
+                />
+              </div>
+
+              <div className="flex justify-end space-x-3 pt-4">
+                <button
+                  onClick={handleCloseModal}
+                  className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors font-medium"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={handleSavePost}
+                  disabled={!newPost.content.trim()}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Guardar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
