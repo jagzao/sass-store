@@ -103,6 +103,13 @@ export default function TenantProfilePage() {
     (session?.user as any)?.role || "Cliente",
   );
 
+  // Sincronizar currentRole con la sesión cuando cambia
+  useEffect(() => {
+    if (session?.user?.role) {
+      setCurrentRole(session.user.role);
+    }
+  }, [session?.user?.role]);
+
   const handleRoleChange = (newRole: string) => {
     setPendingRole(newRole);
     setRoleDialogOpen(true);
@@ -138,13 +145,17 @@ export default function TenantProfilePage() {
       const result = await response.json();
 
       if (response.ok) {
-        setCurrentRole(pendingRole);
-
         // Actualizar la sesión con el nuevo rol
         // Pasamos solo el rol para que el callback JWT lo valide contra la BD
-        await update({
+        const updateResult = await update({
           role: pendingRole,
         });
+
+        // Esperar un momento para que la sesión se actualice
+        await new Promise((resolve) => setTimeout(resolve, 100));
+
+        // Actualizar el estado local después de la actualización de la sesión
+        setCurrentRole(pendingRole);
 
         const roleName = AVAILABLE_ROLES.find(
           (r) => r.id === pendingRole,
@@ -156,6 +167,11 @@ export default function TenantProfilePage() {
             : "Tu rol ha sido actualizado",
           "success",
         );
+
+        // Forzar una recarga de la página para asegurar que todos los componentes reflejen el nuevo rol
+        setTimeout(() => {
+          router.refresh();
+        }, 500);
       } else {
         showToast(result.error || "Error al actualizar el rol", "error");
       }
@@ -309,24 +325,6 @@ export default function TenantProfilePage() {
             {/* Profile Info */}
             <div className="lg:col-span-2">
               <div className="bg-white rounded-lg shadow-md p-8 relative">
-                {isEditing && (
-                  <div className="absolute top-8 right-8 flex gap-2">
-                    <button
-                      onClick={handleSave}
-                      disabled={isLoading}
-                      className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
-                    >
-                      Guardar Cambios
-                    </button>
-                    <button
-                      onClick={handleCancel}
-                      disabled={isLoading}
-                      className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 disabled:opacity-50"
-                    >
-                      Cancelar
-                    </button>
-                  </div>
-                )}
                 <div className="text-center mb-8">
                   <div className="w-24 h-24 bg-blue-600 rounded-full flex items-center justify-center text-white text-3xl font-bold mx-auto mb-4">
                     {session.user.name?.charAt(0)?.toUpperCase() ||
@@ -390,6 +388,24 @@ export default function TenantProfilePage() {
                         </p>
                       </div>
                     </div>
+                    {isEditing && (
+                      <div className="mt-6 flex justify-end gap-2">
+                        <button
+                          onClick={handleCancel}
+                          disabled={isLoading}
+                          className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 disabled:opacity-50"
+                        >
+                          Cancelar
+                        </button>
+                        <button
+                          onClick={handleSave}
+                          disabled={isLoading}
+                          className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
+                        >
+                          Guardar Cambios
+                        </button>
+                      </div>
+                    )}
                   </div>
 
                   <div>

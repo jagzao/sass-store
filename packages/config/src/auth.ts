@@ -216,6 +216,44 @@ const { handlers, auth, signIn, signOut } = NextAuth({
           "[NextAuth] SignIn allowed for provider:",
           account?.provider,
         );
+
+        // For Google OAuth, ensure user exists in database with proper role
+        if (account?.provider === "google" && user?.email) {
+          try {
+            // Find or create user
+            let [existingUser] = await db
+              .select()
+              .from(users)
+              .where(eq(users.email, user.email))
+              .limit(1);
+
+            if (!existingUser) {
+              // Create new user for Google OAuth
+              const [newUser] = await db
+                .insert(users)
+                .values({
+                  id: crypto.randomUUID(),
+                  email: user.email,
+                  name: user.name || user.email?.split("@")[0],
+                  image: user.image,
+                })
+                .returning();
+
+              existingUser = newUser;
+              console.log(
+                "[NextAuth] Created new user for Google OAuth:",
+                newUser.id,
+              );
+            }
+
+            // The role will be set in the JWT callback from database
+            return true;
+          } catch (error) {
+            console.error("[NextAuth] Error in Google OAuth signIn:", error);
+            return false;
+          }
+        }
+
         return true;
       }
 
@@ -264,66 +302,68 @@ const { handlers, auth, signIn, signOut } = NextAuth({
       // Initial sign in - set token from user object
       if (user) {
         token.id = user.id;
-        token.role = user.role;
         token.tenantSlug = user.tenantSlug;
         console.log("[NextAuth] JWT token updated with user data:", {
           id: user.id,
-          role: user.role,
           tenantSlug: user.tenantSlug,
         });
+      }
+
+      // Always fetch the latest role from database for both sign-in and session updates
+      // This ensures the role is always up-to-date, even after browser restart
+      if (token.id && token.tenantSlug) {
+        try {
+          // Find the tenant ID
+          const [tenant] = await db
+            .select({ id: tenants.id })
+            .from(tenants)
+            .where(eq(tenants.slug, token.tenantSlug))
+            .limit(1);
+
+          if (tenant) {
+            // Fetch the latest role from database
+            const [roleAssignment] = await db
+              .select({ role: userRoles.role })
+              .from(userRoles)
+              .where(
+                and(
+                  eq(userRoles.userId, token.id),
+                  eq(userRoles.tenantId, tenant.id),
+                ),
+              )
+              .limit(1);
+
+            if (roleAssignment) {
+              // Use the database value as source of truth
+              token.role = roleAssignment.role;
+              console.log(
+                "[NextAuth] Role fetched from database:",
+                roleAssignment.role,
+              );
+            } else {
+              // If no role assignment exists, use default role
+              token.role = "Cliente";
+              console.warn(
+                "[NextAuth] No role assignment found in database, using default: Cliente",
+              );
+            }
+          } else {
+            console.error("[NextAuth] Tenant not found:", token.tenantSlug);
+            token.role = "Cliente";
+          }
+        } catch (error) {
+          console.error("[NextAuth] Error fetching role from database:", error);
+          // Fallback to default role on error
+          token.role = "Cliente";
+        }
       }
 
       // Handle session updates (e.g., role change from profile page)
       if (trigger === "update" && session) {
         console.log("[NextAuth] JWT update triggered:", session);
 
-        // Optimistically update from session first
-        if (session.role) {
-          token.role = session.role;
-        }
-
-        // Verify against database for security and persistence
-        if (session.role && token.id && token.tenantSlug) {
-          try {
-            // Find the tenant ID
-            const [tenant] = await db
-              .select({ id: tenants.id })
-              .from(tenants)
-              .where(eq(tenants.slug, token.tenantSlug))
-              .limit(1);
-
-            if (tenant) {
-              // Fetch the latest role from database
-              const [roleAssignment] = await db
-                .select({ role: userRoles.role })
-                .from(userRoles)
-                .where(
-                  and(
-                    eq(userRoles.userId, token.id),
-                    eq(userRoles.tenantId, tenant.id),
-                  ),
-                )
-                .limit(1);
-
-              if (roleAssignment) {
-                // Use the database value as source of truth
-                token.role = roleAssignment.role;
-                console.log(
-                  "[NextAuth] Role verified/updated from database:",
-                  roleAssignment.role,
-                );
-              }
-            }
-          } catch (error) {
-            console.error(
-              "[NextAuth] Error verifying role from database:",
-              error,
-            );
-            // Token already has session.role from optimistic update
-          }
-        }
-
-        // Update other fields
+        // For role updates, we've already fetched from database above
+        // Update other fields if needed
         if (session.name) token.name = session.name;
       }
 

@@ -2,9 +2,7 @@ const path = require('path');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Cloudflare Pages compatibility
-  // Use export for static site generation, standalone for Vercel
-  output: process.env.CF_PAGES ? 'export' : undefined,
+  // Vercel compatibility - no special output configuration needed
 
   // Monorepo support - tell Next.js where the root is
   outputFileTracingRoot: path.join(__dirname, '../../'),
