@@ -69,7 +69,7 @@ interface GenerateConfig {
   };
   contentMix: {
     promotions: number;
-    beforeAfter: number;
+    before_after: number;
     trends: number;
     tips: number;
   };
@@ -100,7 +100,7 @@ export default function GenerateView() {
     },
     contentMix: {
       promotions: 40,
-      beforeAfter: 30,
+      before_after: 30,
       trends: 20,
       tips: 10,
     },

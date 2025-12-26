@@ -38,7 +38,7 @@ interface LibraryContent {
 }
 
 interface LibraryViewProps {
-  onContentSelect: (contentId: string) => void;
+  onContentSelect: (contentId: string, data?: any) => void;
   onCreateNew: () => void;
 }
 
@@ -380,7 +380,12 @@ export default function LibraryView({
             <div
               key={item.id}
               className="bg-white rounded-lg shadow-sm border overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
-              onClick={() => onContentSelect(item.id)}
+              onClick={() =>
+                onContentSelect(item.id, {
+                  title: item.title,
+                  baseContent: item.content,
+                })
+              }
             >
               {/* Media Preview */}
               {item.mediaUrl && (

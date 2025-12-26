@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import SocialNavigation from "./SocialNavigation";
-import EditorDrawer from "./EditorDrawer";
+import EditorDrawer, { InitialData } from "./EditorDrawer";
 import CalendarView from "./views/CalendarView";
 import QueueView from "./views/QueueView";
 import GenerateView from "./views/GenerateView";
@@ -21,20 +21,26 @@ export default function SocialMediaManager({
   const [activeView, setActiveView] = useState<ViewType>("calendar");
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
+  const [selectedPostData, setSelectedPostData] = useState<
+    InitialData | undefined
+  >(undefined);
 
   const handleCreateNew = () => {
     setSelectedPostId(null);
+    setSelectedPostData(undefined);
     setIsEditorOpen(true);
   };
 
-  const handlePostClick = (postId: string) => {
+  const handlePostClick = (postId: string, data?: InitialData) => {
     setSelectedPostId(postId);
+    setSelectedPostData(data);
     setIsEditorOpen(true);
   };
 
   const handleCloseEditor = () => {
     setIsEditorOpen(false);
     setSelectedPostId(null);
+    setSelectedPostData(undefined);
   };
 
   const renderActiveView = () => {
@@ -77,6 +83,7 @@ export default function SocialMediaManager({
           isOpen={isEditorOpen}
           onClose={handleCloseEditor}
           postId={selectedPostId}
+          initialData={selectedPostData}
         />
       )}
     </div>

@@ -70,16 +70,24 @@ interface PostVariant {
   mediaUrl?: string;
 }
 
+export interface InitialData {
+  title?: string;
+  baseContent?: string;
+  variants?: PostVariant[];
+}
+
 interface EditorDrawerProps {
   isOpen: boolean;
   onClose: () => void;
   postId?: string | null;
+  initialData?: InitialData;
 }
 
 export default function EditorDrawer({
   isOpen,
   onClose,
   postId,
+  initialData,
 }: EditorDrawerProps) {
   const [title, setTitle] = useState("");
   const [baseContent, setBaseContent] = useState("");
@@ -96,12 +104,17 @@ export default function EditorDrawer({
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (initialData?.variants) {
-      const initialVariants: Record<string, string> = {};
-      initialData.variants.forEach((variant) => {
-        initialVariants[variant.platform] = variant.content;
-      });
-      setVariants(initialVariants);
+    if (initialData) {
+      if (initialData.title) setTitle(initialData.title);
+      if (initialData.baseContent) setBaseContent(initialData.baseContent);
+
+      if (initialData.variants) {
+        const initialVariants: Record<string, string> = {};
+        initialData.variants.forEach((variant) => {
+          initialVariants[variant.platform] = variant.content;
+        });
+        setVariants(initialVariants);
+      }
     }
   }, [initialData]);
 

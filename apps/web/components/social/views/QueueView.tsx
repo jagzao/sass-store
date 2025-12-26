@@ -65,7 +65,7 @@ interface QueuePost {
 }
 
 interface QueueViewProps {
-  onPostClick: (postId: string) => void;
+  onPostClick: (postId: string, data?: any) => void;
 }
 
 export default function QueueView({ onPostClick }: QueueViewProps) {
@@ -444,7 +444,12 @@ export default function QueueView({ onPostClick }: QueueViewProps) {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <button
-                        onClick={() => onPostClick(post.id)}
+                        onClick={() =>
+                          onPostClick(post.id, {
+                            title: post.title,
+                            baseContent: post.content,
+                          })
+                        }
                         className="text-blue-600 hover:text-blue-900 mr-3"
                       >
                         Editar
