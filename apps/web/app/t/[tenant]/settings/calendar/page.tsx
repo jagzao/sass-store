@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useSearchParams } from "next/navigation";
+import SyncDetailsModal from "@/components/SyncDetailsModal";
 
 /**
  * Google Calendar Settings Page
@@ -9,7 +10,7 @@ import { useParams, useSearchParams } from "next/navigation";
  * Allows administrators to:
  * - Connect their Google Calendar
  * - View connection status
- * - Manually trigger calendar sync
+ * - Manually trigger calendar sync (with preview and selection)
  * - View sync history and statistics
  */
 export default function CalendarSettingsPage() {
@@ -23,6 +24,13 @@ export default function CalendarSettingsPage() {
   const [syncStats, setSyncStats] = useState<any>(null);
   const [syncResult, setSyncResult] = useState<any>(null);
   const [calendarEmail, setCalendarEmail] = useState("");
+
+  // Modal State
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalData, setModalData] = useState<any>(null);
+  const [modalTab, setModalTab] = useState<"new" | "existing" | "skipped">(
+    "new",
+  );
 
   // Check for OAuth callback success/error
   useEffect(() => {
@@ -122,8 +130,9 @@ export default function CalendarSettingsPage() {
       setSyncing(true);
       setSyncResult(null);
 
+      // Perform a preview first
       const response = await fetch(
-        `/api/tenants/${tenantSlug}/calendar/sync?daysBack=30`,
+        `/api/tenants/${tenantSlug}/calendar/sync?daysBack=30&preview=true`,
         {
           method: "POST",
         },
@@ -133,15 +142,61 @@ export default function CalendarSettingsPage() {
 
       if (response.ok) {
         setSyncResult(data);
-        fetchStatus(); // Refresh stats
+        // We also store the full data for the modal
+        setModalData({
+          new: data.events?.new || [],
+          existing: data.events?.existing || [],
+          skipped: data.events?.skipped || [],
+          errors: data.events?.errors || [],
+        });
       } else {
-        alert(`Sync failed: ${data.error}`);
+        alert(`Preview failed: ${data.error}`);
       }
     } catch (error) {
       console.error("Failed to sync calendar:", error);
       alert("Failed to sync calendar. Please try again.");
     } finally {
       setSyncing(false);
+    }
+  };
+
+  const handleConfirmSync = async (selectedIds: string[]) => {
+    try {
+      setSyncing(true);
+      setModalOpen(false); // Close modal while working
+
+      const response = await fetch(
+        `/api/tenants/${tenantSlug}/calendar/sync?daysBack=30`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ eventIds: selectedIds }),
+        },
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setSyncResult(data); // Update with FINAL results (preview: false)
+        fetchStatus();
+        alert(`Successfully synced ${data.summary.syncedBookings} bookings.`);
+      } else {
+        alert(`Sync failed: ${data.error}`);
+      }
+    } catch (error) {
+      console.error("Failed to confirm sync:", error);
+      alert("Failed to confirm sync.");
+    } finally {
+      setSyncing(false);
+    }
+  };
+
+  const openModal = (tab: "new" | "existing" | "skipped") => {
+    if (syncResult?.preview && modalData) {
+      setModalTab(tab);
+      setModalOpen(true);
     }
   };
 
@@ -234,50 +289,87 @@ export default function CalendarSettingsPage() {
       {/* Sync Results */}
       {syncResult && (
         <div className="bg-white rounded-lg shadow p-6 mb-6">
-          <h2 className="text-xl font-semibold mb-4">Last Sync Results</h2>
+          <h2 className="text-xl font-semibold mb-4">
+            {syncResult.preview ? "Sync Preview Results" : "Last Sync Results"}
+          </h2>
+          {syncResult.preview && (
+            <p className="text-sm text-gray-500 mb-4">
+              Click on the cards below to view details and select events to
+              sync.
+            </p>
+          )}
 
           <div className="grid grid-cols-2 gap-4 mb-4">
-            <div className="bg-blue-50 p-4 rounded">
+            <div
+              className={`bg-blue-50 p-4 rounded ${syncResult.preview ? "cursor-pointer hover:bg-blue-100 transition" : ""}`}
+              onClick={() => openModal("new")}
+            >
               <p className="text-2xl font-bold text-blue-600">
                 {syncResult.summary.totalEvents}
               </p>
               <p className="text-sm text-gray-600">Total Events Found</p>
             </div>
 
-            <div className="bg-green-50 p-4 rounded">
+            <div
+              className={`bg-green-50 p-4 rounded ${syncResult.preview ? "cursor-pointer hover:bg-green-100 transition" : ""}`}
+              onClick={() => openModal("new")}
+            >
               <p className="text-2xl font-bold text-green-600">
-                {syncResult.summary.syncedBookings}
+                {syncResult.preview
+                  ? syncResult.summary.newEvents
+                  : syncResult.summary.syncedBookings}
               </p>
-              <p className="text-sm text-gray-600">New Bookings Created</p>
+              <p className="text-sm text-gray-600">
+                {syncResult.preview
+                  ? "New Candidates (Review)"
+                  : "New Bookings Created"}
+              </p>
             </div>
 
-            <div className="bg-yellow-50 p-4 rounded">
+            <div
+              className={`bg-yellow-50 p-4 rounded ${syncResult.preview ? "cursor-pointer hover:bg-yellow-100 transition" : ""}`}
+              onClick={() => openModal("existing")}
+            >
               <p className="text-2xl font-bold text-yellow-600">
-                {syncResult.summary.skippedEvents}
+                {syncResult.preview
+                  ? syncResult.summary.existingEvents
+                  : syncResult.summary.skippedEvents}
               </p>
-              <p className="text-sm text-gray-600">Events Skipped</p>
+              <p className="text-sm text-gray-600">
+                {syncResult.preview
+                  ? "Already Synced (Found)"
+                  : "Events Skipped"}
+              </p>
             </div>
 
-            <div className="bg-red-50 p-4 rounded">
+            <div
+              className={`bg-red-50 p-4 rounded ${syncResult.preview ? "cursor-pointer hover:bg-red-100 transition" : ""}`}
+              onClick={() => openModal("skipped")}
+            >
               <p className="text-2xl font-bold text-red-600">
-                {syncResult.summary.errors}
+                {syncResult.preview
+                  ? syncResult.summary.skippedEvents + syncResult.summary.errors
+                  : syncResult.summary.errors}
               </p>
-              <p className="text-sm text-gray-600">Errors</p>
+              <p className="text-sm text-gray-600">Errors / Skipped</p>
             </div>
           </div>
 
-          {syncResult.errors && syncResult.errors.length > 0 && (
-            <div className="bg-red-50 p-4 rounded">
-              <p className="font-semibold text-red-800 mb-2">Errors:</p>
-              <ul className="list-disc list-inside text-sm text-red-700">
-                {syncResult.errors.map((err: any, idx: number) => (
-                  <li key={idx}>
-                    Event {err.eventId}: {err.error}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+          {/* Detailed error list for final result */}
+          {!syncResult.preview &&
+            syncResult.errors &&
+            syncResult.errors.length > 0 && (
+              <div className="bg-red-50 p-4 rounded">
+                <p className="font-semibold text-red-800 mb-2">Errors:</p>
+                <ul className="list-disc list-inside text-sm text-red-700">
+                  {syncResult.errors.map((err: any, idx: number) => (
+                    <li key={idx}>
+                      Event {err.eventId}: {err.error}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
         </div>
       )}
 
@@ -306,6 +398,17 @@ export default function CalendarSettingsPage() {
           </p>
         </div>
       </div>
+
+      {/* Modal */}
+      {modalOpen && modalData && (
+        <SyncDetailsModal
+          isOpen={modalOpen}
+          onClose={() => setModalOpen(false)}
+          onConfirm={handleConfirmSync}
+          data={modalData}
+          initialTab={modalTab}
+        />
+      )}
     </div>
   );
 }

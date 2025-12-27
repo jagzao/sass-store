@@ -35,8 +35,23 @@ export async function POST(
     const { tenant: tenantSlug } = await params;
     const { searchParams } = new URL(request.url);
     const daysBack = parseInt(searchParams.get("daysBack") || "30");
-    const autoConvertToVisits =
-      searchParams.get("autoConvertToVisits") === "true";
+    const preview = searchParams.get("preview") === "true";
+
+    // Check for eventIds in body if strictly limited sync is requested
+    let eventIdsToSync: string[] | null = null;
+    if (
+      !preview &&
+      request.headers.get("content-type")?.includes("application/json")
+    ) {
+      try {
+        const body = await request.json();
+        if (body.eventIds && Array.isArray(body.eventIds)) {
+          eventIdsToSync = body.eventIds;
+        }
+      } catch (e) {
+        // Body might be empty, ignore
+      }
+    }
 
     // Find tenant
     const [tenant] = await db
@@ -105,7 +120,12 @@ export async function POST(
       maxResults: 250, // Limit to avoid overwhelming the system
     });
 
-    const events = eventsResponse.data.items || [];
+    let events = eventsResponse.data.items || [];
+
+    // Filter by specific IDs if requested
+    if (eventIdsToSync) {
+      events = events.filter((e) => e.id && eventIdsToSync!.includes(e.id));
+    }
 
     // Get all services for this tenant (for default mapping)
     const allServices = await db
@@ -125,7 +145,8 @@ export async function POST(
       );
     }
 
-    // Process events and create bookings
+    // Process events
+    const processedEvents = [];
     const syncedBookings = [];
     const skippedEvents = [];
     const errors = [];
@@ -136,6 +157,7 @@ export async function POST(
         if (!event.start?.dateTime || !event.end?.dateTime) {
           skippedEvents.push({
             id: event.id,
+            summary: event.summary,
             reason: "All-day event or missing time data",
           });
           continue;
@@ -153,8 +175,27 @@ export async function POST(
           )
           .limit(1);
 
-        if (existing.length > 0) {
-          skippedEvents.push({ id: event.id, reason: "Already synced" });
+        const isExisting = existing.length > 0;
+
+        if (preview) {
+          // In preview mode, just collect data
+          processedEvents.push({
+            id: event.id,
+            summary: event.summary || "Sin título",
+            start: event.start.dateTime,
+            end: event.end.dateTime,
+            status: isExisting ? "existing" : "new",
+            reason: isExisting ? "Already synced" : "Ready to sync",
+          });
+          continue;
+        }
+
+        if (isExisting) {
+          skippedEvents.push({
+            id: event.id,
+            summary: event.summary,
+            reason: "Already synced",
+          });
           continue;
         }
 
@@ -239,13 +280,40 @@ export async function POST(
       } catch (error) {
         errors.push({
           eventId: event.id,
+          summary: event.summary,
           error: error instanceof Error ? error.message : "Unknown error",
         });
       }
     }
 
+    if (preview) {
+      const newEvents = processedEvents.filter((e) => e.status === "new");
+      const existingEvents = processedEvents.filter(
+        (e) => e.status === "existing",
+      );
+
+      return NextResponse.json({
+        success: true,
+        preview: true,
+        summary: {
+          totalEvents: processedEvents.length,
+          newEvents: newEvents.length,
+          existingEvents: existingEvents.length,
+          skippedEvents: skippedEvents.length,
+          errors: errors.length,
+        },
+        events: {
+          new: newEvents,
+          existing: existingEvents,
+          skipped: skippedEvents,
+          errors: errors,
+        },
+      });
+    }
+
     return NextResponse.json({
       success: true,
+      preview: false,
       summary: {
         totalEvents: events.length,
         syncedBookings: syncedBookings.length,

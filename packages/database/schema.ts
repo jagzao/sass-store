@@ -406,6 +406,7 @@ export const tenantsRelations = relations(tenants, ({ many }) => ({
   reels: many(reels),
   customers: many(customers),
   customerVisits: many(customerVisits),
+  socialPosts: many(socialPosts),
 }));
 
 export const tenantConfigsRelations = relations(tenantConfigs, ({ one }) => ({
@@ -538,7 +539,7 @@ export const channelCredentials = pgTable(
   }),
 );
 
-// 4. Social posts (channel-agnostic content)
+// 4. Social posts - New simplified structure for AI-generated social media content
 export const socialPosts = pgTable(
   "social_posts",
   {
@@ -546,24 +547,73 @@ export const socialPosts = pgTable(
     tenantId: uuid("tenant_id")
       .references(() => tenants.id)
       .notNull(),
-    title: text("title"),
-    bodyMd: text("body_md"),
-    mediaIds: uuid("media_ids")
-      .array()
+    title: varchar("title", { length: 200 }),
+    baseText: text("base_text").notNull(),
+    status: varchar("status", { length: 20 }).notNull().default("draft"), // draft|scheduled|published|failed|canceled
+    scheduledAtUtc: timestamp("scheduled_at_utc"),
+    timezone: varchar("timezone", { length: 100 }).notNull().default("UTC"),
+    createdBy: varchar("created_by", { length: 100 })
       .notNull()
-      .default(sql`ARRAY[]::uuid[]`),
-    tags: text("tags")
-      .array()
+      .default("system"),
+    updatedBy: varchar("updated_by", { length: 100 })
       .notNull()
-      .default(sql`ARRAY[]::text[]`),
-    dueDate: date("due_date"),
-    status: varchar("status", { length: 20 }).notNull().default("draft"), // draft|ready|archived
-    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
-    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
+      .default("system"),
+    metadata: jsonb("metadata"),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
   },
   (table) => ({
     tenantIdx: index("social_posts_tenant_idx").on(table.tenantId),
     statusIdx: index("social_posts_status_idx").on(table.status),
+    scheduledAtIdx: index("social_posts_scheduled_at_idx").on(
+      table.scheduledAtUtc,
+    ),
+    createdAtIdx: index("social_posts_created_at_idx").on(table.createdAt),
+    tenantStatusIdx: index("social_posts_tenant_status_idx").on(
+      table.tenantId,
+      table.status,
+    ),
+    tenantDateRangeIdx: index("social_posts_tenant_date_range_idx").on(
+      table.tenantId,
+      table.scheduledAtUtc,
+    ),
+  }),
+);
+
+// Social post targets - Platform-specific variants
+export const socialPostTargets = pgTable(
+  "social_post_targets",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    postId: uuid("post_id")
+      .references(() => socialPosts.id, { onDelete: "cascade" })
+      .notNull(),
+    platform: varchar("platform", { length: 50 }).notNull(), // facebook|instagram|linkedin|x|tiktok|gbp|threads
+    publishAtUtc: timestamp("publish_at_utc"),
+    timezone: varchar("timezone", { length: 100 })
+      .notNull()
+      .default("America/Mexico_City"),
+    status: varchar("status", { length: 20 }).notNull().default("draft"),
+    variantText: text("variant_text"),
+    platformPostId: varchar("platform_post_id", { length: 255 }),
+    externalRef: varchar("external_ref", { length: 255 }),
+    error: text("error"),
+    assetIds: jsonb("asset_ids").notNull().default("[]"),
+    metadata: jsonb("metadata"),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    postIdIdx: index("social_post_targets_post_id_idx").on(table.postId),
+    platformIdx: index("social_post_targets_platform_idx").on(table.platform),
+    statusIdx: index("social_post_targets_status_idx").on(table.status),
+    publishAtIdx: index("social_post_targets_publish_at_idx").on(
+      table.publishAtUtc,
+    ),
+    platformStatusIdx: index("social_post_targets_platform_status_idx").on(
+      table.platform,
+      table.status,
+    ),
   }),
 );
 
@@ -735,8 +785,19 @@ export const socialPostsRelations = relations(socialPosts, ({ one, many }) => ({
     fields: [socialPosts.tenantId],
     references: [tenants.id],
   }),
+  targets: many(socialPostTargets),
   variants: many(contentVariants),
 }));
+
+export const socialPostTargetsRelations = relations(
+  socialPostTargets,
+  ({ one }) => ({
+    post: one(socialPosts, {
+      fields: [socialPostTargets.postId],
+      references: [socialPosts.id],
+    }),
+  }),
+);
 
 export const contentVariantsRelations = relations(
   contentVariants,

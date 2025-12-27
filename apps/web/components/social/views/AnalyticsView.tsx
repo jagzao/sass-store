@@ -10,6 +10,20 @@ import {
   endOfMonth,
 } from "date-fns";
 import { es } from "date-fns/locale";
+import {
+  LineChart,
+  Line,
+  AreaChart,
+  Area,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 
 const PLATFORM_CONFIG = {
   facebook: { emoji: "📘", name: "Facebook", color: "bg-blue-600" },
@@ -88,6 +102,7 @@ export default function AnalyticsView({
       const startDate = subDays(endDate, selectedRange?.days || 30);
 
       const params = new URLSearchParams({
+        tenant,
         start_date: format(startDate, "yyyy-MM-dd"),
         end_date: format(endDate, "yyyy-MM-dd"),
       });
@@ -96,7 +111,7 @@ export default function AnalyticsView({
         params.append("platforms", selectedPlatforms.join(","));
       }
 
-      // Simular llamada a API
+      // Call analytics API
       const response = await fetch(`/api/v1/social/analytics?${params}`);
       if (!response.ok) {
         throw new Error("Failed to fetch analytics data");
@@ -335,54 +350,73 @@ export default function AnalyticsView({
         </div>
       </div>
 
-      {/* Main Chart */}
+      {/* Time Series Chart */}
+      <div className="bg-white rounded-lg shadow-sm border p-6">
+        <h3 className="text-lg font-medium text-gray-900 mb-4">
+          Tendencias de Alcance e Interacciones
+        </h3>
+        <ResponsiveContainer width="100%" height={300}>
+          <AreaChart data={analyticsData.timeSeriesData}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis
+              dataKey="date"
+              tickFormatter={(date) => format(new Date(date), "dd/MM")}
+            />
+            <YAxis />
+            <Tooltip
+              labelFormatter={(date) =>
+                format(new Date(date), "dd/MM/yyyy", { locale: es })
+              }
+            />
+            <Legend />
+            <Area
+              type="monotone"
+              dataKey="reach"
+              name="Alcance"
+              stroke="#3b82f6"
+              fill="#3b82f6"
+              fillOpacity={0.6}
+            />
+            <Area
+              type="monotone"
+              dataKey="interactions"
+              name="Interacciones"
+              stroke="#10b981"
+              fill="#10b981"
+              fillOpacity={0.6}
+            />
+          </AreaChart>
+        </ResponsiveContainer>
+      </div>
+
+      {/* Platform Performance Chart */}
       <div className="bg-white rounded-lg shadow-sm border p-6">
         <h3 className="text-lg font-medium text-gray-900 mb-4">
           Rendimiento por Plataforma
         </h3>
-        <div className="space-y-4">
-          {analyticsData.platformBreakdown.map((platform) => (
-            <div
-              key={platform.platform}
-              className="flex items-center justify-between"
-            >
-              <div className="flex items-center space-x-3">
-                <span className="text-xl">
-                  {
-                    PLATFORM_CONFIG[
-                      platform.platform as keyof typeof PLATFORM_CONFIG
-                    ]?.emoji
-                  }
-                </span>
-                <span className="font-medium text-gray-900">
-                  {
-                    PLATFORM_CONFIG[
-                      platform.platform as keyof typeof PLATFORM_CONFIG
-                    ]?.name
-                  }
-                </span>
-              </div>
-              <div className="flex items-center space-x-6 text-sm">
-                <div>
-                  <span className="text-gray-600">Alcance: </span>
-                  <span className="font-medium">
-                    {formatNumber(platform.reach)}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-gray-600">Interacciones: </span>
-                  <span className="font-medium">
-                    {formatNumber(platform.interactions)}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-gray-600">Seguidores: </span>
-                  <span className="font-medium">+{platform.followers}</span>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart data={analyticsData.platformBreakdown}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis
+              dataKey="platform"
+              tickFormatter={(platform) =>
+                PLATFORM_CONFIG[platform as keyof typeof PLATFORM_CONFIG]
+                  ?.name || platform
+              }
+            />
+            <YAxis />
+            <Tooltip
+              labelFormatter={(platform) =>
+                PLATFORM_CONFIG[platform as keyof typeof PLATFORM_CONFIG]
+                  ?.name || platform
+              }
+            />
+            <Legend />
+            <Bar dataKey="reach" name="Alcance" fill="#3b82f6" />
+            <Bar dataKey="interactions" name="Interacciones" fill="#10b981" />
+            <Bar dataKey="followers" name="Nuevos Seguidores" fill="#f59e0b" />
+          </BarChart>
+        </ResponsiveContainer>
       </div>
 
       {/* Top Posts */}
