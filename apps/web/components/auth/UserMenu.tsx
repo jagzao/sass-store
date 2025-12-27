@@ -122,9 +122,12 @@ export default function UserMenu({
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50 border border-gray-200">
+        <div className="absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg z-50 border border-gray-200">
           <div className="py-1">
-            <div className="px-4 py-2 text-sm text-gray-500 border-b">
+            <div
+              className="px-4 py-2 text-sm text-gray-500 border-b truncate"
+              title={user.email || ""}
+            >
               {user.email}
             </div>
             <a

@@ -26,7 +26,10 @@ export default async function TenantOrdersPage({ params }: PageProps) {
 
   const [tenantData, orders] = await Promise.all([
     getTenantDataForPage(resolvedParams.tenant),
-    getUserOrders(resolvedTenant.id, session.user as { id: string; role: string }),
+    getUserOrders(
+      resolvedTenant.id,
+      session.user as { id: string; role: string; email?: string | null },
+    ),
   ]);
 
   return (
