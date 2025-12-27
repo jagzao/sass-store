@@ -126,97 +126,111 @@ export default function GenerateView({ tenant }: GenerateViewProps) {
   const handleGenerate = async () => {
     setIsGenerating(true);
     try {
-      // Simular llamada a API de generación de contenido
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      // Call AI generation endpoint
+      const response = await fetch("/api/v1/social/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          tenant,
+          objective: config.objective,
+          vibe: config.vibe,
+          platforms: config.platforms,
+          startDate: config.dateRange.start,
+          endDate: config.dateRange.end,
+          frequency: config.frequency,
+          contentMix: config.contentMix,
+        }),
+      });
 
-      // Generar posts de ejemplo
-      const posts: GeneratedPost[] = [];
-      const totalPosts = Math.floor(
-        (config.frequency.postsPerWeek +
-          config.frequency.reelsPerWeek +
-          config.frequency.storiesPerWeek) *
-          4,
-      );
-
-      const contentTypes = Object.entries(config.contentMix)
-        .filter(([_, value]) => value > 0)
-        .map(([key, value]) => ({ type: key, weight: value }));
-
-      for (let i = 0; i < Math.min(totalPosts, 25); i++) {
-        const randomDate = new Date(
-          Date.now() +
-            Math.random() *
-              (new Date(config.dateRange.end).getTime() -
-                new Date(config.dateRange.start).getTime()),
-        );
-
-        const contentType =
-          contentTypes[Math.floor(Math.random() * contentTypes.length)];
-        const contentTypeLabel =
-          CONTENT_TYPES.find((ct) => ct.id === contentType.type)?.label ||
-          "General";
-
-        const templates = {
-          promotions: [
-            `✨ Oferta especial en nuestros servicios de uñas. ¡No te la pierdas! #WonderNails #Oferta`,
-            `🎁 Esta semana tenemos promociones exclusivas para ti. Agenda tu cita hoy. #Promocion`,
-            `💅 Descubre nuestros nuevos diseños de uñas con descuento especial. #Novedades`,
-          ],
-          before_after: [
-            `🔄 Transformación increíble en nuestro salón. Antes y después de nuestro servicio. #BeforeAfter`,
-            `💖 Mira el cambio espectacular de nuestra clienta. ¡Resultados profesionales! #Transformacion`,
-            `✨ El poder de un buen servicio de uñas. Compara el antes y el después. #Magia`,
-          ],
-          trends: [
-            `🔥 Las últimas tendencias en uñas para esta temporada. ¡Sé la primera en lucirlas! #Tendencias`,
-            `📈 Descubre los diseños de uñas que están arrasando en las redes. #Fashion`,
-            `✨ Mantente al día con las últimas tendencias en arte de uñas. #Estilo`,
-          ],
-          tips: [
-            `💡 ¿Sabías que...? Consejos profesionales para el cuidado de tus uñas. #Tips`,
-            `🔍 Tip del día: Cómo mantener tus uñas impecables por más tiempo. #Consejos`,
-            `✨ Secretos profesionales para tener uñas saludables y hermosas. #Cuidado`,
-          ],
-        };
-
-        const platformTemplates =
-          templates[contentType.type as keyof typeof templates];
-        const content =
-          platformTemplates[
-            Math.floor(Math.random() * platformTemplates.length)
-          ];
-
-        posts.push({
-          id: `generated-${i}`,
-          title: `${contentTypeLabel} - ${format(randomDate, "dd/MM")}`,
-          content,
-          platforms: config.platforms.slice(
-            0,
-            Math.floor(Math.random() * config.platforms.length) + 1,
-          ),
-          suggestedDate: randomDate,
-          contentType: contentType.type,
-          status: "draft",
-        });
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to generate content");
       }
+
+      const result = await response.json();
+
+      // Transform API response to match component format
+      const posts: GeneratedPost[] = result.data.generatedPosts.map(
+        (post: any) => ({
+          id: post.id,
+          title: post.title,
+          content: post.content,
+          platforms: post.platforms,
+          suggestedDate: new Date(post.scheduledAt),
+          contentType: post.contentType || "promotional",
+          status: post.status,
+        }),
+      );
 
       setGeneratedPosts(posts);
       setShowPreview(true);
     } catch (error) {
       console.error("Error generating content:", error);
-      alert("Error al generar contenido. Por favor, intenta de nuevo.");
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
+
+      // Show user-friendly error message
+      if (errorMessage.includes("not configured")) {
+        alert(
+          "AI service not configured. Please ask your administrator to add ANTHROPIC_API_KEY to environment variables.",
+        );
+      } else if (errorMessage.includes("rate limit")) {
+        alert("AI rate limit exceeded. Please try again in a few moments.");
+      } else {
+        alert(`Error al generar contenido: ${errorMessage}`);
+      }
     } finally {
       setIsGenerating(false);
     }
   };
 
-  const handleSaveToCalendar = () => {
-    // Aquí se guardarían los posts generados en el calendario y la cola
-    alert(
-      `${generatedPosts.length} publicaciones guardadas en el calendario y la cola`,
-    );
-    setShowPreview(false);
-    setGeneratedPosts([]);
+  const handleSaveToCalendar = async () => {
+    try {
+      // Save all generated posts to the database
+      const savePromises = generatedPosts.map(async (post) => {
+        const response = await fetch("/api/v1/social/queue", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            tenant,
+            title: post.title,
+            baseText: post.content,
+            status: "draft",
+            scheduledAtUtc: post.suggestedDate,
+            platforms: post.platforms.map((platform: string) => ({
+              platform,
+              variantText: post.content,
+              status: "draft",
+            })),
+            metadata: {
+              contentType: post.contentType,
+              generatedWithAI: true,
+            },
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`Failed to save post: ${post.title}`);
+        }
+
+        return response.json();
+      });
+
+      await Promise.all(savePromises);
+
+      alert(
+        `✅ ${generatedPosts.length} posts saved successfully to your calendar!`,
+      );
+      setShowPreview(false);
+      setGeneratedPosts([]);
+    } catch (error) {
+      console.error("Error saving posts:", error);
+      alert("Error al guardar algunos posts. Por favor, intenta de nuevo.");
+    }
   };
 
   const totalPercentage = Object.values(config.contentMix).reduce(

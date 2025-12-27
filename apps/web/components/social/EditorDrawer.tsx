@@ -176,25 +176,51 @@ Agenda tu cita hoy. #WonderNails #Belleza`;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
 
-    // Aquí se implementaría el guardado del post
-    console.log("Guardando post:", {
-      id: postId,
-      title,
-      content: baseContent,
-      platforms: selectedPlatforms,
-      variants: selectedPlatforms.map((platform) => ({
-        platform,
-        content: variants[platform] || baseContent,
-      })),
-      scheduledAt: isScheduled
+    try {
+      const scheduledAtUtc = isScheduled
         ? new Date(`${scheduledDate}T${scheduledTime}`)
-        : null,
-      status,
-    });
+        : null;
 
-    // Cerrar el drawer después de guardar
-    onClose();
+      const postData = {
+        id: postId || undefined,
+        tenant,
+        title,
+        baseText: baseContent,
+        status,
+        scheduledAtUtc,
+        platforms: selectedPlatforms.map((platform) => ({
+          platform,
+          variantText: variants[platform] || baseContent,
+          status,
+        })),
+      };
+
+      const response = await fetch("/api/v1/social/queue", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(postData),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to save post");
+      }
+
+      // Success - close drawer
+      alert("✅ Post saved successfully!");
+      onClose();
+    } catch (error) {
+      console.error("Error saving post:", error);
+      alert(
+        `Error al guardar el post: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   if (!isOpen) return null;
