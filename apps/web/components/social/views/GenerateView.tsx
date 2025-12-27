@@ -85,7 +85,11 @@ interface GeneratedPost {
   status: "draft";
 }
 
-export default function GenerateView() {
+interface GenerateViewProps {
+  tenant: string;
+}
+
+export default function GenerateView({ tenant }: GenerateViewProps) {
   const [config, setConfig] = useState<GenerateConfig>({
     objective: "brand",
     platforms: ["facebook", "instagram"],

@@ -77,6 +77,7 @@ export interface InitialData {
 }
 
 interface EditorDrawerProps {
+  tenant: string;
   isOpen: boolean;
   onClose: () => void;
   postId?: string | null;
@@ -84,6 +85,7 @@ interface EditorDrawerProps {
 }
 
 export default function EditorDrawer({
+  tenant,
   isOpen,
   onClose,
   postId,

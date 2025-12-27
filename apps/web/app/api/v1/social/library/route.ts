@@ -1,155 +1,461 @@
 import { NextRequest, NextResponse } from "next/server";
+import { db } from "@sass-store/database";
+import {
+  socialPosts,
+  socialPostTargets,
+  tenants,
+} from "@sass-store/database/schema";
+import { eq, and, desc, sql, inArray, or, like } from "drizzle-orm";
 
+/**
+ * GET /api/v1/social/library
+ * Get content library items (saved templates/successful posts)
+ *
+ * Query params:
+ * - tenant: tenant slug (required)
+ * - search: search in title and content
+ * - format: filter by format (post, reel, story, video)
+ * - platform: filter by platform
+ * - sortBy: recent | name | usage (default: recent)
+ */
 export async function GET(request: NextRequest) {
   try {
-    // En un entorno real, aquí se consultaría la base de datos
-    // Por ahora, devolveremos datos de demostración
-    const demoContent = [
-      {
-        id: "lib-1",
-        title: "Promoción de servicios",
-        content:
-          "✨ Oferta especial en nuestros servicios de uñas. ¡Resultados profesionales que te harán brillar! Agenda tu cita hoy. #WonderNails #Belleza",
-        format: "post",
-        platforms: ["facebook", "instagram"],
-        createdAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
-        updatedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
-        usageCount: 8,
-      },
-      {
-        id: "lib-2",
-        title: "Transformación increíble",
-        content:
-          "Mira el cambio espectacular de nuestra clienta. ¡De simple a espectacular en una sola sesión! 💅✨ #Transformación #BeforeAfter",
-        format: "reel",
-        platforms: ["instagram", "tiktok"],
-        mediaUrl: "/placeholder-video.jpg",
-        createdAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
-        updatedAt: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000),
-        usageCount: 12,
-      },
-      {
-        id: "lib-3",
-        title: "Tip del día",
-        content:
-          "💡 ¿Sabías que...? El uso de base coat antes del esmalte protege tus uñas y ayuda a que el color dure más tiempo.",
-        format: "story",
-        platforms: ["instagram", "facebook"],
-        createdAt: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000),
-        updatedAt: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000),
-        usageCount: 5,
-      },
-      {
-        id: "lib-4",
-        title: "Tutorial de uñas",
-        content:
-          "Aprende a conseguir el acabado perfecto en casa con nuestros consejos profesionales. En este video te mostramos paso a paso.",
-        format: "video",
-        platforms: ["instagram", "tiktok", "youtube"],
-        mediaUrl: "/placeholder-video.jpg",
-        createdAt: new Date(Date.now() - 25 * 24 * 60 * 60 * 1000),
-        updatedAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
-        usageCount: 15,
-      },
-      {
-        id: "lib-5",
-        title: "Nuevos colores",
-        content:
-          "¡Llegaron los nuevos colores de temporada! 🌈 Tonos vibrantes y elegantes para que elijas tu próximo look. #NuevosColores #Tendencias",
-        format: "post",
-        platforms: ["facebook", "instagram", "tiktok"],
-        createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
-        updatedAt: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000),
-        usageCount: 6,
-      },
+    const { searchParams } = new URL(request.url);
+    const tenantSlug = searchParams.get("tenant");
+    const search = searchParams.get("search");
+    const format = searchParams.get("format");
+    const platform = searchParams.get("platform");
+    const sortBy = searchParams.get("sortBy") || "recent";
+
+    if (!tenantSlug) {
+      return NextResponse.json(
+        { success: false, error: "Tenant slug is required" },
+        { status: 400 },
+      );
+    }
+
+    // Get tenant ID from slug
+    const [tenant] = await db
+      .select({ id: tenants.id })
+      .from(tenants)
+      .where(eq(tenants.slug, tenantSlug))
+      .limit(1);
+
+    if (!tenant) {
+      return NextResponse.json(
+        { success: false, error: "Tenant not found" },
+        { status: 404 },
+      );
+    }
+
+    // Build query conditions
+    // Library items are either:
+    // 1. Posts marked as "library" in metadata
+    // 2. Published posts that can be reused
+    const conditions = [
+      eq(socialPosts.tenantId, tenant.id),
+      or(
+        sql`${socialPosts.metadata}->>'isLibrary' = 'true'`,
+        eq(socialPosts.status, "published"),
+      ),
     ];
+
+    // Search in title and content
+    if (search) {
+      conditions.push(
+        or(
+          like(socialPosts.title, `%${search}%`),
+          like(socialPosts.baseText, `%${search}%`),
+        ),
+      );
+    }
+
+    // Filter by format (stored in metadata)
+    if (format) {
+      conditions.push(sql`${socialPosts.metadata}->>'format' = ${format}`);
+    }
+
+    // Fetch posts
+    let query = db
+      .select({
+        id: socialPosts.id,
+        title: socialPosts.title,
+        content: socialPosts.baseText,
+        status: socialPosts.status,
+        metadata: socialPosts.metadata,
+        createdAt: socialPosts.createdAt,
+        updatedAt: socialPosts.updatedAt,
+      })
+      .from(socialPosts)
+      .where(and(...conditions));
+
+    // Apply sorting
+    switch (sortBy) {
+      case "name":
+        query = query.orderBy(socialPosts.title);
+        break;
+      case "usage":
+        query = query.orderBy(
+          desc(sql`CAST(${socialPosts.metadata}->>'usageCount' AS INTEGER)`),
+        );
+        break;
+      case "recent":
+      default:
+        query = query.orderBy(desc(socialPosts.updatedAt));
+        break;
+    }
+
+    const posts = await query;
+
+    // Get targets for all posts
+    const postIds = posts.map((p) => p.id);
+    let targets: any[] = [];
+
+    if (postIds.length > 0) {
+      targets = await db
+        .select({
+          postId: socialPostTargets.postId,
+          platform: socialPostTargets.platform,
+        })
+        .from(socialPostTargets)
+        .where(
+          inArray(
+            socialPostTargets.postId,
+            postIds as unknown as [string, ...string[]],
+          ),
+        );
+    }
+
+    // Build library items
+    let libraryItems = posts.map((post) => {
+      const postTargets = targets.filter((t) => t.postId === post.id);
+      const platforms = [...new Set(postTargets.map((t) => t.platform))];
+
+      // Extract metadata
+      const metadata = (post.metadata as any) || {};
+      const format = metadata.format || "post";
+      const usageCount = metadata.usageCount || 0;
+      const mediaUrl = metadata.mediaUrl || null;
+
+      return {
+        id: post.id,
+        title: post.title || "Untitled",
+        content: post.content,
+        format,
+        platforms,
+        mediaUrl,
+        createdAt: post.createdAt,
+        updatedAt: post.updatedAt,
+        usageCount,
+      };
+    });
+
+    // Filter by platform if specified
+    if (platform) {
+      libraryItems = libraryItems.filter((item) =>
+        item.platforms.includes(platform),
+      );
+    }
 
     return NextResponse.json({
       success: true,
-      data: demoContent,
+      data: libraryItems,
+      count: libraryItems.length,
     });
   } catch (error) {
     console.error("Error fetching library content:", error);
     return NextResponse.json(
-      { success: false, error: "Failed to fetch library content" },
+      {
+        success: false,
+        error: "Failed to fetch library content",
+        details: error instanceof Error ? error.message : "Unknown error",
+      },
       { status: 500 },
     );
   }
 }
 
+/**
+ * POST /api/v1/social/library
+ * Save content to library
+ *
+ * Body:
+ * - tenant: string (required)
+ * - title: string (required)
+ * - content: string (required)
+ * - format: post | reel | story | video
+ * - platforms: string[]
+ * - mediaUrl?: string
+ */
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
+    const {
+      tenant: tenantSlug,
+      title,
+      content,
+      format = "post",
+      platforms = [],
+      mediaUrl,
+    } = body;
 
-    // En un entorno real, aquí se guardaría el contenido en la biblioteca
-    console.log("Saving content to library:", body);
+    if (!tenantSlug || !title || !content) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Tenant slug, title and content are required",
+        },
+        { status: 400 },
+      );
+    }
 
-    // Simular una respuesta exitosa
+    // Get tenant ID from slug
+    const [tenant] = await db
+      .select({ id: tenants.id })
+      .from(tenants)
+      .where(eq(tenants.slug, tenantSlug))
+      .limit(1);
+
+    if (!tenant) {
+      return NextResponse.json(
+        { success: false, error: "Tenant not found" },
+        { status: 404 },
+      );
+    }
+
+    // Create post marked as library content
+    const [newPost] = await db
+      .insert(socialPosts)
+      .values({
+        tenantId: tenant.id,
+        title,
+        baseText: content,
+        status: "draft", // Library items start as drafts
+        metadata: {
+          isLibrary: true,
+          format,
+          usageCount: 0,
+          mediaUrl,
+        },
+        createdBy: "user",
+        updatedBy: "user",
+      })
+      .returning();
+
+    // Create targets for each platform
+    if (platforms.length > 0) {
+      await db.insert(socialPostTargets).values(
+        platforms.map((platform: string) => ({
+          postId: newPost.id,
+          platform,
+          variantText: content,
+          status: "draft",
+        })),
+      );
+    }
+
     return NextResponse.json({
       success: true,
       data: {
-        id: `lib-${Date.now()}`,
-        ...body,
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        id: newPost.id,
+        title: newPost.title,
+        content: newPost.baseText,
+        format,
+        platforms,
+        mediaUrl,
+        createdAt: newPost.createdAt,
+        updatedAt: newPost.updatedAt,
         usageCount: 0,
       },
     });
   } catch (error) {
     console.error("Error saving content to library:", error);
     return NextResponse.json(
-      { success: false, error: "Failed to save content to library" },
+      {
+        success: false,
+        error: "Failed to save content to library",
+        details: error instanceof Error ? error.message : "Unknown error",
+      },
       { status: 500 },
     );
   }
 }
 
+/**
+ * PUT /api/v1/social/library
+ * Update library content
+ *
+ * Body:
+ * - id: string (required)
+ * - tenant: string (required)
+ * - title?: string
+ * - content?: string
+ * - format?: string
+ * - platforms?: string[]
+ * - mediaUrl?: string
+ */
 export async function PUT(request: NextRequest) {
   try {
     const body = await request.json();
-    const { id } = body;
+    const {
+      id,
+      tenant: tenantSlug,
+      title,
+      content,
+      format,
+      platforms,
+      mediaUrl,
+    } = body;
 
-    if (!id) {
+    if (!id || !tenantSlug) {
       return NextResponse.json(
-        { success: false, error: "Content ID is required" },
+        { success: false, error: "Content ID and tenant slug are required" },
         { status: 400 },
       );
     }
 
-    // En un entorno real, aquí se actualizaría el contenido en la biblioteca
-    console.log("Updating library content:", body);
+    // Get tenant ID from slug
+    const [tenant] = await db
+      .select({ id: tenants.id })
+      .from(tenants)
+      .where(eq(tenants.slug, tenantSlug))
+      .limit(1);
+
+    if (!tenant) {
+      return NextResponse.json(
+        { success: false, error: "Tenant not found" },
+        { status: 404 },
+      );
+    }
+
+    // Get current metadata
+    const [currentPost] = await db
+      .select({ metadata: socialPosts.metadata })
+      .from(socialPosts)
+      .where(and(eq(socialPosts.id, id), eq(socialPosts.tenantId, tenant.id)))
+      .limit(1);
+
+    if (!currentPost) {
+      return NextResponse.json(
+        { success: false, error: "Content not found" },
+        { status: 404 },
+      );
+    }
+
+    const currentMetadata = (currentPost.metadata as any) || {};
+
+    // Update post
+    const [updatedPost] = await db
+      .update(socialPosts)
+      .set({
+        ...(title && { title }),
+        ...(content && { baseText: content }),
+        metadata: {
+          ...currentMetadata,
+          isLibrary: true,
+          ...(format && { format }),
+          ...(mediaUrl !== undefined && { mediaUrl }),
+        },
+        updatedBy: "user",
+        updatedAt: new Date(),
+      })
+      .where(and(eq(socialPosts.id, id), eq(socialPosts.tenantId, tenant.id)))
+      .returning();
+
+    // Update targets if platforms provided
+    if (platforms && platforms.length > 0) {
+      // Delete existing targets
+      await db
+        .delete(socialPostTargets)
+        .where(eq(socialPostTargets.postId, id));
+
+      // Create new targets
+      await db.insert(socialPostTargets).values(
+        platforms.map((platform: string) => ({
+          postId: id,
+          platform,
+          variantText: content || updatedPost.baseText,
+          status: "draft",
+        })),
+      );
+    }
 
     return NextResponse.json({
       success: true,
       data: {
-        id,
-        ...body,
-        updatedAt: new Date(),
+        id: updatedPost.id,
+        title: updatedPost.title,
+        content: updatedPost.baseText,
+        updatedAt: updatedPost.updatedAt,
       },
     });
   } catch (error) {
     console.error("Error updating library content:", error);
     return NextResponse.json(
-      { success: false, error: "Failed to update library content" },
+      {
+        success: false,
+        error: "Failed to update library content",
+        details: error instanceof Error ? error.message : "Unknown error",
+      },
       { status: 500 },
     );
   }
 }
 
+/**
+ * DELETE /api/v1/social/library
+ * Delete library content
+ *
+ * Query params:
+ * - id: content ID (required)
+ * - tenant: tenant slug (required)
+ */
 export async function DELETE(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const contentId = searchParams.get("id");
+    const tenantSlug = searchParams.get("tenant");
 
-    if (!contentId) {
+    if (!contentId || !tenantSlug) {
       return NextResponse.json(
-        { success: false, error: "Content ID is required" },
+        { success: false, error: "Content ID and tenant slug are required" },
         { status: 400 },
       );
     }
 
-    // En un entorno real, aquí se eliminaría el contenido de la biblioteca
-    console.log("Deleting library content:", contentId);
+    // Get tenant ID from slug
+    const [tenant] = await db
+      .select({ id: tenants.id })
+      .from(tenants)
+      .where(eq(tenants.slug, tenantSlug))
+      .limit(1);
+
+    if (!tenant) {
+      return NextResponse.json(
+        { success: false, error: "Tenant not found" },
+        { status: 404 },
+      );
+    }
+
+    // Delete targets first
+    await db
+      .delete(socialPostTargets)
+      .where(eq(socialPostTargets.postId, contentId));
+
+    // Delete post
+    const [deletedPost] = await db
+      .delete(socialPosts)
+      .where(
+        and(eq(socialPosts.id, contentId), eq(socialPosts.tenantId, tenant.id)),
+      )
+      .returning({ id: socialPosts.id });
+
+    if (!deletedPost) {
+      return NextResponse.json(
+        { success: false, error: "Content not found" },
+        { status: 404 },
+      );
+    }
 
     return NextResponse.json({
       success: true,
@@ -158,7 +464,11 @@ export async function DELETE(request: NextRequest) {
   } catch (error) {
     console.error("Error deleting library content:", error);
     return NextResponse.json(
-      { success: false, error: "Failed to delete library content" },
+      {
+        success: false,
+        error: "Failed to delete library content",
+        details: error instanceof Error ? error.message : "Unknown error",
+      },
       { status: 500 },
     );
   }

@@ -65,10 +65,11 @@ interface QueuePost {
 }
 
 interface QueueViewProps {
+  tenant: string;
   onPostClick: (postId: string, data?: any) => void;
 }
 
-export default function QueueView({ onPostClick }: QueueViewProps) {
+export default function QueueView({ tenant, onPostClick }: QueueViewProps) {
   const [posts, setPosts] = useState<QueuePost[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedPosts, setSelectedPosts] = useState<Set<string>>(new Set());
@@ -85,6 +86,7 @@ export default function QueueView({ onPostClick }: QueueViewProps) {
     setIsLoading(true);
     try {
       const params = new URLSearchParams({
+        tenant,
         start_date: filters.dateRange.start,
         end_date: filters.dateRange.end,
       });
@@ -92,7 +94,6 @@ export default function QueueView({ onPostClick }: QueueViewProps) {
       if (filters.status) params.append("status", filters.status);
       if (filters.platform) params.append("platform", filters.platform);
 
-      // Simular llamada a API
       const response = await fetch(`/api/v1/social/queue?${params}`);
       if (!response.ok) {
         throw new Error("Failed to fetch queue posts");
@@ -135,7 +136,7 @@ export default function QueueView({ onPostClick }: QueueViewProps) {
     } finally {
       setIsLoading(false);
     }
-  }, [filters]);
+  }, [tenant, filters]);
 
   useEffect(() => {
     fetchQueuePosts();
@@ -168,7 +169,7 @@ export default function QueueView({ onPostClick }: QueueViewProps) {
     try {
       switch (action) {
         case "approve":
-          // Cambiar estado a 'published' para los posts seleccionados
+          // TODO: Implement API call to update status
           setPosts((prev) =>
             prev.map((post) =>
               selectedPosts.has(post.id)
@@ -178,7 +179,7 @@ export default function QueueView({ onPostClick }: QueueViewProps) {
           );
           break;
         case "reschedule":
-          // Lógica para reprogramar (simplificada)
+          // TODO: Implement API call to reschedule
           const newDate = new Date();
           newDate.setDate(newDate.getDate() + 1);
           setPosts((prev) =>
@@ -190,10 +191,22 @@ export default function QueueView({ onPostClick }: QueueViewProps) {
           );
           break;
         case "delete":
-          // Eliminar posts seleccionados
-          setPosts((prev) =>
-            prev.filter((post) => !selectedPosts.has(post.id)),
+          // Delete posts via API
+          const postIds = Array.from(selectedPosts).join(",");
+          const response = await fetch(
+            `/api/v1/social/queue?ids=${postIds}&tenant=${tenant}`,
+            {
+              method: "DELETE",
+            },
           );
+
+          if (response.ok) {
+            setPosts((prev) =>
+              prev.filter((post) => !selectedPosts.has(post.id)),
+            );
+          } else {
+            throw new Error("Failed to delete posts");
+          }
           break;
       }
 

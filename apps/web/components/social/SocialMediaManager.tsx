@@ -46,22 +46,23 @@ export default function SocialMediaManager({
   const renderActiveView = () => {
     switch (activeView) {
       case "calendar":
-        return <CalendarView onPostClick={handlePostClick} />;
+        return <CalendarView tenant={tenant} onPostClick={handlePostClick} />;
       case "queue":
-        return <QueueView onPostClick={handlePostClick} />;
+        return <QueueView tenant={tenant} onPostClick={handlePostClick} />;
       case "generate":
-        return <GenerateView />;
+        return <GenerateView tenant={tenant} />;
       case "library":
         return (
           <LibraryView
+            tenant={tenant}
             onContentSelect={handlePostClick}
             onCreateNew={handleCreateNew}
           />
         );
       case "analytics":
-        return <AnalyticsView onPostClick={handlePostClick} />;
+        return <AnalyticsView tenant={tenant} onPostClick={handlePostClick} />;
       default:
-        return <CalendarView onPostClick={handlePostClick} />;
+        return <CalendarView tenant={tenant} onPostClick={handlePostClick} />;
     }
   };
 
@@ -80,6 +81,7 @@ export default function SocialMediaManager({
       {/* Editor Drawer */}
       {isEditorOpen && (
         <EditorDrawer
+          tenant={tenant}
           isOpen={isEditorOpen}
           onClose={handleCloseEditor}
           postId={selectedPostId}

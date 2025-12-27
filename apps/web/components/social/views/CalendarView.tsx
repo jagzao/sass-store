@@ -36,6 +36,7 @@ interface CalendarData {
 }
 
 interface CalendarViewProps {
+  tenant: string;
   onPostClick: (postId: string) => void;
 }
 
@@ -95,7 +96,10 @@ const STATUS_CONFIG = {
   },
 };
 
-export default function CalendarView({ onPostClick }: CalendarViewProps) {
+export default function CalendarView({
+  tenant,
+  onPostClick,
+}: CalendarViewProps) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [calendarData, setCalendarData] = useState<CalendarData>({});
@@ -139,6 +143,7 @@ export default function CalendarView({ onPostClick }: CalendarViewProps) {
       );
 
       const params = new URLSearchParams({
+        tenant,
         view: viewType,
         start_date: startDate,
         end_date: endDate,
@@ -154,7 +159,6 @@ export default function CalendarView({ onPostClick }: CalendarViewProps) {
         params.append("formats", filters.formats.join(","));
       }
 
-      // Simular llamada a API
       const response = await fetch(`/api/v1/social/calendar?${params}`);
       if (!response.ok) {
         throw new Error("Failed to fetch calendar data");

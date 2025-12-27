@@ -54,6 +54,7 @@ interface AnalyticsData {
 }
 
 interface AnalyticsViewProps {
+  tenant: string;
   onPostClick: (postId: string) => void;
 }
 
@@ -64,7 +65,10 @@ const DATE_RANGES = [
   { id: "1y", label: "Último año", days: 365 },
 ];
 
-export default function AnalyticsView({ onPostClick }: AnalyticsViewProps) {
+export default function AnalyticsView({
+  tenant,
+  onPostClick,
+}: AnalyticsViewProps) {
   const [dateRange, setDateRange] = useState("30d");
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
   const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(

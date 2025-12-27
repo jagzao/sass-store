@@ -38,11 +38,13 @@ interface LibraryContent {
 }
 
 interface LibraryViewProps {
+  tenant: string;
   onContentSelect: (contentId: string, data?: any) => void;
   onCreateNew: () => void;
 }
 
 export default function LibraryView({
+  tenant,
   onContentSelect,
   onCreateNew,
 }: LibraryViewProps) {
@@ -60,8 +62,7 @@ export default function LibraryView({
   const fetchLibraryContent = async () => {
     setIsLoading(true);
     try {
-      // Simular llamada a API
-      const response = await fetch("/api/v1/social/library");
+      const response = await fetch(`/api/v1/social/library?tenant=${tenant}`);
       if (!response.ok) {
         throw new Error("Failed to fetch library content");
       }
