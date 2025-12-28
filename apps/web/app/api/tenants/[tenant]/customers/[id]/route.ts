@@ -149,7 +149,10 @@ export async function DELETE(
       );
     }
 
-    return NextResponse.json({ message: "Customer deleted successfully" });
+    return NextResponse.json({
+      success: true,
+      message: "Customer deleted successfully",
+    });
   } catch (error) {
     console.error("Customer DELETE error:", error);
     return NextResponse.json(
