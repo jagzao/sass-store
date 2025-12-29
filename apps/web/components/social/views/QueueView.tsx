@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import DraggableQueue from "../DraggableQueue";
 
 const PLATFORM_CONFIG = {
   facebook: {
@@ -73,6 +74,7 @@ export default function QueueView({ tenant, onPostClick }: QueueViewProps) {
   const [posts, setPosts] = useState<QueuePost[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedPosts, setSelectedPosts] = useState<Set<string>>(new Set());
+  const [viewMode, setViewMode] = useState<"table" | "drag">("table");
   const [filters, setFilters] = useState({
     status: "",
     platform: "",
@@ -102,7 +104,7 @@ export default function QueueView({ tenant, onPostClick }: QueueViewProps) {
       const result = await response.json();
       setPosts(result.data || []);
     } catch (error) {
-      console.error("Error fetching queue posts:", error);
+      // Error fetching queue posts - showing demo data
       // Datos de demostración en caso de error
       const demoPosts: QueuePost[] = [];
       const statuses: Array<keyof typeof STATUS_CONFIG> = [
@@ -212,7 +214,7 @@ export default function QueueView({ tenant, onPostClick }: QueueViewProps) {
 
       setSelectedPosts(new Set());
     } catch (error) {
-      console.error(`Error performing ${action} action:`, error);
+      // Error performing bulk action
       alert(`Error al realizar la acción ${action}`);
     }
   };
@@ -220,6 +222,36 @@ export default function QueueView({ tenant, onPostClick }: QueueViewProps) {
   const truncateText = (text: string, maxLength: number = 80) => {
     if (text.length <= maxLength) return text;
     return text.substring(0, maxLength) + "...";
+  };
+
+  const handleReorder = async (reorderedPosts: any[]) => {
+    try {
+      const postIds = reorderedPosts.map((p) => p.id);
+
+      const response = await fetch("/api/v1/social/queue/reorder", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          tenant,
+          postIds,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to reorder posts");
+      }
+
+      await response.json();
+      // Posts reordered successfully
+
+      // Refresh the posts list to reflect new order
+      await fetchQueuePosts();
+    } catch (error) {
+      // Error reordering posts
+      alert("Error al reordenar las publicaciones");
+    }
   };
 
   return (
@@ -234,6 +266,30 @@ export default function QueueView({ tenant, onPostClick }: QueueViewProps) {
             <p className="text-gray-600 text-sm mt-1">
               Gestión rápida de publicaciones pendientes o fallidas
             </p>
+          </div>
+
+          {/* View Mode Toggle */}
+          <div className="flex items-center gap-2 bg-gray-100 rounded-lg p-1">
+            <button
+              onClick={() => setViewMode("table")}
+              className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                viewMode === "table"
+                  ? "bg-white text-gray-900 shadow-sm"
+                  : "text-gray-600 hover:text-gray-900"
+              }`}
+            >
+              📋 Tabla
+            </button>
+            <button
+              onClick={() => setViewMode("drag")}
+              className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                viewMode === "drag"
+                  ? "bg-white text-gray-900 shadow-sm"
+                  : "text-gray-600 hover:text-gray-900"
+              }`}
+            >
+              🔀 Reordenar
+            </button>
           </div>
         </div>
 
@@ -354,142 +410,186 @@ export default function QueueView({ tenant, onPostClick }: QueueViewProps) {
         </div>
       )}
 
-      {/* Queue Table */}
-      <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
-        {isLoading ? (
-          <div className="p-8 text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Cargando cola de publicaciones...</p>
-          </div>
-        ) : posts.length === 0 ? (
-          <div className="p-8 text-center">
-            <div className="text-gray-600 text-6xl mb-4">📋</div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
-              No hay publicaciones en la cola
-            </h3>
-            <p className="text-gray-600">
-              No se encontraron publicaciones con los filtros aplicados.
-            </p>
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left">
-                    <input
-                      type="checkbox"
-                      checked={
-                        selectedPosts.size === posts.length && posts.length > 0
-                      }
-                      onChange={handleSelectAll}
-                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                    />
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Contenido
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Plataformas
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Fecha
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Estado
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Acciones
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {posts.map((post) => (
-                  <tr key={post.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
+      {/* Content Area - Toggle between Table and Drag View */}
+      {viewMode === "drag" ? (
+        /* Drag & Drop View */
+        <div className="bg-white rounded-lg shadow-sm border p-6">
+          {isLoading ? (
+            <div className="p-8 text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+              <p className="text-gray-600">Cargando cola de publicaciones...</p>
+            </div>
+          ) : (
+            <>
+              <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <p className="text-sm text-blue-800">
+                  💡 <strong>Modo Reordenar:</strong> Arrastra y suelta las
+                  publicaciones para cambiar su orden de programación. Los
+                  cambios se guardarán automáticamente.
+                </p>
+              </div>
+              <DraggableQueue
+                posts={posts.map((post) => ({
+                  id: post.id,
+                  title: post.title || "Sin título",
+                  baseText: post.content,
+                  scheduledAt: post.scheduledAt || new Date(),
+                  status: post.status,
+                  platforms: post.platforms,
+                }))}
+                onPostClick={(postId) => {
+                  const post = posts.find((p) => p.id === postId);
+                  if (post) {
+                    onPostClick(postId, {
+                      title: post.title,
+                      baseContent: post.content,
+                    });
+                  }
+                }}
+                onReorder={handleReorder}
+              />
+            </>
+          )}
+        </div>
+      ) : (
+        /* Table View */
+        <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
+          {isLoading ? (
+            <div className="p-8 text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+              <p className="text-gray-600">Cargando cola de publicaciones...</p>
+            </div>
+          ) : posts.length === 0 ? (
+            <div className="p-8 text-center">
+              <div className="text-gray-600 text-6xl mb-4">📋</div>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                No hay publicaciones en la cola
+              </h3>
+              <p className="text-gray-600">
+                No se encontraron publicaciones con los filtros aplicados.
+              </p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left">
                       <input
                         type="checkbox"
-                        checked={selectedPosts.has(post.id)}
-                        onChange={() => handleSelectPost(post.id)}
+                        checked={
+                          selectedPosts.size === posts.length &&
+                          posts.length > 0
+                        }
+                        onChange={handleSelectAll}
                         className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                       />
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="text-sm font-medium text-gray-900">
-                        {post.title}
-                      </div>
-                      <div className="text-sm text-gray-600">
-                        {truncateText(post.content)}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex flex-wrap gap-1">
-                        {post.platforms.map((platform) => (
-                          <span
-                            key={platform}
-                            className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${PLATFORM_CONFIG[platform as keyof typeof PLATFORM_CONFIG].color}`}
-                          >
-                            {
-                              PLATFORM_CONFIG[
-                                platform as keyof typeof PLATFORM_CONFIG
-                              ].emoji
-                            }
-                          </span>
-                        ))}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {post.scheduledAt
-                        ? format(post.scheduledAt, "dd/MM/yyyy HH:mm", {
-                            locale: es,
-                          })
-                        : "No programado"}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span
-                        className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${STATUS_CONFIG[post.status].color}`}
-                      >
-                        {STATUS_CONFIG[post.status].icon}
-                        <span className="ml-1">
-                          {STATUS_CONFIG[post.status].label}
-                        </span>
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <button
-                        onClick={() =>
-                          onPostClick(post.id, {
-                            title: post.title,
-                            baseContent: post.content,
-                          })
-                        }
-                        className="text-blue-600 hover:text-blue-900 mr-3"
-                      >
-                        Editar
-                      </button>
-                      <button
-                        onClick={() => {
-                          setPosts((prev) =>
-                            prev.filter((p) => p.id !== post.id),
-                          );
-                          setSelectedPosts((prev) => {
-                            const newSet = new Set(prev);
-                            newSet.delete(post.id);
-                            return newSet;
-                          });
-                        }}
-                        className="text-red-600 hover:text-red-900"
-                      >
-                        Eliminar
-                      </button>
-                    </td>
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Contenido
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Plataformas
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Fecha
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Estado
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Acciones
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {posts.map((post) => (
+                    <tr key={post.id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <input
+                          type="checkbox"
+                          checked={selectedPosts.has(post.id)}
+                          onChange={() => handleSelectPost(post.id)}
+                          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                        />
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="text-sm font-medium text-gray-900">
+                          {post.title}
+                        </div>
+                        <div className="text-sm text-gray-600">
+                          {truncateText(post.content)}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex flex-wrap gap-1">
+                          {post.platforms.map((platform) => (
+                            <span
+                              key={platform}
+                              className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${PLATFORM_CONFIG[platform as keyof typeof PLATFORM_CONFIG].color}`}
+                            >
+                              {
+                                PLATFORM_CONFIG[
+                                  platform as keyof typeof PLATFORM_CONFIG
+                                ].emoji
+                              }
+                            </span>
+                          ))}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {post.scheduledAt
+                          ? format(post.scheduledAt, "dd/MM/yyyy HH:mm", {
+                              locale: es,
+                            })
+                          : "No programado"}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span
+                          className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${STATUS_CONFIG[post.status].color}`}
+                        >
+                          {STATUS_CONFIG[post.status].icon}
+                          <span className="ml-1">
+                            {STATUS_CONFIG[post.status].label}
+                          </span>
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button
+                          onClick={() =>
+                            onPostClick(post.id, {
+                              title: post.title,
+                              baseContent: post.content,
+                            })
+                          }
+                          className="text-blue-600 hover:text-blue-900 mr-3"
+                        >
+                          Editar
+                        </button>
+                        <button
+                          onClick={() => {
+                            setPosts((prev) =>
+                              prev.filter((p) => p.id !== post.id),
+                            );
+                            setSelectedPosts((prev) => {
+                              const newSet = new Set(prev);
+                              newSet.delete(post.id);
+                              return newSet;
+                            });
+                          }}
+                          className="text-red-600 hover:text-red-900"
+                        >
+                          Eliminar
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
