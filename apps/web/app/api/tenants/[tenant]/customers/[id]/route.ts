@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@sass-store/database";
-import { customers, tenants } from "@sass-store/database/schema";
+import { bookings, customers, tenants } from "@sass-store/database/schema";
 import { eq, and } from "drizzle-orm";
 import { z } from "zod";
 
@@ -133,6 +133,17 @@ export async function DELETE(
     if (!tenant) {
       return NextResponse.json({ error: "Tenant not found" }, { status: 404 });
     }
+
+    // Unlink bookings regarding this customer to avoid FK constraints
+    await db
+      .update(bookings)
+      .set({ customerId: null })
+      .where(
+        and(
+          eq(bookings.customerId, customerId),
+          eq(bookings.tenantId, tenant.id),
+        ),
+      );
 
     // Delete customer
     const [deletedCustomer] = await db
