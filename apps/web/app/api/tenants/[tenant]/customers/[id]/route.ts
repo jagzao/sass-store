@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@sass-store/database";
-import { bookings, customers, tenants } from "@sass-store/database/schema";
-import { eq, and } from "drizzle-orm";
+import {
+  bookings,
+  customers,
+  customerVisits,
+  tenants,
+} from "@sass-store/database/schema";
+import { eq, and, sql } from "drizzle-orm";
 import { z } from "zod";
 
 const updateCustomerSchema = z.object({
@@ -47,7 +52,34 @@ export async function GET(
       );
     }
 
-    return NextResponse.json({ customer });
+    // Get stats for delete warning
+    const [visitsCount] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(customerVisits)
+      .where(
+        and(
+          eq(customerVisits.customerId, customerId),
+          eq(customerVisits.tenantId, tenant.id),
+        ),
+      );
+
+    const [bookingsCount] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(bookings)
+      .where(
+        and(
+          eq(bookings.customerId, customerId),
+          eq(bookings.tenantId, tenant.id),
+        ),
+      );
+
+    return NextResponse.json({
+      customer,
+      stats: {
+        visits: Number(visitsCount?.count || 0),
+        bookings: Number(bookingsCount?.count || 0),
+      },
+    });
   } catch (error) {
     console.error("Customer GET error:", error);
     return NextResponse.json(

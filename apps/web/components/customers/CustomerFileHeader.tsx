@@ -58,6 +58,10 @@ export default function CustomerFileHeader({
   const [editedTags, setEditedTags] = useState<string[]>([]);
   const [newTag, setNewTag] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
+  const [stats, setStats] = useState<{
+    visits: number;
+    bookings: number;
+  } | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -85,6 +89,9 @@ export default function CustomerFileHeader({
         }
 
         setCustomer(data.customer);
+        if (data.stats) {
+          setStats(data.stats);
+        }
         setEditedNotes(data.customer.generalNotes || "");
         setEditedName(data.customer.name || "");
         setEditedPhone(data.customer.phone || "");
@@ -381,25 +388,60 @@ export default function CustomerFileHeader({
               <Trash2 className="h-5 w-5" />
             </button>
           </AlertDialogTrigger>
-          <AlertDialogContent>
+          <AlertDialogContent
+            className={`${isLuxury ? "border-[#D4AF37]/20" : ""}`}
+          >
             <AlertDialogHeader>
-              <AlertDialogTitle>
+              <AlertDialogTitle
+                className={`${isLuxury ? "text-[#1a1a1a] font-serif text-xl" : ""}`}
+              >
                 ¿Está seguro de eliminar esta clienta?
               </AlertDialogTitle>
-              <AlertDialogDescription>
-                Esta acción no se puede deshacer. Se eliminará permanentemente
-                la clienta "{customer.name}" y todo su historial de visitas y
-                servicios.
+              <AlertDialogDescription className="space-y-4">
+                <p>
+                  Esta acción no se puede deshacer. Se eliminará permanentemente
+                  la clienta{" "}
+                  <span className="font-semibold text-gray-900">
+                    "{customer.name}"
+                  </span>
+                  .
+                </p>
+
+                {stats && (
+                  <div
+                    className={`p-4 rounded-md ${isLuxury ? "bg-red-50 border border-red-100" : "bg-gray-100"}`}
+                  >
+                    <p
+                      className={`text-sm font-medium mb-2 ${isLuxury ? "text-red-800" : "text-gray-700"}`}
+                    >
+                      También se eliminarán o desvincularán:
+                    </p>
+                    <ul className="list-disc list-inside text-sm space-y-1 text-gray-600">
+                      <li>
+                        <span className="font-semibold">{stats.visits}</span>{" "}
+                        Visitas completadas
+                      </li>
+                      <li>
+                        <span className="font-semibold">{stats.bookings}</span>{" "}
+                        Reservas (pendientes o pasadas)
+                      </li>
+                    </ul>
+                  </div>
+                )}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogCancel
+                className={`${isLuxury ? "border-gray-200 text-gray-600 hover:bg-gray-50" : ""}`}
+              >
+                Cancelar
+              </AlertDialogCancel>
               <AlertDialogAction
                 onClick={handleDelete}
                 className={buttonVariants({ variant: "destructive" })}
                 disabled={isDeleting}
               >
-                {isDeleting ? "Eliminando..." : "Eliminar"}
+                {isDeleting ? "Eliminando..." : "Eliminar permanentemente"}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
