@@ -24,7 +24,7 @@ export interface ServiceCardProps {
   tenantSlug: string;
   metadata?: ServiceMetadata;
   onBook?: (serviceId: string) => void;
-  variant?: "default" | "luxury";
+  variant?: "default" | "luxury" | "tech";
 }
 
 const ServiceCard = memo(
@@ -62,6 +62,7 @@ const ServiceCard = memo(
     };
 
     const isLuxury = variant === "luxury";
+    const isTech = variant === "tech";
 
     // Validate if image is a valid URL (not an emoji or other text)
     const isValidImageUrl = (url?: string) => {
@@ -86,7 +87,9 @@ const ServiceCard = memo(
           className={`rounded-xl overflow-hidden transition-all duration-300 ${
             isLuxury
               ? "bg-white/70 backdrop-blur-md border border-[#D4AF37]/30 hover:border-[#D4AF37]/60 hover:shadow-[0_10px_30px_rgba(212,175,55,0.15)]"
-              : "bg-white shadow-lg hover:shadow-xl border border-gray-100"
+              : isTech
+                ? "bg-white/5 backdrop-blur-md border border-white/10 hover:border-[#FF8000]/50 hover:shadow-[0_0_15px_rgba(255,128,0,0.15)]"
+                : "bg-white shadow-lg hover:shadow-xl border border-gray-100"
           }`}
         >
           {/* Image - clickable for details */}
@@ -136,12 +139,12 @@ const ServiceCard = memo(
               )}
             </div>
             <h3
-              className={`text-xl font-bold mb-3 ${isLuxury ? "text-[#D4AF37] font-serif tracking-wide" : "text-gray-900"}`}
+              className={`text-xl font-bold mb-3 ${isLuxury ? "text-[#D4AF37] font-serif tracking-wide" : isTech ? "text-white font-[family-name:var(--font-rajdhani)] tracking-wider uppercase" : "text-gray-900"}`}
             >
               {name}
             </h3>
             <p
-              className={`mb-4 line-clamp-2 ${isLuxury ? "text-gray-600 font-normal" : "text-gray-600"}`}
+              className={`mb-4 line-clamp-2 ${isLuxury ? "text-gray-600 font-normal" : isTech ? "text-gray-400" : "text-gray-600"}`}
             >
               {shortDescription || description}
             </p>
@@ -149,8 +152,10 @@ const ServiceCard = memo(
             <div className="flex items-center justify-between mb-6">
               <div>
                 <span
-                  className={`text-3xl font-bold ${isLuxury ? "text-[#333333]" : ""}`}
-                  style={!isLuxury ? { color: primaryColor } : undefined}
+                  className={`text-3xl font-bold ${isLuxury ? "text-[#333333]" : isTech ? "text-[#FF8000]" : ""}`}
+                  style={
+                    !isLuxury && !isTech ? { color: primaryColor } : undefined
+                  }
                 >
                   ${price}
                 </span>
@@ -161,7 +166,9 @@ const ServiceCard = memo(
                   className={`px-3 py-1 rounded-full text-sm ${
                     isLuxury
                       ? "text-[#D4AF37] bg-[#D4AF37]/10 border border-[#D4AF37]/20"
-                      : "bg-gray-100 text-gray-700"
+                      : isTech
+                        ? "text-[#EAFF00] bg-white/5 border border-white/10"
+                        : "bg-gray-100 text-gray-700"
                   }`}
                 >
                   {duration} min
@@ -175,9 +182,19 @@ const ServiceCard = memo(
             <button
               onClick={handleReservarAhora}
               className={`w-full py-3 px-6 rounded-lg font-semibold hover:opacity-90 shadow-md transition-opacity ${
-                isLuxury ? "text-[#121212]" : "text-white"
+                isLuxury
+                  ? "text-[#121212]"
+                  : isTech
+                    ? "bg-gradient-to-r from-[#FF8000] to-[#FF5500] text-black hover:shadow-[0_0_20px_rgba(255,128,0,0.4)] rounded-full border-none"
+                    : "text-white"
               }`}
-              style={{ backgroundColor: isLuxury ? "#D4AF37" : primaryColor }}
+              style={{
+                backgroundColor: isLuxury
+                  ? "#D4AF37"
+                  : isTech
+                    ? undefined
+                    : primaryColor,
+              }}
               data-testid="reservar-ahora-button"
             >
               Reservar Ahora
@@ -279,7 +296,9 @@ const ServiceCard = memo(
                   <h3 className="text-lg font-semibold mb-2 text-gray-900">
                     Descripción
                   </h3>
-                  <p className="text-gray-600 leading-relaxed">{longDescription || description}</p>
+                  <p className="text-gray-600 leading-relaxed">
+                    {longDescription || description}
+                  </p>
                 </div>
 
                 {metadata && Object.keys(metadata).length > 0 && (

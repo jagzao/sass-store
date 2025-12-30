@@ -30,6 +30,14 @@ interface PageProps {
 export default async function TenantPageServer({ params }: PageProps) {
   const { tenant: tenantSlug } = await params;
 
+  // Custom Design for Zo System
+  if (tenantSlug === "zo-system") {
+    const ZoLandingPage = (
+      await import("@/components/tenant/zo-system/ZoLandingPage")
+    ).default;
+    return <ZoLandingPage tenantSlug={tenantSlug} />;
+  }
+
   // Get tenant data directly from database (server-side only, no HTTP calls)
   const tenant = await getTenantBySlug(tenantSlug);
 
@@ -91,7 +99,7 @@ async function ProductsSection({
   tenantSlug: string;
   tenantMode: "booking" | "catalog";
   primaryColor: string;
-  variant?: "default" | "luxury";
+  variant?: "default" | "luxury" | "tech";
 }) {
   // Fetch products (cached for 5 minutes)
   const productsResponse = await fetchRevalidating<{ data: Product[] }>(
@@ -120,13 +128,13 @@ async function ProductsSection({
             key={product.id}
             id={product.id}
             name={product.name}
-            description={product.description}
+            description={product.description || ""}
             price={Number(product.price)}
             image={product.imageUrl || product.metadata?.image}
             category={product.category || product.metadata?.category}
             primaryColor={primaryColor}
             tenantSlug={tenantSlug}
-            metadata={product.metadata}
+            metadata={product.metadata as any}
             variant={variant}
           />
         ))}
@@ -146,7 +154,7 @@ async function ServicesSection({
 }: {
   tenantSlug: string;
   primaryColor: string;
-  variant?: "default" | "luxury";
+  variant?: "default" | "luxury" | "tech";
 }) {
   // Fetch services (cached for 5 minutes)
   const servicesResponse = await fetchRevalidating<{ data: Service[] }>(
@@ -162,10 +170,10 @@ async function ServicesSection({
 
   return (
     <section
-      className={`container mx-auto px-4 py-12 ${variant === "luxury" ? "" : "bg-white"}`}
+      className={`container mx-auto px-4 py-12 ${variant === "luxury" ? "" : variant === "tech" ? "bg-transparent" : "bg-white"}`}
     >
       <h2
-        className={`text-3xl font-bold mb-8 ${variant === "luxury" ? "text-[#D4AF37] font-serif" : ""}`}
+        className={`text-3xl font-bold mb-8 ${variant === "luxury" ? "text-[#D4AF37] font-serif" : variant === "tech" ? "text-white font-[family-name:var(--font-rajdhani)] tracking-wider uppercase" : ""}`}
       >
         Servicios Destacados
       </h2>
@@ -174,10 +182,12 @@ async function ServicesSection({
           <ServiceCard
             key={service.id}
             {...service}
+            description={service.description || ""}
             price={Number(service.price)}
             primaryColor={primaryColor}
             tenantSlug={tenantSlug}
             variant={variant}
+            metadata={service.metadata as any}
           />
         ))}
       </div>

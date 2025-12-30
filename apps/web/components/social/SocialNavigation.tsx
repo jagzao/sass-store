@@ -4,7 +4,7 @@ import { useState } from "react";
 
 interface SocialNavigationProps {
   activeView: string;
-  onViewChange: (view: string) => void;
+  onViewChange: (view: any) => void;
   onCreateNew: () => void;
 }
 

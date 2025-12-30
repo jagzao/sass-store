@@ -1,4 +1,4 @@
-import { Inter } from "next/font/google";
+import { Inter, Montserrat, Rajdhani } from "next/font/google";
 import "./globals.css";
 // JotaiProvider removed - migrated to Zustand
 import { ToastProvider } from "@/components/ui/toast-provider";
@@ -10,6 +10,21 @@ const inter = Inter({
   subsets: ["latin"],
   display: "swap",
   preload: true,
+  variable: "--font-inter",
+});
+
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  display: "swap",
+  variable: "--font-montserrat",
+});
+
+const rajdhani = Rajdhani({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  display: "swap",
+  variable: "--font-rajdhani",
 });
 
 export const metadata = {
@@ -33,7 +48,10 @@ export default async function RootLayout({ children }: RootLayoutProps) {
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
-      <body className={inter.className} suppressHydrationWarning>
+      <body
+        className={`${inter.className} ${montserrat.variable} ${rajdhani.variable}`}
+        suppressHydrationWarning
+      >
         <ClientInit />
         <AuthSessionProvider>
           <ToastProvider>

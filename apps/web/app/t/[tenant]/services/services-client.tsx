@@ -57,45 +57,76 @@ export function ServicesClient({ services, tenantData }: ServicesClientProps) {
     <LiveRegionProvider>
       <div className="container mx-auto px-4 py-8">
         {/* Services Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+        <div
+          className={`grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12 ${tenantData.slug === "zo-system" ? "auto-rows-fr" : ""}`}
+        >
           {services.map((service: any) => (
             <div
               key={service.id}
-              className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+              className={`rounded-lg overflow-hidden transition-all ${
+                tenantData.slug === "zo-system"
+                  ? "bg-white/5 backdrop-blur-md border border-white/10 hover:border-[#FF8000]/50 hover:shadow-[0_0_20px_rgba(255,128,0,0.15)]"
+                  : "bg-white shadow-md hover:shadow-lg"
+              }`}
             >
-              <div className="p-6">
-                <div className="text-5xl mb-4 text-center">
+              <div className="p-6 h-full flex flex-col">
+                <div
+                  className={`text-5xl mb-4 text-center ${tenantData.slug === "zo-system" ? "text-shadow-neon" : ""}`}
+                >
                   {service.metadata?.image || "💅"}
                 </div>
-                <h3 className="text-xl font-semibold mb-2">{service.name}</h3>
-                <p className="text-gray-600 text-sm mb-4">
+                <h3
+                  className={`text-xl font-semibold mb-2 ${tenantData.slug === "zo-system" ? "text-white font-[family-name:var(--font-rajdhani)] uppercase tracking-wide" : ""}`}
+                >
+                  {service.name}
+                </h3>
+                <p
+                  className={`text-sm mb-4 flex-grow ${tenantData.slug === "zo-system" ? "text-gray-400" : "text-gray-600"}`}
+                >
                   {service.shortDescription || service.description}
                 </p>
                 <div className="flex justify-between items-center mb-4">
                   <span
-                    className="text-2xl font-bold"
-                    style={{ color: tenantData.branding.primaryColor }}
+                    className={`text-2xl font-bold ${tenantData.slug === "zo-system" ? "text-[#FF8000]" : ""}`}
+                    style={
+                      tenantData.slug !== "zo-system"
+                        ? { color: tenantData.branding.primaryColor }
+                        : {}
+                    }
                   >
                     ${service.price}
                   </span>
-                  <span className="text-sm text-gray-500">
+                  <span
+                    className={`text-sm ${tenantData.slug === "zo-system" ? "text-[#EAFF00]" : "text-gray-500"}`}
+                  >
                     {service.duration} min
                   </span>
                 </div>
 
                 {/* Click Budget: ≤2 clicks to book */}
-                <div className="space-y-2">
+                <div className="space-y-2 mt-auto">
                   <a
                     href={`/t/${tenantData.slug}/booking/${service.id}`}
-                    className="block w-full py-2 px-4 rounded border border-gray-300 text-gray-700 hover:bg-gray-50 text-sm text-center"
+                    className={`block w-full py-2 px-4 rounded border text-sm text-center transition-colors ${
+                      tenantData.slug === "zo-system"
+                        ? "border-white/20 text-white hover:bg-white/10"
+                        : "border-gray-300 text-gray-700 hover:bg-gray-50"
+                    }`}
                   >
                     Ver horarios (1/2)
                   </a>
                   <button
                     onClick={() => handleBookService(service)}
-                    className="block w-full py-3 px-6 rounded-lg text-white font-semibold hover:opacity-90 transition-opacity text-center"
+                    className={`block w-full py-3 px-6 rounded-lg font-semibold hover:opacity-90 transition-opacity text-center uppercase tracking-wide ${
+                      tenantData.slug === "zo-system"
+                        ? "text-black font-bold bg-gradient-to-r from-[#FF8000] to-[#FF5500] hover:shadow-[0_0_15px_rgba(255,128,0,0.4)] transition-all"
+                        : "text-white"
+                    }`}
                     style={{
-                      backgroundColor: tenantData.branding.primaryColor,
+                      backgroundColor:
+                        tenantData.slug === "zo-system"
+                          ? undefined
+                          : tenantData.branding.primaryColor,
                     }}
                   >
                     Reservar ahora (1/2)
@@ -107,51 +138,88 @@ export function ServicesClient({ services, tenantData }: ServicesClientProps) {
         </div>
 
         {/* Quick Booking Flow */}
-        <div className="bg-white rounded-lg shadow-md p-8">
-          <h2 className="text-2xl font-bold mb-6 text-center">
+        <div
+          className={`rounded-lg shadow-md p-8 ${tenantData.slug === "zo-system" ? "bg-white/5 backdrop-blur-md border border-white/10" : "bg-white"}`}
+        >
+          <h2
+            className={`text-2xl font-bold mb-6 text-center ${tenantData.slug === "zo-system" ? "text-white font-[family-name:var(--font-rajdhani)] uppercase tracking-wide" : ""}`}
+          >
             Reserva Rápida (≤2 clicks)
           </h2>
           <div className="grid md:grid-cols-2 gap-8">
             <div className="text-center">
               <div
-                className="w-12 h-12 rounded-full mx-auto mb-4 flex items-center justify-center text-white font-bold"
-                style={{ backgroundColor: tenantData.branding.primaryColor }}
+                className={`w-12 h-12 rounded-full mx-auto mb-4 flex items-center justify-center font-bold ${tenantData.slug === "zo-system" ? "text-black bg-[#FF8000] shadow-[0_0_15px_rgba(255,128,0,0.4)]" : "text-white"}`}
+                style={
+                  tenantData.slug !== "zo-system"
+                    ? { backgroundColor: tenantData.branding.primaryColor }
+                    : {}
+                }
               >
                 1
               </div>
-              <h3 className="font-semibold mb-2">Seleccionar servicio</h3>
-              <p className="text-gray-600 text-sm">
+              <h3
+                className={`font-semibold mb-2 ${tenantData.slug === "zo-system" ? "text-white" : ""}`}
+              >
+                Seleccionar servicio
+              </h3>
+              <p
+                className={`text-sm ${tenantData.slug === "zo-system" ? "text-gray-400" : "text-gray-600"}`}
+              >
                 Elige el servicio que deseas y tu horario preferido
               </p>
             </div>
             <div className="text-center">
               <div
-                className="w-12 h-12 rounded-full mx-auto mb-4 flex items-center justify-center text-white font-bold"
-                style={{ backgroundColor: tenantData.branding.primaryColor }}
+                className={`w-12 h-12 rounded-full mx-auto mb-4 flex items-center justify-center font-bold ${tenantData.slug === "zo-system" ? "text-black bg-[#FF8000] shadow-[0_0_15px_rgba(255,128,0,0.4)]" : "text-white"}`}
+                style={
+                  tenantData.slug !== "zo-system"
+                    ? { backgroundColor: tenantData.branding.primaryColor }
+                    : {}
+                }
               >
                 2
               </div>
-              <h3 className="font-semibold mb-2">Confirmar reserva</h3>
-              <p className="text-gray-600 text-sm">
+              <h3
+                className={`font-semibold mb-2 ${tenantData.slug === "zo-system" ? "text-white" : ""}`}
+              >
+                Confirmar reserva
+              </h3>
+              <p
+                className={`text-sm ${tenantData.slug === "zo-system" ? "text-gray-400" : "text-gray-600"}`}
+              >
                 Confirma tus datos y finaliza la reserva
               </p>
             </div>
           </div>
 
           <div className="mt-8 text-center">
-            <a
-              href={`/t/${tenantData.slug}/booking`}
-              className="inline-block px-8 py-3 rounded-lg text-white font-semibold hover:opacity-90 transition-opacity"
-              style={{ backgroundColor: tenantData.branding.primaryColor }}
-            >
-              Comenzar reserva express
-            </a>
+            {tenantData.slug === "zo-system" ? (
+              <a
+                href={`/t/${tenantData.slug}/booking`}
+                className="inline-block px-8 py-3 rounded-lg text-black font-bold text-center uppercase tracking-wide bg-gradient-to-r from-[#FF8000] to-[#FF5500] hover:shadow-[0_0_15px_rgba(255,128,0,0.4)] transition-all"
+              >
+                Comenzar reserva express
+              </a>
+            ) : (
+              <a
+                href={`/t/${tenantData.slug}/booking`}
+                className="inline-block px-8 py-3 rounded-lg text-white font-semibold hover:opacity-90 transition-opacity"
+                style={{ backgroundColor: tenantData.branding.primaryColor }}
+              >
+                Comenzar reserva express
+              </a>
+            )}
           </div>
         </div>
 
         {/* Available Times */}
-        <div className="mt-12 bg-white rounded-lg shadow-md p-8">
-          <h2 className="text-2xl font-bold mb-6 text-center">
+        <div
+          className={`mt-12 rounded-lg shadow-md p-8 ${tenantData.slug === "zo-system" ? "bg-white/5 backdrop-blur-md border border-white/10" : "bg-white"}`}
+        >
+          <h2
+            className={`text-2xl font-bold mb-6 text-center ${tenantData.slug === "zo-system" ? "text-white font-[family-name:var(--font-rajdhani)] uppercase tracking-wide" : ""}`}
+          >
             Horarios Disponibles Hoy
           </h2>
           <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
@@ -168,7 +236,11 @@ export function ServicesClient({ services, tenantData }: ServicesClientProps) {
               <a
                 key={time}
                 href={`/t/${tenantData.slug}/booking?time=${encodeURIComponent(time)}`}
-                className="block py-2 px-3 rounded border border-gray-300 text-gray-700 hover:bg-gray-50 text-sm text-center"
+                className={`block py-2 px-3 rounded border text-sm text-center transition-colors ${
+                  tenantData.slug === "zo-system"
+                    ? "border-white/20 text-white hover:bg-white/10 hover:border-[#FF8000]/50"
+                    : "border-gray-300 text-gray-700 hover:bg-gray-50"
+                }`}
               >
                 {time}
               </a>

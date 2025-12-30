@@ -17,6 +17,7 @@ interface Post {
 interface DraggablePostCardProps {
   post: Post;
   onClick: (postId: string) => void;
+  variant?: "default" | "tech";
 }
 
 const PLATFORM_CONFIG = {
@@ -72,6 +73,7 @@ const STATUS_CONFIG = {
 export default function DraggablePostCard({
   post,
   onClick,
+  variant = "default",
 }: DraggablePostCardProps) {
   const {
     attributes,
@@ -96,8 +98,12 @@ export default function DraggablePostCard({
     <div
       ref={setNodeRef}
       style={style}
-      className={`bg-white rounded-lg border p-4 hover:shadow-md transition-all cursor-move ${
+      className={`rounded-lg border p-4 hover:shadow-md transition-all cursor-move ${
         isDragging ? "shadow-lg" : ""
+      } ${
+        variant === "tech"
+          ? "bg-white/5 border-white/10 hover:border-[#FF8000]/50"
+          : "bg-white border-gray-200"
       }`}
       {...attributes}
       {...listeners}
@@ -117,11 +123,15 @@ export default function DraggablePostCard({
             </span>
           </div>
 
-          <h3 className="font-medium text-gray-900 mb-2">
+          <h3
+            className={`font-medium mb-2 ${variant === "tech" ? "text-white font-[family-name:var(--font-rajdhani)] uppercase tracking-wide" : "text-gray-900"}`}
+          >
             {post.title || "Sin título"}
           </h3>
 
-          <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+          <p
+            className={`text-sm mb-3 line-clamp-2 ${variant === "tech" ? "text-gray-400" : "text-gray-600"}`}
+          >
             {post.baseText}
           </p>
 

@@ -22,7 +22,7 @@ export interface ProductCardProps {
   tenantSlug: string;
   metadata?: ProductMetadata;
   onAddToCart?: (productId: string, quantity: number) => void;
-  variant?: "default" | "luxury";
+  variant?: "default" | "luxury" | "tech";
 }
 
 const ProductCard = memo(
@@ -185,6 +185,7 @@ const ProductCard = memo(
     };
 
     const isLuxury = variant === "luxury";
+    const isTech = variant === "tech";
 
     return (
       <>
@@ -193,7 +194,9 @@ const ProductCard = memo(
           className={`rounded-lg overflow-hidden transition-all duration-300 ${
             isLuxury
               ? "bg-white/75 backdrop-blur-md border border-[#C5A059]/20 hover:border-[#C5A059]/40 hover:shadow-[0_20px_40px_-10px_rgba(200,180,220,0.2)]"
-              : "bg-white shadow-md hover:shadow-lg"
+              : isTech
+                ? "bg-white/5 backdrop-blur-md border border-white/10 hover:border-[#FF8000]/50 hover:shadow-[0_0_15px_rgba(255,128,0,0.15)] group"
+                : "bg-white shadow-md hover:shadow-lg"
           }`}
         >
           {/* Image - clickable for details */}
@@ -217,20 +220,22 @@ const ProductCard = memo(
               )}
             </div>
             <h3
-              className={`text-xl font-semibold mb-2 ${isLuxury ? "text-[#C5A059] font-serif tracking-wide" : ""}`}
+              className={`text-xl font-semibold mb-2 ${isLuxury ? "text-[#C5A059] font-serif tracking-wide" : isTech ? "text-white font-[family-name:var(--font-rajdhani)] tracking-wider uppercase" : ""}`}
             >
               {name}
             </h3>
             <p
-              className={`text-sm mb-4 line-clamp-2 ${isLuxury ? "text-[#666666] font-light" : "text-gray-600"}`}
+              className={`text-sm mb-4 line-clamp-2 ${isLuxury ? "text-[#666666] font-light" : isTech ? "text-gray-400" : "text-gray-600"}`}
             >
               {description}
             </p>
 
             <div className="flex justify-between items-center mb-4">
               <span
-                className={`text-2xl font-bold ${isLuxury ? "text-[#333333]" : ""}`}
-                style={!isLuxury ? { color: primaryColor } : undefined}
+                className={`text-2xl font-bold ${isLuxury ? "text-[#333333]" : isTech ? "text-[#FF8000]" : ""}`}
+                style={
+                  !isLuxury && !isTech ? { color: primaryColor } : undefined
+                }
               >
                 ${price}
               </span>
@@ -238,7 +243,9 @@ const ProductCard = memo(
                 className={`text-xs px-2 py-1 rounded capitalize ${
                   isLuxury
                     ? "text-[#C5A059] bg-[#F8F5FA] border border-[#C5A059]/20"
-                    : "text-gray-500 bg-gray-100"
+                    : isTech
+                      ? "text-[#EAFF00] bg-white/5 border border-white/10"
+                      : "text-gray-500 bg-gray-100"
                 }`}
               >
                 {category?.replace("-", " ") ||
@@ -250,11 +257,13 @@ const ProductCard = memo(
 
           {/* Quantity Controls + Buttons */}
           <div className="px-6 pb-6">
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex items-center border rounded-md">
+            <div className={`flex items-center justify-between gap-4`}>
+              <div
+                className={`flex items-center border rounded-md ${isTech ? "border-white/10 bg-white/5" : ""}`}
+              >
                 <button
                   onClick={handleDecrement}
-                  className={`px-3 py-1 ${isLuxury ? "text-[#C5A059] hover:bg-[#C5A059]/10" : "text-gray-600 hover:bg-gray-100"}`}
+                  className={`px-3 py-1 ${isLuxury ? "text-[#C5A059] hover:bg-[#C5A059]/10" : isTech ? "text-white hover:bg-white/10 border-r border-white/10" : "text-gray-600 hover:bg-gray-100"}`}
                 >
                   -
                 </button>
@@ -262,11 +271,11 @@ const ProductCard = memo(
                   type="number"
                   value={localQuantity}
                   onChange={handleQuantityChange}
-                  className={`w-12 text-center border-none focus:ring-0 ${isLuxury ? "bg-transparent text-[#333333]" : "text-gray-900"}`}
+                  className={`w-12 text-center border-none focus:ring-0 ${isLuxury ? "bg-transparent text-[#333333]" : isTech ? "bg-transparent text-white" : "text-gray-900"}`}
                 />
                 <button
                   onClick={handleIncrement}
-                  className={`px-3 py-1 ${isLuxury ? "text-[#C5A059] hover:bg-[#C5A059]/10" : "text-gray-600 hover:bg-gray-100"}`}
+                  className={`px-3 py-1 ${isLuxury ? "text-[#C5A059] hover:bg-[#C5A059]/10" : isTech ? "text-white hover:bg-white/10 border-l border-white/10" : "text-gray-600 hover:bg-gray-100"}`}
                 >
                   +
                 </button>
@@ -278,10 +287,14 @@ const ProductCard = memo(
                 className={`flex-1 py-2 px-4 rounded-md text-white font-medium shadow-sm transition-all ${
                   isLuxury
                     ? "bg-[#C5A059] hover:bg-[#B08D45] disabled:opacity-70"
-                    : "hover:opacity-90 disabled:opacity-70"
+                    : isTech
+                      ? "bg-gradient-to-r from-[#FF8000] to-[#FF5500] hover:shadow-[0_0_20px_rgba(255,128,0,0.4)] disabled:opacity-70 rounded-full"
+                      : "hover:opacity-90 disabled:opacity-70"
                 }`}
                 style={
-                  !isLuxury ? { backgroundColor: primaryColor } : undefined
+                  !isLuxury && !isTech
+                    ? { backgroundColor: primaryColor }
+                    : undefined
                 }
               >
                 {isAdding ? "Agregando..." : "Comprar ahora"}

@@ -38,6 +38,7 @@ interface CalendarData {
 interface CalendarViewProps {
   tenant: string;
   onPostClick: (postId: string) => void;
+  variant?: "default" | "tech";
 }
 
 const VIEW_TYPES = [
@@ -99,6 +100,7 @@ const STATUS_CONFIG = {
 export default function CalendarView({
   tenant,
   onPostClick,
+  variant = "default",
 }: CalendarViewProps) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -221,6 +223,21 @@ export default function CalendarView({
   };
 
   const getStatusColor = (dayData: CalendarDay) => {
+    if (variant === "tech") {
+      if (dayData.postCount === 0) return "bg-white/5 hover:bg-white/10";
+      // Tech variant status colors (neon)
+      const data = calendarData[format(dayData.date, "yyyy-MM-dd")];
+      if (!data) return "bg-white/5";
+
+      if (data.failed_count > 0) return "bg-red-900/20 border-red-500/50";
+      if (data.scheduled_count > 0)
+        return "bg-[#FF8000]/20 border-[#FF8000]/50";
+      if (data.published_count > 0)
+        return "bg-green-900/20 border-green-500/50";
+      if (data.draft_count > 0) return "bg-yellow-900/20 border-yellow-500/50";
+      return "bg-white/5";
+    }
+
     if (dayData.postCount === 0) return "bg-gray-50";
 
     const data = calendarData[format(dayData.date, "yyyy-MM-dd")];
@@ -269,14 +286,36 @@ export default function CalendarView({
               onClick={() => setSelectedDate(date)}
               className={`
                 relative p-2 min-h-[80px] text-left rounded-lg border transition-all hover:shadow-sm
-                ${dayData.isCurrentMonth ? "text-gray-900" : "text-gray-400"}
-                ${isSelected ? "ring-2 ring-blue-500 border-blue-200" : "border-gray-200 hover:border-gray-300"}
-                ${isToday ? "bg-blue-50" : getStatusColor(dayData)}
+                ${
+                  variant === "tech"
+                    ? dayData.isCurrentMonth
+                      ? "text-gray-200"
+                      : "text-gray-600"
+                    : dayData.isCurrentMonth
+                      ? "text-gray-900"
+                      : "text-gray-400"
+                }
+                ${
+                  isSelected
+                    ? variant === "tech"
+                      ? "ring-1 ring-[#FF8000] border-[#FF8000]/50"
+                      : "ring-2 ring-blue-500 border-blue-200"
+                    : variant === "tech"
+                      ? "border-white/10"
+                      : "border-gray-200 hover:border-gray-300"
+                }
+                ${
+                  isToday
+                    ? variant === "tech"
+                      ? "bg-[#FF8000]/10"
+                      : "bg-blue-50"
+                    : getStatusColor(dayData)
+                }
               `}
             >
               {/* Date number */}
               <div
-                className={`text-sm font-medium ${isToday ? "text-blue-600" : ""}`}
+                className={`text-sm font-medium ${isToday ? (variant === "tech" ? "text-[#FF8000]" : "text-blue-600") : ""}`}
               >
                 {format(date, "d")}
               </div>
@@ -515,10 +554,14 @@ export default function CalendarView({
   return (
     <div className="space-y-6">
       {/* Header with controls */}
-      <div className="bg-white rounded-lg shadow-sm border p-6">
+      <div
+        className={`${variant === "tech" ? "bg-white/5 backdrop-blur-md border-white/10" : "bg-white"} rounded-lg shadow-sm border p-6`}
+      >
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">
+            <h2
+              className={`text-xl font-semibold ${variant === "tech" ? "text-white font-[family-name:var(--font-rajdhani)] uppercase tracking-wide" : "text-gray-900"}`}
+            >
               {viewType === "month"
                 ? format(currentMonth, "MMMM yyyy", { locale: es })
                 : viewType === "week"
@@ -544,8 +587,12 @@ export default function CalendarView({
                     px-3 py-1 text-sm font-medium rounded-md transition-colors
                     ${
                       viewType === type.id
-                        ? "bg-white text-blue-600 shadow-sm"
-                        : "text-gray-600 hover:text-gray-900"
+                        ? variant === "tech"
+                          ? "bg-[#FF8000] text-black shadow-sm font-bold"
+                          : "bg-white text-blue-600 shadow-sm"
+                        : variant === "tech"
+                          ? "text-gray-400 hover:text-white"
+                          : "text-gray-600 hover:text-gray-900"
                     }
                   `}
                 >
@@ -610,13 +657,28 @@ export default function CalendarView({
         {/* Filters */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              className={`block text-sm font-medium mb-2 ${variant === "tech" ? "text-gray-300" : "text-gray-700"}`}
+            >
               Plataformas
             </label>
-            <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-              <option value="">Todas las plataformas</option>
+            <select
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${variant === "tech" ? "bg-black/20 border-white/10 text-white focus:ring-[#FF8000] focus:border-[#FF8000]" : "border-gray-300 focus:ring-blue-500"}`}
+            >
+              <option
+                value=""
+                className={variant === "tech" ? "bg-[#0D0D0D] text-white" : ""}
+              >
+                Todas las plataformas
+              </option>
               {Object.entries(PLATFORM_CONFIG).map(([key, config]) => (
-                <option key={key} value={key}>
+                <option
+                  key={key}
+                  value={key}
+                  className={
+                    variant === "tech" ? "bg-[#0D0D0D] text-white" : ""
+                  }
+                >
                   {config.emoji} {config.name}
                 </option>
               ))}
@@ -624,13 +686,28 @@ export default function CalendarView({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              className={`block text-sm font-medium mb-2 ${variant === "tech" ? "text-gray-300" : "text-gray-700"}`}
+            >
               Estado
             </label>
-            <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-              <option value="">Todos los estados</option>
+            <select
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${variant === "tech" ? "bg-black/20 border-white/10 text-white focus:ring-[#FF8000] focus:border-[#FF8000]" : "border-gray-300 focus:ring-blue-500"}`}
+            >
+              <option
+                value=""
+                className={variant === "tech" ? "bg-[#0D0D0D] text-white" : ""}
+              >
+                Todos los estados
+              </option>
               {Object.entries(STATUS_CONFIG).map(([key, config]) => (
-                <option key={key} value={key}>
+                <option
+                  key={key}
+                  value={key}
+                  className={
+                    variant === "tech" ? "bg-[#0D0D0D] text-white" : ""
+                  }
+                >
                   {config.label}
                 </option>
               ))}
@@ -638,22 +715,53 @@ export default function CalendarView({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              className={`block text-sm font-medium mb-2 ${variant === "tech" ? "text-gray-300" : "text-gray-700"}`}
+            >
               Formato
             </label>
-            <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-              <option value="">Todos los formatos</option>
-              <option value="post">Post</option>
-              <option value="reel">Reel</option>
-              <option value="story">Story</option>
-              <option value="video">Video</option>
+            <select
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${variant === "tech" ? "bg-black/20 border-white/10 text-white focus:ring-[#FF8000] focus:border-[#FF8000]" : "border-gray-300 focus:ring-blue-500"}`}
+            >
+              <option
+                value=""
+                className={variant === "tech" ? "bg-[#0D0D0D] text-white" : ""}
+              >
+                Todos los formatos
+              </option>
+              <option
+                value="post"
+                className={variant === "tech" ? "bg-[#0D0D0D] text-white" : ""}
+              >
+                Post
+              </option>
+              <option
+                value="reel"
+                className={variant === "tech" ? "bg-[#0D0D0D] text-white" : ""}
+              >
+                Reel
+              </option>
+              <option
+                value="story"
+                className={variant === "tech" ? "bg-[#0D0D0D] text-white" : ""}
+              >
+                Story
+              </option>
+              <option
+                value="video"
+                className={variant === "tech" ? "bg-[#0D0D0D] text-white" : ""}
+              >
+                Video
+              </option>
             </select>
           </div>
         </div>
       </div>
 
       {/* Calendar Content */}
-      <div className="bg-white rounded-lg shadow-sm border p-6">
+      <div
+        className={`${variant === "tech" ? "bg-white/5 backdrop-blur-md border-white/10" : "bg-white"} rounded-lg shadow-sm border p-6`}
+      >
         {viewType === "month" && renderMonthView()}
         {viewType === "week" && renderWeekView()}
         {viewType === "list" && renderListView()}

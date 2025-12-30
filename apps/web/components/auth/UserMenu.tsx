@@ -9,7 +9,7 @@ export default function UserMenu({
   variant = "default",
 }: {
   tenantSlug?: string;
-  variant?: "default" | "transparent";
+  variant?: "default" | "transparent" | "dark";
 }) {
   const { data: session, status } = useSession();
   const loading = status === "loading";
@@ -68,6 +68,7 @@ export default function UserMenu({
   // If not authenticated
   if (!session?.user) {
     const isTransparent = variant === "transparent";
+    const isDark = variant === "dark";
     return (
       <a
         href={
@@ -78,7 +79,9 @@ export default function UserMenu({
         className={
           isTransparent
             ? "px-4 py-2 rounded border border-[#D4AF37] text-[#D4AF37] bg-transparent hover:bg-[#D4AF37] hover:text-black transition-colors font-medium"
-            : "bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+            : isDark
+              ? "bg-[#FF8000] text-black hover:bg-[#FF5500] hover:shadow-[0_0_15px_rgba(255,128,0,0.4)] px-4 py-2 rounded transition-all font-bold"
+              : "bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
         }
       >
         Iniciar Sesión
@@ -94,7 +97,7 @@ export default function UserMenu({
     <div className="relative" ref={menuRef}>
       <button
         onClick={toggleMenu}
-        className="flex items-center space-x-2 text-gray-700 hover:text-gray-900"
+        className={`flex items-center space-x-2 transition-colors ${variant === "dark" || variant === "transparent" ? "text-white hover:text-gray-200" : "text-gray-700 hover:text-gray-900"}`}
         aria-expanded={isOpen}
         aria-haspopup="true"
       >

@@ -2,6 +2,7 @@ import { Suspense, type ReactNode } from "react";
 import { notFound } from "next/navigation";
 import TenantHeader from "@/components/ui/TenantHeader";
 import { getTenantBySlug } from "@/lib/server/get-tenant";
+import { CircuitSpotlight } from "@/components/ui/CircuitSpotlight";
 
 // Force dynamic rendering for all tenant pages
 export const dynamic = "force-dynamic";
@@ -25,7 +26,15 @@ export default async function TenantLayout({
   console.log("[TenantLayout] Extracted tenantSlug:", tenantSlug);
 
   // Get tenant data directly from database (server-side only, no HTTP calls)
-  const tenantData = await getTenantBySlug(tenantSlug);
+  const tenantRaw = await getTenantBySlug(tenantSlug);
+
+  const tenantData: any = tenantRaw
+    ? {
+        ...tenantRaw,
+        products: [],
+        services: [],
+      }
+    : null;
 
   if (!tenantData) {
     console.error(`[TenantLayout] Tenant not found: ${tenantSlug}`);
@@ -36,11 +45,19 @@ export default async function TenantLayout({
   console.log(`[TenantLayout] Successfully loaded tenant: ${tenantData.name}`);
 
   const isWondernails = tenantSlug === "wondernails";
+  const isZoSystem = tenantSlug === "zo-system";
 
   return (
     <div
-      className={`min-h-screen ${isWondernails ? "bg-white text-[#333333]" : "bg-gray-50"}`}
+      className={`min-h-screen ${
+        isWondernails
+          ? "bg-white text-[#333333]"
+          : isZoSystem
+            ? "bg-[#0D0D0D] text-white font-[family-name:var(--font-montserrat)] relative overflow-x-hidden"
+            : "bg-gray-50"
+      }`}
     >
+      {isZoSystem && <CircuitSpotlight />}
       <style
         dangerouslySetInnerHTML={{
           __html: isWondernails
@@ -156,7 +173,61 @@ export default async function TenantLayout({
             background: #FFFFFF !important;
           }
         `
-            : `
+            : isZoSystem
+              ? `
+          /* Zo System Dark Mode Overrides */
+          :root {
+            --background: 13 13 13;
+            --foreground: 255 255 255;
+            --primary: 255 128 0;
+            --primary-foreground: 13 13 13;
+            --font-sans: var(--font-montserrat);
+          }
+
+          body {
+            background-color: #0D0D0D !important;
+            color: #FFFFFF !important;
+          }
+
+          h1, h2, h3, h4, h5, h6 {
+            font-family: var(--font-rajdhani), sans-serif !important;
+            color: #FFFFFF !important;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+          }
+
+          /* Glassmorphism for Cards */
+          [data-testid="product-card"], [data-testid="service-card"], .glass-panel {
+            background: rgba(255, 255, 255, 0.03) !important;
+            backdrop-filter: blur(10px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+          }
+
+          /* Neon Accents for Text */
+          .text-primary, .text-neon-orange {
+            color: #FF8000 !important;
+          }
+          
+          .text-secondary, .text-neon-yellow {
+             color: #EAFF00 !important;
+          }
+
+          /* Inputs */
+          input, select, textarea {
+            background-color: rgba(255, 255, 255, 0.05) !important;
+            border-color: rgba(255, 255, 255, 0.1) !important;
+            color: white !important;
+          }
+          
+          /* Modals */
+           [role="dialog"], .modal-content {
+            background-color: #0D0D0D !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+           }
+
+        `
+              : `
           /* Default styles for non-wondernails tenants */
           body {
             background-color: #F9FAFB !important;
@@ -193,7 +264,9 @@ export default async function TenantLayout({
       />
       <TenantHeader
         tenantData={tenantData}
-        variant={isWondernails ? "transparent" : "default"}
+        variant={
+          isWondernails ? "transparent" : isZoSystem ? "dark" : "default"
+        }
       />
       <main>{children}</main>
     </div>

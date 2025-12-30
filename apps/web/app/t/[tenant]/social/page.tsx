@@ -24,7 +24,10 @@ export default function SocialPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <SocialMediaManager tenant={tenant.slug} />
+      <SocialMediaManager
+        tenant={tenant.slug}
+        variant={tenant.slug === "zo-system" ? "tech" : "default"}
+      />
     </div>
   );
 }

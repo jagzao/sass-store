@@ -13,10 +13,12 @@ type ViewType = "calendar" | "queue" | "generate" | "library" | "analytics";
 
 interface SocialMediaManagerProps {
   tenant: string;
+  variant?: "default" | "tech";
 }
 
 export default function SocialMediaManager({
   tenant,
+  variant = "default",
 }: SocialMediaManagerProps) {
   const [activeView, setActiveView] = useState<ViewType>("calendar");
   const [isEditorOpen, setIsEditorOpen] = useState(false);
@@ -46,9 +48,21 @@ export default function SocialMediaManager({
   const renderActiveView = () => {
     switch (activeView) {
       case "calendar":
-        return <CalendarView tenant={tenant} onPostClick={handlePostClick} />;
+        return (
+          <CalendarView
+            tenant={tenant}
+            onPostClick={handlePostClick}
+            variant={variant}
+          />
+        );
       case "queue":
-        return <QueueView tenant={tenant} onPostClick={handlePostClick} />;
+        return (
+          <QueueView
+            tenant={tenant}
+            onPostClick={handlePostClick}
+            variant={variant}
+          />
+        );
       case "generate":
         return <GenerateView tenant={tenant} />;
       case "library":

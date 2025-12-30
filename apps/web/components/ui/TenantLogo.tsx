@@ -7,7 +7,7 @@ interface TenantLogoProps {
   tenantSlug: string;
   tenantName: string;
   primaryColor: string;
-  variant?: "default" | "transparent";
+  variant?: "default" | "transparent" | "dark";
   logoUrl?: string; // Add optional logoUrl prop
 }
 
@@ -72,11 +72,13 @@ export default function TenantLogo({
           />
         ) : (
           <h1
-            className={`text-2xl font-bold ${variant === "transparent" ? "text-white" : ""}`}
+            className={`text-2xl font-bold ${variant === "transparent" || variant === "dark" ? "text-white" : ""}`}
             style={
               variant === "default"
                 ? { color: primaryColor }
-                : { color: "#FFFFFF" }
+                : variant === "dark"
+                  ? { color: "#FFFFFF" } // White for dark mode
+                  : { color: "#FFFFFF" }
             }
           >
             {tenantName}

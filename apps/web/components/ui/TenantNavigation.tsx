@@ -7,7 +7,7 @@ interface TenantNavigationProps {
   tenantSlug: string;
   primaryColor?: string;
   mode?: "booking" | "catalog";
-  variant?: "default" | "transparent";
+  variant?: "default" | "transparent" | "dark";
 }
 
 export default function TenantNavigation({
@@ -18,6 +18,7 @@ export default function TenantNavigation({
 }: TenantNavigationProps) {
   const pathname = usePathname();
   const isTransparent = variant === "transparent";
+  const isDark = variant === "dark";
 
   const links = [{ name: "Productos", href: `/t/${tenantSlug}/products` }];
 
@@ -42,13 +43,19 @@ export default function TenantNavigation({
                 isActive
                   ? isTransparent && tenantSlug !== "wondernails"
                     ? "text-white font-bold"
-                    : "text-gray-900"
+                    : isDark
+                      ? "text-[#FF8000] font-bold" // Neon Orange for active state in dark mode
+                      : "text-gray-900"
                   : isTransparent && tenantSlug !== "wondernails"
                     ? "text-gray-200"
-                    : "text-gray-500"
+                    : isDark
+                      ? "text-gray-400 hover:text-white"
+                      : "text-gray-500"
               }`}
               style={
-                isActive && !isTransparent ? { color: primaryColor } : undefined
+                isActive && !isTransparent && !isDark
+                  ? { color: primaryColor }
+                  : undefined
               }
             >
               {link.name}
@@ -63,6 +70,7 @@ export default function TenantNavigation({
           links={links}
           primaryColor={primaryColor}
           isTransparent={isTransparent}
+          isDark={isDark}
           pathname={pathname}
           tenantSlug={tenantSlug}
         />
@@ -75,12 +83,14 @@ function MobileMenu({
   links,
   primaryColor,
   isTransparent,
+  isDark,
   pathname,
   tenantSlug,
 }: {
   links: { name: string; href: string }[];
   primaryColor: string;
   isTransparent: boolean;
+  isDark: boolean;
   pathname: string;
   tenantSlug: string;
 }) {
@@ -98,7 +108,9 @@ function MobileMenu({
         className={`p-2 rounded-md hover:bg-gray-100 transition-colors ${
           isTransparent && tenantSlug !== "wondernails"
             ? "text-white hover:bg-white/10"
-            : "text-gray-900"
+            : isDark && tenantSlug !== "wondernails"
+              ? "text-white hover:bg-white/10"
+              : "text-gray-900"
         }`}
         aria-label={isOpen ? "Cerrar menú" : "Abrir menú"}
         style={{ minWidth: "44px", minHeight: "44px" }}

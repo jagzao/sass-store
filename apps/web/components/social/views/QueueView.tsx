@@ -68,9 +68,14 @@ interface QueuePost {
 interface QueueViewProps {
   tenant: string;
   onPostClick: (postId: string, data?: any) => void;
+  variant?: "default" | "tech";
 }
 
-export default function QueueView({ tenant, onPostClick }: QueueViewProps) {
+export default function QueueView({
+  tenant,
+  onPostClick,
+  variant = "default",
+}: QueueViewProps) {
   const [posts, setPosts] = useState<QueuePost[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedPosts, setSelectedPosts] = useState<Set<string>>(new Set());

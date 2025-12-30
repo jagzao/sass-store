@@ -8,7 +8,7 @@ import { TenantData } from "@/types/tenant";
 
 interface TenantHeaderProps {
   tenantData: TenantData;
-  variant?: "default" | "transparent";
+  variant?: "default" | "transparent" | "dark";
 }
 
 export default function TenantHeader({
@@ -16,6 +16,7 @@ export default function TenantHeader({
   variant = "default",
 }: TenantHeaderProps) {
   const isTransparent = variant === "transparent";
+  const isDark = variant === "dark";
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -38,7 +39,9 @@ export default function TenantHeader({
               ? "bg-white/75 backdrop-blur-md border-b border-[#C5A059]/15 shadow-[0_20px_40px_-10px_rgba(200,180,220,0.2)]"
               : "bg-white/95 backdrop-blur-sm border-b border-gray-200 shadow-sm"
             : "bg-transparent border-transparent shadow-none"
-          : "bg-white/95 backdrop-blur-sm border-b border-gray-200"
+          : isDark
+            ? "bg-[#0D0D0D]/80 backdrop-blur-md border-b border-white/10"
+            : "bg-white/95 backdrop-blur-sm border-b border-gray-200"
       }`}
       style={{ position: "sticky", top: 0 }}
     >
