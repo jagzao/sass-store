@@ -7,10 +7,7 @@ const nextConfig = {
   // Monorepo support - tell Next.js where the root is
   outputFileTracingRoot: path.join(__dirname, '../../'),
 
-  // Skip linting and typecheck during builds
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
+  // Skip typecheck during builds
   typescript: {
     ignoreBuildErrors: true,
   },
