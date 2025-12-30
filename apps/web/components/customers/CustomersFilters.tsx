@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { Search } from "lucide-react";
 
@@ -12,34 +12,34 @@ interface CustomersFiltersProps {
   };
 }
 
-export default function CustomersFilters({ tenantSlug, searchParams }: CustomersFiltersProps) {
+export default function CustomersFilters({
+  tenantSlug,
+  searchParams,
+}: CustomersFiltersProps) {
   const router = useRouter();
   const pathname = usePathname();
   const [search, setSearch] = useState(searchParams.search || "");
   const [status, setStatus] = useState(searchParams.status || "all");
 
+  // Add debouncing for search
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const params = new URLSearchParams();
+      if (search) params.set("search", search);
+      if (status && status !== "all") params.set("status", status);
+
+      router.push(`${pathname}?${params.toString()}`);
+    }, 300); // 300ms delay
+
+    return () => clearTimeout(timer);
+  }, [search, status, pathname, router]);
+
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setSearch(value);
-
-    // Update URL with debounce
-    const params = new URLSearchParams();
-    if (value) params.set("search", value);
-    if (status && status !== "all") params.set("status", status);
-
-    router.push(`${pathname}?${params.toString()}`);
+    setSearch(e.target.value);
   };
 
   const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = e.target.value;
-    setStatus(value);
-
-    // Update URL
-    const params = new URLSearchParams();
-    if (search) params.set("search", search);
-    if (value && value !== "all") params.set("status", value);
-
-    router.push(`${pathname}?${params.toString()}`);
+    setStatus(e.target.value);
   };
 
   return (

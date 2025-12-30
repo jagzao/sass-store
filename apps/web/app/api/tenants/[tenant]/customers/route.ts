@@ -5,7 +5,7 @@ import {
   tenants,
   customerVisits,
 } from "@sass-store/database/schema";
-import { eq, desc, sql } from "drizzle-orm";
+import { eq, desc, sql, or, ilike } from "drizzle-orm";
 import { z } from "zod";
 import {
   applyRateLimit,
@@ -109,6 +109,9 @@ export async function GET(
 
   try {
     const { tenant: tenantSlug } = await params;
+    const searchParams = request.nextUrl.searchParams;
+    const search = searchParams.get("search") || undefined;
+    const status = searchParams.get("status") || undefined;
 
     // Find tenant
     const [tenant] = await db
@@ -121,8 +124,8 @@ export async function GET(
       return NextResponse.json({ error: "Tenant not found" }, { status: 404 });
     }
 
-    // Fetch customers with calculated fields using aggregation
-    const customersWithStats = await db
+    // Build the base query
+    let query = db
       .select({
         id: customers.id,
         name: customers.name,
@@ -138,7 +141,26 @@ export async function GET(
       })
       .from(customers)
       .leftJoin(customerVisits, eq(customers.id, customerVisits.customerId))
-      .where(eq(customers.tenantId, tenant.id))
+      .where(eq(customers.tenantId, tenant.id));
+
+    // Apply search filter if provided
+    if (search) {
+      query = query.where(
+        or(
+          ilike(customers.name, `%${search}%`),
+          ilike(customers.phone, `%${search}%`),
+          ilike(customers.email, `%${search}%`),
+        ),
+      );
+    }
+
+    // Apply status filter if provided and not "all"
+    if (status && status !== "all") {
+      query = query.where(eq(customers.status, status as any));
+    }
+
+    // Execute the query with grouping and ordering
+    const customersWithStats = await query
       .groupBy(
         customers.id,
         customers.name,
@@ -161,14 +183,14 @@ export async function GET(
     if (rateLimitResult) {
       const headers = createRateLimitHeaders(rateLimitResult);
       return NextResponse.json(
-        { customers: customersWithStats },
+        { customers: formattedCustomers },
         {
           headers,
         },
       );
     }
 
-    return NextResponse.json({ customers: customersWithStats });
+    return NextResponse.json({ customers: formattedCustomers });
   } catch (error) {
     console.error("Customers GET error:", error);
     return NextResponse.json(
