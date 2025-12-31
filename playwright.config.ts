@@ -87,7 +87,7 @@ export default defineConfig({
     port: 3001,
 
     // Performance: Reuse existing server in dev (huge time saver)
-    reuseExistingServer: !isCI,
+    reuseExistingServer: true,
 
     // Timeout: Give enough time for Next.js to start (2 minutes)
     timeout: 120000,
