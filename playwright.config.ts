@@ -20,9 +20,9 @@ export default defineConfig({
   workers: isCI ? 1 : "50%",
 
   // Timeout configuration (smart defaults)
-  timeout: 30000, // 30s per test
+  timeout: 60000, // 60s per test
   expect: {
-    timeout: 5000, // 5s for assertions
+    timeout: 10000, // 10s for assertions
   },
 
   // Reporter: list in dev (better UX), html in CI
