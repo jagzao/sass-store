@@ -33,17 +33,41 @@ export const ZoNavbar = () => {
       }`}
     >
       <div className="container mx-auto px-6 flex items-center justify-between">
-        {/* Left: Brand (Glowing Logo) */}
+        {/* Left: Brand (Clean SVG Logo) */}
         <Link
           href="/t/zo-system"
-          className="group relative flex items-center gap-2"
+          className="group relative flex items-center gap-3"
         >
-          <div className="relative">
-            <div className="absolute inset-0 bg-[#FF8000] blur-lg opacity-40 group-hover:opacity-60 transition-opacity duration-300 rounded-full" />
-            <span className="relative z-10 font-[family-name:var(--font-rajdhani)] text-2xl font-bold text-white tracking-widest uppercase">
+          <div className="relative flex items-center justify-center w-10 h-10 bg-[#FF8000]/10 rounded-full border border-[#FF8000]/20 group-hover:bg-[#FF8000]/20 transition-all duration-300">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="text-[#FF8000] drop-shadow-[0_0_8px_rgba(255,128,0,0.5)]"
+            >
+              <rect x="4" y="4" width="16" height="16" rx="2" />
+              <rect x="9" y="9" width="6" height="6" />
+              <path d="M9 1v3" />
+              <path d="M15 1v3" />
+              <path d="M9 20v3" />
+              <path d="M15 20v3" />
+              <path d="M20 9h3" />
+              <path d="M20 14h3" />
+              <path d="M1 9h3" />
+              <path d="M1 14h3" />
+            </svg>
+          </div>
+          <span className="font-[family-name:var(--font-rajdhani)] text-2xl font-bold text-white tracking-widest uppercase flex flex-col leading-none">
+            <span>
               Zo <span className="text-[#FF8000]">System</span>
             </span>
-          </div>
+          </span>
         </Link>
 
         {/* Center: Critical Links (Desktop) */}
@@ -67,13 +91,13 @@ export const ZoNavbar = () => {
         <div className="hidden md:flex items-center gap-4">
           <Link
             href="/auth/signin"
-            className="px-5 py-2 rounded-full text-sm font-medium text-white bg-white/5 border border-white/10 hover:bg-white/10 backdrop-blur-md transition-all duration-300"
+            className="px-5 py-2.5 rounded-full text-sm font-medium text-white bg-white/5 border border-white/10 hover:bg-white/10 backdrop-blur-md transition-all duration-300"
           >
             Login
           </Link>
           <Link
             href="/t/zo-system/contact"
-            className="px-6 py-2 rounded-full text-sm font-bold text-white bg-[#FF8000] hover:bg-[#FF6600] shadow-[0_0_15px_rgba(255,128,0,0.4)] hover:shadow-[0_0_25px_rgba(255,128,0,0.6)] transition-all duration-300 border border-[#FF8000]"
+            className="flex items-center justify-center px-6 py-2.5 rounded-full text-sm font-bold text-white bg-[#FF8000] hover:bg-[#FF6600] shadow-[0_0_15px_rgba(255,128,0,0.4)] hover:shadow-[0_0_25px_rgba(255,128,0,0.6)] transition-all duration-300 border border-[#FF8000]"
           >
             Agendar Cita
           </Link>

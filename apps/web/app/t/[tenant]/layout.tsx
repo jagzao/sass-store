@@ -262,12 +262,12 @@ export default async function TenantLayout({
         `,
         }}
       />
-      <TenantHeader
-        tenantData={tenantData}
-        variant={
-          isWondernails ? "transparent" : isZoSystem ? "dark" : "default"
-        }
-      />
+      {!isZoSystem && (
+        <TenantHeader
+          tenantData={tenantData}
+          variant={isWondernails ? "transparent" : "default"}
+        />
+      )}
       <main>{children}</main>
     </div>
   );
