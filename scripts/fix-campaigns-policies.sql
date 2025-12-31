@@ -26,23 +26,23 @@ DROP POLICY IF EXISTS campaigns_authenticated_all ON public.campaigns;
 CREATE POLICY campaigns_authenticated_select ON public.campaigns
     FOR SELECT
     TO authenticated
-    USING (tenant_id = (SELECT current_setting('app.current_tenant_id')::uuid));
+    USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
 
 CREATE POLICY campaigns_authenticated_insert ON public.campaigns
     FOR INSERT
     TO authenticated
-    WITH CHECK (tenant_id = (SELECT current_setting('app.current_tenant_id')::uuid));
+    WITH CHECK (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
 
 CREATE POLICY campaigns_authenticated_update ON public.campaigns
     FOR UPDATE
     TO authenticated
-    USING (tenant_id = (SELECT current_setting('app.current_tenant_id')::uuid)
-    WITH CHECK (tenant_id = (SELECT current_setting('app.current_tenant_id')::uuid));
+    USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid)
+    WITH CHECK (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
 
 CREATE POLICY campaigns_authenticated_delete ON public.campaigns
     FOR DELETE
     TO authenticated
-    USING (tenant_id = (SELECT current_setting('app.current_tenant_id')::uuid);
+    USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
 
 -- ============================================
 -- STEP 3: Verify policies were created
@@ -81,7 +81,7 @@ WHERE table_schema = 'public'
 -- If tenant_id doesn't exist, you need to:
 -- ALTER TABLE public.campaigns ADD COLUMN tenant_id UUID REFERENCES tenants(id);
 
--- 2. Verify your app sets the tenant context:
+-- 2. Verify your app sets tenant context:
 -- Your middleware should set: SET LOCAL app.current_tenant_id = '<tenant_id>';
 
 -- 3. Test with a real JWT token from your app to verify isolation works
