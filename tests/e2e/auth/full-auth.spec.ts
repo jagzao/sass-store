@@ -24,9 +24,8 @@ test.describe.serial("Authentication Flows", () => {
 
     // 4. Verification
     // Should pass if redirected to login or auto-logged in.
-    // Adjust expectation based on actual flow (usually redirects to login or dashboard)
-    // If it stays on register/shows error, this will confirm the bug.
-    await expect(page).not.toHaveURL(/.*register.*/);
+    // The expected behavior is to redirect to login with a success parameter
+    await expect(page).toHaveURL(/.*login\?registered=true.*/);
   });
 
   test("should login with the newly created user", async ({ page }) => {
