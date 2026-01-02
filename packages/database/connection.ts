@@ -32,11 +32,10 @@ if (!connectionString || connectionString === "your-database-url-here") {
 // Singleton pattern to prevent connection pool exhaustion
 // CRITICAL: Supabase free tier has only 3-5 connection limit
 declare global {
-  // eslint-disable-next-line no-var
   var __db: ReturnType<typeof drizzle> | undefined;
-  // eslint-disable-next-line no-var
+
   var __client: postgres.Sql | undefined;
-  // eslint-disable-next-line no-var
+
   var __connectionString: string | undefined;
 }
 
@@ -79,13 +78,14 @@ const client =
     prepare: false,
     ssl: isLocalhost ? false : "require", // Only use SSL for remote connections
     // Increased connection pool for test environments (8 parallel workers)
-    // For production: 3-5 connections per instance to stay within Supabase limits
-    max: isTestEnv ? 15 : isLocalhost ? 10 : 5,
-    idle_timeout: 20, // 20 seconds - faster cleanup for test environments
-    connect_timeout: 30, // 30 seconds - allow time for pooler connection
-    max_lifetime: isTestEnv ? 60 * 15 : 60 * 45, // Shorter lifetime in tests (15 min vs 45 min)
+    // For production: 1 connection per instance to stay strictly within Supabase limits
+    // CRITICAL: Serverless functions spin up many instances; high max here causes pool exhaustion immediately.
+    max: isTestEnv ? 15 : isLocalhost ? 10 : 1,
+    idle_timeout: 15, // 15 seconds - release connections quickly
+    connect_timeout: 10, // 10 seconds - fail fast if pooler is overloaded
+    max_lifetime: isTestEnv ? 60 * 15 : 60 * 5, // Recycle connections often in production (5 mins)
     // Additional optimizations
-    keep_alive: 60, // Keep connection alive every 60 seconds
+    keep_alive: null, // Disable keep-alive to allow serverless freeze
     fetch_types: false, // Disable automatic type fetching for better performance
     // Connection pooling behavior
     connection: {
@@ -97,6 +97,12 @@ const client =
 if (process.env.NODE_ENV !== "production") {
   globalThis.__client = client;
 }
+
+// Log connection attempt (masked)
+const maskedUrl = connectionString?.replace(/:[^:@]*@/, ":****@");
+console.log(
+  `[DB] Initialize postgres client. URL: ${maskedUrl}, Max: ${isTestEnv ? 15 : isLocalhost ? 10 : 1}, SSL: ${isLocalhost ? false : "require"}`,
+);
 
 // Create drizzle instance with schema
 const dbInstance = drizzle(client, { schema });
@@ -129,3 +135,21 @@ export async function checkDatabaseConnection(): Promise<boolean> {
 
 // Type for the database instance
 export type Database = typeof db;
+
+// Helper to get debug info about the connection (safe for public display)
+export function getDatabaseDebugInfo() {
+  const url = globalThis.__connectionString || process.env.DATABASE_URL || "";
+  const isSupabase = url.includes("supabase");
+  const isPooler = url.includes("pooler") || url.includes("supavisor");
+
+  // Mask the password
+  const maskedUrl = url.replace(/:[^:@]*@/, ":****@");
+
+  return {
+    isSupabase,
+    isPooler,
+    maskedUrl,
+    ssl: isLocalhost ? false : "require",
+    maxConnections: isTestEnv ? 15 : isLocalhost ? 10 : 1,
+  };
+}
