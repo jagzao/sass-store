@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { handlers, auth } from "@/lib/auth";
-import { db, sql } from "@sass-store/database";
+// Removed static import to prevent top-level await hanging
+// import { db, sql } from "@sass-store/database";
 
 // Force dynamic execution
 export const dynamic = "force-dynamic";
@@ -9,14 +10,23 @@ export async function GET() {
   const start = performance.now();
 
   // Get DB debug info if available (using dynamic import to avoid crashes if package not updated)
-  let dbInfo: any = {};
+  let dbInfo: any = {}; // Define dbInfo here
+  let dbModule: any = null; // Hold the module
+
   try {
-    const { getDatabaseDebugInfo } = await import("@sass-store/database");
-    if (getDatabaseDebugInfo) {
-      dbInfo = getDatabaseDebugInfo();
+    // Race the module import
+    dbModule = await Promise.race([
+      import("@sass-store/database"),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("IMPORT_TIMEOUT")), 2000),
+      ),
+    ]);
+
+    if (dbModule && dbModule.getDatabaseDebugInfo) {
+      dbInfo = dbModule.getDatabaseDebugInfo();
     }
-  } catch (e) {
-    dbInfo = { error: "Could not load database debug info" };
+  } catch (e: any) {
+    dbInfo = { error: `Could not load database debug info: ${e.message}` };
   }
 
   const diagnostic = {
@@ -49,36 +59,44 @@ export async function GET() {
     }
 
     // Test DB Connection (basic) with strict timeout
-    try {
-      const dbStart = performance.now();
+    if (dbModule && dbModule.db && dbModule.sql) {
+      try {
+        const db = dbModule.db; // Use locally loaded db
+        const sql = dbModule.sql;
 
-      // Create a timeout promise that rejects after 3 seconds
-      const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(
-          () => reject(new Error("DB_CONNECTION_TIMEOUT_3000MS")),
-          3000,
-        ),
-      );
+        const dbStart = performance.now();
 
-      // Race the DB query against the timeout
-      await Promise.race([
-        db.execute(sql`SELECT 1 as connected`),
-        timeoutPromise,
-      ]);
+        // Create a timeout promise that rejects after 3 seconds
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(
+            () => reject(new Error("DB_CONNECTION_TIMEOUT_3000MS")),
+            3000,
+          ),
+        );
 
-      const dbEnd = performance.now();
+        // Race the DB query against the timeout
+        await Promise.race([
+          db.execute(sql`SELECT 1 as connected`),
+          timeoutPromise,
+        ]);
 
-      diagnostic.database.status = "connected";
-      diagnostic.database.connection = "ok";
-      diagnostic.database.latencyMs = Math.round(dbEnd - dbStart);
-    } catch (e: any) {
-      diagnostic.database.status = "error";
-      diagnostic.database.connection = e.message;
-      // If it was a timeout, explicitly note it
-      if (e.message === "DB_CONNECTION_TIMEOUT_3000MS") {
-        diagnostic.database.notes =
-          "The database connection hung and was aborted to preserve the request.";
+        const dbEnd = performance.now();
+
+        diagnostic.database.status = "connected";
+        diagnostic.database.connection = "ok";
+        diagnostic.database.latencyMs = Math.round(dbEnd - dbStart);
+      } catch (e: any) {
+        diagnostic.database.status = "error";
+        diagnostic.database.connection = e.message;
+        // If it was a timeout, explicitly note it
+        if (e.message === "DB_CONNECTION_TIMEOUT_3000MS") {
+          diagnostic.database.notes =
+            "The database connection hung and was aborted to preserve the request.";
+        }
       }
+    } else {
+      diagnostic.database.status = "skipped";
+      diagnostic.database.connection = "Database module failed to load";
     }
 
     const end = performance.now();
