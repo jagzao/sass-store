@@ -1,0 +1,3 @@
+/**
+ * Minimal Vitest setup file
+ */

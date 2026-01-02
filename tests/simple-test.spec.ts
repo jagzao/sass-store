@@ -14,8 +14,3 @@ describe("Simple Test", () => {
     expect(result).toBe(42);
   });
 });
-
-// Also try a test without describe
-it("standalone test", () => {
-  expect(true).toBe(true);
-});
