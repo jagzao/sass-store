@@ -197,7 +197,6 @@ const { handlers, auth, signIn, signOut } = NextAuth({
   },
   pages: {
     signIn: "/t/zo-system/login", // Default tenant login
-    error: "/auth/error",
   },
   callbacks: {
     async signIn({ user, account, profile }: any) {
