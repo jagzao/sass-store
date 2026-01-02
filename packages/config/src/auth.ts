@@ -330,6 +330,18 @@ const { handlers, auth, signIn, signOut } = NextAuth({
             .limit(1);
 
           if (tenant) {
+            // SET RLS CONTEXT - CRITICAL FOR VIEWING ROLES
+            try {
+              await db.execute(
+                sql`SELECT set_tenant_context(${tenant.id}::uuid)`,
+              );
+            } catch (rlsError) {
+              console.error(
+                "[NextAuth] Failed to set RLS context in JWT:",
+                rlsError,
+              );
+            }
+
             // Fetch the latest role from database
             const [roleAssignment] = await db
               .select({ role: userRoles.role })
