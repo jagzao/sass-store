@@ -384,23 +384,23 @@ async function applyRLSPolicies() {
       DROP POLICY IF EXISTS tenant_isolation_customers_insert ON customers;
       DROP POLICY IF EXISTS tenant_isolation_customers_update ON customers;
       DROP POLICY IF EXISTS tenant_isolation_customers_delete ON customers;
-      
+
       CREATE POLICY tenant_isolation_customers_select ON customers
         FOR SELECT
-        USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
-      
+        USING (tenant_id = (SELECT current_setting('app.current_tenant_id', TRUE)::uuid));
+
       CREATE POLICY tenant_isolation_customers_insert ON customers
         FOR INSERT
-        WITH CHECK (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
-      
+        WITH CHECK (tenant_id = (SELECT current_setting('app.current_tenant_id', TRUE)::uuid));
+
       CREATE POLICY tenant_isolation_customers_update ON customers
         FOR UPDATE
-        USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid)
-        WITH CHECK (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
-      
+        USING (tenant_id = (SELECT current_setting('app.current_tenant_id', TRUE)::uuid))
+        WITH CHECK (tenant_id = (SELECT current_setting('app.current_tenant_id', TRUE)::uuid));
+
       CREATE POLICY tenant_isolation_customers_delete ON customers
         FOR DELETE
-        USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+        USING (tenant_id = (SELECT current_setting('app.current_tenant_id', TRUE)::uuid));
     `);
     console.log("✓ RLS policies applied to customers table");
 

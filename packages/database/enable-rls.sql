@@ -241,6 +241,37 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- ================================================================
+-- RLS Policies for Customers
+-- ================================================================
+
+-- Enable RLS on customers table
+ALTER TABLE customers FORCE ROW LEVEL SECURITY;
+
+-- Drop existing policies if they exist
+DROP POLICY IF EXISTS tenant_isolation_customers_select ON customers;
+DROP POLICY IF EXISTS tenant_isolation_customers_insert ON customers;
+DROP POLICY IF EXISTS tenant_isolation_customers_update ON customers;
+DROP POLICY IF EXISTS tenant_isolation_customers_delete ON customers;
+
+-- Create optimized policies
+CREATE POLICY tenant_isolation_customers_select ON customers
+  FOR SELECT
+  USING (tenant_id = (select current_setting('app.current_tenant_id', TRUE)::uuid));
+
+CREATE POLICY tenant_isolation_customers_insert ON customers
+  FOR INSERT
+  WITH CHECK (tenant_id = (select current_setting('app.current_tenant_id', TRUE)::uuid));
+
+CREATE POLICY tenant_isolation_customers_update ON customers
+  FOR UPDATE
+  USING (tenant_id = (select current_setting('app.current_tenant_id', TRUE)::uuid))
+  WITH CHECK (tenant_id = (select current_setting('app.current_tenant_id', TRUE)::uuid));
+
+CREATE POLICY tenant_isolation_customers_delete ON customers
+  FOR DELETE
+  USING (tenant_id = (select current_setting('app.current_tenant_id', TRUE)::uuid));
+
+-- ================================================================
 -- Usage Example:
 -- ================================================================
 -- -- Set tenant context before queries:

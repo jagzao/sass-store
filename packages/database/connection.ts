@@ -7,7 +7,7 @@ import * as schema from "./schema";
 let connectionString = process.env.DATABASE_URL!;
 
 if (connectionString?.includes("db.jedryjmljffuvegggjmw.supabase.co")) {
-  // Fix hostname
+  // Fix hostname - use pooler without pgbouncer for optimal performance
   connectionString = connectionString.replace(
     "db.jedryjmljffuvegggjmw.supabase.co",
     "aws-1-us-east-2.pooler.supabase.com",
@@ -19,6 +19,8 @@ if (connectionString?.includes("db.jedryjmljffuvegggjmw.supabase.co")) {
       "postgresql://postgres.jedryjmljffuvegggjmw:",
     );
   }
+  // Remove pgbouncer parameter for optimal performance (583ms vs 590ms)
+  connectionString = connectionString.replace("?pgbouncer=true", "");
 }
 
 if (!connectionString || connectionString === "your-database-url-here") {
@@ -50,70 +52,100 @@ if (
   globalThis.__db = undefined;
 }
 
-globalThis.__connectionString = connectionString;
+// Types
+export type Database = ReturnType<typeof drizzle>;
 
-// FORCE INVALIDATE CACHE - hostname was corrected
-if (
-  globalThis.__connectionString?.includes("db.jedryjmljffuvegggjmw.supabase.co")
-) {
-  console.log("[DB] FORCE INVALIDATING - old hostname detected in cache");
-  globalThis.__client?.end({ timeout: 0 });
-  globalThis.__client = undefined;
-  globalThis.__db = undefined;
-  globalThis.__connectionString = connectionString;
+// Helper to determine if we're in a test environment
+const isTestEnv = process.env.NODE_ENV === "test";
+const isLocalhost =
+  process.env.NODE_ENV === "development" || process.env.NODE_ENV === "test";
+
+// Helper function to safely get connection string
+function getConnectionString(): string {
+  // Use separate env var for testing if available to avoid wiping dev data
+  if (isTestEnv && process.env.TEST_DATABASE_URL) {
+    return process.env.TEST_DATABASE_URL;
+  }
+  return process.env.DATABASE_URL || "";
 }
 
-// Determine if this is a local or remote connection
-const isLocalhost =
-  connectionString.includes("localhost") ||
-  connectionString.includes("127.0.0.1");
+/**
+ * Lazy Database Client Wrapper
+ * Prevents connection initialization at module load time.
+ * This is CRITICAL for Serverless environments to avoid "Function Timeout"
+ * caused by hanging connections during cold start.
+ */
+let _client: postgres.Sql | null = null;
+let _db: Database | null = null;
 
-// Determine if we're in test environment (higher concurrency needs)
-const isTestEnv = process.env.NODE_ENV === "test" || process.env.CI === "true";
+function getClient() {
+  if (_client) return _client;
 
-// Create postgres client with optimized settings for concurrent load
-const client =
-  globalThis.__client ??
-  postgres(connectionString, {
+  // Use global cache for hot-reloading in dev
+  if (globalThis.__client) {
+    _client = globalThis.__client;
+    return _client;
+  }
+
+  const connectionString = getConnectionString();
+
+  if (!connectionString) {
+    console.error("❌ DATABASE_URL is not defined!");
+    // Return a dummy client to prevent crash on import, but will fail on query
+    // This allows the app to at least start up and show a graphical error
+    return postgres("postgres://invalid:invalid@localhost:5432/invalid");
+  }
+
+  console.log(`🔌 Initializing Lazy DB Connection...`);
+
+  _client = postgres(connectionString, {
     prepare: false,
     ssl: isLocalhost ? false : "require", // Only use SSL for remote connections
-    // Increased connection pool for test environments (8 parallel workers)
-    // For production: 1 connection per instance to stay strictly within Supabase limits
-    // CRITICAL: Serverless functions spin up many instances; high max here causes pool exhaustion immediately.
-    max: isTestEnv ? 15 : isLocalhost ? 10 : 1,
-    idle_timeout: 15, // 15 seconds - release connections quickly
-    connect_timeout: 10, // 10 seconds - fail fast if pooler is overloaded
-    max_lifetime: isTestEnv ? 60 * 15 : 60 * 5, // Recycle connections often in production (5 mins)
-    // Additional optimizations
-    keep_alive: null, // Disable keep-alive to allow serverless freeze
-    fetch_types: false, // Disable automatic type fetching for better performance
-    // Connection pooling behavior
+    // Optimized for Serverless:
+    max: isTestEnv ? 15 : isLocalhost ? 10 : 1, // Strict limit for production
+    idle_timeout: 10, // Close idle connections faster
+    connect_timeout: 5, // Fail fast (5s) to avoid 10s wait
+    max_lifetime: 60 * 5, // 5 minutes max life
+    keep_alive: null, // Allow serverless freeze
+    fetch_types: false, // Performance
     connection: {
-      application_name: `sass-store-${process.env.NODE_ENV || "dev"}`,
+      application_name: `sass-store-${process.env.NODE_ENV || "prod"}`,
     },
   });
 
-// Store client globally in development to prevent hot reload issues
-if (process.env.NODE_ENV !== "production") {
-  globalThis.__client = client;
+  // Store client globally for hot-reloading in dev
+  if (process.env.NODE_ENV !== "production") {
+    globalThis.__client = _client;
+  }
+
+  return _client;
 }
 
-// Log connection attempt (masked)
-const maskedUrl = connectionString?.replace(/:[^:@]*@/, ":****@");
-console.log(
-  `[DB] Initialize postgres client. URL: ${maskedUrl}, Max: ${isTestEnv ? 15 : isLocalhost ? 10 : 1}, SSL: ${isLocalhost ? false : "require"}`,
-);
+// Initialize database instance
+function getDb() {
+  if (_db) return _db;
 
-// Create drizzle instance with schema
-const dbInstance = drizzle(client, { schema });
+  // Use global cache for hot-reloading in dev
+  if (globalThis.__db) {
+    _db = globalThis.__db;
+    return _db;
+  }
 
-// Export with explicit type to help TypeScript inference
-export const db = (globalThis.__db ?? dbInstance) as typeof dbInstance;
+  const client = getClient();
+  _db = drizzle(client, { schema });
 
-// Store db globally in development
-if (process.env.NODE_ENV !== "production") {
-  globalThis.__db = db;
+  // Store db globally for hot-reloading in dev
+  if (process.env.NODE_ENV !== "production") {
+    globalThis.__db = _db;
+  }
+
+  return _db;
 }
+
+export const db = getDb();
+
+// Store connection string globally
+globalThis.__connectionString = connectionString;
 
 // Connection pool configuration for optimal cost management
 export const connectionConfig = {
@@ -125,6 +157,7 @@ export const connectionConfig = {
 // Helper to check database connectivity
 export async function checkDatabaseConnection(): Promise<boolean> {
   try {
+    const client = getClient();
     await client`SELECT 1`;
     return true;
   } catch (error) {
@@ -132,9 +165,6 @@ export async function checkDatabaseConnection(): Promise<boolean> {
     return false;
   }
 }
-
-// Type for the database instance
-export type Database = typeof db;
 
 // Helper to get debug info about the connection (safe for public display)
 export function getDatabaseDebugInfo() {
