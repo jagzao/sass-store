@@ -3,15 +3,23 @@ import { NextResponse } from "next/server";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  // Redirect to the error page
-  return NextResponse.redirect(
-    new URL("/auth/error", process.env.NEXTAUTH_URL || "http://localhost:3001"),
+  // Return a simple response to avoid timeout
+  return NextResponse.json(
+    {
+      error: "Authentication error",
+      message: "Please check your credentials and try again",
+    },
+    { status: 400 },
   );
 }
 
 export async function POST() {
-  // Redirect to the error page
-  return NextResponse.redirect(
-    new URL("/auth/error", process.env.NEXTAUTH_URL || "http://localhost:3001"),
+  // Return a simple response to avoid timeout
+  return NextResponse.json(
+    {
+      error: "Authentication error",
+      message: "Please check your credentials and try again",
+    },
+    { status: 400 },
   );
 }
