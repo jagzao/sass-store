@@ -1,13 +1,22 @@
 import { NextResponse } from "next/server";
-import { handlers, auth } from "@/lib/auth";
-// Removed static import to prevent top-level await hanging
-// import { db, sql } from "@sass-store/database";
+// import { handlers, auth } from "@/lib/auth"; // REMOVED to prevent static initialization
 
 // Force dynamic execution
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   const start = performance.now();
+  let handlers: any = null;
+  let auth: any = null;
+
+  // Try to load auth dynamically
+  try {
+    const authModule = await import("@/lib/auth");
+    handlers = authModule.handlers;
+    auth = authModule.auth;
+  } catch (e) {
+    console.error("Failed to load auth module dynamically", e);
+  }
 
   // Get DB debug info if available (using dynamic import to avoid crashes if package not updated)
   let dbInfo: any = {}; // Define dbInfo here

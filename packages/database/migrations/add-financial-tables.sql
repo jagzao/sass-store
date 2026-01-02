@@ -118,7 +118,7 @@ ALTER TABLE pos_terminals ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies
 CREATE POLICY pos_terminals_tenant_isolation ON pos_terminals
-  FOR ALL USING (tenant_id = get_current_tenant_id());
+  FOR ALL USING (tenant_id = (SELECT NULLIF(current_setting('app.current_tenant_id', true), '')::UUID));
 
 -- ============================================================================
 -- FINANCIAL KPIs (CALCULATED DAILY)

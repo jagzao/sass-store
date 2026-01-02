@@ -63,23 +63,23 @@ ALTER TABLE payments FORCE ROW LEVEL SECURITY;
 -- Policy: Users can only view products from their tenant
 CREATE POLICY tenant_isolation_products_select ON products
   FOR SELECT
-  USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+  USING (tenant_id = (select current_setting('app.current_tenant_id', TRUE)::uuid));
 
 -- Policy: Users can only insert products for their tenant
 CREATE POLICY tenant_isolation_products_insert ON products
   FOR INSERT
-  WITH CHECK (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+  WITH CHECK (tenant_id = (select current_setting('app.current_tenant_id', TRUE)::uuid));
 
 -- Policy: Users can only update products from their tenant
 CREATE POLICY tenant_isolation_products_update ON products
   FOR UPDATE
-  USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid)
-  WITH CHECK (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+  USING (tenant_id = (select current_setting('app.current_tenant_id', TRUE)::uuid))
+  WITH CHECK (tenant_id = (select current_setting('app.current_tenant_id', TRUE)::uuid));
 
 -- Policy: Users can only delete products from their tenant
 CREATE POLICY tenant_isolation_products_delete ON products
   FOR DELETE
-  USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+  USING (tenant_id = (select current_setting('app.current_tenant_id', TRUE)::uuid));
 
 -- ================================================================
 -- RLS Policies for Services
@@ -87,20 +87,20 @@ CREATE POLICY tenant_isolation_products_delete ON products
 
 CREATE POLICY tenant_isolation_services_select ON services
   FOR SELECT
-  USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+  USING (tenant_id = (select current_setting('app.current_tenant_id', TRUE)::uuid));
 
 CREATE POLICY tenant_isolation_services_insert ON services
   FOR INSERT
-  WITH CHECK (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+  WITH CHECK (tenant_id = (select current_setting('app.current_tenant_id', TRUE)::uuid));
 
 CREATE POLICY tenant_isolation_services_update ON services
   FOR UPDATE
-  USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid)
-  WITH CHECK (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+  USING (tenant_id = (select current_setting('app.current_tenant_id', TRUE)::uuid))
+  WITH CHECK (tenant_id = (select current_setting('app.current_tenant_id', TRUE)::uuid));
 
 CREATE POLICY tenant_isolation_services_delete ON services
   FOR DELETE
-  USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+  USING (tenant_id = (select current_setting('app.current_tenant_id', TRUE)::uuid));
 
 -- ================================================================
 -- RLS Policies for Staff
@@ -108,20 +108,20 @@ CREATE POLICY tenant_isolation_services_delete ON services
 
 CREATE POLICY tenant_isolation_staff_select ON staff
   FOR SELECT
-  USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+  USING (tenant_id = (select current_setting('app.current_tenant_id', TRUE)::uuid));
 
 CREATE POLICY tenant_isolation_staff_insert ON staff
   FOR INSERT
-  WITH CHECK (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+  WITH CHECK (tenant_id = (select current_setting('app.current_tenant_id', TRUE)::uuid));
 
 CREATE POLICY tenant_isolation_staff_update ON staff
   FOR UPDATE
-  USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid)
-  WITH CHECK (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+  USING (tenant_id = (select current_setting('app.current_tenant_id', TRUE)::uuid))
+  WITH CHECK (tenant_id = (select current_setting('app.current_tenant_id', TRUE)::uuid));
 
 CREATE POLICY tenant_isolation_staff_delete ON staff
   FOR DELETE
-  USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+  USING (tenant_id = (select current_setting('app.current_tenant_id', TRUE)::uuid));
 
 -- ================================================================
 -- RLS Policies for Appointments
@@ -129,60 +129,91 @@ CREATE POLICY tenant_isolation_staff_delete ON staff
 
 CREATE POLICY tenant_isolation_bookings_select ON bookings
   FOR SELECT
-  USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+  USING (tenant_id = (select current_setting('app.current_tenant_id', TRUE)::uuid));
 
 CREATE POLICY tenant_isolation_bookings_insert ON bookings
   FOR INSERT
-  WITH CHECK (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+  WITH CHECK (tenant_id = (select current_setting('app.current_tenant_id', TRUE)::uuid));
 
 CREATE POLICY tenant_isolation_bookings_update ON bookings
   FOR UPDATE
-  USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid)
-  WITH CHECK (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+  USING (tenant_id = (select current_setting('app.current_tenant_id', TRUE)::uuid))
+  WITH CHECK (tenant_id = (select current_setting('app.current_tenant_id', TRUE)::uuid));
 
 CREATE POLICY tenant_isolation_bookings_delete ON bookings
   FOR DELETE
-  USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+  USING (tenant_id = (select current_setting('app.current_tenant_id', TRUE)::uuid));
 
 -- ================================================================
 -- ================================================================
 
 CREATE POLICY tenant_isolation_orders_select ON orders
   FOR SELECT
-  USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+  USING (tenant_id = (select current_setting('app.current_tenant_id', TRUE)::uuid));
 
 CREATE POLICY tenant_isolation_orders_insert ON orders
   FOR INSERT
-  WITH CHECK (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+  WITH CHECK (tenant_id = (select current_setting('app.current_tenant_id', TRUE)::uuid));
 
 CREATE POLICY tenant_isolation_orders_update ON orders
   FOR UPDATE
-  USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid)
-  WITH CHECK (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+  USING (tenant_id = (select current_setting('app.current_tenant_id', TRUE)::uuid))
+  WITH CHECK (tenant_id = (select current_setting('app.current_tenant_id', TRUE)::uuid));
 
 CREATE POLICY tenant_isolation_orders_delete ON orders
   FOR DELETE
-  USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+  USING (tenant_id = (select current_setting('app.current_tenant_id', TRUE)::uuid));
 
 -- ================================================================
 -- ================================================================
 
 CREATE POLICY tenant_isolation_payments_select ON payments
   FOR SELECT
-  USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+  USING (tenant_id = (select current_setting('app.current_tenant_id', TRUE)::uuid));
 
 CREATE POLICY tenant_isolation_payments_insert ON payments
   FOR INSERT
-  WITH CHECK (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+  WITH CHECK (tenant_id = (select current_setting('app.current_tenant_id', TRUE)::uuid));
 
 CREATE POLICY tenant_isolation_payments_update ON payments
   FOR UPDATE
-  USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid)
-  WITH CHECK (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+  USING (tenant_id = (select current_setting('app.current_tenant_id', TRUE)::uuid))
+  WITH CHECK (tenant_id = (select current_setting('app.current_tenant_id', TRUE)::uuid));
 
 CREATE POLICY tenant_isolation_payments_delete ON payments
   FOR DELETE
-  USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+  USING (tenant_id = (select current_setting('app.current_tenant_id', TRUE)::uuid));
+
+-- ================================================================
+-- RLS Policies for POS Terminals
+-- ================================================================
+
+-- Enable RLS on pos_terminals table
+ALTER TABLE pos_terminals FORCE ROW LEVEL SECURITY;
+
+-- Drop existing policies if they exist
+DROP POLICY IF EXISTS tenant_isolation_pos_terminals_select ON pos_terminals;
+DROP POLICY IF EXISTS tenant_isolation_pos_terminals_insert ON pos_terminals;
+DROP POLICY IF EXISTS tenant_isolation_pos_terminals_update ON pos_terminals;
+DROP POLICY IF EXISTS tenant_isolation_pos_terminals_delete ON pos_terminals;
+
+-- Create optimized policies
+CREATE POLICY tenant_isolation_pos_terminals_select ON pos_terminals
+  FOR SELECT
+  USING (tenant_id = (select current_setting('app.current_tenant_id', TRUE)::uuid));
+
+CREATE POLICY tenant_isolation_pos_terminals_insert ON pos_terminals
+  FOR INSERT
+  WITH CHECK (tenant_id = (select current_setting('app.current_tenant_id', TRUE)::uuid));
+
+CREATE POLICY tenant_isolation_pos_terminals_update ON pos_terminals
+  FOR UPDATE
+  USING (tenant_id = (select current_setting('app.current_tenant_id', TRUE)::uuid))
+  WITH CHECK (tenant_id = (select current_setting('app.current_tenant_id', TRUE)::uuid));
+
+CREATE POLICY tenant_isolation_pos_terminals_delete ON pos_terminals
+  FOR DELETE
+  USING (tenant_id = (select current_setting('app.current_tenant_id', TRUE)::uuid));
 
 -- ================================================================
 -- Helper Function: Set Tenant Context

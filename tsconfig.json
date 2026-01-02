@@ -11,7 +11,7 @@
     "outDir": "./dist",
     "rootDir": ".",
     "typeRoots": ["./node_modules/@types"],
-    "types": ["jest", "@jest/globals", "@testing-library/jest-dom", "node"]
+    "types": ["node"]
   },
   "include": ["tools/**/*", "tests/**/*", "scripts/**/*"],
   "exclude": ["node_modules", "dist", "apps", "packages"]
