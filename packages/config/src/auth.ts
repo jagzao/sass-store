@@ -197,7 +197,7 @@ const { handlers, auth, signIn, signOut } = NextAuth({
     maxAge: 24 * 60 * 60, // 1 day (reduced from 14 days for security)
   },
   pages: {
-    signIn: "/t/zo-system/login", // Default tenant login
+    // No static signIn page - it will be handled dynamically by tenant routes
   },
   callbacks: {
     async signIn({ user, account }: any) {

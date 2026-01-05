@@ -264,7 +264,7 @@ export default function ProductPanel({
                       {product.description}
                     </p>
                     <div className="mt-1 font-semibold text-sm text-gray-900">
-                      ${product.price.toFixed(2)}
+                      ${Number(product.price || 0).toFixed(2)}
                     </div>
                   </div>
                 </div>
@@ -318,7 +318,7 @@ export default function ProductPanel({
                     </p>
                     <div className="mt-1 flex justify-between items-center">
                       <span className="font-bold text-sm text-gray-900">
-                        ${service.price.toFixed(2)}
+                        ${Number(service.price || 0).toFixed(2)}
                       </span>
                       {service.duration && (
                         <span className="text-xs text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded">
