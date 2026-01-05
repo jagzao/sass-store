@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import MenuEditor from "./MenuEditor";
+import ProductPanel from "./ProductPanel";
 import {
   Dialog,
   DialogContent,
@@ -99,7 +100,160 @@ export default function MenuDesignerModal({
   };
 
   const handleDownloadPdf = () => {
-    window.print(); // Simple version for MVP, or use html2pdf logic here
+    // Implementación mejorada para generar PDF
+    const printContent = document.querySelector(".ProseMirror");
+    if (!printContent) {
+      alert("No se pudo generar el PDF. Intente nuevamente.");
+      return;
+    }
+
+    // Crear una ventana temporal para imprimir
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) {
+      alert("Permita las ventanas emergentes para generar el PDF.");
+      return;
+    }
+
+    // Obtener el contenido HTML del editor
+    const content = printContent.innerHTML;
+
+    // Crear el HTML completo para imprimir
+    const printDocument = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>${currentDesign?.name || "Menú"}</title>
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+          }
+          h1 {
+            font-family: Georgia, serif;
+            color: #C5A059;
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            margin-top: 0;
+            border-bottom: 2px solid #C5A059;
+            padding-bottom: 0.5rem;
+          }
+          h2 {
+            font-family: Arial, sans-serif;
+            color: #333;
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.3rem;
+            border-bottom: 1px solid #ddd;
+          }
+          h3 {
+            font-family: Arial, sans-serif;
+            color: #555;
+            font-size: 1.4rem;
+            font-weight: 500;
+            font-style: italic;
+            margin-top: 1.5rem;
+            margin-bottom: 0.8rem;
+          }
+          p {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+          }
+          table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 1rem 0;
+          }
+          table td, table th {
+            border: none;
+            padding: 0.5rem;
+            vertical-align: top;
+          }
+          hr {
+            border: none;
+            height: 1px;
+            background-color: #C5A059;
+            margin: 1.5rem 0;
+          }
+          img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 1rem auto;
+            border-radius: 4px;
+          }
+          .product-node {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 0.75rem 1rem;
+            margin: 0.5rem 0;
+            background-color: #f9f9f9;
+            border-left: 3px solid #C5A059;
+            border-radius: 4px;
+            position: relative;
+          }
+          .product-node .product-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #333;
+            flex: 1;
+            margin-right: 1rem;
+          }
+          .product-node .product-price {
+            font-weight: 700;
+            color: #C5A059;
+            font-size: 1.1rem;
+            white-space: nowrap;
+          }
+          .product-node .product-description {
+            font-size: 0.85rem;
+            color: #666;
+            font-style: italic;
+            margin-top: 0.25rem;
+            width: 100%;
+          }
+          .product-node.with-image {
+            display: grid;
+            grid-template-columns: 80px 1fr auto;
+            gap: 1rem;
+            align-items: center;
+          }
+          .product-node .product-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 4px;
+            border: 1px solid #eee;
+          }
+          @media print {
+            body {
+              margin: 0;
+              padding: 15mm;
+            }
+          }
+        </style>
+      </head>
+      <body>
+        ${content}
+        <script>
+          window.onload = function() {
+            window.print();
+            window.close();
+          }
+        </script>
+      </body>
+      </html>
+    `;
+
+    printWindow.document.write(printDocument);
+    printWindow.document.close();
   };
 
   if (!isOpen) return null;
@@ -211,11 +365,15 @@ export default function MenuDesignerModal({
                 </div>
 
                 <div className="pt-4 border-t border-gray-200">
-                  <h4 className="font-medium mb-3 text-sm">Productos</h4>
+                  <h4 className="font-medium mb-3 text-sm">
+                    Productos y Servicios
+                  </h4>
                   <p className="text-xs text-gray-400 mb-2">
-                    Arrastra productos al menú (Próximamente)
+                    Arrastra productos y servicios al menú
                   </p>
-                  {/* List services here to drag and drop */}
+                  <div className="h-64 overflow-y-auto">
+                    <ProductPanel tenantSlug={tenantSlug} />
+                  </div>
                 </div>
 
                 <div className="pt-4 border-t border-gray-200 mt-auto">
