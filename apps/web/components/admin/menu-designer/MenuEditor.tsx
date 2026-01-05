@@ -19,12 +19,16 @@ interface MenuEditorProps {
   initialContent?: any;
   onChange: (content: any) => void;
   readOnly?: boolean;
+  selectedProducts?: any[]; // Product defined in ProductPanel
+  selectedServices?: any[]; // Service defined in ProductPanel
 }
 
 const MenuEditor = ({
   initialContent,
   onChange,
   readOnly = false,
+  selectedProducts = [],
+  selectedServices = [],
 }: MenuEditorProps) => {
   const editor = useEditor({
     extensions: [
@@ -43,14 +47,8 @@ const MenuEditor = ({
       TableHeader,
       TableCell,
       HorizontalRule,
-      // Custom extensions will be added here
     ],
-    content:
-      initialContent ||
-      `
-      <h1>Menú Especial</h1>
-      <p>Edita este menú para empezar...</p>
-    `,
+    content: initialContent, // Use direct prop
     onUpdate: ({ editor }) => {
       onChange(editor.getJSON());
     },
@@ -63,6 +61,31 @@ const MenuEditor = ({
       },
     },
   });
+
+  // Allow parent to update content (e.g. Generation from selections)
+  useEffect(() => {
+    if (editor && initialContent) {
+      // Only set content if it's different to avoid cursor jumps/loops
+      // For 'Generation' button, it's fine.
+      // We use a simplified check or just force it since 'initialContent'
+      // in parent 'setEditorContent' implies a full replace intention from the generator.
+
+      // However, if 'onUpdate' also calls 'onChange', we have a loop if we are not careful.
+      // The parent 'editorContent' state is updated by both 'onUpdate' (JSON) and 'Generate' (HTML).
+      // If we pass JSON here it works. If we pass HTML string it works.
+      const currentContent = editor.getHTML();
+      if (
+        typeof initialContent === "string" &&
+        initialContent !== currentContent
+      ) {
+        editor.commands.setContent(initialContent);
+      } else if (typeof initialContent === "object") {
+        // Deep compare or just set?
+        // safer to only set if drastically different or just trust the command
+        // editor.commands.setContent(initialContent);
+      }
+    }
+  }, [editor, initialContent]);
 
   if (!editor) {
     return null;
