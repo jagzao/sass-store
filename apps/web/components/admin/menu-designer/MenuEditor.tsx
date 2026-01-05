@@ -9,6 +9,9 @@ import FontFamily from "@tiptap/extension-font-family";
 import { TextStyle } from "@tiptap/extension-text-style";
 import Color from "@tiptap/extension-color";
 import { Table } from "@tiptap/extension-table";
+import { TableRow } from "@tiptap/extension-table-row";
+import { TableHeader } from "@tiptap/extension-table-header";
+import { TableCell } from "@tiptap/extension-table-cell";
 import { HorizontalRule } from "@tiptap/extension-horizontal-rule";
 import { useEffect } from "react";
 
@@ -36,6 +39,9 @@ const MenuEditor = ({
       Table.configure({
         resizable: true,
       }),
+      TableRow,
+      TableHeader,
+      TableCell,
       HorizontalRule,
       // Custom extensions will be added here
     ],

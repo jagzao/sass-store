@@ -62,13 +62,18 @@ export async function POST(
   { params }: { params: { tenant: string } },
 ) {
   try {
+    const tenantSlug = params.tenant;
+    console.log(`[API] Creando menú para tenant: ${tenantSlug}`);
+
     const session = await auth();
     if (!session) {
+      console.log("[API] Unauthorized: No session");
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const tenantSlug = params.tenant;
     const body = await request.json();
+    console.log("[API] Body recibido:", JSON.stringify(body, null, 2));
+
     const validatedData = createMenuSchema.parse(body);
 
     const tenant = await db.query.tenants.findFirst({
@@ -76,27 +81,44 @@ export async function POST(
     });
 
     if (!tenant) {
+      console.log(`[API] Tenant no encontrado: ${tenantSlug}`);
       return NextResponse.json({ error: "Tenant not found" }, { status: 404 });
     }
 
-    const [newDesign] = await db
-      .insert(menuDesigns)
-      .values({
-        tenantId: tenant.id,
-        name: validatedData.name,
-        description: validatedData.description,
-        content: validatedData.content,
-        templateId: validatedData.templateId || "custom",
-        dimensions: validatedData.dimensions,
-      })
-      .returning();
+    console.log(`[API] Tenant ID encontrado: ${tenant.id}`);
 
-    return NextResponse.json(newDesign);
+    try {
+      const [newDesign] = await db
+        .insert(menuDesigns)
+        .values({
+          tenantId: tenant.id,
+          name: validatedData.name,
+          description: validatedData.description,
+          content: validatedData.content,
+          templateId: validatedData.templateId || "custom",
+          dimensions: validatedData.dimensions,
+        })
+        .returning();
+
+      console.log(`[API] Diseño creado exitosamente: ${newDesign.id}`);
+      return NextResponse.json(newDesign);
+    } catch (dbError: any) {
+      console.error("[API] Error de base de datos al insertar menú:", dbError);
+      console.error(
+        "[API] Detalle del error:",
+        JSON.stringify(dbError, null, 2),
+      );
+      return NextResponse.json(
+        { error: "Database error", details: dbError.message },
+        { status: 500 },
+      );
+    }
   } catch (error) {
     if (error instanceof z.ZodError) {
+      console.error("[API] Error de validación Zod:", error.errors);
       return NextResponse.json({ error: error.errors }, { status: 400 });
     }
-    console.error("Error creating menu design:", error);
+    console.error("[API] Error general creando menú:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 },
