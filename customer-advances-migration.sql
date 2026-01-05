@@ -41,6 +41,26 @@ CREATE TABLE IF NOT EXISTS advance_applications (
     updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
+-- Verificar que las tablas de referencia existan
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'customers') THEN
+        RAISE EXCEPTION 'La tabla customers no existe. Por favor, crea primero la tabla customers.';
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'customer_visits') THEN
+        RAISE EXCEPTION 'La tabla customer_visits no existe. Por favor, crea primero la tabla customer_visits.';
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'tenants') THEN
+        RAISE EXCEPTION 'La tabla tenants no existe. Por favor, crea primero la tabla tenants.';
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'bookings') THEN
+        RAISE EXCEPTION 'La tabla bookings no existe. Por favor, crea primero la tabla bookings.';
+    END IF;
+END $$;
+
 -- Create indexes for customer_advances table
 CREATE INDEX IF NOT EXISTS customer_advances_tenant_idx ON customer_advances(tenant_id);
 CREATE INDEX IF NOT EXISTS customer_advances_customer_idx ON customer_advances(customer_id);
@@ -62,12 +82,12 @@ ALTER TABLE customer_advances ENABLE ROW LEVEL SECURITY;
 -- Policy: Users can only view advances from their own tenant
 CREATE POLICY tenant_isolation_customer_advances ON customer_advances
     FOR ALL TO authenticated
-    USING (tenant_id IN (SELECT tenant_id FROM user_roles WHERE user_id = auth.uid() AND role = 'Admin'));
+    USING (tenant_id IN (SELECT tenant_id::uuid FROM user_roles WHERE user_id::text = auth.uid()::text AND role = 'Admin'));
 
 -- Policy: Users can only view advances from their own tenant
 CREATE POLICY tenant_isolation_advance_applications ON advance_applications
     FOR ALL TO authenticated
-    USING (tenant_id IN (SELECT tenant_id FROM user_roles WHERE user_id = auth.uid() AND role = 'Admin'));
+    USING (tenant_id IN (SELECT tenant_id::uuid FROM user_roles WHERE user_id::text = auth.uid()::text AND role = 'Admin'));
 
 -- Add trigger to update updated_at timestamp
 CREATE OR REPLACE FUNCTION update_updated_at_column()
@@ -108,7 +128,7 @@ BEGIN
     -- Update the customer's balance_favor column
     UPDATE customers
     SET balance_favor = balance
-    WHERE id = customer_id_param;
+    WHERE id = customer_id_param::uuid;
     
     RETURN balance;
 END;
@@ -126,7 +146,7 @@ BEGIN
     -- Get visit total and advance applied
     SELECT total_amount, advance_applied INTO total_amount, advance_applied
     FROM customer_visits
-    WHERE id = visit_id_param;
+    WHERE id = visit_id_param::uuid;
     
     -- Calculate remaining amount
     remaining_amount := total_amount - advance_applied;
@@ -144,10 +164,10 @@ BEGIN
     
     -- Update the visit
     UPDATE customer_visits
-    SET 
+    SET
         remaining_amount = remaining_amount,
         payment_status = payment_status
-    WHERE id = visit_id_param;
+    WHERE id = visit_id_param::uuid;
     
     RETURN payment_status;
 END;
@@ -165,12 +185,12 @@ BEGIN
     -- Get advance original amount
     SELECT original_amount INTO original_amount
     FROM customer_advances
-    WHERE id = advance_id_param;
+    WHERE id = advance_id_param::uuid;
     
     -- Sum all applications of this advance
     SELECT COALESCE(SUM(amount_applied), 0) INTO total_applied
     FROM advance_applications
-    WHERE advance_id = advance_id_param;
+    WHERE advance_id = advance_id_param::uuid;
     
     -- Calculate remaining amount
     remaining_amount := original_amount - total_applied;
@@ -186,10 +206,10 @@ BEGIN
     
     -- Update the advance
     UPDATE customer_advances
-    SET 
+    SET
         amount = remaining_amount,
         status = status
-    WHERE id = advance_id_param;
+    WHERE id = advance_id_param::uuid;
     
     RETURN status;
 END;
