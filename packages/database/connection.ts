@@ -9,10 +9,11 @@ let connectionString = process.env.DATABASE_URL!;
 // Rewrites the connection string to use the Transaction Pooler (Supavisor) on port 6543
 // This prevents connection exhaustion (504 Timeouts) which occurs with direct connections (port 5432)
 if (connectionString?.includes("db.jedryjmljffuvegggjmw.supabase.co")) {
-  // 1. Force use of the Pooler Host (Supavisor) in the correct region (aws-1-us-east-2 from previous config)
+  // 1. Force use of the Pooler Host (Supavisor) using the project-specific alias
+  // This is safer than hardcoding the region (aws-1-us-east-2)
   connectionString = connectionString.replace(
     "db.jedryjmljffuvegggjmw.supabase.co",
-    "aws-1-us-east-2.pooler.supabase.com",
+    "jedryjmljffuvegggjmw.pooler.supabase.com",
   );
 
   // 2. Force Port 6543 (Transaction Mode) - Critical for Serverless
