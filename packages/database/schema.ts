@@ -799,6 +799,38 @@ export const socialPostTargetsRelations = relations(
   }),
 );
 
+// Menu Designer Table
+export const menuDesigns = pgTable(
+  "menu_designs",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .references(() => tenants.id)
+      .notNull(),
+    name: varchar("name", { length: 200 }).notNull(),
+    description: text("description"),
+    content: jsonb("content").notNull(), // Stores the Tiptap JSON structure
+    templateId: varchar("template_id", { length: 50 }).default("custom"),
+    dimensions: jsonb("dimensions")
+      .notNull()
+      .default('{"width": 816, "height": 1056}'), // Default Letter size in px (96dpi)
+    isDraft: boolean("is_draft").default(true),
+    metadata: jsonb("metadata"),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    tenantIdx: index("menu_designs_tenant_idx").on(table.tenantId),
+  }),
+);
+
+export const menuDesignsRelations = relations(menuDesigns, ({ one }) => ({
+  tenant: one(tenants, {
+    fields: [menuDesigns.tenantId],
+    references: [tenants.id],
+  }),
+}));
+
 export const contentVariantsRelations = relations(
   contentVariants,
   ({ one, many }) => ({
@@ -1418,6 +1450,9 @@ export const customers = pgTable(
       .array()
       .default(sql`ARRAY[]::text[]`), // Tags: alergias, preferencias, tipo de piel, etc.
     status: customerStatus("status").notNull().default("active"),
+    balanceFavor: decimal("balance_favor", { precision: 10, scale: 2 })
+      .notNull()
+      .default("0"), // Saldo a favor del cliente
     metadata: jsonb("metadata").default("{}"), // Additional flexible data
     createdAt: timestamp("created_at").defaultNow(),
     updatedAt: timestamp("updated_at").defaultNow(),
@@ -1451,6 +1486,15 @@ export const customerVisits = pgTable(
     totalAmount: decimal("total_amount", { precision: 10, scale: 2 })
       .notNull()
       .default("0"),
+    advanceApplied: decimal("advance_applied", { precision: 10, scale: 2 })
+      .notNull()
+      .default("0"), // Adelanto aplicado
+    remainingAmount: decimal("remaining_amount", { precision: 10, scale: 2 })
+      .notNull()
+      .default("0"), // Monto restante por pagar
+    paymentStatus: varchar("payment_status", { length: 20 })
+      .notNull()
+      .default("pending"), // 'pending', 'partially_paid', 'fully_paid', 'overpaid'
     notes: text("notes"), // Observaciones de la visita
     nextVisitFrom: date("next_visit_from"), // Próxima cita sugerida (inicio rango)
     nextVisitTo: date("next_visit_to"), // Próxima cita sugerida (fin rango)
@@ -1530,6 +1574,8 @@ export const customersRelations = relations(customers, ({ one, many }) => ({
     references: [tenants.id],
   }),
   visits: many(customerVisits),
+  advances: many(customerAdvances),
+  advanceApplications: many(advanceApplications),
 }));
 
 export const customerVisitsRelations = relations(
@@ -1549,6 +1595,7 @@ export const customerVisitsRelations = relations(
     }),
     services: many(customerVisitServices),
     photos: many(visitPhotos),
+    advanceApplications: many(advanceApplications),
   }),
 );
 
@@ -1569,6 +1616,132 @@ export const customerVisitServicesRelations = relations(
     service: one(services, {
       fields: [customerVisitServices.serviceId],
       references: [services.id],
+    }),
+  }),
+);
+
+// Customer Advances table - For tracking customer prepayments
+export const customerAdvances = pgTable(
+  "customer_advances",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .references(() => tenants.id)
+      .notNull(),
+    customerId: uuid("customer_id")
+      .references(() => customers.id, { onDelete: "cascade" })
+      .notNull(),
+    amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
+    originalAmount: decimal("original_amount", {
+      precision: 10,
+      scale: 2,
+    }).notNull(),
+    paymentMethod: varchar("payment_method", { length: 50 }).notNull(), // 'cash', 'card', 'transfer', etc.
+    referenceNumber: varchar("reference_number", { length: 100 }), // Número de referencia del pago
+    notes: text("notes"), // Notas sobre el adelanto
+    status: varchar("status", { length: 20 }).notNull().default("active"), // 'active', 'partially_used', 'fully_used', 'cancelled'
+    validUntil: timestamp("valid_until"), // Fecha de expiración del adelanto (opcional)
+    metadata: jsonb("metadata").default("{}"),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    tenantIdx: index("customer_advances_tenant_idx").on(table.tenantId),
+    customerIdx: index("customer_advances_customer_idx").on(table.customerId),
+    statusIdx: index("customer_advances_status_idx").on(table.status),
+    tenantCustomerIdx: index("customer_advances_tenant_customer_idx").on(
+      table.tenantId,
+      table.customerId,
+    ),
+    validUntilIdx: index("customer_advances_valid_until_idx").on(
+      table.validUntil,
+    ),
+  }),
+);
+
+// Advance Applications table - For tracking how advances are applied to services
+export const advanceApplications = pgTable(
+  "advance_applications",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .references(() => tenants.id)
+      .notNull(),
+    advanceId: uuid("advance_id")
+      .references(() => customerAdvances.id, { onDelete: "cascade" })
+      .notNull(),
+    customerId: uuid("customer_id")
+      .references(() => customers.id)
+      .notNull(),
+    visitId: uuid("visit_id").references(() => customerVisits.id, {
+      onDelete: "cascade",
+    }), // Aplicado a una visita específica
+    bookingId: uuid("booking_id").references(() => bookings.id, {
+      onDelete: "cascade",
+    }), // Aplicado a una reserva específica
+    amountApplied: decimal("amount_applied", {
+      precision: 10,
+      scale: 2,
+    }).notNull(),
+    notes: text("notes"), // Notas sobre la aplicación
+    metadata: jsonb("metadata").default("{}"),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    tenantIdx: index("advance_applications_tenant_idx").on(table.tenantId),
+    advanceIdx: index("advance_applications_advance_idx").on(table.advanceId),
+    customerIdx: index("advance_applications_customer_idx").on(
+      table.customerId,
+    ),
+    visitIdx: index("advance_applications_visit_idx").on(table.visitId),
+    bookingIdx: index("advance_applications_booking_idx").on(table.bookingId),
+    tenantAdvanceIdx: index("advance_applications_tenant_advance_idx").on(
+      table.tenantId,
+      table.advanceId,
+    ),
+  }),
+);
+
+// Customer Advances Relations
+export const customerAdvancesRelations = relations(
+  customerAdvances,
+  ({ one, many }) => ({
+    tenant: one(tenants, {
+      fields: [customerAdvances.tenantId],
+      references: [tenants.id],
+    }),
+    customer: one(customers, {
+      fields: [customerAdvances.customerId],
+      references: [customers.id],
+    }),
+    applications: many(advanceApplications),
+  }),
+);
+
+// Advance Applications Relations
+export const advanceApplicationsRelations = relations(
+  advanceApplications,
+  ({ one }) => ({
+    tenant: one(tenants, {
+      fields: [advanceApplications.tenantId],
+      references: [tenants.id],
+    }),
+    advance: one(customerAdvances, {
+      fields: [advanceApplications.advanceId],
+      references: [customerAdvances.id],
+    }),
+    customer: one(customers, {
+      fields: [advanceApplications.customerId],
+      references: [customers.id],
+    }),
+    visit: one(customerVisits, {
+      fields: [advanceApplications.visitId],
+      references: [customerVisits.id],
+    }),
+    booking: one(bookings, {
+      fields: [advanceApplications.bookingId],
+      references: [bookings.id],
     }),
   }),
 );
