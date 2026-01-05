@@ -1,34 +1,33 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import { db } from "@/lib/db";
+import { auth } from "@sass-store/config/auth";
+import { db } from "@sass-store/database";
 import {
   customerAdvances,
   advanceApplications,
   customerVisits,
-} from "@/packages/database/schema";
-import { eq, and, sql } from "drizzle-orm";
+  bookings,
+} from "@sass-store/database/schema";
+import { eq, sql } from "drizzle-orm";
 import { z } from "zod";
 
 // Schema for validating advance application
 const applyAdvanceSchema = z.object({
   visitId: z.string().uuid().optional(),
   bookingId: z.string().uuid().optional(),
-  amountApplied: z
+  amount: z
     .string()
     .refine((val) => !isNaN(parseFloat(val)) && parseFloat(val) > 0, {
-      message: "Amount applied must be a positive number",
+      message: "Amount must be a positive number",
     }),
-  notes: z.string().optional(),
 });
 
-// POST /api/advances/[id]/apply - Apply an advance to a service
+// POST /api/advances/[id]/apply - Apply an advance to a visit/booking
 export async function POST(
   request: NextRequest,
   { params }: { params: { id: string } },
 ) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await auth();
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }

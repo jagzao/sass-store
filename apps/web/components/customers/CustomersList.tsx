@@ -118,6 +118,12 @@ export default function CustomersList({
             <tr>
               <th
                 scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Acciones
+              </th>
+              <th
+                scope="col"
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[250px] min-w-[200px]"
               >
                 Clienta
@@ -154,17 +160,20 @@ export default function CustomersList({
               >
                 Estado
               </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Acciones
-              </th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {customers.map((customer) => (
               <tr key={customer.id} className="hover:bg-gray-50">
+                <td className="px-6 py-4 whitespace-nowrap text-left text-sm font-medium">
+                  <Link
+                    href={`/t/${tenantSlug}/clientes/${customer.id}`}
+                    className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-900"
+                  >
+                    <Eye className="h-4 w-4" />
+                    Ver Expediente
+                  </Link>
+                </td>
                 <td className="px-6 py-4 whitespace-nowrap max-w-[250px]">
                   <div className="flex items-center">
                     <div className="flex-shrink-0 h-10 w-10">
@@ -231,15 +240,6 @@ export default function CustomersList({
                         ? "Inactiva"
                         : "Bloqueada"}
                   </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <Link
-                    href={`/t/${tenantSlug}/clientes/${customer.id}`}
-                    className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-900"
-                  >
-                    <Eye className="h-4 w-4" />
-                    Ver Expediente
-                  </Link>
                 </td>
               </tr>
             ))}

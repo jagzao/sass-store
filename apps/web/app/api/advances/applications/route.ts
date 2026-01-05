@@ -1,18 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import { db } from "@/lib/db";
+import { auth } from "@sass-store/config/auth";
+import { db } from "@sass-store/database";
 import {
   advanceApplications,
   customerAdvances,
-  customerVisits,
-} from "@/packages/database/schema";
-import { eq, and } from "drizzle-orm";
+  customerVisits, // Kept this import as it's used later in the code
+} from "@sass-store/database/schema";
+import { eq, and, desc, sql } from "drizzle-orm";
 
 // GET /api/advances/applications - List advance applications
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await auth();
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }

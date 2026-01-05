@@ -1,21 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import { db } from "@/lib/db";
+
+import { auth } from "@sass-store/config/auth";
+import { db } from "@sass-store/database";
 import {
-  customers,
   customerAdvances,
   advanceApplications,
-} from "@/packages/database/schema";
-import { eq, and, sql } from "drizzle-orm";
+  customerVisits,
+  customers,
+} from "@sass-store/database/schema";
+import { eq, desc, sum, sql } from "drizzle-orm";
 
-// GET /api/customers/[id]/balance - Get customer balance favor
+// GET /api/customers/[id]/balance - Get customer balance details
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } },
 ) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await auth();
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }

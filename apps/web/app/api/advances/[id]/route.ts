@@ -1,29 +1,32 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import { db } from "@/lib/db";
-import { customerAdvances } from "@/packages/database/schema";
-import { eq, and, sql } from "drizzle-orm";
+import { auth } from "@sass-store/config/auth";
+import { db } from "@sass-store/database";
+import { customerAdvances } from "@sass-store/database/schema";
+import { eq, sql } from "drizzle-orm";
 import { z } from "zod";
 
-// Schema for validating advance update
+// Schema for validating advance updates
 const updateAdvanceSchema = z.object({
+  amount: z
+    .string()
+    .refine((val) => !isNaN(parseFloat(val)) && parseFloat(val) > 0, {
+      message: "Amount must be a positive number",
+    })
+    .optional(),
   paymentMethod: z.string().min(1).optional(),
   referenceNumber: z.string().optional(),
   notes: z.string().optional(),
   validUntil: z.string().optional(),
-  status: z
-    .enum(["active", "partially_used", "fully_used", "cancelled"])
-    .optional(),
+  status: z.enum(["active", "used", "expired", "cancelled"]).optional(),
 });
 
-// GET /api/advances/[id] - Get advance details
+// GET /api/advances/[id] - Get a single advance
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } },
 ) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await auth();
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -55,7 +58,7 @@ export async function PUT(
   { params }: { params: { id: string } },
 ) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await auth();
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -139,7 +142,7 @@ export async function DELETE(
   { params }: { params: { id: string } },
 ) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await auth();
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
