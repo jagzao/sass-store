@@ -5,50 +5,6 @@ import * as schema from "./schema";
 // Initialize PostgreSQL connection
 let connectionString = process.env.DATABASE_URL!;
 
-// SUPABASE POOLER CONFIGURATION (Critical for Vercel/Serverless)
-// Rewrites the connection string to use the Transaction Pooler (Supavisor) on port 6543
-// This prevents connection exhaustion (504 Timeouts) which occurs with direct connections (port 5432)
-if (connectionString?.includes("db.jedryjmljffuvegggjmw.supabase.co")) {
-  // 1. Force use of the Pooler Host (Supavisor) using the project-specific alias
-  // This is safer than hardcoding the region (aws-1-us-east-2)
-  connectionString = connectionString.replace(
-    "db.jedryjmljffuvegggjmw.supabase.co",
-    "jedryjmljffuvegggjmw.pooler.supabase.com",
-  );
-
-  // 2. Force Port 6543 (Transaction Mode) - Critical for Serverless
-  // Replaces default 5432 if present, or appends it
-  if (connectionString.includes(":5432")) {
-    connectionString = connectionString.replace(":5432", ":6543");
-  } else {
-    // If no port specified, insert it before the path
-    const pathIndex = connectionString.lastIndexOf("/");
-    if (pathIndex > -1) {
-      // Check if port is already there (simple check)
-      const hasPort = /:\d+\//.test(connectionString);
-      if (!hasPort) {
-        connectionString =
-          connectionString.slice(0, pathIndex) +
-          ":6543" +
-          connectionString.slice(pathIndex);
-      }
-    }
-  }
-
-  // 3. Ensure correct username format for Pooler: [user].[project_ref]
-  // Supavisor often requires the project reference in the username to route correctly
-  if (!connectionString.includes("postgres.jedryjmljffuvegggjmw")) {
-    connectionString = connectionString.replace(
-      "postgresql://postgres:",
-      "postgresql://postgres.jedryjmljffuvegggjmw:",
-    );
-  }
-
-  // 4. Clean up query parameters
-  // Remove pgbouncer=true as Supavisor/postgres.js handles this, and ensure sslmode is required
-  connectionString = connectionString.split("?")[0]; // distinct params handled by postgres.js options
-}
-
 if (!connectionString || connectionString === "your-database-url-here") {
   console.warn(
     "[DB] DATABASE_URL is not properly configured, using mock connection",

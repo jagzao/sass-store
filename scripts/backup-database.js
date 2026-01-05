@@ -1,4 +1,3 @@
-const { createClient } = require('@supabase/supabase-js');
 const fs = require('fs');
 const path = require('path');
 
@@ -11,13 +10,19 @@ if (!fs.existsSync(backupDir)) {
 // Configurar cliente de Supabase
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-const supabase = createClient(supabaseUrl, supabaseKey);
+
+// No usamos createClient del SDK para evitar problemas de RLS silenciosos.
+// Usamos REST API directa con fetch (Node 18+).
 
 // Función para realizar el backup
 async function performBackup() {
   try {
     console.log('Iniciando backup de la base de datos...');
     
+    if (!supabaseUrl || !supabaseKey) {
+        throw new Error('Faltan variables de entorno: SUPABASE_URL o SUPABASE_SERVICE_ROLE_KEY');
+    }
+
     // Obtener timestamp actual
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
     const backupFile = path.join(backupDir, `backup-${timestamp}.sql`);
@@ -31,18 +36,28 @@ async function performBackup() {
 
 `;
 
-    // Función auxiliar para obtener datos de una tabla
+    // Función auxiliar para obtener datos de una tabla usando REST API
     const getTableData = async (tableName) => {
       try {
-        const { data, error } = await supabase
-          .from(tableName)
-          .select('*');
-          
-        if (error) {
-          console.error(`Error al obtener datos de la tabla ${tableName}:`, error);
-          return [];
+        const url = `${supabaseUrl}/rest/v1/${tableName}?select=*&limit=10000`;
+        const response = await fetch(url, {
+            headers: {
+                "apikey": supabaseKey,
+                "Authorization": `Bearer ${supabaseKey}`,
+                "Content-Type": "application/json",
+                // "Prefer": "count=none" 
+            }
+        });
+
+        if (!response.ok) {
+            const text = await response.text();
+            console.error(`Error HTTP ${response.status} al obtener tabla ${tableName}: ${response.statusText}`, text);
+            // Lanzamos error para que no sea silencioso, pero permitimos continuar con otras tablas si es crítico?
+            // El usuario pidió "Muestra errores explícitamente".
+            return []; 
         }
-        
+
+        const data = await response.json();
         return data || [];
       } catch (err) {
         console.error(`Error inesperado al obtener datos de la tabla ${tableName}:`, err);
@@ -67,7 +82,10 @@ async function performBackup() {
           } else if (typeof value === 'boolean') {
             return value ? 'TRUE' : 'FALSE';
           } else if (value instanceof Date) {
-            return `'${value.toISOString()}'`;
+             return `'${value.toISOString()}'`;
+          } else if (typeof value === 'object' && value !== null) {
+             // Para columnas JSON/JSONB
+             return `'${JSON.stringify(value).replace(/'/g, "''")}'`;
           } else {
             return value;
           }
@@ -79,8 +97,7 @@ async function performBackup() {
       return insertStatements.join('\n') + '\n';
     };
 
-    // Tablas a respaldar
-    // Tablas a respaldar
+    // Tablas a respaldar (Lista completa actualizada)
     const tablesToBackup = [
       'tenants',
       'tenant_configs',
@@ -142,8 +159,10 @@ async function performBackup() {
       if (tableData.length > 0) {
         // Generar sentencias INSERT
         backupContent += generateInserts(tableName, tableData);
+        console.log(`  - ${tableData.length} registros exportados.`);
       } else {
-        backupContent += `-- La tabla ${tableName} no contiene datos\n`;
+        backupContent += `-- La tabla ${tableName} no contiene datos o hubo un error al obtenerlos\n`;
+        console.log(`  - 0 registros.`);
       }
     }
 
@@ -153,7 +172,7 @@ async function performBackup() {
     
     return backupFile;
   } catch (error) {
-    console.error('Error durante el backup:', error);
+    console.error('Error crítico durante el backup:', error);
     process.exit(1);
   }
 }
