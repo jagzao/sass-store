@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useEffect, ReactNode } from "react";
+import { useEffect, useState, ReactNode } from "react";
 
 interface AdminRouteGuardProps {
   children: ReactNode;
@@ -15,8 +15,14 @@ export default function AdminRouteGuard({
 }: AdminRouteGuardProps) {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const [isChecking, setIsChecking] = useState(true);
 
   useEffect(() => {
+    // Use a timeout to prevent infinite loading
+    const timeoutId = setTimeout(() => {
+      setIsChecking(false);
+    }, 3000); // 3 seconds timeout
+
     if (status === "loading") return; // Still loading session
 
     if (status === "unauthenticated") {
@@ -30,14 +36,20 @@ export default function AdminRouteGuard({
       router.push(`/t/${tenantSlug}`);
       return;
     }
+
+    // Clear timeout if everything is OK
+    clearTimeout(timeoutId);
+    setIsChecking(false);
+
+    return () => clearTimeout(timeoutId);
   }, [session, status, router, tenantSlug]);
 
   // Show loading state while checking session
-  if (status === "loading") {
+  if (status === "loading" || isChecking) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="text-4xl mb-4">⏳</div>
+          <div className="text-4xl mb-4 animate-pulse">⏳</div>
           <p className="text-gray-600">
             Verificando permisos de administrador...
           </p>

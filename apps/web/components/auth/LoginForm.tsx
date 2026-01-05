@@ -30,6 +30,7 @@ export function LoginForm({ tenantSlug, primaryColor }: LoginFormProps) {
         email,
         password,
         tenantSlug,
+        rememberMe,
         redirect: false,
       });
 
