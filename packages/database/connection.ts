@@ -4,24 +4,8 @@ import * as schema from "./schema";
 
 // Initialize PostgreSQL connection
 // TEMPORARY FIX: Override cached env var with correct hostname and username
+// Initialize PostgreSQL connection
 let connectionString = process.env.DATABASE_URL!;
-
-if (connectionString?.includes("db.jedryjmljffuvegggjmw.supabase.co")) {
-  // Fix hostname - use pooler without pgbouncer for optimal performance
-  connectionString = connectionString.replace(
-    "db.jedryjmljffuvegggjmw.supabase.co",
-    "aws-1-us-east-2.pooler.supabase.com",
-  );
-  // Fix username for pooler (needs to be postgres.PROJECT_ID)
-  if (!connectionString.includes("postgres.jedryjmljffuvegggjmw")) {
-    connectionString = connectionString.replace(
-      "postgresql://postgres:",
-      "postgresql://postgres.jedryjmljffuvegggjmw:",
-    );
-  }
-  // Remove pgbouncer parameter for optimal performance (583ms vs 590ms)
-  connectionString = connectionString.replace("?pgbouncer=true", "");
-}
 
 if (!connectionString || connectionString === "your-database-url-here") {
   console.warn(

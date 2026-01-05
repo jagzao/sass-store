@@ -80,14 +80,53 @@ async function performBackup() {
     };
 
     // Tablas a respaldar
+    // Tablas a respaldar
     const tablesToBackup = [
-      'users',
       'tenants',
-      'user_roles',
-      'services',
+      'tenant_configs',
+      'api_keys',
       'products',
+      'services',
+      'staff',
       'bookings',
-      'payments'
+      'media_assets',
+      'tenant_quotas',
+      'orders',
+      'order_items',
+      'payments',
+      'audit_logs',
+      'tenant_channels',
+      'channel_accounts',
+      'channel_credentials',
+      'social_posts',
+      'social_post_targets',
+      'content_variants',
+      'posting_rules',
+      'post_jobs',
+      'post_results',
+      'media_renditions',
+      'customers',
+      'customer_visits',
+      'visit_photos',
+      'customer_visit_services',
+      'menu_designs',
+      'users',
+      'accounts',
+      'sessions',
+      'verification_tokens',
+      'user_roles',
+      'product_reviews',
+      'financial_kpis',
+      'financial_movements',
+      'user_carts',
+      'campaigns',
+      'reels',
+      'pos_terminals',
+      'mercadopago_tokens',
+      'mercadopago_payments',
+      'oauth_state_tokens',
+      'customer_advances',
+      'advance_applications'
     ];
 
     // Generar backup para cada tabla
