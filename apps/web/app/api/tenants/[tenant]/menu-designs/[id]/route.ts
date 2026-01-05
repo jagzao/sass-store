@@ -22,7 +22,7 @@ const updateMenuSchema = z.object({
 // GET - Single Design
 export async function GET(
   request: NextRequest,
-  { params }: { params: { slug: string; id: string } },
+  { params }: { params: { tenant: string; id: string } },
 ) {
   try {
     const session = await auth();
@@ -47,7 +47,7 @@ export async function GET(
 // PATCH - Update Design
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { slug: string; id: string } },
+  { params }: { params: { tenant: string; id: string } },
 ) {
   try {
     const session = await auth();
@@ -79,7 +79,7 @@ export async function PATCH(
 // DELETE - Delete Design
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { slug: string; id: string } },
+  { params }: { params: { tenant: string; id: string } },
 ) {
   try {
     const session = await auth();

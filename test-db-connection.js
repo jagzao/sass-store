@@ -1,30 +1,33 @@
+const { checkDatabaseConnection, getDatabaseDebugInfo } = require('./packages/database/connection');
 
-// Simple script to test DB connection
-// Usage: node test-db-connection.js
-
-const postgres = require('./node_modules/postgres'); // Try root node_modules
-// If that fails, we might need to find where postgres is installed. 
-// Since it's a monorepo, it might be in node_modules or packages/database/node_modules
-
-const connectionString = "postgresql://postgres.jedryjmljffuvegggjmw:TSGmf_3G-rbLbz!@aws-1-us-east-2.pooler.supabase.com:6543/postgres?pgbouncer=true";
-
-console.log("Testing connection to:", connectionString.replace(/:[^:]*@/, ':****@'));
-
-const sql = postgres(connectionString, {
-  ssl: 'require',
-  connect_timeout: 10,
-});
-
-async function test() {
+async function testConnection() {
+  console.log('=== DIAGNÓSTICO DE CONEXIÓN A SUPABASE ===\n');
+  
+  // Mostrar información de depuración
+  const debugInfo = getDatabaseDebugInfo();
+  console.log('Información de conexión:');
+  console.log('- URL (mascarada):', debugInfo.maskedUrl);
+  console.log('- ¿Es Supabase?:', debugInfo.isSupabase);
+  console.log('- ¿Usa Pooler?:', debugInfo.isPooler);
+  console.log('- SSL:', debugInfo.ssl);
+  console.log('- Máximo de conexiones:', debugInfo.maxConnections);
+  console.log('');
+  
+  // Probar conexión
+  console.log('Probando conexión a la base de datos...');
   try {
-    console.log("Connecting...");
-    const result = await sql`SELECT 1 as result`;
-    console.log("Connection successful!", result);
+    const isConnected = await checkDatabaseConnection();
+    if (isConnected) {
+      console.log('✅ Conexión exitosa a la base de datos');
+    } else {
+      console.log('❌ Falló la conexión a la base de datos');
+    }
   } catch (error) {
-    console.error("Connection failed:", error);
-  } finally {
-    await sql.end();
+    console.error('❌ Error al probar la conexión:', error.message);
+    console.error('Detalles del error:', error);
   }
+  
+  console.log('\n=== FIN DEL DIAGNÓSTICO ===');
 }
 
-test();
+testConnection().catch(console.error);

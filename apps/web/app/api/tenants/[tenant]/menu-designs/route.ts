@@ -18,10 +18,10 @@ const createMenuSchema = z.object({
     .optional(),
 });
 
-// GET /api/tenants/[slug]/menu-designs - List designs
+// GET /api/tenants/[tenant]/menu-designs - List designs
 export async function GET(
   request: NextRequest,
-  { params }: { params: { slug: string } },
+  { params }: { params: { tenant: string } },
 ) {
   try {
     const session = await auth();
@@ -29,7 +29,7 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const tenantSlug = params.slug;
+    const tenantSlug = params.tenant;
 
     // Get tenant ID from slug (simplified for brevity, usually middleware handles handle tenant resolution)
     const tenant = await db.query.tenants.findFirst({
@@ -56,10 +56,10 @@ export async function GET(
   }
 }
 
-// POST /api/tenants/[slug]/menu-designs - Create design
+// POST /api/tenants/[tenant]/menu-designs - Create design
 export async function POST(
   request: NextRequest,
-  { params }: { params: { slug: string } },
+  { params }: { params: { tenant: string } },
 ) {
   try {
     const session = await auth();
@@ -67,7 +67,7 @@ export async function POST(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const tenantSlug = params.slug;
+    const tenantSlug = params.tenant;
     const body = await request.json();
     const validatedData = createMenuSchema.parse(body);
 
