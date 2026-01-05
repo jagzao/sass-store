@@ -139,10 +139,10 @@
     "recharts": "^3.6.0",
     "resend": "^6.1.2",
     "web-vitals": "^5.1.0",
-    "zod": "^3.25.76"
+    "zod": "^3.25.76",
+    "@supabase/supabase-js": "^2.39.0"
   },
   "optionalDependencies": {
-    "@octokit/rest": "^19.0.13",
-    "@supabase/supabase-js": "^2.39.0"
+    "@octokit/rest": "^19.0.13"
   }
 }
