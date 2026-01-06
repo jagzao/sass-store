@@ -26,11 +26,15 @@ export default function AdminProductsPage() {
   const params = useParams();
   const tenantSlug = params.tenant as string;
 
+  // Debug: Verificar que el tenantSlug se está obteniendo correctamente
+  console.log("Tenant slug:", tenantSlug);
+
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentTenant, setCurrentTenant] = useState<any>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     sku: "",
     name: "",
@@ -65,15 +69,22 @@ export default function AdminProductsPage() {
   };
 
   const loadProducts = async () => {
+    setLoading(true);
+    setError(null);
     try {
       // Session-based auth - API routes will verify session server-side
       const response = await fetch(`/api/v1/products?limit=100`);
       if (response.ok) {
         const data = await response.json();
         setProducts(data.data || []);
+      } else {
+        const errorText = await response.text();
+        console.error("Error response:", errorText);
+        setError(`Error loading products: ${errorText}`);
       }
     } catch (error) {
       console.error("Error loading products:", error);
+      setError("Network error loading products");
     } finally {
       setLoading(false);
     }
@@ -107,7 +118,7 @@ export default function AdminProductsPage() {
         resetForm();
       } else {
         const error = await response.json();
-        alert(`Error: ${error.error}`);
+        alert(`Error: ${error.error || "Unknown error"}`);
       }
     } catch (error) {
       console.error("Error saving product:", error);
@@ -143,7 +154,7 @@ export default function AdminProductsPage() {
         await loadProducts();
       } else {
         const error = await response.json();
-        alert(`Error: ${error.error}`);
+        alert(`Error: ${error.error || "Unknown error"}`);
       }
     } catch (error) {
       console.error("Error deleting product:", error);
