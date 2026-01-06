@@ -174,6 +174,46 @@ export const services = pgTable(
   }),
 );
 
+// Service Quotes table
+export const serviceQuotes = pgTable(
+  "service_quotes",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .references(() => tenants.id)
+      .notNull(),
+    serviceId: uuid("service_id")
+      .references(() => services.id)
+      .notNull(),
+    quoteNumber: varchar("quote_number", { length: 50 }).notNull(),
+    name: varchar("name", { length: 200 }).notNull(),
+    description: text("description"),
+    price: decimal("price", { precision: 10, scale: 2 }).notNull(),
+    duration: decimal("duration", { precision: 4, scale: 1 }).notNull(),
+    validityDays: integer("validity_days").notNull().default(7),
+    termsConditions: text("terms_conditions"),
+    status: varchar("status", { length: 20 }).notNull().default("pending"),
+    customerName: varchar("customer_name", { length: 100 }),
+    customerEmail: varchar("customer_email", { length: 255 }),
+    customerPhone: varchar("customer_phone", { length: 20 }),
+    notes: text("notes"),
+    metadata: jsonb("metadata").notNull().default("{}"),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+    expiresAt: timestamp("expires_at"),
+  },
+  (table) => ({
+    tenantQuoteUnique: uniqueIndex("service_quotes_tenant_quote_unique_idx").on(
+      table.tenantId,
+      table.quoteNumber,
+    ),
+    tenantIdx: index("service_quotes_tenant_idx").on(table.tenantId),
+    serviceIdx: index("service_quotes_service_idx").on(table.serviceId),
+    statusIdx: index("service_quotes_status_idx").on(table.status),
+    expiresIdx: index("service_quotes_expires_idx").on(table.expiresAt),
+  }),
+);
+
 // Staff table
 export const staff = pgTable(
   "staff",
@@ -407,6 +447,7 @@ export const tenantsRelations = relations(tenants, ({ many }) => ({
   customers: many(customers),
   customerVisits: many(customerVisits),
   socialPosts: many(socialPosts),
+  serviceQuotes: many(serviceQuotes),
 }));
 
 export const tenantConfigsRelations = relations(tenantConfigs, ({ one }) => ({
@@ -429,6 +470,18 @@ export const servicesRelations = relations(services, ({ one, many }) => ({
     references: [tenants.id],
   }),
   bookings: many(bookings),
+  quotes: many(serviceQuotes),
+}));
+
+export const serviceQuotesRelations = relations(serviceQuotes, ({ one }) => ({
+  tenant: one(tenants, {
+    fields: [serviceQuotes.tenantId],
+    references: [tenants.id],
+  }),
+  service: one(services, {
+    fields: [serviceQuotes.serviceId],
+    references: [services.id],
+  }),
 }));
 
 export const staffRelations = relations(staff, ({ one, many }) => ({

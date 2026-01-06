@@ -4,9 +4,11 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import { useSession } from "next-auth/react";
 
 export const ZoNavbar = () => {
   const pathname = usePathname();
+  const { data: session } = useSession();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -23,6 +25,11 @@ export const ZoNavbar = () => {
     { name: "SaaS Solutions", href: "/t/zo-system/products" },
     { name: "Servicios", href: "/t/zo-system/services" },
   ];
+
+  // Add Social link if user is logged in
+  if (session) {
+    navLinks.push({ name: "Social Post", href: "/t/zo-system/social" });
+  }
 
   return (
     <nav
@@ -89,12 +96,27 @@ export const ZoNavbar = () => {
 
         {/* Right: Action Buttons (Desktop) */}
         <div className="hidden md:flex items-center gap-4">
-          <Link
-            href="/auth/signin"
-            className="px-5 py-2.5 rounded-full text-sm font-medium text-white bg-white/5 border border-white/10 hover:bg-white/10 backdrop-blur-md transition-all duration-300"
-          >
-            Login
-          </Link>
+          {session ? (
+            <div className="flex items-center gap-4">
+              <span className="text-sm text-gray-400">
+                Hola, {session.user?.name?.split(" ")[0]}
+              </span>
+              <Link
+                href="/t/zo-system/admin"
+                className="px-5 py-2.5 rounded-full text-sm font-medium text-white bg-white/5 border border-white/10 hover:bg-white/10 backdrop-blur-md transition-all duration-300"
+              >
+                Admin
+              </Link>
+            </div>
+          ) : (
+            <Link
+              href="/t/zo-system/login"
+              className="px-5 py-2.5 rounded-full text-sm font-medium text-white bg-white/5 border border-white/10 hover:bg-white/10 backdrop-blur-md transition-all duration-300"
+            >
+              Login
+            </Link>
+          )}
+
           <Link
             href="/t/zo-system/contact"
             className="flex items-center justify-center px-6 py-2.5 rounded-full text-sm font-bold text-white bg-[#FF8000] hover:bg-[#FF6600] shadow-[0_0_15px_rgba(255,128,0,0.4)] hover:shadow-[0_0_25px_rgba(255,128,0,0.6)] transition-all duration-300 border border-[#FF8000]"
@@ -154,13 +176,23 @@ export const ZoNavbar = () => {
                 </Link>
               ))}
               <div className="h-px bg-white/10 my-2" />
-              <Link
-                href="/auth/signin"
-                className="text-center py-3 rounded-lg bg-white/5 border border-white/10 text-white"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Login
-              </Link>
+              {session ? (
+                <Link
+                  href="/t/zo-system/admin"
+                  className="text-center py-3 rounded-lg bg-white/5 border border-white/10 text-white"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Panel Admin
+                </Link>
+              ) : (
+                <Link
+                  href="/t/zo-system/login"
+                  className="text-center py-3 rounded-lg bg-white/5 border border-white/10 text-white"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Login
+                </Link>
+              )}
               <Link
                 href="/t/zo-system/contact"
                 className="text-center py-3 rounded-lg bg-[#FF8000] text-white font-bold shadow-[0_0_15px_rgba(255,128,0,0.4)]"
