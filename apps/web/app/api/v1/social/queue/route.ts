@@ -6,6 +6,8 @@ import {
   tenants,
 } from "@sass-store/database/schema";
 import { eq, and, desc, gte, lte, sql, inArray } from "drizzle-orm";
+import { withTenantContext } from "@/lib/db/tenant-context";
+import { logger } from "@/lib/logger";
 
 /**
  * GET /api/v1/social/queue
@@ -47,6 +49,9 @@ export async function GET(request: NextRequest) {
         { status: 404 },
       );
     }
+
+    // Set tenant context for RLS
+    await db.execute(sql`SELECT set_tenant_context(${tenant.id}::uuid)`);
 
     // Build query conditions
     const conditions = [eq(socialPosts.tenantId, tenant.id)];
@@ -189,6 +194,9 @@ export async function POST(request: NextRequest) {
         { status: 404 },
       );
     }
+
+    // Set tenant context for RLS
+    await db.execute(sql`SELECT set_tenant_context(${tenant.id}::uuid)`);
 
     // If ID is provided, update existing post
     if (id) {
@@ -344,6 +352,9 @@ export async function DELETE(request: NextRequest) {
         { status: 404 },
       );
     }
+
+    // Set tenant context for RLS
+    await db.execute(sql`SELECT set_tenant_context(${tenant.id}::uuid)`);
 
     // Delete targets first (foreign key constraint)
     await db

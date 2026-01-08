@@ -48,6 +48,9 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // Set tenant context for RLS
+    await db.execute(sql`SELECT set_tenant_context(${tenant.id}::uuid)`);
+
     // Build query conditions
     // Library items are either:
     // 1. Posts marked as "library" in metadata
@@ -223,6 +226,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Set tenant context for RLS
+    await db.execute(sql`SELECT set_tenant_context(${tenant.id}::uuid)`);
+
     // Create post marked as library content
     const [newPost] = await db
       .insert(socialPosts)
@@ -327,6 +333,9 @@ export async function PUT(request: NextRequest) {
         { status: 404 },
       );
     }
+
+    // Set tenant context for RLS
+    await db.execute(sql`SELECT set_tenant_context(${tenant.id}::uuid)`);
 
     // Get current metadata
     const [currentPost] = await db
@@ -436,6 +445,9 @@ export async function DELETE(request: NextRequest) {
         { status: 404 },
       );
     }
+
+    // Set tenant context for RLS
+    await db.execute(sql`SELECT set_tenant_context(${tenant.id}::uuid)`);
 
     // Delete targets first
     await db

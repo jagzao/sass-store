@@ -197,7 +197,7 @@ Agenda tu cita hoy. #WonderNails #Belleza`;
         })),
       };
 
-      const response = await fetch("/api/v1/social/queue", {
+      const response = await fetch(`/api/v1/social/queue?tenant=${tenant}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
