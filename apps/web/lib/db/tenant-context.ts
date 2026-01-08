@@ -47,6 +47,14 @@ export async function withTenantContext(
         tenantSlug = pathParts[tenantIndex + 1];
       }
       tenantLogger.debug(`Extracted tenant slug from URL: ${tenantSlug}`);
+    } else if (
+      (process.env.NODE_ENV === "development" ||
+        process.env.NODE_ENV === "test") &&
+      request.headers.get("x-tenant-slug")
+    ) {
+      // Allow overriding tenant context via header in dev/test for easier testing
+      tenantSlug = request.headers.get("x-tenant-slug");
+      tenantLogger.debug(`Extracted tenant slug from header: ${tenantSlug}`);
     } else {
       // Por defecto, obtener de la sesión
       if (options?.requireAuth !== false) {

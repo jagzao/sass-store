@@ -1,12 +1,8 @@
 "use client";
 
-import React, { useState, memo } from "react";
-import { useRouter } from "next/navigation";
+import CreateQuoteButton from "../quotes/CreateQuoteButton";
 
-interface ServiceMetadata {
-  image?: string;
-  [key: string]: string | number | boolean | undefined;
-}
+// ... existing imports
 
 export interface ServiceCardProps {
   id: string;
@@ -25,6 +21,7 @@ export interface ServiceCardProps {
   metadata?: ServiceMetadata;
   onBook?: (serviceId: string) => void;
   variant?: "default" | "luxury" | "tech";
+  isAdmin?: boolean;
 }
 
 const ServiceCard = memo(
@@ -45,7 +42,10 @@ const ServiceCard = memo(
     metadata,
     onBook,
     variant = "default",
+    isAdmin = false,
   }: ServiceCardProps) => {
+    // ... existing hook logic
+
     const router = useRouter();
     const [showModal, setShowModal] = useState(false);
 
@@ -199,6 +199,15 @@ const ServiceCard = memo(
             >
               Reservar Ahora
             </button>
+
+            {isAdmin && (
+              <CreateQuoteButton
+                serviceId={id}
+                serviceName={name}
+                tenantSlug={tenantSlug}
+                className="mt-3 bg-white text-gray-700 border border-gray-200 hover:bg-gray-50"
+              />
+            )}
           </div>
         </div>
 

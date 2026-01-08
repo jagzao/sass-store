@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { LiveRegionProvider } from "@/components/a11y/LiveRegion";
+import CreateQuoteButton from "@/components/quotes/CreateQuoteButton";
 
 interface Service {
   id: string;
@@ -23,9 +24,14 @@ interface ServicesClientProps {
       primaryColor: string;
     };
   };
+  isAdmin?: boolean;
 }
 
-export function ServicesClient({ services, tenantData }: ServicesClientProps) {
+export function ServicesClient({
+  services,
+  tenantData,
+  isAdmin = false,
+}: ServicesClientProps) {
   const router = useRouter();
 
   const handleBookService = (service: Service) => {
@@ -131,6 +137,15 @@ export function ServicesClient({ services, tenantData }: ServicesClientProps) {
                   >
                     Reservar ahora (1/2)
                   </button>
+
+                  {isAdmin && (
+                    <CreateQuoteButton
+                      serviceId={service.id}
+                      serviceName={service.name}
+                      tenantSlug={tenantData.slug}
+                      className="mt-2 bg-white text-gray-700 border border-gray-200 hover:bg-gray-50"
+                    />
+                  )}
                 </div>
               </div>
             </div>
