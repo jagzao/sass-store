@@ -197,7 +197,7 @@ const { handlers, auth, signIn, signOut } = NextAuth({
     maxAge: 24 * 60 * 60, // 1 day (reduced from 14 days for security)
   },
   pages: {
-    // No static signIn page - it will be handled dynamically by tenant routes
+    signIn: "/auth/signin",
   },
   callbacks: {
     async signIn({ user, account }: any) {

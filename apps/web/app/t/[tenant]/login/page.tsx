@@ -4,10 +4,14 @@ import { getTenantDataForPage } from "@/lib/db/tenant-service";
 import { signIn } from "@/lib/auth";
 import { Metadata } from "next";
 import { LoginForm } from "@/components/auth/LoginForm";
+import { AuthError } from "@/components/auth/AuthError";
 
 interface PageProps {
   params: Promise<{
     tenant: string;
+  }>;
+  searchParams: Promise<{
+    [key: string]: string | string[] | undefined;
   }>;
 }
 
@@ -30,8 +34,9 @@ export async function generateMetadata({
   }
 }
 
-export default async function LoginPage({ params }: PageProps) {
+export default async function LoginPage({ params, searchParams }: PageProps) {
   const resolvedParams = await params;
+  const resolvedSearchParams = await searchParams;
 
   // Resolve tenant to ensure it exists and is valid
   let resolvedTenant;
@@ -41,8 +46,8 @@ export default async function LoginPage({ params }: PageProps) {
     resolvedTenant = await Promise.race([
       resolveTenant(),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Tenant resolution timeout')), 5000)
-      )
+        setTimeout(() => reject(new Error("Tenant resolution timeout")), 5000),
+      ),
     ]);
 
     if (!resolvedTenant) {
@@ -50,14 +55,14 @@ export default async function LoginPage({ params }: PageProps) {
     }
 
     // Fetch tenant data from database with timeout
-    tenantData = await Promise.race([
+    tenantData = (await Promise.race([
       getTenantDataForPage(resolvedParams.tenant),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Tenant data fetch timeout')), 30000)
-      )
-    ]) as any;
+        setTimeout(() => reject(new Error("Tenant data fetch timeout")), 30000),
+      ),
+    ])) as any;
   } catch (error) {
-    console.error('Error loading tenant data:', error);
+    console.error("Error loading tenant data:", error);
     notFound();
   }
 
@@ -88,6 +93,9 @@ export default async function LoginPage({ params }: PageProps) {
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+          {/* Error display */}
+          <AuthError error={resolvedSearchParams.error as string} />
+
           {/* Login Form */}
           <LoginForm
             tenantSlug={resolvedParams.tenant}

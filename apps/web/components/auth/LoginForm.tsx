@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { FormInput, PasswordInput } from "@/components/ui/forms";
 
 interface LoginFormProps {
@@ -17,6 +17,24 @@ export function LoginForm({ tenantSlug, primaryColor }: LoginFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Check for error parameters in URL
+  useEffect(() => {
+    const errorParam = searchParams.get("error");
+    if (errorParam) {
+      const errorMessages: { [key: string]: string } = {
+        CredentialsSignin:
+          "Credenciales inválidas. Por favor, verifica tu email y contraseña.",
+        SessionRequired:
+          "Se requiere inicio de sesión para acceder a esta página.",
+        Default:
+          "Ocurrió un error durante la autenticación. Por favor, intenta nuevamente.",
+      };
+
+      setError(errorMessages[errorParam] || errorMessages.Default);
+    }
+  }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
