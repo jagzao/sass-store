@@ -1,6 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
+import { Lock } from "lucide-react";
 
 interface AuthErrorProps {
   error?: string;
@@ -9,6 +10,7 @@ interface AuthErrorProps {
 export function AuthError({ error: errorProp }: AuthErrorProps) {
   const searchParams = useSearchParams();
   const errorParam = searchParams.get("error") || errorProp;
+  const currentTenant = searchParams.get("current_tenant");
 
   if (!errorParam) {
     return null;
@@ -20,6 +22,9 @@ export function AuthError({ error: errorProp }: AuthErrorProps) {
     SessionRequired: "Se requiere inicio de sesión para acceder a esta página.",
     Default:
       "Ocurrió un error durante la autenticación. Por favor, intenta nuevamente.",
+    tenant_mismatch: currentTenant
+      ? `Estás intentando acceder con una sesión de '${currentTenant}'. Por seguridad, cada tenant requiere una sesión separada. Por favor, inicia sesión nuevamente.`
+      : "Estás intentando acceder a un tenant diferente al de tu sesión actual. Por seguridad, cada tenant requiere una sesión separada. Por favor, inicia sesión nuevamente.",
     TenantMismatch:
       "Estás intentando acceder a un tenant diferente. Por favor, inicia sesión con el tenant correcto.",
     Configuration:
@@ -50,6 +55,34 @@ export function AuthError({ error: errorProp }: AuthErrorProps) {
 
   const message = errorMessages[errorParam] || errorMessages.Default;
 
+  const getErrorIcon = () => {
+    if (errorParam === "tenant_mismatch") {
+      return <Lock className="h-5 w-5 text-red-400" />;
+    }
+    return (
+      <svg
+        className="h-5 w-5 text-red-400"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+        aria-hidden="true"
+      >
+        <path
+          fillRule="evenodd"
+          d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+          clipRule="evenodd"
+        />
+      </svg>
+    );
+  };
+
+  const getErrorTitle = () => {
+    if (errorParam === "tenant_mismatch") {
+      return "Cambio de Tenant Detectado";
+    }
+    return "Error de autenticación";
+  };
+
   return (
     <div
       data-testid="auth-error"
@@ -57,28 +90,22 @@ export function AuthError({ error: errorProp }: AuthErrorProps) {
       role="alert"
     >
       <div className="flex">
-        <div className="flex-shrink-0">
-          <svg
-            className="h-5 w-5 text-red-400"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-            aria-hidden="true"
-          >
-            <path
-              fillRule="evenodd"
-              d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </div>
+        <div className="flex-shrink-0">{getErrorIcon()}</div>
         <div className="ml-3">
           <h3 className="text-sm font-medium text-red-800">
-            Error de autenticación
+            {getErrorTitle()}
           </h3>
           <div className="mt-2 text-sm text-red-700">
             <p>{message}</p>
           </div>
+          {errorParam === "tenant_mismatch" && (
+            <div className="mt-3 text-xs text-yellow-700 bg-yellow-50 p-2 rounded border border-yellow-200">
+              <strong>Nota de seguridad:</strong> Para proteger tus datos, cada
+              tenant requiere una sesión de autenticación separada. Esto evita
+              que una sesión pueda ser utilizada para acceder a tenants no
+              autorizados.
+            </div>
+          )}
         </div>
       </div>
     </div>

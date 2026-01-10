@@ -122,6 +122,9 @@ export async function middleware(request: NextRequest) {
   response.headers.set("x-tenant-locale", resolvedTenant.locale);
   response.headers.set("x-tenant-currency", resolvedTenant.currency);
 
+  // Add security headers to prevent session sharing
+  response.headers.set("x-tenant-isolation", "strict");
+
   // Set CSRF token for GET requests if not already set
   if (method === "GET" && !isCsrfExempt(pathname)) {
     const cookieHeader = request.headers.get("cookie") || "";

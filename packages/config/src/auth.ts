@@ -244,15 +244,72 @@ const { handlers, auth, signIn, signOut } = NextAuth({
 
       return false;
     },
-    async session({ session, token }: any) {
+    async session({ session, token, request }: any) {
       if (session?.user && token) {
         session.user.id = token.id;
         session.user.role = token.role;
         session.user.tenantSlug = token.tenantSlug;
+
+        // Validate tenant context on each session request
+        // This ensures that the session is only valid for the intended tenant
+        if (request) {
+          const url = new URL(request.url);
+          const pathname = url.pathname;
+
+          // Extract tenant from URL path (/t/{tenant}/*)
+          if (pathname.startsWith("/t/")) {
+            const pathSegments = pathname.split("/");
+            if (pathSegments.length >= 3) {
+              const urlTenantSlug = pathSegments[2];
+
+              // If the URL tenant doesn't match the session tenant, invalidate session
+              if (urlTenantSlug !== token.tenantSlug) {
+                console.warn(
+                  `[NextAuth] Session tenant mismatch: session is for '${token.tenantSlug}' but URL is for '${urlTenantSlug}' - invalidating session`,
+                );
+
+                // Clear session data to force re-authentication
+                session.user = null;
+                session.error = "tenant_mismatch";
+                return session;
+              }
+            }
+          }
+        }
       }
       return session;
     },
-    async jwt({ token, user, trigger, session }: any) {
+    async jwt({ token, user, trigger, session, request }: any) {
+      // Validate tenant context on each JWT request
+      if (request && token.tenantSlug) {
+        const url = new URL(request.url);
+        const pathname = url.pathname;
+
+        // Extract tenant from URL path (/t/{tenant}/*)
+        if (pathname.startsWith("/t/")) {
+          const pathSegments = pathname.split("/");
+          if (pathSegments.length >= 3) {
+            const urlTenantSlug = pathSegments[2];
+
+            // If the URL tenant doesn't match the token tenant, invalidate token
+            if (urlTenantSlug !== token.tenantSlug) {
+              console.warn(
+                `[NextAuth] JWT tenant mismatch: token is for '${token.tenantSlug}' but URL is for '${urlTenantSlug}' - invalidating token`,
+              );
+
+              // Clear token data to force re-authentication
+              return {
+                ...token,
+                id: null,
+                tenantSlug: null,
+                role: null,
+                error: "tenant_mismatch",
+              };
+            }
+          }
+        }
+      }
+
       // Initial sign in - set token from user object
       if (user) {
         token.id = user.id;

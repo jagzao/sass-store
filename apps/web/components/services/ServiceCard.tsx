@@ -1,8 +1,14 @@
 "use client";
 
+import React, { useState, memo } from "react";
+import { useRouter } from "next/navigation";
 import CreateQuoteButton from "../quotes/CreateQuoteButton";
 
-// ... existing imports
+export interface ServiceMetadata {
+  image?: string;
+  category?: string;
+  [key: string]: any;
+}
 
 export interface ServiceCardProps {
   id: string;
