@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { auth } from "@/lib/auth";
 import { db } from "@sass-store/database";
 import { tenants } from "@sass-store/database/schema";
 import { eq } from "drizzle-orm";
@@ -58,7 +57,7 @@ export async function withTenantContext(
     } else {
       // Por defecto, obtener de la sesión
       if (options?.requireAuth !== false) {
-        const session = await getServerSession(authOptions);
+        const session = await auth();
         tenantSlug = session?.user?.tenantSlug || null;
         tenantLogger.debug(`Extracted tenant slug from session: ${tenantSlug}`);
       }
