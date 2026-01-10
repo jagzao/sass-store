@@ -1,7 +1,6 @@
 import { db } from "@sass-store/database";
 import { tenants, apiKeys } from "@sass-store/database/schema";
 import { eq, and, or, gt, isNull, sql } from "@sass-store/database";
-import crypto from "crypto";
 
 /**
  * Generic request interface to avoid Next.js version dependency issues
@@ -17,8 +16,12 @@ export interface RequestWithHeaders {
  * @param apiKey The raw API key
  * @returns The hashed API key
  */
-function hashApiKey(apiKey: string): string {
-  return crypto.createHash("sha256").update(apiKey).digest("hex");
+async function hashApiKey(apiKey: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(apiKey);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
 /**
@@ -51,7 +54,7 @@ export async function validateApiKey(request: RequestWithHeaders) {
 
   try {
     // Hash the provided API key
-    const hashedKey = hashApiKey(apiKey);
+    const hashedKey = await hashApiKey(apiKey);
 
     // Query for the API key with tenant validation
     const result = await db
@@ -134,7 +137,7 @@ export async function validateSimpleApiKey(request: RequestWithHeaders) {
 
   try {
     // Hash the provided API key
-    const hashedKey = hashApiKey(apiKey);
+    const hashedKey = await hashApiKey(apiKey);
 
     // Query for the API key (no tenant validation)
     const result = await db
