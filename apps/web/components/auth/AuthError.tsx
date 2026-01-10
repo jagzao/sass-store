@@ -37,6 +37,15 @@ export function AuthError({ error: errorProp }: AuthErrorProps) {
     EmailSignin: "Error al enviar el email de inicio de sesión.",
     SessionExpired:
       "La sesión ha expirado. Por favor, inicia sesión nuevamente.",
+    missing_tenant:
+      "No se pudo determinar el tenant. Por favor, intenta nuevamente.",
+    tenant_not_found:
+      "El tenant solicitado no existe. Por favor, verifica la URL.",
+    access_denied:
+      "No tienes permisos para acceder a este tenant. Por favor, inicia sesión con las credenciales correctas.",
+    database_error:
+      "Error de base de datos. Por favor, intenta nuevamente más tarde.",
+    validation_error: "Error de validación. Por favor, intenta nuevamente.",
   };
 
   const message = errorMessages[errorParam] || errorMessages.Default;

@@ -8,6 +8,7 @@ import {
   CSRF_PROTECTED_METHODS,
   isCsrfExempt,
 } from "@sass-store/core";
+import { validateTenantAccess } from "@/lib/auth/tenant-validation";
 
 // Known tenant slugs from seed data
 const KNOWN_TENANTS = [
@@ -107,7 +108,13 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // 3. Set headers for all internal requests
+  // 3. Validate tenant access for authenticated users
+  const tenantValidation = await validateTenantAccess(request);
+  if (tenantValidation.status === 302) {
+    return tenantValidation; // This is a redirect response
+  }
+
+  // 4. Set headers for all internal requests
   const response = NextResponse.next();
   response.headers.set("x-tenant", resolvedTenant.slug);
   response.headers.set("x-tenant-id", resolvedTenant.id);

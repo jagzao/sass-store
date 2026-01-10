@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import TenantHeader from "@/components/ui/TenantHeader";
 import { getTenantBySlug } from "@/lib/server/get-tenant";
 import { CircuitSpotlight } from "@/components/ui/CircuitSpotlight";
+import ErrorBoundary from "@/components/ErrorBoundary";
 
 // Force dynamic rendering for all tenant pages
 export const dynamic = "force-dynamic";
@@ -38,8 +39,7 @@ export default async function TenantLayout({
 
   if (!tenantData) {
     console.error(`[TenantLayout] Tenant not found: ${tenantSlug}`);
-    // If we can't get tenant data at the layout level, it's likely a 404
-    return <>{children}</>;
+    notFound();
   }
 
   console.log(`[TenantLayout] Successfully loaded tenant: ${tenantData.name}`);
@@ -268,7 +268,9 @@ export default async function TenantLayout({
           variant={isWondernails ? "transparent" : "default"}
         />
       )}
-      <main>{children}</main>
+      <ErrorBoundary>
+        <main>{children}</main>
+      </ErrorBoundary>
     </div>
   );
 }
