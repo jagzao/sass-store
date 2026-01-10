@@ -4,7 +4,11 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { toast } from "sonner";
+// Using a simple toast implementation to avoid dependency issues
+const toast = {
+  success: (message: string) => alert(`✓ ${message}`),
+  error: (message: string) => alert(`✗ ${message}`),
+};
 
 interface Quote {
   id: string;

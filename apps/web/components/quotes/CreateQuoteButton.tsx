@@ -2,7 +2,11 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner"; // Assuming sonner or similar is used, usually configured in layout
+// Using a simple toast implementation to avoid dependency issues
+const toast = {
+  success: (message: string) => alert(`✓ ${message}`),
+  error: (message: string) => alert(`✗ ${message}`),
+};
 
 interface CreateQuoteButtonProps {
   serviceId: string;
