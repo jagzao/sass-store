@@ -7,7 +7,6 @@ import { LiveRegionProvider } from "@/components/a11y/LiveRegion";
 import { getTenantBySlug } from "@/lib/server/get-tenant";
 import { fetchRevalidating } from "@/lib/api/fetch-with-cache";
 import type { TenantData, Product, Service } from "@/types/tenant";
-import PageClient from "./page-client";
 
 // Force dynamic rendering
 export const dynamic = "force-dynamic";
@@ -86,8 +85,8 @@ export default async function TenantPageServer({ params }: PageProps) {
     </LiveRegionProvider>
   );
 
-  // Wrap the page content with the client component that handles authentication
-  return <PageClient tenantSlug={tenantSlug}>{pageContent}</PageClient>;
+  // Return the page content directly without client-side auth wrapper
+  return pageContent;
 }
 
 /**
