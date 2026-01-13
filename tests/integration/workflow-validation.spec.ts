@@ -285,6 +285,25 @@ describe("Workflow Reform Validation", () => {
       );
       expect(config.agents["failure-triager"].use_web_search).toBe(true);
     });
+
+    it("should have MCP Playwright configuration", () => {
+      const mcpPlaywrightPath = join(
+        projectRoot,
+        "config",
+        "mcp-playwright.json",
+      );
+      expect(existsSync(mcpPlaywrightPath)).toBe(true);
+
+      const config = JSON.parse(readFileSync(mcpPlaywrightPath, "utf8"));
+
+      expect(config.mcpServers.playwright).toBeDefined();
+      expect(config.mcpServers.playwright.args).toContain(
+        "--caps=testing,tracing",
+      );
+      expect(
+        config.workflow_integration.automation.click_budget_validation,
+      ).toBe(true);
+    });
   });
 
   describe("Workflow Tools Integration", () => {

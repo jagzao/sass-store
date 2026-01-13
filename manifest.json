@@ -210,7 +210,7 @@
     "advanced_analytics": "Detailed tracking and reporting"
   },
   "mcp_tools": {
-    "allowed": ["db-postgres", "file/r2", "webfetch"],
+    "allowed": ["db-postgres", "file/r2", "webfetch", "playwright"],
     "restrictions": [
       "No global MCP autoload",
       "No destructive DDL operations",

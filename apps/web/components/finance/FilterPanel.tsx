@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import { SearchableSelectSingle } from "@/components/ui/forms/SearchableSelectSingle";
+import { SelectOption } from "@/components/ui/forms/SearchableSelect";
 
 interface FilterOptions {
   type?: string;
@@ -26,26 +28,40 @@ const FilterPanel = ({
 }: FilterPanelProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const movementTypes = [
-    { value: "SETTLEMENT", label: "Liquidaciones" },
-    { value: "REFUND", label: "Reembolsos" },
-    { value: "CHARGEBACK", label: "Contracargos" },
-    { value: "WITHDRAWAL", label: "Retiros" },
-    { value: "FEE", label: "Comisiones" },
-    { value: "CARD_PURCHASE", label: "Compras POS" },
-  ];
+  const movementTypes = useMemo<SelectOption[]>(
+    () => [
+      { value: "SETTLEMENT", label: "Liquidaciones" },
+      { value: "REFUND", label: "Reembolsos" },
+      { value: "CHARGEBACK", label: "Contracargos" },
+      { value: "WITHDRAWAL", label: "Retiros" },
+      { value: "FEE", label: "Comisiones" },
+      { value: "CARD_PURCHASE", label: "Compras POS" },
+    ],
+    [],
+  );
 
-  const paymentMethods = [
-    "credit_card",
-    "debit_card",
-    "bank_transfer",
-    "cash",
-    "digital_wallet",
-  ];
+  const paymentMethods = useMemo<SelectOption[]>(
+    () => [
+      { value: "credit_card", label: "Credit Card" },
+      { value: "debit_card", label: "Debit Card" },
+      { value: "bank_transfer", label: "Bank Transfer" },
+      { value: "cash", label: "Cash" },
+      { value: "digital_wallet", label: "Digital Wallet" },
+    ],
+    [],
+  );
+
+  const statusOptions = useMemo<SelectOption[]>(
+    () => [
+      { value: "reconciled", label: "Conciliados" },
+      { value: "unreconciled", label: "Pendientes" },
+    ],
+    [],
+  );
 
   const handleFilterChange = (
     key: keyof FilterOptions,
-    value: string | Date | undefined
+    value: string | Date | undefined,
   ) => {
     const newFilters = { ...filters };
 
@@ -104,58 +120,57 @@ const FilterPanel = ({
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Tipo
           </label>
-          <select
+          <SearchableSelectSingle
+            options={[
+              { value: "", label: "Todos los tipos" },
+              ...movementTypes,
+            ]}
             value={filters.type || ""}
-            onChange={(e) => handleFilterChange("type", e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            disabled={loading}
-          >
-            <option value="">Todos los tipos</option>
-            {movementTypes.map((type) => (
-              <option key={type.value} value={type.value}>
-                {type.label}
-              </option>
-            ))}
-          </select>
+            onChange={(option: SelectOption | null) =>
+              handleFilterChange("type", option?.value)
+            }
+            placeholder="Seleccionar tipo"
+            isSearchable={true}
+            isDisabled={loading}
+          />
         </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Estado
           </label>
-          <select
+          <SearchableSelectSingle
+            options={[
+              { value: "", label: "Todos los estados" },
+              ...statusOptions,
+            ]}
             value={filters.status || ""}
-            onChange={(e) => handleFilterChange("status", e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            disabled={loading}
-          >
-            <option value="">Todos los estados</option>
-            <option value="reconciled">Conciliados</option>
-            <option value="unreconciled">Pendientes</option>
-          </select>
+            onChange={(option: SelectOption | null) =>
+              handleFilterChange("status", option?.value)
+            }
+            placeholder="Seleccionar estado"
+            isSearchable={false}
+            isDisabled={loading}
+          />
         </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Método de Pago
           </label>
-          <select
+          <SearchableSelectSingle
+            options={[
+              { value: "", label: "Todos los métodos" },
+              ...paymentMethods,
+            ]}
             value={filters.paymentMethod || ""}
-            onChange={(e) =>
-              handleFilterChange("paymentMethod", e.target.value)
+            onChange={(option: SelectOption | null) =>
+              handleFilterChange("paymentMethod", option?.value)
             }
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            disabled={loading}
-          >
-            <option value="">Todos los métodos</option>
-            {paymentMethods.map((method) => (
-              <option key={method} value={method}>
-                {method
-                  .replace("_", " ")
-                  .replace(/\b\w/g, (l) => l.toUpperCase())}
-              </option>
-            ))}
-          </select>
+            placeholder="Seleccionar método"
+            isSearchable={true}
+            isDisabled={loading}
+          />
         </div>
       </div>
 
@@ -173,7 +188,7 @@ const FilterPanel = ({
                 onChange={(e) =>
                   handleFilterChange(
                     "from",
-                    e.target.value ? new Date(e.target.value) : undefined
+                    e.target.value ? new Date(e.target.value) : undefined,
                   )
                 }
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -191,7 +206,7 @@ const FilterPanel = ({
                 onChange={(e) =>
                   handleFilterChange(
                     "to",
-                    e.target.value ? new Date(e.target.value) : undefined
+                    e.target.value ? new Date(e.target.value) : undefined,
                   )
                 }
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -240,9 +255,10 @@ const FilterPanel = ({
           {filters.paymentMethod && (
             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
               Método:{" "}
-              {filters.paymentMethod
-                .replace("_", " ")
-                .replace(/\b\w/g, (l) => l.toUpperCase())}
+              {
+                paymentMethods.find((m) => m.value === filters.paymentMethod)
+                  ?.label
+              }
             </span>
           )}
           {filters.from && (

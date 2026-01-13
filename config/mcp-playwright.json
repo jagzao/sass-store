@@ -1,0 +1,58 @@
+{
+  "mcpServers": {
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "@playwright/mcp@latest",
+        "--browser=chromium",
+        "--caps=testing,tracing",
+        "--output-dir",
+        "agents/bundles/playwright",
+        "--save-session",
+        "--save-trace",
+        "--viewport-size",
+        "1440x900",
+        "--timeout-action",
+        "7000",
+        "--timeout-navigation",
+        "65000"
+      ],
+      "env": {
+        "PLAYWRIGHT_TEST_BASE_URL": "http://localhost:3001",
+        "PLAYWRIGHT_MCP_ALLOWED_HOSTS": "localhost,127.0.0.1"
+      }
+    }
+  },
+  "description": "Playwright MCP configuration for SaaS Store end-to-end automation and click-budget validation.",
+  "usage": {
+    "tests_directory": "tests/e2e",
+    "bundle_output": "agents/bundles/playwright",
+    "trace_output": "agents/bundles/playwright/traces",
+    "artifacts_to_attach": [
+      "agents/bundles/playwright/**/*.zip",
+      "agents/bundles/playwright/**/*.webm"
+    ]
+  },
+  "workflow_integration": {
+    "agents": {
+      "prime_testing": {
+        "uses_playwright_mcp": true,
+        "scenarios": ["booking", "purchase", "tenant-onboarding"],
+        "autopilot_click_budget": true
+      },
+      "failure-triager": {
+        "auto_launch_mcp": true,
+        "collects_traces": true
+      }
+    },
+    "automation": {
+      "click_budget_validation": true,
+      "snapshot_mode": "incremental"
+    }
+  },
+  "security": {
+    "allow_unrestricted_file_access": false,
+    "allowed_hosts": ["localhost", "127.0.0.1"],
+    "notes": "Playwright MCP browser sessions stay on local hosts only."
+  }
+}

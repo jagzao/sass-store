@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import {
   format,
   startOfMonth,
@@ -14,6 +14,8 @@ import {
   endOfWeek,
 } from "date-fns";
 import { es } from "date-fns/locale";
+import { SearchableSelectSingle } from "@/components/ui/forms/SearchableSelectSingle";
+import { SelectOption } from "@/components/ui/forms/SearchableSelect";
 
 interface CalendarDay {
   date: Date;
@@ -115,6 +117,42 @@ export default function CalendarView({
 
   const monthStart = startOfMonth(currentMonth);
   const monthEnd = endOfMonth(currentMonth);
+
+  // Memoize platform options
+  const platformOptions = useMemo<SelectOption[]>(
+    () => [
+      { value: "", label: "Todas las plataformas" },
+      ...Object.entries(PLATFORM_CONFIG).map(([key, config]) => ({
+        value: key,
+        label: `${config.emoji} ${config.name}`,
+      })),
+    ],
+    [],
+  );
+
+  // Memoize status options
+  const statusOptions = useMemo<SelectOption[]>(
+    () => [
+      { value: "", label: "Todos los estados" },
+      ...Object.entries(STATUS_CONFIG).map(([key, config]) => ({
+        value: key,
+        label: config.label,
+      })),
+    ],
+    [],
+  );
+
+  // Memoize format options
+  const formatOptions = useMemo<SelectOption[]>(
+    () => [
+      { value: "", label: "Todos los formatos" },
+      { value: "post", label: "Post" },
+      { value: "reel", label: "Reel" },
+      { value: "story", label: "Story" },
+      { value: "video", label: "Video" },
+    ],
+    [],
+  );
 
   // Generate calendar grid based on view type
   const getCalendarDays = () => {
@@ -662,27 +700,19 @@ export default function CalendarView({
             >
               Plataformas
             </label>
-            <select
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${variant === "tech" ? "bg-black/20 border-white/10 text-white focus:ring-[#FF8000] focus:border-[#FF8000]" : "border-gray-300 focus:ring-blue-500"}`}
-            >
-              <option
-                value=""
-                className={variant === "tech" ? "bg-[#0D0D0D] text-white" : ""}
-              >
-                Todas las plataformas
-              </option>
-              {Object.entries(PLATFORM_CONFIG).map(([key, config]) => (
-                <option
-                  key={key}
-                  value={key}
-                  className={
-                    variant === "tech" ? "bg-[#0D0D0D] text-white" : ""
-                  }
-                >
-                  {config.emoji} {config.name}
-                </option>
-              ))}
-            </select>
+            <SearchableSelectSingle
+              options={platformOptions}
+              value={filters.platforms[0] || ""}
+              onChange={(option: SelectOption | null) => {
+                setFilters((prev) => ({
+                  ...prev,
+                  platforms: option?.value ? [option.value] : [],
+                }));
+              }}
+              placeholder="Seleccionar plataforma"
+              isSearchable={true}
+              isDisabled={isLoading}
+            />
           </div>
 
           <div>
@@ -691,27 +721,19 @@ export default function CalendarView({
             >
               Estado
             </label>
-            <select
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${variant === "tech" ? "bg-black/20 border-white/10 text-white focus:ring-[#FF8000] focus:border-[#FF8000]" : "border-gray-300 focus:ring-blue-500"}`}
-            >
-              <option
-                value=""
-                className={variant === "tech" ? "bg-[#0D0D0D] text-white" : ""}
-              >
-                Todos los estados
-              </option>
-              {Object.entries(STATUS_CONFIG).map(([key, config]) => (
-                <option
-                  key={key}
-                  value={key}
-                  className={
-                    variant === "tech" ? "bg-[#0D0D0D] text-white" : ""
-                  }
-                >
-                  {config.label}
-                </option>
-              ))}
-            </select>
+            <SearchableSelectSingle
+              options={statusOptions}
+              value={filters.statuses[0] || ""}
+              onChange={(option: SelectOption | null) => {
+                setFilters((prev) => ({
+                  ...prev,
+                  statuses: option?.value ? [option.value] : [],
+                }));
+              }}
+              placeholder="Seleccionar estado"
+              isSearchable={false}
+              isDisabled={isLoading}
+            />
           </div>
 
           <div>
@@ -720,40 +742,19 @@ export default function CalendarView({
             >
               Formato
             </label>
-            <select
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${variant === "tech" ? "bg-black/20 border-white/10 text-white focus:ring-[#FF8000] focus:border-[#FF8000]" : "border-gray-300 focus:ring-blue-500"}`}
-            >
-              <option
-                value=""
-                className={variant === "tech" ? "bg-[#0D0D0D] text-white" : ""}
-              >
-                Todos los formatos
-              </option>
-              <option
-                value="post"
-                className={variant === "tech" ? "bg-[#0D0D0D] text-white" : ""}
-              >
-                Post
-              </option>
-              <option
-                value="reel"
-                className={variant === "tech" ? "bg-[#0D0D0D] text-white" : ""}
-              >
-                Reel
-              </option>
-              <option
-                value="story"
-                className={variant === "tech" ? "bg-[#0D0D0D] text-white" : ""}
-              >
-                Story
-              </option>
-              <option
-                value="video"
-                className={variant === "tech" ? "bg-[#0D0D0D] text-white" : ""}
-              >
-                Video
-              </option>
-            </select>
+            <SearchableSelectSingle
+              options={formatOptions}
+              value={filters.formats[0] || ""}
+              onChange={(option: SelectOption | null) => {
+                setFilters((prev) => ({
+                  ...prev,
+                  formats: option?.value ? [option.value] : [],
+                }));
+              }}
+              placeholder="Seleccionar formato"
+              isSearchable={false}
+              isDisabled={isLoading}
+            />
           </div>
         </div>
       </div>

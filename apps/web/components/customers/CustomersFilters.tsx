@@ -1,8 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { Search } from "lucide-react";
+import { SearchableSelectSingle } from "@/components/ui/forms/SearchableSelectSingle";
+import { SelectOption } from "@/components/ui/forms/SearchableSelect";
 
 interface CustomersFiltersProps {
   tenantSlug: string;
@@ -21,6 +23,16 @@ export default function CustomersFilters({
   const [search, setSearch] = useState(searchParams.search || "");
   const [status, setStatus] = useState(searchParams.status || "all");
 
+  const statusOptions = useMemo<SelectOption[]>(
+    () => [
+      { value: "all", label: "Todos los estados" },
+      { value: "active", label: "Activas" },
+      { value: "inactive", label: "Inactivas" },
+      { value: "blocked", label: "Bloqueadas" },
+    ],
+    [],
+  );
+
   // Add debouncing for search
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -38,8 +50,8 @@ export default function CustomersFilters({
     setSearch(e.target.value);
   };
 
-  const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setStatus(e.target.value);
+  const handleStatusChange = (option: SelectOption | null) => {
+    setStatus(option?.value || "all");
   };
 
   return (
@@ -61,16 +73,13 @@ export default function CustomersFilters({
 
         {/* Status Filter */}
         <div className="w-full md:w-48">
-          <select
+          <SearchableSelectSingle
+            options={statusOptions}
             value={status}
             onChange={handleStatusChange}
-            className="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
-          >
-            <option value="all">Todos los estados</option>
-            <option value="active">Activas</option>
-            <option value="inactive">Inactivas</option>
-            <option value="blocked">Bloqueadas</option>
-          </select>
+            placeholder="Seleccionar estado"
+            isSearchable={false}
+          />
         </div>
       </div>
     </div>

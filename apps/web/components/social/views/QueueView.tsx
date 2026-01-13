@@ -1,9 +1,11 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import DraggableQueue from "../DraggableQueue";
+import { SearchableSelectSingle } from "@/components/ui/forms/SearchableSelectSingle";
+import { SelectOption } from "@/components/ui/forms/SearchableSelect";
 
 const PLATFORM_CONFIG = {
   facebook: {
@@ -88,6 +90,30 @@ export default function QueueView({
       end: format(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), "yyyy-MM-dd"),
     },
   });
+
+  // Memoize platform options
+  const platformOptions = useMemo<SelectOption[]>(
+    () => [
+      { value: "", label: "Todas las plataformas" },
+      ...Object.entries(PLATFORM_CONFIG).map(([key, config]) => ({
+        value: key,
+        label: `${config.emoji} ${config.name}`,
+      })),
+    ],
+    [],
+  );
+
+  // Memoize status options
+  const statusOptions = useMemo<SelectOption[]>(
+    () => [
+      { value: "", label: "Todos los estados" },
+      ...Object.entries(STATUS_CONFIG).map(([key, config]) => ({
+        value: key,
+        label: config.label,
+      })),
+    ],
+    [],
+  );
 
   const fetchQueuePosts = useCallback(async () => {
     setIsLoading(true);
@@ -251,7 +277,7 @@ export default function QueueView({
       await response.json();
       // Posts reordered successfully
 
-      // Refresh the posts list to reflect new order
+      // Refresh posts list to reflect new order
       await fetchQueuePosts();
     } catch (error) {
       // Error reordering posts
@@ -304,40 +330,38 @@ export default function QueueView({
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Estado
             </label>
-            <select
+            <SearchableSelectSingle
+              options={statusOptions}
               value={filters.status}
-              onChange={(e) =>
-                setFilters((prev) => ({ ...prev, status: e.target.value }))
-              }
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">Todos los estados</option>
-              {Object.entries(STATUS_CONFIG).map(([status, config]) => (
-                <option key={status} value={status}>
-                  {config.label}
-                </option>
-              ))}
-            </select>
+              onChange={(option: SelectOption | null) => {
+                setFilters((prev) => ({
+                  ...prev,
+                  status: option?.value || "",
+                }));
+              }}
+              placeholder="Seleccionar estado"
+              isSearchable={false}
+              isDisabled={isLoading}
+            />
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Plataforma
             </label>
-            <select
+            <SearchableSelectSingle
+              options={platformOptions}
               value={filters.platform}
-              onChange={(e) =>
-                setFilters((prev) => ({ ...prev, platform: e.target.value }))
-              }
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">Todas las plataformas</option>
-              {Object.entries(PLATFORM_CONFIG).map(([platform, config]) => (
-                <option key={platform} value={platform}>
-                  {config.emoji} {config.name}
-                </option>
-              ))}
-            </select>
+              onChange={(option: SelectOption | null) => {
+                setFilters((prev) => ({
+                  ...prev,
+                  platform: option?.value || "",
+                }));
+              }}
+              placeholder="Seleccionar plataforma"
+              isSearchable={true}
+              isDisabled={isLoading}
+            />
           </div>
 
           <div>

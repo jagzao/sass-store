@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useTenantSlug } from "@/lib/tenant/client-resolver";
 import { useCart } from "@/lib/cart/cart-store";
+import { SearchableSelectSingle } from "@/components/ui/forms/SearchableSelectSingle";
+import { SelectOption } from "@/components/ui/forms/SearchableSelect";
 
 interface TenantInfo {
   id: string;
@@ -83,6 +85,12 @@ export function TopNav({ tenantInfo }: TopNavProps) {
     ],
   );
 
+  // Convert categories to SelectOption format
+  const categoryOptions: SelectOption[] = categories.map((cat) => ({
+    value: cat.value,
+    label: cat.label,
+  }));
+
   return (
     <nav
       className="bg-gray-900 text-white shadow-lg border-b border-gray-800"
@@ -115,24 +123,27 @@ export function TopNav({ tenantInfo }: TopNavProps) {
           {/* Search Bar - Estilo Amazon */}
           <form onSubmit={handleSearch} className="flex-1 max-w-3xl mx-8">
             <div className="flex h-12 rounded-lg overflow-hidden shadow-sm">
-              {/* Category Selector */}
-              <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="bg-gray-100 text-gray-900 px-4 py-3 border-r border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm font-medium min-w-[120px]"
-              >
-                {categories.map((cat) => (
-                  <option key={cat.value} value={cat.value}>
-                    {cat.label}
-                  </option>
-                ))}
-              </select>
+              {/* Category Selector - Now SearchableSelectSingle */}
+              <div className="w-48">
+                <SearchableSelectSingle
+                  options={categoryOptions}
+                  value={selectedCategory}
+                  onChange={(option: SelectOption | null) =>
+                    setSelectedCategory(option?.value || "all")
+                  }
+                  placeholder="Categoría"
+                  className="h-full"
+                  isSearchable={false}
+                />
+              </div>
 
               {/* Search Input - Cápsula grande */}
               <input
                 type="text"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setSearchQuery(e.target.value)
+                }
                 placeholder="Buscar productos, servicios, horarios…"
                 className="flex-1 px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500 text-base"
               />
