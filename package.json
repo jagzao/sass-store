@@ -140,8 +140,9 @@
     "postgres": "^3.4.3",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
+    "react-is": "^19.2.3",
     "react-select": "^5.10.2",
-    "recharts": "^3.6.0",
+    "recharts": "^2.15.0",
     "resend": "^6.1.2",
     "web-vitals": "^5.1.0",
     "zod": "^3.25.76"
