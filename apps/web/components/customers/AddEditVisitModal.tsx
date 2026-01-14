@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import FormInput from "@/components/ui/forms/FormInput";
 import FormSelect from "@/components/ui/forms/FormSelect";
 import FormTextarea from "@/components/ui/forms/FormTextarea";
+import { QuantityControl } from "@/components/ui/forms/QuantityControl";
 import { cn } from "@/lib/utils";
 import { DateTimePicker } from "@/components/ui/date-time-picker";
 import VisitPhotosUpload, { VisitPhoto } from "./VisitPhotosUpload";
@@ -69,12 +70,16 @@ export default function AddEditVisitModal({
 
   // Form state
   const [visitDate, setVisitDate] = useState<Date>(
-    visit?.visitDate ? new Date(visit.visitDate) : new Date()
+    visit?.visitDate ? new Date(visit.visitDate) : new Date(),
   );
   const [notes, setNotes] = useState(visit?.notes || "");
-  const [nextVisitFrom, setNextVisitFrom] = useState(visit?.nextVisitFrom || "");
+  const [nextVisitFrom, setNextVisitFrom] = useState(
+    visit?.nextVisitFrom || "",
+  );
   const [nextVisitTo, setNextVisitTo] = useState(visit?.nextVisitTo || "");
-  const [status, setStatus] = useState<Visit["status"]>(visit?.status || "completed");
+  const [status, setStatus] = useState<Visit["status"]>(
+    visit?.status || "completed",
+  );
   const [services, setServices] = useState<VisitService[]>([]);
   const [photos, setPhotos] = useState<VisitPhoto[]>([]); // Initialize with existing photos if available
 
@@ -83,23 +88,34 @@ export default function AddEditVisitModal({
       try {
         setLoading(true);
         setServicesError(null);
-        const response = await fetch(`/api/v1/public/services?tenant=${tenantSlug}`);
-        
+        const response = await fetch(
+          `/api/v1/public/services?tenant=${tenantSlug}`,
+        );
+
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
-          throw new Error(errorData.error || `Error ${response.status}: ${response.statusText}`);
+          throw new Error(
+            errorData.error ||
+              `Error ${response.status}: ${response.statusText}`,
+          );
         }
-        
+
         const data = await response.json();
-        
+
         if (!data.data || !Array.isArray(data.data)) {
-          throw new Error("La respuesta del servidor no contiene una lista de servicios válida");
+          throw new Error(
+            "La respuesta del servidor no contiene una lista de servicios válida",
+          );
         }
-        
+
         setAvailableServices(data.data);
       } catch (error) {
         console.error("Error fetching services:", error);
-        setServicesError(error instanceof Error ? error.message : "Error al cargar los servicios");
+        setServicesError(
+          error instanceof Error
+            ? error.message
+            : "Error al cargar los servicios",
+        );
       } finally {
         setLoading(false);
       }
@@ -114,7 +130,9 @@ export default function AddEditVisitModal({
     if (availableServices.length > 0 && visit && services.length === 0) {
       const visitServices = visit.services.map((s) => {
         // Try to find by ID (assuming s.id is serviceId) or name match as fallback
-        const service = availableServices.find(avail => avail.id === s.id || avail.name === s.serviceName);
+        const service = availableServices.find(
+          (avail) => avail.id === s.id || avail.name === s.serviceName,
+        );
         return {
           serviceId: service ? service.id : s.id, // Use matched ID or fallback to provided ID
           serviceName: service ? service.name : s.serviceName,
@@ -129,10 +147,12 @@ export default function AddEditVisitModal({
 
     // Load photos
     if (visit && visit.photos && photos.length === 0) {
-        setPhotos(visit.photos.map(p => ({
-            url: p.url,
-            type: p.type
-        })));
+      setPhotos(
+        visit.photos.map((p) => ({
+          url: p.url,
+          type: p.type,
+        })),
+      );
     }
   }, [availableServices, visit]);
 
@@ -199,7 +219,7 @@ export default function AddEditVisitModal({
         nextVisitFrom: nextVisitFrom || null,
         nextVisitTo: nextVisitTo || null,
         status,
-        photos: photos.map(p => ({ url: p.url, type: p.type })), // Send photos to API
+        photos: photos.map((p) => ({ url: p.url, type: p.type })), // Send photos to API
         services: services.map((s) => ({
           serviceId: s.serviceId,
           description: s.description,
@@ -229,7 +249,9 @@ export default function AddEditVisitModal({
       onClose(true); // Refresh parent
     } catch (error) {
       console.error("Error saving visit:", error);
-      alert(error instanceof Error ? error.message : "Error al guardar la visita");
+      alert(
+        error instanceof Error ? error.message : "Error al guardar la visita",
+      );
     } finally {
       setSubmitting(false);
     }
@@ -239,19 +261,25 @@ export default function AddEditVisitModal({
 
   return (
     <div className="fixed inset-0 z-50 bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 flex items-center justify-center p-4">
-      <div className={cn(
-        "fixed left-[50%] top-[50%] z-50 grid w-full max-w-4xl max-h-[90vh] overflow-y-auto translate-x-[-50%] translate-y-[-50%] gap-4 border p-6 shadow-lg duration-200 sm:rounded-lg",
-        isLuxury 
-          ? "bg-white border-[#D4AF37]/40 shadow-2xl" 
-          : "bg-background shadow-lg"
-      )}>
+      <div
+        className={cn(
+          "fixed left-[50%] top-[50%] z-50 grid w-full max-w-4xl max-h-[90vh] overflow-y-auto translate-x-[-50%] translate-y-[-50%] gap-4 border p-6 shadow-lg duration-200 sm:rounded-lg",
+          isLuxury
+            ? "bg-white border-[#D4AF37]/40 shadow-2xl"
+            : "bg-background shadow-lg",
+        )}
+      >
         {/* Header */}
         <div className="flex flex-col space-y-1.5 text-center sm:text-left">
           <div className="flex items-center justify-between">
-            <h2 className={cn(
-              "text-lg font-semibold leading-none tracking-tight",
-              isLuxury ? "text-[#1a1a1a] font-serif uppercase tracking-widest" : ""
-            )}>
+            <h2
+              className={cn(
+                "text-lg font-semibold leading-none tracking-tight",
+                isLuxury
+                  ? "text-[#1a1a1a] font-serif uppercase tracking-widest"
+                  : "",
+              )}
+            >
               {visit ? "Editar Visita" : "Nueva Visita"}
             </h2>
             <Button
@@ -308,7 +336,9 @@ export default function AddEditVisitModal({
 
             {servicesError ? (
               <div className="bg-destructive/15 border-destructive/50 text-destructive p-4 rounded-md mb-4 flex flex-col items-start gap-2">
-                <p className="text-sm font-medium">Error al cargar los servicios:</p>
+                <p className="text-sm font-medium">
+                  Error al cargar los servicios:
+                </p>
                 <p className="text-sm">{servicesError}</p>
                 <Button
                   type="button"
@@ -318,17 +348,22 @@ export default function AddEditVisitModal({
                     setLoading(true);
                     setServicesError(null);
                     fetch(`/api/v1/public/services?tenant=${tenantSlug}`)
-                      .then(response => {
-                        if (!response.ok) throw new Error("Failed to fetch services");
+                      .then((response) => {
+                        if (!response.ok)
+                          throw new Error("Failed to fetch services");
                         return response.json();
                       })
-                      .then(data => {
+                      .then((data) => {
                         setAvailableServices(data.data || []);
                         setServicesError(null);
                       })
-                      .catch(err => {
+                      .catch((err) => {
                         console.error("Error retrying fetch:", err);
-                        setServicesError(err instanceof Error ? err.message : "Error al cargar los servicios");
+                        setServicesError(
+                          err instanceof Error
+                            ? err.message
+                            : "Error al cargar los servicios",
+                        );
                       })
                       .finally(() => setLoading(false));
                   }}
@@ -342,28 +377,39 @@ export default function AddEditVisitModal({
               </div>
             ) : availableServices.length === 0 ? (
               <div className="text-center py-8 bg-muted/50 rounded-lg border-2 border-dashed">
-                <p className="text-foreground font-medium mb-2">No hay servicios disponibles</p>
-                <p className="text-muted-foreground text-sm">Contacta al administrador para agregar servicios a tu catálogo</p>
+                <p className="text-foreground font-medium mb-2">
+                  No hay servicios disponibles
+                </p>
+                <p className="text-muted-foreground text-sm">
+                  Contacta al administrador para agregar servicios a tu catálogo
+                </p>
               </div>
             ) : services.length === 0 ? (
               <div className="text-center py-8 rounded-lg border-2 border-dashed">
-                <p className="text-muted-foreground">No hay servicios agregados</p>
+                <p className="text-muted-foreground">
+                  No hay servicios agregados
+                </p>
               </div>
             ) : (
               <div className="space-y-4">
                 {services.map((service, index) => (
-                  <div key={index} className="bg-muted/50 rounded-lg p-4 border">
+                  <div
+                    key={index}
+                    className="bg-muted/50 rounded-lg p-4 border"
+                  >
                     <div className="grid grid-cols-12 gap-4 items-start">
                       <div className="col-span-5">
                         <FormSelect
                           label="Servicio"
                           value={service.serviceId}
-                          onChange={(e) => handleServiceChange(index, e.target.value)}
+                          onChange={(e) =>
+                            handleServiceChange(index, e.target.value)
+                          }
                           required
                           placeholder="Seleccionar servicio..."
                           options={availableServices.map((s) => ({
                             value: s.id,
-                            label: `${s.name} - $${Number(s.price).toFixed(2)}`
+                            label: `${s.name} - $${Number(s.price).toFixed(2)}`,
                           }))}
                           selectClassName="text-sm"
                         />
@@ -376,7 +422,10 @@ export default function AddEditVisitModal({
                           step="0.01"
                           value={service.unitPrice}
                           onChange={(e) =>
-                            handlePriceChange(index, parseFloat(e.target.value) || 0)
+                            handlePriceChange(
+                              index,
+                              parseFloat(e.target.value) || 0,
+                            )
                           }
                           required
                           inputClassName="text-sm"
@@ -384,17 +433,14 @@ export default function AddEditVisitModal({
                       </div>
 
                       <div className="col-span-2">
-                        <FormInput
+                        <QuantityControl
                           label="Cantidad"
-                          type="number"
-                          step="1"
                           value={service.quantity}
-                          onChange={(e) =>
-                            handleQuantityChange(index, parseInt(e.target.value, 10) || 1)
+                          onChange={(value) =>
+                            handleQuantityChange(index, value)
                           }
-                          required
                           min={1}
-                          inputClassName="text-sm"
+                          size="sm"
                         />
                       </div>
 
@@ -446,7 +492,9 @@ export default function AddEditVisitModal({
 
           {/* Next Visit */}
           <div>
-            <h3 className="text-sm font-medium mb-3">Próxima Cita (Opcional)</h3>
+            <h3 className="text-sm font-medium mb-3">
+              Próxima Cita (Opcional)
+            </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormInput
                 label="Desde"
@@ -470,24 +518,36 @@ export default function AddEditVisitModal({
           </div>
 
           {/* Actions */}
-          <div className={cn("flex justify-end gap-3 pt-4 border-t", isLuxury ? "border-[#D4AF37]/20" : "")}>
+          <div
+            className={cn(
+              "flex justify-end gap-3 pt-4 border-t",
+              isLuxury ? "border-[#D4AF37]/20" : "",
+            )}
+          >
             <Button
               type="button"
               variant="outline"
               onClick={() => onClose()}
-              className={isLuxury ? "border-gray-200 text-gray-600 hover:bg-gray-50" : ""}
+              className={
+                isLuxury ? "border-gray-200 text-gray-600 hover:bg-gray-50" : ""
+              }
             >
               Cancelar
             </Button>
             <Button
               type="submit"
               disabled={submitting || services.length === 0}
-              className={isLuxury 
-                ? "bg-[#D4AF37] hover:bg-[#b3932d] text-white border-0" 
-                : ""
+              className={
+                isLuxury
+                  ? "bg-[#D4AF37] hover:bg-[#b3932d] text-white border-0"
+                  : ""
               }
             >
-              {submitting ? "Guardando..." : visit ? "Guardar Cambios" : "Crear Visita"}
+              {submitting
+                ? "Guardando..."
+                : visit
+                  ? "Guardar Cambios"
+                  : "Crear Visita"}
             </Button>
           </div>
         </form>

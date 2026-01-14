@@ -21,3 +21,6 @@ export type { SearchableSelectMultiProps } from "./SearchableSelectMulti";
 
 export { default as AsyncSearchableSelect } from "./AsyncSearchableSelect";
 export type { AsyncSearchableSelectProps } from "./AsyncSearchableSelect";
+
+export { QuantityControl } from "./QuantityControl";
+export type { QuantityControlProps } from "./QuantityControl";
