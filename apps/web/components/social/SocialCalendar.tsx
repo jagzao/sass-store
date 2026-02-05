@@ -14,6 +14,7 @@ import {
   subMonths,
 } from "date-fns";
 import { es } from "date-fns/locale";
+import FormSelect from "@/components/ui/forms/FormSelect";
 
 interface Post {
   id: string;
@@ -277,7 +278,7 @@ export default function SocialCalendar() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Plataforma
                 </label>
-                <select
+                <FormSelect
                   value={newPost.platform}
                   onChange={(e) =>
                     setNewPost({
@@ -285,15 +286,15 @@ export default function SocialCalendar() {
                       platform: e.target.value as Post["platform"],
                     })
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  <option value="facebook">📘 Facebook</option>
-                  <option value="instagram">📷 Instagram</option>
-                  <option value="twitter">🐦 Twitter</option>
-                  <option value="tiktok">🎵 TikTok</option>
-                  <option value="youtube">▶️ YouTube</option>
-                  <option value="linkedin">💼 LinkedIn</option>
-                </select>
+                  options={[
+                    { value: "facebook", label: "📘 Facebook" },
+                    { value: "instagram", label: "📷 Instagram" },
+                    { value: "twitter", label: "🐦 Twitter" },
+                    { value: "tiktok", label: "🎵 TikTok" },
+                    { value: "youtube", label: "▶️ YouTube" },
+                    { value: "linkedin", label: "💼 LinkedIn" },
+                  ]}
+                />
               </div>
 
               <div>

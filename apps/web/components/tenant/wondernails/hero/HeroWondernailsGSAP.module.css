@@ -195,7 +195,8 @@
   margin-bottom: 0.5rem;
 }
 
-.topic {
+.topic,
+.topic.title {
   /* Luxury Serif Font for Headings */
   font-family: "Playfair Display", "Georgia", serif;
   font-size: 3rem;

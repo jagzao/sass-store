@@ -1,6 +1,6 @@
 "use client";
 
-import React, { memo, useMemo } from "react";
+import React, { useId, useMemo } from "react";
 import Select, {
   Props as ReactSelectProps,
   StylesConfig,
@@ -100,8 +100,8 @@ function SearchableSelectComponent<IsMulti extends boolean = false>(
   } = props;
 
   // Generate ID if not provided
-  const selectId =
-    id || name || `select-${Math.random().toString(36).substr(2, 9)}`;
+  const autoId = useId();
+  const selectId = id || name || `select-${autoId.replace(/:/g, "")}`;
 
   // Convert value to react-select format
   const selectValue = useMemo(() => {

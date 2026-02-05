@@ -50,6 +50,13 @@
       "when": 1766860887953,
       "tag": "0006_brown_hellfire_club",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1769823160000,
+      "tag": "0007_add_social_posts_metadata",
+      "breakpoints": true
     }
   ]
 }

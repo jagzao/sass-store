@@ -8,6 +8,7 @@ import SingleImageUpload from "@/components/ui/single-image-upload";
 import { useFormPersist } from "@/hooks/useFormPersist";
 import MenuDesignerModal from "@/components/admin/menu-designer/MenuDesignerModal";
 import AdminRouteGuard from "@/components/auth/AdminRouteGuard";
+import { useTenantTheme } from "@/lib/hooks/useTenantTheme";
 
 interface Service {
   id: string;
@@ -26,6 +27,7 @@ interface Service {
 export default function AdminServicesPage() {
   const params = useParams();
   const tenantSlug = params.tenant as string;
+  const { isDark, getFormStyles } = useTenantTheme(tenantSlug);
 
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);

@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Save, X, Plus, Trash2 } from "lucide-react";
+import FormSelect from "@/components/ui/forms/FormSelect";
 
 interface CustomerFormProps {
   tenantSlug: string;
@@ -183,15 +184,15 @@ export default function CustomerForm({
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Estado
           </label>
-          <select
+          <FormSelect
             value={status}
             onChange={(e) => setStatus(e.target.value as any)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="active">Activa</option>
-            <option value="inactive">Inactiva</option>
-            <option value="blocked">Bloqueada</option>
-          </select>
+            options={[
+              { value: "active", label: "Activa" },
+              { value: "inactive", label: "Inactiva" },
+              { value: "blocked", label: "Bloqueada" },
+            ]}
+          />
         </div>
 
         {/* Tags */}

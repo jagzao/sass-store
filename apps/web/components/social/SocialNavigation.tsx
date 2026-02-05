@@ -6,6 +6,7 @@ interface SocialNavigationProps {
   activeView: string;
   onViewChange: (view: any) => void;
   onCreateNew: () => void;
+  onManageTokens: () => void;
 }
 
 const TABS = [
@@ -20,6 +21,7 @@ export default function SocialNavigation({
   activeView,
   onViewChange,
   onCreateNew,
+  onManageTokens,
 }: SocialNavigationProps) {
   return (
     <div className="sticky top-0 z-10 bg-white border-b border-gray-200 shadow-sm">
@@ -46,26 +48,36 @@ export default function SocialNavigation({
             ))}
           </nav>
 
-          {/* Create Button */}
-          <button
-            onClick={onCreateNew}
-            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
-          >
-            <svg
-              className="mr-2 h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+          {/* Actions */}
+          <div className="flex items-center space-x-3">
+            <button
+              onClick={onManageTokens}
+              className="inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 4v16m8-8H4"
-              />
-            </svg>
-            Crear
-          </button>
+              <span className="mr-2">🔐</span>
+              Cuentas
+            </button>
+
+            <button
+              onClick={onCreateNew}
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+            >
+              <svg
+                className="mr-2 h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 4v16m8-8H4"
+                />
+              </svg>
+              Crear
+            </button>
+          </div>
         </div>
       </div>
     </div>

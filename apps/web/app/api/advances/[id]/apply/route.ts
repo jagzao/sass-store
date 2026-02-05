@@ -24,7 +24,7 @@ const applyAdvanceSchema = z.object({
 // POST /api/advances/[id]/apply - Apply an advance to a visit/booking
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const session = await auth();
@@ -34,7 +34,7 @@ export async function POST(
 
     const body = await request.json();
     const validatedData = applyAdvanceSchema.parse(body);
-    const advanceId = params.id;
+    const advanceId = (await params).id;
 
     // Convert amount to number
     const amountApplied = parseFloat(validatedData.amountApplied);

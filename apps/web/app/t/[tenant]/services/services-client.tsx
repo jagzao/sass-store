@@ -77,9 +77,34 @@ export function ServicesClient({
             >
               <div className="p-6 h-full flex flex-col">
                 <div
-                  className={`text-5xl mb-4 text-center ${tenantData.slug === "zo-system" ? "text-shadow-neon" : ""}`}
+                  className={`mb-4 flex justify-center ${
+                    tenantData.slug === "zo-system"
+                      ? "text-5xl text-center text-shadow-neon"
+                      : "text-center"
+                  }`}
                 >
-                  {service.metadata?.image || "💅"}
+                  {/* Try to render image, fallback to placeholder if error/invalid */}
+                  <div className="w-full h-48 relative mb-2 overflow-hidden rounded-lg group-hover:scale-105 transition-transform duration-300 bg-gray-100">
+                    <img
+                      src={
+                        service.metadata?.image ||
+                        service.imageUrl ||
+                        `https://placehold.co/400x320/F3F4F6/9CA3AF?text=${encodeURIComponent(service.name)}`
+                      }
+                      alt={service.name}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        // Build the fallback URL
+                        const fallbackUrl = `https://placehold.co/400x320/F3F4F6/9CA3AF?text=${encodeURIComponent(service.name)}`;
+                        // Only set fallback if we aren't already trying to load it to avoid infinite loops
+                        if (target.src !== fallbackUrl) {
+                          target.src = fallbackUrl;
+                          target.onerror = null; // Prevent infinite fallback loops
+                        }
+                      }}
+                    />
+                  </div>
                 </div>
                 <h3
                   className={`text-xl font-semibold mb-2 ${tenantData.slug === "zo-system" ? "text-white font-[family-name:var(--font-rajdhani)] uppercase tracking-wide" : ""}`}

@@ -79,6 +79,11 @@ const { handlers, auth, signIn, signOut } = NextAuth({
         }
 
         try {
+          console.log(
+            "[NextAuth] Authorizing credentials for:",
+            credentials.email,
+          );
+
           // Find user by email
           const [user] = await db
             .select()
@@ -86,7 +91,13 @@ const { handlers, auth, signIn, signOut } = NextAuth({
             .where(eq(users.email, credentials.email as string))
             .limit(1);
 
-          if (!user || !user.password) {
+          if (!user) {
+            console.log("[NextAuth] User not found:", credentials.email);
+            return null;
+          }
+
+          if (!user.password) {
+            console.log("[NextAuth] User has no password set");
             return null;
           }
 
@@ -97,8 +108,11 @@ const { handlers, auth, signIn, signOut } = NextAuth({
           );
 
           if (!passwordMatch) {
+            console.log("[NextAuth] Password mismatch for user:", user.email);
             return null;
           }
+
+          console.log("[NextAuth] Password verified for:", user.email);
 
           // Find tenant - critical for RLS
           const [tenant] = await db
@@ -108,15 +122,18 @@ const { handlers, auth, signIn, signOut } = NextAuth({
             .limit(1);
 
           if (!tenant) {
-            console.log("[NextAuth] Tenant not found");
+            console.log("[NextAuth] Tenant not found:", credentials.tenantSlug);
             return null;
           }
+
+          console.log("[NextAuth] Tenant found:", tenant.id);
 
           // SET RLS CONTEXT - CRITICAL FOR VIEWING STAFF/ROLES
           try {
             await db.execute(
               sql`SELECT set_tenant_context(${tenant.id}::uuid)`,
             );
+            console.log("[NextAuth] RLS context set");
           } catch (rlsError) {
             console.error("[NextAuth] Failed to set RLS context:", rlsError);
           }
@@ -132,6 +149,8 @@ const { handlers, auth, signIn, signOut } = NextAuth({
               ),
             )
             .limit(1);
+
+          console.log("[NextAuth] Role assignment found:", !!roleAssignment);
 
           let userRole: RbacRole = "Cliente"; // Default role
 

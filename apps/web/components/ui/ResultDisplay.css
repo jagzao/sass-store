@@ -1,0 +1,266 @@
+/**
+ * Result Display Styles
+ * 
+ * CSS styles for ResultDisplay components
+ * Provides consistent visual styling for success, error, loading, and empty states
+ */
+
+/* Base Result Display Component */
+.result-display {
+  @apply flex items-center gap-3 p-4 rounded-lg border transition-all duration-200;
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+}
+
+.result-display__icon {
+  @apply flex items-center justify-center w-8 h-8 rounded-full text-2xl font-semibold;
+}
+
+.result-display__content {
+  @apply flex-1;
+}
+
+.result-display__text {
+  @apply text-gray-700 text-sm;
+}
+
+/* Success State */
+.result-display--success {
+  @apply border-green-200 bg-green-50;
+}
+
+.result-display--success .result-display__icon {
+  @apply bg-green-500 text-white;
+}
+
+.result-display--success .result-display__content {
+  @apply text-green-800;
+}
+
+/* Error State */
+.result-display--error {
+  @apply border-red-200 bg-red-50;
+}
+
+.result-display--error .result-display__icon {
+  @apply bg-red-500 text-white;
+}
+
+.result-display--error .result-display__content {
+  @apply text-red-800;
+}
+
+.result-display__error-type {
+  @apply font-mono text-xs font-semibold text-red-600 mb-2 bg-red-100 px-2 py-1 rounded;
+}
+
+.result-display__error-message {
+  @apply text-sm text-red-700 font-medium mb-2;
+}
+
+.result-display__error-details {
+  @apply text-xs text-red-600 bg-red-100 p-2 rounded font-mono leading-relaxed max-h-32 overflow-auto;
+}
+
+/* Loading State */
+.result-display--loading {
+  @apply border-gray-200 bg-gray-50;
+}
+
+.result-display--loading .result-display__spinner {
+  @apply w-6 h-6 border-2 border-gray-400 border-t-gray-300 rounded-full animate-spin;
+}
+
+.result-display--loading .result-display__spinner::before {
+  content: "";
+  @apply absolute top-0 left-0 w-4 h-4 border-2 border-t-transparent border-transparent border-r-transparent border-b-transparent border-l-transparent border-gray-400 rounded-full;
+  animation: spin 1s linear infinite;
+}
+
+.result-display--loading .result-display__text {
+  @apply text-gray-600 italic;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Empty State */
+.result-display--empty {
+  @apply border-gray-200 bg-gray-50;
+}
+
+.result-display--empty .result-display__icon {
+  @apply bg-gray-400 text-white;
+}
+
+.result-display--empty .result-display__text {
+  @apply text-gray-600;
+}
+
+/* Custom State */
+.result-display--custom {
+  @apply border-gray-200 bg-gray-50;
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+  .result-display {
+    @apply p-3 gap-2;
+  }
+
+  .result-display__icon {
+    @apply w-6 h-6 text-lg;
+  }
+
+  .result-display__text {
+    @apply text-xs;
+  }
+
+  .result-display__error-type,
+  .result-display__error-message {
+    @apply text-xs mb-1;
+  }
+
+  .result-display__error-details {
+    @apply text-xs p-1.5;
+  }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  .result-display {
+    @apply bg-gray-900 border-gray-700;
+  }
+
+  .result-display--success {
+    @apply border-green-700 bg-green-900/20;
+  }
+
+  .result-display--success .result-display__content {
+    @apply text-green-300;
+  }
+
+  .result-display--error {
+    @apply border-red-700 bg-red-900/20;
+  }
+
+  .result-display--error .result-display__content {
+    @apply text-red-300;
+  }
+
+  .result-display--loading {
+    @apply border-gray-700 bg-gray-900/20;
+  }
+
+  .result-display--loading .result-display__text {
+    @apply text-gray-400;
+  }
+
+  .result-display--empty {
+    @apply border-gray-700 bg-gray-900/20;
+  }
+
+  .result-display--empty .result-display__text {
+    @apply text-gray-400;
+  }
+
+  .result-display--custom {
+    @apply border-gray-700 bg-gray-900/20;
+  }
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  .result-display {
+    @apply border-2 border-gray-900;
+  }
+
+  .result-display__icon {
+    @apply border-2 border-gray-700;
+  }
+
+  .result-display__text {
+    @apply text-gray-900 font-semibold;
+  }
+}
+
+/* Animation Variants */
+.result-display--fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.result-display--slide-up {
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Compact Mode */
+.result-display--compact {
+  @apply p-2 gap-2;
+}
+
+.result-display--compact .result-display__icon {
+  @apply w-5 h-5 text-sm;
+}
+
+.result-display--compact .result-display__text {
+  @apply text-xs;
+}
+
+/* Error Type Specific Colors */
+.result-display__error-type.ValidationError {
+  @apply bg-blue-100 text-blue-700;
+}
+
+.result-display__error-type.NotFoundError {
+  @apply bg-yellow-100 text-yellow-700;
+}
+
+.result-display__error-type.AuthorizationError {
+  @apply bg-red-100 text-red-700;
+}
+
+.result-display__error-type.AuthenticationError {
+  @apply bg-orange-100 text-orange-700;
+}
+
+.result-display__error-type.BusinessRuleError {
+  @apply bg-purple-100 text-purple-700;
+}
+
+.result-display__error-type.DatabaseError {
+  @apply bg-gray-100 text-gray-700;
+}
+
+.result-display__error-type.ConfigurationError {
+  @apply bg-indigo-100 text-indigo-700;
+}

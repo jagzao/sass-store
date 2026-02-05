@@ -3,7 +3,6 @@
 import { useSession } from "next-auth/react";
 import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState, lazy, Suspense } from "react";
-import UserMenu from "@/components/auth/UserMenu";
 import { useFinance } from "@/lib/hooks/use-finance";
 import {
   KPICardSkeleton,
@@ -128,6 +127,15 @@ export default function TenantFinancePage() {
           <h1 className="text-2xl font-bold text-gray-900 mb-6">
             Panel Financiero - {currentTenant?.name || "Negocio"}
           </h1>
+
+          {/* Error State */}
+          {error && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6">
+              <strong className="font-bold">Error: </strong>
+              <span className="block sm:inline">{error}</span>
+            </div>
+          )}
+
           {/* Mercado Pago Connection Status */}
           {mercadoPagoStatus && !mercadoPagoStatus.connected && (
             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">

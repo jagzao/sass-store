@@ -1,95 +1,238 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { db } from "@sass-store/database";
 import {
   socialPosts,
   socialPostTargets,
   tenants,
 } from "@sass-store/database/schema";
-import { eq, and, desc, gte, lte, sql, inArray } from "drizzle-orm";
-import { withTenantContext } from "@/lib/db/tenant-context";
-import { logger } from "@/lib/logger";
+import { and, desc, eq, gte, inArray, lte, sql } from "drizzle-orm";
+import { z } from "zod";
 
-/**
- * GET /api/v1/social/queue
- * List all social media posts with filters
- *
- * Query params:
- * - tenant: tenant slug (required)
- * - status: filter by status (draft, scheduled, published, failed, canceled)
- * - platform: filter by platform
- * - start_date: filter posts from this date
- * - end_date: filter posts until this date
- */
-export async function GET(request: NextRequest) {
-  try {
-    const { searchParams } = new URL(request.url);
-    const tenantSlug = searchParams.get("tenant");
-    const status = searchParams.get("status");
-    const platform = searchParams.get("platform");
-    const startDate = searchParams.get("start_date");
-    const endDate = searchParams.get("end_date");
+import { Result, Ok, Err, fromPromise } from "@sass-store/core/src/result";
+import { DomainError, ErrorFactories } from "@sass-store/core/src/errors/types";
+import { withResultHandler } from "@sass-store/core/src/middleware/result-handler";
+import { validateWithZod } from "@sass-store/validation/src/zod-result";
 
-    if (!tenantSlug) {
-      return NextResponse.json(
-        { success: false, error: "Tenant slug is required" },
-        { status: 400 },
-      );
+const GetQueueQuerySchema = z.object({
+  tenant: z.string().min(1),
+  status: z.string().optional(),
+  platform: z.string().optional(),
+  start_date: z.string().optional(),
+  end_date: z.string().optional(),
+  id: z.string().optional(),
+});
+
+const DeleteQueueQuerySchema = z.object({
+  tenant: z.string().min(1),
+  ids: z.string().min(1),
+});
+
+const PlatformSchema = z.object({
+  platform: z.string().min(1),
+  variantText: z.string().optional(),
+  publishAtUtc: z.union([z.string(), z.date(), z.null()]).optional(),
+  status: z.string().optional(),
+  assetIds: z.array(z.string()).optional(),
+});
+
+const PostBodySchema = z.object({
+  id: z.string().optional(),
+  tenant: z.string().min(1),
+  title: z.string().optional(),
+  baseText: z.string().min(1),
+  status: z.string().optional(),
+  scheduledAtUtc: z.union([z.string(), z.date(), z.null()]).optional(),
+  timezone: z.string().optional(),
+  platforms: z.array(PlatformSchema).optional(),
+  metadata: z.any().optional(),
+  mediaIds: z.array(z.string()).optional(),
+  createdBy: z.string().optional(),
+});
+
+const parseQueryParams = <T extends z.ZodTypeAny>(
+  request: NextRequest,
+  schema: T,
+): Result<z.infer<T>, DomainError> => {
+  const { searchParams } = new URL(request.url);
+  const params: Record<string, string> = {};
+
+  searchParams.forEach((value, key) => {
+    const trimmed = value.trim();
+    if (trimmed) {
+      params[key] = trimmed;
     }
+  });
 
-    // Get tenant ID from slug
-    const [tenant] = await db
+  return validateWithZod(schema, params);
+};
+
+const parseOptionalDate = (
+  value: string | Date | null | undefined,
+  field: string,
+): Result<Date | null, DomainError> => {
+  if (!value) {
+    return Ok(null);
+  }
+
+  const date = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return Err(
+      ErrorFactories.validation(`Invalid date for ${field}`, field, value),
+    );
+  }
+
+  return Ok(date);
+};
+
+const normalizeMetadata = (metadata: unknown): Record<string, unknown> => {
+  if (!metadata || typeof metadata !== "object" || Array.isArray(metadata)) {
+    return {};
+  }
+
+  return metadata as Record<string, unknown>;
+};
+
+const getTenantId = async (
+  tenantSlug: string,
+): Promise<Result<string, DomainError>> => {
+  const tenantResult = await fromPromise(
+    db
       .select({ id: tenants.id })
       .from(tenants)
       .where(eq(tenants.slug, tenantSlug))
-      .limit(1);
+      .limit(1),
+    (error) =>
+      ErrorFactories.database(
+        "find_tenant",
+        `Failed to find tenant ${tenantSlug}`,
+        undefined,
+        error instanceof Error ? error : undefined,
+      ),
+  );
 
-    if (!tenant) {
-      return NextResponse.json(
-        { success: false, error: "Tenant not found" },
-        { status: 404 },
-      );
+  if (!tenantResult.success) {
+    return tenantResult;
+  }
+
+  const tenant = tenantResult.data[0];
+  if (!tenant) {
+    return Err(ErrorFactories.notFound("Tenant", tenantSlug));
+  }
+
+  return Ok(tenant.id);
+};
+
+const setTenantContext = async (
+  tenantId: string,
+): Promise<Result<void, DomainError>> => {
+  const contextResult = await fromPromise(
+    db.execute(sql`SELECT set_tenant_context(${tenantId}::uuid)`),
+    (error) =>
+      ErrorFactories.database(
+        "set_tenant_context",
+        "Failed to set tenant context",
+        undefined,
+        error instanceof Error ? error : undefined,
+      ),
+  );
+
+  if (!contextResult.success) {
+    return contextResult;
+  }
+
+  return Ok(undefined);
+};
+
+export const GET = withResultHandler(
+  async (request: NextRequest): Promise<Result<any[], DomainError>> => {
+    const queryResult = parseQueryParams(request, GetQueueQuerySchema);
+    if (!queryResult.success) {
+      return queryResult;
     }
 
-    // Set tenant context for RLS
-    await db.execute(sql`SELECT set_tenant_context(${tenant.id}::uuid)`);
+    const {
+      tenant: tenantSlug,
+      status,
+      platform,
+      start_date,
+      end_date,
+      id,
+    } = queryResult.data;
 
-    // Build query conditions
-    const conditions = [eq(socialPosts.tenantId, tenant.id)];
+    const startDateResult = parseOptionalDate(start_date, "start_date");
+    if (!startDateResult.success) {
+      return startDateResult;
+    }
+
+    const endDateResult = parseOptionalDate(end_date, "end_date");
+    if (!endDateResult.success) {
+      return endDateResult;
+    }
+
+    const tenantIdResult = await getTenantId(tenantSlug);
+    if (!tenantIdResult.success) {
+      return tenantIdResult;
+    }
+
+    const tenantId = tenantIdResult.data;
+    const contextResult = await setTenantContext(tenantId);
+    if (!contextResult.success) {
+      return contextResult;
+    }
+
+    const conditions = [eq(socialPosts.tenantId, tenantId)];
 
     if (status) {
       conditions.push(eq(socialPosts.status, status));
     }
 
-    if (startDate) {
-      conditions.push(gte(socialPosts.scheduledAtUtc, new Date(startDate)));
+    if (startDateResult.data) {
+      conditions.push(gte(socialPosts.scheduledAtUtc, startDateResult.data));
     }
 
-    if (endDate) {
-      conditions.push(lte(socialPosts.scheduledAtUtc, new Date(endDate)));
+    if (endDateResult.data) {
+      conditions.push(lte(socialPosts.scheduledAtUtc, endDateResult.data));
     }
 
-    // Fetch posts with their targets
-    const posts = await db
-      .select({
-        id: socialPosts.id,
-        title: socialPosts.title,
-        content: socialPosts.baseText,
-        status: socialPosts.status,
-        scheduledAt: socialPosts.scheduledAtUtc,
-        timezone: socialPosts.timezone,
-        createdBy: socialPosts.createdBy,
-        createdAt: socialPosts.createdAt,
-        updatedAt: socialPosts.updatedAt,
-        metadata: socialPosts.metadata,
-      })
-      .from(socialPosts)
-      .where(and(...conditions))
-      .orderBy(desc(socialPosts.scheduledAtUtc));
+    if (id) {
+      conditions.push(eq(socialPosts.id, id));
+    }
 
-    // For each post, get its targets
-    const postsWithTargets = await Promise.all(
-      posts.map(async (post) => {
-        const targets = await db
+    const postsResult = await fromPromise(
+      db
+        .select({
+          id: socialPosts.id,
+          title: socialPosts.title,
+          content: socialPosts.baseText,
+          status: socialPosts.status,
+          scheduledAt: socialPosts.scheduledAtUtc,
+          timezone: socialPosts.timezone,
+          createdBy: socialPosts.createdBy,
+          createdAt: socialPosts.createdAt,
+          updatedAt: socialPosts.updatedAt,
+          metadata: socialPosts.metadata,
+        })
+        .from(socialPosts)
+        .where(and(...conditions))
+        .orderBy(desc(socialPosts.scheduledAtUtc)),
+      (error) =>
+        ErrorFactories.database(
+          "fetch_social_posts",
+          "Failed to fetch queue posts",
+          undefined,
+          error instanceof Error ? error : undefined,
+        ),
+    );
+
+    if (!postsResult.success) {
+      return postsResult;
+    }
+
+    const postsWithTargets: any[] = [];
+
+    for (const post of postsResult.data) {
+      const targetsResult = await fromPromise(
+        db
           .select({
             id: socialPostTargets.id,
             platform: socialPostTargets.platform,
@@ -98,66 +241,75 @@ export async function GET(request: NextRequest) {
             publishAtUtc: socialPostTargets.publishAtUtc,
             platformPostId: socialPostTargets.platformPostId,
             error: socialPostTargets.error,
+            assetIds: socialPostTargets.assetIds,
+            metadata: socialPostTargets.metadata,
           })
           .from(socialPostTargets)
-          .where(eq(socialPostTargets.postId, post.id));
+          .where(eq(socialPostTargets.postId, post.id)),
+        (error) =>
+          ErrorFactories.database(
+            "fetch_social_post_targets",
+            "Failed to fetch post targets",
+            undefined,
+            error instanceof Error ? error : undefined,
+          ),
+      );
 
-        // Filter by platform if specified
-        const filteredTargets = platform
-          ? targets.filter((t) => t.platform === platform)
-          : targets;
+      if (!targetsResult.success) {
+        return targetsResult;
+      }
 
-        // Skip this post if platform filter excludes all targets
-        if (platform && filteredTargets.length === 0) {
-          return null;
-        }
+      const targets = targetsResult.data;
+      const filteredTargets = platform
+        ? targets.filter((target) => target.platform === platform)
+        : targets;
 
-        return {
-          ...post,
-          platforms: filteredTargets.map((t) => t.platform),
-          targets: filteredTargets,
-        };
-      }),
+      if (platform && filteredTargets.length === 0) {
+        continue;
+      }
+
+      const metadataMediaIds = Array.isArray((post.metadata as any)?.mediaIds)
+        ? ((post.metadata as any).mediaIds as string[])
+        : [];
+      const targetAssetIds = filteredTargets.flatMap((target) =>
+        Array.isArray(target.assetIds) ? target.assetIds : [],
+      );
+      const mediaIds = metadataMediaIds.length
+        ? metadataMediaIds
+        : Array.from(new Set(targetAssetIds));
+
+      postsWithTargets.push({
+        ...post,
+        mediaIds,
+        platforms: filteredTargets.map((target) => target.platform),
+        targets: filteredTargets,
+      });
+    }
+
+    return Ok(postsWithTargets);
+  },
+);
+
+export const POST = withResultHandler(
+  async (request: NextRequest): Promise<Result<any, DomainError>> => {
+    const bodyResult = await fromPromise(request.json(), (error) =>
+      ErrorFactories.validation(
+        "Invalid request body",
+        "body",
+        undefined,
+        error,
+      ),
     );
 
-    // Remove null entries (posts filtered out by platform)
-    const filteredPosts = postsWithTargets.filter((p) => p !== null);
+    if (!bodyResult.success) {
+      return bodyResult;
+    }
 
-    return NextResponse.json({
-      success: true,
-      data: filteredPosts,
-      count: filteredPosts.length,
-    });
-  } catch (error) {
-    console.error("Error fetching queue posts:", error);
-    return NextResponse.json(
-      {
-        success: false,
-        error: "Failed to fetch queue posts",
-        details: error instanceof Error ? error.message : "Unknown error",
-      },
-      { status: 500 },
-    );
-  }
-}
+    const validationResult = validateWithZod(PostBodySchema, bodyResult.data);
+    if (!validationResult.success) {
+      return validationResult;
+    }
 
-/**
- * POST /api/v1/social/queue
- * Create or update a social media post
- *
- * Body:
- * - id?: string (if updating)
- * - tenant: string (required)
- * - title?: string
- * - baseText: string (required)
- * - status: string
- * - scheduledAtUtc?: Date
- * - timezone?: string
- * - platforms: Array<{platform: string, variantText?: string, publishAtUtc?: Date}>
- */
-export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json();
     const {
       id,
       tenant: tenantSlug,
@@ -168,229 +320,284 @@ export async function POST(request: NextRequest) {
       timezone = "UTC",
       platforms = [],
       metadata,
+      mediaIds,
       createdBy = "user",
-    } = body;
+    } = validationResult.data;
 
-    if (!tenantSlug || !baseText) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "Tenant slug and baseText are required",
-        },
-        { status: 400 },
-      );
+    const scheduledAtResult = parseOptionalDate(
+      scheduledAtUtc,
+      "scheduledAtUtc",
+    );
+    if (!scheduledAtResult.success) {
+      return scheduledAtResult;
     }
 
-    // Get tenant ID from slug
-    const [tenant] = await db
-      .select({ id: tenants.id })
-      .from(tenants)
-      .where(eq(tenants.slug, tenantSlug))
-      .limit(1);
-
-    if (!tenant) {
-      return NextResponse.json(
-        { success: false, error: "Tenant not found" },
-        { status: 404 },
-      );
+    const tenantIdResult = await getTenantId(tenantSlug);
+    if (!tenantIdResult.success) {
+      return tenantIdResult;
     }
 
-    // Set tenant context for RLS
-    await db.execute(sql`SELECT set_tenant_context(${tenant.id}::uuid)`);
+    const tenantId = tenantIdResult.data;
+    const contextResult = await setTenantContext(tenantId);
+    if (!contextResult.success) {
+      return contextResult;
+    }
 
-    // If ID is provided, update existing post
-    if (id) {
-      // Update post
-      const [updatedPost] = await db
-        .update(socialPosts)
-        .set({
-          title,
-          baseText,
-          status,
-          scheduledAtUtc: scheduledAtUtc ? new Date(scheduledAtUtc) : null,
-          timezone,
-          metadata,
-          updatedBy: createdBy,
-          updatedAt: new Date(),
-        })
-        .where(and(eq(socialPosts.id, id), eq(socialPosts.tenantId, tenant.id)))
-        .returning();
+    const normalizedMetadata = normalizeMetadata(metadata);
+    const mergedMetadata = mediaIds?.length
+      ? { ...normalizedMetadata, mediaIds }
+      : normalizedMetadata;
 
-      if (!updatedPost) {
-        return NextResponse.json(
-          { success: false, error: "Post not found" },
-          { status: 404 },
-        );
-      }
+    const platformValues = platforms.map((platform) => {
+      const publishAtResult = parseOptionalDate(
+        platform.publishAtUtc,
+        "publishAtUtc",
+      );
 
-      // Delete existing targets
-      await db
-        .delete(socialPostTargets)
-        .where(eq(socialPostTargets.postId, id));
-
-      // Create new targets
-      if (platforms.length > 0) {
-        await db.insert(socialPostTargets).values(
-          platforms.map((p: any) => ({
-            postId: id,
-            platform: p.platform,
-            variantText: p.variantText || baseText,
-            publishAtUtc: p.publishAtUtc
-              ? new Date(p.publishAtUtc)
-              : scheduledAtUtc
-                ? new Date(scheduledAtUtc)
-                : null,
-            status: p.status || status,
+      return publishAtResult.success
+        ? {
+            postId: id ?? "",
+            platform: platform.platform,
+            variantText: platform.variantText || baseText,
+            publishAtUtc:
+              publishAtResult.data ?? scheduledAtResult.data ?? null,
+            status: platform.status || status,
             timezone,
-          })),
-        );
+            assetIds: platform.assetIds ?? [],
+          }
+        : publishAtResult;
+    });
+
+    for (const value of platformValues) {
+      if (!(value as any).success && (value as any).error) {
+        return value as Result<any, DomainError>;
+      }
+    }
+
+    const normalizedPlatforms = platformValues as Array<{
+      postId: string;
+      platform: string;
+      variantText: string;
+      publishAtUtc: Date | null;
+      status: string;
+      timezone: string;
+      assetIds: string[];
+    }>;
+
+    if (id) {
+      const updateResult = await fromPromise(
+        db
+          .update(socialPosts)
+          .set({
+            title,
+            baseText,
+            status,
+            scheduledAtUtc: scheduledAtResult.data,
+            timezone,
+            metadata: mergedMetadata,
+            updatedBy: createdBy,
+            updatedAt: new Date(),
+          })
+          .where(
+            and(eq(socialPosts.id, id), eq(socialPosts.tenantId, tenantId)),
+          )
+          .returning(),
+        (error) =>
+          ErrorFactories.database(
+            "update_social_post",
+            "Failed to update post",
+            undefined,
+            error instanceof Error ? error : undefined,
+          ),
+      );
+
+      if (!updateResult.success) {
+        return updateResult;
       }
 
-      return NextResponse.json({
-        success: true,
-        data: {
-          ...updatedPost,
-          platforms: platforms.map((p: any) => p.platform),
-        },
+      const updatedPost = updateResult.data[0];
+      if (!updatedPost) {
+        return Err(ErrorFactories.notFound("SocialPost", id));
+      }
+
+      const deleteTargetsResult = await fromPromise(
+        db.delete(socialPostTargets).where(eq(socialPostTargets.postId, id)),
+        (error) =>
+          ErrorFactories.database(
+            "delete_social_post_targets",
+            "Failed to reset post targets",
+            undefined,
+            error instanceof Error ? error : undefined,
+          ),
+      );
+
+      if (!deleteTargetsResult.success) {
+        return deleteTargetsResult;
+      }
+
+      if (normalizedPlatforms.length > 0) {
+        const insertTargetsResult = await fromPromise(
+          db.insert(socialPostTargets).values(
+            normalizedPlatforms.map((platform) => ({
+              ...platform,
+              postId: id,
+            })),
+          ),
+          (error) =>
+            ErrorFactories.database(
+              "insert_social_post_targets",
+              "Failed to create post targets",
+              undefined,
+              error instanceof Error ? error : undefined,
+            ),
+        );
+
+        if (!insertTargetsResult.success) {
+          return insertTargetsResult;
+        }
+      }
+
+      return Ok({
+        ...updatedPost,
+        platforms: normalizedPlatforms.map((platform) => platform.platform),
+        mediaIds,
       });
     }
 
-    // Create new post
-    const [newPost] = await db
-      .insert(socialPosts)
-      .values({
-        tenantId: tenant.id,
-        title,
-        baseText,
-        status,
-        scheduledAtUtc: scheduledAtUtc ? new Date(scheduledAtUtc) : null,
-        timezone,
-        createdBy,
-        updatedBy: createdBy,
-        metadata,
-      })
-      .returning();
-
-    // Create targets for each platform
-    if (platforms.length > 0) {
-      await db.insert(socialPostTargets).values(
-        platforms.map((p: any) => ({
-          postId: newPost.id,
-          platform: p.platform,
-          variantText: p.variantText || baseText,
-          publishAtUtc: p.publishAtUtc
-            ? new Date(p.publishAtUtc)
-            : scheduledAtUtc
-              ? new Date(scheduledAtUtc)
-              : null,
-          status: p.status || status,
+    const createResult = await fromPromise(
+      db
+        .insert(socialPosts)
+        .values({
+          tenantId,
+          title,
+          baseText,
+          status,
+          scheduledAtUtc: scheduledAtResult.data,
           timezone,
-        })),
-      );
-    }
-
-    return NextResponse.json({
-      success: true,
-      data: {
-        ...newPost,
-        platforms: platforms.map((p: any) => p.platform),
-      },
-    });
-  } catch (error) {
-    console.error("Error creating/updating post:", error);
-    return NextResponse.json(
-      {
-        success: false,
-        error: "Failed to create/update post",
-        details: error instanceof Error ? error.message : "Unknown error",
-      },
-      { status: 500 },
+          createdBy,
+          updatedBy: createdBy,
+          metadata: mergedMetadata,
+        })
+        .returning(),
+      (error) =>
+        ErrorFactories.database(
+          "create_social_post",
+          "Failed to create post",
+          undefined,
+          error instanceof Error ? error : undefined,
+        ),
     );
-  }
-}
 
-/**
- * DELETE /api/v1/social/queue
- * Delete one or more posts
- *
- * Query params:
- * - ids: comma-separated list of post IDs
- * - tenant: tenant slug (required)
- */
-export async function DELETE(request: NextRequest) {
-  try {
-    const { searchParams } = new URL(request.url);
-    const idsParam = searchParams.get("ids");
-    const tenantSlug = searchParams.get("tenant");
-
-    if (!idsParam || !tenantSlug) {
-      return NextResponse.json(
-        { success: false, error: "Post IDs and tenant slug are required" },
-        { status: 400 },
-      );
+    if (!createResult.success) {
+      return createResult;
     }
 
-    const postIds = idsParam.split(",").filter(Boolean);
+    const newPost = createResult.data[0];
+    if (newPost && normalizedPlatforms.length > 0) {
+      const insertTargetsResult = await fromPromise(
+        db.insert(socialPostTargets).values(
+          normalizedPlatforms.map((platform) => ({
+            ...platform,
+            postId: newPost.id,
+          })),
+        ),
+        (error) =>
+          ErrorFactories.database(
+            "insert_social_post_targets",
+            "Failed to create post targets",
+            undefined,
+            error instanceof Error ? error : undefined,
+          ),
+      );
+
+      if (!insertTargetsResult.success) {
+        return insertTargetsResult;
+      }
+    }
+
+    return Ok({
+      ...newPost,
+      platforms: normalizedPlatforms.map((platform) => platform.platform),
+      mediaIds,
+    });
+  },
+);
+
+export const DELETE = withResultHandler(
+  async (request: NextRequest): Promise<Result<any, DomainError>> => {
+    const queryResult = parseQueryParams(request, DeleteQueueQuerySchema);
+    if (!queryResult.success) {
+      return queryResult;
+    }
+
+    const { ids, tenant: tenantSlug } = queryResult.data;
+    const postIds = ids
+      .split(",")
+      .map((value) => value.trim())
+      .filter(Boolean);
 
     if (postIds.length === 0) {
-      return NextResponse.json(
-        { success: false, error: "No post IDs provided" },
-        { status: 400 },
-      );
+      return Err(ErrorFactories.validation("No post IDs provided", "ids"));
     }
 
-    // Get tenant ID from slug
-    const [tenant] = await db
-      .select({ id: tenants.id })
-      .from(tenants)
-      .where(eq(tenants.slug, tenantSlug))
-      .limit(1);
-
-    if (!tenant) {
-      return NextResponse.json(
-        { success: false, error: "Tenant not found" },
-        { status: 404 },
-      );
+    const tenantIdResult = await getTenantId(tenantSlug);
+    if (!tenantIdResult.success) {
+      return tenantIdResult;
     }
 
-    // Set tenant context for RLS
-    await db.execute(sql`SELECT set_tenant_context(${tenant.id}::uuid)`);
+    const tenantId = tenantIdResult.data;
+    const contextResult = await setTenantContext(tenantId);
+    if (!contextResult.success) {
+      return contextResult;
+    }
 
-    // Delete targets first (foreign key constraint)
-    await db
-      .delete(socialPostTargets)
-      .where(
-        inArray(
-          socialPostTargets.postId,
-          postIds as unknown as [string, ...string[]],
+    const deleteTargetsResult = await fromPromise(
+      db
+        .delete(socialPostTargets)
+        .where(
+          inArray(socialPostTargets.postId, postIds as [string, ...string[]]),
         ),
-      );
-
-    // Delete posts
-    const deletedPosts = await db
-      .delete(socialPosts)
-      .where(
-        and(
-          inArray(socialPosts.id, postIds as unknown as [string, ...string[]]),
-          eq(socialPosts.tenantId, tenant.id),
+      (error) =>
+        ErrorFactories.database(
+          "delete_social_post_targets",
+          "Failed to delete post targets",
+          undefined,
+          error instanceof Error ? error : undefined,
         ),
-      )
-      .returning({ id: socialPosts.id });
-
-    return NextResponse.json({
-      success: true,
-      message: `Deleted ${deletedPosts.length} post${deletedPosts.length !== 1 ? "s" : ""}`,
-      deletedIds: deletedPosts.map((p) => p.id),
-    });
-  } catch (error) {
-    console.error("Error deleting posts:", error);
-    return NextResponse.json(
-      {
-        success: false,
-        error: "Failed to delete posts",
-        details: error instanceof Error ? error.message : "Unknown error",
-      },
-      { status: 500 },
     );
-  }
-}
+
+    if (!deleteTargetsResult.success) {
+      return deleteTargetsResult;
+    }
+
+    const deletedPostsResult = await fromPromise(
+      db
+        .delete(socialPosts)
+        .where(
+          and(
+            inArray(socialPosts.id, postIds as [string, ...string[]]),
+            eq(socialPosts.tenantId, tenantId),
+          ),
+        )
+        .returning({ id: socialPosts.id }),
+      (error) =>
+        ErrorFactories.database(
+          "delete_social_posts",
+          "Failed to delete posts",
+          undefined,
+          error instanceof Error ? error : undefined,
+        ),
+    );
+
+    if (!deletedPostsResult.success) {
+      return deletedPostsResult;
+    }
+
+    return Ok({
+      deletedIds: deletedPostsResult.data.map((post) => post.id),
+      message: `Deleted ${deletedPostsResult.data.length} post${
+        deletedPostsResult.data.length === 1 ? "" : "s"
+      }`,
+    });
+  },
+);

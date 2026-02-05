@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect, useCallback } from "react";
 import { useParams } from "next/navigation";
 
@@ -15,7 +17,13 @@ interface KPIData {
 
 interface Movement {
   id: string;
-  type: "SETTLEMENT" | "REFUND" | "CHARGEBACK" | "WITHDRAWAL" | "FEE" | "CARD_PURCHASE";
+  type:
+    | "SETTLEMENT"
+    | "REFUND"
+    | "CHARGEBACK"
+    | "WITHDRAWAL"
+    | "FEE"
+    | "CARD_PURCHASE";
   amount: number;
   currency: string;
   description: string;
@@ -49,7 +57,9 @@ interface MovementFilters {
 
 export const useFinance = () => {
   const params = useParams();
-  const tenantSlug = params.tenant as string;
+  const rawTenant = params.tenant;
+  const tenantSlug =
+    (Array.isArray(rawTenant) ? rawTenant[0] : rawTenant) || "";
 
   const [data, setData] = useState<FinanceData>({
     kpis: {
@@ -80,7 +90,9 @@ export const useFinance = () => {
       try {
         setData((prev) => ({ ...prev, loading: true, error: null }));
 
-        const response = await fetch(`/api/finance/kpis?period=${period}`);
+        const response = await fetch(
+          `/api/finance/kpis?period=${period}&tenant=${tenantSlug}`,
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch KPIs");
         }
@@ -89,7 +101,7 @@ export const useFinance = () => {
 
         setData((prev) => ({
           ...prev,
-          kpis: result.aggregated,
+          kpis: result.data,
           loading: false,
         }));
 
@@ -104,7 +116,7 @@ export const useFinance = () => {
         return null;
       }
     },
-    [tenantSlug]
+    [tenantSlug],
   );
 
   const fetchMovements = useCallback(
@@ -113,6 +125,9 @@ export const useFinance = () => {
         setData((prev) => ({ ...prev, loading: true, error: null }));
 
         const queryParams = new URLSearchParams();
+
+        // Agregar parámetro tenant
+        queryParams.append("tenant", tenantSlug);
 
         // Convertir filtros a parámetros de query
         Object.entries(filters).forEach(([key, value]) => {
@@ -149,7 +164,7 @@ export const useFinance = () => {
         return null;
       }
     },
-    [tenantSlug]
+    [tenantSlug],
   );
 
   const updateMovementFilters = useCallback(
@@ -158,7 +173,7 @@ export const useFinance = () => {
       setMovementFilters(updatedFilters);
       fetchMovements(updatedFilters);
     },
-    [movementFilters, fetchMovements]
+    [movementFilters, fetchMovements],
   );
 
   const resetMovementFilters = useCallback(() => {
@@ -210,12 +225,23 @@ export const useFinance = () => {
       notes?: string;
     }) => {
       try {
+        // Agregar tenantSlug a los datos de la venta
+        const saleDataWithTenant = {
+          ...saleData,
+          tenantSlug,
+          customerId: null, // Por ahora, podemos mejorar esto después
+          totalAmount: saleData.items.reduce(
+            (total, item) => total + item.quantity * item.unitPrice,
+            0,
+          ),
+        };
+
         const response = await fetch("/api/finance/pos/sales", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(saleData),
+          body: JSON.stringify(saleDataWithTenant),
         });
 
         if (!response.ok) {
@@ -235,12 +261,14 @@ export const useFinance = () => {
         throw error;
       }
     },
-    [fetchMovements, fetchKPIs]
+    [fetchMovements, fetchKPIs, tenantSlug],
   );
 
   const getPOSTerminals = useCallback(async () => {
     try {
-      const response = await fetch("/api/finance/pos/terminals");
+      const response = await fetch(
+        `/api/finance/pos/terminals?tenant=${tenantSlug}`,
+      );
       if (!response.ok) {
         throw new Error("Failed to fetch POS terminals");
       }
@@ -251,7 +279,7 @@ export const useFinance = () => {
       console.error("Error fetching POS terminals:", error);
       return [];
     }
-  }, []);
+  }, [tenantSlug]);
 
   const generateSalesReport = useCallback(
     async (
@@ -261,10 +289,11 @@ export const useFinance = () => {
         terminalId?: string;
         paymentMethod?: string;
         format?: "json" | "pdf" | "excel";
-      } = {}
+      } = {},
     ) => {
       try {
         const params = new URLSearchParams();
+        params.append("tenant", tenantSlug);
         if (filters.from) params.append("from", filters.from);
         if (filters.to) params.append("to", filters.to);
         if (filters.terminalId) params.append("terminalId", filters.terminalId);
@@ -283,7 +312,7 @@ export const useFinance = () => {
         throw error;
       }
     },
-    []
+    [tenantSlug],
   );
 
   const generateProductsReport = useCallback(
@@ -294,10 +323,11 @@ export const useFinance = () => {
         category?: string;
         limit?: number;
         format?: "json" | "pdf" | "excel";
-      } = {}
+      } = {},
     ) => {
       try {
         const params = new URLSearchParams();
+        params.append("tenant", tenantSlug);
         if (filters.from) params.append("from", filters.from);
         if (filters.to) params.append("to", filters.to);
         if (filters.category) params.append("category", filters.category);
@@ -315,7 +345,7 @@ export const useFinance = () => {
         throw error;
       }
     },
-    []
+    [tenantSlug],
   );
 
   const checkMercadoPagoStatus = useCallback(async () => {
@@ -337,7 +367,7 @@ export const useFinance = () => {
     async (
       movementId: string,
       reconciled: boolean,
-      reconciliationId?: string
+      reconciliationId?: string,
     ) => {
       try {
         const response = await fetch(
@@ -350,8 +380,9 @@ export const useFinance = () => {
             body: JSON.stringify({
               reconciled,
               reconciliationId,
+              tenantSlug,
             }),
-          }
+          },
         );
 
         if (!response.ok) {
@@ -367,7 +398,7 @@ export const useFinance = () => {
           movements: prev.movements.map((movement) =>
             movement.id === movementId
               ? { ...movement, reconciled, reconciliationId }
-              : movement
+              : movement,
           ),
         }));
 
@@ -377,7 +408,7 @@ export const useFinance = () => {
         throw error;
       }
     },
-    []
+    [tenantSlug],
   );
 
   // Load initial data

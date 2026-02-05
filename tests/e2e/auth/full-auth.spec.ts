@@ -1,7 +1,8 @@
 import { test, expect } from "@playwright/test";
+import { TEST_CREDENTIALS } from "../helpers/test-helpers";
 
 test.describe.serial("Authentication Flows", () => {
-  const tenantSlug = "wondernails";
+  const { tenantSlug } = TEST_CREDENTIALS;
   const randomSuffix = Math.floor(Math.random() * 100000);
   const newUserEmail = `auto_auth_${randomSuffix}@test.com`;
   const newUserPass = "Password123!";
@@ -79,7 +80,7 @@ test.describe.serial("Authentication Flows", () => {
   test("should login with admin credentials", async ({ page }) => {
     // This verifies the 'standard' admin account often used
     await page.goto(`/t/${tenantSlug}/login`);
-    await page.fill('input[name="email"]', "admin@wondernails.com");
+    await page.fill('input[name="email"]', TEST_CREDENTIALS.adminEmail);
     await page.fill('input[name="password"]', "Password123!");
     await page.click('button:has-text("Iniciar sesión")');
 

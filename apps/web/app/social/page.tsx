@@ -3,6 +3,7 @@
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import FormSelect from "@/components/ui/forms/FormSelect";
 
 export default function SocialPage() {
   const { data: session, status } = useSession();
@@ -104,11 +105,15 @@ export default function SocialPage() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Plataforma
                   </label>
-                  <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                    <option>Facebook</option>
-                    <option>Instagram</option>
-                    <option>Twitter</option>
-                  </select>
+                  <FormSelect
+                    options={[
+                      { value: "Facebook", label: "Facebook" },
+                      { value: "Instagram", label: "Instagram" },
+                      { value: "Twitter", label: "Twitter" },
+                    ]}
+                    // Mocking empty onChange since this is a UI scaffold
+                    onChange={() => {}}
+                  />
                 </div>
 
                 <div>

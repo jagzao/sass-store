@@ -130,6 +130,13 @@ export default function CustomersList({
               </th>
               <th
                 scope="col"
+                // Hide on smaller tablets
+                className="hidden sm:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap"
+              >
+                Última Visita
+              </th>
+              <th
+                scope="col"
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[200px] min-w-[150px]"
               >
                 Contacto
@@ -146,13 +153,6 @@ export default function CustomersList({
                 className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap"
               >
                 Total Gastado
-              </th>
-              <th
-                scope="col"
-                // Hide on smaller tablets
-                className="hidden sm:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap"
-              >
-                Última Visita
               </th>
               <th
                 scope="col"
@@ -191,6 +191,14 @@ export default function CustomersList({
                     </div>
                   </div>
                 </td>
+                <td className="hidden sm:table-cell px-6 py-4 whitespace-nowrap">
+                  <div className="text-sm text-gray-900 flex items-center gap-1">
+                    <Calendar className="h-4 w-4 text-gray-400" />
+                    {customer.lastVisit
+                      ? new Date(customer.lastVisit).toLocaleDateString("es-MX")
+                      : "Sin visitas"}
+                  </div>
+                </td>
                 <td className="px-6 py-4 whitespace-nowrap max-w-[200px]">
                   <div className="text-sm text-gray-900 flex items-center gap-1 truncate">
                     <Phone className="h-4 w-4 text-gray-400 flex-shrink-0" />
@@ -214,14 +222,6 @@ export default function CustomersList({
                   <div className="text-sm font-medium text-gray-900 flex items-center gap-1">
                     <DollarSign className="h-4 w-4 text-green-600" />$
                     {customer.totalSpent.toFixed(2)}
-                  </div>
-                </td>
-                <td className="hidden sm:table-cell px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-900 flex items-center gap-1">
-                    <Calendar className="h-4 w-4 text-gray-400" />
-                    {customer.lastVisit
-                      ? new Date(customer.lastVisit).toLocaleDateString("es-MX")
-                      : "Sin visitas"}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">

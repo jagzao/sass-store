@@ -23,7 +23,7 @@ const updateAdvanceSchema = z.object({
 // GET /api/advances/[id] - Get a single advance
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const session = await auth();
@@ -31,7 +31,7 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const advanceId = params.id;
+    const advanceId = (await params).id;
 
     const [advance] = await db
       .select()
@@ -55,7 +55,7 @@ export async function GET(
 // PUT /api/advances/[id] - Update an advance
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const session = await auth();
@@ -65,7 +65,7 @@ export async function PUT(
 
     const body = await request.json();
     const validatedData = updateAdvanceSchema.parse(body);
-    const advanceId = params.id;
+    const advanceId = (await params).id;
 
     // Check if advance exists
     const [existingAdvance] = await db
@@ -139,7 +139,7 @@ export async function PUT(
 // DELETE /api/advances/[id] - Cancel an advance
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const session = await auth();
@@ -147,7 +147,7 @@ export async function DELETE(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const advanceId = params.id;
+    const advanceId = (await params).id;
 
     // Check if advance exists
     const [existingAdvance] = await db

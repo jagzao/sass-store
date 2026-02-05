@@ -224,8 +224,20 @@ export async function seedTenantData() {
         mode: "booking",
         status: "active",
         branding: {
-          primaryColor: "#DC2626",
+          primaryColor: "#FF8000",
           secondaryColor: "#1F2937",
+          theme: "dark",
+          logo: "https://placeholder.zo.dev/logos/zo-system.png",
+          favicon: "https://placeholder.zo.dev/favicons/zo-system.ico",
+          navLinks: [
+            {
+              name: "Portafolio",
+              href: "https://zo-portfolio.pages.dev/",
+              external: true,
+            },
+            { name: "SaaS Solutions", href: "/t/zo-system/products" },
+            { name: "Servicios", href: "/t/zo-system/services" },
+          ],
         },
         contact: {
           phone: "+1-555-0206",

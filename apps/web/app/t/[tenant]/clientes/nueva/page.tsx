@@ -1,5 +1,4 @@
 import { notFound } from "next/navigation";
-import TenantHeader from "@/components/ui/TenantHeader";
 import { LiveRegionProvider } from "@/components/a11y/LiveRegion";
 import { fetchStatic } from "@/lib/api/fetch-with-cache";
 import type { TenantData } from "@/types/tenant";
@@ -14,28 +13,9 @@ interface PageProps {
 export default async function NewCustomerPage({ params }: PageProps) {
   const { tenant: tenantSlug } = await params;
 
-  // Fetch tenant data
-  let tenantData: TenantData | null = null;
-
-  try {
-    tenantData = await fetchStatic<TenantData>(`/api/tenants/${tenantSlug}`, [
-      "tenant",
-      tenantSlug,
-    ]);
-  } catch (error) {
-    console.error(
-      `[NewCustomerPage] Failed to fetch tenant ${tenantSlug}:`,
-      error,
-    );
-    notFound();
-  }
-
   return (
     <LiveRegionProvider>
       <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
-        {/* Header */}
-        <TenantHeader tenantData={tenantData} />
-
         {/* Main Content */}
         <main className="container mx-auto px-4 py-8">
           {/* Breadcrumb */}

@@ -3,9 +3,11 @@
 import React, { useEffect, useState } from "react";
 
 export const CircuitSpotlight = () => {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [mounted, setMounted] = useState(false);
+  const [mousePosition, setMousePosition] = useState({ x: -1, y: -1 });
 
   useEffect(() => {
+    setMounted(true);
     const handleMouseMove = (e: MouseEvent) => {
       setMousePosition({ x: e.clientX, y: e.clientY });
     };
@@ -16,6 +18,10 @@ export const CircuitSpotlight = () => {
       window.removeEventListener("mousemove", handleMouseMove);
     };
   }, []);
+
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <div className="fixed inset-0 z-[-1] pointer-events-none overflow-hidden bg-[#0D0D0D]">

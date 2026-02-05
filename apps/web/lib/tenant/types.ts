@@ -1,3 +1,9 @@
+import type { TenantBranding as BaseTenantBranding } from "@/types/tenant";
+
+export interface TenantBranding extends BaseTenantBranding {
+  website?: string;
+}
+
 export interface Tenant {
   id: string;
   name: string;
@@ -5,13 +11,7 @@ export interface Tenant {
   description?: string;
   mode: "catalog" | "booking";
   status: "active" | "inactive" | "suspended";
-  branding: {
-    primaryColor: string;
-    secondaryColor: string;
-    logo: string;
-    favicon: string;
-    website?: string;
-  };
+  branding: TenantBranding;
   contact: {
     phone: string;
     email: string;

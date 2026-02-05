@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import UserMenu from "@/components/auth/UserMenu";
+import FormSelect from "@/components/ui/forms/FormSelect";
 
 interface ConfigItem {
   value: any;
@@ -76,7 +77,7 @@ export default function ConfigPage() {
     category: string,
     key: string,
     value: any,
-    description?: string
+    description?: string,
   ) => {
     setSaving(true);
     try {
@@ -345,7 +346,7 @@ export default function ConfigPage() {
               <div className="bg-white rounded-lg shadow-md p-6">
                 {(() => {
                   const category = categories.find(
-                    (c) => c.id === activeCategory
+                    (c) => c.id === activeCategory,
                   );
                   if (!category) return null;
 
@@ -390,7 +391,7 @@ export default function ConfigPage() {
                                             category.id,
                                             setting.key,
                                             e.target.checked,
-                                            setting.description
+                                            setting.description,
                                           )
                                         }
                                         disabled={saving}
@@ -400,28 +401,20 @@ export default function ConfigPage() {
                                   )}
 
                                   {setting.type === "select" && (
-                                    <select
+                                    <FormSelect
                                       value={currentValue}
                                       onChange={(e) =>
                                         updateConfig(
                                           category.id,
                                           setting.key,
                                           e.target.value,
-                                          setting.description
+                                          setting.description,
                                         )
                                       }
                                       disabled={saving}
-                                      className="block w-48 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    >
-                                      {setting.options?.map((option) => (
-                                        <option
-                                          key={option.value}
-                                          value={option.value}
-                                        >
-                                          {option.label}
-                                        </option>
-                                      ))}
-                                    </select>
+                                      selectClassName="w-48 text-sm"
+                                      options={setting.options || []}
+                                    />
                                   )}
 
                                   {setting.type === "number" && (
@@ -433,7 +426,7 @@ export default function ConfigPage() {
                                           category.id,
                                           setting.key,
                                           parseFloat(e.target.value),
-                                          setting.description
+                                          setting.description,
                                         )
                                       }
                                       disabled={saving}
@@ -449,7 +442,7 @@ export default function ConfigPage() {
                                 <div className="mt-2 text-xs text-gray-500">
                                   Última actualización:{" "}
                                   {new Date(
-                                    config[category.id][setting.key].updatedAt
+                                    config[category.id][setting.key].updatedAt,
                                   ).toLocaleString("es-MX")}
                                 </div>
                               )}

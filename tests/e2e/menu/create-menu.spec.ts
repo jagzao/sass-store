@@ -1,9 +1,11 @@
 import { test, expect } from "@playwright/test";
+import { TEST_CREDENTIALS } from "../helpers/test-helpers";
 
 test.describe("Menu Creation Flow - Wondernails", () => {
-  const tenantSlug = "wondernails";
-  const userEmail = "marialiciavh1984@gmail.com";
-  const userPassword = process.env.TEST_SPECIFIC_PASSWORD || "admin";
+  const { tenantSlug } = TEST_CREDENTIALS;
+  const userEmail = TEST_CREDENTIALS.adminEmail;
+  const userPassword =
+    process.env.TEST_SPECIFIC_PASSWORD || TEST_CREDENTIALS.adminPassword;
 
   test("should login, select services, generate menu, and save", async ({
     page,

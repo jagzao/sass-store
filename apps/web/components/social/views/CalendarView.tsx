@@ -16,6 +16,7 @@ import {
 import { es } from "date-fns/locale";
 import { SearchableSelectSingle } from "@/components/ui/forms/SearchableSelectSingle";
 import { SelectOption } from "@/components/ui/forms/SearchableSelect";
+import DayDetailsModal from "../DayDetailsModal";
 
 interface CalendarDay {
   date: Date;
@@ -39,7 +40,7 @@ interface CalendarData {
 
 interface CalendarViewProps {
   tenant: string;
-  onPostClick: (postId: string) => void;
+  onPostClick: (postId: string, data?: any) => void;
   variant?: "default" | "tech";
 }
 
@@ -114,6 +115,9 @@ export default function CalendarView({
     statuses: [] as string[],
     formats: [] as string[],
   });
+  const [selectedDayDetails, setSelectedDayDetails] = useState<Date | null>(
+    null,
+  );
 
   const monthStart = startOfMonth(currentMonth);
   const monthEnd = endOfMonth(currentMonth);
@@ -319,97 +323,133 @@ export default function CalendarView({
           const isToday = isSameDay(date, new Date());
 
           return (
-            <button
-              key={date.toISOString()}
-              onClick={() => setSelectedDate(date)}
-              className={`
-                relative p-2 min-h-[80px] text-left rounded-lg border transition-all hover:shadow-sm
-                ${
-                  variant === "tech"
-                    ? dayData.isCurrentMonth
-                      ? "text-gray-200"
-                      : "text-gray-600"
-                    : dayData.isCurrentMonth
-                      ? "text-gray-900"
-                      : "text-gray-400"
+            <div key={date.toISOString()} className="relative group">
+              <button
+                onClick={() => {
+                  setSelectedDate(date);
+                  setSelectedDayDetails(date);
+                }}
+                onDoubleClick={() =>
+                  onPostClick("new-post", {
+                    scheduledDate: format(date, "yyyy-MM-dd"),
+                  })
                 }
-                ${
-                  isSelected
-                    ? variant === "tech"
-                      ? "ring-1 ring-[#FF8000] border-[#FF8000]/50"
-                      : "ring-2 ring-blue-500 border-blue-200"
-                    : variant === "tech"
-                      ? "border-white/10"
-                      : "border-gray-200 hover:border-gray-300"
-                }
-                ${
-                  isToday
-                    ? variant === "tech"
-                      ? "bg-[#FF8000]/10"
-                      : "bg-blue-50"
-                    : getStatusColor(dayData)
-                }
-              `}
-            >
-              {/* Date number */}
-              <div
-                className={`text-sm font-medium ${isToday ? (variant === "tech" ? "text-[#FF8000]" : "text-blue-600") : ""}`}
+                className={`
+                  w-full h-full min-h-[80px] text-left p-2 rounded-lg border transition-all hover:shadow-sm
+                  ${
+                    variant === "tech"
+                      ? dayData.isCurrentMonth
+                        ? "text-gray-200"
+                        : "text-gray-600"
+                      : dayData.isCurrentMonth
+                        ? "text-gray-900"
+                        : "text-gray-400"
+                  }
+                  ${
+                    isSelected
+                      ? variant === "tech"
+                        ? "ring-1 ring-[#FF8000] border-[#FF8000]/50"
+                        : "ring-2 ring-blue-500 border-blue-200"
+                      : variant === "tech"
+                        ? "border-white/10"
+                        : "border-gray-200 hover:border-gray-300"
+                  }
+                  ${
+                    isToday
+                      ? variant === "tech"
+                        ? "bg-[#FF8000]/10"
+                        : "bg-blue-50"
+                      : getStatusColor(dayData)
+                  }
+                `}
               >
-                {format(date, "d")}
-              </div>
+                {/* Date number */}
+                <div
+                  className={`text-sm font-medium ${isToday ? (variant === "tech" ? "text-[#FF8000]" : "text-blue-600") : ""}`}
+                >
+                  {format(date, "d")}
+                </div>
 
-              {/* Post indicators */}
-              {dayData.postCount > 0 && (
-                <div className="mt-1 space-y-1">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-medium text-gray-600">
-                      {dayData.postCount} post
-                      {dayData.postCount !== 1 ? "s" : ""}
-                    </span>
-                    <div className="text-xs">
-                      {getPlatformEmojis(dayData.platforms)}
+                {/* Post indicators */}
+                {dayData.postCount > 0 && (
+                  <div className="mt-1 space-y-1">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-medium text-gray-600">
+                        {dayData.postCount} post
+                        {dayData.postCount !== 1 ? "s" : ""}
+                      </span>
+                      <div className="text-xs">
+                        {getPlatformEmojis(dayData.platforms)}
+                      </div>
+                    </div>
+
+                    {/* Status indicators */}
+                    <div className="flex space-x-1">
+                      {calendarData[format(date, "yyyy-MM-dd")]?.draft_count >
+                        0 && (
+                        <div
+                          className="w-2 h-2 bg-yellow-400 rounded-full"
+                          title="Borradores"
+                        />
+                      )}
+                      {calendarData[format(date, "yyyy-MM-dd")]
+                        ?.scheduled_count > 0 && (
+                        <div
+                          className="w-2 h-2 bg-blue-400 rounded-full"
+                          title="Programados"
+                        />
+                      )}
+                      {calendarData[format(date, "yyyy-MM-dd")]
+                        ?.published_count > 0 && (
+                        <div
+                          className="w-2 h-2 bg-green-400 rounded-full"
+                          title="Publicados"
+                        />
+                      )}
+                      {calendarData[format(date, "yyyy-MM-dd")]?.failed_count >
+                        0 && (
+                        <div
+                          className="w-2 h-2 bg-red-400 rounded-full"
+                          title="Fallidos"
+                        />
+                      )}
                     </div>
                   </div>
+                )}
 
-                  {/* Status indicators */}
-                  <div className="flex space-x-1">
-                    {calendarData[format(date, "yyyy-MM-dd")]?.draft_count >
-                      0 && (
-                      <div
-                        className="w-2 h-2 bg-yellow-400 rounded-full"
-                        title="Borradores"
-                      />
-                    )}
-                    {calendarData[format(date, "yyyy-MM-dd")]?.scheduled_count >
-                      0 && (
-                      <div
-                        className="w-2 h-2 bg-blue-400 rounded-full"
-                        title="Programados"
-                      />
-                    )}
-                    {calendarData[format(date, "yyyy-MM-dd")]?.published_count >
-                      0 && (
-                      <div
-                        className="w-2 h-2 bg-green-400 rounded-full"
-                        title="Publicados"
-                      />
-                    )}
-                    {calendarData[format(date, "yyyy-MM-dd")]?.failed_count >
-                      0 && (
-                      <div
-                        className="w-2 h-2 bg-red-400 rounded-full"
-                        title="Fallidos"
-                      />
-                    )}
-                  </div>
-                </div>
-              )}
+                {/* Today indicator */}
+                {isToday && (
+                  <div className="absolute top-1 right-1 w-2 h-2 bg-blue-600 rounded-full" />
+                )}
+              </button>
 
-              {/* Today indicator */}
-              {isToday && (
-                <div className="absolute top-1 right-1 w-2 h-2 bg-blue-600 rounded-full" />
-              )}
-            </button>
+              {/* Add Button on Hover */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onPostClick("new-post", {
+                    scheduledDate: format(date, "yyyy-MM-dd"),
+                  });
+                }}
+                className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 p-1 bg-blue-50 text-blue-600 rounded-full hover:bg-blue-100 transition-opacity z-10"
+                title="Crear post"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 4v16m8-8H4"
+                  />
+                </svg>
+              </button>
+            </div>
           );
         })}
       </div>
@@ -703,10 +743,12 @@ export default function CalendarView({
             <SearchableSelectSingle
               options={platformOptions}
               value={filters.platforms[0] || ""}
-              onChange={(option: SelectOption | null) => {
+              onChange={(option) => {
+                const value =
+                  typeof option === "string" ? option : option?.value;
                 setFilters((prev) => ({
                   ...prev,
-                  platforms: option?.value ? [option.value] : [],
+                  platforms: value ? [value] : [],
                 }));
               }}
               placeholder="Seleccionar plataforma"
@@ -724,10 +766,12 @@ export default function CalendarView({
             <SearchableSelectSingle
               options={statusOptions}
               value={filters.statuses[0] || ""}
-              onChange={(option: SelectOption | null) => {
+              onChange={(option) => {
+                const value =
+                  typeof option === "string" ? option : option?.value;
                 setFilters((prev) => ({
                   ...prev,
-                  statuses: option?.value ? [option.value] : [],
+                  statuses: value ? [value] : [],
                 }));
               }}
               placeholder="Seleccionar estado"
@@ -745,10 +789,12 @@ export default function CalendarView({
             <SearchableSelectSingle
               options={formatOptions}
               value={filters.formats[0] || ""}
-              onChange={(option: SelectOption | null) => {
+              onChange={(option) => {
+                const value =
+                  typeof option === "string" ? option : option?.value;
                 setFilters((prev) => ({
                   ...prev,
-                  formats: option?.value ? [option.value] : [],
+                  formats: value ? [value] : [],
                 }));
               }}
               placeholder="Seleccionar formato"
@@ -792,15 +838,35 @@ export default function CalendarView({
             </div>
 
             <div className="text-gray-500">
-              Doble clic en un día para crear un post
+              Clic para detalle • Doble clic para crear
             </div>
           </div>
         </div>
       )}
 
+      {/* Day Details Modal */}
+      {selectedDayDetails && (
+        <DayDetailsModal
+          tenant={tenant}
+          date={selectedDayDetails}
+          isOpen={!!selectedDayDetails}
+          onClose={() => setSelectedDayDetails(null)}
+          onEditPost={(postId) => {
+            setSelectedDayDetails(null);
+            onPostClick(postId);
+          }}
+          onCreatePost={(date) => {
+            setSelectedDayDetails(null);
+            onPostClick("new-post", {
+              scheduledDate: format(date, "yyyy-MM-dd"),
+            });
+          }}
+          variant={variant}
+        />
+      )}
       {isLoading && (
         <div className="fixed inset-0 bg-white bg-opacity-75 flex items-center justify-center z-50">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
         </div>
       )}
     </div>

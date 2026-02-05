@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { resolveTenant } from "@/lib/tenant/resolver";
 import { TopNav } from "@/components/navigation/top-nav";
 import { getTenantDataForPage } from "@/lib/db/tenant-service";
+import { CalendarSettings } from "./CalendarSettings";
 
 interface PageProps {
   params: Promise<{
@@ -390,59 +391,7 @@ export default async function CalendarAdminPage({ params }: PageProps) {
               </div>
 
               {/* Settings */}
-              <div className="bg-white rounded-lg shadow-md p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                  Configuración
-                </h3>
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Duración por defecto
-                    </label>
-                    <select className="w-full px-3 py-2 border border-gray-300 rounded text-sm">
-                      <option>30 minutos</option>
-                      <option>45 minutos</option>
-                      <option selected>60 minutos</option>
-                      <option>90 minutos</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Buffer entre citas
-                    </label>
-                    <select className="w-full px-3 py-2 border border-gray-300 rounded text-sm">
-                      <option>Sin buffer</option>
-                      <option selected>15 minutos</option>
-                      <option>30 minutos</option>
-                    </select>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="text-sm font-medium text-gray-700">
-                        Auto-confirmar
-                      </div>
-                      <div className="text-xs text-gray-500">
-                        Confirmar citas automáticamente
-                      </div>
-                    </div>
-                    <input type="checkbox" className="rounded" />
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="text-sm font-medium text-gray-700">
-                        Recordatorios SMS
-                      </div>
-                      <div className="text-xs text-gray-500">
-                        Enviar 24h antes
-                      </div>
-                    </div>
-                    <input type="checkbox" defaultChecked className="rounded" />
-                  </div>
-                </div>
-              </div>
+              <CalendarSettings />
             </div>
           </div>
         </div>

@@ -1,182 +1,22 @@
-"use client";
-
-import { useEffect, useState, Suspense } from "react";
-import { useParams } from "next/navigation";
+import { getTenantDataForPage } from "@/lib/db/tenant-service";
 import ProductCard from "@/components/products/ProductCard";
-import TenantPageSkeleton from "@/components/ui/TenantPageSkeleton";
-import { useCart } from "@/lib/cart/cart-store";
 import { LiveRegionProvider } from "@/components/a11y/LiveRegion";
-import { buildApiUrl } from "@/lib/api/client-config";
-import type {
-  TenantData,
-  Product,
-  ProductMetadata,
-  TenantBranding,
-} from "@/types/tenant";
-import TenantHeader from "@/components/ui/TenantHeader";
+import { Product, ProductMetadata, TenantBranding } from "@/types/tenant";
 
-export default function ProductsPage() {
-  const params = useParams();
-  const { addItem } = useCart();
+interface ProductsPageProps {
+  params: Promise<{
+    tenant: string;
+  }>;
+}
 
-  const [tenantSlug, setTenantSlug] = useState<string>("");
-  const [tenantData, setTenantData] = useState<TenantData | null>(null);
-  const [loading, setLoading] = useState(true);
+export default async function ProductsPage({ params }: ProductsPageProps) {
+  const resolvedParams = await params;
+  const tenantData = await getTenantDataForPage(resolvedParams.tenant);
+  const { branding, products, slug: tenantSlug } = tenantData;
 
-  useEffect(() => {
-    const resolveParams = async () => {
-      try {
-        const resolvedParams = await params;
-        setTenantSlug(resolvedParams.tenant as string);
-      } catch (error) {
-        console.error("[PRODUCTS PAGE] Error resolving params:", error);
-        // Fallback to a default tenant if params resolution fails
-        setTenantSlug("unknown");
-      }
-    };
-
-    resolveParams();
-  }, [params]);
-
-  useEffect(() => {
-    const loadTenantData = async () => {
-      try {
-        console.log(
-          "[PRODUCTS PAGE] Starting to load tenant data for:",
-          tenantSlug,
-        );
-
-        // Cargar tenant y productos en paralelo para mejor performance
-        const tenantUrl = buildApiUrl(`/api/tenants/${tenantSlug}`);
-        const productsUrl = buildApiUrl(
-          `/api/v1/public/products?tenant=${tenantSlug}&limit=20`,
-        );
-
-        console.log("[PRODUCTS PAGE] Fetching from:", {
-          tenantUrl,
-          productsUrl,
-        });
-
-        const [tenantResponse, productsResponse] = await Promise.all([
-          fetch(tenantUrl).then((r) => {
-            console.log("[PRODUCTS PAGE] Tenant API response:", r.ok, r.status);
-            return r.ok ? r.json() : null;
-          }),
-          fetch(productsUrl).then((r) => {
-            console.log(
-              "[PRODUCTS PAGE] Products API response:",
-              r.ok,
-              r.status,
-            );
-            return r.ok ? r.json() : null;
-          }),
-        ]);
-
-        console.log("[PRODUCTS PAGE] Tenant response:", tenantResponse);
-        console.log("[PRODUCTS PAGE] Products response:", productsResponse);
-
-        const tenantInfo = tenantResponse;
-        const products = productsResponse?.data || [];
-
-        console.log(
-          "[PRODUCTS PAGE] Processed - tenantInfo:",
-          !!tenantInfo,
-          "products count:",
-          products.length,
-        );
-
-        // Combine data
-        if (tenantInfo) {
-          console.log(
-            "[PRODUCTS PAGE] Setting tenant data with real tenant info",
-          );
-          setTenantData({
-            ...tenantInfo,
-            products: products,
-          });
-        } else {
-          // Fallback: just products with mock tenant data
-          console.log(
-            "[PRODUCTS PAGE] Setting tenant data with fallback mock data",
-          );
-          setTenantData({
-            id: `tenant-${tenantSlug}`,
-            slug: tenantSlug,
-            name: tenantSlug.charAt(0).toUpperCase() + tenantSlug.slice(1),
-            products: products,
-            services: [],
-            branding: { primaryColor: "#DC2626", secondaryColor: "#991B1B" },
-            contact: { email: "info@example.com", phone: "+52 55 1234 5678" },
-          });
-        }
-        console.log("[PRODUCTS PAGE] Tenant data set successfully");
-      } catch (error) {
-        console.error("[PRODUCTS PAGE] Error loading tenant data:", error);
-      } finally {
-        setLoading(false);
-        console.log("[PRODUCTS PAGE] Loading complete");
-      }
-    };
-
-    loadTenantData();
-  }, [tenantSlug]);
-
-  const handleAddToCart = (productId: string, quantity: number) => {
-    if (!tenantData) return;
-
-    const product = tenantData.products.find(
-      (p: Product) => p.id === productId,
-    );
-    if (!product) return;
-
-    const metadata: ProductMetadata = product.metadata || {};
-
-    // Add item to cart with specified quantity
-    addItem(
-      {
-        sku: product.id,
-        name: product.name,
-        price: Number(product.price),
-        image: metadata.image || "📦",
-        variant: {
-          tenant: tenantSlug,
-          type: "product",
-        },
-      },
-      quantity,
-    );
-  };
-
-  if (loading) {
-    return <TenantPageSkeleton />;
-  }
-
-  if (!tenantData) {
-    return (
-      <div className="min-h-screen bg-red-50 flex items-center justify-center">
-        <div className="bg-white p-8 rounded-lg shadow-md max-w-md text-center">
-          <h1 className="text-2xl font-bold text-red-600 mb-4">Error</h1>
-          <p className="text-gray-700 mb-4">No se pudo cargar el tenant.</p>
-          <a
-            href="/t/zo-system"
-            className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
-          >
-            Ir a la Tienda Principal
-          </a>
-        </div>
-      </div>
-    );
-  }
-
-  const branding: TenantBranding = tenantData.branding;
   const categories = Array.from(
-    new Set(
-      tenantData.products.map(
-        (p: Product) => p.metadata?.category || "general",
-      ),
-    ),
+    new Set(products.map((p: Product) => p.metadata?.category || "general")),
   );
-  const hasServices = tenantData.services.length > 0;
 
   return (
     <LiveRegionProvider>
@@ -202,21 +42,31 @@ export default function ProductsPage() {
 
         {/* Products Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {tenantData.products.map((product: Product) => {
+          {products.map((product: Product) => {
             const metadata: ProductMetadata = product.metadata || {};
+            // Pass branding.primaryColor if available, or fall back to a default
+            const primaryColor = branding?.primaryColor || "#000000";
+
+            // Safe casting for metadata properties
+            const image =
+              typeof metadata.image === "string" ? metadata.image : undefined;
+            const category =
+              typeof metadata.category === "string"
+                ? metadata.category
+                : "general";
+
             return (
               <ProductCard
                 key={product.id}
                 id={product.id}
                 name={product.name}
-                description={product.description}
-                price={product.price}
-                image={metadata.image}
-                category={metadata.category}
-                primaryColor={branding.primaryColor}
+                description={product.description || ""}
+                price={Number(product.price)}
+                image={image}
+                category={category}
+                primaryColor={primaryColor}
                 tenantSlug={tenantSlug}
                 metadata={metadata}
-                onAddToCart={handleAddToCart}
                 variant={tenantSlug === "wondernails" ? "luxury" : "default"}
               />
             );
@@ -232,7 +82,7 @@ export default function ProductsPage() {
             <div className="text-center">
               <div
                 className="w-12 h-12 rounded-full mx-auto mb-4 flex items-center justify-center text-white font-bold"
-                style={{ backgroundColor: branding.primaryColor }}
+                style={{ backgroundColor: branding?.primaryColor || "#000" }}
               >
                 1
               </div>
@@ -244,7 +94,7 @@ export default function ProductsPage() {
             <div className="text-center">
               <div
                 className="w-12 h-12 rounded-full mx-auto mb-4 flex items-center justify-center text-white font-bold"
-                style={{ backgroundColor: branding.primaryColor }}
+                style={{ backgroundColor: branding?.primaryColor || "#000" }}
               >
                 2
               </div>
@@ -256,7 +106,7 @@ export default function ProductsPage() {
             <div className="text-center">
               <div
                 className="w-12 h-12 rounded-full mx-auto mb-4 flex items-center justify-center text-white font-bold"
-                style={{ backgroundColor: branding.primaryColor }}
+                style={{ backgroundColor: branding?.primaryColor || "#000" }}
               >
                 3
               </div>

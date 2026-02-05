@@ -1,12 +1,15 @@
 "use client";
 
 import { useTenant } from "@/hooks/useTenant";
+import { useTenantSlug } from "@/lib/tenant/client-resolver";
 import SocialMediaManager from "@/components/social/SocialMediaManager";
 
 export default function SocialPage() {
   const { tenant } = useTenant();
+  const tenantSlug = useTenantSlug();
+  const resolvedSlug = tenant?.slug ?? tenantSlug;
 
-  if (!tenant) {
+  if (!resolvedSlug) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
@@ -25,8 +28,8 @@ export default function SocialPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <SocialMediaManager
-        tenant={tenant.slug}
-        variant={tenant.slug === "zo-system" ? "tech" : "default"}
+        tenant={resolvedSlug}
+        variant={resolvedSlug === "zo-system" ? "tech" : "default"}
       />
     </div>
   );

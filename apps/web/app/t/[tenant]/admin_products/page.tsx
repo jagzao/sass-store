@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import UserMenu from "@/components/auth/UserMenu";
 import { Trash2, Pencil } from "lucide-react";
 
-import { useTenantGuard } from "@/lib/auth/hooks/useTenantGuard";
+import { useTenantTheme } from "@/lib/hooks/useTenantTheme";
 import AdminRouteGuard from "@/components/auth/AdminRouteGuard";
 
 interface Product {
@@ -22,12 +22,9 @@ interface Product {
 }
 
 export default function AdminProductsPage() {
-  // useTenantGuard();
   const params = useParams();
   const tenantSlug = params.tenant as string;
-
-  // Debug: Verificar que el tenantSlug se está obteniendo correctamente
-  console.log("Tenant slug:", tenantSlug);
+  const { isDark, getFormStyles } = useTenantTheme(tenantSlug);
 
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -326,9 +323,7 @@ export default function AdminProductsPage() {
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        SKU *
-                      </label>
+                      <label className={getFormStyles().label}>SKU *</label>
                       <input
                         type="text"
                         required
@@ -336,15 +331,13 @@ export default function AdminProductsPage() {
                         onChange={(e) =>
                           setFormData({ ...formData, sku: e.target.value })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className={getFormStyles().input}
                         placeholder="PROD-001"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Nombre *
-                      </label>
+                      <label className={getFormStyles().label}>Nombre *</label>
                       <input
                         type="text"
                         required
@@ -352,16 +345,14 @@ export default function AdminProductsPage() {
                         onChange={(e) =>
                           setFormData({ ...formData, name: e.target.value })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className={getFormStyles().input}
                         placeholder="Nombre del producto"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Descripción
-                    </label>
+                    <label className={getFormStyles().label}>Descripción</label>
                     <textarea
                       value={formData.description}
                       onChange={(e) =>
@@ -371,7 +362,7 @@ export default function AdminProductsPage() {
                         })
                       }
                       rows={3}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className={getFormStyles().textarea}
                       placeholder="Descripción detallada del producto"
                     />
                   </div>
@@ -389,7 +380,7 @@ export default function AdminProductsPage() {
                         onChange={(e) =>
                           setFormData({ ...formData, price: e.target.value })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className={getFormStyles().input}
                         placeholder="0.00"
                       />
                     </div>
@@ -405,7 +396,7 @@ export default function AdminProductsPage() {
                         onChange={(e) =>
                           setFormData({ ...formData, category: e.target.value })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className={getFormStyles().input}
                         placeholder="Categoría del producto"
                       />
                     </div>

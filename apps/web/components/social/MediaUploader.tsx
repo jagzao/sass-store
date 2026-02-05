@@ -1,263 +1,361 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
-import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
+import {
+  Upload,
+  X,
+  GripVertical,
+  Image as ImageIcon,
+  Video,
+  Loader2,
+} from "lucide-react";
 
-interface MediaUploaderProps {
-  value?: string;
-  type?: "image" | "video" | "both";
-  maxSize?: number; // in MB
-  onUpload: (url: string, type: "image" | "video") => void;
-  onRemove?: () => void;
-  className?: string;
+interface MediaItem {
+  id: string;
+  url: string;
+  type: "image" | "video";
 }
 
+interface MediaUploaderProps {
+  tenant: string;
+  mediaUrls: string[];
+  mediaIds: string[];
+  onMediaChange: (urls: string[], ids: string[]) => void;
+  maxFiles?: number;
+  acceptTypes?: string[];
+  variant?: "default" | "tech";
+  disabled?: boolean;
+}
+
+const VIDEO_EXTENSIONS = [".mp4", ".mov", ".webm", ".mkv", ".avi"];
+
+const inferMediaType = (url: string): "image" | "video" => {
+  if (url.startsWith("data:video")) {
+    return "video";
+  }
+
+  const lowerUrl = url.toLowerCase();
+  if (VIDEO_EXTENSIONS.some((ext) => lowerUrl.includes(ext))) {
+    return "video";
+  }
+
+  return "image";
+};
+
 export default function MediaUploader({
-  value,
-  type = "both",
-  maxSize = 10,
-  onUpload,
-  onRemove,
-  className = "",
+  tenant,
+  mediaUrls,
+  mediaIds,
+  onMediaChange,
+  maxFiles = 10,
+  acceptTypes = ["image/*", "video/*"],
+  variant = "default",
+  disabled = false,
 }: MediaUploaderProps) {
-  const [uploading, setUploading] = useState(false);
-  const [progress, setProgress] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [preview, setPreview] = useState<string | null>(value || null);
-  const [mediaType, setMediaType] = useState<"image" | "video" | null>(null);
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const acceptedTypes = {
-    image: "image/jpeg,image/png,image/gif,image/webp",
-    video: "video/mp4,video/webm,video/quicktime",
-    both: "image/jpeg,image/png,image/gif,image/webp,video/mp4,video/webm,video/quicktime",
+  useEffect(() => {
+    if (mediaUrls.length === 0 || mediaIds.length === 0) {
+      setMediaItems([]);
+      return;
+    }
+
+    if (mediaUrls.length !== mediaIds.length) {
+      return;
+    }
+
+    const items = mediaUrls.map((url, index) => ({
+      id: mediaIds[index],
+      url,
+      type: inferMediaType(url),
+    }));
+
+    setMediaItems(items);
+  }, [mediaUrls, mediaIds]);
+
+  const styles = {
+    text: variant === "tech" ? "text-gray-200" : "text-gray-900",
+    textSecondary: variant === "tech" ? "text-gray-400" : "text-gray-500",
+    border: variant === "tech" ? "border-gray-800" : "border-gray-200",
+    dragActive: variant === "tech" ? "border-[#FF8000]" : "border-blue-500",
+    cardBg: variant === "tech" ? "bg-[#1a1a1a]" : "bg-gray-50",
   };
 
-  const handleFileSelect = useCallback(
-    async (file: File) => {
-      setError(null);
-
-      // Validate file size
-      const fileSizeMB = file.size / (1024 * 1024);
-      if (fileSizeMB > maxSize) {
-        setError(`File size must be less than ${maxSize}MB`);
-        return;
-      }
-
-      // Determine media type
-      const isImage = file.type.startsWith("image/");
-      const isVideo = file.type.startsWith("video/");
-      const detectedType = isImage ? "image" : isVideo ? "video" : null;
-
-      if (!detectedType) {
-        setError("Invalid file type");
-        return;
-      }
-
-      setMediaType(detectedType);
-
-      // Create preview
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setPreview(e.target?.result as string);
-      };
-      reader.readAsDataURL(file);
-
-      // Simulate upload with progress
-      // In real implementation, this would use Cloudinary or another service
-      setUploading(true);
-      setProgress(0);
-
-      try {
-        // Simulate upload progress
-        for (let i = 0; i <= 100; i += 10) {
-          await new Promise((resolve) => setTimeout(resolve, 100));
-          setProgress(i);
-        }
-
-        // In real implementation, upload to Cloudinary here
-        // const formData = new FormData();
-        // formData.append('file', file);
-        // formData.append('upload_preset', 'your_preset');
-        // const response = await fetch('https://api.cloudinary.com/v1_1/your_cloud/upload', {
-        //   method: 'POST',
-        //   body: formData
-        // });
-        // const data = await response.json();
-        // const uploadedUrl = data.secure_url;
-
-        // For now, use the preview URL as a placeholder
-        const uploadedUrl = URL.createObjectURL(file);
-
-        onUpload(uploadedUrl, detectedType);
-        setProgress(100);
-      } catch (err) {
-        setError("Upload failed. Please try again.");
-        setPreview(null);
-      } finally {
-        setUploading(false);
-      }
-    },
-    [maxSize, onUpload],
-  );
-
-  const handleDrop = useCallback(
-    (e: React.DragEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-
-      const files = Array.from(e.dataTransfer.files);
-      if (files.length > 0) {
-        handleFileSelect(files[0]);
-      }
-    },
-    [handleFileSelect],
-  );
-
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const handleDragOver = (event: React.DragEvent) => {
+    event.preventDefault();
+    if (disabled) return;
+    setIsDragging(true);
   };
 
-  const handleClick = () => {
-    fileInputRef.current?.click();
+  const handleDragLeave = () => {
+    setIsDragging(false);
   };
 
-  const handleRemove = () => {
-    setPreview(null);
-    setMediaType(null);
-    setProgress(0);
+  const handleDrop = async (event: React.DragEvent) => {
+    event.preventDefault();
+    setIsDragging(false);
+
+    if (disabled) return;
+
+    const files = Array.from(event.dataTransfer.files);
+    await handleFiles(files);
+  };
+
+  const handleFileSelect = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const files = Array.from(event.target.files || []);
+    await handleFiles(files);
+
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
-    onRemove?.();
+  };
+
+  const handleFiles = async (files: File[]) => {
+    setError(null);
+
+    if (files.length === 0) {
+      return;
+    }
+
+    const remainingSlots = maxFiles - mediaItems.length;
+    if (files.length > remainingSlots) {
+      setError(
+        `Solo puedes agregar ${remainingSlots} archivos más (máximo ${maxFiles}).`,
+      );
+      return;
+    }
+
+    const invalidFiles = files.filter(
+      (file) =>
+        !file.type.startsWith("image/") && !file.type.startsWith("video/"),
+    );
+    if (invalidFiles.length > 0) {
+      setError("Solo se permiten imágenes y videos.");
+      return;
+    }
+
+    const oversizedFiles = files.filter((file) => {
+      const isVideo = file.type.startsWith("video/");
+      const maxSize = isVideo ? 50 * 1024 * 1024 : 5 * 1024 * 1024;
+      return file.size > maxSize;
+    });
+
+    if (oversizedFiles.length > 0) {
+      setError(
+        "Algunos archivos exceden el tamaño máximo (5MB imágenes, 50MB videos).",
+      );
+      return;
+    }
+
+    setIsUploading(true);
+    setUploadProgress(0);
+
+    try {
+      const uploadedItems: MediaItem[] = [];
+
+      for (let index = 0; index < files.length; index += 1) {
+        const file = files[index];
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("tenant", tenant);
+        formData.append("assetType", "social");
+
+        const response = await fetch("/api/v1/social/media/upload", {
+          method: "POST",
+          body: formData,
+        });
+
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+          const message = result?.error?.message || "Failed to upload file";
+          throw new Error(message);
+        }
+
+        uploadedItems.push({
+          id: result.data.mediaId,
+          url: result.data.url,
+          type: file.type.startsWith("video/") ? "video" : "image",
+        });
+
+        setUploadProgress(Math.round(((index + 1) / files.length) * 100));
+      }
+
+      const newItems = [...mediaItems, ...uploadedItems];
+      setMediaItems(newItems);
+      onMediaChange(
+        newItems.map((item) => item.url),
+        newItems.map((item) => item.id),
+      );
+    } catch (uploadError) {
+      setError(
+        uploadError instanceof Error
+          ? uploadError.message
+          : "Error al subir archivos.",
+      );
+    } finally {
+      setIsUploading(false);
+      setUploadProgress(0);
+    }
+  };
+
+  const handleRemoveMedia = (index: number) => {
+    const newItems = mediaItems.filter((_, itemIndex) => itemIndex !== index);
+    setMediaItems(newItems);
+    onMediaChange(
+      newItems.map((item) => item.url),
+      newItems.map((item) => item.id),
+    );
+  };
+
+  const handleReorder = (fromIndex: number, toIndex: number) => {
+    if (fromIndex === toIndex) return;
+    const newItems = [...mediaItems];
+    const [moved] = newItems.splice(fromIndex, 1);
+    newItems.splice(toIndex, 0, moved);
+    setMediaItems(newItems);
+    onMediaChange(
+      newItems.map((item) => item.url),
+      newItems.map((item) => item.id),
+    );
   };
 
   return (
-    <div className={`space-y-4 ${className}`}>
-      {!preview ? (
-        <div
-          onClick={handleClick}
-          onDrop={handleDrop}
-          onDragOver={handleDragOver}
-          className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-blue-500 transition-colors"
-        >
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept={acceptedTypes[type]}
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              if (file) handleFileSelect(file);
-            }}
-            className="hidden"
-          />
+    <div className={`space-y-4 ${styles.text}`}>
+      <div
+        className={`border-2 border-dashed rounded-lg p-6 text-center transition-all ${
+          isDragging ? styles.dragActive : styles.border
+        } ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+        onClick={() => !disabled && fileInputRef.current?.click()}
+      >
+        <input
+          ref={fileInputRef}
+          type="file"
+          multiple
+          accept={acceptTypes.join(",")}
+          onChange={handleFileSelect}
+          className="hidden"
+          disabled={disabled}
+        />
 
-          <div className="space-y-2">
-            <svg
-              className="mx-auto h-12 w-12 text-gray-400"
-              stroke="currentColor"
-              fill="none"
-              viewBox="0 0 48 48"
-              aria-hidden="true"
-            >
-              <path
-                d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
-                strokeWidth={2}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+        <Upload className={`mx-auto h-10 w-10 mb-3 ${styles.textSecondary}`} />
+        <p className={`text-sm font-medium ${styles.text}`}>
+          Arrastra imágenes o videos aquí
+        </p>
+        <p className={`text-xs ${styles.textSecondary}`}>
+          o haz clic para seleccionar archivos
+        </p>
+        <p className={`text-xs mt-2 ${styles.textSecondary}`}>
+          Máximo {maxFiles} archivos • 5MB imágenes, 50MB videos
+        </p>
+      </div>
 
-            <div className="text-sm text-gray-600">
-              <span className="font-medium text-blue-600 hover:text-blue-500">
-                Click to upload
-              </span>
-              {" or drag and drop"}
-            </div>
-
-            <p className="text-xs text-gray-500">
-              {type === "image" && "PNG, JPG, GIF up to 10MB"}
-              {type === "video" && "MP4, WEBM up to 10MB"}
-              {type === "both" && "Images or videos up to 10MB"}
-            </p>
-          </div>
-        </div>
-      ) : (
-        <div className="relative">
-          {/* Preview */}
-          <div className="relative rounded-lg overflow-hidden bg-gray-100">
-            {mediaType === "image" ? (
-              <Image
-                src={preview}
-                alt="Preview"
-                width={400}
-                height={300}
-                className="w-full h-auto object-contain max-h-96"
-              />
-            ) : (
-              <video
-                src={preview}
-                controls
-                className="w-full h-auto max-h-96"
-              />
-            )}
-
-            {/* Upload Progress Overlay */}
-            {uploading && (
-              <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                <div className="text-center text-white">
-                  <div className="text-lg font-medium mb-2">Uploading...</div>
-                  <div className="w-64 bg-gray-200 rounded-full h-2">
-                    <div
-                      className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                      style={{ width: `${progress}%` }}
-                    />
-                  </div>
-                  <div className="text-sm mt-2">{progress}%</div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Actions */}
-          {!uploading && (
-            <div className="mt-2 flex gap-2">
-              <button
-                onClick={handleClick}
-                className="flex-1 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
-              >
-                Change
-              </button>
-              <button
-                onClick={handleRemove}
-                className="flex-1 px-4 py-2 text-sm font-medium text-red-700 bg-white border border-red-300 rounded-md hover:bg-red-50"
-              >
-                Remove
-              </button>
-            </div>
-          )}
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-red-700 text-sm">
+          {error}
         </div>
       )}
 
-      {/* Error Message */}
-      {error && (
-        <div className="rounded-md bg-red-50 p-4">
-          <div className="flex">
-            <svg
-              className="h-5 w-5 text-red-400"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fillRule="evenodd"
-                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                clipRule="evenodd"
-              />
-            </svg>
-            <div className="ml-3">
-              <p className="text-sm font-medium text-red-800">{error}</p>
+      {isUploading && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2 text-sm text-blue-700">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Subiendo archivos...
             </div>
+            <span className="text-sm text-blue-600">
+              {Math.round(uploadProgress)}%
+            </span>
+          </div>
+          <div className="w-full bg-blue-200 rounded-full h-2">
+            <div
+              className="bg-blue-600 h-2 rounded-full transition-all"
+              style={{ width: `${uploadProgress}%` }}
+            />
+          </div>
+        </div>
+      )}
+
+      {mediaItems.length > 0 && (
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <h3 className={`text-sm font-medium ${styles.text}`}>
+              Contenido multimedia
+            </h3>
+            <span className={`text-xs ${styles.textSecondary}`}>
+              {mediaItems.length}/{maxFiles} items
+            </span>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            {mediaItems.map((item, index) => (
+              <div
+                key={item.id}
+                className={`relative rounded-lg overflow-hidden border ${styles.border} ${styles.cardBg}`}
+                draggable={!disabled}
+                onDragStart={() => setDragIndex(index)}
+                onDragOver={(event) => event.preventDefault()}
+                onDrop={() => {
+                  if (dragIndex === null) return;
+                  handleReorder(dragIndex, index);
+                  setDragIndex(null);
+                }}
+              >
+                {item.type === "image" ? (
+                  <img
+                    src={item.url}
+                    alt={`Media ${index + 1}`}
+                    className="w-full aspect-square object-cover"
+                  />
+                ) : (
+                  <div className="w-full aspect-square bg-gray-200 flex items-center justify-center">
+                    <Video className="h-10 w-10 text-gray-400" />
+                  </div>
+                )}
+
+                <div className="absolute top-2 left-2 bg-black/70 text-white text-[10px] px-2 py-1 rounded">
+                  {item.type === "image" ? (
+                    <span className="flex items-center gap-1">
+                      <ImageIcon className="h-3 w-3" />
+                      IMG
+                    </span>
+                  ) : (
+                    <span className="flex items-center gap-1">
+                      <Video className="h-3 w-3" />
+                      VID
+                    </span>
+                  )}
+                </div>
+
+                <div className="absolute top-2 right-2 bg-blue-600 text-white text-[10px] px-2 py-1 rounded">
+                  {index + 1}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => handleRemoveMedia(index)}
+                  className="absolute bottom-2 right-2 bg-red-600 text-white p-1 rounded"
+                  disabled={disabled}
+                >
+                  <X className="h-4 w-4" />
+                </button>
+
+                <div className="absolute bottom-2 left-2 bg-black/70 text-white p-1 rounded">
+                  <GripVertical className="h-4 w-4" />
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       )}

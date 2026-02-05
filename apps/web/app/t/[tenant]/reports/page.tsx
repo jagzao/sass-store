@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import UserMenu from "@/components/auth/UserMenu";
+import FormSelect from "@/components/ui/forms/FormSelect";
 import { useFinance } from "@/lib/hooks/use-finance";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
@@ -257,16 +258,17 @@ export default function ReportsPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Método de Pago
                 </label>
-                <select
+                <FormSelect
                   value={paymentMethod}
                   onChange={(e) => setPaymentMethod(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="">Todos</option>
-                  <option value="cash">Efectivo</option>
-                  <option value="card">Tarjeta</option>
-                  <option value="mercadopago">Mercado Pago</option>
-                </select>
+                  selectClassName="w-full"
+                  options={[
+                    { value: "", label: "Todos" },
+                    { value: "cash", label: "Efectivo" },
+                    { value: "card", label: "Tarjeta" },
+                    { value: "mercadopago", label: "Mercado Pago" },
+                  ]}
+                />
               </div>
 
               <div>

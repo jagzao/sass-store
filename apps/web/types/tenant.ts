@@ -7,6 +7,8 @@ export interface TenantBranding {
   secondaryColor: string;
   logo?: string;
   favicon?: string;
+  theme?: "light" | "dark";
+  navLinks?: { name: string; href: string; external?: boolean }[];
 }
 
 export interface TenantContact {

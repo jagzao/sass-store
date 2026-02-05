@@ -19,7 +19,7 @@ export interface CarouselItemDetailProps {
 }
 
 export const CarouselItemDetail = memo<CarouselItemDetailProps>(
-  function CarouselItemDetail({ slide, onAddToCart, onCheckout, onClose }) {
+  ({ slide, onAddToCart, onCheckout, onClose }) => {
     return (
       <div className={styles.detail} data-testid="detail-view">
         <div className={styles.detailTitle}>
@@ -67,6 +67,14 @@ export const CarouselItemDetail = memo<CarouselItemDetailProps>(
             aria-label="Volver a la vista del carrusel"
           >
             VER TODOS
+          </button>
+          <button
+            className="sr-only"
+            onClick={onClose}
+            data-testid="close-detail"
+            aria-label="Cerrar detalle"
+          >
+            Cerrar detalle
           </button>
         </div>
       </div>

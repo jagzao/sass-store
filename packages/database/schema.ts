@@ -448,6 +448,15 @@ export const tenantsRelations = relations(tenants, ({ many }) => ({
   customerVisits: many(customerVisits),
   socialPosts: many(socialPosts),
   serviceQuotes: many(serviceQuotes),
+  // Inventory management relations
+  productInventory: many(productInventory),
+  serviceProducts: many(serviceProducts),
+  inventoryTransactions: many(inventoryTransactions),
+  inventoryAlerts: many(inventoryAlerts),
+  productAlertConfig: many(productAlertConfig),
+  // Retouch configuration relations
+  serviceRetouchConfig: many(serviceRetouchConfig),
+  tenantHolidays: many(tenantHolidays),
 }));
 
 export const tenantConfigsRelations = relations(tenantConfigs, ({ one }) => ({
@@ -462,6 +471,18 @@ export const productsRelations = relations(products, ({ one, many }) => ({
     references: [tenants.id],
   }),
   reviews: many(productReviews),
+  // Inventory management relations
+  inventory: one(productInventory, {
+    fields: [products.id],
+    references: [productInventory.productId],
+  }),
+  serviceProducts: many(serviceProducts),
+  inventoryTransactions: many(inventoryTransactions),
+  inventoryAlerts: many(inventoryAlerts),
+  alertConfig: one(productAlertConfig, {
+    fields: [products.id],
+    references: [productAlertConfig.productId],
+  }),
 }));
 
 export const servicesRelations = relations(services, ({ one, many }) => ({
@@ -471,6 +492,8 @@ export const servicesRelations = relations(services, ({ one, many }) => ({
   }),
   bookings: many(bookings),
   quotes: many(serviceQuotes),
+  // Inventory management relations
+  serviceProducts: many(serviceProducts),
 }));
 
 export const serviceQuotesRelations = relations(serviceQuotes, ({ one }) => ({
@@ -1506,6 +1529,8 @@ export const customers = pgTable(
     balanceFavor: decimal("balance_favor", { precision: 10, scale: 2 })
       .notNull()
       .default("0"), // Saldo a favor del cliente
+    nextRetouchDate: date("next_retouch_date"), // Próxima fecha de retoque calculada automáticamente
+    retouchServiceId: uuid("retouch_service_id").references(() => services.id), // Servicio base para cálculo de retoque
     metadata: jsonb("metadata").default("{}"), // Additional flexible data
     createdAt: timestamp("created_at").defaultNow(),
     updatedAt: timestamp("updated_at").defaultNow(),
@@ -1620,6 +1645,68 @@ export const customerVisitServices = pgTable(
   }),
 );
 
+// Service Retouch Configuration table - Configurable retouch frequency per service
+export const serviceRetouchConfig = pgTable(
+  "service_retouch_config",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .references(() => tenants.id)
+      .notNull(),
+    serviceId: uuid("service_id")
+      .references(() => services.id, { onDelete: "cascade" })
+      .notNull(),
+    frequencyType: varchar("frequency_type", { length: 20 })
+      .notNull()
+      .default("days"), // 'days', 'weeks', 'months'
+    frequencyValue: integer("frequency_value").notNull().default(15), // Number of days/weeks/months
+    isActive: boolean("is_active").notNull().default(true),
+    isDefault: boolean("is_default").notNull().default(false), // Default configuration for tenant
+    businessDaysOnly: boolean("business_days_only").notNull().default(false), // Only count business days
+    metadata: jsonb("metadata").default("{}"),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    tenantServiceUnique: uniqueIndex(
+      "service_retouch_config_tenant_service_idx",
+    ).on(table.tenantId, table.serviceId),
+    tenantIdx: index("service_retouch_config_tenant_idx").on(table.tenantId),
+    serviceIdx: index("service_retouch_config_service_idx").on(table.serviceId),
+    tenantDefaultIdx: index("service_retouch_config_tenant_default_idx").on(
+      table.tenantId,
+      table.isDefault,
+    ),
+  }),
+);
+
+// Tenant Holidays table - Days off and holidays for retouch calculation
+export const tenantHolidays = pgTable(
+  "tenant_holidays",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .references(() => tenants.id)
+      .notNull(),
+    name: varchar("name", { length: 100 }).notNull(), // Holiday name
+    date: date("date").notNull(), // Holiday date
+    isRecurring: boolean("is_recurring").notNull().default(false), // Recurs every year
+    affectsRetouch: boolean("affects_retouch").notNull().default(true), // Affects retouch calculation
+    notes: text("notes"),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    tenantDateUnique: uniqueIndex("tenant_holidays_tenant_date_idx").on(
+      table.tenantId,
+      table.date,
+    ),
+    tenantIdx: index("tenant_holidays_tenant_idx").on(table.tenantId),
+    dateIdx: index("tenant_holidays_date_idx").on(table.date),
+    recurringIdx: index("tenant_holidays_recurring_idx").on(table.isRecurring),
+  }),
+);
+
 // Customer Management Relations
 export const customersRelations = relations(customers, ({ one, many }) => ({
   tenant: one(tenants, {
@@ -1629,6 +1716,10 @@ export const customersRelations = relations(customers, ({ one, many }) => ({
   visits: many(customerVisits),
   advances: many(customerAdvances),
   advanceApplications: many(advanceApplications),
+  retouchService: one(services, {
+    fields: [customers.retouchServiceId],
+    references: [services.id],
+  }),
 }));
 
 export const customerVisitsRelations = relations(
@@ -1832,3 +1923,331 @@ export const mercadopagoPaymentsRelations = relations(
     }),
   }),
 );
+
+// ========================================================================
+// INVENTORY MANAGEMENT - Product Inventory & Service Connection
+// ========================================================================
+
+// Product Inventory table - Tracks stock levels per tenant
+export const productInventory = pgTable(
+  "product_inventory",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .references(() => tenants.id)
+      .notNull(),
+    productId: uuid("product_id")
+      .references(() => products.id, { onDelete: "cascade" })
+      .notNull(),
+    quantity: decimal("quantity", { precision: 10, scale: 2 })
+      .notNull()
+      .default("0"),
+    reorderLevel: decimal("reorder_level", { precision: 10, scale: 2 })
+      .notNull()
+      .default("0"),
+    reorderQuantity: decimal("reorder_quantity", { precision: 10, scale: 2 })
+      .notNull()
+      .default("0"),
+    unitCost: decimal("unit_cost", { precision: 10, scale: 2 }), // Cost per unit for inventory valuation
+    location: varchar("location", { length: 100 }), // Physical location (e.g., "Shelf A-1")
+    metadata: jsonb("metadata").default("{}"),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    tenantProductUnique: uniqueIndex("product_inventory_tenant_product_idx").on(
+      table.tenantId,
+      table.productId,
+    ),
+    tenantIdx: index("product_inventory_tenant_idx").on(table.tenantId),
+    productIdx: index("product_inventory_product_idx").on(table.productId),
+    // Índices compuestos para consultas de bajo stock
+    tenantLowStockIdx: index("product_inventory_tenant_low_stock_idx").on(
+      table.tenantId,
+      table.quantity,
+    ),
+    tenantReorderIdx: index("product_inventory_tenant_reorder_idx").on(
+      table.tenantId,
+      table.reorderLevel,
+    ),
+  }),
+);
+
+// Service Products table - Many-to-many relationship between services and products
+export const serviceProducts = pgTable(
+  "service_products",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .references(() => tenants.id)
+      .notNull(),
+    serviceId: uuid("service_id")
+      .references(() => services.id, { onDelete: "cascade" })
+      .notNull(),
+    productId: uuid("product_id")
+      .references(() => products.id, { onDelete: "cascade" })
+      .notNull(),
+    quantity: decimal("quantity", { precision: 10, scale: 2 })
+      .notNull()
+      .default("1"), // Quantity of product used per service
+    optional: boolean("optional").notNull().default(false), // Whether this product is optional for the service
+    metadata: jsonb("metadata").default("{}"),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    tenantServiceProductUnique: uniqueIndex(
+      "service_products_tenant_service_product_idx",
+    ).on(table.tenantId, table.serviceId, table.productId),
+    tenantIdx: index("service_products_tenant_idx").on(table.tenantId),
+    serviceIdx: index("service_products_service_idx").on(table.serviceId),
+    productIdx: index("service_products_product_idx").on(table.productId),
+    // Índice compuesto para obtener todos los productos de un servicio
+    serviceTenantIdx: index("service_products_service_tenant_idx").on(
+      table.serviceId,
+      table.tenantId,
+    ),
+  }),
+);
+
+// Inventory Transactions table - Audit trail for all inventory movements
+export const inventoryTransactions = pgTable(
+  "inventory_transactions",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .references(() => tenants.id)
+      .notNull(),
+    productId: uuid("product_id")
+      .references(() => products.id)
+      .notNull(),
+    type: varchar("type", { length: 20 }).notNull(), // 'deduction', 'addition', 'adjustment', 'initial'
+    quantity: decimal("quantity", { precision: 10, scale: 2 }).notNull(), // Positive for additions, negative for deductions
+    previousQuantity: decimal("previous_quantity", {
+      precision: 10,
+      scale: 2,
+    }).notNull(), // Quantity before transaction
+    newQuantity: decimal("new_quantity", { precision: 10, scale: 2 }).notNull(), // Quantity after transaction
+    referenceType: varchar("reference_type", { length: 50 }), // 'service_completion', 'manual_adjustment', 'purchase', 'return'
+    referenceId: uuid("reference_id"), // ID of the related record (e.g., visit_id, adjustment_id)
+    notes: text("notes"), // Additional notes about the transaction
+    userId: text("user_id").references(() => users.id), // User who performed the transaction
+    metadata: jsonb("metadata").default("{}"),
+    createdAt: timestamp("created_at").defaultNow(),
+  },
+  (table) => ({
+    tenantIdx: index("inventory_transactions_tenant_idx").on(table.tenantId),
+    productIdx: index("inventory_transactions_product_idx").on(table.productId),
+    typeIdx: index("inventory_transactions_type_idx").on(table.type),
+    referenceIdx: index("inventory_transactions_reference_idx").on(
+      table.referenceType,
+      table.referenceId,
+    ),
+    createdAtIdx: index("inventory_transactions_created_at_idx").on(
+      table.createdAt,
+    ),
+    // Índices compuestos para consultas de auditoría
+    tenantProductTypeIdx: index(
+      "inventory_transactions_tenant_product_type_idx",
+    ).on(table.tenantId, table.productId, table.type),
+    tenantDateIdx: index("inventory_transactions_tenant_date_idx").on(
+      table.tenantId,
+      table.createdAt,
+    ),
+  }),
+);
+
+// Inventory Alerts table - Tracks low stock and other inventory alerts
+export const inventoryAlerts = pgTable(
+  "inventory_alerts",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .references(() => tenants.id)
+      .notNull(),
+    productId: uuid("product_id")
+      .references(() => products.id)
+      .notNull(),
+    alertType: varchar("alert_type", { length: 50 }).notNull(), // 'low_stock', 'out_of_stock', 'overstock', 'expiry_warning'
+    severity: varchar("severity", { length: 20 }).notNull().default("medium"), // 'low', 'medium', 'high', 'critical'
+    threshold: decimal("threshold", { precision: 10, scale: 2 }), // Threshold that triggered the alert
+    currentValue: decimal("current_value", { precision: 10, scale: 2 }), // Current value that triggered the alert
+    status: varchar("status", { length: 20 }).notNull().default("active"), // 'active', 'acknowledged', 'resolved'
+    acknowledgedBy: text("acknowledged_by").references(() => users.id), // User who acknowledged the alert
+    acknowledgedAt: timestamp("acknowledged_at"), // When the alert was acknowledged
+    resolvedAt: timestamp("resolved_at"), // When the alert was resolved
+    notes: text("notes"), // Notes about the alert resolution
+    metadata: jsonb("metadata").default("{}"),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    tenantIdx: index("inventory_alerts_tenant_idx").on(table.tenantId),
+    productIdx: index("inventory_alerts_product_idx").on(table.productId),
+    alertTypeIdx: index("inventory_alerts_alert_type_idx").on(table.alertType),
+    severityIdx: index("inventory_alerts_severity_idx").on(table.severity),
+    statusIdx: index("inventory_alerts_status_idx").on(table.status),
+    createdAtIdx: index("inventory_alerts_created_at_idx").on(table.createdAt),
+    // Índices compuestos para consultas de alertas activas
+    tenantActiveAlertsIdx: index("inventory_alerts_tenant_active_idx").on(
+      table.tenantId,
+      table.status,
+    ),
+    tenantSeverityIdx: index("inventory_alerts_tenant_severity_idx").on(
+      table.tenantId,
+      table.severity,
+    ),
+  }),
+);
+
+// Product Alert Configuration table - Custom alert settings per product
+export const productAlertConfig = pgTable(
+  "product_alert_config",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .references(() => tenants.id)
+      .notNull(),
+    productId: uuid("product_id")
+      .references(() => products.id, { onDelete: "cascade" })
+      .notNull(),
+    lowStockThreshold: decimal("low_stock_threshold", {
+      precision: 10,
+      scale: 2,
+    }), // Custom low stock threshold
+    lowStockEnabled: boolean("low_stock_enabled").notNull().default(true), // Enable low stock alerts
+    outOfStockEnabled: boolean("out_of_stock_enabled").notNull().default(true), // Enable out of stock alerts
+    overstockThreshold: decimal("overstock_threshold", {
+      precision: 10,
+      scale: 2,
+    }), // Custom overstock threshold
+    overstockEnabled: boolean("overstock_enabled").notNull().default(false), // Enable overstock alerts
+    expiryWarningDays: integer("expiry_warning_days"), // Days before expiry to warn (if product has expiry)
+    expiryWarningEnabled: boolean("expiry_warning_enabled")
+      .notNull()
+      .default(false), // Enable expiry warnings
+    emailNotifications: boolean("email_notifications").notNull().default(true), // Send email notifications for alerts
+    metadata: jsonb("metadata").default("{}"),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    tenantProductUnique: uniqueIndex(
+      "product_alert_config_tenant_product_idx",
+    ).on(table.tenantId, table.productId),
+    tenantIdx: index("product_alert_config_tenant_idx").on(table.tenantId),
+    productIdx: index("product_alert_config_product_idx").on(table.productId),
+  }),
+);
+
+// Inventory Management Relations
+export const productInventoryRelations = relations(
+  productInventory,
+  ({ one, many }) => ({
+    tenant: one(tenants, {
+      fields: [productInventory.tenantId],
+      references: [tenants.id],
+    }),
+    product: one(products, {
+      fields: [productInventory.productId],
+      references: [products.id],
+    }),
+    transactions: many(inventoryTransactions),
+    alerts: many(inventoryAlerts),
+    alertConfig: one(productAlertConfig, {
+      fields: [productInventory.productId],
+      references: [productAlertConfig.productId],
+    }),
+  }),
+);
+
+export const serviceProductsRelations = relations(
+  serviceProducts,
+  ({ one }) => ({
+    tenant: one(tenants, {
+      fields: [serviceProducts.tenantId],
+      references: [tenants.id],
+    }),
+    service: one(services, {
+      fields: [serviceProducts.serviceId],
+      references: [services.id],
+    }),
+    product: one(products, {
+      fields: [serviceProducts.productId],
+      references: [products.id],
+    }),
+  }),
+);
+
+export const inventoryTransactionsRelations = relations(
+  inventoryTransactions,
+  ({ one }) => ({
+    tenant: one(tenants, {
+      fields: [inventoryTransactions.tenantId],
+      references: [tenants.id],
+    }),
+    product: one(products, {
+      fields: [inventoryTransactions.productId],
+      references: [products.id],
+    }),
+    user: one(users, {
+      fields: [inventoryTransactions.userId],
+      references: [users.id],
+    }),
+  }),
+);
+
+export const inventoryAlertsRelations = relations(
+  inventoryAlerts,
+  ({ one }) => ({
+    tenant: one(tenants, {
+      fields: [inventoryAlerts.tenantId],
+      references: [tenants.id],
+    }),
+    product: one(products, {
+      fields: [inventoryAlerts.productId],
+      references: [products.id],
+    }),
+    acknowledgedByUser: one(users, {
+      fields: [inventoryAlerts.acknowledgedBy],
+      references: [users.id],
+    }),
+  }),
+);
+
+export const productAlertConfigRelations = relations(
+  productAlertConfig,
+  ({ one }) => ({
+    tenant: one(tenants, {
+      fields: [productAlertConfig.tenantId],
+      references: [tenants.id],
+    }),
+    product: one(products, {
+      fields: [productAlertConfig.productId],
+      references: [products.id],
+    }),
+  }),
+);
+
+// Service Retouch Configuration Relations
+export const serviceRetouchConfigRelations = relations(
+  serviceRetouchConfig,
+  ({ one }) => ({
+    tenant: one(tenants, {
+      fields: [serviceRetouchConfig.tenantId],
+      references: [tenants.id],
+    }),
+    service: one(services, {
+      fields: [serviceRetouchConfig.serviceId],
+      references: [services.id],
+    }),
+  }),
+);
+
+// Tenant Holidays Relations
+export const tenantHolidaysRelations = relations(tenantHolidays, ({ one }) => ({
+  tenant: one(tenants, {
+    fields: [tenantHolidays.tenantId],
+    references: [tenants.id],
+  }),
+}));

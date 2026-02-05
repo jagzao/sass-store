@@ -109,9 +109,21 @@ export async function middleware(request: NextRequest) {
   }
 
   // 3. Validate tenant access for authenticated users
-  const tenantValidation = await validateTenantAccess(request);
-  if (tenantValidation.status === 302) {
-    return tenantValidation; // This is a redirect response
+  // Skip validation for public routes that don't satisfy the tenant logic
+  const isPublicRoute =
+    pathname === `/t/${resolvedTenant.slug}` ||
+    pathname.startsWith(`/t/${resolvedTenant.slug}/products`) ||
+    pathname.startsWith(`/t/${resolvedTenant.slug}/cart`) ||
+    pathname.startsWith(`/t/${resolvedTenant.slug}/checkout`) ||
+    pathname.startsWith(`/t/${resolvedTenant.slug}/login`) ||
+    pathname.startsWith(`/t/${resolvedTenant.slug}/services`);
+
+  let tenantValidation;
+  if (!isPublicRoute) {
+    tenantValidation = await validateTenantAccess(request);
+    if (tenantValidation.status === 302) {
+      return tenantValidation; // This is a redirect response
+    }
   }
 
   // 4. Set headers for all internal requests

@@ -84,13 +84,14 @@ export async function cleanupTestData() {
   if (!testDb || !testClient) return;
 
   // List of tables to clean (in order to avoid foreign key constraints)
+  // Start with most dependent tables, end with root tables
   const tables = [
     "product_reviews",
-    "bookings",
-    "user_carts",
     "order_items",
-    "orders",
+    "user_carts",
+    "bookings",
     "payments",
+    "orders",
     "products",
     "services",
     "staff",
@@ -123,7 +124,7 @@ export async function createTestTenant(
   const [tenant] = await db
     .insert(schema.tenants)
     .values({
-      slug: `test-${Date.now()}`,
+      slug: `test-${Date.now()}-${Math.random().toString(36).substring(7)}`,
       name: "Test Tenant",
       mode: "catalog",
       branding: {},
@@ -150,7 +151,7 @@ export async function createTestProduct(
     .insert(schema.products)
     .values({
       tenantId,
-      sku: `TEST-${Date.now()}`,
+      sku: `TEST-${Date.now()}-${Math.random().toString(36).substring(7)}`,
       name: "Test Product",
       price: "99.99",
       category: "test",
@@ -178,7 +179,7 @@ export async function createTestService(
       tenantId,
       name: "Test Service",
       description: "Test service description",
-      duration: 60,
+      duration: "60",
       price: "49.99",
       active: true,
       ...overrides,
@@ -200,7 +201,7 @@ export async function createTestUser(
     .insert(schema.users)
     .values({
       id: `user-${Date.now()}-${Math.random().toString(36).substring(7)}`,
-      email: `test-${Date.now()}@example.com`,
+      email: `test-${Date.now()}-${Math.random().toString(36).substring(7)}@example.com`,
       name: "Test User",
       password: "hashed_password_here",
       ...overrides,

@@ -5,6 +5,7 @@ import { X, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import FormInput from "@/components/ui/forms/FormInput";
 import FormSelect from "@/components/ui/forms/FormSelect";
+import SearchableSelect from "@/components/ui/forms/SearchableSelect";
 import FormTextarea from "@/components/ui/forms/FormTextarea";
 import { QuantityControl } from "@/components/ui/forms/QuantityControl";
 import { cn } from "@/lib/utils";
@@ -399,11 +400,11 @@ export default function AddEditVisitModal({
                   >
                     <div className="grid grid-cols-12 gap-4 items-start">
                       <div className="col-span-5">
-                        <FormSelect
+                        <SearchableSelect
                           label="Servicio"
                           value={service.serviceId}
-                          onChange={(e) =>
-                            handleServiceChange(index, e.target.value)
+                          onChange={(val: any) =>
+                            handleServiceChange(index, val?.value || "")
                           }
                           required
                           placeholder="Seleccionar servicio..."
@@ -411,7 +412,12 @@ export default function AddEditVisitModal({
                             value: s.id,
                             label: `${s.name} - $${Number(s.price).toFixed(2)}`,
                           }))}
-                          selectClassName="text-sm"
+                          menuPortalTarget={
+                            typeof document !== "undefined"
+                              ? document.body
+                              : undefined
+                          }
+                          className="text-sm"
                         />
                       </div>
 

@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+
 import { db } from "@sass-store/database";
 import { products } from "@sass-store/database/schema";
 import { eq, and, desc } from "drizzle-orm";
@@ -36,6 +35,7 @@ export async function GET(request: NextRequest) {
             updatedAt: products.updatedAt,
           })
           .from(products)
+          .where(eq(products.tenantId, tenantId))
           .orderBy(desc(products.createdAt))
           .limit(limit);
 
@@ -124,6 +124,7 @@ export async function POST(request: NextRequest) {
             active: active !== undefined ? active : true,
             metadata: metadata || {},
             imageUrl: null,
+            tenantId,
           })
           .returning();
 

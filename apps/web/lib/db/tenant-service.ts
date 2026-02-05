@@ -5,418 +5,6 @@ import { notFound } from "next/navigation";
 import { getOrSetCache, CacheKeys } from "@/lib/cache/redis";
 import type { Product, Service } from "@/types/tenant";
 
-// Mock tenant data for self-healing when DB is not available
-const mockTenants = {
-  "zo-system": {
-    id: "zo-system",
-    slug: "zo-system",
-    name: "Zo System",
-    description: "Desarrollo de software premium y consultoría tecnológica",
-    mode: "catalog",
-    status: "active",
-    branding: {
-      primaryColor: "#DC2626",
-      secondaryColor: "#991B1B",
-      logo: "",
-      favicon: "",
-    },
-    contact: {
-      phone: "+52 55 1234 5678",
-      email: "info@zo-system.com",
-      address: "Ciudad de México, México",
-    },
-    location: { latitude: 19.4326, longitude: -99.1332, placeId: "" },
-    quotas: { storageGB: 5, monthlyBudget: 100, apiCallsPerHour: 1000 },
-  },
-  wondernails: {
-    id: "wondernails",
-    slug: "wondernails",
-    name: "Wonder Nails Studio",
-    description: "Manicure premium con los mejores acabados",
-    mode: "booking",
-    status: "active",
-    branding: {
-      primaryColor: "#e91e63",
-      secondaryColor: "#ad1457",
-      logo: "",
-      favicon: "",
-    },
-    contact: {
-      phone: "+52 555 123 4567",
-      email: "info@wondernails.mx",
-      address: "Colonia Roma Norte, CDMX",
-    },
-    location: { latitude: 19.4326, longitude: -99.1332, placeId: "" },
-    quotas: { storageGB: 5, monthlyBudget: 100, apiCallsPerHour: 1000 },
-  },
-  vigistudio: {
-    id: "vigistudio",
-    slug: "vigistudio",
-    name: "Vigi Studio",
-    description: "Corte y peinado profesional",
-    mode: "booking",
-    status: "active",
-    branding: {
-      primaryColor: "#9c27b0",
-      secondaryColor: "#7b1fa2",
-      logo: "",
-      favicon: "",
-    },
-    contact: {
-      phone: "+52 555 234 5678",
-      email: "info@vigistudio.mx",
-      address: "Polanco, CDMX",
-    },
-    location: { latitude: 19.4326, longitude: -99.1332, placeId: "" },
-    quotas: { storageGB: 5, monthlyBudget: 100, apiCallsPerHour: 1000 },
-  },
-  "nom-nom": {
-    id: "nom-nom",
-    slug: "nom-nom",
-    name: "Nom Nom",
-    description: "Deliciosa comida casera y delivery rápido",
-    mode: "catalog",
-    status: "active",
-    branding: {
-      primaryColor: "#ff5722",
-      secondaryColor: "#d84315",
-      logo: "",
-      favicon: "",
-    },
-    contact: {
-      phone: "+52 555 345 6789",
-      email: "info@nom-nom.mx",
-      address: "Condesa, CDMX",
-    },
-    location: { latitude: 19.4326, longitude: -99.1332, placeId: "" },
-    quotas: { storageGB: 5, monthlyBudget: 100, apiCallsPerHour: 1000 },
-  },
-  "centro-tenistico": {
-    id: "centro-tenistico",
-    slug: "centro-tenistico",
-    name: "Centro Tenístico",
-    description: "Clases de tenis y reserva de canchas",
-    mode: "booking",
-    status: "active",
-    branding: {
-      primaryColor: "#4caf50",
-      secondaryColor: "#388e3c",
-      logo: "",
-      favicon: "",
-    },
-    contact: {
-      phone: "+52 555 456 7890",
-      email: "info@centro-tenistico.mx",
-      address: "Santa Fe, CDMX",
-    },
-    location: { latitude: 19.4326, longitude: -99.1332, placeId: "" },
-    quotas: { storageGB: 5, monthlyBudget: 100, apiCallsPerHour: 1000 },
-  },
-  delirios: {
-    id: "delirios",
-    slug: "delirios",
-    name: "Delirios Healthy Kitchen",
-    description: "Comida saludable gourmet con ingredientes orgánicos",
-    mode: "catalog",
-    status: "active",
-    branding: {
-      primaryColor: "#65A30D",
-      secondaryColor: "#4D7C0F",
-      logo: "",
-      favicon: "",
-    },
-    contact: {
-      phone: "+52 555 567 8901",
-      email: "info@delirios.mx",
-      address: "Condesa, CDMX",
-    },
-    location: { latitude: 19.4326, longitude: -99.1332, placeId: "" },
-    quotas: { storageGB: 5, monthlyBudget: 100, apiCallsPerHour: 1000 },
-  },
-};
-
-// Mock services data
-const mockServices = {
-  wondernails: [
-    {
-      id: "1",
-      name: "Gel Manicure",
-      description: "Manicure con gel de larga duración",
-      price: 45.0,
-      duration: 60,
-      featured: true,
-      active: true,
-      metadata: {
-        includes: [
-          "Nail shaping",
-          "Cuticle care",
-          "Gel polish",
-          "Hand massage",
-        ],
-      },
-    },
-    {
-      id: "2",
-      name: "Pedicure Spa",
-      description: "Pedicure relajante con masaje",
-      price: 55.0,
-      duration: 75,
-      featured: true,
-      active: true,
-      metadata: { includes: ["Foot soak", "Nail care", "Massage", "Polish"] },
-    },
-  ],
-  vigistudio: [
-    {
-      id: "3",
-      name: "Signature Blowout",
-      description: "Peinado profesional con productos premium",
-      price: 55.0,
-      duration: 45,
-      featured: true,
-      active: true,
-      metadata: {
-        includes: ["Hair wash", "Styling", "Blow dry", "Finishing products"],
-      },
-    },
-  ],
-  "nom-nom": [
-    {
-      id: "4",
-      name: "Ensalada César",
-      description: "Ensalada fresca con pollo grillado",
-      price: 95.0,
-      duration: 15,
-      featured: true,
-      active: true,
-      metadata: {
-        includes: ["Lechuga", "Pollo", "Crutones", "Aderezo césar"],
-        category: "salads",
-      },
-    },
-    {
-      id: "5",
-      name: "Pizza Margherita",
-      description: "Pizza italiana clásica con ingredientes frescos",
-      price: 140.0,
-      duration: 20,
-      featured: true,
-      active: true,
-      metadata: {
-        includes: ["Tomate", "Mozzarella", "Albahaca", "Aceite de oliva"],
-        category: "pizzas",
-      },
-    },
-  ],
-  "centro-tenistico": [
-    {
-      id: "6",
-      name: "Clase Individual",
-      description: "Clases de tenis personalizadas con instructor profesional",
-      price: 800.0,
-      duration: 60,
-      featured: true,
-      active: true,
-      metadata: {
-        includes: ["Instructor certificado", "Pelotas", "Cancha por 1 hora"],
-      },
-    },
-    {
-      id: "7",
-      name: "Reserva de Cancha",
-      description: "Alquiler de cancha de tenis por hora",
-      price: 200.0,
-      duration: 60,
-      featured: true,
-      active: true,
-      metadata: {
-        includes: ["Cancha por 1 hora", "Iluminación"],
-      },
-    },
-  ],
-};
-
-// Mock products data
-const mockProducts = {
-  wondernails: [
-    {
-      id: "1",
-      sku: "WN-GEL-RED",
-      name: "Gel Polish Red",
-      description: "Esmalte gel rojo intenso",
-      price: 15.0,
-      category: "polish",
-      featured: true,
-      active: true,
-      metadata: { color: "red", volume: "10ml" },
-    },
-  ],
-  vigistudio: [
-    {
-      id: "2",
-      sku: "VS-SHAMPOO",
-      name: "Premium Shampoo",
-      description: "Shampoo profesional para todo tipo de cabello",
-      price: 25.0,
-      category: "haircare",
-      featured: true,
-      active: true,
-      metadata: { volume: "250ml", type: "all hair types" },
-    },
-  ],
-  "nom-nom": [
-    {
-      id: "3",
-      sku: "NN-SMOOTHIE",
-      name: "Smoothie Verde",
-      description: "Smoothie nutritivo con espinaca y mango",
-      price: 65.0,
-      category: "beverages",
-      featured: true,
-      active: true,
-      metadata: { ingredients: "espinaca, mango, plátano", size: "500ml" },
-    },
-    {
-      id: "4",
-      sku: "NN-GRANOLA",
-      name: "Granola Casera",
-      description: "Granola artesanal con frutos secos",
-      price: 120.0,
-      category: "snacks",
-      featured: true,
-      active: true,
-      metadata: { weight: "250g", ingredients: "avena, almendras, miel" },
-    },
-  ],
-  "centro-tenistico": [
-    {
-      id: "5",
-      sku: "CT-RAQUETA",
-      name: "Raqueta Wilson Pro",
-      description: "Raqueta profesional de tenis Wilson",
-      price: 2500.0,
-      category: "equipment",
-      featured: true,
-      active: true,
-      metadata: { brand: "Wilson", weight: "300g", grip: "4 3/8" },
-    },
-    {
-      id: "6",
-      sku: "CT-PELOTAS",
-      name: "Pelotas Penn Championship",
-      description: "Set de 3 pelotas de tenis Penn",
-      price: 180.0,
-      category: "equipment",
-      featured: true,
-      active: true,
-      metadata: { brand: "Penn", quantity: "3 pelotas", type: "championship" },
-    },
-  ],
-  delirios: [
-    {
-      id: "7",
-      sku: "DEL-ENSALADA",
-      name: "Ensalada Detox",
-      description: "Ensalada fresca con ingredientes orgánicos",
-      price: 120.0,
-      category: "salads",
-      featured: true,
-      active: true,
-      metadata: {
-        image: "🥗",
-        ingredients: "espinaca, quinoa, aguacate",
-        calories: "350 kcal",
-      },
-    },
-    {
-      id: "8",
-      sku: "DEL-BOWL",
-      name: "Power Bowl",
-      description: "Bowl energético con proteínas y vegetales",
-      price: 140.0,
-      category: "bowls",
-      featured: true,
-      active: true,
-      metadata: {
-        image: "🥙",
-        ingredients: "pollo, arroz integral, vegetales",
-        calories: "450 kcal",
-      },
-    },
-    {
-      id: "9",
-      sku: "DEL-JUICE",
-      name: "Juice Verde",
-      description: "Jugo natural detox",
-      price: 65.0,
-      category: "beverages",
-      featured: true,
-      active: true,
-      metadata: {
-        image: "🥤",
-        ingredients: "apio, pepino, manzana verde",
-        calories: "80 kcal",
-      },
-    },
-  ],
-};
-
-// Mock staff data
-const mockStaff = {
-  wondernails: [
-    {
-      id: "1",
-      name: "Marialicia Villafuerte H.",
-      role: "Senior Nail Technician",
-      email: "marialicia@wondernails.mx",
-      phone: "+52 555 123 4567",
-      specialties: ["Gel nails", "Acrylic", "Nail art"],
-      photo: "",
-      active: true,
-      metadata: { experience: "8 years" },
-    },
-  ],
-  vigistudio: [
-    {
-      id: "2",
-      name: "Carlos Ramirez",
-      role: "Master Stylist",
-      email: "carlos@vigistudio.mx",
-      phone: "+52 555 234 5678",
-      specialties: ["Hair styling", "Color"],
-      photo: "",
-      active: true,
-      metadata: { experience: "8 years" },
-    },
-  ],
-  "nom-nom": [
-    {
-      id: "3",
-      name: "Chef Ana Martínez",
-      role: "Chef Ejecutiva",
-      email: "ana@nom-nom.mx",
-      phone: "+52 555 345 6789",
-      specialties: ["Cocina mediterránea", "Postres", "Cocina saludable"],
-      photo: "",
-      active: true,
-      metadata: { experience: "12 years" },
-    },
-  ],
-  "centro-tenistico": [
-    {
-      id: "4",
-      name: "Prof. Miguel Torres",
-      role: "Instructor Principal",
-      email: "miguel@centro-tenistico.mx",
-      phone: "+52 555 456 7890",
-      specialties: ["Tenis avanzado", "Técnica", "Preparación física"],
-      photo: "",
-      active: true,
-      metadata: { experience: "15 years", certification: "PTR Professional" },
-    },
-  ],
-};
-
 // Optimized in-memory cache for tenant data with LRU eviction
 class TenantCache {
   private static cache = new Map<string, any>();
@@ -519,17 +107,10 @@ export class TenantService {
         };
       }
     } catch (error) {
-      // Log the error but always use mock data when DB is unavailable
-      console.error(
-        "[TenantService] Database error, falling back to mock data:",
-        error,
-      );
+      console.error("[TenantService] Database error:", error);
     }
 
-    // Fallback to mock data when DB connection fails
-    console.log(`[TenantService] Using mock data for tenant: ${slug}`);
-    const mockTenant = mockTenants[slug as keyof typeof mockTenants];
-    return mockTenant || null;
+    return null;
   }
 
   // Get tenant services (booking-mode tenants)
@@ -567,16 +148,19 @@ export class TenantService {
           description: service.description,
           shortDescription: service.shortDescription,
           longDescription: service.longDescription,
-          metadata: service.metadata,
+          metadata: {
+            ...service.metadata,
+            // Ensure image property exists in metadata if imageUrl is present
+            image: service.metadata?.image || service.imageUrl,
+          },
+          imageUrl: service.imageUrl, // Also expose it directly
         }));
       }
     } catch (error) {
       console.error("Error fetching services from database:", error);
     }
 
-    // Fallback to mock data
-    console.log(`[TenantService] Using mock services for tenant: ${tenantId}`);
-    return mockServices[tenantId as keyof typeof mockServices] || [];
+    return [];
   }
 
   // Get tenant products (catalog-mode tenants)
@@ -620,9 +204,7 @@ export class TenantService {
       console.error("Error fetching products from database:", error);
     }
 
-    // Fallback to mock data
-    console.log(`[TenantService] Using mock products for tenant: ${tenantId}`);
-    return mockProducts[tenantId as keyof typeof mockProducts] || [];
+    return [];
   }
 
   // Get tenant staff (for booking tenants)
@@ -666,9 +248,7 @@ export class TenantService {
       console.error("Error fetching staff from database:", error);
     }
 
-    // Fallback to mock data
-    console.log(`[TenantService] Using mock staff for tenant: ${tenantId}`);
-    return mockStaff[tenantId as keyof typeof mockStaff] || [];
+    return [];
   }
 
   // Get complete tenant data with all relations (optimized with Redis + in-memory cache)
@@ -701,9 +281,9 @@ export class TenantService {
 
           if (!tenant || tenant.length === 0) {
             console.log(
-              `[TenantService] Tenant not found in database, using mock data: ${slug}`,
+              `[TenantService] Tenant not found in database: ${slug}`,
             );
-            return this.getMockTenantWithData(slug);
+            return null;
           }
 
           const tenantData = tenant[0];
@@ -759,7 +339,11 @@ export class TenantService {
               description: service.description,
               shortDescription: service.shortDescription,
               longDescription: service.longDescription,
-              metadata: service.metadata,
+              metadata: {
+                ...service.metadata,
+                image: service.metadata?.image || service.imageUrl,
+              },
+              imageUrl: service.imageUrl,
             })),
             products: tenantProducts.map((product: Product) => ({
               id: product.id,
@@ -793,39 +377,14 @@ export class TenantService {
         } catch (error) {
           // Log and use fallback - this handles DB connection errors gracefully
           console.error(
-            "[TenantService] Error fetching complete tenant data, falling back to mock:",
+            "[TenantService] Error fetching complete tenant data:",
             error,
           );
-          const mockData = this.getMockTenantWithData(slug);
-
-          // Cache mock data to avoid repeated errors
-          if (mockData) {
-            TenantCache.set(memoryCacheKey, mockData);
-          }
-
-          return mockData;
+          return null;
         }
       },
       600, // 10 minutes TTL in Redis
     );
-  }
-
-  // Helper method for mock data fallback
-  private static getMockTenantWithData(slug: string) {
-    console.log(`[TenantService] Looking for mock tenant: "${slug}"`);
-    // SECURITY: Redacted sensitive log);
-    const mockTenant = mockTenants[slug as keyof typeof mockTenants];
-    if (!mockTenant) {
-      console.log(`[TenantService] Mock tenant not found for: "${slug}"`);
-      return null;
-    }
-
-    return {
-      ...mockTenant,
-      services: mockServices[slug as keyof typeof mockServices] || [],
-      products: mockProducts[slug as keyof typeof mockProducts] || [],
-      staff: mockStaff[slug as keyof typeof mockStaff] || [],
-    };
   }
 
   // Get featured services/products for homepage
@@ -868,30 +427,9 @@ export class TenantService {
         products: featuredProducts,
       };
     } catch (error) {
-      if (process.env.NODE_ENV === "development") {
-        console.error(
-          "[Self-Healing] Error fetching featured items, falling back to mock data:",
-          error,
-        );
-      }
+      console.error("[TenantService] Error fetching featured items:", error);
       return {
-        services:
-          tenantId === "wondernails"
-            ? [
-                {
-                  id: "1",
-                  name: "Manicure Gel",
-                  description: "Manicure premium con acabado gel",
-                  price: "35.00",
-                },
-                {
-                  id: "2",
-                  name: "Pedicure Spa",
-                  description: "Pedicure relajante con masaje",
-                  price: "45.00",
-                },
-              ]
-            : [],
+        services: [],
         products: [],
       };
     }

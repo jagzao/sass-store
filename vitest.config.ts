@@ -9,7 +9,8 @@ export default defineConfig({
   test: {
     globals: true,
     environment: "node",
-    // setupFiles: ["./tests/setup/vitest-minimal.setup.ts"],
+    globalSetup: "./tests/setup/vitest.global-setup.ts",
+    setupFiles: ["./tests/setup/vitest.setup.ts"],
     include: ["tests/**/*.{test,spec}.{ts,tsx}"],
     exclude: [
       "node_modules",

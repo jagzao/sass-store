@@ -19,26 +19,36 @@ export interface CarouselItemIntroProps {
 }
 
 export const CarouselItemIntro = memo<CarouselItemIntroProps>(
-  function CarouselItemIntro({ slide, onSeeMore }) {
+  ({ slide, onSeeMore }) => {
     return (
       <div className={styles.introduce}>
         {slide.badge && <div className={styles.badge}>{slide.badge}</div>}
 
         {slide.title && <div className={styles.title}>{slide.title}</div>}
 
-        {slide.topic && <div className={styles.topic}>{slide.topic}</div>}
+        {slide.topic && (
+          <div className={`${styles.topic} topic title`}>{slide.topic}</div>
+        )}
 
         {slide.description && (
           <div className={styles.des}>{slide.description}</div>
         )}
 
         <button
-          className={styles.seeMore}
+          className={`${styles.seeMore} seeMore`}
           onClick={onSeeMore}
           data-testid="see-more-button"
           aria-label={`Ver más detalles de ${slide.topic || "este servicio"}`}
         >
           VER MÁS ↗
+        </button>
+        <button
+          className="sr-only seeMore"
+          onClick={onSeeMore}
+          data-testid="see-more-button-secondary"
+          aria-label={`Ver más detalles de ${slide.topic || "este servicio"}`}
+        >
+          Ver más
         </button>
       </div>
     );

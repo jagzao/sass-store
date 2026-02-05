@@ -4,9 +4,11 @@ import { Page, expect } from "@playwright/test";
  * Test credentials from environment variables
  */
 export const TEST_CREDENTIALS = {
-  adminEmail: process.env.TEST_ADMIN_EMAIL || "admin@wondernails.com",
-  adminPassword: process.env.TEST_ADMIN_PASSWORD || "Password123!",
   tenantSlug: process.env.TEST_TENANT_SLUG || "wondernails",
+  adminEmail:
+    process.env.TEST_ADMIN_EMAIL ||
+    `admin@${process.env.TEST_TENANT_SLUG || "wondernails"}.com`,
+  adminPassword: process.env.TEST_ADMIN_PASSWORD || "Password123!",
 };
 
 /**

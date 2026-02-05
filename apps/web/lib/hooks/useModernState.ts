@@ -1,3 +1,5 @@
+"use client";
+
 // Modern React hooks using Jotai - 2025 best practices
 // Replacing heavy useContext and useEffect patterns
 import { useAtom, useAtomValue, useSetAtom } from "jotai";

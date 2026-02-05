@@ -25,11 +25,11 @@ export function LoginForm({ tenantSlug, primaryColor }: LoginFormProps) {
     if (errorParam) {
       const errorMessages: { [key: string]: string } = {
         CredentialsSignin:
-          "Credenciales inválidas. Por favor, verifica tu email y contraseña.",
+          "Credenciales no válidas. Verifica que tu correo y contraseña sean correctos y que tengas acceso a este tenant.",
         SessionRequired:
           "Se requiere inicio de sesión para acceder a esta página.",
         Default:
-          "Ocurrió un error durante la autenticación. Por favor, intenta nuevamente.",
+          "Ocurrió un error iniciar sesión. Por favor, intenta nuevamente.",
       };
 
       setError(errorMessages[errorParam] || errorMessages.Default);
@@ -56,7 +56,14 @@ export function LoginForm({ tenantSlug, primaryColor }: LoginFormProps) {
 
       if (result?.error) {
         console.error("[LoginForm] SignIn error:", result.error);
-        throw new Error("Credenciales inválidas");
+        if (result.error === "CredentialsSignin") {
+          setError(
+            "Credenciales no válidas para este tenant. Verifica tu correo y contraseña.",
+          );
+        } else {
+          setError("Error al iniciar sesión. Por favor intenta nuevamente.");
+        }
+        return;
       }
 
       if (result?.ok) {
@@ -68,12 +75,10 @@ export function LoginForm({ tenantSlug, primaryColor }: LoginFormProps) {
         localStorage.setItem("currentTenant", tenantSlug);
         // Redirect to tenant page on success
         router.push(`/t/${tenantSlug}`);
-      } else {
-        console.warn("[LoginForm] SignIn result not ok:", result);
       }
     } catch (err) {
       console.error("[LoginForm] Login error:", err);
-      setError(err instanceof Error ? err.message : "Error al iniciar sesión");
+      setError("Ocurrió un error inesperado. Intenta de nuevo.");
     } finally {
       setIsLoading(false);
     }
@@ -81,6 +86,10 @@ export function LoginForm({ tenantSlug, primaryColor }: LoginFormProps) {
 
   return (
     <form className="space-y-6" onSubmit={handleSubmit}>
+      <h2 className="text-2xl font-semibold text-gray-900">
+        Inicia sesión en tu cuenta
+      </h2>
+
       {error && (
         <div
           data-testid="error-message"
@@ -166,7 +175,7 @@ export function LoginForm({ tenantSlug, primaryColor }: LoginFormProps) {
           backgroundColor: primaryColor,
         }}
       >
-        {isLoading ? "Iniciando sesión..." : "Iniciar sesión"}
+        {isLoading ? "Iniciando sesión..." : "Iniciar Sesión"}
       </button>
     </form>
   );

@@ -206,9 +206,20 @@ export default function TenantProfilePage() {
       });
 
       if (response.ok) {
-        await update({ name: formData.name.trim() });
+        // Forzar una actualización completa de la sesión
+        await update({
+          name: formData.name.trim(),
+          // Forzar la actualización de la sesión con una marca de tiempo
+          _timestamp: Date.now(),
+        });
+
         setIsEditing(false);
         showToast("Tu nombre ha sido actualizado correctamente", "success");
+
+        // Forzar una recarga de la página para asegurar que todos los componentes reflejen el nuevo nombre
+        setTimeout(() => {
+          window.location.reload();
+        }, 500);
       } else {
         const error = await response.json();
         showToast(error.error || "Error al actualizar el nombre", "error");
@@ -317,33 +328,75 @@ export default function TenantProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div
+      className={`min-h-screen ${
+        tenantSlug === "zo-system"
+          ? "bg-black bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a1a1a] via-black to-black"
+          : "bg-gray-50"
+      }`}
+    >
       {/* Header */}
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Profile Info */}
             <div className="lg:col-span-2">
-              <div className="bg-white rounded-lg shadow-md p-8 relative">
+              <div
+                className={`rounded-lg shadow-md p-8 relative ${
+                  tenantSlug === "zo-system"
+                    ? "bg-white/5 backdrop-blur-md border border-white/10"
+                    : "bg-white"
+                }`}
+              >
                 <div className="text-center mb-8">
-                  <div className="w-24 h-24 bg-blue-600 rounded-full flex items-center justify-center text-white text-3xl font-bold mx-auto mb-4">
+                  <div
+                    className={`w-24 h-24 rounded-full flex items-center justify-center text-3xl font-bold mx-auto mb-4 ${
+                      tenantSlug === "zo-system"
+                        ? "bg-[#FF8000] text-black shadow-[0_0_20px_rgba(255,128,0,0.3)]"
+                        : "bg-blue-600 text-white"
+                    }`}
+                  >
                     {session.user.name?.charAt(0)?.toUpperCase() ||
                       session.user.email?.charAt(0).toUpperCase()}
                   </div>
-                  <h2 className="text-2xl font-bold text-gray-900">
+                  <h2
+                    className={`text-2xl font-bold ${
+                      tenantSlug === "zo-system"
+                        ? "text-white font-[family-name:var(--font-rajdhani)] uppercase tracking-wide"
+                        : "text-gray-900"
+                    }`}
+                  >
                     Hola, {session.user.name?.split(" ")[0] || "Usuario"}
                   </h2>
-                  <p className="text-gray-600">{session.user.email}</p>
+                  <p
+                    className={
+                      tenantSlug === "zo-system"
+                        ? "text-gray-400"
+                        : "text-gray-600"
+                    }
+                  >
+                    {session.user.email}
+                  </p>
                 </div>
 
                 <div className="space-y-6">
                   <div>
-                    <h3 className="text-lg font-semibold mb-4 text-gray-900 flex justify-between items-center">
+                    <h3
+                      className={`text-lg font-semibold mb-4 flex justify-between items-center ${
+                        tenantSlug === "zo-system"
+                          ? "text-white border-b border-white/10 pb-2"
+                          : "text-gray-900"
+                      }`}
+                    >
                       Información Personal
                       {!isEditing && (
                         <button
                           onClick={handleEdit}
-                          className="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm"
+                          className={`px-3 py-1 rounded-lg text-sm transition-colors ${
+                            tenantSlug === "zo-system"
+                              ? "bg-[#FF8000] text-black hover:bg-[#FF9933] font-bold uppercase tracking-wide"
+                              : "bg-blue-600 text-white hover:bg-blue-700"
+                          }`}
                         >
                           Editar
                         </button>
@@ -351,7 +404,13 @@ export default function TenantProfilePage() {
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label
+                          className={`block text-sm font-medium mb-1 ${
+                            tenantSlug === "zo-system"
+                              ? "text-gray-300"
+                              : "text-gray-700"
+                          }`}
+                        >
                           Nombre
                         </label>
                         {isEditing ? (
@@ -361,28 +420,62 @@ export default function TenantProfilePage() {
                             onChange={(e) =>
                               setFormData({ ...formData, name: e.target.value })
                             }
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:border-transparent ${
+                              tenantSlug === "zo-system"
+                                ? "bg-black/20 border-white/20 text-white focus:ring-[#FF8000] placeholder-gray-500"
+                                : "border-gray-300 focus:ring-blue-500"
+                            }`}
                             placeholder="Tu nombre"
                           />
                         ) : (
-                          <p className="text-gray-900 bg-gray-50 px-3 py-2 rounded">
+                          <p
+                            className={`px-3 py-2 rounded ${
+                              tenantSlug === "zo-system"
+                                ? "text-white bg-white/5 border border-white/5"
+                                : "text-gray-900 bg-gray-50"
+                            }`}
+                          >
                             {session.user.name || "No especificado"}
                           </p>
                         )}
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label
+                          className={`block text-sm font-medium mb-1 ${
+                            tenantSlug === "zo-system"
+                              ? "text-gray-300"
+                              : "text-gray-700"
+                          }`}
+                        >
                           Email
                         </label>
-                        <p className="text-gray-900 bg-gray-50 px-3 py-2 rounded">
+                        <p
+                          className={`px-3 py-2 rounded ${
+                            tenantSlug === "zo-system"
+                              ? "text-gray-300 bg-white/5 border border-white/5"
+                              : "text-gray-900 bg-gray-50"
+                          }`}
+                        >
                           {session.user.email}
                         </p>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label
+                          className={`block text-sm font-medium mb-1 ${
+                            tenantSlug === "zo-system"
+                              ? "text-gray-300"
+                              : "text-gray-700"
+                          }`}
+                        >
                           Rol
                         </label>
-                        <p className="text-gray-900 bg-gray-50 px-3 py-2 rounded capitalize">
+                        <p
+                          className={`px-3 py-2 rounded capitalize ${
+                            tenantSlug === "zo-system"
+                              ? "text-[#EAFF00] bg-white/5 border border-white/5"
+                              : "text-gray-900 bg-gray-50"
+                          }`}
+                        >
                           {AVAILABLE_ROLES.find((r) => r.id === currentRole)
                             ?.name || "Cliente"}
                         </p>
@@ -393,14 +486,22 @@ export default function TenantProfilePage() {
                         <button
                           onClick={handleCancel}
                           disabled={isLoading}
-                          className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 disabled:opacity-50"
+                          className={`px-4 py-2 rounded-lg disabled:opacity-50 ${
+                            tenantSlug === "zo-system"
+                              ? "bg-white/10 text-white hover:bg-white/20"
+                              : "bg-gray-200 text-gray-800 hover:bg-gray-300"
+                          }`}
                         >
                           Cancelar
                         </button>
                         <button
                           onClick={handleSave}
                           disabled={isLoading}
-                          className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
+                          className={`px-4 py-2 rounded-lg disabled:opacity-50 ${
+                            tenantSlug === "zo-system"
+                              ? "bg-[#EAFF00] text-black font-bold uppercase tracking-wide hover:shadow-[0_0_15px_rgba(234,255,0,0.4)]"
+                              : "bg-green-600 text-white hover:bg-green-700"
+                          }`}
                         >
                           Guardar Cambios
                         </button>
@@ -409,34 +510,92 @@ export default function TenantProfilePage() {
                   </div>
 
                   <div>
-                    <h3 className="text-lg font-semibold mb-4 text-gray-900">
+                    <h3
+                      className={`text-lg font-semibold mb-4 ${
+                        tenantSlug === "zo-system"
+                          ? "text-white border-b border-white/10 pb-2"
+                          : "text-gray-900"
+                      }`}
+                    >
                       Configuración de Cuenta
                     </h3>
                     <div className="space-y-3">
                       <button
                         onClick={() => setShowPasswordModal(true)}
-                        className="w-full text-left px-4 py-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
+                        className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${
+                          tenantSlug === "zo-system"
+                            ? "bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/10"
+                            : "bg-gray-50 hover:bg-gray-100"
+                        }`}
                       >
-                        <div className="font-medium text-gray-900">
+                        <div
+                          className={`font-medium ${
+                            tenantSlug === "zo-system"
+                              ? "text-white"
+                              : "text-gray-900"
+                          }`}
+                        >
                           Cambiar Contraseña
                         </div>
-                        <div className="text-sm text-gray-600">
+                        <div
+                          className={`text-sm ${
+                            tenantSlug === "zo-system"
+                              ? "text-gray-400"
+                              : "text-gray-600"
+                          }`}
+                        >
                           Actualiza tu contraseña de acceso
                         </div>
                       </button>
-                      <button className="w-full text-left px-4 py-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
-                        <div className="font-medium text-gray-900">
+                      <button
+                        className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${
+                          tenantSlug === "zo-system"
+                            ? "bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/10"
+                            : "bg-gray-50 hover:bg-gray-100"
+                        }`}
+                      >
+                        <div
+                          className={`font-medium ${
+                            tenantSlug === "zo-system"
+                              ? "text-white"
+                              : "text-gray-900"
+                          }`}
+                        >
                           Preferencias de Notificaciones
                         </div>
-                        <div className="text-sm text-gray-600">
+                        <div
+                          className={`text-sm ${
+                            tenantSlug === "zo-system"
+                              ? "text-gray-400"
+                              : "text-gray-600"
+                          }`}
+                        >
                           Configura cómo recibir notificaciones
                         </div>
                       </button>
-                      <button className="w-full text-left px-4 py-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
-                        <div className="font-medium text-gray-900">
+                      <button
+                        className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${
+                          tenantSlug === "zo-system"
+                            ? "bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/10"
+                            : "bg-gray-50 hover:bg-gray-100"
+                        }`}
+                      >
+                        <div
+                          className={`font-medium ${
+                            tenantSlug === "zo-system"
+                              ? "text-white"
+                              : "text-gray-900"
+                          }`}
+                        >
                           Privacidad
                         </div>
-                        <div className="text-sm text-gray-600">
+                        <div
+                          className={`text-sm ${
+                            tenantSlug === "zo-system"
+                              ? "text-gray-400"
+                              : "text-gray-600"
+                          }`}
+                        >
                           Configura tu privacidad y datos
                         </div>
                       </button>
@@ -447,52 +606,124 @@ export default function TenantProfilePage() {
                   {(currentTenant?.products?.length > 0 ||
                     currentTenant?.services?.length > 0) && (
                     <div>
-                      <h3 className="text-lg font-semibold mb-4 text-gray-900">
+                      <h3
+                        className={`text-lg font-semibold mb-4 ${
+                          tenantSlug === "zo-system"
+                            ? "text-white border-b border-white/10 pb-2"
+                            : "text-gray-900"
+                        }`}
+                      >
                         Administración
                       </h3>
                       <div className="space-y-3">
                         {currentTenant?.products?.length > 0 && (
                           <a
                             href={`/t/${tenantSlug}/admin_products`}
-                            className="flex items-center justify-between w-full text-left px-4 py-3 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors border border-blue-200"
+                            className={`flex items-center justify-between w-full text-left px-4 py-3 rounded-lg transition-colors border ${
+                              tenantSlug === "zo-system"
+                                ? "bg-white/5 hover:bg-white/10 border-white/10 text-white"
+                                : "bg-blue-50 hover:bg-blue-100 border-blue-200"
+                            }`}
                           >
                             <div>
-                              <div className="font-medium text-blue-900">
+                              <div
+                                className={`font-medium ${
+                                  tenantSlug === "zo-system"
+                                    ? "text-white"
+                                    : "text-blue-900"
+                                }`}
+                              >
                                 Gestionar Productos
                               </div>
-                              <div className="text-sm text-blue-700">
+                              <div
+                                className={`text-sm ${
+                                  tenantSlug === "zo-system"
+                                    ? "text-gray-400"
+                                    : "text-blue-700"
+                                }`}
+                              >
                                 {currentTenant.products.length} productos
                                 registrados
                               </div>
                             </div>
-                            <div className="text-blue-600">→</div>
+                            <div
+                              className={
+                                tenantSlug === "zo-system"
+                                  ? "text-[#FF8000]"
+                                  : "text-blue-600"
+                              }
+                            >
+                              →
+                            </div>
                           </a>
                         )}
                         {currentTenant?.services?.length > 0 && (
                           <a
                             href={`/t/${tenantSlug}/admin_services`}
-                            className="flex items-center justify-between w-full text-left px-4 py-3 bg-green-50 hover:bg-green-100 rounded-lg transition-colors border border-green-200"
+                            className={`flex items-center justify-between w-full text-left px-4 py-3 rounded-lg transition-colors border ${
+                              tenantSlug === "zo-system"
+                                ? "bg-white/5 hover:bg-white/10 border-white/10 text-white"
+                                : "bg-green-50 hover:bg-green-100 border-green-200"
+                            }`}
                           >
                             <div>
-                              <div className="font-medium text-green-900">
+                              <div
+                                className={`font-medium ${
+                                  tenantSlug === "zo-system"
+                                    ? "text-white"
+                                    : "text-green-900"
+                                }`}
+                              >
                                 Gestionar Servicios
                               </div>
-                              <div className="text-sm text-green-700">
+                              <div
+                                className={`text-sm ${
+                                  tenantSlug === "zo-system"
+                                    ? "text-gray-400"
+                                    : "text-green-700"
+                                }`}
+                              >
                                 {currentTenant.services.length} servicios
                                 registrados
                               </div>
                             </div>
-                            <div className="text-green-600">→</div>
+                            <div
+                              className={
+                                tenantSlug === "zo-system"
+                                  ? "text-[#EAFF00]"
+                                  : "text-green-600"
+                              }
+                            >
+                              →
+                            </div>
                           </a>
                         )}
                       </div>
                     </div>
                   )}
 
-                  <div className="pt-6 border-t">
-                    <p className="text-sm text-gray-600 text-center">
+                  <div
+                    className={`pt-6 border-t ${
+                      tenantSlug === "zo-system"
+                        ? "border-white/10"
+                        : "border-gray-200"
+                    }`}
+                  >
+                    <p
+                      className={`text-sm text-center ${
+                        tenantSlug === "zo-system"
+                          ? "text-gray-500"
+                          : "text-gray-600"
+                      }`}
+                    >
                       ID de usuario:{" "}
-                      <code className="bg-gray-100 px-2 py-1 rounded text-xs">
+                      <code
+                        className={`px-2 py-1 rounded text-xs ${
+                          tenantSlug === "zo-system"
+                            ? "bg-white/10 text-gray-300"
+                            : "bg-gray-100"
+                        }`}
+                      >
                         {session.user.id}
                       </code>
                     </p>
@@ -503,11 +734,27 @@ export default function TenantProfilePage() {
 
             {/* Role Management */}
             <div>
-              <div className="bg-white rounded-lg shadow-md p-6">
-                <h3 className="text-lg font-semibold mb-4 text-gray-900">
+              <div
+                className={`rounded-lg shadow-md p-6 ${
+                  tenantSlug === "zo-system"
+                    ? "bg-white/5 backdrop-blur-md border border-white/10"
+                    : "bg-white"
+                }`}
+              >
+                <h3
+                  className={`text-lg font-semibold mb-4 ${
+                    tenantSlug === "zo-system" ? "text-white" : "text-gray-900"
+                  }`}
+                >
                   Gestión de Roles
                 </h3>
-                <p className="text-sm text-gray-600 mb-4">
+                <p
+                  className={`text-sm mb-4 ${
+                    tenantSlug === "zo-system"
+                      ? "text-gray-400"
+                      : "text-gray-600"
+                  }`}
+                >
                   Selecciona tu rol en el sistema:
                 </p>
                 <div className="space-y-3">
@@ -517,19 +764,43 @@ export default function TenantProfilePage() {
                       onClick={() => handleRoleChange(role.id)}
                       disabled={isLoading}
                       className={`w-full text-left px-4 py-3 rounded-lg transition-colors disabled:opacity-50 ${
-                        role.id === currentRole
-                          ? "bg-blue-100 border-2 border-blue-500"
-                          : "bg-gray-50 hover:bg-gray-100"
+                        tenantSlug === "zo-system"
+                          ? role.id === currentRole
+                            ? "bg-[#FF8000]/20 border border-[#FF8000]"
+                            : "bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/10"
+                          : role.id === currentRole
+                            ? "bg-blue-100 border-2 border-blue-500"
+                            : "bg-gray-50 hover:bg-gray-100"
                       }`}
                     >
-                      <div className="font-medium text-gray-900">
+                      <div
+                        className={`font-medium ${
+                          tenantSlug === "zo-system"
+                            ? role.id === currentRole
+                              ? "text-[#FF8000]"
+                              : "text-white"
+                            : "text-gray-900"
+                        }`}
+                      >
                         {role.name}
                       </div>
-                      <div className="text-sm text-gray-600">
+                      <div
+                        className={`text-sm ${
+                          tenantSlug === "zo-system"
+                            ? "text-gray-400"
+                            : "text-gray-600"
+                        }`}
+                      >
                         {role.description}
                       </div>
                       {role.id === currentRole && (
-                        <div className="text-xs text-blue-600 mt-1">
+                        <div
+                          className={`text-xs mt-1 ${
+                            tenantSlug === "zo-system"
+                              ? "text-[#FF8000]"
+                              : "text-blue-600"
+                          }`}
+                        >
                           ✓ Rol actual
                         </div>
                       )}
@@ -541,13 +812,37 @@ export default function TenantProfilePage() {
               {/* Tenant Branding (Admin Only) - Sidebar */}
               {currentRole === "Admin" && currentTenant && (
                 <div className="mt-8">
-                  <div className="bg-white rounded-lg shadow-md p-6">
+                  <div
+                    className={`rounded-lg shadow-md p-6 ${
+                      tenantSlug === "zo-system"
+                        ? "bg-white/5 backdrop-blur-md border border-white/10"
+                        : "bg-white"
+                    }`}
+                  >
                     <div className="flex items-center gap-3 mb-4">
-                      <div className="p-2 bg-purple-50 rounded-lg">
-                        <Store className="w-5 h-5 text-purple-600" />
+                      <div
+                        className={`p-2 rounded-lg ${
+                          tenantSlug === "zo-system"
+                            ? "bg-[#FF8000]/10"
+                            : "bg-purple-50"
+                        }`}
+                      >
+                        <Store
+                          className={`w-5 h-5 ${
+                            tenantSlug === "zo-system"
+                              ? "text-[#FF8000]"
+                              : "text-purple-600"
+                          }`}
+                        />
                       </div>
                       <div>
-                        <h3 className="text-lg font-semibold text-gray-900">
+                        <h3
+                          className={`text-lg font-semibold ${
+                            tenantSlug === "zo-system"
+                              ? "text-white"
+                              : "text-gray-900"
+                          }`}
+                        >
                           Logo Tenant
                         </h3>
                       </div>

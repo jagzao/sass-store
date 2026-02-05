@@ -1,14 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { auth } from "@/lib/auth";
 import { db } from "@sass-store/database";
-import { products } from "@sass-store/database/schema";
+import {
+  products,
+  inventoryTransactions,
+  inventoryAlerts,
+} from "@sass-store/database/schema";
 import { eq, and } from "drizzle-orm";
 import { withTenantContext } from "@/lib/db/tenant-context";
 import { logger } from "@/lib/logger";
 
 interface RouteParams {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 // GET /api/v1/products/[id] - Obtener un producto específico
@@ -17,7 +20,7 @@ export async function GET(request: NextRequest, context: RouteParams) {
     request,
     async (request, tenantId) => {
       try {
-        const { id } = context.params;
+        const { id } = await context.params;
 
         // Get the product
         // Nota: Ya no necesitamos filtrar por tenantId ya que el contexto de tenant está establecido
@@ -38,7 +41,7 @@ export async function GET(request: NextRequest, context: RouteParams) {
             updatedAt: products.updatedAt,
           })
           .from(products)
-          .where(eq(products.id, id))
+          .where(and(eq(products.id, id), eq(products.tenantId, tenantId)))
           .limit(1);
 
         if (!productResult || productResult.length === 0) {
@@ -84,14 +87,13 @@ export async function PUT(request: NextRequest, context: RouteParams) {
     request,
     async (request, tenantId) => {
       try {
-        const { id } = context.params;
+        const { id } = await context.params;
 
-        // Check if product exists
-        // Nota: Ya no necesitamos filtrar por tenantId ya que el contexto de tenant está establecido
+        // Check if product exists and belongs to this tenant
         const existingProduct = await db
           .select({ id: products.id, sku: products.sku })
           .from(products)
-          .where(eq(products.id, id))
+          .where(and(eq(products.id, id), eq(products.tenantId, tenantId)))
           .limit(1);
 
         if (!existingProduct || existingProduct.length === 0) {
@@ -126,7 +128,7 @@ export async function PUT(request: NextRequest, context: RouteParams) {
         const duplicateProduct = await db
           .select({ id: products.id })
           .from(products)
-          .where(and(eq(products.sku, sku), eq(products.id, id)))
+          .where(eq(products.sku, sku))
           .limit(1);
 
         if (
@@ -154,7 +156,7 @@ export async function PUT(request: NextRequest, context: RouteParams) {
             metadata: metadata || {},
             updatedAt: new Date(),
           })
-          .where(eq(products.id, id))
+          .where(and(eq(products.id, id), eq(products.tenantId, tenantId)))
           .returning();
 
         return NextResponse.json({
@@ -179,14 +181,13 @@ export async function DELETE(request: NextRequest, context: RouteParams) {
     request,
     async (request, tenantId) => {
       try {
-        const { id } = context.params;
+        const { id } = await context.params;
 
-        // Check if product exists
-        // Nota: Ya no necesitamos filtrar por tenantId ya que el contexto de tenant está establecido
+        // Check if product exists and belongs to this tenant
         const existingProduct = await db
-          .select({ id: products.id })
+          .select({ id: products.id, tenantId: products.tenantId })
           .from(products)
-          .where(eq(products.id, id))
+          .where(and(eq(products.id, id), eq(products.tenantId, tenantId)))
           .limit(1);
 
         if (!existingProduct || existingProduct.length === 0) {
@@ -196,8 +197,29 @@ export async function DELETE(request: NextRequest, context: RouteParams) {
           );
         }
 
-        // Delete the product
-        await db.delete(products).where(eq(products.id, id));
+        // Delete related inventory records first (no cascade in schema for these)
+        await db
+          .delete(inventoryAlerts)
+          .where(
+            and(
+              eq(inventoryAlerts.productId, id),
+              eq(inventoryAlerts.tenantId, tenantId),
+            ),
+          );
+
+        await db
+          .delete(inventoryTransactions)
+          .where(
+            and(
+              eq(inventoryTransactions.productId, id),
+              eq(inventoryTransactions.tenantId, tenantId),
+            ),
+          );
+
+        // Delete product - ensure tenantId matches
+        await db
+          .delete(products)
+          .where(and(eq(products.id, id), eq(products.tenantId, tenantId)));
 
         return NextResponse.json({
           message: "Product deleted successfully",

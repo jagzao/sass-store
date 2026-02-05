@@ -58,7 +58,7 @@ export async function GET(request: NextRequest) {
     const conditions = [
       eq(socialPosts.tenantId, tenant.id),
       or(
-        sql`${socialPosts.metadata}->>'isLibrary' = 'true'`,
+        sql`COALESCE(${socialPosts.metadata}->>'isLibrary', 'false') = 'true'`,
         eq(socialPosts.status, "published"),
       ),
     ];
@@ -75,7 +75,9 @@ export async function GET(request: NextRequest) {
 
     // Filter by format (stored in metadata)
     if (format) {
-      conditions.push(sql`${socialPosts.metadata}->>'format' = ${format}`);
+      conditions.push(
+        sql`COALESCE(${socialPosts.metadata}->>'format', '') = ${format}`,
+      );
     }
 
     // Fetch posts
@@ -99,7 +101,9 @@ export async function GET(request: NextRequest) {
         break;
       case "usage":
         query = query.orderBy(
-          desc(sql`CAST(${socialPosts.metadata}->>'usageCount' AS INTEGER)`),
+          desc(
+            sql`CAST(COALESCE(${socialPosts.metadata}->>'usageCount', '0') AS INTEGER)`,
+          ),
         );
         break;
       case "recent":

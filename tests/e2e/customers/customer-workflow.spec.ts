@@ -1,7 +1,8 @@
 import { test, expect } from "@playwright/test";
+import { TEST_CREDENTIALS } from "../helpers/test-helpers";
 
 test.describe.serial("Customer & Visit Workflow", () => {
-  const tenantSlug = "wondernails";
+  const { tenantSlug } = TEST_CREDENTIALS;
 
   test("should create client, add 3 visits, and edit a visit", async ({
     page,
@@ -10,8 +11,8 @@ test.describe.serial("Customer & Visit Workflow", () => {
 
     // 0. Login
     await page.goto(`/t/${tenantSlug}/login`);
-    await page.fill('input[type="email"]', "testadmin@wondernails.com");
-    await page.fill('input[type="password"]', "Password123!");
+    await page.fill('input[type="email"]', TEST_CREDENTIALS.adminEmail);
+    await page.fill('input[type="password"]', TEST_CREDENTIALS.adminPassword);
     await page.click('button[type="submit"]');
     await page.waitForURL(`**\/t/${tenantSlug}`);
 

@@ -13,7 +13,7 @@ import { eq, desc, sum, sql } from "drizzle-orm";
 // GET /api/customers/[id]/balance - Get customer balance details
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const session = await auth();
@@ -21,7 +21,7 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const customerId = params.id;
+    const customerId = (await params).id;
 
     // Check if customer exists
     const [customer] = await db

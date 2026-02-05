@@ -11,11 +11,21 @@ const DEFAULT_TENANT: Tenant = {
   mode: "catalog",
   status: "active",
   branding: {
-    primaryColor: "#DC2626",
+    primaryColor: "#FF8000",
     secondaryColor: "#1F2937",
     logo: "https://placeholder.zo.dev/logos/zo-system.png",
     favicon: "https://placeholder.zo.dev/favicons/zo-system.ico",
     website: "https://zo.dev",
+    theme: "dark",
+    navLinks: [
+      {
+        name: "Portafolio",
+        href: "https://zo-portfolio.pages.dev/",
+        external: true,
+      },
+      { name: "SaaS Solutions", href: "/t/zo-system/products" },
+      { name: "Servicios", href: "/t/zo-system/services" },
+    ],
   },
   contact: {
     phone: "+1-555-0100",
@@ -152,7 +162,9 @@ export async function getTenantId(): Promise<string> {
   }
 }
 
-export async function getTenantIdForRequest(request?: Request): Promise<string> {
+export async function getTenantIdForRequest(
+  request?: Request,
+): Promise<string> {
   try {
     // For API routes, we can read headers from the request object
     if (request) {

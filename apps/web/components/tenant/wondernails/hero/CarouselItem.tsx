@@ -46,7 +46,7 @@ export const CarouselItem = memo<CarouselItemProps>(
         <CarouselItemIntro slide={slide} onSeeMore={onSeeMore} />
 
         <div
-          className={`${styles.imgWrap} ${styles.clickableImgWrap}`}
+          className={`${styles.imgWrap} ${styles.clickableImgWrap} imgWrap clickableImgWrap imgWrapGlobal clickableImgWrapGlobal`}
           onClick={handleImageClick}
           role="button"
           tabIndex={0}

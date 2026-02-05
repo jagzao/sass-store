@@ -188,6 +188,15 @@ export default function UserMenu({
             >
               ⚡ Admin Servicios
             </a>
+            {currentTenantSlug === "zo-system" && (
+              <a
+                href="/t/zo-system/admin_tenants"
+                onClick={closeMenu}
+                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              >
+                🏢 Admin Tenants
+              </a>
+            )}
             <button
               onClick={handleSignOut}
               className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"

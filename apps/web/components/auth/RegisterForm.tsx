@@ -126,7 +126,12 @@ export function RegisterForm({ tenantSlug, primaryColor }: RegisterFormProps) {
   };
 
   return (
-    <form className="space-y-6" onSubmit={handleSubmit} noValidate>
+    <form
+      className="space-y-6"
+      onSubmit={handleSubmit}
+      noValidate
+      data-testid="register-form"
+    >
       {error && (
         <div
           role="alert"

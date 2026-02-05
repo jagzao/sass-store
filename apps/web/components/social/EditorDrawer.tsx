@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import MediaUploader from "./MediaUploader";
 
 interface Platform {
   id: string;
@@ -74,6 +75,9 @@ export interface InitialData {
   title?: string;
   baseContent?: string;
   variants?: PostVariant[];
+  scheduledDate?: string; // Format: yyyy-MM-dd
+  mediaUrls?: string[];
+  mediaIds?: string[];
 }
 
 interface EditorDrawerProps {
@@ -82,6 +86,7 @@ interface EditorDrawerProps {
   onClose: () => void;
   postId?: string | null;
   initialData?: InitialData;
+  variant?: "default" | "tech";
 }
 
 export default function EditorDrawer({
@@ -90,6 +95,7 @@ export default function EditorDrawer({
   onClose,
   postId,
   initialData,
+  variant = "default",
 }: EditorDrawerProps) {
   const [title, setTitle] = useState("");
   const [baseContent, setBaseContent] = useState("");
@@ -104,6 +110,60 @@ export default function EditorDrawer({
   const [status, setStatus] = useState<"draft" | "ready">("draft");
   const [isScheduled, setIsScheduled] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [mediaUrls, setMediaUrls] = useState<string[]>([]);
+  const [mediaIds, setMediaIds] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetchPostDetails = async () => {
+      if (postId && !initialData?.baseContent) {
+        setIsLoading(true);
+        try {
+          const response = await fetch(
+            `/api/v1/social/queue?tenant=${tenant}&id=${postId}`,
+          );
+          if (response.ok) {
+            const data = await response.json();
+            if (data.data && data.data.length > 0) {
+              const post = data.data[0];
+              setTitle(post.title || "");
+              setBaseContent(post.content || "");
+              setStatus(post.status);
+
+              if (post.scheduledAt) {
+                const date = new Date(post.scheduledAt);
+                setScheduledDate(format(date, "yyyy-MM-dd"));
+                setScheduledTime(format(date, "HH:mm"));
+                setIsScheduled(true);
+              }
+
+              if (post.targets) {
+                const loadedVariants: Record<string, string> = {};
+                post.targets.forEach((target: any) => {
+                  loadedVariants[target.platform] = target.variantText;
+                });
+                setVariants(loadedVariants);
+                setSelectedPlatforms(post.platforms || []);
+              }
+
+              if (post.metadata?.mediaUrls) {
+                setMediaUrls(post.metadata.mediaUrls);
+              }
+
+              if (post.mediaIds) {
+                setMediaIds(post.mediaIds);
+              }
+            }
+          }
+        } catch (error) {
+          console.error("Error fetching post details:", error);
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    fetchPostDetails();
+  }, [postId, tenant, initialData]);
 
   useEffect(() => {
     if (initialData) {
@@ -117,8 +177,26 @@ export default function EditorDrawer({
         });
         setVariants(initialVariants);
       }
+
+      if (initialData.scheduledDate) {
+        setScheduledDate(initialData.scheduledDate);
+        setIsScheduled(true);
+      }
+
+      if (initialData.mediaUrls) {
+        setMediaUrls(initialData.mediaUrls);
+      }
+
+      if (initialData.mediaIds) {
+        setMediaIds(initialData.mediaIds);
+      }
     }
   }, [initialData]);
+
+  const handleMediaChange = (urls: string[], ids: string[]) => {
+    setMediaUrls(urls);
+    setMediaIds(ids);
+  };
 
   const handlePlatformToggle = (platformId: string) => {
     setSelectedPlatforms((prev) =>
@@ -190,10 +268,15 @@ Agenda tu cita hoy. #WonderNails #Belleza`;
         baseText: baseContent,
         status,
         scheduledAtUtc,
+        mediaIds,
+        metadata: {
+          mediaUrls,
+        },
         platforms: selectedPlatforms.map((platform) => ({
           platform,
           variantText: variants[platform] || baseContent,
           status,
+          assetIds: mediaIds,
         })),
       };
 
@@ -225,6 +308,31 @@ Agenda tu cita hoy. #WonderNails #Belleza`;
 
   if (!isOpen) return null;
 
+  const isTech = variant === "tech";
+
+  // Estilos base según variante
+  const styles = {
+    bg: isTech ? "bg-[#111111]" : "bg-white",
+    text: isTech ? "text-gray-200" : "text-gray-900",
+    textSecondary: isTech ? "text-gray-400" : "text-gray-500",
+    border: isTech ? "border-gray-800" : "border-gray-200",
+    inputBg: isTech ? "bg-[#1a1a1a]" : "bg-white",
+    inputBorder: isTech ? "border-gray-700" : "border-gray-300",
+    activeItemBg: isTech ? "bg-[#FF8000]/10" : "bg-blue-50",
+    activeItemBorder: isTech ? "border-[#FF8000]" : "border-blue-500",
+    hoverBg: isTech ? "hover:bg-gray-800" : "hover:bg-gray-50",
+    primaryButton: isTech
+      ? "bg-[#FF8000] hover:bg-[#FF8000]/90 text-black"
+      : "bg-blue-600 hover:bg-blue-700 text-white",
+    secondaryButton: isTech
+      ? "bg-gray-800 text-gray-200 hover:bg-gray-700 border-gray-700"
+      : "bg-gray-200 text-gray-800 hover:bg-gray-300 border-gray-300",
+    accentText: isTech ? "text-[#FF8000]" : "text-blue-600",
+    headerBorder: isTech
+      ? "border-b border-gray-800"
+      : "border-b border-gray-200",
+  };
+
   return (
     <div className="fixed inset-0 z-50 overflow-hidden">
       {/* Overlay */}
@@ -236,16 +344,16 @@ Agenda tu cita hoy. #WonderNails #Belleza`;
       {/* Drawer */}
       <div className="absolute inset-y-0 right-0 max-w-full flex">
         <div className="relative w-screen max-w-2xl">
-          <div className="h-full flex flex-col bg-white shadow-xl">
+          <div className={`h-full flex flex-col shadow-xl ${styles.bg}`}>
             {/* Header */}
-            <div className="px-6 py-4 border-b border-gray-200">
+            <div className={`px-6 py-4 ${styles.headerBorder}`}>
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-medium text-gray-900">
+                <h2 className={`text-lg font-medium ${styles.text}`}>
                   {postId ? "Editar Publicación" : "Nueva Publicación"}
                 </h2>
                 <button
                   onClick={onClose}
-                  className="rounded-md text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className={`rounded-md ${styles.textSecondary} hover:${styles.text} focus:outline-none focus:ring-2 focus:ring-blue-500`}
                 >
                   <svg
                     className="h-6 w-6"
@@ -271,7 +379,7 @@ Agenda tu cita hoy. #WonderNails #Belleza`;
                 <div>
                   <label
                     htmlFor="title"
-                    className="block text-sm font-medium text-gray-700 mb-2"
+                    className={`block text-sm font-medium ${styles.textSecondary} mb-2`}
                   >
                     Título interno
                   </label>
@@ -280,11 +388,11 @@ Agenda tu cita hoy. #WonderNails #Belleza`;
                     id="title"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${styles.inputBg} ${styles.inputBorder} ${styles.text}`}
                     placeholder="Título para organización interna..."
                     maxLength={200}
                   />
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className={`text-xs ${styles.textSecondary} mt-1`}>
                     {title.length}/200 caracteres
                   </p>
                 </div>
@@ -294,7 +402,7 @@ Agenda tu cita hoy. #WonderNails #Belleza`;
                   <div className="flex items-center justify-between mb-2">
                     <label
                       htmlFor="content"
-                      className="block text-sm font-medium text-gray-700"
+                      className={`block text-sm font-medium ${styles.textSecondary}`}
                     >
                       Contenido base
                     </label>
@@ -302,7 +410,7 @@ Agenda tu cita hoy. #WonderNails #Belleza`;
                       type="button"
                       onClick={handleGenerateWithAI}
                       disabled={isLoading}
-                      className="text-sm text-blue-600 hover:text-blue-800 disabled:opacity-50"
+                      className={`text-sm ${styles.accentText} disabled:opacity-50`}
                     >
                       {isLoading ? "Generando..." : "Generar con IA ✨"}
                     </button>
@@ -312,19 +420,43 @@ Agenda tu cita hoy. #WonderNails #Belleza`;
                     value={baseContent}
                     onChange={(e) => setBaseContent(e.target.value)}
                     rows={4}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${styles.inputBg} ${styles.inputBorder} ${styles.text}`}
                     placeholder="Escribe el contenido base..."
                     required
                   />
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className={`text-xs ${styles.textSecondary} mt-1`}>
                     {baseContent.length}/2000 caracteres
                   </p>
                 </div>
 
+                {/* Media */}
+                <div>
+                  <label
+                    className={`block text-sm font-medium ${styles.textSecondary} mb-2`}
+                  >
+                    Media (imágenes o video)
+                  </label>
+                  <MediaUploader
+                    tenant={tenant}
+                    mediaUrls={mediaUrls}
+                    mediaIds={mediaIds}
+                    onMediaChange={handleMediaChange}
+                    maxFiles={10}
+                    variant={variant}
+                    disabled={isLoading}
+                  />
+                  <p className={`text-xs ${styles.textSecondary} mt-2`}>
+                    Añade hasta 10 archivos para caruseles. Se publicará el
+                    orden seleccionado.
+                  </p>
+                </div>
+
                 {/* Scheduling */}
-                <div className="border rounded-lg p-4 bg-gray-50">
+                <div
+                  className={`border rounded-lg p-4 ${styles.border} ${isTech ? "bg-white/5" : "bg-gray-50"}`}
+                >
                   <div className="flex items-center space-x-4 mb-4">
-                    <label className="flex items-center">
+                    <label className={`flex items-center ${styles.text}`}>
                       <input
                         type="radio"
                         name="schedule-type"
@@ -334,7 +466,7 @@ Agenda tu cita hoy. #WonderNails #Belleza`;
                       />
                       Borrador
                     </label>
-                    <label className="flex items-center">
+                    <label className={`flex items-center ${styles.text}`}>
                       <input
                         type="radio"
                         name="schedule-type"
@@ -351,7 +483,7 @@ Agenda tu cita hoy. #WonderNails #Belleza`;
                       <div>
                         <label
                           htmlFor="date"
-                          className="block text-sm font-medium text-gray-700 mb-2"
+                          className={`block text-sm font-medium ${styles.textSecondary} mb-2`}
                         >
                           Fecha
                         </label>
@@ -361,14 +493,14 @@ Agenda tu cita hoy. #WonderNails #Belleza`;
                           value={scheduledDate}
                           onChange={(e) => setScheduledDate(e.target.value)}
                           min={format(new Date(), "yyyy-MM-dd")}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${styles.inputBg} ${styles.inputBorder} ${styles.text}`}
                           required={isScheduled}
                         />
                       </div>
                       <div>
                         <label
                           htmlFor="time"
-                          className="block text-sm font-medium text-gray-700 mb-2"
+                          className={`block text-sm font-medium ${styles.textSecondary} mb-2`}
                         >
                           Hora
                         </label>
@@ -377,7 +509,7 @@ Agenda tu cita hoy. #WonderNails #Belleza`;
                           id="time"
                           value={scheduledTime}
                           onChange={(e) => setScheduledTime(e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${styles.inputBg} ${styles.inputBorder} ${styles.text}`}
                           required={isScheduled}
                         />
                       </div>
@@ -387,7 +519,9 @@ Agenda tu cita hoy. #WonderNails #Belleza`;
 
                 {/* Platform Selection */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                  <label
+                    className={`block text-sm font-medium ${styles.textSecondary} mb-3`}
+                  >
                     Plataformas
                   </label>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -398,20 +532,24 @@ Agenda tu cita hoy. #WonderNails #Belleza`;
                         onClick={() => handlePlatformToggle(platform.id)}
                         className={`relative p-3 rounded-lg border-2 transition-all ${
                           selectedPlatforms.includes(platform.id)
-                            ? "border-blue-500 bg-blue-50"
-                            : "border-gray-200 hover:border-gray-300"
+                            ? `${styles.activeItemBorder} ${styles.activeItemBg}`
+                            : `${styles.border} ${styles.hoverBg} ${styles.textSecondary}`
                         }`}
                       >
                         <div className="text-center">
                           <div className="text-2xl mb-1">{platform.emoji}</div>
-                          <div className="text-sm font-medium">
+                          <div
+                            className={`text-sm font-medium ${selectedPlatforms.includes(platform.id) ? styles.text : ""}`}
+                          >
                             {platform.name}
                           </div>
                         </div>
                         {selectedPlatforms.includes(platform.id) && (
-                          <div className="absolute top-1 right-1 w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
+                          <div
+                            className={`absolute top-1 right-1 w-4 h-4 rounded-full flex items-center justify-center ${isTech ? "bg-[#FF8000]" : "bg-blue-500"}`}
+                          >
                             <svg
-                              className="w-2 h-2 text-white"
+                              className={`w-2 h-2 ${isTech ? "text-black" : "text-white"}`}
                               fill="currentColor"
                               viewBox="0 0 20 20"
                             >
@@ -431,7 +569,7 @@ Agenda tu cita hoy. #WonderNails #Belleza`;
                 {/* Platform-specific variants */}
                 {selectedPlatforms.length > 0 && (
                   <div className="space-y-4">
-                    <h3 className="text-lg font-medium text-gray-900">
+                    <h3 className={`text-lg font-medium ${styles.text}`}>
                       Personalización por Plataforma
                     </h3>
                     {selectedPlatforms.map((platformId) => {
@@ -442,14 +580,19 @@ Agenda tu cita hoy. #WonderNails #Belleza`;
                       const isOverLimit = charCount.current > charCount.max;
 
                       return (
-                        <div key={platformId} className="border rounded-lg p-4">
+                        <div
+                          key={platformId}
+                          className={`border rounded-lg p-4 ${styles.border}`}
+                        >
                           <div className="flex items-center mb-3">
                             <span className="text-lg mr-2">
                               {platform.emoji}
                             </span>
-                            <span className="font-medium">{platform.name}</span>
+                            <span className={`font-medium ${styles.text}`}>
+                              {platform.name}
+                            </span>
                             <span
-                              className={`ml-auto text-sm ${isOverLimit ? "text-red-500" : "text-gray-500"}`}
+                              className={`ml-auto text-sm ${isOverLimit ? "text-red-500" : styles.textSecondary}`}
                             >
                               {charCount.current}/{charCount.max}
                             </span>
@@ -460,8 +603,10 @@ Agenda tu cita hoy. #WonderNails #Belleza`;
                               handleVariantChange(platformId, e.target.value)
                             }
                             rows={3}
-                            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                              isOverLimit ? "border-red-300" : "border-gray-300"
+                            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${styles.inputBg} ${styles.text} ${
+                              isOverLimit
+                                ? "border-red-300"
+                                : styles.inputBorder
                             }`}
                             placeholder={`Personaliza el contenido para ${platform.name}...`}
                           />
@@ -479,11 +624,13 @@ Agenda tu cita hoy. #WonderNails #Belleza`;
 
                 {/* Status */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label
+                    className={`block text-sm font-medium ${styles.textSecondary} mb-2`}
+                  >
                     Estado
                   </label>
                   <div className="flex space-x-4">
-                    <label className="flex items-center">
+                    <label className={`flex items-center ${styles.text}`}>
                       <input
                         type="radio"
                         name="status"
@@ -494,7 +641,7 @@ Agenda tu cita hoy. #WonderNails #Belleza`;
                       />
                       Borrador
                     </label>
-                    <label className="flex items-center">
+                    <label className={`flex items-center ${styles.text}`}>
                       <input
                         type="radio"
                         name="status"
@@ -510,12 +657,14 @@ Agenda tu cita hoy. #WonderNails #Belleza`;
               </div>
 
               {/* Actions */}
-              <div className="px-6 py-4 border-t border-gray-200">
+              <div
+                className={`px-6 py-4 border-t ${isTech ? "border-gray-800" : "border-gray-200"}`}
+              >
                 <div className="flex justify-end space-x-4">
                   <button
                     type="button"
                     onClick={onClose}
-                    className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50"
+                    className={`px-4 py-2 border rounded-md ${styles.secondaryButton}`}
                   >
                     Cancelar
                   </button>
@@ -524,7 +673,7 @@ Agenda tu cita hoy. #WonderNails #Belleza`;
                     disabled={
                       selectedPlatforms.length === 0 || !baseContent.trim()
                     }
-                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className={`px-4 py-2 rounded-md disabled:opacity-50 disabled:cursor-not-allowed ${styles.primaryButton}`}
                   >
                     {isScheduled ? "Programar" : "Guardar"}
                   </button>

@@ -16,12 +16,17 @@ interface SocialMediaManagerProps {
   variant?: "default" | "tech";
 }
 
+import TokenManagementModal from "./TokenManagementModal";
+
+// ... (imports remain)
+
 export default function SocialMediaManager({
   tenant,
   variant = "default",
 }: SocialMediaManagerProps) {
   const [activeView, setActiveView] = useState<ViewType>("calendar");
   const [isEditorOpen, setIsEditorOpen] = useState(false);
+  const [isTokenModalOpen, setIsTokenModalOpen] = useState(false);
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
   const [selectedPostData, setSelectedPostData] = useState<
     InitialData | undefined
@@ -33,8 +38,16 @@ export default function SocialMediaManager({
     setIsEditorOpen(true);
   };
 
+  const handleManageTokens = () => {
+    setIsTokenModalOpen(true);
+  };
+
   const handlePostClick = (postId: string, data?: InitialData) => {
-    setSelectedPostId(postId);
+    if (postId === "new-post") {
+      setSelectedPostId(null);
+    } else {
+      setSelectedPostId(postId);
+    }
     setSelectedPostData(data);
     setIsEditorOpen(true);
   };
@@ -87,6 +100,7 @@ export default function SocialMediaManager({
           activeView={activeView}
           onViewChange={setActiveView}
           onCreateNew={handleCreateNew}
+          onManageTokens={handleManageTokens}
         />
 
         <div className="p-6">{renderActiveView()}</div>
@@ -100,6 +114,17 @@ export default function SocialMediaManager({
           onClose={handleCloseEditor}
           postId={selectedPostId}
           initialData={selectedPostData}
+          variant={variant}
+        />
+      )}
+
+      {/* Token Management Modal */}
+      {isTokenModalOpen && (
+        <TokenManagementModal
+          tenant={tenant}
+          isOpen={isTokenModalOpen}
+          onClose={() => setIsTokenModalOpen(false)}
+          variant={variant}
         />
       )}
     </div>

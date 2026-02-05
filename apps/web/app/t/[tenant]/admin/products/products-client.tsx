@@ -1,26 +1,18 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
-
-interface Product {
-  id: string;
-  sku: string;
-  name: string;
-  description: string | null;
-  price: string;
-  category: string;
-  featured: boolean;
-  image: string | null;
-  metadata: any;
-  createdAt: Date;
-}
+import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { ProductModal, Product } from "./product-modal";
 
 export function ProductsClient({ tenantSlug }: { tenantSlug: string }) {
   const { data: session } = useSession();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Modal state
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
   useEffect(() => {
     if (session) {
@@ -33,28 +25,82 @@ export function ProductsClient({ tenantSlug }: { tenantSlug: string }) {
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`/api/products?tenant=${tenantSlug}`);
+      const res = await fetch(`/api/v1/products?tenant=${tenantSlug}`);
 
       if (!res.ok) {
-        throw new Error('Error al cargar productos');
+        throw new Error("Error al cargar productos");
       }
 
       const data = await res.json();
       setProducts(data.data || []);
     } catch (err: any) {
-      console.error('Error fetching products:', err);
+      console.error("Error fetching products:", err);
       setError(err.message);
     } finally {
       setLoading(false);
     }
   };
 
-  const getStockStatus = (stock: number) => {
-    if (stock === 0)
-      return { text: 'Agotado', color: 'text-red-600 bg-red-100' };
-    if (stock <= 5)
-      return { text: 'Poco Stock', color: 'text-yellow-600 bg-yellow-100' };
-    return { text: 'En Stock', color: 'text-green-600 bg-green-100' };
+  const handleOpenCreate = () => {
+    setEditingProduct(null);
+    setIsModalOpen(true);
+  };
+
+  const handleOpenEdit = (product: Product) => {
+    setEditingProduct(product);
+    setIsModalOpen(true);
+  };
+
+  const handleSaveProduct = async (productData: Partial<Product>) => {
+    try {
+      const url = editingProduct
+        ? `/api/v1/products/${editingProduct.id}`
+        : "/api/v1/products";
+
+      const method = editingProduct ? "PUT" : "POST";
+
+      const res = await fetch(url, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(productData),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Error al guardar el producto");
+      }
+
+      await fetchProducts();
+    } catch (err: any) {
+      console.error("Error saving product:", err);
+      alert(err.message);
+      throw err; // Re-throw to be caught by modal
+    }
+  };
+
+  const handleDelete = async (productId: string) => {
+    if (
+      !window.confirm("¿Estás seguro de que quieres eliminar este producto?")
+    ) {
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/v1/products/${productId}`, {
+        method: "DELETE",
+      });
+
+      if (!res.ok) {
+        throw new Error("Error al eliminar el producto");
+      }
+
+      // Refresh list
+      fetchProducts();
+    } catch (err: any) {
+      alert(err.message);
+    }
   };
 
   if (loading) {
@@ -99,6 +145,36 @@ export function ProductsClient({ tenantSlug }: { tenantSlug: string }) {
 
   return (
     <>
+      {/* Page Header */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="flex items-center space-x-3">
+              <a
+                href={`/t/${tenantSlug}/admin`}
+                className="text-indigo-600 hover:text-indigo-700"
+              >
+                ← Panel Admin
+              </a>
+              <span className="text-gray-600">/</span>
+              <h1 className="text-3xl font-bold text-gray-900">
+                Gestión de Productos
+              </h1>
+            </div>
+            <p className="text-gray-600 mt-2">
+              Administra tu catálogo de productos
+            </p>
+          </div>
+          <button
+            onClick={handleOpenCreate}
+            className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+          >
+            <span className="mr-2">+</span>
+            Nuevo Producto
+          </button>
+        </div>
+      </div>
+
       {/* Stats Summary */}
       <div className="grid md:grid-cols-4 gap-6 mb-8">
         <div className="bg-white rounded-lg shadow-md p-6">
@@ -133,7 +209,10 @@ export function ProductsClient({ tenantSlug }: { tenantSlug: string }) {
           {products.length === 0 ? (
             <div className="p-8 text-center text-gray-500">
               <p className="mb-4">No hay productos registrados</p>
-              <button className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+              <button
+                onClick={handleOpenCreate}
+                className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+              >
                 + Crear Primer Producto
               </button>
             </div>
@@ -167,14 +246,14 @@ export function ProductsClient({ tenantSlug }: { tenantSlug: string }) {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className="flex-shrink-0 w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-2xl">
-                          {product.image || '📦'}
+                          {product.image || "📦"}
                         </div>
                         <div className="ml-4">
                           <div className="text-sm font-medium text-gray-900">
                             {product.name}
                           </div>
                           <div className="text-sm text-gray-500 max-w-xs truncate">
-                            {product.description || 'Sin descripción'}
+                            {product.description || "Sin descripción"}
                           </div>
                           {product.featured && (
                             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 mt-1">
@@ -188,24 +267,33 @@ export function ProductsClient({ tenantSlug }: { tenantSlug: string }) {
                       {product.sku}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 capitalize">
-                      {product.category.replace('-', ' ')}
+                      {product.category.replace("-", " ")}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                       ${parseFloat(product.price).toFixed(2)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                        Activo
-                      </span>
+                      {product.active ? (
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                          Activo
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                          Inactivo
+                        </span>
+                      )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                      <button className="text-indigo-600 hover:text-indigo-900">
+                      <button
+                        onClick={() => handleOpenEdit(product)}
+                        className="text-indigo-600 hover:text-indigo-900"
+                      >
                         Editar
                       </button>
-                      <button className="text-blue-600 hover:text-blue-900">
-                        Duplicar
-                      </button>
-                      <button className="text-red-600 hover:text-red-900">
+                      <button
+                        onClick={() => handleDelete(product.id)}
+                        className="text-red-600 hover:text-red-900"
+                      >
                         Eliminar
                       </button>
                     </td>
@@ -231,7 +319,9 @@ export function ProductsClient({ tenantSlug }: { tenantSlug: string }) {
                   className="flex items-center justify-between"
                 >
                   <div className="flex items-center">
-                    <span className="text-lg mr-2">{product.image || '📦'}</span>
+                    <span className="text-lg mr-2">
+                      {product.image || "📦"}
+                    </span>
                     <span className="text-sm font-medium truncate max-w-[200px]">
                       {product.name}
                     </span>
@@ -253,14 +343,14 @@ export function ProductsClient({ tenantSlug }: { tenantSlug: string }) {
                 (category) => (
                   <div key={category} className="flex justify-between">
                     <span className="text-sm text-gray-600 capitalize">
-                      {category.replace('-', ' ')}
+                      {category.replace("-", " ")}
                     </span>
                     <span className="text-sm font-medium">
-                      {products.filter((p) => p.category === category).length}{' '}
+                      {products.filter((p) => p.category === category).length}{" "}
                       producto(s)
                     </span>
                   </div>
-                )
+                ),
               )}
             </div>
           </div>
@@ -270,14 +360,11 @@ export function ProductsClient({ tenantSlug }: { tenantSlug: string }) {
               Acciones Rápidas
             </h3>
             <div className="space-y-2">
-              <button className="w-full text-left p-2 rounded hover:bg-gray-50 transition-colors text-sm">
-                📦 Importar Productos (CSV)
-              </button>
-              <button className="w-full text-left p-2 rounded hover:bg-gray-50 transition-colors text-sm">
-                📊 Exportar Inventario
-              </button>
-              <button className="w-full text-left p-2 rounded hover:bg-gray-50 transition-colors text-sm">
-                🏷️ Gestionar Categorías
+              <button
+                onClick={handleOpenCreate}
+                className="w-full text-left p-2 rounded hover:bg-gray-50 transition-colors text-sm"
+              >
+                + Nuevo Producto
               </button>
               <button
                 onClick={fetchProducts}
@@ -289,6 +376,14 @@ export function ProductsClient({ tenantSlug }: { tenantSlug: string }) {
           </div>
         </div>
       )}
+
+      {/* Modal */}
+      <ProductModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSave={handleSaveProduct}
+        product={editingProduct}
+      />
     </>
   );
 }
