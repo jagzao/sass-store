@@ -4,8 +4,9 @@ import {
   customers,
   tenants,
   customerVisits,
+  bookings,
 } from "@sass-store/database/schema";
-import { eq, desc, sql, or, ilike } from "drizzle-orm";
+import { eq, desc, asc, sql, or, ilike, and, gt, ne } from "drizzle-orm";
 import { z } from "zod";
 import {
   applyRateLimit,
@@ -112,6 +113,8 @@ export async function GET(
     const searchParams = request.nextUrl.searchParams;
     const search = searchParams.get("search") || undefined;
     const status = searchParams.get("status") || undefined;
+    const sort = searchParams.get("sort") || "createdAt";
+    const order = searchParams.get("order") === "asc" ? "asc" : "desc";
 
     // Find tenant
     const [tenant] = await db
@@ -124,7 +127,28 @@ export async function GET(
       return NextResponse.json({ error: "Tenant not found" }, { status: 404 });
     }
 
-    // Build the base query
+    // Define calculated fields for reuse in selection and sorting
+    const totalSpentSql = sql<number>`COALESCE(SUM(${customerVisits.totalAmount}), 0)`.mapWith(Number);
+    const visitCountSql = sql<number>`COUNT(${customerVisits.id})`.mapWith(Number);
+    const lastVisitSql = sql<string>`MAX(${customerVisits.visitDate})`;
+    
+    // Subquery for next appointment: earliest booking in the future that is not cancelled
+    const nextAppointmentSql = sql<string>`(
+      SELECT MIN(start_time)
+      FROM ${bookings}
+      WHERE ${bookings.customerId} = ${customers.id}
+      AND ${bookings.startTime} > NOW()
+      AND ${bookings.status} != 'cancelled'
+    )`;
+
+    // Define estimated next appointment for sorting (Last Visit + 15 days)
+    // Adding interval to date/timestamp in SQL
+    const estimatedNextAppointmentSql = sql<string>`(${lastVisitSql} + INTERVAL '15 days')`;
+    
+    // Effective Next Appointment: Use real appointment if exists, otherwise use estimated
+    const effectiveNextAppointmentSql = sql<string>`COALESCE(${nextAppointmentSql}, ${estimatedNextAppointmentSql})`;
+
+    // Build the query
     let query = db
       .select({
         id: customers.id,
@@ -132,18 +156,17 @@ export async function GET(
         phone: customers.phone,
         email: customers.email,
         status: customers.status,
-        totalSpent:
-          sql<number>`COALESCE(SUM(${customerVisits.totalAmount}), 0)`.mapWith(
-            Number,
-          ),
-        visitCount: sql<number>`COUNT(${customerVisits.id})`.mapWith(Number),
-        lastVisit: sql<string>`MAX(${customerVisits.visitDate})`,
+        createdAt: customers.createdAt,
+        totalSpent: totalSpentSql,
+        visitCount: visitCountSql,
+        lastVisit: lastVisitSql,
+        nextAppointment: nextAppointmentSql,
       })
       .from(customers)
       .leftJoin(customerVisits, eq(customers.id, customerVisits.customerId))
       .where(eq(customers.tenantId, tenant.id));
 
-    // Apply search filter if provided
+    // Apply search filter
     if (search) {
       query = query.where(
         or(
@@ -154,28 +177,65 @@ export async function GET(
       );
     }
 
-    // Apply status filter if provided and not "all"
+    // Apply status filter
     if (status && status !== "all") {
       query = query.where(eq(customers.status, status as any));
     }
 
-    // Execute the query with grouping and ordering
-    const customersWithStats = await query
-      .groupBy(
-        customers.id,
-        customers.name,
-        customers.phone,
-        customers.email,
-        customers.status,
-        customers.createdAt,
-      )
-      .orderBy(desc(customers.createdAt));
+    // Grouping
+    const queryWithGroup = query.groupBy(
+      customers.id,
+      customers.name,
+      customers.phone,
+      customers.email,
+      customers.status,
+      customers.createdAt,
+    );
 
-    // map undefined email to match interface if needed, although the query handles it
-    const formattedCustomers = customersWithStats.map((c) => ({
+    // Apply sorting
+    let orderByClause;
+    const direction = order === "asc" ? asc : desc;
+
+    switch (sort) {
+      case "name":
+        orderByClause = direction(customers.name);
+        break;
+      case "totalSpent":
+        orderByClause = direction(totalSpentSql);
+        break;
+      case "visitCount":
+        orderByClause = direction(visitCountSql);
+        break;
+      case "lastVisit":
+        // Sort by last visit, handling nulls (customers with no visits)
+        // PostgreSQL: NULLS LAST / NULLS FIRST
+        // Drizzle might not support nullsLast() directly on sql chunks in all versions, 
+        // but typically desc puts nulls first by default in some DBs, last in others. 
+        // We'll trust the default for now or refine if needed.
+        orderByClause = direction(lastVisitSql);
+        break;
+      case "customer": // Alias for name
+        orderByClause = direction(customers.name);
+        break;
+      case "status":
+        orderByClause = direction(customers.status);
+        break;
+      case "nextAppointment":
+        orderByClause = direction(effectiveNextAppointmentSql);
+        break;
+      case "createdAt":
+      default:
+        orderByClause = direction(customers.createdAt);
+        break;
+    }
+
+    const customersWithData = await queryWithGroup.orderBy(orderByClause);
+
+    // Format response
+    const formattedCustomers = customersWithData.map((c) => ({
       ...c,
       email: c.email || undefined,
-      nextAppointment: undefined, // TODO: Get from bookings when we have booking data
+      // nextAppointment is now returned from DB
     }));
 
     // Apply rate limiting headers
@@ -185,6 +245,7 @@ export async function GET(
       return NextResponse.json(
         { customers: formattedCustomers },
         {
+          status: 200,
           headers,
         },
       );

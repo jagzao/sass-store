@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
-import { db } from "@sass-store/database";
 import { InventoryService } from "@/lib/inventory/inventory-service";
 import { z } from "zod";
+import {
+  resolveInventoryTenantContext,
+  toInventoryErrorResponse,
+} from "../_lib/tenant-context";
 
 // Esquemas de validación
 const querySchema = z.object({
@@ -23,19 +25,9 @@ const querySchema = z.object({
  */
 export async function GET(request: NextRequest) {
   try {
-    // Verificar autenticación
-    const session = await auth();
-    if (!session?.user) {
-      return NextResponse.json({ error: "No autorizado" }, { status: 401 });
-    }
-
-    // Obtener tenant del usuario
-    const tenantId = session.user.tenantId;
-    if (!tenantId) {
-      return NextResponse.json(
-        { error: "Tenant no encontrado" },
-        { status: 400 },
-      );
+    const tenantContext = await resolveInventoryTenantContext();
+    if (!tenantContext.success) {
+      return toInventoryErrorResponse(tenantContext.error);
     }
 
     // Parsear y validar query parameters
@@ -53,24 +45,26 @@ export async function GET(request: NextRequest) {
     let report;
     switch (query.reportType) {
       case "low_stock":
-        report = await InventoryService.getLowStockReport(tenantId);
+        report = await InventoryService.getLowStockReport(
+          tenantContext.data.tenantId,
+        );
         break;
       case "stock_value":
         report = await InventoryService.getStockValueReport(
-          tenantId,
+          tenantContext.data.tenantId,
           processedQuery.category,
         );
         break;
       case "movement_summary":
         report = await InventoryService.getMovementSummaryReport(
-          tenantId,
+          tenantContext.data.tenantId,
           processedQuery.startDate,
           processedQuery.endDate,
         );
         break;
       case "product_performance":
         report = await InventoryService.getProductPerformanceReport(
-          tenantId,
+          tenantContext.data.tenantId,
           processedQuery.startDate,
           processedQuery.endDate,
         );
@@ -82,9 +76,13 @@ export async function GET(request: NextRequest) {
         );
     }
 
+    if (!report.success) {
+      return toInventoryErrorResponse(report.error);
+    }
+
     // Si el formato es CSV, generar respuesta CSV
     if (query.format === "csv") {
-      const csvContent = generateCSV(report);
+      const csvContent = generateCSV(report.data);
       const filename = `inventory_${query.reportType}_report_${new Date().toISOString().split("T")[0]}.csv`;
 
       return new NextResponse(csvContent, {
@@ -98,7 +96,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       reportType: query.reportType,
       generatedAt: new Date().toISOString(),
-      data: report,
+      data: report.data,
     });
   } catch (error) {
     console.error("Error en GET /api/inventory/reports:", error);
@@ -108,10 +106,6 @@ export async function GET(request: NextRequest) {
         { error: "Parámetros inválidos", details: error.errors },
         { status: 400 },
       );
-    }
-
-    if (error instanceof Error) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
     }
 
     return NextResponse.json(

@@ -9,11 +9,14 @@ export interface InventoryItem {
   productId: string;
   productName: string;
   productSku: string;
+  productImage?: string | null;
+  productCategory: string;
   quantity: number;
   reservedQuantity: number;
   availableQuantity: number;
   reorderPoint: number;
   unitPrice: number;
+  salePrice: number;
   totalValue: number;
   lastUpdated: Date;
   isActive: boolean;
@@ -175,6 +178,7 @@ export function useInventory() {
         quantity?: number;
         reorderPoint?: number;
         unitPrice?: number;
+        salePrice?: number;
         isActive?: boolean;
       },
     ) => {

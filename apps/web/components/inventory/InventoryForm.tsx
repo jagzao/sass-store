@@ -3,9 +3,12 @@
 import React, { useState, useEffect } from "react";
 import { useInventory } from "@/lib/hooks/useInventory";
 import { InventoryItem } from "@/lib/hooks/useInventory";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { InventoryServiceLinkingTab } from "./InventoryServiceLinkingTab";
 
 interface InventoryFormProps {
   item?: InventoryItem;
+  compact?: boolean;
   onSuccess?: () => void;
   onCancel?: () => void;
 }
@@ -15,11 +18,13 @@ interface FormData {
   quantity: number;
   reorderPoint: number;
   unitPrice: number;
+  salePrice: number;
   isActive: boolean;
 }
 
 export function InventoryForm({
   item,
+  compact = false,
   onSuccess,
   onCancel,
 }: InventoryFormProps) {
@@ -30,10 +35,12 @@ export function InventoryForm({
     quantity: 0,
     reorderPoint: 5,
     unitPrice: 0,
+    salePrice: 0,
     isActive: true,
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [activeTab, setActiveTab] = useState<"general" | "services">("general");
 
   // Inicializar formulario con datos del item si existe
   useEffect(() => {
@@ -43,9 +50,21 @@ export function InventoryForm({
         quantity: item.quantity,
         reorderPoint: item.reorderPoint,
         unitPrice: item.unitPrice,
+        salePrice: item.salePrice,
         isActive: item.isActive,
       });
+    } else {
+      setFormData({
+        productId: "",
+        quantity: 0,
+        reorderPoint: 5,
+        unitPrice: 0,
+        salePrice: 0,
+        isActive: true,
+      });
     }
+
+    setActiveTab("general");
   }, [item]);
 
   // Validar formulario
@@ -62,6 +81,10 @@ export function InventoryForm({
 
     if (formData.unitPrice < 0) {
       newErrors.unitPrice = "El precio unitario no puede ser negativo";
+    }
+
+    if (formData.salePrice < 0) {
+      newErrors.salePrice = "El precio de venta no puede ser negativo";
     }
 
     if (formData.reorderPoint < 0) {
@@ -127,12 +150,8 @@ export function InventoryForm({
     }
   };
 
-  return (
-    <div className="bg-white shadow-sm rounded-lg p-6">
-      <h2 className="text-lg font-medium text-gray-900 mb-6">
-        {item ? "Editar Inventario" : "Nuevo Inventario"}
-      </h2>
-
+  const generalFormContent = (
+    <>
       {error && (
         <div className="mb-4 bg-red-50 border border-red-200 rounded-lg p-4">
           <p className="text-red-600">{error}</p>
@@ -155,6 +174,11 @@ export function InventoryForm({
               disabled={!!item}
             >
               <option value="">Seleccionar producto</option>
+              {item && (
+                <option value={item.productId}>
+                  {item.productName} ({item.productSku})
+                </option>
+              )}
               <option value="product_1">Producto 1</option>
               <option value="product_2">Producto 2</option>
               <option value="product_3">Producto 3</option>
@@ -167,7 +191,7 @@ export function InventoryForm({
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Precio Unitario <span className="text-red-500">*</span>
+              Costo Unitario <span className="text-red-500">*</span>
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -187,6 +211,35 @@ export function InventoryForm({
             </div>
             {errors.unitPrice && (
               <p className="mt-1 text-sm text-red-600">{errors.unitPrice}</p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Precio Venta <span className="text-red-500">*</span>
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <span className="text-gray-500 sm:text-sm">$</span>
+              </div>
+              <input
+                type="number"
+                name="salePrice"
+                value={formData.salePrice}
+                onChange={handleChange}
+                min="0"
+                step="0.01"
+                disabled
+                className={`pl-7 w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  errors.salePrice ? "border-red-500" : "border-gray-300"
+                }`}
+              />
+            </div>
+            <p className="mt-1 text-xs text-gray-500">
+              Este valor se configura desde el catálogo de productos.
+            </p>
+            {errors.salePrice && (
+              <p className="mt-1 text-sm text-red-600">{errors.salePrice}</p>
             )}
           </div>
 
@@ -287,6 +340,61 @@ export function InventoryForm({
           </button>
         </div>
       </form>
+    </>
+  );
+
+  const formContent = (
+    <>
+      {!compact && (
+        <h2 className="text-lg font-medium text-gray-900 mb-6">
+          {item ? "Editar Inventario" : "Nuevo Inventario"}
+        </h2>
+      )}
+
+      {item ? (
+        <Tabs
+          value={activeTab}
+          onValueChange={(value) =>
+            setActiveTab(value as "general" | "services")
+          }
+          className="w-full"
+        >
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger
+              value="general"
+              className="data-[state=active]:bg-champagne data-[state=active]:text-dark-graphite"
+            >
+              General
+            </TabsTrigger>
+            <TabsTrigger
+              value="services"
+              className="data-[state=active]:bg-champagne data-[state=active]:text-dark-graphite"
+            >
+              Servicios
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="general" className="mt-4">
+            {generalFormContent}
+          </TabsContent>
+
+          <TabsContent value="services" className="mt-4">
+            <InventoryServiceLinkingTab productId={item.productId} />
+          </TabsContent>
+        </Tabs>
+      ) : (
+        generalFormContent
+      )}
+    </>
+  );
+
+  if (compact) {
+    return <div className="p-1">{formContent}</div>;
+  }
+
+  return (
+    <div className="bg-white shadow-sm rounded-lg p-6">
+      {formContent}
     </div>
   );
 }

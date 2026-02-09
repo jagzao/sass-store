@@ -272,8 +272,7 @@ export default function TenantsManagement() {
                       <div className="flex gap-2">
                         <button
                           onClick={() => handleEdit(tenant)}
-                          disabled={tenant.slug === "zo-system"}
-                          className={`p-1.5 rounded hover:bg-white/10 transition-colors ${tenant.slug === "zo-system" ? "opacity-30 cursor-not-allowed" : "text-blue-400"}`}
+                          className="p-1.5 rounded hover:bg-white/10 transition-colors text-blue-400"
                         >
                           <PencilIcon className="w-4 h-4" />
                         </button>
@@ -377,8 +376,7 @@ export default function TenantsManagement() {
                             </Link>
                             <button
                               onClick={() => handleEdit(tenant)}
-                              disabled={tenant.slug === "zo-system"}
-                              className={`p-1.5 rounded hover:bg-white/10 transition-colors ${tenant.slug === "zo-system" ? "cursor-not-allowed opacity-50" : "text-blue-400"}`}
+                              className="p-1.5 rounded hover:bg-white/10 transition-colors text-blue-400"
                               title="Editar"
                             >
                               <PencilIcon className="w-4 h-4" />

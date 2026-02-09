@@ -6,6 +6,7 @@ export interface FormInputProps extends Omit<InputHTMLAttributes<HTMLInputElemen
   helperText?: string;
   containerClassName?: string;
   inputClassName?: string;
+  labelClassName?: string;
 }
 
 const FormInput = memo(({
@@ -14,6 +15,7 @@ const FormInput = memo(({
   helperText,
   containerClassName = '',
   inputClassName = '',
+  labelClassName = '',
   id,
   disabled,
   ...props
@@ -33,7 +35,7 @@ const FormInput = memo(({
       {label && (
         <label
           htmlFor={inputId}
-          className="block text-sm font-medium text-gray-700 mb-1"
+          className={`block text-sm font-medium text-gray-700 mb-1 ${labelClassName}`}
         >
           {label}
         </label>

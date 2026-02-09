@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
-import { db } from "@sass-store/database";
 import { InventoryService } from "@/lib/inventory/inventory-service";
 import { z } from "zod";
+import {
+  resolveInventoryTenantContext,
+  toInventoryErrorResponse,
+} from "../../_lib/tenant-context";
 
 interface RouteParams {
   params: {
@@ -20,19 +22,9 @@ const bodySchema = z.object({
  */
 export async function GET(request: NextRequest, context: RouteParams) {
   try {
-    // Verificar autenticación
-    const session = await auth();
-    if (!session?.user) {
-      return NextResponse.json({ error: "No autorizado" }, { status: 401 });
-    }
-
-    // Obtener tenant del usuario
-    const tenantId = session.user.tenantId;
-    if (!tenantId) {
-      return NextResponse.json(
-        { error: "Tenant no encontrado" },
-        { status: 400 },
-      );
+    const tenantContext = await resolveInventoryTenantContext();
+    if (!tenantContext.success) {
+      return toInventoryErrorResponse(tenantContext.error);
     }
 
     // Obtener alertId de los params
@@ -40,24 +32,17 @@ export async function GET(request: NextRequest, context: RouteParams) {
 
     // Obtener alerta
     const alert = await InventoryService.getInventoryAlertById(
-      tenantId,
+      tenantContext.data.tenantId,
       alertId,
     );
 
-    if (!alert) {
-      return NextResponse.json(
-        { error: "Alerta no encontrada" },
-        { status: 404 },
-      );
+    if (!alert.success) {
+      return toInventoryErrorResponse(alert.error);
     }
 
-    return NextResponse.json({ alert });
+    return NextResponse.json(alert.data);
   } catch (error) {
     console.error("Error en GET /api/inventory/alerts/[alertId]:", error);
-
-    if (error instanceof Error) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
-    }
 
     return NextResponse.json(
       { error: "Error interno del servidor" },
@@ -71,19 +56,9 @@ export async function GET(request: NextRequest, context: RouteParams) {
  */
 export async function PUT(request: NextRequest, context: RouteParams) {
   try {
-    // Verificar autenticación
-    const session = await auth();
-    if (!session?.user) {
-      return NextResponse.json({ error: "No autorizado" }, { status: 401 });
-    }
-
-    // Obtener tenant del usuario
-    const tenantId = session.user.tenantId;
-    if (!tenantId) {
-      return NextResponse.json(
-        { error: "Tenant no encontrado" },
-        { status: 400 },
-      );
+    const tenantContext = await resolveInventoryTenantContext();
+    if (!tenantContext.success) {
+      return toInventoryErrorResponse(tenantContext.error);
     }
 
     // Obtener alertId de los params
@@ -95,22 +70,19 @@ export async function PUT(request: NextRequest, context: RouteParams) {
 
     // Actualizar alerta
     const result = await InventoryService.updateInventoryAlert(
-      tenantId,
+      tenantContext.data.tenantId,
       alertId,
-      validatedData,
+      {
+        resolved: validatedData.resolved,
+        resolutionNote: validatedData.resolutionNote,
+      },
     );
 
-    if (!result) {
-      return NextResponse.json(
-        { error: "Alerta no encontrada" },
-        { status: 404 },
-      );
+    if (!result.success) {
+      return toInventoryErrorResponse(result.error);
     }
 
-    return NextResponse.json({
-      message: "Alerta actualizada exitosamente",
-      alert: result,
-    });
+    return NextResponse.json(result.data);
   } catch (error) {
     console.error("Error en PUT /api/inventory/alerts/[alertId]:", error);
 
@@ -119,10 +91,6 @@ export async function PUT(request: NextRequest, context: RouteParams) {
         { error: "Datos inválidos", details: error.errors },
         { status: 400 },
       );
-    }
-
-    if (error instanceof Error) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
     }
 
     return NextResponse.json(
@@ -137,19 +105,9 @@ export async function PUT(request: NextRequest, context: RouteParams) {
  */
 export async function DELETE(request: NextRequest, context: RouteParams) {
   try {
-    // Verificar autenticación
-    const session = await auth();
-    if (!session?.user) {
-      return NextResponse.json({ error: "No autorizado" }, { status: 401 });
-    }
-
-    // Obtener tenant del usuario
-    const tenantId = session.user.tenantId;
-    if (!tenantId) {
-      return NextResponse.json(
-        { error: "Tenant no encontrado" },
-        { status: 400 },
-      );
+    const tenantContext = await resolveInventoryTenantContext();
+    if (!tenantContext.success) {
+      return toInventoryErrorResponse(tenantContext.error);
     }
 
     // Obtener alertId de los params
@@ -157,26 +115,17 @@ export async function DELETE(request: NextRequest, context: RouteParams) {
 
     // Eliminar alerta
     const result = await InventoryService.deleteInventoryAlert(
-      tenantId,
+      tenantContext.data.tenantId,
       alertId,
     );
 
-    if (!result) {
-      return NextResponse.json(
-        { error: "Alerta no encontrada" },
-        { status: 404 },
-      );
+    if (!result.success) {
+      return toInventoryErrorResponse(result.error);
     }
 
-    return NextResponse.json({
-      message: "Alerta eliminada exitosamente",
-    });
+    return NextResponse.json({ message: "Alerta eliminada exitosamente" });
   } catch (error) {
     console.error("Error en DELETE /api/inventory/alerts/[alertId]:", error);
-
-    if (error instanceof Error) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
-    }
 
     return NextResponse.json(
       { error: "Error interno del servidor" },

@@ -49,6 +49,7 @@ module.exports = {
         },
         'neon-orange': '#FF8000',
         'neon-yellow': '#EAFF00',
+        'champagne': '#F3E5AB',
         'dark-graphite': '#0D0D0D',
       },
       borderRadius: {

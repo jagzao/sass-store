@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
-import { db } from "@sass-store/database";
 import { InventoryService } from "@/lib/inventory/inventory-service";
 import { z } from "zod";
+import {
+  resolveInventoryTenantContext,
+  toInventoryErrorResponse,
+} from "./_lib/tenant-context";
 
 // Esquemas de validación
 const createInventorySchema = z.object({
@@ -69,19 +71,9 @@ const querySchema = z.object({
  */
 export async function GET(request: NextRequest) {
   try {
-    // Verificar autenticación
-    const session = await auth();
-    if (!session?.user) {
-      return NextResponse.json({ error: "No autorizado" }, { status: 401 });
-    }
-
-    // Obtener tenant del usuario
-    const tenantId = session.user.tenantId;
-    if (!tenantId) {
-      return NextResponse.json(
-        { error: "Tenant no encontrado" },
-        { status: 400 },
-      );
+    const tenantContext = await resolveInventoryTenantContext();
+    if (!tenantContext.success) {
+      return toInventoryErrorResponse(tenantContext.error);
     }
 
     // Parsear y validar query parameters
@@ -90,11 +82,15 @@ export async function GET(request: NextRequest) {
 
     // Obtener inventario
     const result = await InventoryService.getInventory({
-      tenantId,
+      tenantId: tenantContext.data.tenantId,
       ...query,
     });
 
-    return NextResponse.json(result);
+    if (!result.success) {
+      return toInventoryErrorResponse(result.error);
+    }
+
+    return NextResponse.json(result.data);
   } catch (error) {
     console.error("Error en GET /api/inventory:", error);
 
@@ -117,19 +113,9 @@ export async function GET(request: NextRequest) {
  */
 export async function POST(request: NextRequest) {
   try {
-    // Verificar autenticación
-    const session = await auth();
-    if (!session?.user) {
-      return NextResponse.json({ error: "No autorizado" }, { status: 401 });
-    }
-
-    // Obtener tenant del usuario
-    const tenantId = session.user.tenantId;
-    if (!tenantId) {
-      return NextResponse.json(
-        { error: "Tenant no encontrado" },
-        { status: 400 },
-      );
+    const tenantContext = await resolveInventoryTenantContext();
+    if (!tenantContext.success) {
+      return toInventoryErrorResponse(tenantContext.error);
     }
 
     // Parsear y validar body
@@ -138,11 +124,15 @@ export async function POST(request: NextRequest) {
 
     // Crear inventario
     const result = await InventoryService.createInventory({
-      tenantId,
+      tenantId: tenantContext.data.tenantId,
       ...validatedData,
     });
 
-    return NextResponse.json(result, { status: 201 });
+    if (!result.success) {
+      return toInventoryErrorResponse(result.error);
+    }
+
+    return NextResponse.json(result.data, { status: 201 });
   } catch (error) {
     console.error("Error en POST /api/inventory:", error);
 
@@ -151,10 +141,6 @@ export async function POST(request: NextRequest) {
         { error: "Datos inválidos", details: error.errors },
         { status: 400 },
       );
-    }
-
-    if (error instanceof Error) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
     }
 
     return NextResponse.json(

@@ -183,53 +183,89 @@ export default function WondernailsCarouselFinal({
   );
   const rootRef = useRef<HTMLDivElement>(null);
 
-  // Fetch featured services if no initial slides
+  // Fetch featured content if no initial slides
   useEffect(() => {
     if (initialSlides?.length) return;
 
-    const fetchFeaturedServices = async () => {
+    const fetchFeaturedContent = async () => {
       try {
-        const response = await fetch(
-          "/api/v1/public/services?tenant=wondernails&featured=true",
-        );
-        if (response.ok) {
-          const data = await response.json();
-          const services = data.data || [];
+        const [servicesResponse, productsResponse] = await Promise.all([
+          fetch("/api/v1/public/services?tenant=wondernails&featured=true"),
+          fetch("/api/v1/public/products?tenant=wondernails&featured=true"),
+        ]);
 
-          if (services.length > 0) {
-            const mappedSlides: WnSlide[] = services.map((s: any) => ({
-              id: s.id,
-              img: s.imageUrl || "/tenants/wondernails/hero/img1.webp",
-              videoUrl: s.videoUrl,
-              title: "WONDERNAILS PRO",
-              topic: s.name,
-              description: s.shortDescription || s.description || "Servicio Premium",
-              badge: "Destacado",
-              bgColor: "rgba(180, 140, 200, 0.15)",
-              type: "service",
-              detailTitle: s.name,
-              detail: s.longDescription || s.description,
-              specs: [
-                { label: "Duración", value: `${s.duration} h` },
-                { label: "Precio", value: `$${s.price}` },
-              ],
-            }));
-            // If we have enough slides, use them. Otherwise mix with defaults or just use defaults.
-            // Carousel needs at least 5 items for best effect usually.
-            if (mappedSlides.length >= 3) {
-              setSlides(mappedSlides);
-            } else {
-              // Prepend to defaults
-              setSlides([...mappedSlides, ...defaultSlides]);
-            }
+        const servicesPayload = servicesResponse.ok
+          ? await servicesResponse.json()
+          : { data: [] };
+        const productsPayload = productsResponse.ok
+          ? await productsResponse.json()
+          : { data: [] };
+
+        const services = servicesPayload.data || [];
+        const products = productsPayload.data || [];
+
+        const mappedServiceSlides: WnSlide[] = services.map((s: any) => ({
+          id: s.id,
+          img: s.imageUrl || "/tenants/wondernails/hero/img1.webp",
+          videoUrl: s.videoUrl,
+          title: "WONDERNAILS PRO",
+          topic: s.name,
+          description: s.shortDescription || s.description || "Servicio Premium",
+          badge: "Destacado",
+          bgColor: "rgba(180, 140, 200, 0.15)",
+          type: "service",
+          detailTitle: s.name,
+          detail: s.longDescription || s.description,
+          specs: [
+            { label: "Duración", value: `${s.duration} h` },
+            { label: "Precio", value: `$${s.price}` },
+          ],
+        }));
+
+        const mappedProductSlides: WnSlide[] = products.map((p: any) => {
+          const candidateImage = p.imageUrl || p.metadata?.image;
+          const hasValidImage =
+            typeof candidateImage === "string" &&
+            (candidateImage.startsWith("http") ||
+              candidateImage.startsWith("/") ||
+              candidateImage.startsWith("data:image"));
+
+          return {
+            id: p.id,
+            img: hasValidImage
+              ? candidateImage
+              : "/tenants/wondernails/hero/img5.jpg",
+            title: "WONDERNAILS PRO",
+            topic: p.name,
+            description: p.description || "Producto destacado",
+            badge: "Producto destacado",
+            bgColor: "rgba(212, 175, 55, 0.1)",
+            type: "product",
+            detailTitle: p.name,
+            detail: p.description || `SKU: ${p.sku}`,
+            specs: [
+              { label: "Categoría", value: p.category || "Nail Products" },
+              { label: "Precio", value: `$${p.price}` },
+            ],
+          };
+        });
+
+        const mappedSlides = [...mappedServiceSlides, ...mappedProductSlides];
+
+        if (mappedSlides.length > 0) {
+          // Keep at least 3 items for smooth UX in this carousel style
+          if (mappedSlides.length >= 3) {
+            setSlides(mappedSlides);
+          } else {
+            setSlides([...mappedSlides, ...defaultSlides]);
           }
         }
       } catch (err) {
-        console.error("Error loading featured services for carousel", err);
+        console.error("Error loading featured content for carousel", err);
       }
     };
 
-    fetchFeaturedServices();
+    fetchFeaturedContent();
   }, [initialSlides]);
 
   const listRef = useRef<HTMLDivElement>(null);

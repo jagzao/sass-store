@@ -38,7 +38,7 @@ interface Visit {
   nextVisitTo?: string;
   status: "pending" | "scheduled" | "completed" | "cancelled";
   services: {
-    id: string; // This should be the service definition ID
+    id: string;
     serviceName: string;
     quantity: number;
     unitPrice: number;
@@ -82,7 +82,7 @@ export default function AddEditVisitModal({
     visit?.status || "completed",
   );
   const [services, setServices] = useState<VisitService[]>([]);
-  const [photos, setPhotos] = useState<VisitPhoto[]>([]); // Initialize with existing photos if available
+  const [photos, setPhotos] = useState<VisitPhoto[]>([]);
 
   useEffect(() => {
     async function fetchServices() {
@@ -125,17 +125,14 @@ export default function AddEditVisitModal({
     fetchServices();
   }, [tenantSlug]);
 
-  // Efecto para inicializar los servicios de la visita después de cargar los servicios disponibles
   useEffect(() => {
-    // Load services
     if (availableServices.length > 0 && visit && services.length === 0) {
       const visitServices = visit.services.map((s) => {
-        // Try to find by ID (assuming s.id is serviceId) or name match as fallback
         const service = availableServices.find(
           (avail) => avail.id === s.id || avail.name === s.serviceName,
         );
         return {
-          serviceId: service ? service.id : s.id, // Use matched ID or fallback to provided ID
+          serviceId: service ? service.id : s.id,
           serviceName: service ? service.name : s.serviceName,
           description: "",
           unitPrice: s.unitPrice,
@@ -146,7 +143,6 @@ export default function AddEditVisitModal({
       setServices(visitServices);
     }
 
-    // Load photos
     if (visit && visit.photos && photos.length === 0) {
       setPhotos(
         visit.photos.map((p) => ({
@@ -220,7 +216,7 @@ export default function AddEditVisitModal({
         nextVisitFrom: nextVisitFrom || null,
         nextVisitTo: nextVisitTo || null,
         status,
-        photos: photos.map((p) => ({ url: p.url, type: p.type })), // Send photos to API
+        photos: photos.map((p) => ({ url: p.url, type: p.type })),
         services: services.map((s) => ({
           serviceId: s.serviceId,
           description: s.description,
@@ -247,7 +243,7 @@ export default function AddEditVisitModal({
         throw new Error(error.message || "Failed to save visit");
       }
 
-      onClose(true); // Refresh parent
+      onClose(true);
     } catch (error) {
       console.error("Error saving visit:", error);
       alert(
@@ -258,305 +254,288 @@ export default function AddEditVisitModal({
     }
   };
 
-  const isLuxury = tenantSlug === "wondernails";
-
+  // Luxury / Sanitized visual logic
+  const GOLD_COLOR = "#C5A059";
+  
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+      <div 
+        className="fixed inset-0 z-40" 
+        onClick={() => onClose()} 
+      />
       <div
+        role="dialog"
+        aria-modal="true"
         className={cn(
-          "fixed left-[50%] top-[50%] z-50 grid w-full max-w-4xl max-h-[90vh] overflow-y-auto translate-x-[-50%] translate-y-[-50%] gap-4 border p-6 shadow-lg duration-200 sm:rounded-lg",
-          isLuxury
-            ? "bg-white border-[#D4AF37]/40 shadow-2xl"
-            : "bg-background shadow-lg",
+          "relative z-50 w-full max-w-4xl max-h-[90vh] flex flex-col bg-white",
+          "border border-[rgba(197,160,89,0.3)] shadow-[0_20px_50px_rgba(0,0,0,0.3)]",
+          "rounded-xl overflow-hidden"
         )}
       >
         {/* Header */}
-        <div className="flex flex-col space-y-1.5 text-center sm:text-left">
-          <div className="flex items-center justify-between">
-            <h2
-              className={cn(
-                "text-lg font-semibold leading-none tracking-tight",
-                isLuxury
-                  ? "text-[#1a1a1a] font-serif uppercase tracking-widest"
-                  : "",
-              )}
-            >
-              {visit ? "Editar Visita" : "Nueva Visita"}
-            </h2>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => onClose()}
-              className="h-6 w-6 rounded-full p-0 hover:bg-black/5"
-            >
-              <X className={cn("h-4 w-4", isLuxury ? "text-[#D4AF37]" : "")} />
-              <span className="sr-only">Close</span>
-            </Button>
-          </div>
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[rgba(197,160,89,0.15)] bg-white shrink-0">
+          <h2 className="text-xl font-serif font-bold text-[#C5A059] uppercase tracking-wide">
+            {visit ? "Editar Visita" : "Nueva Visita"}
+          </h2>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => onClose()}
+            className="rounded-full hover:bg-[rgba(197,160,89,0.1)] text-[#C5A059] transition-colors"
+          >
+            <X className="h-5 w-5" />
+            <span className="sr-only">Cerrar</span>
+          </Button>
         </div>
 
-        {/* Body */}
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Basic Info */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <DateTimePicker
-              label="Fecha y Hora de Atención *"
-              date={visitDate}
-              setDate={setVisitDate}
-            />
+        {/* Scrollable Body */}
+        <div className="flex-1 overflow-y-auto p-6 bg-white space-y-8">
+          <form id="visit-form" onSubmit={handleSubmit} className="space-y-8">
+            
+            {/* Grid for General Info */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-1.5">
+                 {/* Custom styling wrapper for inputs to enforce light gray bg */}
+                 <div className="[&_input]:bg-[#F9F9F9] [&_input]:border-gray-200 [&_input]:rounded-[8px] [&_input:focus]:border-[#C5A059] [&_label]:text-[#333333]">
+                   <DateTimePicker
+                      label="Fecha y Hora de Atención *"
+                      date={visitDate}
+                      setDate={setVisitDate}
+                      className="bg-champagne hover:bg-champagne/80 text-dark-graphite border-champagne"
+                   />
+                 </div>
+              </div>
 
-            <FormSelect
-              label="Estado *"
-              value={status}
-              onChange={(e) => setStatus(e.target.value as Visit["status"])}
-              required
-              options={[
-                { value: "pending", label: "Pendiente" },
-                { value: "scheduled", label: "Programada" },
-                { value: "completed", label: "Completada" },
-                { value: "cancelled", label: "Cancelada" },
-              ]}
-            />
-          </div>
-
-          {/* Services */}
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-medium">Servicios</h3>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={handleAddService}
-                disabled={availableServices.length === 0}
-              >
-                <Plus className="h-4 w-4 mr-1" />
-                Agregar Servicio
-              </Button>
+              <div className="space-y-1.5">
+                <FormSelect
+                  label="Estado *"
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value as Visit["status"])}
+                  required
+                  options={[
+                    { value: "pending", label: "Pendiente" },
+                    { value: "scheduled", label: "Programada" },
+                    { value: "completed", label: "Completada" },
+                    { value: "cancelled", label: "Cancelada" },
+                  ]}
+                  // Apply custom styling via className/styles if supported, 
+                  // or rely on the parent wrapper if FormSelect spreads styles deeply enough.
+                  // Since FormSelect might have its own classes, we might need a wrapper.
+                  className="bg-[#F9F9F9] border-gray-200 rounded-[8px] focus:ring-[#C5A059] focus:border-[#C5A059] text-[#333333]"
+                  labelClassName="text-[#333333]"
+                />
+              </div>
             </div>
 
-            {servicesError ? (
-              <div className="bg-destructive/15 border-destructive/50 text-destructive p-4 rounded-md mb-4 flex flex-col items-start gap-2">
-                <p className="text-sm font-medium">
-                  Error al cargar los servicios:
-                </p>
-                <p className="text-sm">{servicesError}</p>
+            {/* Services Section */}
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-serif font-medium text-[#C5A059]">Servicios</h3>
                 <Button
                   type="button"
-                  variant="outline"
+                  onClick={handleAddService}
+                  disabled={availableServices.length === 0}
+                  className="bg-transparent border border-[#C5A059] text-[#C5A059] hover:bg-[#C5A059] hover:text-white transition-all rounded-[8px]"
                   size="sm"
-                  onClick={() => {
-                    setLoading(true);
-                    setServicesError(null);
-                    fetch(`/api/v1/public/services?tenant=${tenantSlug}`)
-                      .then((response) => {
-                        if (!response.ok)
-                          throw new Error("Failed to fetch services");
-                        return response.json();
-                      })
-                      .then((data) => {
-                        setAvailableServices(data.data || []);
-                        setServicesError(null);
-                      })
-                      .catch((err) => {
-                        console.error("Error retrying fetch:", err);
-                        setServicesError(
-                          err instanceof Error
-                            ? err.message
-                            : "Error al cargar los servicios",
-                        );
-                      })
-                      .finally(() => setLoading(false));
-                  }}
                 >
-                  Reintentar
+                  <Plus className="h-4 w-4 mr-2" />
+                  Agregar Servicio
                 </Button>
               </div>
-            ) : loading ? (
-              <div className="text-center py-8 rounded-lg border-2 border-dashed">
-                <p className="text-muted-foreground">Cargando servicios...</p>
-              </div>
-            ) : availableServices.length === 0 ? (
-              <div className="text-center py-8 bg-muted/50 rounded-lg border-2 border-dashed">
-                <p className="text-foreground font-medium mb-2">
-                  No hay servicios disponibles
-                </p>
-                <p className="text-muted-foreground text-sm">
-                  Contacta al administrador para agregar servicios a tu catálogo
-                </p>
-              </div>
-            ) : services.length === 0 ? (
-              <div className="text-center py-8 rounded-lg border-2 border-dashed">
-                <p className="text-muted-foreground">
-                  No hay servicios agregados
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {services.map((service, index) => (
-                  <div
-                    key={index}
-                    className="bg-muted/50 rounded-lg p-4 border"
-                  >
-                    <div className="grid grid-cols-12 gap-4 items-start">
-                      <div className="col-span-5">
-                        <SearchableSelect
-                          label="Servicio"
-                          value={service.serviceId}
-                          onChange={(val: any) =>
-                            handleServiceChange(index, val?.value || "")
-                          }
-                          required
-                          placeholder="Seleccionar servicio..."
-                          options={availableServices.map((s) => ({
-                            value: s.id,
-                            label: `${s.name} - $${Number(s.price).toFixed(2)}`,
-                          }))}
-                          menuPortalTarget={
-                            typeof document !== "undefined"
-                              ? document.body
-                              : undefined
-                          }
-                          className="text-sm"
-                        />
-                      </div>
 
-                      <div className="col-span-2">
-                        <FormInput
-                          label="Precio"
-                          type="number"
-                          step="0.01"
-                          value={service.unitPrice}
-                          onChange={(e) =>
-                            handlePriceChange(
-                              index,
-                              parseFloat(e.target.value) || 0,
-                            )
-                          }
-                          required
-                          inputClassName="text-sm"
-                        />
-                      </div>
+              {/* Service Grid Area */}
+              <div className="min-h-[100px]">
+                {loading ? (
+                  <div className="flex justify-center p-8 border border-dashed border-[#C5A059]/30 rounded-[8px] bg-[#F9F9F9]">
+                    <p className="text-[#C5A059] animate-pulse">Cargando catálogo...</p>
+                  </div>
+                ) : services.length === 0 ? (
+                  <div className="text-center py-10 border border-dashed border-[#C5A059]/40 rounded-[8px] bg-[rgba(197,160,89,0.03)]">
+                    <p className="text-[#333333] mb-2 font-medium">No hay servicios agregados</p>
+                    <p className="text-gray-500 text-sm">Añade los servicios realizados en esta visita.</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {services.map((service, index) => (
+                      <div
+                        key={index}
+                        className="bg-white border border-gray-100 rounded-[8px] p-4 shadow-sm hover:border-[#C5A059]/30 transition-colors relative group"
+                      >
+                         {/* Remove button absolute top-right for mobile friendliness or keep inline? User asked for responsive. 
+                             Inline is often safer for complex rows. Let's keep existing grid structure but sanitize styles. */}
+                        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-start">
+                          <div className="col-span-1 md:col-span-5">
+                            {/* Force white/gray inputs */}
+                            <div className="[&_input]:bg-[#F9F9F9] [&_div[class*='control']]:bg-[#F9F9F9] [&_div[class*='control']]:border-gray-200 [&_div[class*='control']]:rounded-[8px]">
+                                <SearchableSelect
+                                label="Servicio"
+                                value={service.serviceId}
+                                onChange={(val: any) =>
+                                    handleServiceChange(index, val?.value || "")
+                                }
+                                required
+                                placeholder="Seleccionar servicio..."
+                                options={availableServices.map((s) => ({
+                                    value: s.id,
+                                    label: `${s.name} - $${Number(s.price).toFixed(2)}`,
+                                }))}
+                                menuPortalTarget={
+                                    typeof document !== "undefined"
+                                    ? document.body
+                                    : undefined
+                                }
+                                className="text-sm"
+                                labelClassName="text-[#333333]"
+                                />
+                            </div>
+                          </div>
 
-                      <div className="col-span-2">
-                        <QuantityControl
-                          label="Cantidad"
-                          value={service.quantity}
-                          onChange={(value) =>
-                            handleQuantityChange(index, value)
-                          }
-                          min={1}
-                          size="sm"
-                        />
-                      </div>
+                          <div className="col-span-1 md:col-span-2">
+                             <div className="[&_input]:bg-[#F9F9F9] [&_input]:border-gray-200 [&_input]:rounded-[8px]">
+                                <FormInput
+                                label="Precio"
+                                type="number"
+                                step="0.01"
+                                value={service.unitPrice}
+                                onChange={(e) =>
+                                    handlePriceChange(
+                                    index,
+                                    parseFloat(e.target.value) || 0,
+                                    )
+                                }
+                                required
+                                inputClassName="text-sm text-[#333333]"
+                                labelClassName="text-[#333333]"
+                                />
+                             </div>
+                          </div>
 
-                      <div className="col-span-2">
-                        <label className="block text-sm font-medium text-muted-foreground mb-1">
-                          Subtotal
-                        </label>
-                        <div className="px-3 py-2 border rounded-md text-sm font-medium bg-secondary text-secondary-foreground">
-                          ${service.subtotal.toFixed(2)}
+                          <div className="col-span-1 md:col-span-2">
+                            <QuantityControl
+                                label="Cantidad"
+                                value={service.quantity}
+                                onChange={(value) =>
+                                handleQuantityChange(index, value)
+                                }
+                                min={1}
+                                size="sm"
+                                // Assuming QuantityControl accepts className or we wrap it logic needed
+                            />
+                             {/* Note: QuantityControl might contain internal styles we can't easily override without verification, but usually it respects standard input styles if global. */}
+                          </div>
+
+                          <div className="col-span-1 md:col-span-2">
+                            <label className="block text-sm font-medium text-[#333333] mb-1">
+                                Subtotal
+                            </label>
+                            <div className="px-3 py-2 border border-gray-200 rounded-[8px] text-sm font-bold bg-[#333333] text-white">
+                                ${service.subtotal.toFixed(2)}
+                            </div>
+                          </div>
+
+                          <div className="col-span-1 md:col-span-1 flex justify-end md:justify-center pt-0 md:pt-7">
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => handleRemoveService(index)}
+                                className="text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full"
+                            >
+                                <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
                         </div>
                       </div>
-
-                      <div className="col-span-1 flex items-end pt-7">
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleRemoveService(index)}
-                          className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
+                    ))}
                   </div>
-                ))}
+                )}
               </div>
-            )}
 
-            {/* Total */}
-            <div className="mt-4 flex justify-end items-center">
-              <div className="bg-primary/5 px-6 py-3 rounded-lg border border-primary/10">
-                <span className="text-sm font-medium mr-4">Total:</span>
-                <span className="text-xl font-bold text-primary">
-                  ${calculateTotal().toFixed(2)}
-                </span>
-              </div>
+               {/* Total - Highlighted */}
+               {services.length > 0 && (
+                <div className="flex justify-end mt-2">
+                    <div className="flex items-center gap-4 bg-[rgba(197,160,89,0.1)] px-6 py-4 rounded-[8px] border border-[#C5A059]/20">
+                        <span className="text-sm text-[#333333] uppercase tracking-wide">Total Estimado</span>
+                        <span className="text-2xl font-serif font-bold text-[#C5A059]">
+                            ${calculateTotal().toFixed(2)}
+                        </span>
+                    </div>
+                </div>
+               )}
             </div>
-          </div>
 
-          {/* Notes */}
-          <FormTextarea
-            label="Observaciones"
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            rows={3}
-            placeholder="Notas sobre la visita, tratamientos realizados, observaciones especiales..."
-          />
-
-          {/* Next Visit */}
-          <div>
-            <h3 className="text-sm font-medium mb-3">
-              Próxima Cita (Opcional)
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormInput
-                label="Desde"
-                type="date"
-                value={nextVisitFrom}
-                onChange={(e) => setNextVisitFrom(e.target.value)}
-              />
-              <FormInput
-                label="Hasta"
-                type="date"
-                value={nextVisitTo}
-                onChange={(e) => setNextVisitTo(e.target.value)}
+            {/* Observations */}
+            <div className="[&_textarea]:bg-[#F9F9F9] [&_textarea]:border-gray-200 [&_textarea]:rounded-[8px] [&_textarea:focus]:border-[#C5A059]">
+              <FormTextarea
+                label="Observaciones"
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                rows={4}
+                placeholder="Notas técnicas, preferencias del cliente, etc..."
+                labelClassName="text-[#333333]"
               />
             </div>
-          </div>
 
-          {/* Photos */}
-          <div>
-            <h3 className="text-sm font-medium mb-3">Fotos de la Visita</h3>
-            <VisitPhotosUpload photos={photos} onChange={setPhotos} />
-          </div>
+            {/* Next Visit / Optional */}
+            <div className="pt-4 border-t border-gray-100">
+               <h3 className="text-md font-serif text-[#C5A059] mb-4">Próxima Cita (Opcional)</h3>
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                 <div className="[&_input]:bg-[#F9F9F9] [&_input]:border-gray-200 [&_input]:rounded-[8px]">
+                    <FormInput
+                        label="Desde"
+                        type="date"
+                        value={nextVisitFrom}
+                        onChange={(e) => setNextVisitFrom(e.target.value)}
+                        labelClassName="text-[#333333]"
+                    />
+                 </div>
+                 <div className="[&_input]:bg-[#F9F9F9] [&_input]:border-gray-200 [&_input]:rounded-[8px]">
+                    <FormInput
+                        label="Hasta"
+                        type="date"
+                        value={nextVisitTo}
+                        onChange={(e) => setNextVisitTo(e.target.value)}
+                         labelClassName="text-[#333333]"
+                    />
+                 </div>
+               </div>
+            </div>
 
-          {/* Actions */}
-          <div
-            className={cn(
-              "flex justify-end gap-3 pt-4 border-t",
-              isLuxury ? "border-[#D4AF37]/20" : "",
-            )}
-          >
+            {/* Photos */}
+            <div className="pt-4 border-t border-gray-100">
+               <h3 className="text-md font-serif text-[#C5A059] mb-4">Evidencia Fotográfica</h3>
+               <VisitPhotosUpload photos={photos} onChange={setPhotos} />
+            </div>
+
+            {/* Spacer for sticky footer */}
+            <div className="h-20 md:h-0" />
+            
+          </form>
+        </div>
+
+        {/* Sticky Footer */}
+        <div className="shrink-0 p-4 bg-white border-t border-gray-100 flex flex-col-reverse md:flex-row justify-end gap-3 z-20">
             <Button
               type="button"
               variant="outline"
               onClick={() => onClose()}
-              className={
-                isLuxury ? "border-gray-200 text-gray-600 hover:bg-gray-50" : ""
-              }
+              className="w-full md:w-auto h-[44px] border-gray-300 text-gray-600 hover:bg-gray-50 rounded-[8px]"
             >
               Cancelar
             </Button>
             <Button
               type="submit"
+              form="visit-form"
               disabled={submitting || services.length === 0}
-              className={
-                isLuxury
-                  ? "bg-[#D4AF37] hover:bg-[#b3932d] text-white border-0"
-                  : ""
-              }
+              className={cn(
+                  "w-full md:w-auto h-[44px] text-white font-medium rounded-[8px] shadow-lg",
+                  "bg-[#C5A059] hover:bg-[#b08d4b] transition-all",
+                  "disabled:opacity-50 disabled:cursor-not-allowed"
+              )}
             >
-              {submitting
-                ? "Guardando..."
-                : visit
-                  ? "Guardar Cambios"
-                  : "Crear Visita"}
+              {submitting ? "Guardando..." : visit ? "Guardar Cambios" : "Crear Visita"}
             </Button>
-          </div>
-        </form>
+        </div>
       </div>
     </div>
   );

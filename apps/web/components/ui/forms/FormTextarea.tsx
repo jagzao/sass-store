@@ -7,6 +7,7 @@ export interface FormTextareaProps extends Omit<TextareaHTMLAttributes<HTMLTextA
   showCharCount?: boolean;
   containerClassName?: string;
   textareaClassName?: string;
+  labelClassName?: string;
 }
 
 const FormTextarea = memo(({
@@ -16,6 +17,7 @@ const FormTextarea = memo(({
   showCharCount = false,
   containerClassName = '',
   textareaClassName = '',
+  labelClassName = '',
   id,
   disabled,
   value,
@@ -40,7 +42,7 @@ const FormTextarea = memo(({
       {label && (
         <label
           htmlFor={textareaId}
-          className="block text-sm font-medium text-gray-700 mb-1"
+          className={`block text-sm font-medium text-gray-700 mb-1 ${labelClassName}`}
         >
           {label}
         </label>

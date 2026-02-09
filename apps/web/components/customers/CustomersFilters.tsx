@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { Search } from "lucide-react";
 import { SearchableSelectSingle } from "@/components/ui/forms/SearchableSelectSingle";
 import { SelectOption } from "@/components/ui/forms/SearchableSelect";
@@ -34,23 +34,52 @@ export default function CustomersFilters({
   );
 
   // Add debouncing for search
+  const searchParamsHook = useSearchParams();
+
+  // Add debouncing for search
   useEffect(() => {
     const timer = setTimeout(() => {
-      const params = new URLSearchParams();
-      if (search) params.set("search", search);
-      if (status && status !== "all") params.set("status", status);
+       const newParams = new URLSearchParams();
+       
+       if (search) newParams.set("search", search);
+       if (status && status !== "all") newParams.set("status", status);
+       
+       // Preserve sort/order from props (OR rely on hook if props are unstable, but props are passed from server which is fine if we check equality)
+       // Actually, let's use the hook for the current state of sort/order to be safer against prop reference changes
+       // restarting the effect.
+       
+       const currentSort = searchParamsHook.get("sort");
+       const currentOrder = searchParamsHook.get("order");
 
-      router.push(`${pathname}?${params.toString()}`);
+       if (currentSort) {
+         newParams.set("sort", currentSort);
+       }
+       if (currentOrder) {
+         newParams.set("order", currentOrder);
+       }
+
+       const queryString = newParams.toString();
+       const currentQueryString = searchParamsHook.toString();
+
+       // Only push if the query string has effectively changed
+       // We need to be careful about parameter order, but URLSearchParams usually sorts or we can just compare values?
+       // Simplest is to check if newParams is different from current.
+       
+       if (queryString !== currentQueryString) {
+          router.push(`${pathname}?${queryString}`);
+       }
     }, 300); // 300ms delay
 
     return () => clearTimeout(timer);
-  }, [search, status, pathname, router]);
+  }, [search, status, pathname, router, searchParamsHook]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
   };
 
-  const handleStatusChange = (option: SelectOption | null) => {
+  const handleStatusChange = (option: SelectOption | string | null) => {
+    // We expect SelectOption for single select, but the type allows string
+    if (typeof option === 'string') return; 
     setStatus(option?.value || "all");
   };
 

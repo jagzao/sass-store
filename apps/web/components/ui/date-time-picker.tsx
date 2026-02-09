@@ -19,9 +19,10 @@ interface DateTimePickerProps {
   date?: Date;
   setDate: (date: Date) => void;
   label?: string;
+  className?: string;
 }
 
-export function DateTimePicker({ date, setDate, label }: DateTimePickerProps) {
+export function DateTimePicker({ date, setDate, label, className }: DateTimePickerProps) {
   const [selectedDate, setSelectedDate] = React.useState<Date | undefined>(
     date
   );
@@ -68,7 +69,8 @@ export function DateTimePicker({ date, setDate, label }: DateTimePickerProps) {
             variant={"outline"}
             className={cn(
               "w-full justify-start text-left font-normal",
-              !date && "text-muted-foreground"
+              !date && "text-muted-foreground",
+              className
             )}
           >
             <CalendarIcon className="mr-2 h-4 w-4" />

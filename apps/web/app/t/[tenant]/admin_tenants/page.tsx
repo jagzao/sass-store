@@ -12,7 +12,39 @@ import {
   LayoutGrid,
   List,
 } from "lucide-react";
+import { z } from "zod";
 import TenantLogoUpload from "@/components/tenant/TenantLogoUpload";
+
+// Validation Schemas
+const step1Schema = z.object({
+  name: z.string().min(1, "El nombre es requerido"),
+  slug: z
+    .string()
+    .min(1, "El slug es requerido")
+    .regex(
+      /^[a-z0-9-]+$/,
+      "El slug debe contener solo letras minúsculas, números y guiones",
+    ),
+  mode: z.enum(["booking", "ecommerce", "both"]),
+  currency: z.string(),
+  description: z.string().optional(),
+});
+
+const step2Schema = z.object({
+  adminUser: z.object({
+    name: z.string().optional(),
+    email: z.string().email("Email inválido"),
+    password: z.string().min(6, "La contraseña debe tener al menos 6 caracteres"),
+  }),
+});
+
+const step3Schema = z.object({
+  theme: z.object({
+    primaryColor: z.string().min(1, "Color primario requerido"),
+    secondaryColor: z.string().min(1, "Color secundario requerido"),
+    logoUrl: z.string().optional(),
+  }),
+});
 
 interface Tenant {
   id: string;
@@ -549,17 +581,60 @@ function CreateTenantModal({
   });
 
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null); // General error message
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [serverErrors, setServerErrors] = useState<
+    { step: number; field: string; message: string }[]
+  >([]);
+
+  const validateStep = (currentStep: number) => {
+    let result;
+    setFieldErrors({}); // Clear previous errors
+
+    try {
+      if (currentStep === 1) {
+        step1Schema.parse(formData);
+      } else if (currentStep === 2) {
+        step2Schema.parse(formData);
+      } else if (currentStep === 3) {
+        step3Schema.parse(formData);
+      }
+      return true;
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        const errors: Record<string, string> = {};
+        err.errors.forEach((e) => {
+          // Path can be nested like ['adminUser', 'email']
+          const path = e.path.join(".");
+          errors[path] = e.message;
+        });
+        setFieldErrors(errors);
+      }
+      return false;
+    }
+  };
+
+  const handleNext = () => {
+    if (validateStep(step)) {
+      setStep(step + 1);
+      setServerErrors([]); // Clear server errors when moving forward
+    }
+  };
+
+  const handleJumpToError = (targetStep: number, field: string) => {
+    setStep(targetStep);
+    // Optional: focus logic could go here
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (step < 4) {
-      setStep(step + 1);
-      return;
-    }
-
+    
+    // Final validation before submit (Step 4 implies previous steps are valid, but good to check)
+    // Actually step 4 has no fields to validate itself, just confirmation.
+    
     setLoading(true);
     setError(null);
+    setServerErrors([]);
 
     try {
       const response = await fetch("/api/tenants", {
@@ -572,7 +647,30 @@ function CreateTenantModal({
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.error || "Error al crear el tenant");
+        
+        // Handle structured validation errors from backend
+        if (data.details && Array.isArray(data.details)) {
+            // Transform Zod-like backend errors to clickable summary
+            const newServerErrors = data.details.map((detail: any) => {
+                // Map backend paths to steps (heuristically)
+                const path = detail.path.join(".");
+                let step = 1;
+                if (path.startsWith("adminUser")) step = 2;
+                if (path.startsWith("theme")) step = 3;
+                
+                return {
+                    step,
+                    field: path,
+                    message: detail.message
+                };
+            });
+            setServerErrors(newServerErrors);
+            setError("Hay errores en el formulario. Por favor revísalos abajo.");
+        } else {
+            throw new Error(data.error || "Error al crear el tenant");
+        }
+        setLoading(false); // Stop loading if error
+        return;
       }
 
       onSuccess();
@@ -594,6 +692,14 @@ function CreateTenantModal({
       [name]:
         type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
     }));
+    // Clear error for this field
+    if (fieldErrors[name]) {
+        setFieldErrors(prev => {
+            const next = { ...prev };
+            delete next[name];
+            return next;
+        });
+    }
   };
 
   const handleNestedChange = (
@@ -608,6 +714,15 @@ function CreateTenantModal({
         [field]: value,
       },
     }));
+    
+    const path = `${parent}.${field}`;
+    if (fieldErrors[path]) {
+        setFieldErrors(prev => {
+            const next = { ...prev };
+            delete next[path];
+            return next;
+        });
+    }
   };
 
   return (
@@ -627,8 +742,28 @@ function CreateTenantModal({
 
         <div className="p-6">
           {error && (
-            <div className="mb-6 p-4 bg-red-900/20 border border-red-500/50 text-red-200 rounded text-sm">
-              {error}
+            <div className="mb-6 p-4 bg-red-900/20 border border-red-500/50 text-red-200 rounded text-sm animate-in fade-in slide-in-from-top-2">
+              <p className="font-bold flex items-center gap-2">
+                 ⚠️ {error}
+              </p>
+              {serverErrors.length > 0 && (
+                <div className="mt-3 pl-4 border-l-2 border-red-500/30">
+                    <p className="text-xs uppercase text-red-400 font-bold mb-2">Detalles:</p>
+                    <ul className="space-y-1">
+                        {serverErrors.map((err, idx) => (
+                            <li key={idx}>
+                                <button
+                                    type="button"
+                                    onClick={() => handleJumpToError(err.step, err.field)}
+                                    className="text-left hover:text-white underline decoration-red-500/50 hover:decoration-white transition-all text-sm"
+                                >
+                                    Paso {err.step}: {err.message}
+                                </button>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+              )}
             </div>
           )}
 
@@ -656,9 +791,9 @@ function CreateTenantModal({
                       name="name"
                       value={formData.name}
                       onChange={handleChange}
-                      required
-                      className={inputClass}
+                      className={`${inputClass} ${fieldErrors["name"] ? "border-red-500" : ""}`}
                     />
+                    {fieldErrors["name"] && <p className="text-red-400 text-xs mt-1">{fieldErrors["name"]}</p>}
                   </div>
 
                   <div>
@@ -668,11 +803,9 @@ function CreateTenantModal({
                       name="slug"
                       value={formData.slug}
                       onChange={handleChange}
-                      required
-                      pattern="^[a-z0-9-]+$"
-                      title="Solo letras minúsculas, números y guiones"
-                      className={inputClass}
+                      className={`${inputClass} ${fieldErrors["slug"] ? "border-red-500" : ""}`}
                     />
+                    {fieldErrors["slug"] && <p className="text-red-400 text-xs mt-1">{fieldErrors["slug"]}</p>}
                   </div>
 
                   <div>
@@ -765,9 +898,9 @@ function CreateTenantModal({
                       onChange={(e) =>
                         handleNestedChange("adminUser", "email", e.target.value)
                       }
-                      required
-                      className={inputClass}
+                      className={`${inputClass} ${fieldErrors["adminUser.email"] ? "border-red-500" : ""}`}
                     />
+                    {fieldErrors["adminUser.email"] && <p className="text-red-400 text-xs mt-1">{fieldErrors["adminUser.email"]}</p>}
                   </div>
                   <div>
                     <label className={labelClass}>Contraseña *</label>
@@ -781,10 +914,9 @@ function CreateTenantModal({
                           e.target.value,
                         )
                       }
-                      required
-                      minLength={6}
-                      className={inputClass}
+                      className={`${inputClass} ${fieldErrors["adminUser.password"] ? "border-red-500" : ""}`}
                     />
+                    {fieldErrors["adminUser.password"] && <p className="text-red-400 text-xs mt-1">{fieldErrors["adminUser.password"]}</p>}
                   </div>
                 </div>
               </div>
@@ -960,17 +1092,23 @@ function CreateTenantModal({
                 </button>
               )}
 
-              <button
-                type="submit"
-                disabled={loading}
-                className={buttonPrimaryClass}
-              >
-                {loading
-                  ? "Procesando..."
-                  : step === 4
-                    ? "Crear Tenant"
-                    : "Siguiente"}
-              </button>
+              {step < 4 ? (
+                <button
+                    type="button"
+                    onClick={handleNext}
+                    className={buttonPrimaryClass}
+                >
+                    Siguiente
+                </button>
+              ) : (
+                <button
+                    type="submit"
+                    disabled={loading}
+                    className={buttonPrimaryClass}
+                >
+                    {loading ? "Procesando..." : "Crear Tenant"}
+                </button>
+              )}
             </div>
           </form>
         </div>

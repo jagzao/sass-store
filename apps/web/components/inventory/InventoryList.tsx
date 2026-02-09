@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from "react";
 import { useInventory } from "@/lib/hooks/useInventory";
 import { InventoryItem } from "@/lib/hooks/useInventory";
+import { Eye, Edit, Trash2, AlertCircle } from "lucide-react"; // Icons
+import Image from "next/image";
 
 interface InventoryListProps {
   onEdit?: (item: InventoryItem) => void;
@@ -29,16 +31,13 @@ export function InventoryList({
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
   const [pagination, setPagination] = useState({
     page: 1,
-    limit: 20,
+    limit: 10,
     total: 0,
     totalPages: 0,
   });
   const [params, setParams] = useState(initialParams);
   const [searchTerm, setSearchTerm] = useState("");
-  const [showLowStock, setShowLowStock] = useState(false);
-  const [showOutOfStock, setShowOutOfStock] = useState(false);
 
-  // Cargar inventario
   const loadInventory = async () => {
     try {
       const response = await getInventory(params);
@@ -49,37 +48,32 @@ export function InventoryList({
     }
   };
 
-  // Aplicar filtros
-  const applyFilters = () => {
-    const newParams = {
-      ...params,
-      page: 1, // Resetear a primera página al filtrar
-      search: searchTerm || undefined,
-      lowStock: showLowStock || undefined,
-      outOfStock: showOutOfStock || undefined,
-    };
-    setParams(newParams);
-  };
-
-  // Cambiar página
-  const changePage = (page: number) => {
-    setParams((prev) => ({ ...prev, page }));
-  };
-
-  // Limpiar filtros
-  const clearFilters = () => {
-    setSearchTerm("");
-    setShowLowStock(false);
-    setShowOutOfStock(false);
-    setParams(initialParams);
-  };
-
-  // Cargar inventario cuando cambian los parámetros
   useEffect(() => {
     loadInventory();
   }, [params]);
 
-  // Formatear moneda
+  // Debounced Auto-Search
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchTerm.length >= 3 || searchTerm.length === 0) {
+        setParams((prev) => {
+          if (prev.search === searchTerm) return prev;
+          return { ...prev, page: 1, search: searchTerm };
+        });
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
+  const applyFilters = () => {
+    setParams((prev) => ({ ...prev, page: 1, search: searchTerm }));
+  };
+
+  const changePage = (page: number) => {
+    setParams((prev) => ({ ...prev, page }));
+  };
+
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("es-MX", {
       style: "currency",
@@ -87,273 +81,219 @@ export function InventoryList({
     }).format(amount);
   };
 
-  // Obtener clase para estado de stock
-  const getStockStatusClass = (item: InventoryItem) => {
+  // Luxury Status Badges
+  const getStockStatusBadge = (item: InventoryItem) => {
     if (item.availableQuantity === 0) {
-      return "text-red-600 bg-red-50";
+      return (
+        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-red-50 text-red-700 border border-red-100">
+          Sin Stock
+        </span>
+      );
     }
     if (item.availableQuantity <= item.reorderPoint) {
-      return "text-yellow-600 bg-yellow-50";
+      return (
+        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-red-50 text-red-600 border border-red-100">
+          Stock Bajo
+        </span>
+      );
     }
-    return "text-green-600 bg-green-50";
-  };
-
-  // Obtener texto para estado de stock
-  const getStockStatusText = (item: InventoryItem) => {
-    if (item.availableQuantity === 0) {
-      return "Sin stock";
-    }
-    if (item.availableQuantity <= item.reorderPoint) {
-      return "Stock bajo";
-    }
-    return "En stock";
+    return (
+      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-[#C5A059]/10 text-[#C5A059] border border-[#C5A059]/20">
+        En Stock
+      </span>
+    );
   };
 
   if (loading && inventory.length === 0) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="flex justify-center items-center h-96">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#C5A059]"></div>
       </div>
     );
   }
 
-  if (error) {
+  if (inventory.length === 0 && !loading && !error) {
     return (
-      <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-        <p className="text-red-600">{error}</p>
+      <div className="flex flex-col justify-center items-center h-96 text-center">
+        <div className="bg-[#C5A059]/10 p-4 rounded-full mb-4">
+          <AlertCircle className="w-8 h-8 text-[#C5A059]" />
+        </div>
+        <h3 className="text-xl font-serif text-gray-800 mb-2">
+          Inventario Vacío
+        </h3>
+        <p className="text-gray-500 max-w-sm">
+          No hay productos en el inventario. Comienza agregando productos o
+          ajustando tus filtros.
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-4">
-      {/* Filtros */}
-      <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Buscar
-            </label>
-            <input
-              type="text"
-              placeholder="Nombre o SKU..."
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              onKeyPress={(e) => e.key === "Enter" && applyFilters()}
-            />
-          </div>
-          <div className="flex items-end space-x-2">
-            <label className="flex items-center">
-              <input
-                type="checkbox"
-                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                checked={showLowStock}
-                onChange={(e) => setShowLowStock(e.target.checked)}
-              />
-              <span className="ml-2 text-sm text-gray-700">Stock bajo</span>
-            </label>
-          </div>
-          <div className="flex items-end space-x-2">
-            <label className="flex items-center">
-              <input
-                type="checkbox"
-                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                checked={showOutOfStock}
-                onChange={(e) => setShowOutOfStock(e.target.checked)}
-              />
-              <span className="ml-2 text-sm text-gray-700">Sin stock</span>
-            </label>
-          </div>
-          <div className="flex items-end space-x-2">
-            <button
-              onClick={applyFilters}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+    <div className="space-y-6">
+      {/* Luxury Filter Bar */}
+      <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col md:flex-row gap-4 items-center justify-between">
+        <div className="relative w-full md:w-96">
+          <input
+            type="text"
+            placeholder="Buscar por nombre, SKU o categoría..."
+            className="w-full pl-4 pr-10 py-3 rounded-xl border border-gray-200 focus:border-[#C5A059] focus:ring-1 focus:ring-[#C5A059] outline-none transition-all placeholder:text-gray-400 text-sm"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyPress={(e) => e.key === "Enter" && applyFilters()}
+          />
+          <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
             >
-              Filtrar
-            </button>
-            <button
-              onClick={clearFilters}
-              className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
-            >
-              Limpiar
-            </button>
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0Z"
+              />
+            </svg>
           </div>
+        </div>
+        <div className="flex gap-2">
+           {/* Add buttons here if needed */}
         </div>
       </div>
 
-      {/* Tabla de inventario */}
-      <div className="bg-white shadow-sm rounded-lg overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Producto
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                SKU
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Stock
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Precio Unitario
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Valor Total
-              </th>
-              {showActions && (
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+      {/* Luxury Table */}
+      <div className="bg-white rounded-[12px] shadow-sm border border-gray-100 overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="bg-[#F8F5FA] border-b border-[#C5A059]/20">
+                <th className="px-6 py-4 text-left text-xs font-bold text-[#C5A059] uppercase tracking-wider">
+                  Producto
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-[#C5A059] uppercase tracking-wider">
+                  Categoría
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-[#C5A059] uppercase tracking-wider">
+                  Stock Actual
+                </th>
+                <th className="px-6 py-4 text-center text-xs font-bold text-[#C5A059] uppercase tracking-wider">
+                  Stock Mínimo
+                </th>
+                 <th className="px-6 py-4 text-right text-xs font-bold text-[#C5A059] uppercase tracking-wider">
+                  Costo Unitario
+                </th>
+                <th className="px-6 py-4 text-right text-xs font-bold text-[#C5A059] uppercase tracking-wider">
+                  Precio Venta
+                </th>
+                <th className="px-6 py-4 text-right text-xs font-bold text-[#C5A059] uppercase tracking-wider">
+                  Valor Total
+                </th>
+                <th className="px-6 py-4 text-center text-xs font-bold text-[#C5A059] uppercase tracking-wider">
                   Acciones
                 </th>
-              )}
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {inventory.map((item) => (
-              <tr
-                key={item.id}
-                className="hover:bg-gray-50 cursor-pointer"
-                onClick={() => onSelect?.(item)}
-              >
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-medium text-gray-900">
-                    {item.productName}
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-500">{item.productSku}</div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex items-center space-x-2">
-                    <span
-                      className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStockStatusClass(item)}`}
-                    >
-                      {getStockStatusText(item)}
-                    </span>
-                    <span className="text-sm text-gray-500">
-                      {item.availableQuantity} / {item.quantity}
-                    </span>
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {formatCurrency(item.unitPrice)}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {formatCurrency(item.totalValue)}
-                </td>
-                {showActions && (
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onEdit?.(item);
-                      }}
-                      className="text-blue-600 hover:text-blue-900 mr-3"
-                    >
-                      Editar
-                    </button>
-                  </td>
-                )}
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Paginación */}
-      {pagination.totalPages > 1 && (
-        <div className="flex items-center justify-between border-t border-gray-200 pt-4">
-          <div className="flex-1 flex justify-between sm:hidden">
-            <button
-              onClick={() => changePage(Math.max(1, pagination.page - 1))}
-              disabled={pagination.page === 1}
-              className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
-            >
-              Anterior
-            </button>
-            <button
-              onClick={() =>
-                changePage(Math.min(pagination.totalPages, pagination.page + 1))
-              }
-              disabled={pagination.page === pagination.totalPages}
-              className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
-            >
-              Siguiente
-            </button>
-          </div>
-          <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-            <div>
-              <p className="text-sm text-gray-700">
-                Mostrando{" "}
-                <span className="font-medium">
-                  {(pagination.page - 1) * pagination.limit + 1}
-                </span>{" "}
-                a{" "}
-                <span className="font-medium">
-                  {Math.min(
-                    pagination.page * pagination.limit,
-                    pagination.total,
-                  )}
-                </span>{" "}
-                de <span className="font-medium">{pagination.total}</span>{" "}
-                resultados
-              </p>
-            </div>
-            <div>
-              <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
-                <button
-                  onClick={() => changePage(Math.max(1, pagination.page - 1))}
-                  disabled={pagination.page === 1}
-                  className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
+            </thead>
+            <tbody className="divide-y divide-gray-50">
+              {inventory.map((item, index) => (
+                <tr
+                  key={item.id}
+                  className={`group transition-colors hover:bg-[#F8F5FA]/50 ${
+                    index % 2 === 0 ? "bg-white" : "bg-gray-50/30"
+                  }`}
                 >
-                  Anterior
-                </button>
-                {Array.from(
-                  { length: Math.min(5, pagination.totalPages) },
-                  (_, i) => {
-                    let page;
-                    if (pagination.totalPages <= 5) {
-                      page = i + 1;
-                    } else if (pagination.page <= 3) {
-                      page = i + 1;
-                    } else if (pagination.page >= pagination.totalPages - 2) {
-                      page = pagination.totalPages - 4 + i;
-                    } else {
-                      page = pagination.page - 2 + i;
-                    }
-
-                    return (
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex items-center">
+                      <div className="h-10 w-10 flex-shrink-0 relative rounded-lg overflow-hidden bg-gray-100 border border-gray-100">
+                        {item.productImage ? (
+                          <Image
+                            src={item.productImage}
+                            alt={item.productName}
+                            fill
+                            className="object-cover"
+                          />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center bg-gray-100 text-[#C5A059] font-serif font-bold">
+                            {item.productName.charAt(0)}
+                          </div>
+                        )}
+                      </div>
+                      <div className="ml-4">
+                        <div className="text-sm font-medium text-gray-900 group-hover:text-[#C5A059] transition-colors">
+                          {item.productName}
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          SKU: {item.productSku}
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 border border-gray-200">
+                      {item.productCategory}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex items-center space-x-2">
+                       {getStockStatusBadge(item)}
+                       <span className="text-xs text-gray-500 ml-1">
+                          {item.availableQuantity} un.
+                       </span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500 font-medium">
+                    {item.reorderPoint}
+                  </td>
+                   <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-600 font-medium font-mono">
+                    {formatCurrency(item.unitPrice)}
+                  </td>
+                   <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-600 font-medium font-mono">
+                    {formatCurrency(item.salePrice)}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-right font-bold text-[#C5A059] font-mono">
+                    {formatCurrency(item.totalValue)}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                    <div className="flex justify-center items-center space-x-2">
                       <button
-                        key={page}
-                        onClick={() => changePage(page)}
-                        className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
-                          page === pagination.page
-                            ? "z-10 bg-blue-50 border-blue-500 text-blue-600"
-                            : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
-                        }`}
+                        onClick={() => onEdit?.(item)}
+                        className="p-1.5 text-gray-400 hover:text-[#C5A059] transition-colors rounded-lg hover:bg-[#C5A059]/10"
+                        title="Editar"
                       >
-                        {page}
+                        <Edit className="w-4 h-4" />
                       </button>
-                    );
-                  },
-                )}
-                <button
-                  onClick={() =>
-                    changePage(
-                      Math.min(pagination.totalPages, pagination.page + 1),
-                    )
-                  }
-                  disabled={pagination.page === pagination.totalPages}
-                  className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
-                >
-                  Siguiente
-                </button>
-              </nav>
-            </div>
-          </div>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-      )}
+
+        {/* Pagination - Styled to match Luxury theme */}
+        <div className="bg-white px-6 py-4 border-t border-gray-100 flex items-center justify-between">
+            <div className="text-sm text-gray-500">
+                Mostrando <span className="font-medium text-gray-900">{((pagination.page - 1) * pagination.limit) + 1}</span> - <span className="font-medium text-gray-900">{Math.min(pagination.page * pagination.limit, pagination.total)}</span> de <span className="font-medium text-gray-900">{pagination.total}</span>
+            </div>
+            <div className="flex gap-2">
+                <button
+                    onClick={() => changePage(Math.max(1, pagination.page - 1))}
+                    disabled={pagination.page === 1}
+                    className="px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 hover:text-[#C5A059] hover:border-[#C5A059]/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                >
+                    Anterior
+                </button>
+                <button
+                    onClick={() => changePage(pagination.page + 1)}
+                    disabled={pagination.page >= pagination.totalPages}
+                    className="px-4 py-2 text-sm font-medium text-white bg-[#C5A059] rounded-lg hover:bg-[#B08D4C] disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm shadow-[#C5A059]/20"
+                >
+                    Siguiente
+                </button>
+            </div>
+        </div>
+      </div>
     </div>
   );
 }

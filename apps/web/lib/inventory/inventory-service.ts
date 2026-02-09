@@ -188,6 +188,8 @@ const mapInventoryRow = (row: {
   updatedAt: Date | null;
   productName: string | null;
   productSku: string | null;
+  productImage: string | null;
+  productCategory: string | null;
   productPrice: string | null;
   productActive: boolean | null;
 }) => {
@@ -200,11 +202,14 @@ const mapInventoryRow = (row: {
     productId: row.productId,
     productName: row.productName ?? "",
     productSku: row.productSku ?? "",
+    productImage: row.productImage,
+    productCategory: row.productCategory ?? "Uncategorized",
     quantity,
     reservedQuantity: 0,
     availableQuantity: quantity,
     reorderPoint: toNumber(row.reorderLevel),
     unitPrice,
+    salePrice: toNumber(row.productPrice),
     totalValue: quantity * unitPrice,
     lastUpdated: row.updatedAt ?? row.createdAt ?? new Date(),
     isActive: row.productActive ?? true,
@@ -359,6 +364,8 @@ export class InventoryService {
           updatedAt: productInventory.updatedAt,
           productName: products.name,
           productSku: products.sku,
+          productImage: products.imageUrl,
+          productCategory: products.category,
           productPrice: products.price,
           productActive: products.active,
         })

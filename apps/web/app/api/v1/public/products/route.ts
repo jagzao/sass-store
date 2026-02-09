@@ -7,6 +7,7 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const tenant = searchParams.get("tenant");
+    const featured = searchParams.get("featured") === "true";
     const limitParam = searchParams.get("limit");
     const limit = limitParam ? parseInt(limitParam) : undefined;
 
@@ -31,6 +32,12 @@ export async function GET(request: NextRequest) {
     const tenantId = tenantResult[0].id;
 
     // Build query to get products using Drizzle query builder
+    const conditions = [eq(products.tenantId, tenantId), eq(products.active, true)];
+
+    if (featured) {
+      conditions.push(eq(products.featured, true));
+    }
+
     let query = db
       .select({
         id: products.id,
@@ -45,7 +52,7 @@ export async function GET(request: NextRequest) {
         imageUrl: products.imageUrl,
       })
       .from(products)
-      .where(eq(products.tenantId, tenantId));
+      .where(and(...conditions));
 
     // Add limit if provided
     if (limit) {

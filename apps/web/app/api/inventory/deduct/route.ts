@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
-import { db } from "@sass-store/database";
 import { InventoryService } from "@/lib/inventory/inventory-service";
 import { z } from "zod";
+import {
+  resolveInventoryTenantContext,
+  toInventoryErrorResponse,
+} from "../_lib/tenant-context";
 
 // Esquemas de validación
 const bodySchema = z.object({
@@ -21,19 +23,9 @@ const bodySchema = z.object({
  */
 export async function POST(request: NextRequest) {
   try {
-    // Verificar autenticación
-    const session = await auth();
-    if (!session?.user) {
-      return NextResponse.json({ error: "No autorizado" }, { status: 401 });
-    }
-
-    // Obtener tenant del usuario
-    const tenantId = session.user.tenantId;
-    if (!tenantId) {
-      return NextResponse.json(
-        { error: "Tenant no encontrado" },
-        { status: 400 },
-      );
+    const tenantContext = await resolveInventoryTenantContext();
+    if (!tenantContext.success) {
+      return toInventoryErrorResponse(tenantContext.error);
     }
 
     // Parsear y validar body
@@ -42,27 +34,20 @@ export async function POST(request: NextRequest) {
 
     // Deducir inventario para el servicio
     const result = await InventoryService.deductInventoryForService(
-      tenantId,
+      tenantContext.data.tenantId,
       validatedData.serviceId,
       validatedData.products,
       validatedData.notes,
     );
 
     if (!result.success) {
-      return NextResponse.json(
-        {
-          error: "Error al deducir inventario",
-          details: result.error,
-          insufficientStock: result.insufficientStock,
-        },
-        { status: 400 },
-      );
+      return toInventoryErrorResponse(result.error);
     }
 
     return NextResponse.json({
       message: "Inventario deducido exitosamente",
-      transactions: result.transactions,
-      alerts: result.alerts,
+      transactions: result.data.transactions,
+      alerts: result.data.alerts,
     });
   } catch (error) {
     console.error("Error en POST /api/inventory/deduct:", error);
@@ -72,10 +57,6 @@ export async function POST(request: NextRequest) {
         { error: "Datos inválidos", details: error.errors },
         { status: 400 },
       );
-    }
-
-    if (error instanceof Error) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
     }
 
     return NextResponse.json(

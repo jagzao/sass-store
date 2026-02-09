@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
-import { db } from "@sass-store/database";
 import { InventoryService } from "@/lib/inventory/inventory-service";
 import { z } from "zod";
+import {
+  resolveInventoryTenantContext,
+  toInventoryErrorResponse,
+} from "../_lib/tenant-context";
 
 // Esquemas de validación
 const querySchema = z.object({
@@ -20,19 +22,9 @@ const querySchema = z.object({
  */
 export async function GET(request: NextRequest) {
   try {
-    // Verificar autenticación
-    const session = await auth();
-    if (!session?.user) {
-      return NextResponse.json({ error: "No autorizado" }, { status: 401 });
-    }
-
-    // Obtener tenant del usuario
-    const tenantId = session.user.tenantId;
-    if (!tenantId) {
-      return NextResponse.json(
-        { error: "Tenant no encontrado" },
-        { status: 400 },
-      );
+    const tenantContext = await resolveInventoryTenantContext();
+    if (!tenantContext.success) {
+      return toInventoryErrorResponse(tenantContext.error);
     }
 
     // Parsear y validar query parameters
@@ -48,11 +40,15 @@ export async function GET(request: NextRequest) {
 
     // Obtener transacciones
     const result = await InventoryService.getInventoryTransactions({
-      tenantId,
+      tenantId: tenantContext.data.tenantId,
       ...processedQuery,
     });
 
-    return NextResponse.json(result);
+    if (!result.success) {
+      return toInventoryErrorResponse(result.error);
+    }
+
+    return NextResponse.json(result.data);
   } catch (error) {
     console.error("Error en GET /api/inventory/transactions:", error);
 

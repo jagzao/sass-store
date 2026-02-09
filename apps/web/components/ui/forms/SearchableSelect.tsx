@@ -51,6 +51,7 @@ export interface SearchableSelectProps<IsMulti extends boolean = false> {
   // Styling
   containerClassName?: string;
   className?: string;
+  labelClassName?: string;
 
   // Advanced
   name?: string;
@@ -88,6 +89,7 @@ function SearchableSelectComponent<IsMulti extends boolean = false>(
     loadingMessage = "Cargando...",
     containerClassName = "",
     className = "",
+    labelClassName = "",
     name,
     id,
     required = false,
@@ -216,6 +218,10 @@ function SearchableSelectComponent<IsMulti extends boolean = false>(
         padding: "4px",
         borderRadius: "0.375rem",
       }),
+      menuPortal: (base) => ({
+        ...base,
+        zIndex: 9999,
+      }),
       option: (base, state) => ({
         ...base,
         backgroundColor: state.isSelected
@@ -315,14 +321,14 @@ function SearchableSelectComponent<IsMulti extends boolean = false>(
       : helperText
         ? `${selectId}-helper`
         : undefined,
-  };
+  } as any;
 
   return (
     <div className={containerClassName}>
       {label && (
         <label
           htmlFor={selectId}
-          className="block text-sm font-medium text-gray-700 mb-1"
+          className={`block text-sm font-medium text-gray-700 mb-1 ${labelClassName}`}
         >
           {label}
           {required && <span className="text-red-500 ml-1">*</span>}

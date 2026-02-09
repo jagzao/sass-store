@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
-import { db } from "@sass-store/database";
 import { InventoryService } from "@/lib/inventory/inventory-service";
 import { z } from "zod";
+import {
+  resolveInventoryTenantContext,
+  toInventoryErrorResponse,
+} from "../_lib/tenant-context";
 
 // Esquemas de validación
 const updateInventorySchema = z.object({
@@ -37,19 +39,9 @@ interface RouteParams {
  */
 export async function GET(request: NextRequest, context: RouteParams) {
   try {
-    // Verificar autenticación
-    const session = await auth();
-    if (!session?.user) {
-      return NextResponse.json({ error: "No autorizado" }, { status: 401 });
-    }
-
-    // Obtener tenant del usuario
-    const tenantId = session.user.tenantId;
-    if (!tenantId) {
-      return NextResponse.json(
-        { error: "Tenant no encontrado" },
-        { status: 400 },
-      );
+    const tenantContext = await resolveInventoryTenantContext();
+    if (!tenantContext.success) {
+      return toInventoryErrorResponse(tenantContext.error);
     }
 
     // Obtener productId de los params
@@ -57,18 +49,15 @@ export async function GET(request: NextRequest, context: RouteParams) {
 
     // Obtener inventario
     const inventory = await InventoryService.getInventoryByProductId(
-      tenantId,
+      tenantContext.data.tenantId,
       productId,
     );
 
-    if (!inventory) {
-      return NextResponse.json(
-        { error: "Inventario no encontrado" },
-        { status: 404 },
-      );
+    if (!inventory.success) {
+      return toInventoryErrorResponse(inventory.error);
     }
 
-    return NextResponse.json(inventory);
+    return NextResponse.json(inventory.data);
   } catch (error) {
     console.error("Error en GET /api/inventory/[productId]:", error);
 
@@ -84,19 +73,9 @@ export async function GET(request: NextRequest, context: RouteParams) {
  */
 export async function PUT(request: NextRequest, context: RouteParams) {
   try {
-    // Verificar autenticación
-    const session = await auth();
-    if (!session?.user) {
-      return NextResponse.json({ error: "No autorizado" }, { status: 401 });
-    }
-
-    // Obtener tenant del usuario
-    const tenantId = session.user.tenantId;
-    if (!tenantId) {
-      return NextResponse.json(
-        { error: "Tenant no encontrado" },
-        { status: 400 },
-      );
+    const tenantContext = await resolveInventoryTenantContext();
+    if (!tenantContext.success) {
+      return toInventoryErrorResponse(tenantContext.error);
     }
 
     // Obtener productId de los params
@@ -108,12 +87,16 @@ export async function PUT(request: NextRequest, context: RouteParams) {
 
     // Actualizar inventario
     const result = await InventoryService.updateInventory(
-      tenantId,
+      tenantContext.data.tenantId,
       productId,
       validatedData,
     );
 
-    return NextResponse.json(result);
+    if (!result.success) {
+      return toInventoryErrorResponse(result.error);
+    }
+
+    return NextResponse.json(result.data);
   } catch (error) {
     console.error("Error en PUT /api/inventory/[productId]:", error);
 
@@ -122,10 +105,6 @@ export async function PUT(request: NextRequest, context: RouteParams) {
         { error: "Datos inválidos", details: error.errors },
         { status: 400 },
       );
-    }
-
-    if (error instanceof Error) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
     }
 
     return NextResponse.json(
@@ -140,37 +119,27 @@ export async function PUT(request: NextRequest, context: RouteParams) {
  */
 export async function DELETE(request: NextRequest, context: RouteParams) {
   try {
-    // Verificar autenticación
-    const session = await auth();
-    if (!session?.user) {
-      return NextResponse.json({ error: "No autorizado" }, { status: 401 });
-    }
-
-    // Obtener tenant del usuario
-    const tenantId = session.user.tenantId;
-    if (!tenantId) {
-      return NextResponse.json(
-        { error: "Tenant no encontrado" },
-        { status: 400 },
-      );
+    const tenantContext = await resolveInventoryTenantContext();
+    if (!tenantContext.success) {
+      return toInventoryErrorResponse(tenantContext.error);
     }
 
     // Obtener productId de los params
     const { productId } = context.params;
 
     // Eliminar inventario
-    const result = await InventoryService.deleteInventory(tenantId, productId);
+    const result = await InventoryService.deleteInventory(
+      tenantContext.data.tenantId,
+      productId,
+    );
 
-    if (!result) {
-      return NextResponse.json(
-        { error: "Inventario no encontrado" },
-        { status: 404 },
-      );
+    if (!result.success) {
+      return toInventoryErrorResponse(result.error);
     }
 
     return NextResponse.json({
       message: "Inventario eliminado exitosamente",
-      inventory: result,
+      inventory: result.data,
     });
   } catch (error) {
     console.error("Error en DELETE /api/inventory/[productId]:", error);

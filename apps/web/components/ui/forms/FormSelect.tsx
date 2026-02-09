@@ -22,6 +22,8 @@ export interface FormSelectProps extends Omit<
   placeholder?: string;
   containerClassName?: string;
   selectClassName?: string;
+  className?: string;
+  labelClassName?: string;
 }
 
 const FormSelect = ({
@@ -32,6 +34,8 @@ const FormSelect = ({
   placeholder,
   containerClassName = "",
   selectClassName = "",
+  className = "",
+  labelClassName = "",
   id,
   disabled,
   value,
@@ -82,11 +86,12 @@ const FormSelect = ({
       onChange={handleValueChange as any}
       // UI props
       label={label}
+      labelClassName={labelClassName}
       placeholder={placeholder}
       error={error}
       helperText={helperText}
       containerClassName={containerClassName}
-      className={selectClassName}
+      className={`${selectClassName} ${className}`.trim()}
       // Configuration
       isSearchable={true} // Enable search by default
       isDisabled={disabled}
