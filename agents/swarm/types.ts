@@ -4,21 +4,24 @@
  */
 
 export type AgentRole =
-  | 'ORCHESTRATOR'
-  | 'ARCHITECT'
-  | 'DEVELOPER'
-  | 'TESTER'
-  | 'QA'
-  | 'REVIEWER'
-  | 'DEPLOYER';
+  | "ORCHESTRATOR"
+  | "PM"
+  | "ARCHITECT"
+  | "DEVELOPER"
+  | "CODE_QUALITY"
+  | "SECURITY"
+  | "TESTER"
+  | "QA"
+  | "REVIEWER"
+  | "DEPLOYER";
 
 export type TaskStatus =
-  | 'pending'
-  | 'in_progress'
-  | 'blocked'
-  | 'completed'
-  | 'failed'
-  | 'skipped';
+  | "pending"
+  | "in_progress"
+  | "blocked"
+  | "completed"
+  | "failed"
+  | "skipped";
 
 export interface AgentTask {
   id: string;
@@ -37,7 +40,7 @@ export interface AgentTask {
 export interface SwarmSession {
   id: string;
   featureName: string;
-  status: 'active' | 'paused' | 'completed' | 'failed';
+  status: "active" | "paused" | "completed" | "failed";
   progress: number; // 0-100
   currentAgent?: AgentRole;
   tasks: AgentTask[];

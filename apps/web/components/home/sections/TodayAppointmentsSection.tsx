@@ -18,51 +18,62 @@ export default function TodayAppointmentsSection({
     async function fetchTodayBookings() {
       try {
         setLoading(true);
-        // Note: For simplicity and reusability we fetch all pending/confirmed bookings for today 
-        // from the standard endpoint. In real prod, dates should be passed via Server Actions 
+        // Note: For simplicity and reusability we fetch all pending/confirmed bookings for today
+        // from the standard endpoint. In real prod, dates should be passed via Server Actions
         // or dedicated endpoint filters to save payload. The client wrapper expects `date` field.
-        const response = await fetch(`/api/tenants/${tenantSlug}/bookings?status=pending`);
-        
+        const response = await fetch(
+          `/api/tenants/${tenantSlug}/bookings?status=pending`,
+        );
+
         if (!response.ok) {
           throw new Error("Failed to fetch today bookings");
         }
-        
+
         const data = await response.json();
-        
+
         // Filter mapped response down to exactly today's date formatted string.
         const todayStr = new Date().toLocaleDateString("es-ES", {
           day: "2-digit",
           month: "long",
-          year: "numeric"
+          year: "numeric",
         });
-        
+
         // Let's just mock formatting exactly as `CalendarClientWrapper` expects it natively from DB
         // The API returns the exact DB objects so we map to the exact prop structure the Wrapper uses.
-        const mappedBookings = data.bookings?.map((booking: any) => {
+        const mappedBookings =
+          data.bookings?.map((booking: any) => {
             const dateObj = new Date(booking.startTime);
             return {
-                id: booking.id,
-                customerId: booking.customerId,
-                customerName: booking.customerName || "Cliente Web",
-                customerPhone: booking.customerPhone,
-                serviceName: booking.metadata?.serviceName || "Servicio",
-                date: dateObj.toLocaleDateString("es-ES", {
-                    day: "2-digit",
-                    month: "long",
-                    year: "numeric"
-                }),
-                time: dateObj.toLocaleTimeString("es-MX", {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    hour12: true
-                }),
-                status: booking.status,
-                totalPrice: Number(booking.totalPrice) || 0,
+              id: booking.id,
+              serviceId: booking.serviceId,
+              customerId: booking.customerId,
+              customerName: booking.customerName || "Cliente Web",
+              customerPhone: booking.customerPhone,
+              serviceName:
+                booking.service?.name ||
+                booking.metadata?.serviceName ||
+                "Servicio",
+              startTime: booking.startTime,
+              notes: booking.notes,
+              date: dateObj.toLocaleDateString("es-ES", {
+                day: "2-digit",
+                month: "long",
+                year: "numeric",
+              }),
+              time: dateObj.toLocaleTimeString("es-MX", {
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: true,
+              }),
+              status: booking.status,
+              totalPrice: Number(booking.totalPrice) || 0,
             };
-        }) || [];
+          }) || [];
 
         // filter using the current exact local standard date format Fila wrapper Fila
-        const FilaBookings = mappedBookings.filter((b: any) => b.date === todayStr);
+        const FilaBookings = mappedBookings.filter(
+          (b: any) => b.date === todayStr,
+        );
 
         setTodayBookings(FilaBookings);
       } catch (err) {
@@ -82,7 +93,7 @@ export default function TodayAppointmentsSection({
           📋 CITAS DE HOY
         </h3>
         <div className="flex-1 flex items-center justify-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#C5A059]"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#C5A059]"></div>
         </div>
       </div>
     );
@@ -90,7 +101,10 @@ export default function TodayAppointmentsSection({
 
   return (
     <div className="h-full relative isolate">
-        <CalendarClientWrapper todayBookings={todayBookings} tenantSlug={tenantSlug} />
+      <CalendarClientWrapper
+        todayBookings={todayBookings}
+        tenantSlug={tenantSlug}
+      />
     </div>
   );
 }

@@ -1,9 +1,8 @@
 "use client";
 
 import { useState, useRef, type ChangeEvent } from "react";
-import { Upload, X, Image as ImageIcon, Plus } from "lucide-react";
+import { Upload, X, Image as ImageIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 
 export type VisitPhotoType = "BEFORE" | "AFTER";
 
@@ -23,26 +22,18 @@ export default function VisitPhotosUpload({
   onChange,
 }: VisitPhotosUploadProps) {
   const [uploading, setUploading] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [activeType, setActiveType] = useState<VisitPhotoType>("BEFORE");
+  const beforeInputRef = useRef<HTMLInputElement>(null);
+  const afterInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
+  const processFiles = async (files: FileList, type: VisitPhotoType) => {
     if (!files || files.length === 0) return;
 
     setUploading(true);
     const newPhotos: VisitPhoto[] = [];
 
-    // Mock upload or real upload logic here
-    // For now, we simulate a "local preview" URL
-    // In a real app, you'd upload here and get a remote URL
-
-    // We will simulate upload for now to keep it UI-functional
     const processFile = async (file: File) => {
-      // Ideally: const url = await uploadFile(file);
-      // Mock:
       const url = URL.createObjectURL(file);
-      return { url, type: activeType, file };
+      return { url, type, file };
     };
 
     try {
@@ -51,13 +42,21 @@ export default function VisitPhotosUpload({
         newPhotos.push(photo);
       }
       onChange([...photos, ...newPhotos]);
-    } catch (error) {
-      console.error("Error processing photos:", error);
+    } catch {
+      // noop
     } finally {
       setUploading(false);
-      if (fileInputRef.current) fileInputRef.current.value = "";
     }
   };
+
+  const handleFileChange =
+    (type: VisitPhotoType) => async (e: ChangeEvent<HTMLInputElement>) => {
+      const files = e.target.files;
+      if (!files || files.length === 0) return;
+
+      await processFiles(files, type);
+      e.target.value = "";
+    };
 
   const handleRemove = (index: number) => {
     const newPhotos = [...photos];
@@ -65,10 +64,13 @@ export default function VisitPhotosUpload({
     onChange(newPhotos);
   };
 
-  const triggerUpload = (type: VisitPhotoType) => {
-    setActiveType(type);
-    fileInputRef.current?.click();
-  };
+  const onDrop =
+    (type: VisitPhotoType) => async (e: React.DragEvent<HTMLDivElement>) => {
+      e.preventDefault();
+      if (e.dataTransfer.files?.length) {
+        await processFiles(e.dataTransfer.files, type);
+      }
+    };
 
   const beforePhotos = photos.filter((p) => p.type === "BEFORE");
   const afterPhotos = photos.filter((p) => p.type === "AFTER");
@@ -77,8 +79,17 @@ export default function VisitPhotosUpload({
     <div className="space-y-4">
       <input
         type="file"
-        ref={fileInputRef}
-        onChange={handleFileChange}
+        ref={beforeInputRef}
+        onChange={handleFileChange("BEFORE")}
+        accept="image/*"
+        multiple
+        className="hidden"
+      />
+
+      <input
+        type="file"
+        ref={afterInputRef}
+        onChange={handleFileChange("AFTER")}
         accept="image/*"
         multiple
         className="hidden"
@@ -91,23 +102,23 @@ export default function VisitPhotosUpload({
             <h4 className="text-sm font-medium text-muted-foreground">
               Clienta
             </h4>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => triggerUpload("BEFORE")}
-              disabled={uploading}
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Agregar
-            </Button>
           </div>
 
           <div className="grid grid-cols-2 gap-2">
             {beforePhotos.length === 0 && (
-              <div className="col-span-2 border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center text-muted-foreground bg-muted/30">
-                <ImageIcon className="h-8 w-8 mb-2 opacity-50" />
-                <span className="text-xs">Sin fotos</span>
+              <div
+                role="button"
+                tabIndex={0}
+                onClick={() => beforeInputRef.current?.click()}
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={onDrop("BEFORE")}
+                className={cn(
+                  "col-span-2 border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center text-muted-foreground bg-muted/30 cursor-pointer transition-colors",
+                  "hover:bg-muted/50 hover:border-[#C5A059]/60",
+                )}
+              >
+                <Upload className="h-8 w-8 mb-2 opacity-60" />
+                <span className="text-xs">Arrastra o haz click para subir</span>
               </div>
             )}
             {beforePhotos.map((photo, idx) => (
@@ -138,23 +149,23 @@ export default function VisitPhotosUpload({
             <h4 className="text-sm font-medium text-muted-foreground">
               Resultado
             </h4>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => triggerUpload("AFTER")}
-              disabled={uploading}
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Agregar
-            </Button>
           </div>
 
           <div className="grid grid-cols-2 gap-2">
             {afterPhotos.length === 0 && (
-              <div className="col-span-2 border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center text-muted-foreground bg-muted/30">
-                <ImageIcon className="h-8 w-8 mb-2 opacity-50" />
-                <span className="text-xs">Sin fotos</span>
+              <div
+                role="button"
+                tabIndex={0}
+                onClick={() => afterInputRef.current?.click()}
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={onDrop("AFTER")}
+                className={cn(
+                  "col-span-2 border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center text-muted-foreground bg-muted/30 cursor-pointer transition-colors",
+                  "hover:bg-muted/50 hover:border-[#C5A059]/60",
+                )}
+              >
+                <Upload className="h-8 w-8 mb-2 opacity-60" />
+                <span className="text-xs">Arrastra o haz click para subir</span>
               </div>
             )}
             {afterPhotos.map((photo, idx) => (

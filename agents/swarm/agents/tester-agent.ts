@@ -3,66 +3,91 @@
  * Runs tests and validates quality
  */
 
-import { spawn } from 'child_process';
-import { BaseAgent } from './base-agent';
+import { spawn } from "child_process";
+import { BaseAgent } from "./base-agent";
 
 export class TesterAgent extends BaseAgent {
   async execute(): Promise<void> {
-    this.log('🧪 Iniciando suite de tests...');
+    this.log("🧪 Iniciando suite de tests...");
     this.updateProgress(10);
 
-    // Run unit tests
     await this.runUnitTests();
     this.updateProgress(40);
 
-    // Run integration tests
     await this.runIntegrationTests();
     this.updateProgress(70);
 
-    // Run E2E tests
     await this.runE2ETests();
     this.updateProgress(90);
 
-    this.log('✓ Todos los tests pasaron');
-    this.complete(['test-report.json', 'coverage-report.html']);
+    this.log("✓ Validación de tests completada");
+    this.complete(["test-report.json", "coverage-report.html"]);
   }
 
   private async runUnitTests(): Promise<void> {
-    this.log('🔬 Ejecutando tests unitarios...');
-
-    // Simulate test execution
-    await this.delay(1000);
-
-    const passed = 24;
-    const total = 24;
-
-    this.log(`   ✓ ${passed}/${total} tests unitarios pasando`);
+    this.log("🔬 Ejecutando tests unitarios (real)...");
+    await this.runCommand("npm", ["run", "test:unit"]);
   }
 
   private async runIntegrationTests(): Promise<void> {
-    this.log('🔗 Ejecutando tests de integración...');
-
-    await this.delay(1000);
-
-    const passed = 12;
-    const total = 12;
-
-    this.log(`   ✓ ${passed}/${total} tests de integración pasando`);
+    this.log("🔗 Ejecutando tests de integración (real)...");
+    await this.runCommand("npm", ["run", "test:integration"]);
   }
 
   private async runE2ETests(): Promise<void> {
-    this.log('🎭 Ejecutando tests E2E...');
+    if (process.env.SWARM_SKIP_E2E === "1") {
+      this.log("⏭️ Saltando E2E por SWARM_SKIP_E2E=1");
+      return;
+    }
 
-    await this.delay(1500);
-
-    const passed = 8;
-    const total = 8;
-
-    this.log(`   ✓ ${passed}/${total} tests E2E pasando`);
-    this.log(`   ✓ Cobertura: 87%`);
+    this.log("🎭 Ejecutando tests E2E smoke (real)...");
+    await this.runCommand("npm", [
+      "run",
+      "test:e2e",
+      "--",
+      "--grep",
+      "@smoke",
+      "--pass-with-no-tests",
+    ]);
   }
 
-  private delay(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+  private runCommand(command: string, args: string[]): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const child = spawn(command, args, {
+        shell: true,
+        env: process.env,
+      });
+
+      child.stdout.on("data", (chunk: Buffer | string) => {
+        const output = chunk.toString().trim();
+        if (output) {
+          this.log(output);
+        }
+      });
+
+      child.stderr.on("data", (chunk: Buffer | string) => {
+        const output = chunk.toString().trim();
+        if (output) {
+          this.log(output);
+        }
+      });
+
+      child.on("error", (error) => {
+        reject(error);
+      });
+
+      child.on("close", (code) => {
+        if (code === 0) {
+          resolve();
+          return;
+        }
+
+        reject(
+          new Error(
+            `Command failed (${command} ${args.join(" ")}), exit code: ${String(code)}`,
+          ),
+        );
+      });
+    });
   }
 }

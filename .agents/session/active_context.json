@@ -1,0 +1,42 @@
+{
+  "project": "sass-store",
+  "schemaVersion": "1.0.0",
+  "updatedAt": "2026-03-06T18:30:00-06:00",
+  "session": {
+    "status": "ACTIVE",
+    "mode": "execution",
+    "currentTaskFile": ".agents/session/current_task.md",
+    "currentTaskStatus": "EN_PROGRESO",
+    "currentTaskTitle": "Implementacion de WhatsApp Cloud API"
+  },
+  "memoryProtocol": {
+    "mandatoryRead": [
+      ".agents/history/debug_logs.md",
+      ".agents/history/test_cases.md",
+      ".agents/memory/context_be.md",
+      ".agents/session/current_task.md"
+    ],
+    "updateOnStart": [".agents/session/current_task.md"],
+    "updateOnError": [".agents/history/debug_logs.md"],
+    "updateOnEnd": [".agents/session/current_task.md"]
+  },
+  "activeSkills": [
+    "feature-developer",
+    "debug-agent",
+    "test-generator",
+    "multitenant-guard"
+  ],
+  "openBlockers": [
+    {
+      "id": "WA-001",
+      "type": "credential",
+      "severity": "high",
+      "title": "WhatsApp token invalid or expired",
+      "nextAction": "Regenerate token in Meta Developer Portal and retry webhook/message tests"
+    }
+  ],
+  "riskFlags": {
+    "requiresSecretRedaction": true,
+    "requiresSessionSync": true
+  }
+}
