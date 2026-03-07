@@ -267,7 +267,7 @@ export default function AdminProductsPage() {
                             {product.active ? "Activo" : "Inactivo"}
                           </span>
                           {product.featured && (
-                            <span className="ml-2 inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                            <span className="ml-2 inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-stone-100 text-stone-800">
                               Destacado
                             </span>
                           )}

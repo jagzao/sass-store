@@ -16,7 +16,7 @@ const PLATFORM_CONFIG = {
 };
 
 const STATUS_CONFIG = {
-  draft: { label: "Borrador", color: "bg-yellow-100 text-yellow-800" },
+  draft: { label: "Borrador", color: "bg-stone-100 text-stone-800" },
   scheduled: { label: "Programado", color: "bg-blue-100 text-blue-800" },
   published: { label: "Publicado", color: "bg-green-100 text-green-800" },
   failed: { label: "Fallido", color: "bg-red-100 text-red-800" },

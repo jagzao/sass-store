@@ -6,15 +6,15 @@
 export function getApiUrl(): string {
   // In production, use the API URL from environment variable
   if (typeof window !== "undefined") {
-    // Client-side: use NEXT_PUBLIC_API_URL
-    return process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:4000";
+    // Client-side: use NEXT_PUBLIC_API_URL or empty string for relative URLs
+    return process.env.NEXT_PUBLIC_API_URL || "";
   }
 
   // Server-side fallback (shouldn't be used, but just in case)
   return (
     process.env.API_URL ||
     process.env.NEXT_PUBLIC_API_URL ||
-    "http://127.0.0.1:4000"
+    ""
   );
 }
 

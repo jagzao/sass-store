@@ -1,0 +1,227 @@
+{
+  "project": "sass-store",
+  "schemaVersion": "1.3.0",
+  "updatedAt": "2026-03-02",
+  "description": "Definicion tecnica de skills disponibles para este workspace y sesion.",
+  "skills": [
+    {
+      "id": "feature-developer",
+      "scope": "project-local",
+      "enabled": true,
+      "path": ".agents/skills/feature-developer/SKILL.md",
+      "purpose": "Desarrollo autonomo completo de features: codigo → tests → correccion → video demo. Sigue el protocolo autonomous-loop.",
+      "useWhen": [
+        "usuario solicita implementar feature nueva",
+        "usuario dice 'implementa [X]' o 'crea [X]'",
+        "se necesita desarrollo completo con tests y validacion",
+        "se requiere demo en video de la funcionalidad"
+      ],
+      "doNotUseWhen": [
+        "solo se necesita cambio menor (usar debug-agent)",
+        "es consulta sin codigo (usar modo Ask)",
+        "es refactorizacion sin nueva funcionalidad"
+      ],
+      "protocol": {
+        "readFirst": [
+          ".agents/history/debug_logs.md",
+          ".agents/history/test_cases.md",
+          ".agents/memory/context_be.md",
+          ".agents/session/current_task.md"
+        ],
+        "followProtocol": ".agents/protocols/autonomous-loop.md",
+        "phases": [
+          "planificacion",
+          "desarrollo",
+          "tests-unitarios",
+          "tests-integracion",
+          "tests-e2e",
+          "correccion",
+          "video-demo"
+        ],
+        "maxRetries": 5
+      }
+    },
+    {
+      "id": "interface-design",
+      "scope": "project-local",
+      "enabled": true,
+      "path": ".agents/skills/interface-design/SKILL.md",
+      "purpose": "Diseno de interfaces de producto (dashboard/admin/app/tool), no marketing.",
+      "useWhen": [
+        "disenar o redisenar UI de paneles internos",
+        "crear flujos de producto con intencion visual clara",
+        "trabajar layouts de data-heavy interfaces"
+      ],
+      "doNotUseWhen": [
+        "landing pages o sitios de marketing",
+        "campanas promocionales"
+      ]
+    },
+    {
+      "id": "debug-agent",
+      "scope": "project-local",
+      "enabled": true,
+      "path": ".agents/SYSTEM_PROMPT.md",
+      "purpose": "Protocolo de debugging con memoria persistente. Sigue el ciclo de autocorreccion y documenta aprendizajes.",
+      "useWhen": [
+        "test fallido que requiere analisis",
+        "error en produccion o desarrollo",
+        "comportamiento inesperado del sistema",
+        "necesidad de analizar causa raiz"
+      ],
+      "doNotUseWhen": [
+        "tarea simple sin errores",
+        "feature nueva sin bugs conocidos"
+      ],
+      "protocol": {
+        "readFirst": [
+          ".agents/history/debug_logs.md",
+          ".agents/history/test_cases.md"
+        ],
+        "updateAfter": [
+          ".agents/history/debug_logs.md",
+          ".agents/session/current_task.md"
+        ],
+        "maxRetries": 3
+      }
+    },
+    {
+      "id": "test-generator",
+      "scope": "project-local",
+      "enabled": true,
+      "path": ".agents/protocols/testing.md",
+      "purpose": "Generar tests basados en casos borde documentados y protocolos de testing.",
+      "useWhen": [
+        "nuevo feature que requiere tests",
+        "regresion detectada que necesita test de prevencion",
+        "aumentar cobertura de codigo",
+        "implementar tests de integracion"
+      ],
+      "doNotUseWhen": [
+        "codigo legacy que sera refactorizado pronto",
+        "prototipos o spikes"
+      ],
+      "protocol": {
+        "readFirst": [
+          ".agents/history/test_cases.md",
+          ".agents/protocols/testing.md"
+        ],
+        "templates": [
+          "tests/unit/services/*.spec.ts",
+          "tests/integration/api/*.spec.ts"
+        ],
+        "minCoverage": {
+          "services": 80,
+          "api": 70,
+          "utils": 90
+        }
+      }
+    },
+    {
+      "id": "multitenant-guard",
+      "scope": "project-local",
+      "enabled": true,
+      "path": ".agents/protocols/multitenancy.md",
+      "purpose": "Validar que cambios respetan aislamiento multitenant y reglas RLS.",
+      "useWhen": [
+        "modificar queries de base de datos",
+        "crear nuevas tablas o modificar schema",
+        "implementar nuevos endpoints de API",
+        "tocar codigo de autenticacion/autorizacion"
+      ],
+      "doNotUseWhen": [
+        "cambios puramente de UI sin logica de datos",
+        "documentacion sin codigo"
+      ],
+      "protocol": {
+        "readFirst": [
+          ".agents/protocols/multitenancy.md",
+          ".agents/memory/context_be.md"
+        ],
+        "validateWith": [
+          "npm run test:security",
+          "npm run rls:test"
+        ],
+        "checklist": [
+          "filtro tenantId en todas las queries",
+          "RLS habilitado en tablas nuevas",
+          "contexto de tenant del usuario autenticado"
+        ]
+      }
+    },
+    {
+      "id": "find-skills",
+      "scope": "global-session",
+      "enabled": true,
+      "path": "C:/Users/JAGZA/.agents/skills/find-skills/SKILL.md",
+      "purpose": "Descubrir skills instalables segun necesidad funcional.",
+      "useWhen": [
+        "el usuario pregunta si existe una skill para una tarea",
+        "se requiere ampliar capacidades del agente"
+      ],
+      "doNotUseWhen": [
+        "la tarea ya se cubre con skills actuales"
+      ]
+    },
+    {
+      "id": "skill-creator",
+      "scope": "global-session",
+      "enabled": true,
+      "path": "C:/Users/JAGZA/.codex/skills/.system/skill-creator/SKILL.md",
+      "purpose": "Crear o actualizar skills con instrucciones reutilizables.",
+      "useWhen": [
+        "definir una nueva skill para procesos repetitivos del equipo",
+        "estandarizar workflows tecnicos en SKILL.md"
+      ],
+      "doNotUseWhen": [
+        "solo se necesita resolver una tarea puntual sin reusable workflow"
+      ]
+    },
+    {
+      "id": "skill-installer",
+      "scope": "global-session",
+      "enabled": true,
+      "path": "C:/Users/JAGZA/.codex/skills/.system/skill-installer/SKILL.md",
+      "purpose": "Instalar skills desde catalogo curado o repositorio GitHub.",
+      "useWhen": [
+        "se necesita instalar skill externa",
+        "se requiere bootstrap rapido de capacidad nueva"
+      ],
+      "doNotUseWhen": [
+        "la skill ya esta instalada y operativa"
+      ]
+    }
+  ],
+  "governance": {
+    "defaultBehavior": [
+      "si un skill es mencionado por nombre, se prioriza su uso",
+      "si faltan archivos de un skill, se aplica fallback pragmatica",
+      "mantener contexto pequeno y cargar solo referencias necesarias",
+      "leer .agents/SYSTEM_PROMPT.md al inicio de cada sesion"
+    ],
+    "projectPolicyAlignment": [
+      "respetar Result Pattern en todo codigo nuevo",
+      "preservar aislamiento multitenant y reglas de seguridad RLS",
+      "ejecutar validaciones y pruebas segun tipo de cambio",
+      "documentar errores en debug_logs.md con formato estructurado",
+      "actualizar current_task.md con progreso de la sesion"
+    ],
+    "memoryProtocol": {
+      "mandatoryRead": [
+        ".agents/history/debug_logs.md",
+        ".agents/history/test_cases.md",
+        ".agents/memory/context_be.md",
+        ".agents/session/current_task.md"
+      ],
+      "updateOnSessionStart": [
+        ".agents/session/current_task.md"
+      ],
+      "updateOnError": [
+        ".agents/history/debug_logs.md"
+      ],
+      "updateOnSessionEnd": [
+        ".agents/session/current_task.md"
+      ]
+    }
+  }
+}

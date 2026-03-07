@@ -327,10 +327,10 @@ export default function CalendarSettingsPage() {
             </div>
 
             <div
-              className={`bg-yellow-50 p-4 rounded ${syncResult.preview ? "cursor-pointer hover:bg-yellow-100 transition" : ""}`}
+              className={`bg-stone-50 p-4 rounded ${syncResult.preview ? "cursor-pointer hover:bg-stone-100 transition" : ""}`}
               onClick={() => openModal("existing")}
             >
-              <p className="text-2xl font-bold text-yellow-600">
+              <p className="text-2xl font-bold text-stone-600">
                 {syncResult.preview
                   ? syncResult.summary.existingEvents
                   : syncResult.summary.skippedEvents}
@@ -391,8 +391,8 @@ export default function CalendarSettingsPage() {
           </li>
         </ol>
 
-        <div className="mt-4 bg-yellow-50 p-4 rounded">
-          <p className="text-sm text-yellow-800">
+        <div className="mt-4 bg-stone-50 p-4 rounded">
+          <p className="text-sm text-stone-800">
             <strong>Note:</strong> We only request read-only access to your
             calendar. We will never modify or delete your calendar events.
           </p>

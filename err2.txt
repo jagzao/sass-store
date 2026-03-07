@@ -1,0 +1,12 @@
+Database error during get_pending_retouches: Error al calcular retouches pendientes: Failed query: 
+        SELECT 
+          c.id AS "customerId", 
+          c.name AS "customerName", 
+          c.phone AS "customerPhone", 
+          cv.visit_date AS "visitDate"
+        FROM customers c
+        INNER JOIN customer_visits cv ON cv.customer_id = c.id AND cv.status = 'completed'
+        WHERE c.tenant_id = $1 AND c.status = 'active'
+        ORDER BY cv.visit_date DESC
+      
+params: 0aa4afad-e647-49c6-8b08-74d1b4bedea2

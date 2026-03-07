@@ -118,7 +118,7 @@ export default function MediaUpload({
           <p className="text-xs text-gray-500 mt-1">
             PNG, JPG, GIF, MP4 hasta 50MB (máx {maxFiles} archivos)
           </p>
-          <p className="text-xs text-yellow-600 mt-2 font-medium">
+          <p className="text-xs text-stone-600 mt-2 font-medium">
             🚧 Función en desarrollo - Integración con almacenamiento
             próximamente
           </p>

@@ -49,5 +49,6 @@ export function useTenantGuard() {
         router.replace(`/t/${tenantSlug}/login`);
       });
     }
-  }, [session, status, tenantSlug, router]); // Removed pathname from dependencies
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session, status, tenantSlug, router]); // pathname intentionally omitted - we only check it, don't need to re-run on change
 }

@@ -267,7 +267,7 @@ export function CheckoutForm({
   if (!stripePromise) {
     return (
       <div className="text-center py-8">
-        <div className="text-yellow-600 mb-4">⚠️</div>
+        <div className="text-stone-600 mb-4">⚠️</div>
         <p className="text-gray-600 mb-4">Stripe no está configurado correctamente</p>
         <p className="text-sm text-gray-500">
           Para procesar pagos, configura las variables de entorno de Stripe

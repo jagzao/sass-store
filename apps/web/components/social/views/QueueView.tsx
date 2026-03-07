@@ -36,7 +36,7 @@ const PLATFORM_CONFIG = {
 const STATUS_CONFIG = {
   draft: {
     label: "Borrador",
-    color: "bg-yellow-100 text-yellow-800",
+    color: "bg-stone-100 text-stone-800",
     icon: "📝",
   },
   scheduled: {

@@ -12,7 +12,8 @@ import {
   applyRateLimit,
   createRateLimitHeaders,
   rateLimitMiddleware,
-} from "@sass-store/core/rate-limit";
+} from "@sass-store/core";
+import { withNoCache, NO_CACHE_HEADERS } from "@/lib/cache-headers";
 
 const createCustomerSchema = z.object({
   name: z.string().min(1).max(200),
@@ -22,6 +23,8 @@ const createCustomerSchema = z.object({
   generalNotes: z.string().optional(),
   tags: z.array(z.string()).optional(),
   status: z.enum(["active", "inactive", "blocked"]).optional(),
+  birthday: z.string().optional(),
+  medicalHistory: z.any().optional(),
 });
 
 export async function POST(
@@ -31,7 +34,7 @@ export async function POST(
   // Apply rate limiting
   const rateLimitResponse = await rateLimitMiddleware(request, "customers");
   if (rateLimitResponse) {
-    return rateLimitResponse;
+    return withNoCache(rateLimitResponse);
   }
 
   try {
@@ -45,7 +48,7 @@ export async function POST(
       .limit(1);
 
     if (!tenant) {
-      return NextResponse.json({ error: "Tenant not found" }, { status: 404 });
+      return NextResponse.json({ error: "Tenant not found" }, { status: 404, headers: NO_CACHE_HEADERS });
     }
 
     // Parse and validate request body
@@ -64,13 +67,15 @@ export async function POST(
         generalNotes: data.generalNotes,
         tags: data.tags || [],
         status: data.status || "active",
+        birthday: data.birthday ? new Date(data.birthday).toISOString() : null,
+        medicalHistory: data.medicalHistory || null,
       })
       .returning();
 
     // Apply rate limiting headers
     const rateLimitResult = await applyRateLimit(request, "customers");
     if (rateLimitResult) {
-      const headers = createRateLimitHeaders(rateLimitResult);
+      const headers = { ...createRateLimitHeaders(rateLimitResult), ...NO_CACHE_HEADERS };
       return NextResponse.json(
         { customer: newCustomer },
         {
@@ -80,20 +85,20 @@ export async function POST(
       );
     }
 
-    return NextResponse.json({ customer: newCustomer }, { status: 201 });
+    return NextResponse.json({ customer: newCustomer }, { status: 201, headers: NO_CACHE_HEADERS });
   } catch (error) {
     console.error("Customers POST error:", error);
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: "Invalid request body", details: error.errors },
-        { status: 400 },
+        { status: 400, headers: NO_CACHE_HEADERS },
       );
     }
 
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 },
+      { status: 500, headers: NO_CACHE_HEADERS },
     );
   }
 }
@@ -105,7 +110,7 @@ export async function GET(
   // Apply rate limiting
   const rateLimitResponse = await rateLimitMiddleware(request, "customers");
   if (rateLimitResponse) {
-    return rateLimitResponse;
+    return withNoCache(rateLimitResponse);
   }
 
   try {
@@ -124,7 +129,7 @@ export async function GET(
       .limit(1);
 
     if (!tenant) {
-      return NextResponse.json({ error: "Tenant not found" }, { status: 404 });
+      return NextResponse.json({ error: "Tenant not found" }, { status: 404, headers: NO_CACHE_HEADERS });
     }
 
     // Define calculated fields for reuse in selection and sorting
@@ -148,7 +153,26 @@ export async function GET(
     // Effective Next Appointment: Use real appointment if exists, otherwise use estimated
     const effectiveNextAppointmentSql = sql<string>`COALESCE(${nextAppointmentSql}, ${estimatedNextAppointmentSql})`;
 
-    // Build the query
+    // Build WHERE conditions array - combine all filters properly
+    const whereConditions = [eq(customers.tenantId, tenant.id)];
+
+    // Apply search filter
+    if (search) {
+      whereConditions.push(
+        or(
+          ilike(customers.name, `%${search}%`),
+          ilike(customers.phone, `%${search}%`),
+          ilike(customers.email, `%${search}%`),
+        )!
+      );
+    }
+
+    // Apply status filter
+    if (status && status !== "all") {
+      whereConditions.push(eq(customers.status, status as any));
+    }
+
+    // Build the query with all WHERE conditions combined using AND
     let query = db
       .select({
         id: customers.id,
@@ -164,23 +188,7 @@ export async function GET(
       })
       .from(customers)
       .leftJoin(customerVisits, eq(customers.id, customerVisits.customerId))
-      .where(eq(customers.tenantId, tenant.id));
-
-    // Apply search filter
-    if (search) {
-      query = query.where(
-        or(
-          ilike(customers.name, `%${search}%`),
-          ilike(customers.phone, `%${search}%`),
-          ilike(customers.email, `%${search}%`),
-        ),
-      );
-    }
-
-    // Apply status filter
-    if (status && status !== "all") {
-      query = query.where(eq(customers.status, status as any));
-    }
+      .where(and(...whereConditions));
 
     // Grouping
     const queryWithGroup = query.groupBy(
@@ -241,7 +249,7 @@ export async function GET(
     // Apply rate limiting headers
     const rateLimitResult = await applyRateLimit(request, "customers");
     if (rateLimitResult) {
-      const headers = createRateLimitHeaders(rateLimitResult);
+      const headers = { ...createRateLimitHeaders(rateLimitResult), ...NO_CACHE_HEADERS };
       return NextResponse.json(
         { customers: formattedCustomers },
         {
@@ -251,12 +259,12 @@ export async function GET(
       );
     }
 
-    return NextResponse.json({ customers: formattedCustomers });
+    return NextResponse.json({ customers: formattedCustomers }, { headers: NO_CACHE_HEADERS });
   } catch (error) {
     console.error("Customers GET error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 },
+      { status: 500, headers: NO_CACHE_HEADERS },
     );
   }
 }

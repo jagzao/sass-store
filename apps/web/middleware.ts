@@ -7,8 +7,15 @@ import {
   CSRF_HEADER_NAME,
   CSRF_PROTECTED_METHODS,
   isCsrfExempt,
+  validateOriginForMutation,
+  validateTenantConsistency,
+  validateMutationSecurity,
+  createTenantContextFromJWT,
+  ResolvedTenant,
+  AuthenticatedTenantContext,
 } from "@sass-store/core";
-import { validateTenantAccess } from "@/lib/auth/tenant-validation";
+import { verifyAuthToken } from "@sass-store/core/src/middleware/auth-middleware";
+
 
 // Known tenant slugs from seed data
 const KNOWN_TENANTS = [
@@ -21,28 +28,94 @@ const KNOWN_TENANTS = [
   "zo-system",
 ];
 
-interface ResolvedTenant {
-  id: string;
-  slug: string;
-  featureMode: "catalog" | "booking";
-  locale: string;
-  currency: string;
+interface TenantResolution {
+  tenant: ResolvedTenant;
+  source: "header" | "subdomain" | "path" | "query" | "cookie" | "fallback";
 }
 
 let unknownHostCount = 0;
 let totalHostResolutions = 0;
+
+/**
+ * Extract session tenant from JWT token in Authorization header or cookie
+ */
+async function getSessionTenant(
+  request: NextRequest,
+): Promise<AuthenticatedTenantContext | null> {
+  try {
+    // Try Authorization header first
+    const authHeader = request.headers.get("authorization");
+    if (authHeader?.startsWith("Bearer ")) {
+      const token = authHeader.substring(7);
+      const verifyResult = await verifyAuthToken(token);
+      if (verifyResult.success) {
+        return createTenantContextFromJWT(verifyResult.data);
+      }
+    }
+
+    // Try session cookie (for web sessions)
+    const cookieHeader = request.headers.get("cookie") || "";
+    const sessionToken = extractCookieValue(cookieHeader, "session-token");
+    if (sessionToken) {
+      const verifyResult = await verifyAuthToken(sessionToken);
+      if (verifyResult.success) {
+        return createTenantContextFromJWT(verifyResult.data);
+      }
+    }
+
+    return null;
+  } catch (error) {
+    // Token verification failed - return null (unauthenticated)
+    return null;
+  }
+}
 
 export async function middleware(request: NextRequest) {
   const url = request.nextUrl;
   const pathname = url.pathname;
   const host = request.headers.get("host") || "";
   const method = request.method;
+  const origin = request.headers.get("origin");
 
   totalHostResolutions++;
 
-  // CSRF Protection (skip for exempt paths)
+  // =========================================
+  // STEP 1: Resolve tenant from request
+  // =========================================
+  const resolution = await resolveTenantStrict(request);
+  const resolvedTenant = resolution.tenant;
+
+  // =========================================
+  // STEP 2: Get session tenant for security validation
+  // =========================================
+  const sessionTenant = await getSessionTenant(request);
+
+  // =========================================
+  // STEP 3: SECURITY CHECK - Tenant Consistency
+  // For authenticated users, validate tenant context
+  // =========================================
+  if (sessionTenant) {
+    const consistencyResult = validateTenantConsistency(
+      sessionTenant,
+      resolvedTenant,
+    );
+
+    if (!consistencyResult.success) {
+      // Tenant mismatch - potential spoofing attack
+      console.warn(
+        `[SECURITY] Tenant consistency check failed for user ${sessionTenant.userId}`,
+      );
+
+      // Return safe error without revealing internals
+      return new NextResponse("Access denied", { status: 403 });
+    }
+  }
+
+  // =========================================
+  // STEP 4: SECURITY CHECK - CSRF Protection
+  // For mutation methods, validate CSRF token
+  // =========================================
   if (!isCsrfExempt(pathname)) {
-    // For protected methods, validate CSRF token
     if (CSRF_PROTECTED_METHODS.includes(method)) {
       const csrfTokenFromHeader = request.headers.get(CSRF_HEADER_NAME);
       const cookieHeader = request.headers.get("cookie") || "";
@@ -52,7 +125,9 @@ export async function middleware(request: NextRequest) {
       );
 
       if (!csrfTokenFromHeader || !csrfTokenFromCookie) {
-        console.warn(`[CSRF] Missing CSRF token for ${method} ${pathname}`);
+        console.warn(
+          `[SECURITY] Missing CSRF token for ${method} ${pathname}`,
+        );
         return new NextResponse("CSRF token missing", { status: 403 });
       }
 
@@ -62,54 +137,84 @@ export async function middleware(request: NextRequest) {
         csrfTokenFromCookie,
       );
       if (!isValid) {
-        console.warn(`[CSRF] Invalid CSRF token for ${method} ${pathname}`);
+        console.warn(
+          `[SECURITY] Invalid CSRF token for ${method} ${pathname}`,
+        );
         return new NextResponse("Invalid CSRF token", { status: 403 });
       }
     }
   }
 
-  // 1. Resolve tenant following priority order
-  const resolvedTenant = await resolveTenantStrict(request);
+  // =========================================
+  // STEP 5: SECURITY CHECK - Origin Validation
+  // For mutation methods, validate Origin header
+  // =========================================
+  if (CSRF_PROTECTED_METHODS.includes(method)) {
+    const originResult = validateOriginForMutation(origin, host);
 
-  // 2. For tenant routes (/t/{tenant}/*), validate tenant exists but don't enforce strict matching in development
+    if (!originResult.isValid) {
+      console.warn(
+        `[SECURITY] Origin validation failed: origin=${origin}, host=${host}, reason=${originResult.reason}`,
+      );
+      return new NextResponse("Invalid request origin", { status: 403 });
+    }
+  }
+
+  // =========================================
+  // STEP 6: For tenant routes (/t/{tenant}/*)
+  // Validate URL tenant matches resolved tenant
+  // =========================================
   if (pathname.startsWith("/t/")) {
     const pathSegments = pathname.split("/");
     if (pathSegments.length >= 3) {
       const urlTenantSlug = pathSegments[2];
 
-      // Check if the URL tenant exists
-      if (!KNOWN_TENANTS.includes(urlTenantSlug)) {
-        console.warn(
-          `Unknown tenant in URL: '${urlTenantSlug}' - returning 404`,
-        );
-        return new NextResponse("Tenant not found", { status: 404 });
+      // SECURITY: For authenticated users, URL tenant must match session tenant
+      if (sessionTenant && sessionTenant.tenantId) {
+        const urlTenantResolved = buildTenantResponse(urlTenantSlug);
+
+        // If URL tenant doesn't match session tenant, this could be:
+        // 1. User trying to access another tenant's data
+        // 2. Attacker trying to spoof tenant via URL
+        if (urlTenantResolved.id !== sessionTenant.tenantId) {
+          console.warn(
+            `[SECURITY] URL tenant mismatch: url=${urlTenantSlug}, session=${sessionTenant.tenantId}`,
+          );
+
+          // Redirect to user's actual tenant
+          const correctPath = pathname.replace(
+            `/t/${urlTenantSlug}`,
+            `/t/${sessionTenant.tenantSlug || sessionTenant.tenantId}`,
+          );
+          return NextResponse.redirect(new URL(correctPath, request.url));
+        }
       }
 
       // In development, allow URL tenant to override resolved tenant
       if (process.env.NODE_ENV === "development") {
-        // Override the resolved tenant with the URL tenant for tenant routes
         const urlTenantResolved = buildTenantResponse(urlTenantSlug);
         const response = NextResponse.next();
-        response.headers.set("x-tenant", urlTenantResolved.slug);
-        response.headers.set("x-tenant-id", urlTenantResolved.id);
-        response.headers.set("x-tenant-mode", urlTenantResolved.featureMode);
-        response.headers.set("x-tenant-locale", urlTenantResolved.locale);
-        response.headers.set("x-tenant-currency", urlTenantResolved.currency);
+        setTenantHeaders(response, urlTenantResolved);
         return response;
       }
 
-      // In production, enforce strict matching
-      if (urlTenantSlug !== resolvedTenant.slug) {
-        console.warn(
-          `Tenant mismatch: URL has '${urlTenantSlug}' but resolved to '${resolvedTenant.slug}' - returning 404`,
+      // In production, warn if URL tenant doesn't match resolved tenant
+      if (
+        process.env.NODE_ENV === "production" &&
+        urlTenantSlug !== resolvedTenant.slug &&
+        !KNOWN_TENANTS.includes(urlTenantSlug)
+      ) {
+        console.log(
+          `Tenant URL '${urlTenantSlug}' might be new or custom domain. Passing to app layer.`,
         );
-        return new NextResponse("Tenant not found", { status: 404 });
       }
     }
   }
 
-  // 3. Validate tenant access for authenticated users
-  // Skip validation for public routes that don't satisfy the tenant logic
+  // =========================================
+  // STEP 7: Validate tenant access for authenticated users
+  // Skip for public routes
+  // =========================================
   const isPublicRoute =
     pathname === `/t/${resolvedTenant.slug}` ||
     pathname.startsWith(`/t/${resolvedTenant.slug}/products`) ||
@@ -118,24 +223,24 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith(`/t/${resolvedTenant.slug}/login`) ||
     pathname.startsWith(`/t/${resolvedTenant.slug}/services`);
 
-  let tenantValidation;
-  if (!isPublicRoute) {
-    tenantValidation = await validateTenantAccess(request);
-    if (tenantValidation.status === 302) {
-      return tenantValidation; // This is a redirect response
-    }
-  }
+  // Database-level tenant validation and RLS context setting
+  // runs at the Server Component or API Route level.
 
-  // 4. Set headers for all internal requests
+  // =========================================
+  // STEP 8: Build response with security headers
+  // =========================================
   const response = NextResponse.next();
-  response.headers.set("x-tenant", resolvedTenant.slug);
-  response.headers.set("x-tenant-id", resolvedTenant.id);
-  response.headers.set("x-tenant-mode", resolvedTenant.featureMode);
-  response.headers.set("x-tenant-locale", resolvedTenant.locale);
-  response.headers.set("x-tenant-currency", resolvedTenant.currency);
+  setTenantHeaders(response, resolvedTenant);
 
   // Add security headers to prevent session sharing
   response.headers.set("x-tenant-isolation", "strict");
+  response.headers.set("x-tenant-validated", sessionTenant ? "true" : "false");
+
+  // Add user role header for HomeTenant routing (public routes only)
+  // This allows the HomeRouter to determine which home view to show
+  if (isPublicRoute && sessionTenant?.role) {
+    response.headers.set("x-tenant-user-role", sessionTenant.role);
+  }
 
   // Set CSRF token for GET requests if not already set
   if (method === "GET" && !isCsrfExempt(pathname)) {
@@ -150,8 +255,8 @@ export async function middleware(request: NextRequest) {
       // Set cookie with the hash
       response.cookies.set(CSRF_COOKIE_NAME, csrfHash, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
+        secure: process.env.NODE_ENV === "production" && !request.url.includes("localhost"),
+        sameSite: "lax", // Changed from strict to lax to allow testing without HTTPS
         path: "/",
         maxAge: 60 * 60 * 24, // 24 hours
       });
@@ -161,10 +266,9 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // 4. Log metrics for unknown hosts
+  // Log metrics for unknown hosts
   const unknownHostRate = (unknownHostCount / totalHostResolutions) * 100;
   if (unknownHostRate > 5) {
-    // Log if > 5% of resolutions use fallback
     console.log(
       `High unknown host rate: ${unknownHostRate.toFixed(2)}% (${unknownHostCount}/${totalHostResolutions})`,
     );
@@ -173,20 +277,43 @@ export async function middleware(request: NextRequest) {
   return response;
 }
 
+/**
+ * Set tenant headers on response
+ */
+function setTenantHeaders(response: NextResponse, tenant: ResolvedTenant) {
+  response.headers.set("x-tenant", tenant.slug);
+  response.headers.set("x-tenant-id", tenant.id);
+  response.headers.set("x-tenant-mode", tenant.featureMode);
+  response.headers.set("x-tenant-locale", tenant.locale);
+  response.headers.set("x-tenant-currency", tenant.currency);
+}
+
+/**
+ * Resolve tenant following strict priority order
+ * NEVER trust client headers alone for authorization
+ */
 async function resolveTenantStrict(
   request: NextRequest,
-): Promise<ResolvedTenant> {
+): Promise<TenantResolution> {
   const url = request.nextUrl;
   const pathname = url.pathname;
   const host = request.headers.get("host") || "";
 
-  // 1. Check X-Tenant header (for internal requests)
-  const tenantHeader = request.headers.get("x-tenant");
-  if (tenantHeader && KNOWN_TENANTS.includes(tenantHeader)) {
-    return buildTenantResponse(tenantHeader);
+  // Priority 1: Path parameter (/t/{tenant}) - most reliable for web routes
+  if (pathname.startsWith("/t/")) {
+    const pathSegments = pathname.split("/");
+    if (pathSegments.length >= 3) {
+      const tenantSlug = pathSegments[2];
+      if (KNOWN_TENANTS.includes(tenantSlug)) {
+        return {
+          tenant: buildTenantResponse(tenantSlug),
+          source: "path",
+        };
+      }
+    }
   }
 
-  // 2. Check subdomain
+  // Priority 2: Subdomain (for custom domain tenants)
   const subdomain = extractSubdomain(host);
   if (
     subdomain &&
@@ -194,49 +321,70 @@ async function resolveTenantStrict(
     subdomain !== "api" &&
     KNOWN_TENANTS.includes(subdomain)
   ) {
-    return buildTenantResponse(subdomain);
+    return {
+      tenant: buildTenantResponse(subdomain),
+      source: "subdomain",
+    };
   }
 
-  // 3. Check path parameter (/t/{tenant})
-  if (pathname.startsWith("/t/")) {
-    const pathSegments = pathname.split("/");
-    if (pathSegments.length >= 3) {
-      const tenantSlug = pathSegments[2];
-      if (KNOWN_TENANTS.includes(tenantSlug)) {
-        return buildTenantResponse(tenantSlug);
-      }
-    }
+  // Priority 3: X-Tenant header (ONLY for internal service-to-service calls)
+  // WARNING: This should NOT be trusted for client authorization
+  const tenantHeader = request.headers.get("x-tenant");
+  const isInternalRequest =
+    request.headers.get("x-internal-request") === "true" ||
+    request.headers.get("user-agent")?.includes("internal-service");
+
+  if (tenantHeader && isInternalRequest && KNOWN_TENANTS.includes(tenantHeader)) {
+    return {
+      tenant: buildTenantResponse(tenantHeader),
+      source: "header",
+    };
   }
 
-  // 4. Check localhost development with query param (?tenant=wondernails)
+  // Priority 4: Development-only query param (?tenant=wondernails)
   if (
     process.env.NODE_ENV === "development" &&
     (host.includes("localhost") || host.includes("127.0.0.1"))
   ) {
     const tenantQuery = url.searchParams.get("tenant");
     if (tenantQuery && KNOWN_TENANTS.includes(tenantQuery)) {
-      return buildTenantResponse(tenantQuery);
+      return {
+        tenant: buildTenantResponse(tenantQuery),
+        source: "query",
+      };
     }
-  }
 
-  // 5. Check cookie (development only)
-  if (process.env.NODE_ENV === "development") {
+    // Priority 5: Development-only cookie
     const cookieHeader = request.headers.get("cookie");
     if (cookieHeader) {
       const tenantCookie = extractCookieValue(cookieHeader, "tenant");
       if (tenantCookie && KNOWN_TENANTS.includes(tenantCookie)) {
-        return buildTenantResponse(tenantCookie);
+        return {
+          tenant: buildTenantResponse(tenantCookie),
+          source: "cookie",
+        };
       }
     }
   }
 
-  // 6. Fallback to zo-system and log unknown host
+  // Fallback: Use default tenant and log
   unknownHostCount++;
-  console.log(`Unknown host '${host}' using fallback tenant 'zo-system'`);
-  return buildTenantResponse("zo-system");
+  console.log(
+    `[TenantResolution] Unknown host '${host}' using fallback tenant 'zo-system'`,
+  );
+  return {
+    tenant: buildTenantResponse("zo-system"),
+    source: "fallback",
+  };
 }
 
-function buildTenantResponse(slug: string): ResolvedTenant {
+interface FullResolvedTenant extends ResolvedTenant {
+  featureMode: "catalog" | "booking";
+  locale: string;
+  currency: string;
+}
+
+function buildTenantResponse(slug: string): FullResolvedTenant {
   // Simplified mapping - in production this would come from DB
   const tenantModes: Record<string, "catalog" | "booking"> = {
     wondernails: "booking",
@@ -251,6 +399,7 @@ function buildTenantResponse(slug: string): ResolvedTenant {
   return {
     id: slug, // In production, this would be a UUID
     slug,
+    source: "fallback",
     featureMode: tenantModes[slug] || "catalog",
     locale: "es-MX",
     currency: "MXN",

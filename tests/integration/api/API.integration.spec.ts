@@ -5,7 +5,6 @@
  * and JWT authentication.
  */
 
-import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { Result, Ok, Err, isFailure } from "@sass-store/core/src/result";
 import { ErrorFactories } from "@sass-store/core/src/errors/types";
 import { createAuthToken } from "@sass-store/core/src/middleware/auth-middleware";
@@ -109,12 +108,12 @@ describe("API Integration Tests", () => {
 
   describe("Users API", () => {
     it("GET /api/users - should return users for authenticated admin", async () => {
-      const adminToken =
-        createAuthToken({
-          id: `admin_${Date.now()}`,
-          email: "admin@example.com",
-          role: "admin",
-        }).success?.data || "";
+      const adminTokenResult = createAuthToken({
+        id: `admin_${Date.now()}`,
+        email: "admin@example.com",
+        role: "admin",
+      });
+      const adminToken = adminTokenResult.success ? adminTokenResult.data : "";
 
       const response = await fetch(`${baseUrl}/api/users`, {
         method: "GET",
@@ -352,12 +351,12 @@ describe("API Integration Tests", () => {
     });
 
     it("should handle authorization errors consistently", async () => {
-      const customerToken =
-        createAuthToken({
-          id: `customer_${Date.now()}`,
-          email: "customer@example.com",
-          role: "customer",
-        }).success?.data || "";
+      const customerTokenResult = createAuthToken({
+        id: `customer_${Date.now()}`,
+        email: "customer@example.com",
+        role: "customer",
+      });
+      const customerToken = customerTokenResult.success ? customerTokenResult.data : "";
 
       // Try to access admin-only endpoint as customer
       const response = await fetch(`${baseUrl}/api/users`, {

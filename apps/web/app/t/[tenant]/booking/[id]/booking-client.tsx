@@ -512,11 +512,11 @@ Te enviaremos una confirmación por SMS.`);
             </form>
 
             {/* Cancellation Policy */}
-            <div className="mt-6 p-4 bg-yellow-50 rounded-lg">
-              <h4 className="font-medium text-yellow-800 mb-2">
+            <div className="mt-6 p-4 bg-stone-50 rounded-lg">
+              <h4 className="font-medium text-stone-800 mb-2">
                 Política de Cancelación
               </h4>
-              <p className="text-sm text-yellow-700">
+              <p className="text-sm text-stone-700">
                 Puedes cancelar o reprogramar tu cita hasta 4 horas antes sin
                 costo adicional. <strong>El depósito de ${safeDeposit} MXN es reembolsable</strong> si cancelas con al menos 4 horas de anticipación.
               </p>

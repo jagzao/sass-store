@@ -108,31 +108,19 @@
   }
 }
 
-/* CRITICAL: Modal & Dialog Fixes - Force White Background */
 @layer components {
-  /* Target all modal/dialog containers regardless of library */
+  /* CRITICAL: Modal & Dialog Fixes - Force Bone White Background */
   [role="dialog"],
   .modal,
   .modal-content,
   .ReactModal__Content,
   .dialog-panel,
   [data-headlessui-state="open"] {
-    background-color: #ffffff !important;
-    background: #ffffff !important;
+    background-color: #F8F9FA !important;
+    background: #F8F9FA !important;
     color: #333333 !important;
     border: 1px solid #e5e5e5 !important;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
-  }
-
-  /* Kill neon yellow backgrounds specifically */
-  div[style*="background-color: yellow"],
-  div[style*="background: yellow"],
-  *[style*="yellow"],
-  .bg-yellow-500,
-  .bg-yellow-400,
-  .bg-yellow-400 {
-    background-color: #ffffff !important;
-    background: #ffffff !important;
   }
 
   /* Force Header/Navbar Transparency */
@@ -341,23 +329,11 @@
 .modal-content,
 .ReactModal__Content,
 .dialog-panel {
-  background: #ffffff !important;
-  background-color: #ffffff !important;
+  background: #F8F9FA !important;
+  background-color: #F8F9FA !important;
   color: #333333 !important;
   border: 1px solid #c5a059 !important; /* Gold Border */
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
-}
-
-/* Kill neon yellow backgrounds specifically */
-div[style*="background-color: yellow"],
-div[style*="background-color: #FFFF00"],
-div[style*="background-color: rgb(255, 255, 0)"],
-div[style*="background: yellow"],
-div[style*="background: #FFFF00"],
-*[style*="background-color: yellow"],
-*[style*="#ffff00"] {
-  background-color: #ffffff !important;
-  background: #ffffff !important;
 }
 
 /* 3. MAP PLACEHOLDER GLOBAL FIX */
@@ -408,4 +384,157 @@ nav > div {
 /* Force white background on the specific date picker trigger */
 [role="dialog"] [data-slot="trigger"] {
   background-color: #ffffff !important;
+}
+
+/* ==========================================================================
+   ETHEREAL LILAC LUXURY THEME - HomeTenant Dashboard
+   ========================================================================== */
+
+:root {
+  /* Ethereal Lilac Luxury Design Tokens */
+  --lilac-spotlight: #E6E6FA;
+  --lilac-spotlight-soft: rgba(230, 230, 250, 0.3);
+  --lilac-spotlight-subtle: rgba(230, 230, 250, 0.1);
+  --gold-accent: #C5A059;
+  --gold-accent-hover: #D4B76A;
+  --gold-accent-light: rgba(197, 160, 89, 0.2);
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-bg-strong: rgba(255, 255, 255, 0.9);
+  --glass-border: rgba(197, 160, 89, 0.3);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+/* ==========================================================================
+   YELLOW BACKGROUND SANITIZATION - HomeTenant Scope
+   Replace yellow backgrounds with white or lilac in HomeTenant area
+   ========================================================================== */
+
+/* Yellow to White replacement */
+.hometenant-dashboard .bg-yellow-50,
+.hometenant-dashboard .bg-yellow-100,
+.hometenant-dashboard .bg-yellow-200 {
+  background-color: #FFFFFF !important;
+}
+
+/* Yellow to Lilac replacement */
+.hometenant-dashboard .bg-yellow-300,
+.hometenant-dashboard .bg-yellow-400 {
+  background-color: var(--lilac-spotlight-soft) !important;
+}
+
+/* Yellow text to gold accent */
+.hometenant-dashboard .text-yellow-500,
+.hometenant-dashboard .text-yellow-600 {
+  color: var(--gold-accent) !important;
+}
+
+/* Yellow borders to gold */
+.hometenant-dashboard .border-yellow-300,
+.hometenant-dashboard .border-yellow-400,
+.hometenant-dashboard .border-yellow-500 {
+  border-color: var(--gold-accent-light) !important;
+}
+
+/* ==========================================================================
+   GLASSMORPHISM UTILITIES - HomeTenant Cards
+   ========================================================================== */
+
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+.glass-card-strong {
+  background: var(--glass-bg-strong);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+/* ==========================================================================
+   SERIF HEADING STYLES - HomeTenant Typography
+   ========================================================================== */
+
+.font-serif-heading {
+  font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+/* ==========================================================================
+   HOME TENANT MODAL SANITIZATION
+   Ensure modals triggered from HomeTenant use white/gold theme
+   ========================================================================== */
+
+.hometenant-dashboard [role="dialog"],
+.hometenant-dashboard .modal,
+.hometenant-dashboard .modal-content {
+  background: #FFFFFF !important;
+  background-color: #FFFFFF !important;
+  border: 1px solid var(--gold-accent-light) !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Modal input fields in HomeTenant */
+.hometenant-dashboard [role="dialog"] input,
+.hometenant-dashboard [role="dialog"] select,
+.hometenant-dashboard [role="dialog"] textarea {
+  background-color: #FAFAFA !important;
+  border: 1px solid var(--gold-accent-light) !important;
+}
+
+/* Modal buttons in HomeTenant */
+.hometenant-dashboard [role="dialog"] .btn-primary,
+.hometenant-dashboard [role="dialog"] button[class*="primary"] {
+  background-color: var(--gold-accent) !important;
+  color: white !important;
+}
+
+.hometenant-dashboard [role="dialog"] .btn-primary:hover,
+.hometenant-dashboard [role="dialog"] button[class*="primary"]:hover {
+  background-color: var(--gold-accent-hover) !important;
+}
+
+/* ==========================================================================
+   ANIMATIONS - HomeTenant Specific
+   ========================================================================== */
+
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft 0.3s ease-out;
+}
+
+/* Gold shimmer effect for hover states */
+@keyframes goldShimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+.gold-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--gold-accent) 0%,
+    var(--gold-accent-hover) 50%,
+    var(--gold-accent) 100%
+  );
+  background-size: 200% auto;
+  animation: goldShimmer 3s linear infinite;
 }

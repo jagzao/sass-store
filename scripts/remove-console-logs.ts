@@ -7,12 +7,11 @@ import * as fs from "fs";
 import * as path from "path";
 import { glob } from "glob";
 
+// Monolith-only: web app contains all API routes
 const DIRECTORIES_TO_SCAN = [
   "apps/web/app",
   "apps/web/lib",
   "apps/web/components",
-  "apps/api/app",
-  "apps/api/lib",
   "packages/*/src",
 ];
 

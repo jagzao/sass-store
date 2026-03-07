@@ -3,6 +3,7 @@
 import { useTenant } from "@/hooks/useTenant";
 import { useTenantSlug } from "@/lib/tenant/client-resolver";
 import SocialMediaManager from "@/components/social/SocialMediaManager";
+import { AdminLayoutProvider } from "@/components/home/AdminLayoutProvider";
 
 export default function SocialPage() {
   const { tenant } = useTenant();
@@ -26,11 +27,13 @@ export default function SocialPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <SocialMediaManager
-        tenant={resolvedSlug}
-        variant={resolvedSlug === "zo-system" ? "tech" : "default"}
-      />
-    </div>
+    <AdminLayoutProvider tenantSlug={resolvedSlug}>
+      <div className="container mx-auto px-4 py-8">
+        <SocialMediaManager
+          tenant={resolvedSlug}
+          variant={resolvedSlug === "zo-system" ? "tech" : "default"}
+        />
+      </div>
+    </AdminLayoutProvider>
   );
 }

@@ -57,7 +57,7 @@ const PasswordInput = memo(
       if (strength <= 2)
         return { level: 1, label: "Débil", color: "bg-red-500" };
       if (strength <= 4)
-        return { level: 2, label: "Media", color: "bg-yellow-500" };
+        return { level: 2, label: "Media", color: "bg-stone-500" };
       return { level: 3, label: "Fuerte", color: "bg-green-500" };
     };
 

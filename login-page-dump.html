@@ -1,0 +1,609 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="preload" as="image" href="/tenants/manada-juma/logo/logo.svg"><link rel="stylesheet" href="/_next/static/chunks/%5Broot-of-the-server%5D__fd94e214._.css" data-precedence="next_static/chunks/[root-of-the-server]__fd94e214._.css"><link rel="preload" as="script" fetchpriority="low" href="/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_956a0d3a._.js"><script src="/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js" async=""></script><script src="/_next/static/chunks/node_modules_next_dist_compiled_react-server-dom-turbopack_9212ccad._.js" async=""></script><script src="/_next/static/chunks/node_modules_next_dist_compiled_next-devtools_index_1dd7fb59.js" async=""></script><script src="/_next/static/chunks/node_modules_next_dist_compiled_a0e4c7b4._.js" async=""></script><script src="/_next/static/chunks/node_modules_next_dist_client_17643121._.js" async=""></script><script src="/_next/static/chunks/node_modules_next_dist_f3530cac._.js" async=""></script><script src="/_next/static/chunks/node_modules_%40swc_helpers_cjs_d80fb378._.js" async=""></script><script src="/_next/static/chunks/apps_web_a0ff3932._.js" async=""></script><script src="/_next/static/chunks/turbopack-apps_web_23a915ee._.js" async=""></script><script src="/_next/static/chunks/node_modules_next_dist_be32b49c._.js" async=""></script><script src="/_next/static/chunks/apps_web_app_icon_png_mjs_b75fd1e8._.js" async=""></script><script src="/_next/static/chunks/_bde486db._.js" async=""></script><script src="/_next/static/chunks/apps_web_app_global-error_tsx_1cf6b850._.js" async=""></script><script src="/_next/static/chunks/node_modules_%40tanstack_react-query-devtools_build_modern_production_e1579469.js" async=""></script><script src="/_next/static/chunks/node_modules_fe794d67._.js" async=""></script><script src="/_next/static/chunks/apps_web_3ccbef64._.js" async=""></script><script src="/_next/static/chunks/apps_web_app_layout_tsx_1cf6b850._.js" async=""></script><script src="/_next/static/chunks/apps_web_app_error_tsx_4c9cc2fc._.js" async=""></script><script src="/_next/static/chunks/apps_web_app_error_tsx_429f9514._.js" async=""></script><script src="/_next/static/chunks/_e1a6468c._.js" async=""></script><script src="/_next/static/chunks/apps_web_app_not-found_tsx_429f9514._.js" async=""></script><script src="/_next/static/chunks/_7c3da4c0._.js" async=""></script><script src="/_next/static/chunks/apps_web_components_527aa142._.js" async=""></script><script src="/_next/static/chunks/apps_web_app_t_%5Btenant%5D_layout_tsx_429f9514._.js" async=""></script><script src="/_next/static/chunks/apps_web_app_t_%5Btenant%5D_error_tsx_38265e73._.js" async=""></script><script src="/_next/static/chunks/apps_web_app_t_%5Btenant%5D_error_tsx_ffdf76c2._.js" async=""></script><script src="/_next/static/chunks/apps_web_app_t_%5Btenant%5D_not-found_tsx_ffdf76c2._.js" async=""></script><script src="/_next/static/chunks/node_modules_ef3db340._.js" async=""></script><script src="/_next/static/chunks/apps_web_7f93bd74._.js" async=""></script><script src="/_next/static/chunks/apps_web_app_t_%5Btenant%5D_login_page_tsx_ffdf76c2._.js" async=""></script><meta name="next-size-adjust" content=""><script src="/_next/static/chunks/node_modules_next_dist_build_polyfills_polyfill-nomodule.js" nomodule=""></script><style>
+          /* Default styles for non-wondernails tenants */
+          body {
+            background-color: #F9FAFB !important;
+          }
+          
+          [class*="card"] {
+            background: white !important;
+            border: 1px solid #E5E7EB !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+          }
+          
+          :root {
+            --background: 249 250 251;
+            --foreground: 31 41 55;
+            --primary: 59 130 246;
+            --primary-foreground: 255 255 255;
+          }
+          
+          h1, h2, h3, h4, h5, h6 {
+            color: #1F2937 !important;
+          }
+          
+          p, span, div, li {
+             color: #374151;
+          }
+          
+          .btn-primary, button[type="submit"], .bg-primary {
+            background-color: #3B82F6 !important;
+            color: white !important;
+            border: none !important;
+          }
+        </style><script src="/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_c8c997ce._.js"></script><script src="/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_c7192189._.js"></script><link rel="preload" href="/_next/static/media/278cbb97e75e04e2-s.p.2ce9a157.woff2" as="font" crossorigin="" type="font/woff2"><link rel="preload" href="/_next/static/media/3206eb66b875a5b3-s.p.e2b99870.woff2" as="font" crossorigin="" type="font/woff2"><link rel="preload" href="/_next/static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2" as="font" crossorigin="" type="font/woff2"><link rel="preload" href="/_next/static/media/a079e02bba5bf7ab-s.p.7367eab7.woff2" as="font" crossorigin="" type="font/woff2"><link rel="preload" href="/_next/static/media/a10c617c9026098c-s.p.ca7c307b.woff2" as="font" crossorigin="" type="font/woff2"><link rel="preload" href="/_next/static/media/d23f31b94ad01e54-s.p.4b0b0c7e.woff2" as="font" crossorigin="" type="font/woff2"><link rel="preload" href="/_next/static/media/e8f2fbee2754df70-s.p.9b7a96b4.woff2" as="font" crossorigin="" type="font/woff2"><style>@font-face{font-family:'__nextjs-Geist';font-style:normal;font-weight:400 600;font-display:swap;src:url(/__nextjs_font/geist-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}@font-face{font-family:'__nextjs-Geist Mono';font-style:normal;font-weight:400 600;font-display:swap;src:url(/__nextjs_font/geist-mono-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}@font-face{font-family:'__nextjs-Geist';font-style:normal;font-weight:400 600;font-display:swap;src:url(/__nextjs_font/geist-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}@font-face{font-family:'__nextjs-Geist Mono';font-style:normal;font-weight:400 600;font-display:swap;src:url(/__nextjs_font/geist-mono-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}</style></head><body class="inter_d95ec7d3-module___-IDgq__className montserrat_77db9ba9-module__ljZ22G__variable rajdhani_1f8ade65-module__oBrEmq__variable"><div hidden=""><!--$?--><template id="B:0"></template><!--/$--></div><div class="min-h-screen bg-background"><div class="min-h-screen bg-[#F8F9FA] "><header class="sticky top-0 z-50 transition-all duration-300 w-full bg-white/95 backdrop-blur-sm border-b border-gray-200" style="position:sticky;top:0"><div class="container mx-auto px-4 flex items-center justify-between"><a class="hover:opacity-80 transition-opacity block" href="/t/manada-juma"><div class="flex items-center gap-4"><img src="/tenants/manada-juma/logo/logo.svg" alt="manada-juma logo" class="h-16 md:h-20 w-auto transition-all duration-300 object-contain "></div></a><nav class="transition-all duration-300 py-3 bg-white/95 backdrop-blur-sm border-b border-gray-200"><div class="flex items-center justify-between"><div class="hidden md:flex items-center gap-6"><a class="text-sm font-medium tracking-wide transition-colors duration-200 text-gray-500 hover:text-gray-900" href="/t/manada-juma/products">Productos</a><a class="text-sm font-medium tracking-wide transition-colors duration-200 text-gray-500 hover:text-gray-900" href="/t/manada-juma/contact">Contacto</a></div><button class="md:hidden p-2 rounded-md transition-colors text-gray-900 hover:bg-gray-100" aria-label="Abrir menú"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path></svg></button></div></nav><div class="w-8 h-8 bg-gray-200 rounded-full animate-pulse"></div></div></header><main><!--$?--><template id="B:1"></template><div class="min-h-screen bg-[#121212] flex flex-col justify-center items-center"><div class="text-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-loader-circle h-12 w-12 text-[#D4AF37] animate-spin mx-auto mb-4"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg><h2 class="text-xl font-semibold text-white mb-2">Cargando...</h2><p class="text-gray-400">Preparando tu experiencia...</p></div></div><!--/$--></main><div role="status" aria-live="polite" aria-atomic="true" class="sr-only"></div><div role="alert" aria-live="assertive" aria-atomic="true" class="sr-only"></div></div></div><!--$--><div dir="ltr" class="tsqd-parent-container"></div><!--/$--><script>requestAnimationFrame(function(){$RT=performance.now()});</script><script id="_R_">self.__next_r="o7IE5B50sY-vXtpwGebaO"</script><script src="/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_956a0d3a._.js" async=""></script><div hidden="" id="S:1"><template id="P:2"></template><!--$?--><template id="B:3"></template><!--/$--></div><style>
+          /* Default styles for non-wondernails tenants */
+          body {
+            background-color: #F9FAFB !important;
+          }
+          
+          [class*="card"] {
+            background: white !important;
+            border: 1px solid #E5E7EB !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+          }
+          
+          :root {
+            --background: 249 250 251;
+            --foreground: 31 41 55;
+            --primary: 59 130 246;
+            --primary-foreground: 255 255 255;
+          }
+          
+          h1, h2, h3, h4, h5, h6 {
+            color: #1F2937 !important;
+          }
+          
+          p, span, div, li {
+             color: #374151;
+          }
+          
+          .btn-primary, button[type="submit"], .bg-primary {
+            background-color: #3B82F6 !important;
+            color: white !important;
+            border: none !important;
+          }
+        </style><script>(self.__next_f=self.__next_f||[]).push([0])</script><style>
+          /* Default styles for non-wondernails tenants */
+          body {
+            background-color: #F9FAFB !important;
+          }
+          
+          [class*="card"] {
+            background: white !important;
+            border: 1px solid #E5E7EB !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+          }
+          
+          :root {
+            --background: 249 250 251;
+            --foreground: 31 41 55;
+            --primary: 59 130 246;
+            --primary-foreground: 255 255 255;
+          }
+          
+          h1, h2, h3, h4, h5, h6 {
+            color: #1F2937 !important;
+          }
+          
+          p, span, div, li {
+             color: #374151;
+          }
+          
+          .btn-primary, button[type="submit"], .bg-primary {
+            background-color: #3B82F6 !important;
+            color: white !important;
+            border: none !important;
+          }
+        </style><script>self.__next_f.push([1,"c:I[\"[project]/node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js [app-client] (ecmascript)\",[\"/_next/static/chunks/node_modules_next_dist_be32b49c._.js\",\"/_next/static/chunks/apps_web_app_icon_png_mjs_b75fd1e8._.js\"],\"SegmentViewNode\"]\ne:\"$Sreact.fragment\"\n1e:I[\"[project]/node_modules/next/dist/client/components/layout-router.js [app-client] (ecmascript)\",[\"/_next/static/chunks/node_modules_next_dist_be32b49c._.js\",\"/_next/static/chunks/apps_web_app_icon_png_mjs_b75fd1e8._.js\"],\"default\"]\n20:I[\"[project]/node_modules/next/dist/client/components/render-from-template-context.js [app-client] (ecmascript)\",[\"/_next/static/chunks/node_modules_next_dist_be32b49c._.js\",\"/_next/static/chunks/apps_web_app_icon_png_mjs_b75fd1e8._.js\"],\"default\"]\n3c:I[\"[project]/node_modules/next/dist/lib/framework/boundary-components.js [app-client] (ecmascript)\",[\"/_next/static/chunks/node_modules_next_dist_be32b49c._.js\",\"/_next/static/chunks/apps_web_app_icon_png_mjs_b75fd1e8._.js\"],\"OutletBoundary\"]\n3e:\"$Sreact.suspense\"\n53:I[\"[project]/node_modules/next/dist/lib/framework/boundary-components.js [app-client] (ecmascript)\",[\"/_next/static/chunks/node_modules_next_dist_be32b49c._.js\",\"/_next/static/chunks/apps_web_app_icon_png_mjs_b75fd1e8._.js\"],\"ViewportBoundary\"]\n5a:I[\"[project]/node_modules/next/dist/lib/framework/boundary-components.js [app-client] (ecmascript)\",[\"/_next/static/chunks/node_modules_next_dist_be32b49c._.js\",\"/_next/static/chunks/apps_web_app_icon_png_mjs_b75fd1e8._.js\"],\"MetadataBoundary\"]\n60:I[\"[project]/apps/web/app/global-error.tsx [app-client] (ecmascript)\",[\"/_next/static/chunks/_bde486db._.js\",\"/_next/static/chunks/apps_web_app_global-error_tsx_1cf6b850._.js\"],\"default\"]\n68:I[\"[project]/apps/web/components/client-init.tsx [app-client] (ecmascript)\",[\"/_next/static/chunks/node_modules_%40tanstack_react-query-devtools_build_modern_production_e1579469.js\",\"/_next/static/chunks/node_modules_fe794d67._.js\",\"/_next/static/chunks/apps_web_3ccbef64._.js\",\"/_next/static/chunks/apps_web_app_layout_tsx_1cf6b850._.js\"],\"ClientInit\"]\n6a:I[\"[project]/apps/web/app/providers.tsx [app-client] (ecmascript)\",[\"/_next/static/chunks/node_modules_%40tanstack_react-query-devtools_build_modern_production_e1579469.js\",\"/_next/static/chunks/node_modules_fe794d67._.js\",\"/_next/static/chunks/apps_web_3ccbef64._.js\",\"/_next/static/chunks/apps_web_app_layout_tsx_1cf6b850._.js\"],\"Providers\"]\n6c:I[\"[project]/apps/web/components/providers/session-provider.tsx [app-client] (ecmascript)\",[\"/_next/static/chunks/node_modules_%40tanstack_react-query-devtools_build_modern_production_e1579469.js\",\"/_next/static/chunks/node_modules_fe794d67._.js\",\"/_next/static/chunks/apps_web_3ccbef64._.js\",\"/_next/static/chunks/apps_web_app_layout_tsx_1cf6b850._.js\"],\"AuthSessionProvider\"]\n6e:I[\"[project]/apps/web/components/ui/toast-provider.tsx [app-client] (ecmascript)\",[\"/_next/static/chunks/node_modules_%40tanstack_react-query-devtools_build_modern_production_e1579469.js\",\"/_next/static/chunks/node_modules_fe794d67._.js\",\"/_next/static/chunks/apps_web_3ccbef64._.js\",\"/_next/static/chunks/apps_web_app_layout_tsx_1cf6b850._.js\"],\"ToastProvider\"]\n70:I[\"[project]/apps/web/components/cart/CartSyncProvider.tsx [app-client] (ecmascript)\",[\"/_next/static/chunks/node_modules_%40tanstack_react-query-devtools_build_modern_production_e1579469.js\",\"/_next/static/chunks/node_modules_fe794d67._.js\",\"/_next/static/chunks/apps_web_3ccbef64._.js\",\"/_next/static/chunks/apps_web_app_layout_tsx_1cf6b850._.js\"],\"CartSyncProvider\"]\n73:I[\"[project]/apps/web/app/error.tsx [app-client] (ecmascript)\",[\"/_next/static/chunks/node_modules_%40tanstack_react-query-devtools_build_modern_production_e1579469.js\",\"/_next/static/chunks/node_modules_fe794d67._.js\",\"/_next/static/chunks/apps_web_3ccbef64._.js\",\"/_next/static/chunks/apps_web_app_layout_tsx_1cf6b850._.js\",\"/_next/static/chunks/apps_web_app_error_tsx_4c9cc2fc._.js\",\"/_next/static/chunks/apps_web_app_error_tsx_429f9514._.js\"],\"default\"]\n7a:I[\"[project]/apps/web/app/not-found.tsx [app-client] (ecmascript)\",[\"/_next/stati"])</script><style>
+          /* Default styles for non-wondernails tenants */
+          body {
+            background-color: #F9FAFB !important;
+          }
+          
+          [class*="card"] {
+            background: white !important;
+            border: 1px solid #E5E7EB !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+          }
+          
+          :root {
+            --background: 249 250 251;
+            --foreground: 31 41 55;
+            --primary: 59 130 246;
+            --primary-foreground: 255 255 255;
+          }
+          
+          h1, h2, h3, h4, h5, h6 {
+            color: #1F2937 !important;
+          }
+          
+          p, span, div, li {
+             color: #374151;
+          }
+          
+          .btn-primary, button[type="submit"], .bg-primary {
+            background-color: #3B82F6 !important;
+            color: white !important;
+            border: none !important;
+          }
+        </style><script>self.__next_f.push([1,"c/chunks/node_modules_%40tanstack_react-query-devtools_build_modern_production_e1579469.js\",\"/_next/static/chunks/node_modules_fe794d67._.js\",\"/_next/static/chunks/apps_web_3ccbef64._.js\",\"/_next/static/chunks/apps_web_app_layout_tsx_1cf6b850._.js\",\"/_next/static/chunks/_e1a6468c._.js\",\"/_next/static/chunks/apps_web_app_not-found_tsx_429f9514._.js\"],\"default\"]\n:HL[\"/_next/static/chunks/%5Broot-of-the-server%5D__fd94e214._.css\",\"style\"]\n:HL[\"/_next/static/media/278cbb97e75e04e2-s.p.2ce9a157.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n:HL[\"/_next/static/media/3206eb66b875a5b3-s.p.e2b99870.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n:HL[\"/_next/static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n:HL[\"/_next/static/media/a079e02bba5bf7ab-s.p.7367eab7.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n:HL[\"/_next/static/media/a10c617c9026098c-s.p.ca7c307b.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n:HL[\"/_next/static/media/d23f31b94ad01e54-s.p.4b0b0c7e.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n:HL[\"/_next/static/media/e8f2fbee2754df70-s.p.9b7a96b4.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n:N1772655169537.739\n3:\"$EObject.defineProperty(()=\u003e{ctx.componentMod.preloadStyle(fullHref,ctx.renderOpts.crossOrigin,ctx.nonce)},\\\"name\\\",{value:\\\"\\\"})\"\n4:\"$EObject.defineProperty(()=\u003e{ctx.componentMod.preloadFont(href,type,ctx.renderOpts.crossOrigin,ctx.nonce)},\\\"name\\\",{value:\\\"\\\"})\"\n5:\"$EObject.defineProperty(()=\u003e{ctx.componentMod.preloadFont(href,type,ctx.renderOpts.crossOrigin,ctx.nonce)},\\\"name\\\",{value:\\\"\\\"})\"\n6:\"$EObject.defineProperty(()=\u003e{ctx.componentMod.preloadFont(href,type,ctx.renderOpts.crossOrigin,ctx.nonce)},\\\"name\\\",{value:\\\"\\\"})\"\n7:\"$EObject.defineProperty(()=\u003e{ctx.componentMod.preloadFont(href,type,ctx.renderOpts.crossOrigin,ctx.nonce)},\\\"name\\\",{value:\\\"\\\"})\"\n8:\"$EObject.defineProperty(()=\u003e{ctx.componentMod.preloadFont(href,type,ctx.renderOpts.crossOrigin,ctx.nonce)},\\\"name\\\",{value:\\\"\\\"})\"\n9:\"$EObject.defineProperty(()=\u003e{ctx.componentMod.preloadFont(href,type,ctx.renderOpts.crossOrigin,ctx.nonce)},\\\"name\\\",{value:\\\"\\\"})\"\na:\"$EObject.defineProperty(()=\u003e{ctx.componentMod.preloadFont(href,type,ctx.renderOpts.crossOrigin,ctx.nonce)},\\\"name\\\",{value:\\\"\\\"})\"\n2:{\"name\":\"Preloads\",\"key\":null,\"env\":\"Server\",\"stack\":[],\"props\":{\"preloadCallbacks\":[\"$3\",\"$4\",\"$5\",\"$6\",\"$7\",\"$8\",\"$9\",\"$a\"]}}\nb:[]\nd:[]\nf:[[\"Array.map\",\"\",0,0,0,0,false]]\n10:[[\"Array.map\",\"\",0,0,0,0,false]]\n11:[[\"Array.map\",\"\",0,0,0,0,false]]\n12:[[\"Array.map\",\"\",0,0,0,0,false]]\n13:[[\"Array.map\",\"\",0,0,0,0,false]]\n16:I[\"[project]/node_modules/next/dist/client/components/layout-router.js [app-client] (ecmascript)\",[\"/_next/static/chunks/node_modules_next_dist_be32b49c._.js\",\"/_next/static/chunks/apps_web_app_icon_png_mjs_b75fd1e8._.js\"],\"default\"]\n18:I[\"[project]/apps/web/app/error.tsx [app-client] (ecmascript)\",[\"/_next/static/chunks/node_modules_%40tanstack_react-query-devtools_build_modern_production_e1579469.js\",\"/_next/static/chunks/node_modules_fe794d67._.js\",\"/_next/static/chunks/apps_web_3ccbef64._.js\",\"/_next/static/chunks/apps_web_app_layout_tsx_1cf6b850._.js\",\"/_next/static/chunks/apps_web_app_error_tsx_4c9cc2fc._.js\",\"/_next/static/chunks/apps_web_app_error_tsx_429f9514._.js\"],\"default\"]\n19:{\"type\":\"error\",\"pagePath\":\"/apps/web/app/error.tsx\",\"children\":[]}\n1a:[[\"Function.all\",\"\",0,0,0,0,true]]\n17:{\"parallelRouterKey\":\"children\",\"error\":\"$18\",\"errorStyles\":[\"$\",\"$Lc\",null,\"$19\",null,\"$1a\",0],\"errorScripts\":\"$Y\",\"template\":\"$Y\",\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$Y\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\",\"segmentViewBoundaries\":\"$Y\"}\n1b:[[\"Function.all\",\"\",0,0,0,0,true]]\n15:{\"name\":\"RootLayout\",\"key\":null,\"env\":\"Server\",\"stack\":[],\"props\":{\"children\":[\"$\",\"$L16\",null,\"$17\",null,\"$1b\",1],\"params\":\"$Y\"}}\n1c:[[\"Function.all\",\"\",0,0,0,0,true]]\n1d:[[\"Function.all\",\"\",0,0,0,0,true],[\"Function.all\",\"\",0,0,0,0,true]]\n1f:[[\"Function.all\",\"\",0,0,0,0,true],[\"Function.all\",\"\",0,0,0,0,true]]\n21:[[\"Function.all\",\"\",0,0,0"])</script><style>
+          /* Default styles for non-wondernails tenants */
+          body {
+            background-color: #F9FAFB !important;
+          }
+          
+          [class*="card"] {
+            background: white !important;
+            border: 1px solid #E5E7EB !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+          }
+          
+          :root {
+            --background: 249 250 251;
+            --foreground: 31 41 55;
+            --primary: 59 130 246;
+            --primary-foreground: 255 255 255;
+          }
+          
+          h1, h2, h3, h4, h5, h6 {
+            color: #1F2937 !important;
+          }
+          
+          p, span, div, li {
+             color: #374151;
+          }
+          
+          .btn-primary, button[type="submit"], .bg-primary {
+            background-color: #3B82F6 !important;
+            color: white !important;
+            border: none !important;
+          }
+        </style><script>self.__next_f.push([1,",0,true],[\"Function.all\",\"\",0,0,0,0,true]]\n22:[[\"Function.all\",\"\",0,0,0,0,true],[\"Function.all\",\"\",0,0,0,0,true]]\n23:[[\"Array.map\",\"\",0,0,0,0,false],[\"Array.map\",\"\",0,0,0,0,false],[\"Function.all\",\"\",0,0,0,0,true]]\n24:[[\"Array.map\",\"\",0,0,0,0,false],[\"Array.map\",\"\",0,0,0,0,false],[\"Function.all\",\"\",0,0,0,0,true]]\n25:[[\"Array.map\",\"\",0,0,0,0,false],[\"Array.map\",\"\",0,0,0,0,false],[\"Function.all\",\"\",0,0,0,0,true]]\n29:I[\"[project]/apps/web/app/t/[tenant]/error.tsx [app-client] (ecmascript)\",[\"/_next/static/chunks/node_modules_%40tanstack_react-query-devtools_build_modern_production_e1579469.js\",\"/_next/static/chunks/node_modules_fe794d67._.js\",\"/_next/static/chunks/apps_web_3ccbef64._.js\",\"/_next/static/chunks/apps_web_app_layout_tsx_1cf6b850._.js\",\"/_next/static/chunks/_7c3da4c0._.js\",\"/_next/static/chunks/apps_web_components_527aa142._.js\",\"/_next/static/chunks/apps_web_app_t_%5Btenant%5D_layout_tsx_429f9514._.js\",\"/_next/static/chunks/apps_web_app_t_%5Btenant%5D_error_tsx_38265e73._.js\",\"/_next/static/chunks/apps_web_app_t_%5Btenant%5D_error_tsx_ffdf76c2._.js\"],\"default\"]\n2a:{\"type\":\"error\",\"pagePath\":\"/apps/web/app/t/[tenant]/error.tsx\",\"children\":[]}\n2b:[[\"Function.all\",\"\",0,0,0,0,true],[\"Function.all\",\"\",0,0,0,0,true],[\"Function.all\",\"\",0,0,0,0,true]]\n28:{\"parallelRouterKey\":\"children\",\"error\":\"$29\",\"errorStyles\":[\"$\",\"$Lc\",null,\"$2a\",null,\"$2b\",0],\"errorScripts\":\"$Y\",\"template\":\"$Y\",\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$Y\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\",\"segmentViewBoundaries\":\"$Y\"}\n2c:[[\"Function.all\",\"\",0,0,0,0,true],[\"Function.all\",\"\",0,0,0,0,true],[\"Function.all\",\"\",0,0,0,0,true]]\n27:{\"name\":\"TenantLayout\",\"key\":null,\"env\":\"Server\",\"stack\":[[\"Function.all\",\"\",0,0,0,0,true],[\"Function.all\",\"\",0,0,0,0,true]],\"props\":{\"children\":[\"$\",\"$L1e\",null,\"$28\",null,\"$2c\",1],\"params\":\"$Y\"}}\n2d:[[\"Function.all\",\"\",0,0,0,0,true],[\"Function.all\",\"\",0,0,0,0,true],[\"Function.all\",\"\",0,0,0,0,true]]\n2e:[[\"Function.all\",\"\",0,0,0,0,true],[\"Function.all\",\"\",0,0,0,0,true],[\"Function.all\",\"\",0,0,0,0,true]]\n2f:[[\"Function.all\",\"\",0,0,0,0,true],[\"Function.all\",\"\",0,0,0,0,true],[\"Function.all\",\"\",0,0,0,0,true]]\n30:[[\"Function.all\",\"\",0,0,0,0,true],[\"Function.all\",\"\",0,0,0,0,true],[\"Function.all\",\"\",0,0,0,0,true]]\n31:[[\"Function.all\",\"\",0,0,0,0,true],[\"Function.all\",\"\",0,0,0,0,true],[\"Function.all\",\"\",0,0,0,0,true]]\n33:{\"name\":\"LoginPage\",\"key\":null,\"env\":\"Server\",\"stack\":[[\"Function.all\",\"\",0,0,0,0,true],[\"Function.all\",\"\",0,0,0,0,true],[\"Function.all\",\"\",0,0,0,0,true]],\"props\":{\"params\":\"$@34\",\"searchParams\":\"$@35\"}}\n36:[[\"Array.map\",\"\",0,0,0,0,false],[\"Array.map\",\"\",0,0,0,0,false],[\"Function.all\",\"\",0,0,0,0,true]]\n37:[[\"Array.map\",\"\",0,0,0,0,false],[\"Array.map\",\"\",0,0,0,0,false],[\"Function.all\",\"\",0,0,0,0,true]]\n38:[[\"Array.map\",\"\",0,0,0,0,false],[\"Array.map\",\"\",0,0,0,0,false],[\"Function.all\",\"\",0,0,0,0,true]]\n3a:{\"name\":\"Next.MetadataOutlet\",\"key\":null,\"env\":\"Server\",\"stack\":[[\"Function.all\",\"\",0,0,0,0,true],[\"Function.all\",\"\",0,0,0,0,true],[\"Function.all\",\"\",0,0,0,0,true]],\"props\":{}}\n3b:[]\n3d:[]\n40:[[\"Function.all\",\"\",0,0,0,0,true],[\"Function.all\",\"\",0,0,0,0,true]]\n42:{\"name\":\"Loading\",\"key\":\"l\",\"env\":\"Server\",\"stack\":[[\"Function.all\",\"\",0,0,0,0,true],[\"Function.all\",\"\",0,0,0,0,true]],\"props\":{}}\n43:[[\"Loading\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_33b88a02._.js\",14,263,13,1,false]]\n44:[[\"Loading\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_33b88a02._.js\",16,270,13,1,false]]\n46:{\"name\":\"LoaderCircle\",\"key\":null,\"env\":\"Server\",\"owner\":\"$42\",\"stack\":[[\"Loading\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_33b88a02._.js\",19,268,13,1,false]],\"props\":{\"className\":\"h-12 w-12 text-[#D4AF37] animate-spin mx-auto mb-4\"}}\n47:{\"name\":\"\",\"key\":null,\"env\":\"Server\",\"owner\":\"$46\",\"stack\":[[\"LoaderCircle\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_33b88a02._.js\",159,491,159,240,false]],\"props\":{\"ref\":\"$undefined\",\"iconNode\":[[\"path\",{\"d\":\"M21 12a9 9 0 1 1-6.219-8.56\",\"key\":\"13zald\"}]]"])</script><style>
+          /* Default styles for non-wondernails tenants */
+          body {
+            background-color: #F9FAFB !important;
+          }
+          
+          [class*="card"] {
+            background: white !important;
+            border: 1px solid #E5E7EB !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+          }
+          
+          :root {
+            --background: 249 250 251;
+            --foreground: 31 41 55;
+            --primary: 59 130 246;
+            --primary-foreground: 255 255 255;
+          }
+          
+          h1, h2, h3, h4, h5, h6 {
+            color: #1F2937 !important;
+          }
+          
+          p, span, div, li {
+             color: #374151;
+          }
+          
+          .btn-primary, button[type="submit"], .bg-primary {
+            background-color: #3B82F6 !important;
+            color: white !important;
+            border: none !important;
+          }
+        </style><script>self.__next_f.push([1,",\"className\":\"lucide-loader-circle h-12 w-12 text-[#D4AF37] animate-spin mx-auto mb-4\"}}\n48:[[\"\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_33b88a02._.js\",121,231,120,231,false]]\n49:[[\"\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_33b88a02._.js\",131,260,131,25,false],[\"Array.map\",\"\",0,0,0,0,false],[\"\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_33b88a02._.js\",131,21,120,231,false]]\n4a:[[\"Loading\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_33b88a02._.js\",26,268,13,1,false]]\n4b:[[\"Loading\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_33b88a02._.js\",34,268,13,1,false]]\n4c:[]\n"])</script><style>
+          /* Default styles for non-wondernails tenants */
+          body {
+            background-color: #F9FAFB !important;
+          }
+          
+          [class*="card"] {
+            background: white !important;
+            border: 1px solid #E5E7EB !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+          }
+          
+          :root {
+            --background: 249 250 251;
+            --foreground: 31 41 55;
+            --primary: 59 130 246;
+            --primary-foreground: 255 255 255;
+          }
+          
+          h1, h2, h3, h4, h5, h6 {
+            color: #1F2937 !important;
+          }
+          
+          p, span, div, li {
+             color: #374151;
+          }
+          
+          .btn-primary, button[type="submit"], .bg-primary {
+            background-color: #3B82F6 !important;
+            color: white !important;
+            border: none !important;
+          }
+        </style><script>self.__next_f.push([1,"4f:\"$EObject.defineProperty(function(type,config,children){for(var propName,i=2;i\u003carguments.length;i++)validateChildKeys(arguments[i]);i={};var key=null;if(null!=config)for(propName in didWarnAboutOldJSXRuntime||!(\\\"__self\\\"in config)||\\\"key\\\"in config||(didWarnAboutOldJSXRuntime=!0,console.warn(\\\"Your app (or one of its dependencies) is using an outdated JSX transform. Update to the modern JSX transform for faster performance: https://react.dev/link/new-jsx-transform\\\")),hasValidKey(config)\u0026\u0026(checkKeyStringCoercion(config.key),key=\\\"\\\"+config.key),config)hasOwnProperty.call(config,propName)\u0026\u0026\\\"key\\\"!==propName\u0026\u0026\\\"__self\\\"!==propName\u0026\u0026\\\"__source\\\"!==propName\u0026\u0026(i[propName]=config[propName]);var childrenLength=arguments.length-2;if(1===childrenLength)i.children=children;else if(1\u003cchildrenLength){for(var childArray=Array(childrenLength),_i=0;_i\u003cchildrenLength;_i++)childArray[_i]=arguments[_i+2];Object.freeze\u0026\u0026Object.freeze(childArray),i.children=childArray}if(type\u0026\u0026type.defaultProps)for(propName in childrenLength=type.defaultProps)void 0===i[propName]\u0026\u0026(i[propName]=childrenLength[propName]);return key\u0026\u0026function(props,displayName){function warnAboutAccessingKey(){specialPropKeyWarningShown||(specialPropKeyWarningShown=!0,console.error(\\\"%s: `key` is not a prop. Trying to access it will result in `undefined` being returned. If you need to access the same value within the child component, you should pass it as a different prop. (https://react.dev/link/special-props)\\\",displayName))}warnAboutAccessingKey.isReactWarning=!0,Object.defineProperty(props,\\\"key\\\",{get:warnAboutAccessingKey,configurable:!0})}(i,\\\"function\\\"==typeof type?type.displayName||type.name||\\\"Unknown\\\":type),(propName=1e4\u003eReactSharedInternals.recentlyCreatedOwnerStacks++)?(childArray=Error.stackTraceLimit,Error.stackTraceLimit=10,childrenLength=Error(\\\"react-stack-top-frame\\\"),Error.stackTraceLimit=childArray):childrenLength=unknownOwnerDebugStack,ReactElement(type,key,i,getOwner(),childrenLength,propName?createTask(getTaskName(type)):unknownOwnerDebugTask)},\\\"name\\\",{value:\\\"\\\"})\"\n"])</script><style>
+          /* Default styles for non-wondernails tenants */
+          body {
+            background-color: #F9FAFB !important;
+          }
+          
+          [class*="card"] {
+            background: white !important;
+            border: 1px solid #E5E7EB !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+          }
+          
+          :root {
+            --background: 249 250 251;
+            --foreground: 31 41 55;
+            --primary: 59 130 246;
+            --primary-foreground: 255 255 255;
+          }
+          
+          h1, h2, h3, h4, h5, h6 {
+            color: #1F2937 !important;
+          }
+          
+          p, span, div, li {
+             color: #374151;
+          }
+          
+          .btn-primary, button[type="submit"], .bg-primary {
+            background-color: #3B82F6 !important;
+            color: white !important;
+            border: none !important;
+          }
+        </style><script>self.__next_f.push([1,"4e:{\"name\":\"NonIndex\",\"key\":null,\"env\":\"Server\",\"stack\":[],\"props\":{\"createElement\":\"$4f\",\"pagePath\":\"/t/[tenant]/login\",\"statusCode\":200,\"isPossibleServerAction\":false}}\n51:{\"name\":\"ViewportWrapper\",\"key\":null,\"env\":\"Server\",\"stack\":[],\"props\":{}}\n52:[]\n55:{\"name\":\"Next.Viewport\",\"key\":null,\"env\":\"Server\",\"owner\":\"$51\",\"stack\":[],\"props\":{}}\n57:{\"name\":\"MetadataWrapper\",\"key\":null,\"env\":\"Server\",\"stack\":[],\"props\":{}}\n58:[]\n59:[]\n5b:[]\n5d:{\"name\":\"Next.Metadata\",\"key\":null,\"env\":\"Server\",\"owner\":\"$57\",\"stack\":[],\"props\":{}}\n5e:[]\n61:[]\n34:{\"tenant\":\"manada-juma\"}\n35:\n62:[[\"RootLayout\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\[root-of-the-server]__7307c4fb._.js\",312,263,309,1,false]]\n63:[[\"RootLayout\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\[root-of-the-server]__7307c4fb._.js\",316,264,309,1,false]]\n64:[[\"RootLayout\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\[root-of-the-server]__7307c4fb._.js\",318,272,309,1,false]]\n65:[[\"RootLayout\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\[root-of-the-server]__7307c4fb._.js\",325,272,309,1,false]]\n66:[[\"RootLayout\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\[root-of-the-server]__7307c4fb._.js\",339,264,309,1,false]]\n67:[[\"RootLayout\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\[root-of-the-server]__7307c4fb._.js\",343,272,309,1,false]]\n69:[[\"RootLayout\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\[root-of-the-server]__7307c4fb._.js\",348,272,309,1,false]]\n6b:[[\"RootLayout\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\[root-of-the-server]__7307c4fb._.js\",349,286,309,1,false]]\n6d:[[\"RootLayout\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\[root-of-the-server]__7307c4fb._.js\",350,290,309,1,false]]\n6f:[[\"RootLayout\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\[root-of-the-server]__7307c4fb._.js\",351,294,309,1,false]]\n71:[[\"RootLayout\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\[root-of-the-server]__7307c4fb._.js\",352,298,309,1,false]]\n72:[[\"Function.all\",\"\",0,0,0,0,true]]\n74:[[\"Function.all\",\"\",0,0,0,0,true]]\n75:[[\"Array.map\",\"\",0,0,0,0,false]]\n76:[[\"Array.map\",\"\",0,0,0,0,false]]\n77:[[\"Function.all\",\"\",0,0,0,0,true]]\n78:[]\n79:[]\n7b:[[\"Function.all\",\"\",0,0,0,0,true]]\n7c:[[\"Function.all\",\"\",0,0,0,0,true]]\n7d:[[\"Function.all\",\"\",0,0,0,0,true]]\n7e:[[\"TenantLayout\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\[root-of-the-server]__ce197cc8._.js\",4203,13,4201,1,false]]\n:W[\"log\",\"$7e\",\"$27\",\"Server\",\"[TenantLayout] Resolved params:\",\"$34\"]\n7f:[[\"TenantLayout\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\[root-of-the-server]__ce197cc8._.js\",4205,13,4201,1,false]]\n:W[\"log\",\"$7f\",\"$27\",\"Server\",\"[TenantLayout] Extracted tenantSlug:\",\"manada-juma\"]\n80:[[\"getTenantBySlug\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\[root-of-the-server]__ce197cc8._.js\",3959,17,3956,1,false],[\"TenantLayout\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\[root-of-the-server]__ce197cc8._.js\",4207,194,4201,1,false]]\n:W[\"log\",\"$80\",\"$27\",\"Server\",\"[getTenantBySlug] Looking for tenant: manada-juma\"]\n81:[]\n82:[]\n83:[[\"getRedisClient\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_540b251a._.js\",207,21,203,1,false],[\"getCached\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_540b251a._.js\",220,19,219,1,false],[\"getOrSetCache\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_540b251a._.js\",279,26,277,1,false],[\"Function.getTenantWithData\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_540b251a._.js\",535,176,525,12,false],[\"getTenantDataForPage\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_540b251a._.js\",664,44,663,1,false],[\"Module.generateMetadata\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_540b251"])</script><style>
+          /* Default styles for non-wondernails tenants */
+          body {
+            background-color: #F9FAFB !important;
+          }
+          
+          [class*="card"] {
+            background: white !important;
+            border: 1px solid #E5E7EB !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+          }
+          
+          :root {
+            --background: 249 250 251;
+            --foreground: 31 41 55;
+            --primary: 59 130 246;
+            --primary-foreground: 255 255 255;
+          }
+          
+          h1, h2, h3, h4, h5, h6 {
+            color: #1F2937 !important;
+          }
+          
+          p, span, div, li {
+             color: #374151;
+          }
+          
+          .btn-primary, button[type="submit"], .bg-primary {
+            background-color: #3B82F6 !important;
+            color: white !important;
+            border: none !important;
+          }
+        </style><script>self.__next_f.push([1,"a._.js\",1271,204,1268,1,false]]\n:W[\"warn\",\"$83\",\"$3a\",\"Server\",\"[Redis] UPSTASH_REDIS_URL or UPSTASH_REDIS_TOKEN not configured, caching disabled\"]\n84:[[\"getOrSetCache\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_540b251a._.js\",284,13,277,1,false],[\"Function.getTenantWithData\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_540b251a._.js\",535,16,525,12,true],[\"getTenantDataForPage\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_540b251a._.js\",664,24,663,1,true],[\"Module.generateMetadata\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_540b251a._.js\",1271,28,1268,1,true]]\n:W[\"log\",\"$84\",\"$3a\",\"Server\",\"[Redis] Fetching data for: tenant_with_data:manada-juma\"]\n85:[[\"\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_540b251a._.js\",537,25,535,192,false],[\"getOrSetCache\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_540b251a._.js\",285,24,277,1,false],[\"Function.getTenantWithData\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_540b251a._.js\",535,16,525,12,true],[\"getTenantDataForPage\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_540b251a._.js\",664,24,663,1,true],[\"Module.generateMetadata\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_540b251a._.js\",1271,28,1268,1,true]]\n:W[\"log\",\"$85\",\"$3a\",\"Server\",\"[TenantService] Fetching complete tenant data for: manada-juma\"]\n1:D{\"time\":0.16009999811649323}\n1:D\"$2\"\n1:D{\"time\":0.18600000068545341}\n1:null\n14:D{\"time\":0.7040999978780746}\n14:D\"$15\"\n26:D{\"time\":1.8651999980211258}\n26:D\"$27\"\n32:D{\"time\":2.928100001066923}\n32:D\"$33\"\n39:D{\"time\":3.406599998474121}\n39:D\"$3a\"\n39:D{\"time\":5.580699998885393}\n39:[\"$\",\"$L3c\",null,{\"children\":[\"$\",\"$3e\",null,{\"name\":\"Next.MetadataOutlet\",\"children\":\"$@3f\"},\"$3a\",\"$3d\",1]},\"$3a\",\"$3b\",1]\n41:D{\"time\":6.065799999982119}\n41:D\"$42\"\n41:D{\"time\":6.718399997800589}\n45:D{\"time\":6.887800000607967}\n45:D\"$46\"\n45:D{\"time\":7.032299999147654}\n45:D\"$47\"\n45:D{\"time\":7.162999998778105}\n45:[\"$\",\"svg\",null,{\"ref\":\"$undefined\",\"xmlns\":\"http://www.w3.org/2000/svg\",\"width\":24,\"height\":24,\"viewBox\":\"0 0 24 24\",\"fill\":\"none\",\"stroke\":\"currentColor\",\"strokeWidth\":2,\"strokeLinecap\":\"round\",\"strokeLinejoin\":\"round\",\"className\":\"lucide lucide-loader-circle h-12 w-12 text-[#D4AF37] animate-spin mx-auto mb-4\",\"children\":[[\"$\",\"path\",\"13zald\",{\"d\":\"M21 12a9 9 0 1 1-6.219-8.56\"},\"$47\",\"$49\",0],\"$undefined\"]},\"$47\",\"$48\",1]\n41:[\"$\",\"div\",\"l\",{\"className\":\"min-h-screen bg-[#121212] flex flex-col justify-center items-center\",\"children\":[\"$\",\"div\",null,{\"className\":\"text-center\",\"children\":[\"$45\",[\"$\",\"h2\",null,{\"className\":\"text-xl font-semibold text-white mb-2\",\"children\":\"Cargando...\"},\"$42\",\"$4a\",1],[\"$\",\"p\",null,{\"className\":\"text-gray-400\",\"children\":\"Preparando tu experiencia...\"},\"$42\",\"$4b\",1]]},\"$42\",\"$44\",1]},\"$42\",\"$43\",1]\n4d:D{\"time\":7.478199999779463}\n4d:D\"$4e\"\n4d:D{\"time\":7.486999999731779}\n4d:null\n50:D{\"time\":7.529999997466803}\n50:D\"$51\"\n50:D{\"time\":7.634500000625849}\n54:D{\"time\":7.801300000399351}\n54:D\"$55\"\n50:[\"$\",\"$L53\",null,{\"children\":\"$L54\"},\"$51\",\"$52\",1]\n56:D{\"time\":8.390599999576807}\n56:D\"$57\"\n56:D{\"time\":8.612999998033047}\n5c:D{\"time\":8.789699997752905}\n5c:D\"$5d\"\n56:[\"$\",\"div\",null,{\"hidden\":true,\"children\":[\"$\",\"$L5a\",null,{\"children\":[\"$\",\"$3e\",null,{\"name\":\"Next.Metadata\",\"children\":\"$L5c\"},\"$57\",\"$5b\",1]},\"$57\",\"$59\",1]},\"$57\",\"$58\",1]\n5f:[]\n"])</script><style>
+          /* Default styles for non-wondernails tenants */
+          body {
+            background-color: #F9FAFB !important;
+          }
+          
+          [class*="card"] {
+            background: white !important;
+            border: 1px solid #E5E7EB !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+          }
+          
+          :root {
+            --background: 249 250 251;
+            --foreground: 31 41 55;
+            --primary: 59 130 246;
+            --primary-foreground: 255 255 255;
+          }
+          
+          h1, h2, h3, h4, h5, h6 {
+            color: #1F2937 !important;
+          }
+          
+          p, span, div, li {
+             color: #374151;
+          }
+          
+          .btn-primary, button[type="submit"], .bg-primary {
+            background-color: #3B82F6 !important;
+            color: white !important;
+            border: none !important;
+          }
+        </style><script>self.__next_f.push([1,"0:{\"P\":\"$1\",\"b\":\"development\",\"c\":[\"\",\"t\",\"manada-juma\",\"login\"],\"q\":\"\",\"i\":false,\"f\":[[[\"\",{\"children\":[\"t\",{\"children\":[[\"tenant\",\"manada-juma\",\"d\"],{\"children\":[\"login\",{\"children\":[\"__PAGE__\",{}]}]}]}]},\"$undefined\",\"$undefined\",true],[[\"$\",\"$Lc\",\"layout\",{\"type\":\"layout\",\"pagePath\":\"/apps/web/app/layout.tsx\",\"children\":[\"$\",\"$e\",\"c\",{\"children\":[[[\"$\",\"link\",\"0\",{\"rel\":\"stylesheet\",\"href\":\"/_next/static/chunks/%5Broot-of-the-server%5D__fd94e214._.css\",\"precedence\":\"next_static/chunks/[root-of-the-server]__fd94e214._.css\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"},null,\"$f\",0],[\"$\",\"script\",\"script-0\",{\"src\":\"/_next/static/chunks/node_modules_%40tanstack_react-query-devtools_build_modern_production_e1579469.js\",\"async\":true,\"nonce\":\"$undefined\"},null,\"$10\",0],[\"$\",\"script\",\"script-1\",{\"src\":\"/_next/static/chunks/node_modules_fe794d67._.js\",\"async\":true,\"nonce\":\"$undefined\"},null,\"$11\",0],[\"$\",\"script\",\"script-2\",{\"src\":\"/_next/static/chunks/apps_web_3ccbef64._.js\",\"async\":true,\"nonce\":\"$undefined\"},null,\"$12\",0],[\"$\",\"script\",\"script-3\",{\"src\":\"/_next/static/chunks/apps_web_app_layout_tsx_1cf6b850._.js\",\"async\":true,\"nonce\":\"$undefined\"},null,\"$13\",0]],\"$L14\"]},null,\"$d\",1]},null,\"$b\",0],{\"children\":[[\"$\",\"$e\",\"c\",{\"children\":[null,[\"$\",\"$L1e\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L20\",null,{},null,\"$1f\",1],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\",\"segmentViewBoundaries\":[\"$undefined\",\"$undefined\",\"$undefined\",\"$undefined\"]},null,\"$1d\",1]]},null,\"$1c\",0],{\"children\":[[\"$\",\"$Lc\",\"layout\",{\"type\":\"layout\",\"pagePath\":\"/apps/web/app/t/[tenant]/layout.tsx\",\"children\":[\"$\",\"$e\",\"c\",{\"children\":[[[\"$\",\"script\",\"script-0\",{\"src\":\"/_next/static/chunks/_7c3da4c0._.js\",\"async\":true,\"nonce\":\"$undefined\"},null,\"$23\",0],[\"$\",\"script\",\"script-1\",{\"src\":\"/_next/static/chunks/apps_web_components_527aa142._.js\",\"async\":true,\"nonce\":\"$undefined\"},null,\"$24\",0],[\"$\",\"script\",\"script-2\",{\"src\":\"/_next/static/chunks/apps_web_app_t_%5Btenant%5D_layout_tsx_429f9514._.js\",\"async\":true,\"nonce\":\"$undefined\"},null,\"$25\",0]],\"$L26\"]},null,\"$22\",1]},null,\"$21\",0],{\"children\":[[\"$\",\"$e\",\"c\",{\"children\":[null,[\"$\",\"$L1e\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L20\",null,{},null,\"$2f\",1],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\",\"segmentViewBoundaries\":[\"$undefined\",\"$undefined\",\"$undefined\",\"$undefined\"]},null,\"$2e\",1]]},null,\"$2d\",0],{\"children\":[[\"$\",\"$e\",\"c\",{\"children\":[[\"$\",\"$Lc\",\"c-page\",{\"type\":\"page\",\"pagePath\":\"/apps/web/app/t/[tenant]/login/page.tsx\",\"children\":\"$L32\"},null,\"$31\",1],[[\"$\",\"script\",\"script-0\",{\"src\":\"/_next/static/chunks/node_modules_ef3db340._.js\",\"async\":true,\"nonce\":\"$undefined\"},null,\"$36\",0],[\"$\",\"script\",\"script-1\",{\"src\":\"/_next/static/chunks/apps_web_7f93bd74._.js\",\"async\":true,\"nonce\":\"$undefined\"},null,\"$37\",0],[\"$\",\"script\",\"script-2\",{\"src\":\"/_next/static/chunks/apps_web_app_t_%5Btenant%5D_login_page_tsx_ffdf76c2._.js\",\"async\":true,\"nonce\":\"$undefined\"},null,\"$38\",0]],\"$39\"]},null,\"$30\",0],{},null,false,false]},null,false,false]},[[\"$\",\"$Lc\",\"c-loading\",{\"type\":\"loading\",\"pagePath\":\"/apps/web/app/t/[tenant]/loading.tsx\",\"children\":\"$41\"},null,\"$40\",0],[],[]],false,false]},null,false,false]},null,false,false],[\"$\",\"$e\",\"h\",{\"children\":[\"$4d\",\"$50\",\"$56\",[\"$\",\"meta\",null,{\"name\":\"next-size-adjust\",\"content\":\"\"},null,\"$5e\",1]]},null,\"$4c\",0],false]],\"m\":\"$W5f\",\"G\":[\"$60\",[\"$\",\"$Lc\",\"ge-svn\",{\"type\":\"global-error\",\"pagePath\":\"/apps/web/app/global-error.tsx\",\"children\":[]},null,\"$61\",0]],\"S\":false}\n"])</script><style>
+          /* Default styles for non-wondernails tenants */
+          body {
+            background-color: #F9FAFB !important;
+          }
+          
+          [class*="card"] {
+            background: white !important;
+            border: 1px solid #E5E7EB !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+          }
+          
+          :root {
+            --background: 249 250 251;
+            --foreground: 31 41 55;
+            --primary: 59 130 246;
+            --primary-foreground: 255 255 255;
+          }
+          
+          h1, h2, h3, h4, h5, h6 {
+            color: #1F2937 !important;
+          }
+          
+          p, span, div, li {
+             color: #374151;
+          }
+          
+          .btn-primary, button[type="submit"], .bg-primary {
+            background-color: #3B82F6 !important;
+            color: white !important;
+            border: none !important;
+          }
+        </style><script>self.__next_f.push([1,"14:D{\"time\":9.733399998396635}\n"])</script><style>
+          /* Default styles for non-wondernails tenants */
+          body {
+            background-color: #F9FAFB !important;
+          }
+          
+          [class*="card"] {
+            background: white !important;
+            border: 1px solid #E5E7EB !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+          }
+          
+          :root {
+            --background: 249 250 251;
+            --foreground: 31 41 55;
+            --primary: 59 130 246;
+            --primary-foreground: 255 255 255;
+          }
+          
+          h1, h2, h3, h4, h5, h6 {
+            color: #1F2937 !important;
+          }
+          
+          p, span, div, li {
+             color: #374151;
+          }
+          
+          .btn-primary, button[type="submit"], .bg-primary {
+            background-color: #3B82F6 !important;
+            color: white !important;
+            border: none !important;
+          }
+        </style><script data-nextjs-dev-overlay="true" style="display: block; position: absolute;"><nextjs-portal style="--nextjs-dev-tools-scale: 1;"></nextjs-portal></script><script>self.__next_f.push([1,"14:[\"$\",\"html\",null,{\"lang\":\"en\",\"suppressHydrationWarning\":true,\"children\":[[\"$\",\"head\",null,{\"children\":[[\"$\",\"meta\",null,{\"charSet\":\"utf-8\"},\"$15\",\"$64\",1],[\"$\",\"meta\",null,{\"name\":\"viewport\",\"content\":\"width=device-width, initial-scale=1\"},\"$15\",\"$65\",1]]},\"$15\",\"$63\",1],[\"$\",\"body\",null,{\"className\":\"inter_d95ec7d3-module___-IDgq__className montserrat_77db9ba9-module__ljZ22G__variable rajdhani_1f8ade65-module__oBrEmq__variable\",\"suppressHydrationWarning\":true,\"children\":[[\"$\",\"$L68\",null,{},\"$15\",\"$67\",1],[\"$\",\"$L6a\",null,{\"children\":[\"$\",\"$L6c\",null,{\"children\":[\"$\",\"$L6e\",null,{\"children\":[\"$\",\"$L70\",null,{\"children\":[\"$\",\"div\",null,{\"className\":\"min-h-screen bg-background\",\"children\":[\"$\",\"$L1e\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$73\",\"errorStyles\":[\"$\",\"$Lc\",null,{\"type\":\"error\",\"pagePath\":\"/apps/web/app/error.tsx\",\"children\":[]},null,\"$74\",0],\"errorScripts\":[[\"$\",\"script\",\"script-0\",{\"src\":\"/_next/static/chunks/apps_web_app_error_tsx_4c9cc2fc._.js\",\"async\":true},null,\"$75\",0],[\"$\",\"script\",\"script-1\",{\"src\":\"/_next/static/chunks/apps_web_app_error_tsx_429f9514._.js\",\"async\":true},null,\"$76\",0]],\"template\":[\"$\",\"$L20\",null,{},null,\"$77\",1],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":[\"$\",\"$Lc\",\"c-not-found\",{\"type\":\"not-found\",\"pagePath\":\"/apps/web/app/not-found.tsx\",\"children\":[[\"$\",\"$L7a\",null,{},null,\"$79\",1],[]]},null,\"$78\",0],\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\",\"segmentViewBoundaries\":[[\"$\",\"$Lc\",null,{\"type\":\"boundary:not-found\",\"pagePath\":\"/apps/web/app/not-found.tsx@boundary\"},null,\"$7b\",1],\"$undefined\",[\"$\",\"$Lc\",null,{\"type\":\"boundary:error\",\"pagePath\":\"/apps/web/app/error.tsx@boundary\"},null,\"$7c\",1],[\"$\",\"$Lc\",null,{\"type\":\"boundary:global-error\",\"pagePath\":\"/apps/web/app/global-error.tsx\"},null,\"$7d\",1]]},null,\"$72\",1]},\"$15\",\"$71\",1]},\"$15\",\"$6f\",1]},\"$15\",\"$6d\",1]},\"$15\",\"$6b\",1]},\"$15\",\"$69\",1]]},\"$15\",\"$66\",1]]},\"$15\",\"$62\",1]\n"])</script><style>
+          /* Default styles for non-wondernails tenants */
+          body {
+            background-color: #F9FAFB !important;
+          }
+          
+          [class*="card"] {
+            background: white !important;
+            border: 1px solid #E5E7EB !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+          }
+          
+          :root {
+            --background: 249 250 251;
+            --foreground: 31 41 55;
+            --primary: 59 130 246;
+            --primary-foreground: 255 255 255;
+          }
+          
+          h1, h2, h3, h4, h5, h6 {
+            color: #1F2937 !important;
+          }
+          
+          p, span, div, li {
+             color: #374151;
+          }
+          
+          .btn-primary, button[type="submit"], .bg-primary {
+            background-color: #3B82F6 !important;
+            color: white !important;
+            border: none !important;
+          }
+        </style><script>self.__next_f.push([1,"54:D{\"time\":14.485799998044968}\n54:[[\"$\",\"meta\",\"0\",{\"charSet\":\"utf-8\"},\"$3a\",\"$81\",0],[\"$\",\"meta\",\"1\",{\"name\":\"viewport\",\"content\":\"width=device-width, initial-scale=1\"},\"$3a\",\"$82\",0]]\n"])</script><style>
+          /* Default styles for non-wondernails tenants */
+          body {
+            background-color: #F9FAFB !important;
+          }
+          
+          [class*="card"] {
+            background: white !important;
+            border: 1px solid #E5E7EB !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+          }
+          
+          :root {
+            --background: 249 250 251;
+            --foreground: 31 41 55;
+            --primary: 59 130 246;
+            --primary-foreground: 255 255 255;
+          }
+          
+          h1, h2, h3, h4, h5, h6 {
+            color: #1F2937 !important;
+          }
+          
+          p, span, div, li {
+             color: #374151;
+          }
+          
+          .btn-primary, button[type="submit"], .bg-primary {
+            background-color: #3B82F6 !important;
+            color: white !important;
+            border: none !important;
+          }
+        </style><script>self.__next_f.push([1,"a2:I[\"[project]/apps/web/components/tenant/TenantStyles.tsx [app-client] (ecmascript)\",[\"/_next/static/chunks/node_modules_%40tanstack_react-query-devtools_build_modern_production_e1579469.js\",\"/_next/static/chunks/node_modules_fe794d67._.js\",\"/_next/static/chunks/apps_web_3ccbef64._.js\",\"/_next/static/chunks/apps_web_app_layout_tsx_1cf6b850._.js\",\"/_next/static/chunks/_7c3da4c0._.js\",\"/_next/static/chunks/apps_web_components_527aa142._.js\",\"/_next/static/chunks/apps_web_app_t_%5Btenant%5D_layout_tsx_429f9514._.js\"],\"TenantStyles\"]\na5:I[\"[project]/apps/web/components/a11y/LiveRegion.tsx [app-client] (ecmascript)\",[\"/_next/static/chunks/node_modules_%40tanstack_react-query-devtools_build_modern_production_e1579469.js\",\"/_next/static/chunks/node_modules_fe794d67._.js\",\"/_next/static/chunks/apps_web_3ccbef64._.js\",\"/_next/static/chunks/apps_web_app_layout_tsx_1cf6b850._.js\",\"/_next/static/chunks/_7c3da4c0._.js\",\"/_next/static/chunks/apps_web_components_527aa142._.js\",\"/_next/static/chunks/apps_web_app_t_%5Btenant%5D_layout_tsx_429f9514._.js\"],\"LiveRegionProvider\"]\na7:I[\"[project]/apps/web/components/ui/TenantHeader.tsx [app-client] (ecmascript)\",[\"/_next/static/chunks/node_modules_%40tanstack_react-query-devtools_build_modern_production_e1579469.js\",\"/_next/static/chunks/node_modules_fe794d67._.js\",\"/_next/static/chunks/apps_web_3ccbef64._.js\",\"/_next/static/chunks/apps_web_app_layout_tsx_1cf6b850._.js\",\"/_next/static/chunks/_7c3da4c0._.js\",\"/_next/static/chunks/apps_web_components_527aa142._.js\",\"/_next/static/chunks/apps_web_app_t_%5Btenant%5D_layout_tsx_429f9514._.js\"],\"default\"]\naa:I[\"[project]/apps/web/components/ErrorBoundary.tsx [app-client] (ecmascript)\",[\"/_next/static/chunks/node_modules_%40tanstack_react-query-devtools_build_modern_production_e1579469.js\",\"/_next/static/chunks/node_modules_fe794d67._.js\",\"/_next/static/chunks/apps_web_3ccbef64._.js\",\"/_next/static/chunks/apps_web_app_layout_tsx_1cf6b850._.js\",\"/_next/static/chunks/_7c3da4c0._.js\",\"/_next/static/chunks/apps_web_components_527aa142._.js\",\"/_next/static/chunks/apps_web_app_t_%5Btenant%5D_layout_tsx_429f9514._.js\"],\"default\"]\nac:I[\"[project]/apps/web/app/t/[tenant]/error.tsx [app-client] (ecmascript)\",[\"/_next/static/chunks/node_modules_%40tanstack_react-query-devtools_build_modern_production_e1579469.js\",\"/_next/static/chunks/node_modules_fe794d67._.js\",\"/_next/static/chunks/apps_web_3ccbef64._.js\",\"/_next/static/chunks/apps_web_app_layout_tsx_1cf6b850._.js\",\"/_next/static/chunks/_7c3da4c0._.js\",\"/_next/static/chunks/apps_web_components_527aa142._.js\",\"/_next/static/chunks/apps_web_app_t_%5Btenant%5D_layout_tsx_429f9514._.js\",\"/_next/static/chunks/apps_web_app_t_%5Btenant%5D_error_tsx_38265e73._.js\",\"/_next/static/chunks/apps_web_app_t_%5Btenant%5D_error_tsx_ffdf76c2._.js\"],\"default\"]\nc6:I[\"[project]/node_modules/next/dist/client/app-dir/link.js [app-client] (ecmascript)\",[\"/_next/static/chunks/node_modules_%40tanstack_react-query-devtools_build_modern_production_e1579469.js\",\"/_next/static/chunks/node_modules_fe794d67._.js\",\"/_next/static/chunks/apps_web_3ccbef64._.js\",\"/_next/static/chunks/apps_web_app_layout_tsx_1cf6b850._.js\",\"/_next/static/chunks/_7c3da4c0._.js\",\"/_next/static/chunks/apps_web_components_527aa142._.js\",\"/_next/static/chunks/apps_web_app_t_%5Btenant%5D_layout_tsx_429f9514._.js\",\"/_next/static/chunks/apps_web_app_t_%5Btenant%5D_not-found_tsx_ffdf76c2._.js\"],\"\"]\n86:[[\"Function.getTenantBySlug\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_540b251a._.js\",388,21,386,12,false],[\"fetchTenantBySlug\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_540b251a._.js\",116,44,111,1,false],[\"resolveTenant\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_540b251a._.js\",87,20,73,1,true],[\"LoginPage\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_540b251a._.js\",1298,26,1291,1,true]]\n:W[\"log\",\"$86\",\"$33\",\"Server\",\"[TenantService] Fetching tenant from database: manada-juma\"]\n87:[[\"\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_540b"])</script><style>
+          /* Default styles for non-wondernails tenants */
+          body {
+            background-color: #F9FAFB !important;
+          }
+          
+          [class*="card"] {
+            background: white !important;
+            border: 1px solid #E5E7EB !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+          }
+          
+          :root {
+            --background: 249 250 251;
+            --foreground: 31 41 55;
+            --primary: 59 130 246;
+            --primary-foreground: 255 255 255;
+          }
+          
+          h1, h2, h3, h4, h5, h6 {
+            color: #1F2937 !important;
+          }
+          
+          p, span, div, li {
+             color: #374151;
+          }
+          
+          .btn-primary, button[type="submit"], .bg-primary {
+            background-color: #3B82F6 !important;
+            color: white !important;
+            border: none !important;
+          }
+        </style><script>self.__next_f.push([1,"251a._.js\",545,25,535,192,false],[\"getOrSetCache\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_540b251a._.js\",285,18,277,1,true],[\"Function.getTenantWithData\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_540b251a._.js\",535,16,525,12,true],[\"getTenantDataForPage\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_540b251a._.js\",664,24,663,1,true],[\"Module.generateMetadata\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_540b251a._.js\",1271,28,1268,1,true]]\n:W[\"log\",\"$87\",\"$3a\",\"Server\",\"[TenantService] Found tenant in database: manada-juma\"]\n88:[[\"getTenantBySlug\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\[root-of-the-server]__ce197cc8._.js\",3963,21,3956,1,false],[\"TenantLayout\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\[root-of-the-server]__ce197cc8._.js\",4207,23,4201,1,true]]\n:W[\"log\",\"$88\",\"$27\",\"Server\",\"[getTenantBySlug] Database connection successful\"]\n89:[[\"Function.getTenantBySlug\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_540b251a._.js\",393,25,386,12,false],[\"fetchTenantBySlug\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_540b251a._.js\",116,24,111,1,true],[\"resolveTenant\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_540b251a._.js\",87,20,73,1,true],[\"LoginPage\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_540b251a._.js\",1298,26,1291,1,true]]\n:W[\"log\",\"$89\",\"$33\",\"Server\",\"[TenantService] Found tenant in database: manada-juma\"]\n8a:[[\"getRedisClient\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_540b251a._.js\",207,21,203,1,false],[\"getCached\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_540b251a._.js\",220,19,219,1,false],[\"getOrSetCache\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_540b251a._.js\",279,26,277,1,false],[\"Function.getTenantWithData\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_540b251a._.js\",535,176,525,12,false],[\"getTenantDataForPage\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_540b251a._.js\",664,44,663,1,false],[\"LoginPage\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_540b251a._.js\",1307,183,1291,1,false]]\n:W[\"warn\",\"$8a\",\"$33\",\"Server\",\"[Redis] UPSTASH_REDIS_URL or UPSTASH_REDIS_TOKEN not configured, caching disabled\"]\n8b:[[\"getOrSetCache\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_540b251a._.js\",284,13,277,1,false],[\"Function.getTenantWithData\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_540b251a._.js\",535,16,525,12,true],[\"getTenantDataForPage\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_540b251a._.js\",664,24,663,1,true],[\"LoginPage\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_540b251a._.js\",1306,22,1291,1,true]]\n:W[\"log\",\"$8b\",\"$33\",\"Server\",\"[Redis] Fetching data for: tenant_with_data:manada-juma\"]\n8c:[[\"\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_540b251a._.js\",537,25,535,192,false],[\"getOrSetCache\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_540b251a._.js\",285,24,277,1,false],[\"Function.getTenantWithData\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_540b251a._.js\",535,16,525,12,true],[\"getTenantDataForPage\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_540b251a._.js\",664,24,663,1,true],[\"LoginPage\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_540b251a._.js\",1306,22,1291,1,true]]\n:W[\"log\",\"$8c\",\"$33\",\"Server\",\"[TenantService] Fetching complete tenant data for: manada-juma\"]\n8d:[[\"getTenantBySlug\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\[root-of-the-server]__ce197cc8._.js\",3986,17,3956,1,false],[\"TenantLayout\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\[root-of-the-server]__ce197cc8._.js\",4207,23"])</script><style>
+          /* Default styles for non-wondernails tenants */
+          body {
+            background-color: #F9FAFB !important;
+          }
+          
+          [class*="card"] {
+            background: white !important;
+            border: 1px solid #E5E7EB !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+          }
+          
+          :root {
+            --background: 249 250 251;
+            --foreground: 31 41 55;
+            --primary: 59 130 246;
+            --primary-foreground: 255 255 255;
+          }
+          
+          h1, h2, h3, h4, h5, h6 {
+            color: #1F2937 !important;
+          }
+          
+          p, span, div, li {
+             color: #374151;
+          }
+          
+          .btn-primary, button[type="submit"], .bg-primary {
+            background-color: #3B82F6 !important;
+            color: white !important;
+            border: none !important;
+          }
+        </style><script>self.__next_f.push([1,",4201,1,true]]\n:W[\"log\",\"$8d\",\"$27\",\"Server\",\"[getTenantBySlug] Found tenant: manada-juma (aed2ae52-f5c0-4042-af4c-a1df764f7519)\"]\n8e:[[\"TenantLayout\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\[root-of-the-server]__ce197cc8._.js\",4217,13,4201,1,false]]\n:W[\"log\",\"$8e\",\"$27\",\"Server\",\"[TenantLayout] Successfully loaded tenant: manada-juma\"]\n91:I[\"[project]/apps/web/app/t/[tenant]/error.tsx [app-client] (ecmascript)\",[\"/_next/static/chunks/node_modules_%40tanstack_react-query-devtools_build_modern_production_e1579469.js\",\"/_next/static/chunks/node_modules_fe794d67._.js\",\"/_next/static/chunks/apps_web_3ccbef64._.js\",\"/_next/static/chunks/apps_web_app_layout_tsx_1cf6b850._.js\",\"/_next/static/chunks/_7c3da4c0._.js\",\"/_next/static/chunks/apps_web_components_527aa142._.js\",\"/_next/static/chunks/apps_web_app_t_%5Btenant%5D_layout_tsx_429f9514._.js\",\"/_next/static/chunks/apps_web_app_t_%5Btenant%5D_error_tsx_38265e73._.js\",\"/_next/static/chunks/apps_web_app_t_%5Btenant%5D_error_tsx_ffdf76c2._.js\"],\"default\"]\n92:{\"type\":\"error\",\"pagePath\":\"/apps/web/app/t/[tenant]/error.tsx\",\"children\":[]}\n93:[[\"Function.all\",\"\",0,0,0,0,true],[\"Function.all\",\"\",0,0,0,0,true],[\"Function.all\",\"\",0,0,0,0,true]]\n90:{\"parallelRouterKey\":\"children\",\"error\":\"$91\",\"errorStyles\":[\"$\",\"$Lc\",null,\"$92\",null,\"$93\",0],\"errorScripts\":\"$Y\",\"template\":\"$Y\",\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$Y\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\",\"segmentViewBoundaries\":\"$Y\"}\n94:[[\"Function.all\",\"\",0,0,0,0,true],[\"Function.all\",\"\",0,0,0,0,true],[\"Function.all\",\"\",0,0,0,0,true]]\n8f:{\"name\":\"TenantLayout\",\"key\":null,\"env\":\"Server\",\"stack\":[[\"Function.all\",\"\",0,0,0,0,true],[\"Function.all\",\"\",0,0,0,0,true]],\"props\":{\"children\":[\"$\",\"$L1e\",null,\"$90\",null,\"$94\",1],\"params\":\"$Y\"}}\n95:J{\"name\":\"\",\"start\":-318.29289999976754,\"end\":601.1440999992192,\"env\":\"Server\",\"owner\":\"$8f\",\"value\":\"$@96\"}\n97:[[\"getTenantBySlug\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\[root-of-the-server]__ce197cc8._.js\",3962,309,3956,1,false],[\"TenantLayout\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\[root-of-the-server]__ce197cc8._.js\",4207,194,4201,1,false]]\n9a:I[\"[project]/apps/web/app/t/[tenant]/error.tsx [app-client] (ecmascript)\",[\"/_next/static/chunks/node_modules_%40tanstack_react-query-devtools_build_modern_production_e1579469.js\",\"/_next/static/chunks/node_modules_fe794d67._.js\",\"/_next/static/chunks/apps_web_3ccbef64._.js\",\"/_next/static/chunks/apps_web_app_layout_tsx_1cf6b850._.js\",\"/_next/static/chunks/_7c3da4c0._.js\",\"/_next/static/chunks/apps_web_components_527aa142._.js\",\"/_next/static/chunks/apps_web_app_t_%5Btenant%5D_layout_tsx_429f9514._.js\",\"/_next/static/chunks/apps_web_app_t_%5Btenant%5D_error_tsx_38265e73._.js\",\"/_next/static/chunks/apps_web_app_t_%5Btenant%5D_error_tsx_ffdf76c2._.js\"],\"default\"]\n9b:{\"type\":\"error\",\"pagePath\":\"/apps/web/app/t/[tenant]/error.tsx\",\"children\":[]}\n9c:[[\"Function.all\",\"\",0,0,0,0,true],[\"Function.all\",\"\",0,0,0,0,true],[\"Function.all\",\"\",0,0,0,0,true]]\n99:{\"parallelRouterKey\":\"children\",\"error\":\"$9a\",\"errorStyles\":[\"$\",\"$Lc\",null,\"$9b\",null,\"$9c\",0],\"errorScripts\":\"$Y\",\"template\":\"$Y\",\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$Y\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\",\"segmentViewBoundaries\":\"$Y\"}\n9d:[[\"Function.all\",\"\",0,0,0,0,true],[\"Function.all\",\"\",0,0,0,0,true],[\"Function.all\",\"\",0,0,0,0,true]]\n98:{\"name\":\"TenantLayout\",\"key\":null,\"env\":\"Server\",\"stack\":[[\"Function.all\",\"\",0,0,0,0,true],[\"Function.all\",\"\",0,0,0,0,true]],\"props\":{\"children\":[\"$\",\"$L1e\",null,\"$99\",null,\"$9d\",1],\"params\":\"$Y\"}}\n9e:J{\"name\":\"\",\"start\":-10.186599999666214,\"end\":925.3519999980927,\"env\":\"Server\",\"owner\":\"$98\",\"value\":\"$@9f\"}\na0:[[\"getTenantBySlug\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\[root-of-the-server]__ce197cc8._.js\",3968,181,3956,1,false],[\"TenantLayout\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\[root-of-the-server]__ce197cc8._.js\",4207,23,4"])</script><style>
+          /* Default styles for non-wondernails tenants */
+          body {
+            background-color: #F9FAFB !important;
+          }
+          
+          [class*="card"] {
+            background: white !important;
+            border: 1px solid #E5E7EB !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+          }
+          
+          :root {
+            --background: 249 250 251;
+            --foreground: 31 41 55;
+            --primary: 59 130 246;
+            --primary-foreground: 255 255 255;
+          }
+          
+          h1, h2, h3, h4, h5, h6 {
+            color: #1F2937 !important;
+          }
+          
+          p, span, div, li {
+             color: #374151;
+          }
+          
+          .btn-primary, button[type="submit"], .bg-primary {
+            background-color: #3B82F6 !important;
+            color: white !important;
+            border: none !important;
+          }
+        </style><script>self.__next_f.push([1,"201,1,true]]\n96:\"$undefined\"\n9f:\"$undefined\"\na1:[[\"TenantLayout\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\[root-of-the-server]__ce197cc8._.js\",4222,264,4201,1,false]]\na3:[[\"TenantLayout\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\[root-of-the-server]__ce197cc8._.js\",4230,264,4201,1,false]]\na4:[[\"TenantLayout\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\[root-of-the-server]__ce197cc8._.js\",4232,278,4201,1,false]]\na6:[[\"TenantLayout\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\[root-of-the-server]__ce197cc8._.js\",4239,276,4201,1,false]]\na8:[[\"TenantLayout\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\[root-of-the-server]__ce197cc8._.js\",4247,276,4201,1,false]]\na9:[[\"TenantLayout\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\[root-of-the-server]__ce197cc8._.js\",4248,290,4201,1,false]]\nab:[[\"Function.all\",\"\",0,0,0,0,true],[\"Function.all\",\"\",0,0,0,0,true],[\"Function.all\",\"\",0,0,0,0,true]]\nad:[[\"Function.all\",\"\",0,0,0,0,true],[\"Function.all\",\"\",0,0,0,0,true],[\"Function.all\",\"\",0,0,0,0,true]]\nae:[[\"Array.map\",\"\",0,0,0,0,false],[\"Array.map\",\"\",0,0,0,0,false],[\"Function.all\",\"\",0,0,0,0,true]]\naf:[[\"Array.map\",\"\",0,0,0,0,false],[\"Array.map\",\"\",0,0,0,0,false],[\"Function.all\",\"\",0,0,0,0,true]]\nb0:[[\"Function.all\",\"\",0,0,0,0,true],[\"Function.all\",\"\",0,0,0,0,true],[\"Function.all\",\"\",0,0,0,0,true]]\nb1:[[\"Function.all\",\"\",0,0,0,0,true],[\"Function.all\",\"\",0,0,0,0,true]]\nb3:{\"name\":\"NotFound\",\"key\":null,\"env\":\"Server\",\"stack\":[[\"Function.all\",\"\",0,0,0,0,true],[\"Function.all\",\"\",0,0,0,0,true]],\"props\":{}}\nb4:[[\"NotFound\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_6d7f593d._.js\",16,263,15,1,false]]\nb5:[[\"NotFound\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_6d7f593d._.js\",18,270,15,1,false]]\nb6:[[\"NotFound\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_6d7f593d._.js\",20,274,15,1,false]]\nb7:[[\"NotFound\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_6d7f593d._.js\",23,272,15,1,false]]\nb9:{\"name\":\"TriangleAlert\",\"key\":null,\"env\":\"Server\",\"owner\":\"$b3\",\"stack\":[[\"NotFound\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_6d7f593d._.js\",25,286,15,1,false]],\"props\":{\"className\":\"h-12 w-12 text-stone-500\"}}\nba:{\"name\":\"\",\"key\":null,\"env\":\"Server\",\"owner\":\"$b9\",\"stack\":[[\"TriangleAlert\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_33b88a02._.js\",159,491,159,240,false]],\"props\":{\"ref\":\"$undefined\",\"iconNode\":[[\"path\",{\"d\":\"m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3\",\"key\":\"wmoenq\"}],[\"path\",{\"d\":\"M12 9v4\",\"key\":\"juzpu7\"}],[\"path\",{\"d\":\"M12 17h.01\",\"key\":\"p32p05\"}]],\"className\":\"lucide-triangle-alert h-12 w-12 text-stone-500\"}}\nbb:[[\"\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_33b88a02._.js\",121,231,120,231,false]]\nbc:[[\"\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_33b88a02._.js\",131,260,131,25,false],[\"Array.map\",\"\",0,0,0,0,false],[\"\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_33b88a02._.js\",131,21,120,231,false]]\nbd:[[\"\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_33b88a02._.js\",131,260,131,25,false],[\"Array.map\",\"\",0,0,0,0,false],[\"\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_33b88a02._.js\",131,21,120,231,false]]\nbe:[[\"\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_33b88a02._.js\",131,260,131,25,false],[\"Array.map\",\"\",0,0,0,0,false],[\"\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_33b88a02._.js\",131,21,120,231,false]]\nbf:[[\"NotFound\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_6d7f593d._.js\",37,272,15,1,false]]\nc0:[[\"NotFound\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_6d7f593d._.js\",40,280,15,1,false]]\nc1:[[\"NotFound\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\serve"])</script><style>
+          /* Default styles for non-wondernails tenants */
+          body {
+            background-color: #F9FAFB !important;
+          }
+          
+          [class*="card"] {
+            background: white !important;
+            border: 1px solid #E5E7EB !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+          }
+          
+          :root {
+            --background: 249 250 251;
+            --foreground: 31 41 55;
+            --primary: 59 130 246;
+            --primary-foreground: 255 255 255;
+          }
+          
+          h1, h2, h3, h4, h5, h6 {
+            color: #1F2937 !important;
+          }
+          
+          p, span, div, li {
+             color: #374151;
+          }
+          
+          .btn-primary, button[type="submit"], .bg-primary {
+            background-color: #3B82F6 !important;
+            color: white !important;
+            border: none !important;
+          }
+        </style><script>self.__next_f.push([1,"r\\\\chunks\\\\ssr\\\\_6d7f593d._.js\",48,280,15,1,false]]\nc2:[[\"NotFound\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_6d7f593d._.js\",56,280,15,1,false]]\nc4:{\"name\":\"LinkComponent\",\"key\":null,\"env\":\"Server\",\"owner\":\"$b3\",\"stack\":[[\"NotFound\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_6d7f593d._.js\",59,288,15,1,false]],\"props\":{\"href\":\"/t/zo-system\",\"className\":\"w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500\",\"children\":\"Go to Default Store\"}}\nc5:[]\nc8:{\"name\":\"LinkComponent\",\"key\":null,\"env\":\"Server\",\"owner\":\"$b3\",\"stack\":[[\"NotFound\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_6d7f593d._.js\",68,288,15,1,false]],\"props\":{\"href\":\"/\",\"className\":\"w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500\",\"children\":\"Go Home\"}}\nc9:[]\nca:[[\"NotFound\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_6d7f593d._.js\",89,272,15,1,false]]\ncb:[[\"NotFound\",\"C:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\.next\\\\dev\\\\server\\\\chunks\\\\ssr\\\\_6d7f593d._.js\",91,286,15,1,false]]\ncc:[[\"Function.all\",\"\",0,0,0,0,true],[\"Function.all\",\"\",0,0,0,0,true],[\"Function.all\",\"\",0,0,0,0,true]]\ncd:[[\"Function.all\",\"\",0,0,0,0,true],[\"Function.all\",\"\",0,0,0,0,true],[\"Function.all\",\"\",0,0,0,0,true]]\nce:[[\"Function.all\",\"\",0,0,0,0,true],[\"Function.all\",\"\",0,0,0,0,true],[\"Function.all\",\"\",0,0,0,0,true]]\n26:D{\"time\":11.860799998044968}\n26:D{\"awaited\":\"$95\",\"env\":\"Server\",\"owner\":\"$27\",\"stack\":\"$97\"}\n26:D{\"time\":601.2914999984205}\n26:D{\"time\":601.5764999985695}\n26:D{\"awaited\":\"$9e\",\"env\":\"Server\",\"owner\":\"$27\",\"stack\":\"$a0\"}\n26:D{\"time\":925.5108999982476}\n26:D{\"time\":937.4429999999702}\nb2:D{\"time\":938.230499997735}\nb2:D\"$b3\"\nb2:D{\"time\":938.6620000004768}\nb8:D{\"time\":938.7714000009}\nb8:D\"$b9\"\nb8:D{\"time\":938.8770000003278}\nb8:D\"$ba\"\nb8:D{\"time\":939.0412999987602}\nb8:[\"$\",\"svg\",null,{\"ref\":\"$undefined\",\"xmlns\":\"http://www.w3.org/2000/svg\",\"width\":24,\"height\":24,\"viewBox\":\"0 0 24 24\",\"fill\":\"none\",\"stroke\":\"currentColor\",\"strokeWidth\":2,\"strokeLinecap\":\"round\",\"strokeLinejoin\":\"round\",\"className\":\"lucide lucide-triangle-alert h-12 w-12 text-stone-500\",\"children\":[[\"$\",\"path\",\"wmoenq\",{\"d\":\"m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3\"},\"$ba\",\"$bc\",0],[\"$\",\"path\",\"juzpu7\",{\"d\":\"M12 9v4\"},\"$ba\",\"$bd\",0],[\"$\",\"path\",\"p32p05\",{\"d\":\"M12 17h.01\"},\"$ba\",\"$be\",0],\"$undefined\"]},\"$ba\",\"$bb\",1]\nc3:D{\"time\":939.660000000149}\nc3:D\"$c4\"\nc3:D{\"time\":939.7751999981701}\nc3:[\"$\",\"$Lc6\",null,{\"href\":\"/t/zo-system\",\"className\":\"w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500\",\"children\":\"Go to Default Store\"},\"$c4\",\"$c5\",1]\nc7:D{\"time\":939.9536999985576}\nc7:D\"$c8\"\nc7:D{\"time\":940.0469999983907}\nc7:[\"$\",\"$Lc6\",null,{\"href\":\"/\",\"className\":\"w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500\",\"children\":\"Go Home\"},\"$c8\",\"$c9\",1]\nb2:[\"$\",\"div\",null,{\"className\":\"min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8\",\"children\":[\"$\",\"div\",null,{\"className\":\"sm:mx-auto sm:w-full sm:max-w-md\",\"children\":[\"$\",\"div\",null,{\"className\":\"bg-white py-8 px-4 shadow-lg sm:rounded-lg sm:px-10\",\"children\":[[\"$\",\"div\",null,{\"className\":\"flex items-center justify-center mb-6\",\"children\":\"$b8\"},\"$b3\",\"$b7\",1],[\"$\",\"div\",null,{\"className\":\"text-center\",\"children\":[[\"$\",\"h1\",null,{\"className\":\"text-2xl font-bold text-gray-900 mb-4\",\"children\":\"Tenant Not Found\"},\"$b3\",\"$c0\",1],[\"$\",\"p\",null,{\"className\":\"text-gray-600 mb-6\",\"children\":"])</script><style>
+          /* Default styles for non-wondernails tenants */
+          body {
+            background-color: #F9FAFB !important;
+          }
+          
+          [class*="card"] {
+            background: white !important;
+            border: 1px solid #E5E7EB !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+          }
+          
+          :root {
+            --background: 249 250 251;
+            --foreground: 31 41 55;
+            --primary: 59 130 246;
+            --primary-foreground: 255 255 255;
+          }
+          
+          h1, h2, h3, h4, h5, h6 {
+            color: #1F2937 !important;
+          }
+          
+          p, span, div, li {
+             color: #374151;
+          }
+          
+          .btn-primary, button[type="submit"], .bg-primary {
+            background-color: #3B82F6 !important;
+            color: white !important;
+            border: none !important;
+          }
+        </style><script>self.__next_f.push([1,"\"The tenant you’re looking for doesn’t exist or has been deactivated.\"},\"$b3\",\"$c1\",1],[\"$\",\"div\",null,{\"className\":\"space-y-4\",\"children\":[\"$c3\",\"$c7\"]},\"$b3\",\"$c2\",1]]},\"$b3\",\"$bf\",1],[\"$\",\"div\",null,{\"className\":\"mt-8 text-center\",\"children\":[\"$\",\"p\",null,{\"className\":\"text-sm text-gray-500\",\"children\":\"Available tenants: wondernails, vigistudio, centro-tenistico, vainilla-vargas, delirios, nom-nom, zo-system\"},\"$b3\",\"$cb\",1]},\"$b3\",\"$ca\",1]]},\"$b3\",\"$b6\",1]},\"$b3\",\"$b5\",1]},\"$b3\",\"$b4\",1]\n"])</script></body></html>

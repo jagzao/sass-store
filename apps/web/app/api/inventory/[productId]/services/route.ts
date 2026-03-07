@@ -15,9 +15,9 @@ const addServiceLinkSchema = z.object({
 });
 
 interface RouteParams {
-  params: {
+  params: Promise<{
     productId: string;
-  };
+  }>;
 }
 
 const getRelationsAndServices = async (tenantId: string, productId: string) => {
@@ -77,7 +77,7 @@ export async function GET(request: NextRequest, context: RouteParams) {
       return toInventoryErrorResponse(tenantContext.error);
     }
 
-    const { productId } = context.params;
+    const { productId } = await context.params;
 
     const product = await db
       .select({ id: products.id })
@@ -111,7 +111,7 @@ export async function POST(request: NextRequest, context: RouteParams) {
       return toInventoryErrorResponse(tenantContext.error);
     }
 
-    const { productId } = context.params;
+    const { productId } = await context.params;
     const body = await request.json();
     const validatedData = addServiceLinkSchema.parse(body);
 

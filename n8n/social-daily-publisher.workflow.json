@@ -1,0 +1,718 @@
+{
+  "name": "Daily Social Publisher (FB+IG)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 3 * * *"
+            }
+          ]
+        }
+      },
+      "id": "schedule_trigger",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        160,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  t.id AS tenant_id,\n  t.slug,\n  t.name,\n  t.timezone,\n  COALESCE(\n    json_agg(\n      json_build_object(\n        'channel', tc.channel,\n        'account_id', ca.id,\n        'external_ref', ca.external_ref,\n        'access_token', cc.access_token_enc\n      )\n    ) FILTER (WHERE tc.channel IS NOT NULL),\n    '[]'::json\n  ) AS channels\nFROM tenants t\nJOIN tenant_channels tc\n  ON tc.tenant_id = t.id\n AND tc.enabled = true\n AND tc.channel IN ('facebook', 'instagram')\nJOIN channel_accounts ca\n  ON ca.tenant_channel_id = tc.id\n AND ca.status = 'active'\nJOIN channel_credentials cc\n  ON cc.account_id = ca.id\n AND cc.status = 'ok'\n AND (cc.expires_at IS NULL OR cc.expires_at > NOW())\nWHERE t.status = 'active'\nGROUP BY t.id, t.slug, t.name, t.timezone;"
+      },
+      "id": "pg_get_tenants",
+      "name": "PG Get Eligible Tenants",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        380,
+        300
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "YOUR_POSTGRES_CREDENTIAL_ID",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "id": "split_tenants",
+      "name": "Split In Batches: Tenants",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        600,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  COALESCE(\n    json_agg(\n      json_build_object(\n        'target_id', spt.id,\n        'post_id', sp.id,\n        'title', sp.title,\n        'message', COALESCE(spt.variant_text, sp.base_text),\n        'platform', spt.platform,\n        'asset_ids', spt.asset_ids,\n        'publish_at_utc', COALESCE(spt.publish_at_utc, sp.scheduled_at_utc)\n      )\n      ORDER BY COALESCE(spt.publish_at_utc, sp.scheduled_at_utc)\n    ),\n    '[]'::json\n  ) AS targets\nFROM social_posts sp\nJOIN social_post_targets spt ON spt.post_id = sp.id\nWHERE sp.tenant_id = '{{ $json.tenant_id }}'::uuid\n  AND sp.status = 'scheduled'\n  AND spt.status = 'scheduled'\n  AND spt.platform IN ('facebook', 'instagram')\n  AND DATE(COALESCE(spt.publish_at_utc, sp.scheduled_at_utc)) = CURRENT_DATE;"
+      },
+      "id": "pg_get_targets",
+      "name": "PG Get Tenant Scheduled Targets",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        840,
+        300
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "YOUR_POSTGRES_CREDENTIAL_ID",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ Array.isArray($json.targets) && $json.targets.length > 0 }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "if_has_targets",
+      "name": "IF Has Targets",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1080,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const tenant = $items('Split In Batches: Tenants', 0, 0)[0].json;\nconst targets = Array.isArray($json.targets) ? $json.targets : [];\nconst channels = Array.isArray(tenant.channels) ? tenant.channels : [];\n\nreturn targets.map((t) => {\n  const channel = channels.find((c) => c.channel === t.platform) || {};\n  return {\n    json: {\n      tenant_id: tenant.tenant_id,\n      tenant_slug: tenant.slug,\n      target_id: t.target_id,\n      post_id: t.post_id,\n      platform: t.platform,\n      message: t.message,\n      access_token: channel.access_token || '',\n      external_ref: channel.external_ref || {},\n      asset_ids: t.asset_ids || [],\n      media_url: $env.DEFAULT_SOCIAL_IMAGE_URL || ''\n    }\n  };\n});"
+      },
+      "id": "code_expand_existing",
+      "name": "Code Expand Existing Targets",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1320,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH new_post AS (\n  INSERT INTO social_posts (\n    tenant_id,\n    title,\n    base_text,\n    status,\n    scheduled_at_utc,\n    timezone,\n    created_by,\n    updated_by\n  )\n  VALUES (\n    '{{ $item(0).$node[\"Split In Batches: Tenants\"].json.tenant_id }}'::uuid,\n    'Post automático del día',\n    '¡Hola! Hoy estamos disponibles para atenderte. Agenda tu cita con nosotros ✨',\n    'scheduled',\n    NOW(),\n    COALESCE('{{ $item(0).$node[\"Split In Batches: Tenants\"].json.timezone }}', 'America/Mexico_City'),\n    'n8n-system',\n    'n8n-system'\n  )\n  RETURNING id, base_text, scheduled_at_utc\n)\nINSERT INTO social_post_targets (\n  post_id,\n  platform,\n  publish_at_utc,\n  timezone,\n  status,\n  variant_text,\n  asset_ids,\n  metadata\n)\nSELECT\n  np.id,\n  tc.channel,\n  np.scheduled_at_utc,\n  COALESCE('{{ $item(0).$node[\"Split In Batches: Tenants\"].json.timezone }}', 'America/Mexico_City'),\n  'scheduled',\n  np.base_text,\n  '[]'::jsonb,\n  '{\"auto_generated\":true}'::jsonb\nFROM new_post np\nJOIN tenant_channels tc\n  ON tc.tenant_id = '{{ $item(0).$node[\"Split In Batches: Tenants\"].json.tenant_id }}'::uuid\n AND tc.enabled = true\n AND tc.channel IN ('facebook', 'instagram')\nRETURNING id AS target_id, post_id, platform, variant_text;"
+      },
+      "id": "pg_create_generic",
+      "name": "PG Create Generic Post",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        1320,
+        420
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "YOUR_POSTGRES_CREDENTIAL_ID",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const tenant = $items('Split In Batches: Tenants', 0, 0)[0].json;\nconst channels = Array.isArray(tenant.channels) ? tenant.channels : [];\n\nreturn items.map((item) => {\n  const t = item.json;\n  const channel = channels.find((c) => c.channel === t.platform) || {};\n  return {\n    json: {\n      tenant_id: tenant.tenant_id,\n      tenant_slug: tenant.slug,\n      target_id: t.target_id,\n      post_id: t.post_id,\n      platform: t.platform,\n      message: t.variant_text,\n      access_token: channel.access_token || '',\n      external_ref: channel.external_ref || {},\n      asset_ids: [],\n      media_url: $env.DEFAULT_SOCIAL_IMAGE_URL || ''\n    }\n  };\n});"
+      },
+      "id": "code_expand_generic",
+      "name": "Code Expand Generic Targets",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1540,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "append"
+      },
+      "id": "merge_targets",
+      "name": "Merge Targets",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1760,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "platform",
+        "options": {}
+      },
+      "id": "switch_platform",
+      "name": "Switch Platform",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1980,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v20.0/{{$json.external_ref.page_id || $json.external_ref.id}}/feed",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "message",
+              "value": "={{ $json.message }}"
+            },
+            {
+              "name": "access_token",
+              "value": "={{ $json.access_token }}"
+            }
+          ]
+        },
+        "options": {
+          "retry": {
+            "maxTries": 3,
+            "waitBetweenTries": 3000
+          }
+        }
+      },
+      "id": "http_publish_facebook",
+      "name": "HTTP Publish Facebook",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2200,
+        180
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ !$json.error && !!$json.id }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "if_facebook_ok",
+      "name": "IF Facebook Success",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2420,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE social_post_targets\nSET\n  status = 'published',\n  platform_post_id = '{{ $json.id }}',\n  error = NULL,\n  updated_at = NOW()\nWHERE id = '{{ $item(0).$node[\"Merge Targets\"].json.target_id }}'::uuid;"
+      },
+      "id": "pg_fb_mark_published",
+      "name": "PG FB Mark Published",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        2640,
+        100
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "YOUR_POSTGRES_CREDENTIAL_ID",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE social_post_targets\nSET\n  status = 'failed',\n  error = '{{ ($json.error && $json.error.message) ? $json.error.message : \"facebook_publish_failed\" }}',\n  updated_at = NOW()\nWHERE id = '{{ $item(0).$node[\"Merge Targets\"].json.target_id }}'::uuid;"
+      },
+      "id": "pg_fb_mark_failed",
+      "name": "PG FB Mark Failed",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        2640,
+        260
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "YOUR_POSTGRES_CREDENTIAL_ID",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v20.0/{{$json.external_ref.ig_user_id || $json.external_ref.id}}/media",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "image_url",
+              "value": "={{ $json.media_url }}"
+            },
+            {
+              "name": "caption",
+              "value": "={{ $json.message }}"
+            },
+            {
+              "name": "access_token",
+              "value": "={{ $json.access_token }}"
+            }
+          ]
+        },
+        "options": {
+          "retry": {
+            "maxTries": 3,
+            "waitBetweenTries": 3000
+          }
+        }
+      },
+      "id": "http_ig_create",
+      "name": "HTTP IG Create Container",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2200,
+        420
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ !$json.error && !!$json.id }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "if_ig_container_ok",
+      "name": "IF IG Container OK",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2420,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v20.0/{{$item(0).$node[\"Merge Targets\"].json.external_ref.ig_user_id || $item(0).$node[\"Merge Targets\"].json.external_ref.id}}/media_publish",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "creation_id",
+              "value": "={{ $json.id }}"
+            },
+            {
+              "name": "access_token",
+              "value": "={{ $item(0).$node[\"Merge Targets\"].json.access_token }}"
+            }
+          ]
+        },
+        "options": {
+          "retry": {
+            "maxTries": 3,
+            "waitBetweenTries": 3000
+          }
+        }
+      },
+      "id": "http_ig_publish",
+      "name": "HTTP IG Publish",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2640,
+        420
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ !$json.error && !!$json.id }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "if_ig_publish_ok",
+      "name": "IF IG Publish OK",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2860,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE social_post_targets\nSET\n  status = 'published',\n  platform_post_id = '{{ $json.id }}',\n  error = NULL,\n  updated_at = NOW()\nWHERE id = '{{ $item(0).$node[\"Merge Targets\"].json.target_id }}'::uuid;"
+      },
+      "id": "pg_ig_mark_published",
+      "name": "PG IG Mark Published",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        3080,
+        360
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "YOUR_POSTGRES_CREDENTIAL_ID",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE social_post_targets\nSET\n  status = 'failed',\n  error = '{{ ($json.error && $json.error.message) ? $json.error.message : \"instagram_publish_failed\" }}',\n  updated_at = NOW()\nWHERE id = '{{ $item(0).$node[\"Merge Targets\"].json.target_id }}'::uuid;"
+      },
+      "id": "pg_ig_mark_failed",
+      "name": "PG IG Mark Failed",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        3080,
+        500
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "YOUR_POSTGRES_CREDENTIAL_ID",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE social_posts sp\nSET status = CASE\n  WHEN EXISTS (\n    SELECT 1\n    FROM social_post_targets spt\n    WHERE spt.post_id = sp.id\n      AND spt.status = 'failed'\n  ) THEN 'failed'\n  WHEN NOT EXISTS (\n    SELECT 1\n    FROM social_post_targets spt\n    WHERE spt.post_id = sp.id\n      AND spt.status IN ('draft', 'scheduled')\n  ) THEN 'published'\n  ELSE sp.status\nEND,\nupdated_at = NOW()\nWHERE sp.id = '{{ $item(0).$node[\"Merge Targets\"].json.post_id }}'::uuid;"
+      },
+      "id": "pg_sync_post_status",
+      "name": "PG Sync Parent Post Status",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        3300,
+        300
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "YOUR_POSTGRES_CREDENTIAL_ID",
+          "name": "Postgres account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "PG Get Eligible Tenants",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PG Get Eligible Tenants": {
+      "main": [
+        [
+          {
+            "node": "Split In Batches: Tenants",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split In Batches: Tenants": {
+      "main": [
+        [
+          {
+            "node": "PG Get Tenant Scheduled Targets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PG Get Tenant Scheduled Targets": {
+      "main": [
+        [
+          {
+            "node": "IF Has Targets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF Has Targets": {
+      "main": [
+        [
+          {
+            "node": "Code Expand Existing Targets",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "PG Create Generic Post",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code Expand Existing Targets": {
+      "main": [
+        [
+          {
+            "node": "Merge Targets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PG Create Generic Post": {
+      "main": [
+        [
+          {
+            "node": "Code Expand Generic Targets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code Expand Generic Targets": {
+      "main": [
+        [
+          {
+            "node": "Merge Targets",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge Targets": {
+      "main": [
+        [
+          {
+            "node": "Switch Platform",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch Platform": {
+      "main": [
+        [
+          {
+            "node": "HTTP Publish Facebook",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP IG Create Container",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Publish Facebook": {
+      "main": [
+        [
+          {
+            "node": "IF Facebook Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF Facebook Success": {
+      "main": [
+        [
+          {
+            "node": "PG FB Mark Published",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "PG FB Mark Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PG FB Mark Published": {
+      "main": [
+        [
+          {
+            "node": "PG Sync Parent Post Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PG FB Mark Failed": {
+      "main": [
+        [
+          {
+            "node": "PG Sync Parent Post Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP IG Create Container": {
+      "main": [
+        [
+          {
+            "node": "IF IG Container OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF IG Container OK": {
+      "main": [
+        [
+          {
+            "node": "HTTP IG Publish",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "PG IG Mark Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP IG Publish": {
+      "main": [
+        [
+          {
+            "node": "IF IG Publish OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF IG Publish OK": {
+      "main": [
+        [
+          {
+            "node": "PG IG Mark Published",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "PG IG Mark Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PG IG Mark Published": {
+      "main": [
+        [
+          {
+            "node": "PG Sync Parent Post Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PG IG Mark Failed": {
+      "main": [
+        [
+          {
+            "node": "PG Sync Parent Post Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PG Sync Parent Post Status": {
+      "main": [
+        [
+          {
+            "node": "Split In Batches: Tenants",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "versionId": "1",
+  "meta": {
+    "templateCredsSetupCompleted": false
+  }
+}

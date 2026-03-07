@@ -1,0 +1,2 @@
+Database error during get_pending_retouches: Error al calcular retouches pendientes: Failed query: select "customers"."id", "customers"."name", "customers"."phone", "customer_visits"."visit_date" from "customers" inner join "customer_visits" on ("customers"."id" = "customer_visits"."customer_id" and "customer_visits"."status" = $1) where ("customers"."tenant_id" = $2 and "customers"."status" = $3) order by "customer_visits"."visit_date" desc
+params: completed,0aa4afad-e647-49c6-8b08-74d1b4bedea2,active

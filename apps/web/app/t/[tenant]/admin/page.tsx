@@ -430,7 +430,7 @@ export default async function AdminDashboardPage({ params }: PageProps) {
                       </div>
                     </div>
                   </div>
-                  <span className={`text-sm font-semibold ${isLuxury ? 'text-[#D4AF37]' : 'text-yellow-600'}`}>
+                  <span className={`text-sm font-semibold ${isLuxury ? 'text-[#D4AF37]' : 'text-stone-600'}`}>
                     4.8/5
                   </span>
                 </div>

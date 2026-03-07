@@ -128,7 +128,7 @@ export default function HomePage() {
               <strong>1. Local:</strong> Servidor ejecutándose en
               http://localhost:3002
             </div>
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+            <div className="bg-stone-50 border border-stone-200 rounded-lg p-4">
               <strong>2. Staging:</strong> Listo para despliegue con git push
             </div>
             <div className="bg-green-50 border border-green-200 rounded-lg p-4">

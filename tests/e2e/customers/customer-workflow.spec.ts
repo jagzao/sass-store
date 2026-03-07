@@ -358,8 +358,19 @@ test.describe.serial("Customer & Visit Workflow", () => {
         try {
           const button = page.locator(selector).first();
           if (await button.isVisible()) {
+            console.log("Waiting for POST to /customers API...");
+            const responsePromise = page.waitForResponse(response => 
+              response.url().includes(`/api/tenants/${tenantSlug}/customers`) && 
+              response.request().method() === 'POST',
+              { timeout: 15000 }
+            );
+
             await button.click();
             console.log(`Clicked submit button with selector: ${selector}`);
+            
+            const response = await responsePromise;
+            expect(response.status()).toBe(201);
+
             submitClicked = true;
             break;
           }
@@ -387,7 +398,7 @@ test.describe.serial("Customer & Visit Workflow", () => {
     }
 
     // Wait for navigation after form submission
-    await page.waitForURL(/\/clientes\/.+/);
+    await page.waitForURL(url => url.pathname.includes('/clientes/') && !url.pathname.endsWith('/nueva'), { timeout: 10000 });
     console.log("Navigation completed - URL changed to customer details page");
 
     // Take a screenshot to see what's on the page

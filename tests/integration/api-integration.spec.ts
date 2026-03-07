@@ -13,8 +13,8 @@ import {
   afterEach,
 } from "../setup/TestUtilities";
 
-import { UserService } from "../../apps/api/lib/services/UserService";
-import { PaymentService } from "../../apps/api/lib/services/PaymentService";
+import { UserService } from "../../apps/web/lib/services/UserService";
+import { PaymentService } from "../../apps/web/lib/services/PaymentService";
 
 describe("API Integration Tests", () => {
   let userService: UserService;

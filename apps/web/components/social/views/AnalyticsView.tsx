@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   format,
   subDays,
@@ -90,11 +90,7 @@ export default function AnalyticsView({
   );
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    fetchAnalyticsData();
-  }, [dateRange, selectedPlatforms]);
-
-  const fetchAnalyticsData = async () => {
+  const fetchAnalyticsData = useCallback(async () => {
     setIsLoading(true);
     try {
       const selectedRange = DATE_RANGES.find((range) => range.id === dateRange);
@@ -196,7 +192,7 @@ export default function AnalyticsView({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [tenant, dateRange, selectedPlatforms]);
 
   const handlePlatformToggle = (platformId: string) => {
     setSelectedPlatforms((prev) =>

@@ -4,7 +4,8 @@
  * These tests don't require a database connection
  */
 
-import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
+// Using globals instead of imports since globals: true in Vitest config
+import { vi } from 'vitest';
 import { NextRequest } from "next/server";
 
 // Mock the database module

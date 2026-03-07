@@ -162,7 +162,7 @@ export const OptimizedNavigation = () => {
   const { preconnectToImportantDomains } = useOptimizedNavigation();
 
   // Preconectar a dominios importantes al montar
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+   
   useOptimizedNavigation().preconnectToImportantDomains();
 
   return null;

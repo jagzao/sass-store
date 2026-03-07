@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useInventory } from "@/lib/hooks/useInventory";
 import { InventoryItem } from "@/lib/hooks/useInventory";
 import { Eye, Edit, Trash2, AlertCircle } from "lucide-react"; // Icons
@@ -38,7 +38,7 @@ export function InventoryList({
   const [params, setParams] = useState(initialParams);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const loadInventory = async () => {
+  const loadInventory = useCallback(async () => {
     try {
       const response = await getInventory(params);
       setInventory(response.data);
@@ -46,11 +46,11 @@ export function InventoryList({
     } catch (err) {
       console.error("Error loading inventory:", err);
     }
-  };
+  }, [getInventory, params]);
 
   useEffect(() => {
     loadInventory();
-  }, [params]);
+  }, [loadInventory]);
 
   // Debounced Auto-Search
   useEffect(() => {

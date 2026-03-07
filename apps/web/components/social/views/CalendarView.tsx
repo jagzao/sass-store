@@ -79,7 +79,7 @@ const PLATFORM_CONFIG = {
 const STATUS_CONFIG = {
   draft: {
     label: "Borrador",
-    color: "bg-yellow-100 text-yellow-800",
+    color: "bg-stone-100 text-stone-800",
     icon: "📝",
   },
   scheduled: {
@@ -276,7 +276,7 @@ export default function CalendarView({
         return "bg-[#FF8000]/20 border-[#FF8000]/50";
       if (data.published_count > 0)
         return "bg-green-900/20 border-green-500/50";
-      if (data.draft_count > 0) return "bg-yellow-900/20 border-yellow-500/50";
+      if (data.draft_count > 0) return "bg-stone-900/20 border-stone-500/50";
       return "bg-white/5";
     }
 
@@ -288,7 +288,7 @@ export default function CalendarView({
     if (data.failed_count > 0) return "bg-red-50";
     if (data.scheduled_count > 0) return "bg-blue-50";
     if (data.published_count > 0) return "bg-green-50";
-    if (data.draft_count > 0) return "bg-yellow-50";
+    if (data.draft_count > 0) return "bg-stone-50";
 
     return "bg-gray-50";
   };
@@ -388,7 +388,7 @@ export default function CalendarView({
                       {calendarData[format(date, "yyyy-MM-dd")]?.draft_count >
                         0 && (
                         <div
-                          className="w-2 h-2 bg-yellow-400 rounded-full"
+                          className="w-2 h-2 bg-stone-400 rounded-full"
                           title="Borradores"
                         />
                       )}
@@ -820,7 +820,7 @@ export default function CalendarView({
           <div className="flex items-center justify-between text-sm">
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-1">
-                <div className="w-3 h-3 bg-yellow-400 rounded-full" />
+                <div className="w-3 h-3 bg-stone-400 rounded-full" />
                 <span className="text-gray-600">Borrador</span>
               </div>
               <div className="flex items-center space-x-1">

@@ -102,7 +102,7 @@ export function SocialCalendar({ selectedDate, onDateSelect, onCreatePost }: Soc
     if (data.failed_count > 0) return 'bg-red-100';
     if (data.scheduled_count > 0) return 'bg-blue-100';
     if (data.published_count > 0) return 'bg-green-100';
-    if (data.draft_count > 0) return 'bg-yellow-100';
+    if (data.draft_count > 0) return 'bg-stone-100';
 
     return 'bg-gray-100';
   };
@@ -215,7 +215,7 @@ export function SocialCalendar({ selectedDate, onDateSelect, onCreatePost }: Soc
                     {/* Status indicators */}
                     <div className="flex space-x-1">
                       {calendarData[format(date, 'yyyy-MM-dd')]?.draft_count > 0 && (
-                        <div className="w-2 h-2 bg-yellow-400 rounded-full" title="Borradores" />
+                        <div className="w-2 h-2 bg-stone-400 rounded-full" title="Borradores" />
                       )}
                       {calendarData[format(date, 'yyyy-MM-dd')]?.scheduled_count > 0 && (
                         <div className="w-2 h-2 bg-blue-400 rounded-full" title="Programados" />
@@ -245,7 +245,7 @@ export function SocialCalendar({ selectedDate, onDateSelect, onCreatePost }: Soc
         <div className="flex items-center justify-between text-sm">
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-1">
-              <div className="w-3 h-3 bg-yellow-400 rounded-full" />
+              <div className="w-3 h-3 bg-stone-400 rounded-full" />
               <span className="text-gray-600">Borrador</span>
             </div>
             <div className="flex items-center space-x-1">

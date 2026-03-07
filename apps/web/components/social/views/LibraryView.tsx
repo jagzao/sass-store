@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 
@@ -55,11 +55,7 @@ export default function LibraryView({
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState<"recent" | "name" | "usage">("recent");
 
-  useEffect(() => {
-    fetchLibraryContent();
-  }, []);
-
-  const fetchLibraryContent = async () => {
+  const fetchLibraryContent = useCallback(async () => {
     setIsLoading(true);
     try {
       const response = await fetch(`/api/v1/social/library?tenant=${tenant}`);
@@ -133,10 +129,14 @@ export default function LibraryView({
       ]);
     } finally {
       setIsLoading(false);
-    }
-  };
+   }
+ }, [tenant]);
 
-  const handleFormatToggle = (formatId: string) => {
+ useEffect(() => {
+   fetchLibraryContent();
+ }, [fetchLibraryContent]);
+
+ const handleFormatToggle = (formatId: string) => {
     setSelectedFormats((prev) =>
       prev.includes(formatId)
         ? prev.filter((id) => id !== formatId)

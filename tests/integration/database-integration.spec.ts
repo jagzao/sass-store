@@ -16,9 +16,9 @@ import {
 } from "../setup/TestUtilities";
 
 import { db, schema, eq } from "@sass-store/database";
-import { UserService } from "../../apps/api/lib/services/UserService";
-import { PaymentService } from "../../apps/api/lib/services/PaymentService";
-import { InventoryServiceWithResultPattern } from "../../apps/api/lib/services/InventoryServiceResultPattern";
+import { UserService } from "../../apps/web/lib/services/UserService";
+import { PaymentService } from "../../apps/web/lib/services/PaymentService";
+import { InventoryServiceWithResultPattern } from "../../apps/web/lib/services/InventoryServiceResultPattern";
 import { expectSuccess, expectFailure } from "../setup/TestUtilities";
 
 describe("Database Integration Tests", () => {

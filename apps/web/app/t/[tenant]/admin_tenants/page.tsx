@@ -42,7 +42,9 @@ const step3Schema = z.object({
   theme: z.object({
     primaryColor: z.string().min(1, "Color primario requerido"),
     secondaryColor: z.string().min(1, "Color secundario requerido"),
+    accentColor: z.string().min(1, "Color de acento requerido"),
     logoUrl: z.string().optional(),
+    faviconUrl: z.string().optional(),
   }),
 });
 
@@ -66,6 +68,10 @@ interface Tenant {
     secondaryColor?: string;
     accentColor?: string;
     logoUrl?: string;
+    faviconUrl?: string;
+    // Legacy aliases
+    logo?: string;
+    favicon?: string;
   };
   contact?: {
     email?: string;
@@ -287,9 +293,21 @@ export default function IntegratedAdminTenantsPage() {
 
                     <div className="p-6 flex-1">
                       <div className="flex justify-between items-start mb-4">
-                        <div className="w-12 h-12 rounded bg-[#1a1a1a] flex items-center justify-center text-xl font-bold text-[#FF8000] border border-white/10 group-hover:border-[#FF8000]/30 transition-colors uppercase">
-                          {tenant.slug.substring(0, 2)}
-                        </div>
+                        {tenant.branding?.logoUrl || tenant.branding?.logo ? (
+                          <div className="w-16 h-16 rounded bg-white/5 p-2 flex items-center justify-center border border-white/10 group-hover:border-[#FF8000]/30 transition-colors">
+                            <img
+                              src={
+                                tenant.branding.logoUrl || tenant.branding.logo
+                              }
+                              alt={`${tenant.name} Logo`}
+                              className="max-w-full max-h-full object-contain"
+                            />
+                          </div>
+                        ) : (
+                          <div className="w-12 h-12 rounded bg-[#1a1a1a] flex items-center justify-center text-xl font-bold text-[#FF8000] border border-white/10 group-hover:border-[#FF8000]/30 transition-colors uppercase">
+                            {tenant.slug.substring(0, 2)}
+                          </div>
+                        )}
                       </div>
 
                       <h3 className="text-xl font-bold text-white mb-1 group-hover:text-[#FF8000] transition-colors">
@@ -382,9 +400,23 @@ export default function IntegratedAdminTenantsPage() {
                       >
                         <td className="px-6 py-4">
                           <div className="flex items-center">
-                            <div className="h-10 w-10 rounded bg-[#1a1a1a] flex items-center justify-center text-[#FF8000] font-bold border border-white/10 mr-4">
-                              {tenant.slug.substring(0, 2)}
-                            </div>
+                            {tenant.branding?.logoUrl ||
+                            tenant.branding?.logo ? (
+                              <div className="h-10 w-10 rounded bg-white/5 p-1 flex items-center justify-center border border-white/10 mr-4">
+                                <img
+                                  src={
+                                    tenant.branding.logoUrl ||
+                                    tenant.branding.logo
+                                  }
+                                  alt={`${tenant.name} Logo`}
+                                  className="max-w-full max-h-full object-contain"
+                                />
+                              </div>
+                            ) : (
+                              <div className="h-10 w-10 rounded bg-[#1a1a1a] flex items-center justify-center text-[#FF8000] font-bold border border-white/10 mr-4">
+                                {tenant.slug.substring(0, 2)}
+                              </div>
+                            )}
                             <div>
                               <div className="font-medium text-white">
                                 {tenant.name}
@@ -564,7 +596,9 @@ function CreateTenantModal({
     theme: {
       primaryColor: "#000000",
       secondaryColor: "#ffffff",
+      accentColor: "#F59E0B",
       logoUrl: "",
+      faviconUrl: "",
     },
     // Admin User
     adminUser: {
@@ -988,6 +1022,34 @@ function CreateTenantModal({
                     </div>
                   </div>
                   <div className="md:col-span-2 bg-[#252525] p-3 rounded-lg border border-white/10">
+                    <label className={labelClass}>Color de Acento</label>
+                    <div className="flex gap-2 mb-4">
+                      <input
+                        type="color"
+                        value={formData.theme.accentColor}
+                        onChange={(e) =>
+                          handleNestedChange(
+                            "theme",
+                            "accentColor",
+                            e.target.value,
+                          )
+                        }
+                        className="h-10 w-10 bg-transparent border-none cursor-pointer"
+                      />
+                      <input
+                        type="text"
+                        value={formData.theme.accentColor}
+                        onChange={(e) =>
+                          handleNestedChange(
+                            "theme",
+                            "accentColor",
+                            e.target.value,
+                          )
+                        }
+                        className={inputClass}
+                      />
+                    </div>
+
                     <label className={labelClass + " mb-2 block"}>
                       Logo del Tenant
                     </label>
@@ -1002,6 +1064,27 @@ function CreateTenantModal({
                     <p className="text-xs text-gray-500 mt-2 text-center">
                       Formato recomendado: PNG transparente o SVG
                     </p>
+
+                    <div className="mt-4">
+                      <label className={labelClass + " mb-2 block"}>Favicon</label>
+                      <div className="bg-white rounded-lg p-2 max-w-sm mx-auto">
+                        <TenantLogoUpload
+                          currentLogo={formData.theme.faviconUrl}
+                          onLogoChange={(url) =>
+                            handleNestedChange(
+                              "theme",
+                              "faviconUrl",
+                              url || "",
+                            )
+                          }
+                          aspectRatio={1}
+                          lockAspectRatio={true}
+                        />
+                      </div>
+                      <p className="text-xs text-gray-500 mt-2 text-center">
+                        Formato recomendado: PNG transparente o ICO (Cuadrado 1:1)
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1149,7 +1232,8 @@ function EditTenantModal({
       primaryColor: tenant.branding?.primaryColor || "#000000",
       secondaryColor: tenant.branding?.secondaryColor || "#ffffff",
       accentColor: tenant.branding?.accentColor || "#F59E0B",
-      logoUrl: tenant.branding?.logoUrl || "",
+      logoUrl: tenant.branding?.logoUrl || tenant.branding?.logo || "",
+      faviconUrl: tenant.branding?.faviconUrl || tenant.branding?.favicon || "",
     },
   });
   const [loading, setLoading] = useState(false);
@@ -1480,6 +1564,27 @@ function EditTenantModal({
                     <p className="text-xs text-gray-500 mt-2 text-center">
                       Formato recomendado: PNG transparente o SVG
                     </p>
+
+                    <div className="mt-4">
+                      <label className={labelClass + " mb-2 block"}>Favicon</label>
+                      <div className="bg-white rounded-lg p-2 max-w-sm mx-auto">
+                        <TenantLogoUpload
+                          currentLogo={(formData.branding as any).faviconUrl || ""}
+                          onLogoChange={(url) =>
+                            handleNestedChange(
+                              "branding",
+                              "faviconUrl",
+                              url || "",
+                            )
+                          }
+                          aspectRatio={1}
+                          lockAspectRatio={true}
+                        />
+                      </div>
+                      <p className="text-xs text-gray-500 mt-2 text-center">
+                        Formato recomendado: PNG transparente o ICO (Cuadrado 1:1)
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>

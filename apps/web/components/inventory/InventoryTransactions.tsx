@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useInventoryTransactions } from "@/lib/hooks/useInventoryTransactions";
 import { InventoryTransaction } from "@/lib/hooks/useInventoryTransactions";
 
@@ -38,7 +38,7 @@ export function InventoryTransactions({
   });
 
   // Cargar estadísticas de transacciones
-  const loadStats = () => {
+  const loadStats = useCallback(() => {
     const statsData = getTransactionStats();
     setStats({
       totalTransactions: statsData.totalTransactions,
@@ -47,7 +47,7 @@ export function InventoryTransactions({
       totalAdjustments: statsData.byType.adjustment,
       totalQuantity: statsData.totalAdded - statsData.totalDeducted,
     });
-  };
+  }, [getTransactionStats]);
 
   // Aplicar filtros
   const applyFilters = () => {
@@ -93,7 +93,7 @@ export function InventoryTransactions({
   // Cargar estadísticas al inicio
   useEffect(() => {
     loadStats();
-  }, [transactions]);
+  }, [transactions, loadStats]);
 
   // Obtener clase para tipo de transacción
   const getTransactionTypeClass = (type: string) => {

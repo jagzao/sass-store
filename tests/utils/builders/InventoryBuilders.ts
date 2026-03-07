@@ -4,7 +4,7 @@ import {
   InventoryTransaction,
   ProductAlertConfig,
   Supplier,
-} from "../../../apps/api/lib/services/InventoryServiceResultPattern";
+} from "../../../apps/web/lib/services/InventoryServiceResultPattern";
 
 // Simple UUID generator for testing
 const generateUUID = () => crypto.randomUUID();

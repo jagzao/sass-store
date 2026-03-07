@@ -5,10 +5,11 @@ import { getTenantBySlug } from "@/lib/server/get-tenant";
 import { CircuitSpotlight } from "@/components/ui/CircuitSpotlight";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { TenantStyles } from "@/components/tenant/TenantStyles";
+import { LiveRegionProvider } from "@/components/a11y/LiveRegion";
 
 // Force dynamic rendering for all tenant pages
 export const dynamic = "force-dynamic";
-export const revalidate = 3600; // Revalidate every hour
+// export const revalidate = 3600; // Removed to prevent stale 404s for new tenants
 
 interface TenantLayoutProps {
   children: ReactNode;
@@ -51,31 +52,32 @@ export default async function TenantLayout({
     <>
       <TenantStyles isWondernails={isWondernails} isZoSystem={isZoSystem} />
       <div
-        suppressHydrationWarning={true}
         className={`min-h-screen ${
           isWondernails
-            ? "bg-white text-[#333333]"
-            : isZoSystem
+            ? "bg-[#F8F9FA] text-[#333333]"
+            : isZoSystem || tenantData.branding.theme === "dark"
               ? "bg-[#0D0D0D] text-white font-[family-name:var(--font-montserrat)] relative"
-              : "bg-gray-50"
+              : "bg-[#F8F9FA] text-gray-900"
         }`}
       >
-        {(isZoSystem || tenantData.branding.theme === "dark") && (
-          <CircuitSpotlight />
-        )}
-        <TenantHeader
-          tenantData={tenantData}
-          variant={
-            isWondernails
-              ? "transparent"
-              : tenantData.branding.theme === "dark"
-                ? "dark"
-                : "default"
-          }
-        />
-        <main>
-          <ErrorBoundary>{children}</ErrorBoundary>
-        </main>
+        <LiveRegionProvider>
+          {(isZoSystem || tenantData.branding.theme === "dark") && (
+            <CircuitSpotlight />
+          )}
+          <TenantHeader
+            tenantData={tenantData}
+            variant={
+              isWondernails
+                ? "transparent"
+                : tenantData.branding.theme === "dark"
+                  ? "dark"
+                  : "default"
+            }
+          />
+          <main>
+            <ErrorBoundary>{children}</ErrorBoundary>
+          </main>
+        </LiveRegionProvider>
       </div>
     </>
   );

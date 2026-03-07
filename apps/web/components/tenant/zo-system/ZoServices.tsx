@@ -52,7 +52,7 @@ export const ZoServices = () => {
             {/* Mock Browser Header */}
             <div className="flex items-center gap-2 mb-4 border-b border-white/5 pb-2">
               <div className="w-3 h-3 rounded-full bg-red-500/50" />
-              <div className="w-3 h-3 rounded-full bg-yellow-500/50" />
+              <div className="w-3 h-3 rounded-full bg-stone-500/50" />
               <div className="w-3 h-3 rounded-full bg-green-500/50" />
               <div className="ml-4 h-4 w-60 bg-white/5 rounded-full" />
             </div>

@@ -57,7 +57,7 @@
     "component_boundaries": {
       "enforce_separation": true,
       "ui_components_path": "apps/web/components",
-      "api_routes_path": "apps/api/app/api"
+      "api_routes_path": "apps/web/app/api"
     },
     "tenant_isolation": {
       "check_tenant_leaks": true,

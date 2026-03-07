@@ -7,7 +7,7 @@ export default function NotFound() {
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow-lg sm:rounded-lg sm:px-10">
           <div className="flex items-center justify-center mb-6">
-            <AlertTriangle className="h-12 w-12 text-yellow-500" />
+            <AlertTriangle className="h-12 w-12 text-stone-500" />
           </div>
 
           <div className="text-center">

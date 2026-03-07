@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useInventoryAlerts } from "@/lib/hooks/useInventoryAlerts";
 import { InventoryAlert } from "@/lib/hooks/useInventoryAlerts";
 
@@ -41,7 +41,7 @@ export function InventoryAlerts({
   });
 
   // Cargar estadísticas de alertas
-  const loadStats = () => {
+  const loadStats = useCallback(() => {
     const statsData = getAlertStats();
     setStats({
       total: statsData.total,
@@ -51,7 +51,7 @@ export function InventoryAlerts({
       outOfStock: statsData.byType.out_of_stock,
       reorderPoint: statsData.byType.reorder_point,
     });
-  };
+  }, [getAlertStats]);
 
   // Aplicar filtros
   const applyFilters = () => {
@@ -118,13 +118,13 @@ export function InventoryAlerts({
   // Cargar estadísticas al inicio
   useEffect(() => {
     loadStats();
-  }, [alerts]);
+  }, [alerts, loadStats]);
 
   // Obtener clase para tipo de alerta
   const getAlertTypeClass = (type: string) => {
     switch (type) {
       case "low_stock":
-        return "text-yellow-600 bg-yellow-50";
+        return "text-stone-600 bg-stone-50";
       case "out_of_stock":
         return "text-red-600 bg-red-50";
       case "reorder_point":
@@ -174,7 +174,7 @@ export function InventoryAlerts({
         </div>
         <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
           <h3 className="text-sm font-medium text-gray-500">Activas</h3>
-          <p className="text-2xl font-bold text-yellow-600">{stats.active}</p>
+          <p className="text-2xl font-bold text-stone-600">{stats.active}</p>
         </div>
         <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
           <h3 className="text-sm font-medium text-gray-500">Resueltas</h3>
@@ -182,7 +182,7 @@ export function InventoryAlerts({
         </div>
         <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
           <h3 className="text-sm font-medium text-gray-500">Stock Bajo</h3>
-          <p className="text-2xl font-bold text-yellow-600">{stats.lowStock}</p>
+          <p className="text-2xl font-bold text-stone-600">{stats.lowStock}</p>
         </div>
         <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
           <h3 className="text-sm font-medium text-gray-500">Sin Stock</h3>
@@ -289,7 +289,7 @@ export function InventoryAlerts({
                       Resuelta
                     </span>
                   ) : (
-                    <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                    <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-stone-100 text-stone-800">
                       Activa
                     </span>
                   )}
@@ -302,7 +302,7 @@ export function InventoryAlerts({
                     {alert.resolved ? (
                       <button
                         onClick={() => handleReopenAlert(alert)}
-                        className="text-yellow-600 hover:text-yellow-900 mr-3"
+                        className="text-stone-600 hover:text-stone-900 mr-3"
                       >
                         Reabrir
                       </button>

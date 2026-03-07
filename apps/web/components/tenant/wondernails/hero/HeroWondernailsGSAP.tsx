@@ -7,7 +7,7 @@ import styles from "./HeroWondernailsGSAP.module.css";
 // GSAP SSR-safe imports
 let gsap: any, Flip: any;
 if (typeof window !== "undefined") {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
+   
   const GS = require("gsap");
   gsap = GS.gsap;
   Flip = require("gsap/Flip").Flip;

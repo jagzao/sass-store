@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
@@ -23,11 +23,7 @@ export default function QuoteList({ tenantSlug }: { tenantSlug: string }) {
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
-  useEffect(() => {
-    fetchQuotes();
-  }, []);
-
-  const fetchQuotes = async () => {
+  const fetchQuotes = useCallback(async () => {
     try {
       const response = await fetch(`/api/tenants/${tenantSlug}/quotes`);
       if (response.ok) {
@@ -39,12 +35,16 @@ export default function QuoteList({ tenantSlug }: { tenantSlug: string }) {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [tenantSlug]);
+
+  useEffect(() => {
+    fetchQuotes();
+  }, [fetchQuotes]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case "pending":
-        return "bg-yellow-100 text-yellow-800";
+        return "bg-stone-100 text-stone-800";
       case "accepted":
         return "bg-green-100 text-green-800";
       case "converted":

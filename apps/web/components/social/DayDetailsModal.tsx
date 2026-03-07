@@ -115,7 +115,7 @@ export default function DayDetailsModal({
           case "failed":
             return "bg-red-900/30 text-red-400 border border-red-900";
           default:
-            return "bg-yellow-900/30 text-yellow-400 border border-yellow-900";
+            return "bg-stone-900/30 text-stone-400 border border-stone-900";
         }
       }
       switch (status) {
@@ -126,7 +126,7 @@ export default function DayDetailsModal({
         case "failed":
           return "bg-red-100 text-red-800";
         default:
-          return "bg-yellow-100 text-yellow-800";
+          return "bg-stone-100 text-stone-800";
       }
     },
     addButton: isTech

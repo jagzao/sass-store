@@ -271,3 +271,183 @@ export async function sendDisputeNotification({
     throw error;
   }
 }
+
+export interface SendQuoteEmailParams {
+  to: string;
+  quoteNumber: string;
+  customerName: string;
+  totalAmount: number;
+  validityDays: number;
+  items: {
+    name: string;
+    description?: string;
+    quantity: number;
+    unitPrice: number;
+    subtotal: number;
+  }[];
+  tenantName?: string;
+  tenantColor?: string;
+  tenantLogo?: string;
+}
+
+export async function sendQuoteEmail({
+  to,
+  quoteNumber,
+  customerName,
+  totalAmount,
+  validityDays,
+  items,
+  tenantName = "SaaS Store",
+  tenantColor = "#4F46E5",
+  tenantLogo,
+}: SendQuoteEmailParams) {
+  try {
+    const resend = getResendClient();
+    const { data, error } = await resend.emails.send({
+      from: process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev",
+      to,
+      subject: `📄 Cotización #${quoteNumber} - ${tenantName}`,
+      html: getQuoteEmailTemplate({
+        quoteNumber,
+        customerName,
+        totalAmount,
+        validityDays,
+        items,
+        tenantName,
+        tenantColor,
+        tenantLogo,
+      }),
+    });
+
+    if (error) {
+      console.error("❌ Error sending quote email:", error);
+      throw new Error(`Failed to send email: ${error.message}`);
+    }
+
+    console.log("✅ Quote email sent successfully:", data?.id);
+    return { success: true, messageId: data?.id };
+  } catch (error: any) {
+    console.error("❌ Error in sendQuoteEmail:", error);
+    throw error;
+  }
+}
+
+function getQuoteEmailTemplate({
+  quoteNumber,
+  customerName,
+  totalAmount,
+  validityDays,
+  items,
+  tenantName,
+  tenantColor,
+  tenantLogo,
+}: Omit<SendQuoteEmailParams, "to">): string {
+  const itemsHtml = items
+    .map(
+      (item) => `
+    <tr>
+      <td style="padding: 12px; border-bottom: 1px solid #e5e7eb;">
+        <div style="font-weight: 600; color: #1f2937;">${item.name}</div>
+        ${
+          item.description
+            ? `<div style="font-size: 12px; color: #6b7280;">${item.description}</div>`
+            : ""
+        }
+      </td>
+      <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; text-align: center; color: #4b5563;">${
+        item.quantity
+      }</td>
+      <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; text-align: right; color: #4b5563;">$${Number(
+        item.unitPrice,
+      ).toFixed(2)}</td>
+      <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; text-align: right; font-weight: 600; color: #1f2937;">$${Number(
+        item.subtotal,
+      ).toFixed(2)}</td>
+    </tr>
+  `,
+    )
+    .join("");
+
+  return `
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cotización #${quoteNumber} - ${tenantName}</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f3f4f6;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f3f4f6; padding: 40px 20px;">
+    <tr>
+      <td align="center">
+        <table width="600" cellpadding="0" cellspacing="0" style="max-width: 600px; background-color: #ffffff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); overflow: hidden;">
+          <!-- Header -->
+          <tr>
+            <td style="padding: 40px 40px 30px 40px; text-align: center; background: linear-gradient(135deg, ${tenantColor} 0%, ${tenantColor}dd 100%);">
+              ${
+                tenantLogo
+                  ? `<img src="${tenantLogo}" alt="${tenantName}" style="max-width: 150px; height: auto; margin-bottom: 16px;">`
+                  : ""
+              }
+              <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.1);">Cotización</h1>
+              <p style="margin: 8px 0 0 0; color: rgba(255,255,255,0.9); font-size: 16px;">#${quoteNumber}</p>
+            </td>
+          </tr>
+
+          <!-- Content -->
+          <tr>
+            <td style="padding: 40px;">
+              <p style="margin: 0 0 20px 0; color: #4b5563; font-size: 16px; line-height: 1.6;">
+                Hola <strong>${customerName}</strong>,
+              </p>
+              <p style="margin: 0 0 30px 0; color: #4b5563; font-size: 16px; line-height: 1.6;">
+                Aquí tienes los detalles de la cotización solicitada. Esta cotización es válida por <strong>${validityDays} días</strong>.
+              </p>
+
+              <!-- Items Table -->
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 30px; border-collapse: collapse;">
+                <thead>
+                  <tr style="background-color: #f9fafb;">
+                    <th style="padding: 12px; text-align: left; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #6b7280; border-bottom: 1px solid #e5e7eb;">Descripción</th>
+                    <th style="padding: 12px; text-align: center; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #6b7280; border-bottom: 1px solid #e5e7eb;">Cant.</th>
+                    <th style="padding: 12px; text-align: right; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #6b7280; border-bottom: 1px solid #e5e7eb;">Precio Unit.</th>
+                    <th style="padding: 12px; text-align: right; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #6b7280; border-bottom: 1px solid #e5e7eb;">Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${itemsHtml}
+                </tbody>
+                <tfoot>
+                   <tr>
+                    <td colspan="3" style="padding: 16px 12px; text-align: right; font-weight: 600; color: #4b5563; border-top: 2px solid #e5e7eb;">Total</td>
+                    <td style="padding: 16px 12px; text-align: right; font-size: 18px; font-weight: 700; color: ${tenantColor}; border-top: 2px solid #e5e7eb;">$${Number(
+                      totalAmount,
+                    ).toFixed(2)}</td>
+                  </tr>
+                </tfoot>
+              </table>
+
+              <hr style="margin: 30px 0; border: none; border-top: 1px solid #e5e7eb;">
+
+              <p style="margin: 0; color: #6b7280; font-size: 14px; line-height: 1.6; text-align: center;">
+                Si tienes alguna pregunta sobre esta cotización, no dudes en contactarnos.
+              </p>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding: 30px 40px; background-color: #f9fafb; border-top: 1px solid #e5e7eb; border-radius: 0 0 8px 8px;">
+              <p style="margin: 0; color: #9ca3af; font-size: 12px; text-align: center;">
+                © ${new Date().getFullYear()} ${tenantName}. Todos los derechos reservados.
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+  `.trim();
+}

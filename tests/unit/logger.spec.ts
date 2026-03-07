@@ -1,4 +1,5 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+// Using globals instead of imports since globals: true in Vitest config
+import { vi } from 'vitest';
 import { Logger, log } from '../../tools/logger';
 
 describe('Logger - Formatting and Colors', () => {

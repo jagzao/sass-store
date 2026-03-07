@@ -48,8 +48,8 @@ export default function Error({ error, reset }: ErrorProps) {
 
         // Clear any cached data
         if ("caches" in window) {
-          caches.keys().then(function (names) {
-            for (let name of names) caches.delete(name);
+          caches.keys().then((names) => {
+            for (const name of names) caches.delete(name);
           });
         }
       }

@@ -118,14 +118,14 @@ export async function fetchWithCache<T = unknown>(
       const baseUrl =
         process.env.API_URL ||
         process.env.NEXT_PUBLIC_API_URL ||
-        "http://localhost:4000";
+        "";
       fullUrl = url.startsWith("http") ? url : `${baseUrl}${url}`;
       // eslint-disable-next-line no-console
       console.log(`[fetchWithCache] SERVER - External API: ${fullUrl}`);
     }
   } else {
     // CLIENT-SIDE: Use public API URL
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "";
     fullUrl = url.startsWith("http") ? url : `${baseUrl}${url}`;
     // eslint-disable-next-line no-console
     console.log(`[fetchWithCache] CLIENT - API: ${fullUrl}`);

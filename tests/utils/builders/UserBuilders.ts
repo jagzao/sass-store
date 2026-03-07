@@ -3,7 +3,7 @@ import {
   CreateUserData,
   UpdateUserData,
   AuthCredentials,
-} from "../../../apps/api/lib/services/UserService";
+} from "../../../apps/web/lib/services/UserService";
 // Simple UUID generator for testing
 const generateUUID = () => crypto.randomUUID();
 

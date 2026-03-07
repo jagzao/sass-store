@@ -265,13 +265,12 @@ class TestRunner {
 
   // Individual test implementations
   async validateProjectStructure() {
-    // Check if all required files exist
+    // Check if all required files exist (monolith-only: web app contains all API routes)
     const requiredFiles = [
       'package.json',
       'turbo.json',
       'docker-compose.yml',
       'apps/web/package.json',
-      'apps/api/package.json',
       'packages/ui/package.json',
       'packages/database/package.json'
     ];
@@ -319,9 +318,10 @@ class TestRunner {
   }
 
   async testAPIEndpoints() {
+    // Monolith-only: API endpoints are now in apps/web/app/api/
     const endpoints = [
-      'apps/api/app/api/v1/products/route.ts',
-      'apps/api/app/api/v1/media/upload/route.ts'
+      'apps/web/app/api/products/route.ts',
+      'apps/web/app/api/media/upload/route.ts'
     ];
 
     return endpoints.every(endpoint => fs.existsSync(endpoint));
@@ -345,7 +345,8 @@ class TestRunner {
   }
 
   async testMediaProcessing() {
-    return fs.existsSync('apps/api/lib/media/processor.ts');
+    // Monolith-only: media processing is now in apps/web/lib/media/
+    return fs.existsSync('apps/web/lib/media/processor.ts');
   }
 
   async validatePurchaseFlow() {
@@ -414,15 +415,18 @@ class TestRunner {
   }
 
   async validateRateLimiting() {
-    return fs.existsSync('apps/api/lib/rate-limit.ts');
+    // Monolith-only: rate limiting is now in apps/web/lib/
+    return fs.existsSync('apps/web/lib/rate-limit.ts');
   }
 
   async validateAuthMechanisms() {
-    return fs.existsSync('apps/api/lib/auth.ts');
+    // Monolith-only: auth is now in apps/web/lib/
+    return fs.existsSync('apps/web/lib/auth.ts');
   }
 
   async validateAuditTrail() {
-    return fs.existsSync('apps/api/lib/audit.ts');
+    // Monolith-only: audit is now in apps/web/lib/
+    return fs.existsSync('apps/web/lib/audit.ts');
   }
 
   async validateCoreWebVitals() {
@@ -463,7 +467,8 @@ class TestRunner {
   }
 
   async validateImageOptimization() {
-    return fs.existsSync('apps/api/lib/media/processor.ts');
+    // Monolith-only: media processing is now in apps/web/lib/media/
+    return fs.existsSync('apps/web/lib/media/processor.ts');
   }
 
   async validateCaching() {

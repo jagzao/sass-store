@@ -129,7 +129,7 @@ export async function PUT(request: NextRequest) {
     }
 
     // Actualizar el tenant (excluir ID e isActive del set)
-    const { id: _id, isActive, ...updateData } = validatedData;
+    const { id: _id, isActive, theme, ...updateData } = validatedData;
 
     // Map isActive to status if present
     const statusUpdate =
@@ -137,11 +137,26 @@ export async function PUT(request: NextRequest) {
         ? { status: isActive ? "active" : "inactive" }
         : {};
 
+    const brandingUpdate = theme
+      ? {
+          branding: {
+            ...(((existingTenant as any).branding || {}) as Record<string, unknown>),
+            ...theme,
+            // Legacy aliases for compatibility
+            ...(theme.logoUrl !== undefined ? { logo: theme.logoUrl } : {}),
+            ...(theme.faviconUrl !== undefined
+              ? { favicon: theme.faviconUrl }
+              : {}),
+          },
+        }
+      : {};
+
     const [updatedTenant] = await db
       .update(tenants)
       .set({
         ...updateData,
         ...statusUpdate,
+        ...brandingUpdate,
         updatedAt: new Date(),
       })
       .where(eq(tenants.id, validatedData.id))

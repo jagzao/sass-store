@@ -8,7 +8,7 @@ import {
   products,
   services,
 } from "@sass-store/database";
-import { eq, and, ilike, or, count } from "drizzle-orm";
+import { eq, ilike, or, count, sql, asc, desc } from "drizzle-orm";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
 
@@ -91,15 +91,20 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const tenantsQuery = db.query.tenants.findMany({
-      where: whereCondition,
-      limit,
-      offset,
-      orderBy: (tenants, { desc, asc }) => [
-        asc(tenants.status),
-        desc(tenants.createdAt),
-      ],
-    });
+    const tenantsQuery = whereCondition
+      ? db
+          .select()
+          .from(tenants)
+          .where(whereCondition)
+          .orderBy(asc(tenants.status), desc(tenants.createdAt))
+          .limit(limit)
+          .offset(offset)
+      : db
+          .select()
+          .from(tenants)
+          .orderBy(asc(tenants.status), desc(tenants.createdAt))
+          .limit(limit)
+          .offset(offset);
     const totalQuery = whereCondition
       ? db.select({ count: count() }).from(tenants).where(whereCondition)
       : db.select({ count: count() }).from(tenants);
@@ -161,9 +166,11 @@ export async function POST(request: NextRequest) {
     const { adminUser, seedData } = body;
 
     // Verificar si el slug ya existe
-    const existingTenant = await db.query.tenants.findFirst({
-      where: eq(tenants.slug, tenantData.slug),
-    });
+    const [existingTenant] = await db
+      .select()
+      .from(tenants)
+      .where(eq(tenants.slug, tenantData.slug))
+      .limit(1);
 
     if (existingTenant) {
       return NextResponse.json(
@@ -182,7 +189,12 @@ export async function POST(request: NextRequest) {
           // Asegurar que branding tenga valores por defecto si no vienen
           branding: {
             ...tenantData.theme, // Map theme to branding structure if needed, or use directly
+            accentColor: tenantData.theme.accentColor || "#F59E0B",
             logoUrl: tenantData.theme.logoUrl || "",
+            faviconUrl: tenantData.theme.faviconUrl || "",
+            // Legacy aliases for compatibility
+            logo: tenantData.theme.logoUrl || "",
+            favicon: tenantData.theme.faviconUrl || "",
             primaryColor: tenantData.theme.primaryColor || "#000000",
             secondaryColor: tenantData.theme.secondaryColor || "#ffffff",
           },
@@ -204,9 +216,11 @@ export async function POST(request: NextRequest) {
       if (adminUser && adminUser.email && adminUser.password) {
         // Verificar si el usuario ya existe
         let userId = crypto.randomUUID();
-        const existingUser = await tx.query.users.findFirst({
-          where: eq(users.email, adminUser.email),
-        });
+        const [existingUser] = await tx
+          .select()
+          .from(users)
+          .where(eq(users.email, adminUser.email))
+          .limit(1);
 
         if (existingUser) {
           userId = existingUser.id;
@@ -242,27 +256,13 @@ export async function POST(request: NextRequest) {
       // 3. Insertar Seed Data (Si se solicitó)
       if (seedData) {
         if (seedData.products) {
-          // Crear productos de ejemplo
-          await tx.insert(products).values([
-            {
-              tenantId: newTenant.id,
-              sku: "DEMO-001",
-              name: "Producto Demo 1",
-              description: "Descripción del producto demo",
-              price: "100.00",
-              category: "General",
-              active: true,
-            },
-            {
-              tenantId: newTenant.id,
-              sku: "DEMO-002",
-              name: "Producto Demo 2 (Premium)",
-              description: "Producto de alta calidad",
-              price: "250.50",
-              category: "Premium",
-              active: true,
-            },
-          ]);
+          // Crear productos de ejemplo (SQL explícito para compatibilidad con esquemas legacy)
+          await tx.execute(sql`
+            INSERT INTO products (tenant_id, sku, name, description, price, category, active)
+            VALUES
+              (${newTenant.id}, ${"DEMO-001"}, ${"Producto Demo 1"}, ${"Descripción del producto demo"}, ${"100.00"}, ${"General"}, ${true}),
+              (${newTenant.id}, ${"DEMO-002"}, ${"Producto Demo 2 (Premium)"}, ${"Producto de alta calidad"}, ${"250.50"}, ${"Premium"}, ${true})
+          `);
         }
 
         if (seedData.services) {

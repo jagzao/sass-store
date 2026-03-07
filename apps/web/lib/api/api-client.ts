@@ -8,7 +8,7 @@ interface ApiOptions {
 class ApiClient {
   private getBaseUrl(): string {
     // Use API_URL if defined, otherwise default to localhost:4000 for development
-    return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+    return process.env.NEXT_PUBLIC_API_URL || '';
   }
 
   private async buildUrl(endpoint: string, tenant: string, searchParams?: Record<string, string>): Promise<string> {

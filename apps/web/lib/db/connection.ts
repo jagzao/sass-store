@@ -98,25 +98,7 @@ const createMockDb = () => {
 // TEMPORARY FIX: Override cached env var with correct hostname and username
 let connectionString = process.env.DATABASE_URL;
 
-// Fix Supabase pooler connection to use direct connection
-if (connectionString?.includes("pooler.supabase.com")) {
-  // Fix port to use direct connection (5432 instead of 6543)
-  connectionString = connectionString.replace(":6543/", ":5432/");
-  // Fix hostname to use direct connection instead of pooler
-  connectionString = connectionString.replace(
-    "pooler.supabase.com",
-    "db.supabase.co",
-  );
-  // Remove pgbouncer parameter for direct connection
-  connectionString = connectionString.replace("?pgbouncer=true", "");
-  // Fix username for direct connection (postgres instead of postgres.PROJECT_ID)
-  if (connectionString.match(/postgresql:\/\/postgres\.[a-z0-9]+:/)) {
-    connectionString = connectionString.replace(
-      /postgresql:\/\/postgres\.[a-z0-9]+:/,
-      "postgresql://postgres:",
-    );
-  }
-}
+// Removed broken Supabase pooler connection override that corrupted DNS resolution
 
 // Connection pool configuration
 export const connectionConfig = {

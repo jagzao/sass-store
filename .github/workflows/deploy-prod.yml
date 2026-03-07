@@ -81,18 +81,6 @@ jobs:
           directory: apps/web/.next
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: 🐳 Deploy API to Cloud Run (Production)
-        uses: google-github-actions/deploy-cloudrun@v2
-        with:
-          service: sass-store-api-production
-          image: gcr.io/${{ secrets.GCP_PROJECT_ID }}/sass-store-api:${{ github.sha }}
-          region: us-central1
-          env_vars: |
-            NODE_ENV=production
-            DATABASE_URL=${{ secrets.PRODUCTION_DATABASE_URL }}
-            JWT_SECRET=${{ secrets.PRODUCTION_JWT_SECRET }}
-            REDIS_URL=${{ secrets.PRODUCTION_REDIS_URL }}
-
       - name: 🧪 Run smoke tests
         run: |
           sleep 60
@@ -106,8 +94,7 @@ jobs:
       - name: 📢 Notify production deployment
         run: |
           echo "🎉 PRODUCTION DEPLOYMENT COMPLETED SUCCESSFULLY!"
-          echo "🌐 Frontend: https://sassstore.com"
-          echo "🔌 API: https://sass-store-api-prod-abc123.run.app"
+          echo "🌐 Monolith: https://sassstore.com"
           echo "🧪 All tests: PASSED"
           echo "🔒 Security: CLEARED"
           echo "📊 Bundle size: OK"

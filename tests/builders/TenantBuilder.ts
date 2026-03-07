@@ -5,13 +5,13 @@
  * Provides fluent interface for building realistic tenant test objects.
  */
 
-// Simple faker implementation for testing
+// Simple faker-compatible implementation for testing
 const testFaker = {
-  company: () => ({
+  company: {
     name: () => `Test Company ${Math.random().toString(36).substring(7)}`,
     description: () =>
       `Test description ${Math.random().toString(36).substring(7)}`,
-  }),
+  },
   internet: {
     email: () => `test-${Math.random().toString(36).substring(7)}@example.com`,
     color: () =>
@@ -30,10 +30,12 @@ const testFaker = {
     latitude: () => 40.7128 + (Math.random() - 0.5) * 0.1,
     longitude: () => -74.006 + (Math.random() - 0.5) * 0.1,
   },
-  phone: () =>
-    `555-${Math.floor(Math.random() * 999)
-      .toString()
-      .padStart(7, "0")}`,
+  phone: {
+    number: () =>
+      `555-${Math.floor(Math.random() * 999)
+        .toString()
+        .padStart(7, "0")}`,
+  },
   datatype: {
     uuid: () => `${Date.now()}-${Math.random().toString(36).substring(7)}`,
     string: () => `test-${Math.random().toString(36).substring(7)}`,
@@ -41,26 +43,34 @@ const testFaker = {
   helpers: {
     arrayElement: <T>(array: T[]): T =>
       array[Math.floor(Math.random() * array.length)],
-    date: {
-      future: () => new Date(Date.now() + 24 * 60 * 60 * 1000),
-      past: () => new Date(Date.now() - 24 * 60 * 60 * 1000),
-    },
-    lorem: {
-      sentence: () =>
-        `Test sentence ${Math.random().toString(36).substring(7)}`,
-    },
+  },
+  date: {
+    future: () => new Date(Date.now() + 24 * 60 * 60 * 1000),
+    past: () => new Date(Date.now() - 24 * 60 * 60 * 1000),
+  },
+  lorem: {
+    sentence: () => `Test sentence ${Math.random().toString(36).substring(7)}`,
   },
 };
 
 // Fix for Date namespace conflict
 const currentDate = (): Date => new Date();
 
+// Helper to generate proper UUID format
+const generateUUID = (): string => {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = Math.random() * 16 | 0;
+    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+};
+
 export class TenantBuilder {
   private tenant: any = {};
 
   constructor() {
-    // Initialize with a unique ID for each instance
-    this.tenant.id = `tenant-${testFaker.datatype.uuid()}`;
+    // Initialize with a UUID format ID for proper validation
+    this.tenant.id = generateUUID();
   }
 
   static aTenant(): TenantBuilder {
@@ -128,9 +138,9 @@ export class TenantBuilder {
       address: testFaker.location.streetAddress(),
       city: testFaker.location.city(),
       state: testFaker.location.state(),
-      country: testFaker.location.countryCode(),
-      latitude: parseFloat(testFaker.location.latitude()),
-      longitude: parseFloat(testFaker.location.longitude()),
+      country: testFaker.location.country(),
+      latitude: testFaker.location.latitude(),
+      longitude: testFaker.location.longitude(),
       ...location,
     };
     return this;
@@ -203,7 +213,7 @@ export class TenantBuilder {
   build(): any {
     const now = currentDate();
     return {
-      id: this.tenant.id || `tenant-${testFaker.datatype.uuid()}`,
+      id: this.tenant.id || generateUUID(),
       slug: this.tenant.slug || `test-${testFaker.datatype.uuid()}`,
       name: this.tenant.name || testFaker.company.name(),
       description: this.tenant.description || testFaker.company.description(),
@@ -225,9 +235,9 @@ export class TenantBuilder {
         address: testFaker.location.streetAddress(),
         city: testFaker.location.city(),
         state: testFaker.location.state(),
-        country: testFaker.location.countryCode(),
-        latitude: parseFloat(testFaker.location.latitude()),
-        longitude: parseFloat(testFaker.location.longitude()),
+        country: testFaker.location.country(),
+        latitude: testFaker.location.latitude(),
+        longitude: testFaker.location.longitude(),
       },
       quotas: this.tenant.quotas || {
         maxProducts: 100,

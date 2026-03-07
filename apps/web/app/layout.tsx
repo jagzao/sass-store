@@ -5,6 +5,7 @@ import { ToastProvider } from "@/components/ui/toast-provider";
 import { AuthSessionProvider } from "@/components/providers/session-provider";
 import { CartSyncProvider } from "@/components/cart/CartSyncProvider";
 import { ClientInit } from "@/components/client-init";
+import { Providers } from "./providers";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -53,13 +54,15 @@ export default async function RootLayout({ children }: RootLayoutProps) {
         suppressHydrationWarning
       >
         <ClientInit />
-        <AuthSessionProvider>
-          <ToastProvider>
-            <CartSyncProvider>
-              <div className="min-h-screen bg-background">{children}</div>
-            </CartSyncProvider>
-          </ToastProvider>
-        </AuthSessionProvider>
+        <Providers>
+          <AuthSessionProvider>
+            <ToastProvider>
+              <CartSyncProvider>
+                <div className="min-h-screen bg-background">{children}</div>
+              </CartSyncProvider>
+            </ToastProvider>
+          </AuthSessionProvider>
+        </Providers>
       </body>
     </html>
   );

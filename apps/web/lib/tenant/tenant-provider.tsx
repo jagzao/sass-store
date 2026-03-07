@@ -28,24 +28,51 @@ export function TenantProvider({
   useEffect(() => {
     const root = document.documentElement;
 
-    // Set CSS custom properties for theming
-    root.style.setProperty("--color-primary", tenant.branding.primaryColor);
-    root.style.setProperty("--color-secondary", tenant.branding.secondaryColor);
+    // Set CSS custom properties for theming (with neon yellow sanitizer)
+    const isYellow = (color: string) => 
+      color?.toLowerCase() === 'yellow' || 
+      color?.toLowerCase() === '#ffff00' || 
+      color?.toLowerCase() === 'rgb(255, 255, 0)';
+
+    const pColor = isYellow(tenant.branding.primaryColor) ? '#C5A059' : tenant.branding.primaryColor;
+    const sColor = isYellow(tenant.branding.secondaryColor) ? '#F5F5DC' : tenant.branding.secondaryColor;
+
+    root.style.setProperty("--color-primary", pColor);
+    root.style.setProperty("--color-secondary", sColor);
 
     // Update favicon
     const favicon = document.querySelector(
       'link[rel="icon"]',
     ) as HTMLLinkElement;
     if (favicon) {
-      favicon.href = tenant.branding.favicon;
+      favicon.href =
+        tenant.branding.faviconUrl || tenant.branding.favicon || favicon.href;
     }
 
     // Update document title
     document.title = `${tenant.name} - Sass Store`;
   }, [tenant]);
 
+  const isYellow = (color: string) => 
+    color?.toLowerCase() === 'yellow' || 
+    color?.toLowerCase() === '#ffff00' || 
+    color?.toLowerCase() === 'rgb(255, 255, 0)';
+
+  const safeTenant = { ...tenant };
+  if (safeTenant.branding) {
+    if (isYellow(safeTenant.branding.primaryColor)) {
+      safeTenant.branding.primaryColor = '#C5A059'; // Gold
+    }
+    if (isYellow(safeTenant.branding.secondaryColor)) {
+      safeTenant.branding.secondaryColor = '#F5F5DC'; // Blanco Hueso
+    }
+    if (isYellow(safeTenant.branding.backgroundColor)) {
+      safeTenant.branding.backgroundColor = '#F8F9FA'; // Blanco Hueso Variant
+    }
+  }
+
   const contextValue: TenantContext = {
-    tenant,
+    tenant: safeTenant,
     isLoading,
     error,
   };
@@ -73,6 +100,9 @@ export function useTenant(): TenantContext {
         branding: {
           primaryColor: "#DC2626",
           secondaryColor: "#1F2937",
+          accentColor: "#F59E0B",
+          logoUrl: "https://placeholder.zo.dev/logos/zo-system.png",
+          faviconUrl: "https://placeholder.zo.dev/favicons/zo-system.ico",
           logo: "https://placeholder.zo.dev/logos/zo-system.png",
           favicon: "https://placeholder.zo.dev/favicons/zo-system.ico",
           website: "https://zo.dev",

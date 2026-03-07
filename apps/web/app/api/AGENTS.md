@@ -2,19 +2,19 @@
 
 ## Project Structure & Module Organization
 
-- Turbo workspace layout: `apps/web` is the Next.js App Router UI (port 3001) and `apps/api` is the HTTP API (port 4000).
+- **Monolith Architecture**: `apps/web` is the Next.js App Router application (port 3001) containing both UI and API routes.
 - UI routes live under `apps/web/app/**` and shared widgets in `apps/web/components/**`.
-- API handlers live in `apps/api/app/api/**`, with domain services in `apps/api/lib/**`.
+- API handlers live in `apps/web/app/api/**`, with domain services in `apps/web/lib/**`.
 - Shared schema/UI/config live in `packages/*`; update shared packages before app-specific copies.
 - Tests live in `tests/{unit,integration,e2e}` with fixtures in `tests/utils`; migrations and docs are in `migrations/` and `docs/`.
 
 ## Build, Test, and Development Commands
 
-- `npm run dev -- --filter=@sass-store/web`: run only the web app; drop the filter to run all workspaces.
+- `npm run dev`: runs the monolith web application (port 3001) with all API routes included.
 - `npm run build`, `npm run lint`, `npm run typecheck`: required before any PR.
 - `npm run test:unit`, `npm run test:integration`, `npm run test:e2e`: run the respective test suites.
 - `npm run test:e2e:subset -- --grep "booking"`: run a narrowed Playwright subset.
-- From `apps/api`, run `npm run db:generate`, `npm run db:push`, `npm run db:seed` after schema changes.
+- Run `npm run db:generate`, `npm run db:push`, `npm run db:seed` from the root directory after schema changes.
 
 ## Coding Style & Naming Conventions
 
@@ -27,7 +27,7 @@
 
 - Vitest specs live in `tests/{unit,integration}` as `*.spec.ts`; Playwright targets port 3001.
 - Keep logic coverage at or above 80% and log plan changes in `TESTING_IMPLEMENTATION_SUMMARY.md`.
-- Use fixtures from `tests/utils`, stub API calls through `apps/api/lib/**`, and prefer data builders.
+- Use fixtures from `tests/utils`, stub API calls through `apps/web/lib/**`, and prefer data builders.
 
 ## Commit & Pull Request Guidelines
 

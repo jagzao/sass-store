@@ -1,19 +1,20 @@
-import { describe, it, expect, beforeEach } from "vitest";
+// Using globals instead of imports since globals: true in Vitest config
 import {
   getTestDb,
   createTestTenant,
   createTestService,
-  createTestUser,
 } from "../setup/test-database";
-import { bookings } from "@sass-store/database/schema";
+import { bookings, customers, staff } from "@sass-store/database/schema";
 import { eq } from "drizzle-orm";
 
 describe("Booking Operations", () => {
   let testTenantId: string;
   let testServiceId: string;
-  let testUserId: string;
+  let testStaffId: string;
 
   beforeEach(async () => {
+    const db = getTestDb();
+    
     const tenant = await createTestTenant({
       slug: "test-salon",
       name: "Test Salon",
@@ -24,15 +25,20 @@ describe("Booking Operations", () => {
     const service = await createTestService(testTenantId, {
       name: "Haircut",
       price: "50.00",
-      duration: 60,
+      duration: "60",
     });
     testServiceId = service.id;
 
-    const user = await createTestUser(testTenantId, {
-      email: "customer@test.com",
-      name: "Test Customer",
-    });
-    testUserId = user.id;
+    // Create test staff directly
+    const [staffMember] = await db
+      .insert(staff)
+      .values({
+        tenantId: testTenantId,
+        name: "Test Stylist",
+        role: "Stylist",
+      })
+      .returning();
+    testStaffId = staffMember.id;
   });
 
   describe("Create Booking", () => {
@@ -47,18 +53,22 @@ describe("Booking Operations", () => {
         .values({
           tenantId: testTenantId,
           serviceId: testServiceId,
-          userId: testUserId,
+          staffId: testStaffId,
+          customerName: "Test Customer",
+          customerEmail: "customer@test.com",
+          customerPhone: "555-1234",
           startTime,
           endTime,
           status: "confirmed",
           notes: "First time customer",
+          totalPrice: "50.00",
         })
         .returning();
 
       expect(booking).toBeDefined();
       expect(booking.tenantId).toBe(testTenantId);
       expect(booking.serviceId).toBe(testServiceId);
-      expect(booking.userId).toBe(testUserId);
+      expect(booking.customerName).toBe("Test Customer");
       expect(booking.status).toBe("confirmed");
     });
 
@@ -78,10 +88,13 @@ describe("Booking Operations", () => {
         .values({
           tenantId: testTenantId,
           serviceId: testServiceId,
-          userId: testUserId,
+          staffId: testStaffId,
+          customerName: "Test Customer",
+          customerEmail: "customer@test.com",
           startTime: new Date("2025-12-01T10:00:00Z"),
           endTime: new Date("2025-12-01T11:00:00Z"),
           status: "confirmed",
+          totalPrice: "50.00",
         })
         .returning();
 
@@ -112,10 +125,13 @@ describe("Booking Operations", () => {
         .values({
           tenantId: testTenantId,
           serviceId: testServiceId,
-          userId: testUserId,
+          staffId: testStaffId,
+          customerName: "Test Customer",
+          customerEmail: "customer@test.com",
           startTime: new Date("2025-12-01T10:00:00Z"),
           endTime: new Date("2025-12-01T11:00:00Z"),
           status: "pending",
+          totalPrice: "50.00",
         })
         .returning();
 
@@ -137,10 +153,13 @@ describe("Booking Operations", () => {
         .values({
           tenantId: testTenantId,
           serviceId: testServiceId,
-          userId: testUserId,
+          staffId: testStaffId,
+          customerName: "Test Customer",
+          customerEmail: "customer@test.com",
           startTime: new Date("2025-12-01T10:00:00Z"),
           endTime: new Date("2025-12-01T11:00:00Z"),
           status: "confirmed",
+          totalPrice: "50.00",
         })
         .returning();
 
@@ -167,10 +186,13 @@ describe("Booking Operations", () => {
         .values({
           tenantId: testTenantId,
           serviceId: testServiceId,
-          userId: testUserId,
+          staffId: testStaffId,
+          customerName: "Test Customer",
+          customerEmail: "customer@test.com",
           startTime,
           endTime,
           status: "confirmed",
+          totalPrice: "50.00",
         })
         .returning();
 
@@ -182,24 +204,40 @@ describe("Booking Operations", () => {
     });
   });
 
-  describe("Recurring Bookings", () => {
-    it("should identify recurring bookings", async () => {
+  describe("Customer Linking", () => {
+    it("should optionally link booking to registered customer", async () => {
       const db = getTestDb();
+
+      // Create a customer first
+      const [customer] = await db
+        .insert(customers)
+        .values({
+          tenantId: testTenantId,
+          name: "Registered Customer",
+          phone: "555-9999",
+          email: "registered@test.com",
+        })
+        .returning();
 
       const [booking] = await db
         .insert(bookings)
         .values({
           tenantId: testTenantId,
           serviceId: testServiceId,
-          userId: testUserId,
+          staffId: testStaffId,
+          customerId: customer.id,
+          customerName: customer.name,
+          customerEmail: customer.email,
+          customerPhone: customer.phone,
           startTime: new Date("2025-12-01T10:00:00Z"),
           endTime: new Date("2025-12-01T11:00:00Z"),
           status: "confirmed",
-          isRecurring: true,
+          totalPrice: "50.00",
         })
         .returning();
 
-      expect(booking.isRecurring).toBe(true);
+      expect(booking.customerId).toBe(customer.id);
+      expect(booking.customerName).toBe("Registered Customer");
     });
   });
 });

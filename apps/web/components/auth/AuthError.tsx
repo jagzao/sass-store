@@ -99,7 +99,7 @@ export function AuthError({ error: errorProp }: AuthErrorProps) {
             <p>{message}</p>
           </div>
           {errorParam === "tenant_mismatch" && (
-            <div className="mt-3 text-xs text-yellow-700 bg-yellow-50 p-2 rounded border border-yellow-200">
+            <div className="mt-3 text-xs text-stone-700 bg-stone-50 p-2 rounded border border-stone-200">
               <strong>Nota de seguridad:</strong> Para proteger tus datos, cada
               tenant requiere una sesión de autenticación separada. Esto evita
               que una sesión pueda ser utilizada para acceder a tenants no

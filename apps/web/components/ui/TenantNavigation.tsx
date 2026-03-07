@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { useSession } from "next-auth/react";
+import { SessionContext } from "next-auth/react";
 
 interface TenantNavigationProps {
   tenantSlug: string;
@@ -30,7 +30,8 @@ export default function TenantNavigation({
   navLinks,
 }: TenantNavigationProps) {
   const pathname = usePathname();
-  const { data: session } = useSession();
+  const sessionContext = useContext(SessionContext);
+  const session = sessionContext?.data ?? null;
   const isTransparent = variant === "transparent";
   const isDark = variant === "dark";
   const [isScrolled, setIsScrolled] = useState(false);

@@ -125,7 +125,7 @@ export function InventoryAlertsList({
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center">
-                        <AlertTriangle className="mr-2 h-4 w-4 text-yellow-500" />
+                        <AlertTriangle className="mr-2 h-4 w-4 text-stone-500" />
                         <span>{alert.alertType}</span>
                       </div>
                     </TableCell>

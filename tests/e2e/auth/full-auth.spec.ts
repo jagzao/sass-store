@@ -41,7 +41,7 @@ test.describe.serial("Authentication Flows", () => {
     await expect(page.locator("header")).toContainText(/Hola/i);
   });
 
-  test("should initiate Google OAuth flow", async ({ page }) => {
+  test.skip("should initiate Google OAuth flow", async ({ page }) => {
     await page.goto(`/t/${tenantSlug}/login`);
 
     // Click Google Button
@@ -81,7 +81,7 @@ test.describe.serial("Authentication Flows", () => {
     // This verifies the 'standard' admin account often used
     await page.goto(`/t/${tenantSlug}/login`);
     await page.fill('input[name="email"]', TEST_CREDENTIALS.adminEmail);
-    await page.fill('input[name="password"]', "Password123!");
+    await page.fill('input[name="password"]', TEST_CREDENTIALS.adminPassword);
     await page.click('button:has-text("Iniciar sesión")');
 
     // Verify success

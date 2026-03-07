@@ -50,7 +50,7 @@ export function RetouchCustomersList() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "today":
-        return "bg-yellow-100 text-yellow-800";
+        return "bg-stone-100 text-stone-800";
       case "overdue":
         return "bg-red-100 text-red-800";
       case "upcoming":

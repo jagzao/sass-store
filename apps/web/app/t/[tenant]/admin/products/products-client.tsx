@@ -190,7 +190,7 @@ export function ProductsClient({ tenantSlug }: { tenantSlug: string }) {
           <div className="text-sm text-gray-600">Destacados</div>
         </div>
         <div className="bg-white rounded-lg shadow-md p-6">
-          <div className="text-2xl font-bold text-yellow-600">
+          <div className="text-2xl font-bold text-stone-600">
             {products.filter((p) => parseFloat(p.price) > 20).length}
           </div>
           <div className="text-sm text-gray-600">Premium</div>
@@ -256,7 +256,7 @@ export function ProductsClient({ tenantSlug }: { tenantSlug: string }) {
                             {product.description || "Sin descripción"}
                           </div>
                           {product.featured && (
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 mt-1">
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-stone-100 text-stone-800 mt-1">
                               ⭐ Destacado
                             </span>
                           )}

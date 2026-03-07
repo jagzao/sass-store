@@ -119,6 +119,14 @@ export const products = pgTable(
     category: varchar("category", { length: 50 }).notNull(),
     featured: boolean("featured").default(false),
     active: boolean("active").default(true),
+    isSupply: boolean("is_supply").default(false),
+    expenseCategoryId: uuid("expense_category_id").references(
+      () => transactionCategories.id,
+    ),
+    autoCreateExpense: boolean("auto_create_expense").default(true),
+    expenseDescriptionTemplate: text("expense_description_template").default(
+      "Compra: {product_name}",
+    ),
     metadata: jsonb("metadata"),
     createdAt: timestamp("created_at").defaultNow(),
     updatedAt: timestamp("updated_at").defaultNow(),
@@ -131,6 +139,10 @@ export const products = pgTable(
     tenantIdx: index("product_tenant_idx").on(table.tenantId),
     categoryIdx: index("product_category_idx").on(table.category),
     featuredIdx: index("product_featured_idx").on(table.featured),
+    isSupplyIdx: index("product_is_supply_idx").on(table.isSupply),
+    expenseCategoryIdx: index("product_expense_category_idx").on(
+      table.expenseCategoryId,
+    ),
     // Índices compuestos para optimización de consultas frecuentes
     tenantFeaturedIdx: index("product_tenant_featured_idx").on(
       table.tenantId,
@@ -171,6 +183,61 @@ export const services = pgTable(
   (table) => ({
     tenantIdx: index("service_tenant_idx").on(table.tenantId),
     featuredIdx: index("service_featured_idx").on(table.featured),
+  }),
+);
+
+// Quotes table (Multi-item support)
+export const quotes = pgTable(
+  "quotes",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .references(() => tenants.id)
+      .notNull(),
+    quoteNumber: varchar("quote_number", { length: 50 }).notNull(),
+    customerName: varchar("customer_name", { length: 100 }).notNull(),
+    customerEmail: varchar("customer_email", { length: 255 }),
+    customerPhone: varchar("customer_phone", { length: 20 }),
+    totalAmount: decimal("total_amount", { precision: 10, scale: 2 }).notNull(),
+    status: varchar("status", { length: 20 }).notNull().default("pending"), // pending, accepted, rejected, expired, converted
+    validityDays: integer("validity_days").notNull().default(15),
+    expiresAt: timestamp("expires_at"),
+    notes: text("notes"),
+    metadata: jsonb("metadata").default("{}"),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    tenantIdx: index("quote_tenant_idx").on(table.tenantId),
+    statusIdx: index("quote_status_idx").on(table.status),
+    quoteNumberIdx: uniqueIndex("quote_number_idx").on(
+      table.tenantId,
+      table.quoteNumber,
+    ),
+  }),
+);
+
+// Quote Items table
+export const quoteItems = pgTable(
+  "quote_items",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    quoteId: uuid("quote_id")
+      .references(() => quotes.id, { onDelete: "cascade" })
+      .notNull(),
+    type: varchar("type", { length: 20 }).notNull(), // 'service' | 'product'
+    itemId: uuid("item_id"), // serviceId or productId (optional, for tracking)
+    name: varchar("name", { length: 200 }).notNull(),
+    description: text("description"),
+    unitPrice: decimal("unit_price", { precision: 10, scale: 2 }).notNull(),
+    quantity: decimal("quantity", { precision: 10, scale: 2 })
+      .notNull()
+      .default("1"),
+    subtotal: decimal("subtotal", { precision: 10, scale: 2 }).notNull(),
+    metadata: jsonb("metadata").default("{}"),
+  },
+  (table) => ({
+    quoteIdx: index("quote_item_quote_idx").on(table.quoteId),
   }),
 );
 
@@ -446,8 +513,10 @@ export const tenantsRelations = relations(tenants, ({ many }) => ({
   reels: many(reels),
   customers: many(customers),
   customerVisits: many(customerVisits),
+  customerVisitProducts: many(customerVisitProducts),
   socialPosts: many(socialPosts),
   serviceQuotes: many(serviceQuotes),
+  quotes: many(quotes),
   // Inventory management relations
   productInventory: many(productInventory),
   serviceProducts: many(serviceProducts),
@@ -457,6 +526,10 @@ export const tenantsRelations = relations(tenants, ({ many }) => ({
   // Retouch configuration relations
   serviceRetouchConfig: many(serviceRetouchConfig),
   tenantHolidays: many(tenantHolidays),
+  // Transaction categories
+  transactionCategories: many(transactionCategories),
+  // Budgets
+  budgets: many(budgets),
 }));
 
 export const tenantConfigsRelations = relations(tenantConfigs, ({ one }) => ({
@@ -483,6 +556,13 @@ export const productsRelations = relations(products, ({ one, many }) => ({
     fields: [products.id],
     references: [productAlertConfig.productId],
   }),
+  customerVisitProducts: many(customerVisitProducts),
+  // Expense tracking relations
+  expenseCategory: one(transactionCategories, {
+    fields: [products.expenseCategoryId],
+    references: [transactionCategories.id],
+  }),
+  inventoryExpenseLinks: many(inventoryExpenseLinks),
 }));
 
 export const servicesRelations = relations(services, ({ one, many }) => ({
@@ -494,6 +574,21 @@ export const servicesRelations = relations(services, ({ one, many }) => ({
   quotes: many(serviceQuotes),
   // Inventory management relations
   serviceProducts: many(serviceProducts),
+}));
+
+export const quotesRelations = relations(quotes, ({ one, many }) => ({
+  tenant: one(tenants, {
+    fields: [quotes.tenantId],
+    references: [tenants.id],
+  }),
+  items: many(quoteItems),
+}));
+
+export const quoteItemsRelations = relations(quoteItems, ({ one }) => ({
+  quote: one(quotes, {
+    fields: [quoteItems.quoteId],
+    references: [quotes.id],
+  }),
 }));
 
 export const serviceQuotesRelations = relations(serviceQuotes, ({ one }) => ({
@@ -1203,6 +1298,62 @@ export const financialKpis = pgTable(
   }),
 );
 
+// Financial Planning Cells table
+export const financialPlanningCells = pgTable(
+  "financial_planning_cells",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .references(() => tenants.id)
+      .notNull(),
+    categoryId: uuid("category_id")
+      .references(() => transactionCategories.id)
+      .notNull(),
+    bucketId: varchar("bucket_id", { length: 64 }).notNull(),
+    bucketType: varchar("bucket_type", { length: 20 }).notNull(), // week | fortnight | month | year
+    bucketStartDate: date("bucket_start_date").notNull(),
+    bucketEndDate: date("bucket_end_date").notNull(),
+    projectedAmount: decimal("projected_amount", {
+      precision: 12,
+      scale: 2,
+    }).notNull().default("0"),
+    realAmount: decimal("real_amount", { precision: 12, scale: 2 })
+      .notNull()
+      .default("0"),
+    entityId: uuid("entity_id"),
+    notes: text("notes"),
+    isOverBudget: boolean("is_over_budget").notNull().default(false),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    tenantIdx: index("financial_planning_cells_tenant_idx").on(table.tenantId),
+    categoryIdx: index("financial_planning_cells_category_idx").on(
+      table.categoryId,
+    ),
+    entityIdx: index("financial_planning_cells_entity_idx").on(table.entityId),
+    tenantCategoryRangeIdx: index(
+      "financial_planning_cells_tenant_category_range_idx",
+    ).on(table.tenantId, table.categoryId, table.bucketStartDate, table.bucketEndDate),
+    tenantEntityRangeIdx: index("financial_planning_cells_tenant_entity_range_idx").on(
+      table.tenantId,
+      table.entityId,
+      table.bucketStartDate,
+      table.bucketEndDate,
+    ),
+    tenantBucketTypeRangeIdx: index(
+      "financial_planning_cells_tenant_bucket_type_range_idx",
+    ).on(table.tenantId, table.bucketType, table.bucketStartDate, table.bucketEndDate),
+    uniqueCellIdx: uniqueIndex("financial_planning_cells_unique_idx").on(
+      table.tenantId,
+      table.categoryId,
+      table.bucketId,
+      table.bucketType,
+      table.entityId,
+    ),
+  }),
+);
+
 // Financial Movements table
 export const financialMovements = pgTable(
   "financial_movements",
@@ -1214,18 +1365,41 @@ export const financialMovements = pgTable(
     type: varchar("type", { length: 50 }).notNull(), // "income" | "expense"
     paymentMethod: varchar("payment_method", { length: 50 }),
     reconciled: boolean("reconciled").default(false),
+    categoryId: uuid("category_id").references(() => transactionCategories.id),
+    entityId: uuid("entity_id"),
+    fechaProgramada: date("fecha_programada")
+      .notNull()
+      .default(sql`CURRENT_DATE`),
+    fechaPago: date("fecha_pago"),
+    status: varchar("status", { length: 20 }).notNull().default("pending"),
     movementDate: date("movement_date").notNull(),
     description: text("description"),
     referenceId: text("reference_id"),
     counterparty: text("counterparty"),
     amount: decimal("amount", { precision: 12, scale: 2 }).notNull(),
-    reconciliationId: uuid("reconciliation_id"),
     createdAt: timestamp("created_at").defaultNow(),
     updatedAt: timestamp("updated_at").defaultNow(),
   },
   (table) => ({
     tenantDateIdx: index("financial_movements_tenant_date_idx").on(
       table.tenantId,
+      table.movementDate,
+    ),
+    tenantCategoryDateIdx: index("financial_movements_tenant_category_date_idx").on(
+      table.tenantId,
+      table.categoryId,
+      table.movementDate,
+    ),
+    tenantScheduledDateIdx: index(
+      "financial_movements_tenant_scheduled_date_idx",
+    ).on(table.tenantId, table.fechaProgramada),
+    tenantPaidDateIdx: index("financial_movements_tenant_paid_date_idx").on(
+      table.tenantId,
+      table.fechaPago,
+    ),
+    tenantEntityDateIdx: index("financial_movements_tenant_entity_date_idx").on(
+      table.tenantId,
+      table.entityId,
       table.movementDate,
     ),
   }),
@@ -1274,16 +1448,7 @@ export const userCarts = pgTable(
   }),
 );
 
-// Financial Movements Relations
-export const financialMovementsRelations = relations(
-  financialMovements,
-  ({ one }) => ({
-    tenant: one(tenants, {
-      fields: [financialMovements.tenantId],
-      references: [tenants.id],
-    }),
-  }),
-);
+// Financial Movements Relations - will be defined later with category relation
 
 // User carts Relations
 export const userCartsRelations = relations(userCarts, ({ one }) => ({
@@ -1645,6 +1810,33 @@ export const customerVisitServices = pgTable(
   }),
 );
 
+// Customer Visit Products table - Products sold per visit
+export const customerVisitProducts = pgTable(
+  "customer_visit_products",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    visitId: uuid("visit_id")
+      .references(() => customerVisits.id, { onDelete: "cascade" })
+      .notNull(),
+    productId: uuid("product_id")
+      .references(() => products.id)
+      .notNull(),
+    description: text("description"), // Optional custom description
+    unitPrice: decimal("unit_price", { precision: 10, scale: 2 }).notNull(),
+    quantity: integer("quantity").notNull().default(1),
+    subtotal: decimal("subtotal", { precision: 10, scale: 2 }).notNull(),
+    metadata: jsonb("metadata").default("{}"),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    visitIdx: index("customer_visit_products_visit_idx").on(table.visitId),
+    productIdx: index("customer_visit_products_product_idx").on(
+      table.productId,
+    ),
+  }),
+);
+
 // Service Retouch Configuration table - Configurable retouch frequency per service
 export const serviceRetouchConfig = pgTable(
   "service_retouch_config",
@@ -1738,6 +1930,7 @@ export const customerVisitsRelations = relations(
       references: [bookings.id],
     }),
     services: many(customerVisitServices),
+    products: many(customerVisitProducts),
     photos: many(visitPhotos),
     advanceApplications: many(advanceApplications),
   }),
@@ -1760,6 +1953,20 @@ export const customerVisitServicesRelations = relations(
     service: one(services, {
       fields: [customerVisitServices.serviceId],
       references: [services.id],
+    }),
+  }),
+);
+
+export const customerVisitProductsRelations = relations(
+  customerVisitProducts,
+  ({ one }) => ({
+    visit: one(customerVisits, {
+      fields: [customerVisitProducts.visitId],
+      references: [customerVisits.id],
+    }),
+    product: one(products, {
+      fields: [customerVisitProducts.productId],
+      references: [products.id],
     }),
   }),
 );
@@ -2249,5 +2456,479 @@ export const tenantHolidaysRelations = relations(tenantHolidays, ({ one }) => ({
   tenant: one(tenants, {
     fields: [tenantHolidays.tenantId],
     references: [tenants.id],
+  }),
+}));
+
+// ========================================================================
+// TRANSACTION CATEGORIES - Categorías de ingresos y gastos
+// ========================================================================
+
+export const transactionCategories = pgTable(
+  "transaction_categories",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .references(() => tenants.id)
+      .notNull(),
+    type: varchar("type", { length: 20 }).notNull(), // 'income' | 'expense'
+    name: varchar("name", { length: 50 }).notNull(),
+    description: text("description"),
+    color: varchar("color", { length: 7 }).default("#3B82F6"),
+    icon: varchar("icon", { length: 50 }),
+    isFixed: boolean("is_fixed").default(false),
+    isDefault: boolean("is_default").default(false),
+    parentId: uuid("parent_id").references(() => transactionCategories.id),
+    budgetAlertThreshold: integer("budget_alert_threshold").default(80),
+    sortOrder: integer("sort_order").default(0),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    tenantTypeIdx: index("transaction_categories_tenant_type_idx").on(
+      table.tenantId,
+      table.type,
+    ),
+    tenantNameTypeUnique: uniqueIndex(
+      "transaction_categories_tenant_name_type_idx",
+    ).on(table.tenantId, table.name, table.type),
+    parentIdx: index("transaction_categories_parent_idx").on(table.parentId),
+    sortOrderIdx: index("transaction_categories_sort_idx").on(table.sortOrder),
+  }),
+);
+
+// Transaction Categories Relations
+export const transactionCategoriesRelations = relations(
+  transactionCategories,
+  ({ one, many }) => ({
+    tenant: one(tenants, {
+      fields: [transactionCategories.tenantId],
+      references: [tenants.id],
+    }),
+    parent: one(transactionCategories, {
+      fields: [transactionCategories.parentId],
+      references: [transactionCategories.id],
+    }),
+    children: many(transactionCategories),
+    financialMovements: many(financialMovements),
+    financialPlanningCells: many(financialPlanningCells),
+  }),
+);
+
+// Financial planning cells relations
+export const financialPlanningCellsRelations = relations(
+  financialPlanningCells,
+  ({ one }) => ({
+    tenant: one(tenants, {
+      fields: [financialPlanningCells.tenantId],
+      references: [tenants.id],
+    }),
+    category: one(transactionCategories, {
+      fields: [financialPlanningCells.categoryId],
+      references: [transactionCategories.id],
+    }),
+  }),
+);
+
+// Financial Movements Relations
+export const financialMovementsRelations = relations(
+  financialMovements,
+  ({ one }) => ({
+    tenant: one(tenants, {
+      fields: [financialMovements.tenantId],
+      references: [tenants.id],
+    }),
+    category: one(transactionCategories, {
+      fields: [financialMovements.categoryId],
+      references: [transactionCategories.id],
+    }),
+  }),
+);
+
+// ========================================================================
+// BUDGETS - Presupuestos semanales/quincenales/mensuales
+// ========================================================================
+
+export const budgets = pgTable(
+  "budgets",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .references(() => tenants.id)
+      .notNull(),
+    name: varchar("name", { length: 100 }).notNull(),
+    periodType: varchar("period_type", { length: 20 }).notNull(), // 'weekly' | 'biweekly' | 'monthly' | 'custom'
+    startDate: date("start_date").notNull(),
+    endDate: date("end_date").notNull(),
+    totalLimit: decimal("total_limit", { precision: 12, scale: 2 }).notNull(),
+    currency: varchar("currency", { length: 3 }).default("MXN"),
+    status: varchar("status", { length: 20 }).default("active"), // 'active' | 'paused' | 'completed' | 'cancelled'
+    rolloverEnabled: boolean("rollover_enabled").default(false),
+    alertThreshold: integer("alert_threshold").default(80),
+    notes: text("notes"),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    tenantIdx: index("budgets_tenant_idx").on(table.tenantId),
+    tenantStatusIdx: index("budgets_tenant_status_idx").on(
+      table.tenantId,
+      table.status,
+    ),
+    dateRangeIdx: index("budgets_date_range_idx").on(
+      table.startDate,
+      table.endDate,
+    ),
+    tenantPeriodIdx: index("budgets_tenant_period_idx").on(
+      table.tenantId,
+      table.periodType,
+    ),
+  }),
+);
+
+export const budgetCategories = pgTable(
+  "budget_categories",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    budgetId: uuid("budget_id")
+      .references(() => budgets.id, { onDelete: "cascade" })
+      .notNull(),
+    categoryId: uuid("category_id")
+      .references(() => transactionCategories.id, { onDelete: "cascade" })
+      .notNull(),
+    limitAmount: decimal("limit_amount", { precision: 12, scale: 2 }).notNull(),
+    alertThreshold: integer("alert_threshold").default(80),
+    notes: text("notes"),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    budgetIdx: index("budget_categories_budget_idx").on(table.budgetId),
+    categoryIdx: index("budget_categories_category_idx").on(table.categoryId),
+    budgetCategoryUnique: uniqueIndex(
+      "budget_categories_budget_category_idx",
+    ).on(table.budgetId, table.categoryId),
+  }),
+);
+
+// Budgets Relations
+export const budgetsRelations = relations(budgets, ({ one, many }) => ({
+  tenant: one(tenants, {
+    fields: [budgets.tenantId],
+    references: [tenants.id],
+  }),
+  budgetCategories: many(budgetCategories),
+}));
+
+export const budgetCategoriesRelations = relations(
+  budgetCategories,
+  ({ one }) => ({
+    budget: one(budgets, {
+      fields: [budgetCategories.budgetId],
+      references: [budgets.id],
+    }),
+    category: one(transactionCategories, {
+      fields: [budgetCategories.categoryId],
+      references: [transactionCategories.id],
+    }),
+  }),
+);
+
+// ========================================================================
+// INVENTORY EXPENSE LINK - Vinculación automática inventario-gastos
+// ========================================================================
+
+export const inventoryExpenseLinks = pgTable(
+  "inventory_expense_links",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .references(() => tenants.id)
+      .notNull(),
+    productId: uuid("product_id")
+      .references(() => products.id, { onDelete: "cascade" })
+      .notNull(),
+    inventoryTransactionId: uuid("inventory_transaction_id")
+      .references(() => inventoryTransactions.id, { onDelete: "cascade" })
+      .notNull(),
+    financialMovementId: uuid("financial_movement_id").references(
+      () => financialMovements.id,
+      { onDelete: "set null" },
+    ),
+    quantity: decimal("quantity", { precision: 10, scale: 2 }).notNull(),
+    unitCost: decimal("unit_cost", { precision: 10, scale: 2 }).notNull(),
+    totalCost: decimal("total_cost", { precision: 10, scale: 2 }).notNull(),
+    status: varchar("status", { length: 20 }).default("active"),
+    notes: text("notes"),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    tenantIdx: index("inventory_expense_links_tenant_idx").on(table.tenantId),
+    productIdx: index("inventory_expense_links_product_idx").on(
+      table.productId,
+    ),
+    transactionIdx: index("inventory_expense_links_transaction_idx").on(
+      table.inventoryTransactionId,
+    ),
+    movementIdx: index("inventory_expense_links_movement_idx").on(
+      table.financialMovementId,
+    ),
+    statusIdx: index("inventory_expense_links_status_idx").on(table.status),
+    uniqueTransaction: uniqueIndex(
+      "inventory_expense_links_transaction_unique",
+    ).on(table.inventoryTransactionId),
+  }),
+);
+
+// Inventory Expense Links Relations
+export const inventoryExpenseLinksRelations = relations(
+  inventoryExpenseLinks,
+  ({ one }) => ({
+    tenant: one(tenants, {
+      fields: [inventoryExpenseLinks.tenantId],
+      references: [tenants.id],
+    }),
+    product: one(products, {
+      fields: [inventoryExpenseLinks.productId],
+      references: [products.id],
+    }),
+    inventoryTransaction: one(inventoryTransactions, {
+      fields: [inventoryExpenseLinks.inventoryTransactionId],
+      references: [inventoryTransactions.id],
+    }),
+    financialMovement: one(financialMovements, {
+      fields: [inventoryExpenseLinks.financialMovementId],
+      references: [financialMovements.id],
+    }),
+  }),
+);
+
+// Update products relations to include expense category
+export const productsRelationsUpdated = relations(
+  products,
+  ({ one, many }) => ({
+    tenant: one(tenants, {
+      fields: [products.tenantId],
+      references: [tenants.id],
+    }),
+    expenseCategory: one(transactionCategories, {
+      fields: [products.expenseCategoryId],
+      references: [transactionCategories.id],
+    }),
+    inventoryExpenseLinks: many(inventoryExpenseLinks),
+  }),
+);
+
+// ========================================================================
+// ADDITIONAL INVENTORY TABLES - Suppliers, Movements, Transfers, Locations
+// ========================================================================
+
+// Suppliers table - Product suppliers for inventory management
+export const suppliers = pgTable(
+  "suppliers",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .references(() => tenants.id)
+      .notNull(),
+    name: varchar("name", { length: 200 }).notNull(),
+    contactPerson: varchar("contact_person", { length: 100 }),
+    email: varchar("email", { length: 255 }),
+    phone: varchar("phone", { length: 20 }),
+    address: text("address"),
+    metadata: jsonb("metadata").default("{}"),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    tenantIdx: index("suppliers_tenant_idx").on(table.tenantId),
+    nameIdx: index("suppliers_name_idx").on(table.name),
+  }),
+);
+
+// Inventory Movements table - Detailed movement tracking
+export const inventoryMovements = pgTable(
+  "inventory_movements",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .references(() => tenants.id)
+      .notNull(),
+    productId: uuid("product_id")
+      .references(() => products.id)
+      .notNull(),
+    movementType: varchar("movement_type", { length: 20 }).notNull(), // 'purchase' | 'sale' | 'transfer' | 'adjustment' | 'consumption'
+    quantity: decimal("quantity", { precision: 10, scale: 2 }).notNull(),
+    unitCost: decimal("unit_cost", { precision: 10, scale: 2 }),
+    totalCost: decimal("total_cost", { precision: 10, scale: 2 }),
+    referenceType: varchar("reference_type", { length: 50 }),
+    referenceId: uuid("reference_id"),
+    notes: text("notes"),
+    performedBy: text("performed_by"),
+    location: varchar("location", { length: 100 }),
+    metadata: jsonb("metadata").default("{}"),
+    createdAt: timestamp("created_at").defaultNow(),
+  },
+  (table) => ({
+    tenantIdx: index("inventory_movements_tenant_idx").on(table.tenantId),
+    productIdx: index("inventory_movements_product_idx").on(table.productId),
+    typeIdx: index("inventory_movements_type_idx").on(table.movementType),
+    createdAtIdx: index("inventory_movements_created_at_idx").on(table.createdAt),
+  }),
+);
+
+// Inventory Transfers table - Stock transfers between locations
+export const inventoryTransfers = pgTable(
+  "inventory_transfers",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .references(() => tenants.id)
+      .notNull(),
+    transferNumber: varchar("transfer_number", { length: 50 }).notNull(),
+    fromLocationId: uuid("from_location_id"),
+    toLocationId: uuid("to_location_id"),
+    productId: uuid("product_id")
+      .references(() => products.id)
+      .notNull(),
+    quantity: decimal("quantity", { precision: 10, scale: 2 }).notNull(),
+    status: varchar("status", { length: 20 }).notNull().default("pending"), // 'pending' | 'in_transit' | 'completed' | 'cancelled'
+    requestedBy: text("requested_by"),
+    approvedBy: text("approved_by"),
+    receivedBy: text("received_by"),
+    requestedAt: timestamp("requested_at").defaultNow(),
+    approvedAt: timestamp("approved_at"),
+    shippedAt: timestamp("shipped_at"),
+    receivedAt: timestamp("received_at"),
+    notes: text("notes"),
+    metadata: jsonb("metadata").default("{}"),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    tenantIdx: index("inventory_transfers_tenant_idx").on(table.tenantId),
+    productIdx: index("inventory_transfers_product_idx").on(table.productId),
+    statusIdx: index("inventory_transfers_status_idx").on(table.status),
+    createdAtIdx: index("inventory_transfers_created_at_idx").on(table.createdAt),
+  }),
+);
+
+// Inventory Locations table - Storage locations
+export const inventoryLocations = pgTable(
+  "inventory_locations",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .references(() => tenants.id)
+      .notNull(),
+    name: varchar("name", { length: 100 }).notNull(),
+    locationType: varchar("location_type", { length: 20 }).notNull().default("storage"), // 'storage' | 'retail' | 'warehouse' | 'shelf'
+    address: text("address"),
+    isActive: boolean("is_active").notNull().default(true),
+    metadata: jsonb("metadata").default("{}"),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    tenantIdx: index("inventory_locations_tenant_idx").on(table.tenantId),
+    nameIdx: index("inventory_locations_name_idx").on(table.name),
+    isActiveIdx: index("inventory_locations_is_active_idx").on(table.isActive),
+  }),
+);
+
+// Additional Inventory Relations
+export const suppliersRelations = relations(suppliers, ({ one }) => ({
+  tenant: one(tenants, {
+    fields: [suppliers.tenantId],
+    references: [tenants.id],
+  }),
+}));
+
+export const inventoryMovementsRelations = relations(
+  inventoryMovements,
+  ({ one }) => ({
+    tenant: one(tenants, {
+      fields: [inventoryMovements.tenantId],
+      references: [tenants.id],
+    }),
+    product: one(products, {
+      fields: [inventoryMovements.productId],
+      references: [products.id],
+    }),
+  }),
+);
+
+export const inventoryTransfersRelations = relations(
+  inventoryTransfers,
+  ({ one }) => ({
+    tenant: one(tenants, {
+      fields: [inventoryTransfers.tenantId],
+      references: [tenants.id],
+    }),
+    product: one(products, {
+      fields: [inventoryTransfers.productId],
+      references: [products.id],
+    }),
+    fromLocation: one(inventoryLocations, {
+      fields: [inventoryTransfers.fromLocationId],
+      references: [inventoryLocations.id],
+    }),
+    toLocation: one(inventoryLocations, {
+      fields: [inventoryTransfers.toLocationId],
+      references: [inventoryLocations.id],
+    }),
+  }),
+);
+
+export const inventoryLocationsRelations = relations(
+  inventoryLocations,
+  ({ one }) => ({
+    tenant: one(tenants, {
+      fields: [inventoryLocations.tenantId],
+      references: [tenants.id],
+    }),
+  }),
+);
+
+// WhatsApp Messages Table
+export const whatsappMessages = pgTable(
+  'whatsapp_messages',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    tenantId: uuid('tenant_id').references(() => tenants.id),
+    mensajeId: varchar('mensaje_id', { length: 100 }).unique().notNull(),
+    numero: varchar('numero', { length: 20 }).notNull(),
+    contenido: text('contenido'),
+    tipo: varchar('tipo', { length: 20 }).notNull().default('text'),
+    direccion: varchar('direccion', { length: 10 }).notNull(), // 'inbound' | 'outbound'
+    estado: varchar('estado', { length: 20 }).notNull().default('received'), // 'received' | 'sent' | 'delivered' | 'read' | 'failed'
+    tipoInteraccion: varchar('tipo_interaccion', { length: 50 }),
+    metadata: jsonb('metadata'),
+    customerId: uuid('customer_id').references(() => customers.id),
+    relatedEntityType: varchar('related_entity_type', { length: 50 }), // 'order' | 'booking' | 'quote' | 'customer'
+    relatedEntityId: uuid('related_entity_id'),
+    createdAt: timestamp('created_at').defaultNow(),
+    updatedAt: timestamp('updated_at').defaultNow(),
+  },
+  (table) => ({
+    tenantIdx: index('whatsapp_msg_tenant_idx').on(table.tenantId),
+    numeroIdx: index('whatsapp_msg_numero_idx').on(table.numero),
+    direccionIdx: index('whatsapp_msg_direccion_idx').on(table.direccion),
+    estadoIdx: index('whatsapp_msg_estado_idx').on(table.estado),
+    customerIdx: index('whatsapp_msg_customer_idx').on(table.customerId),
+    relatedEntityIdx: index('whatsapp_msg_related_idx').on(table.relatedEntityType, table.relatedEntityId),
+    createdAtIdx: index('whatsapp_msg_created_idx').on(table.createdAt),
+  }),
+);
+
+// Relations
+export const whatsappMessagesRelations = relations(whatsappMessages, ({ one }) => ({
+  tenant: one(tenants, {
+    fields: [whatsappMessages.tenantId],
+    references: [tenants.id],
+  }),
+  customer: one(customers, {
+    fields: [whatsappMessages.customerId],
+    references: [customers.id],
   }),
 }));

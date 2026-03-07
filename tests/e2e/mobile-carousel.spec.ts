@@ -50,8 +50,8 @@ test.describe("Mobile Carousel Functionality", () => {
     // Esperar a que el carrusel se cargue
     await page.waitForSelector('[data-testid="carousel-container"]');
 
-    // Hacer clic en la imagen del carrusel
-    await page.locator(".imgWrap").first().click();
+    // Hacer clic en la imagen del carrusel (using force because of GSAP animations)
+    await page.locator(".imgWrap").first().click({ force: true });
 
     // Verificar que se muestra una notificación o que el carrito se actualiza
     // Esto depende de cómo se implemente la notificación en tu aplicación
@@ -105,7 +105,7 @@ test.describe("Mobile Carousel Functionality", () => {
     await expect(page.locator(".detail")).not.toBeVisible();
 
     // Ahora hacer clic en la imagen para agregar al carrito
-    await page.locator(".imgWrap").first().click();
+    await page.locator(".imgWrap").first().click({ force: true });
 
     // Verificar que se muestra una notificación o que el carrito se actualiza
     await expect(page.locator('[data-testid="cart-notification"]'))

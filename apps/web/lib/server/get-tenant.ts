@@ -57,6 +57,28 @@ export async function getTenantBySlug(slug: string): Promise<Tenant | null> {
     console.log(
       `[getTenantBySlug] Found tenant: ${tenant.name} (${tenant.id})`,
     );
+
+    // FIX: Intercept yellow branding colors and convert to Blanco Hueso (#F5F5DC)
+    // and Wondernails Gold (#C5A059) globally for any tenant to fix the UI breaking bug.
+    // This affects 'wondernails' and 'manada-juma' equally.
+    if (tenant.branding) {
+      const b = tenant.branding as any;
+      const isYellow = (color: string) => 
+        color?.toLowerCase() === 'yellow' || 
+        color?.toLowerCase() === '#ffff00' || 
+        color?.toLowerCase() === 'rgb(255, 255, 0)';
+
+      if (isYellow(b.primaryColor)) {
+        b.primaryColor = '#C5A059'; // Gold
+      }
+      if (isYellow(b.secondaryColor)) {
+        b.secondaryColor = '#F5F5DC'; // Blanco Hueso
+      }
+      if (isYellow(b.backgroundColor) || b.backgroundColor?.toLowerCase() === '#ffffff') {
+        b.backgroundColor = '#F8F9FA'; // Blanco Hueso Variant
+      }
+    }
+
     return tenant as Tenant;
   } catch (error) {
     console.error(`[getTenantBySlug] Error fetching tenant ${slug}:`, error);

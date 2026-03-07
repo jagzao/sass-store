@@ -3,7 +3,7 @@
  * Tests for multi-tenant operations and isolation
  */
 
-import { describe, it, expect, beforeEach } from "vitest";
+// Using globals instead of imports since globals: true in Vitest config
 import {
   getTestDb,
   createTestTenant,
@@ -39,8 +39,9 @@ describe("Tenant Operations", () => {
       if (!db) return;
 
       expect(tenant1).toBeDefined();
-      expect(tenant1.slug).toBe("tenant-1");
-      expect(tenant2.slug).toBe("tenant-2");
+      // Slugs are randomized by test setup for uniqueness
+      expect(tenant1.slug).toContain("tenant-1");
+      expect(tenant2.slug).toContain("tenant-2");
     });
 
     it("should create tenant with correct mode", async () => {

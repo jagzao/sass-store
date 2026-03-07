@@ -5,7 +5,6 @@
  * Includes assertion helpers, mock factories, and test patterns.
  */
 
-import { vi, describe, it, expect, beforeEach, afterEach } from "vitest";
 import { MockDatabase } from "../mocks/MockDatabase";
 import {
   createTestContext,
@@ -245,8 +244,7 @@ export const verifyTenantIsolation = async (
   expect(sharedProducts).toHaveLength(0);
 };
 
-// Re-export vitest utilities for convenience
-export { describe, it, expect, beforeEach, afterEach, vi };
+// Note: Using globals instead of imports since globals: true in Vitest config
 
 // Test setup patterns
 export const standardTestSetup = {

@@ -3,7 +3,7 @@
  * End-to-end business flow tests (without database dependency)
  */
 
-import { describe, it, expect } from "vitest";
+// Using globals instead of imports since globals: true in Vitest config
 
 describe("Complete Business Flows", () => {
   describe("E-Commerce Flow", () => {

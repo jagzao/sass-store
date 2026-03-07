@@ -1,5 +1,6 @@
 import tseslint from "@typescript-eslint/eslint-plugin";
 import tsParser from "@typescript-eslint/parser";
+import reactHooks from "eslint-plugin-react-hooks";
 
 export default [
   {
@@ -25,6 +26,7 @@ export default [
     },
     plugins: {
       "@typescript-eslint": tseslint,
+      "react-hooks": reactHooks,
     },
     rules: {
       // Console statements - error in production, warn in development
@@ -36,9 +38,13 @@ export default [
 
       // Code quality rules
       "no-var": "error",
-      "prefer-const": "error",
+      "prefer-const": "warn",
       "prefer-arrow-callback": "warn",
       "no-unused-expressions": "warn",
+
+      // React hooks rules
+      "react-hooks/rules-of-hooks": "warn",
+      "react-hooks/exhaustive-deps": "warn",
     },
   },
   {

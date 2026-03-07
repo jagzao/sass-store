@@ -1,14 +1,11 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+// Using globals instead of imports since globals: true in Vitest config
+import { vi } from 'vitest';
 import { NextRequest, NextResponse } from "next/server";
 import { withTenantContext } from "@/lib/db/tenant-context";
 import { db } from "@sass-store/database";
-import { tenants } from "@sass-store/database/schema";
-import { eq } from "drizzle-orm";
-import { sql } from "drizzle-orm";
 
-// Mock shared
-const { mockGetServerSession } = vi.hoisted(() => {
-  return { mockGetServerSession: vi.fn() };
+const { mockAuth } = vi.hoisted(() => {
+  return { mockAuth: vi.fn() };
 });
 
 // Mock de la base de datos
@@ -17,10 +14,21 @@ vi.mock("@sass-store/database", () => ({
     select: vi.fn(),
     execute: vi.fn(),
   },
+}));
+
+vi.mock("@sass-store/database/schema", () => ({
   tenants: {
     id: "id",
     slug: "slug",
   },
+}));
+
+vi.mock("drizzle-orm", () => ({
+  eq: vi.fn(() => ({ mocked: "eq" })),
+  sql: (strings: TemplateStringsArray, ...values: unknown[]) => ({
+    strings,
+    values,
+  }),
 }));
 
 // Mock del logger
@@ -34,12 +42,8 @@ vi.mock("@/lib/logger", () => ({
   },
 }));
 
-vi.mock("next-auth", () => ({
-  getServerSession: mockGetServerSession,
-}));
-
 vi.mock("@/lib/auth", () => ({
-  authOptions: {},
+  auth: mockAuth,
 }));
 
 describe("withTenantContext", () => {
@@ -47,13 +51,21 @@ describe("withTenantContext", () => {
   let mockHandler: ReturnType<typeof vi.fn>;
   let mockDb: any;
 
+  const createMockRequest = (url: string, tenantHeader: string | null = null) =>
+    ({
+      url,
+      headers: {
+        get: vi.fn((name: string) =>
+          name === "x-tenant-slug" ? tenantHeader : null,
+        ),
+      },
+    }) as unknown as NextRequest;
+
   beforeEach(() => {
     vi.clearAllMocks();
 
     // Configurar mock de la solicitud
-    mockRequest = {
-      url: "http://localhost:3000/api/v1/products",
-    } as NextRequest;
+    mockRequest = createMockRequest("http://localhost:3000/api/v1/products");
 
     // Configurar mock del handler
     mockHandler = vi
@@ -75,7 +87,7 @@ describe("withTenantContext", () => {
 
   it("debería establecer el contexto de tenant y ejecutar el handler", async () => {
     // Mock de la sesión
-    mockGetServerSession.mockResolvedValue({
+    mockAuth.mockResolvedValue({
       user: {
         tenantSlug: "test-tenant",
       },
@@ -86,23 +98,12 @@ describe("withTenantContext", () => {
     expect(result).toBeDefined();
     expect(mockHandler).toHaveBeenCalledWith(mockRequest, "tenant-uuid-123");
 
-    // Debug output
-    console.log("mockDb.execute calls:", mockDb.execute.mock.calls);
-
-    // Relaxed assertion to verify it was called
     expect(mockDb.execute).toHaveBeenCalled();
-    // We can try to match parameters more loosely if needed
-    // The previous check was:
-    // expect(mockDb.execute).toHaveBeenCalledWith(
-    //   expect.objectContaining({
-    //     sql: expect.stringContaining("set_tenant_context"),
-    //   }),
-    // );
   });
 
   it("debería retornar error 404 si no se encuentra el tenant", async () => {
     // Mock de la sesión
-    mockGetServerSession.mockResolvedValue({
+    mockAuth.mockResolvedValue({
       user: {
         tenantSlug: "non-existent-tenant",
       },
@@ -125,7 +126,7 @@ describe("withTenantContext", () => {
 
   it("debería manejar errores en la ejecución del handler", async () => {
     // Mock de la sesión
-    mockGetServerSession.mockResolvedValue({
+    mockAuth.mockResolvedValue({
       user: {
         tenantSlug: "test-tenant",
       },
@@ -141,7 +142,7 @@ describe("withTenantContext", () => {
 
   it("debería manejar errores al establecer el contexto de tenant", async () => {
     // Mock de la sesión
-    mockGetServerSession.mockResolvedValue({
+    mockAuth.mockResolvedValue({
       user: {
         tenantSlug: "test-tenant",
       },
@@ -158,9 +159,9 @@ describe("withTenantContext", () => {
 
   it("debería extraer tenantSlug de la URL cuando se especifica", async () => {
     // Configurar mock de la solicitud con URL que contiene tenant
-    mockRequest = {
-      url: "http://localhost:3000/t/test-tenant/api/v1/products",
-    } as NextRequest;
+    mockRequest = createMockRequest(
+      "http://localhost:3000/t/test-tenant/api/v1/products",
+    );
 
     const result = await withTenantContext(mockRequest, mockHandler, {
       getTenantSlugFromUrl: true,
@@ -173,9 +174,7 @@ describe("withTenantContext", () => {
 
   it("debería retornar error 404 si no se encuentra tenantSlug en la URL", async () => {
     // Configurar mock de la solicitud sin tenant en la URL
-    mockRequest = {
-      url: "http://localhost:3000/api/v1/products",
-    } as NextRequest;
+    mockRequest = createMockRequest("http://localhost:3000/api/v1/products");
 
     const result = await withTenantContext(mockRequest, mockHandler, {
       getTenantSlugFromUrl: true,

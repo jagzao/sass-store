@@ -8,10 +8,10 @@ import {
 } from "../../../_lib/tenant-context";
 
 interface RouteParams {
-  params: {
+  params: Promise<{
     productId: string;
     serviceId: string;
-  };
+  }>;
 }
 
 /**
@@ -25,7 +25,7 @@ export async function DELETE(request: NextRequest, context: RouteParams) {
       return toInventoryErrorResponse(tenantContext.error);
     }
 
-    const { productId, serviceId } = context.params;
+    const { productId, serviceId } = await context.params;
 
     const deleted = await db
       .delete(serviceProducts)

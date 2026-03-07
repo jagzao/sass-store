@@ -18,7 +18,6 @@ dist
 build
 out
 apps/web/.next
-apps/api/.next
 restart-app.ps1
 restart-app.cmd
 RESTART_APP_README.md

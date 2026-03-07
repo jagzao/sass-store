@@ -1,74 +1,85 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@sass-store/database";
-import { serviceQuotes, services } from "@sass-store/database/schema";
-import { eq, desc, and } from "drizzle-orm";
+import { quotes, quoteItems } from "@sass-store/database/schema";
+import { eq, desc } from "drizzle-orm";
 import { withTenantContextFromParams } from "@/lib/db/tenant-context";
 import { z } from "zod";
 
+// Schema for creating a quote item
+const createQuoteItemSchema = z.object({
+  type: z.enum(["service", "product"]),
+  itemId: z.string().uuid().optional(),
+  name: z.string().min(1),
+  description: z.string().optional(),
+  unitPrice: z.number().nonnegative(),
+  quantity: z.number().positive(),
+  subtotal: z.number().nonnegative(),
+});
+
 // Schema for creating a quote
 const createQuoteSchema = z.object({
-  serviceId: z.string().uuid(),
   customerName: z.string().min(1, "Customer name is required"),
   customerEmail: z.string().email().optional().or(z.literal("")),
   customerPhone: z.string().optional(),
   notes: z.string().optional(),
-  validityDays: z.number().int().positive().default(7),
-  termsConditions: z.string().optional(),
+  validityDays: z.number().int().positive().default(15),
+  totalAmount: z.number().nonnegative(),
+  items: z.array(createQuoteItemSchema).min(1, "At least one item is required"),
 });
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { tenant: string } },
+  { params }: { params: Promise<{ tenant: string }> },
 ) {
   return withTenantContextFromParams(request, params, async (req, tenantId) => {
     try {
       const body = await req.json();
       const validatedData = createQuoteSchema.parse(body);
 
-      // Verify service exists and belongs to tenant
-      const service = await db.query.services.findFirst({
-        where: and(
-          eq(services.id, validatedData.serviceId),
-          eq(services.tenantId, tenantId),
-        ),
-      });
-
-      if (!service) {
-        return NextResponse.json(
-          { error: "Service not found" },
-          { status: 404 },
-        );
-      }
-
       // Generate quote number (e.g., Q-TIMESTAMP-RANDOM)
-      // A collision is unlikely but possible, checking or using sequence logic matches best practice,
-      // but simplistic approach works for now.
-      const quoteNumber = `Q-${Date.now().toString().slice(-6)}-${Math.floor(Math.random() * 1000)}`;
+      const quoteNumber = `Q-${Date.now().toString().slice(-6)}-${Math.floor(
+        Math.random() * 1000,
+      )}`;
 
       // Calculate expiration
       const expiresAt = new Date();
       expiresAt.setDate(expiresAt.getDate() + validatedData.validityDays);
 
-      const [newQuote] = await db
-        .insert(serviceQuotes)
-        .values({
-          tenantId,
-          serviceId: validatedData.serviceId,
-          quoteNumber,
-          name: service.name, // Snapshot of service name
-          description: service.description,
-          price: service.price, // Snapshot of current price
-          duration: service.duration,
-          validityDays: validatedData.validityDays,
-          termsConditions: validatedData.termsConditions,
-          customerName: validatedData.customerName,
-          customerEmail: validatedData.customerEmail || null,
-          customerPhone: validatedData.customerPhone || null,
-          notes: validatedData.notes,
-          status: "pending",
-          expiresAt,
-        })
-        .returning();
+      // Transaction to create quote and items
+      const newQuote = await db.transaction(async (tx) => {
+        const [quote] = await tx
+          .insert(quotes)
+          .values({
+            tenantId,
+            quoteNumber,
+            customerName: validatedData.customerName,
+            customerEmail: validatedData.customerEmail || null,
+            customerPhone: validatedData.customerPhone || null,
+            totalAmount: validatedData.totalAmount.toString(),
+            notes: validatedData.notes,
+            status: "pending",
+            validityDays: validatedData.validityDays,
+            expiresAt,
+          })
+          .returning();
+
+        if (validatedData.items.length > 0) {
+          await tx.insert(quoteItems).values(
+            validatedData.items.map((item) => ({
+              quoteId: quote.id,
+              type: item.type,
+              itemId: item.itemId,
+              name: item.name,
+              description: item.description,
+              unitPrice: item.unitPrice.toString(),
+              quantity: item.quantity.toString(),
+              subtotal: item.subtotal.toString(),
+            })),
+          );
+        }
+
+        return quote;
+      });
 
       return NextResponse.json(newQuote, { status: 201 });
     } catch (error) {
@@ -89,21 +100,15 @@ export async function POST(
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { tenant: string } },
+  { params }: { params: Promise<{ tenant: string }> },
 ) {
   return withTenantContextFromParams(request, params, async (req, tenantId) => {
     try {
-      const allQuotes = await db.query.serviceQuotes.findMany({
-        where: eq(serviceQuotes.tenantId, tenantId),
-        orderBy: [desc(serviceQuotes.createdAt)],
+      const allQuotes = await db.query.quotes.findMany({
+        where: eq(quotes.tenantId, tenantId),
+        orderBy: [desc(quotes.createdAt)],
         with: {
-          service: {
-            columns: {
-              id: true,
-              name: true,
-              imageUrl: true,
-            },
-          },
+          items: true,
         },
       });
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 interface TokenManagementModalProps {
   tenant: string;
@@ -29,13 +29,7 @@ export default function TokenManagementModal({
   const [isLoading, setIsLoading] = useState(false);
   const [connections, setConnections] = useState<Record<string, boolean>>({});
 
-  useEffect(() => {
-    if (isOpen) {
-      fetchConnections();
-    }
-  }, [isOpen]);
-
-  const fetchConnections = async () => {
+  const fetchConnections = useCallback(async () => {
     try {
       const response = await fetch(`/api/v1/social/tokens?tenant=${tenant}`);
       if (response.ok) {
@@ -53,7 +47,13 @@ export default function TokenManagementModal({
     } catch (error) {
       console.error("Error fetching connections:", error);
     }
-  };
+  }, [tenant]);
+
+  useEffect(() => {
+    if (isOpen) {
+      fetchConnections();
+    }
+  }, [isOpen, fetchConnections]);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();

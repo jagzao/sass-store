@@ -3,6 +3,7 @@ import { db } from "@sass-store/database";
 import {
   customerVisits,
   customerVisitServices,
+  customerVisitProducts,
   visitPhotos,
   tenants,
   services,
@@ -28,6 +29,17 @@ const createVisitSchema = z.object({
       subtotal: z.number(),
     }),
   ),
+  products: z
+    .array(
+      z.object({
+        productId: z.string(),
+        description: z.string().optional(),
+        unitPrice: z.number(),
+        quantity: z.number(),
+        subtotal: z.number(),
+      }),
+    )
+    .optional(),
   photos: z
     .array(
       z.object({
@@ -68,6 +80,11 @@ export async function GET(
             service: true, // Join to get service name
           },
         },
+        products: {
+          with: {
+            product: true, // Join to get product details
+          },
+        },
         photos: true,
       },
       orderBy: [desc(customerVisits.visitDate)],
@@ -83,6 +100,13 @@ export async function GET(
         quantity: Number(vs.quantity),
         unitPrice: Number(vs.unitPrice),
         subtotal: Number(vs.subtotal),
+      })),
+      products: visit.products.map((vp) => ({
+        id: vp.productId,
+        productName: vp.product.name,
+        quantity: Number(vp.quantity),
+        unitPrice: Number(vp.unitPrice),
+        subtotal: Number(vp.subtotal),
       })),
     }));
 
@@ -149,7 +173,21 @@ export async function POST(
         );
       }
 
-      // 3. Create Photos
+      // 3. Create Products
+      if (data.products && data.products.length > 0) {
+        await tx.insert(customerVisitProducts).values(
+          data.products.map((p) => ({
+            visitId: visit.id,
+            productId: p.productId,
+            description: p.description,
+            unitPrice: p.unitPrice.toString(),
+            quantity: p.quantity,
+            subtotal: p.subtotal.toString(),
+          })),
+        );
+      }
+
+      // 4. Create Photos
       if (data.photos && data.photos.length > 0) {
         await tx.insert(visitPhotos).values(
           data.photos.map((p) => ({

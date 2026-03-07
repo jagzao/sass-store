@@ -7,6 +7,7 @@ import { LiveRegionProvider } from "@/components/a11y/LiveRegion";
 import { getTenantBySlug } from "@/lib/server/get-tenant";
 import { fetchRevalidating } from "@/lib/api/fetch-with-cache";
 import type { TenantData, Product, Service } from "@/types/tenant";
+import HomeRouterWrapper from "@/components/home/HomeRouterWrapper";
 
 // Force dynamic rendering
 export const dynamic = "force-dynamic";
@@ -26,6 +27,10 @@ interface PageProps {
  * - Automatic caching with Next.js
  * - No client-side JavaScript for initial render
  * - Streaming with Suspense boundaries
+ * 
+ * Role-Based Home Selection:
+ * - Unauthenticated / Cliente role => Public Home (existing behavior)
+ * - Admin / Gerente / Personal role => HomeTenant Dashboard
  */
 export default async function TenantPageServer({ params }: PageProps) {
   const { tenant: tenantSlug } = await params;
@@ -53,7 +58,8 @@ export default async function TenantPageServer({ params }: PageProps) {
     services: [],
   };
 
-  const pageContent = (
+  // Public home content (existing behavior)
+  const publicHomeContent = (
     <LiveRegionProvider>
       <>
         {/* Hero Section - renders immediately */}
@@ -85,8 +91,16 @@ export default async function TenantPageServer({ params }: PageProps) {
     </LiveRegionProvider>
   );
 
-  // Return the page content directly without client-side auth wrapper
-  return pageContent;
+  // Use HomeRouter for role-based home selection
+  // Staff roles (admin, gerente, personal) see HomeTenant dashboard
+  // Unauthenticated and cliente roles see public home
+  return (
+    <HomeRouterWrapper
+      tenantSlug={tenantSlug}
+      tenantData={tenantData}
+      publicHomeContent={publicHomeContent}
+    />
+  );
 }
 
 /**

@@ -73,9 +73,8 @@ class ProjectValidator {
     this.check('Docs directory exists', () => this.dirExists('docs'));
     this.check('Tests directory exists', () => this.dirExists('tests'));
 
-    // Apps structure
+    // Apps structure (monolith-only: web app contains all API routes)
     this.check('Web app exists', () => this.dirExists('apps/web'));
-    this.check('API app exists', () => this.dirExists('apps/api'));
 
     // Packages structure
     this.check('UI package exists', () => this.dirExists('packages/ui'));
@@ -106,18 +105,6 @@ class ProjectValidator {
     // Components
     this.check('Components directory exists', () => this.dirExists('apps/web/components'));
     this.check('Lib directory exists', () => this.dirExists('apps/web/lib'));
-  }
-
-  validateApiApp() {
-    this.log('=== API App Validation ===');
-
-    this.check('API package.json exists', () => this.fileExists('apps/api/package.json'));
-    this.check('API TypeScript config exists', () => this.fileExists('apps/api/tsconfig.json'));
-
-    // API structure
-    this.check('API app directory exists', () => this.dirExists('apps/api/app'));
-    this.check('API lib directory exists', () => this.dirExists('apps/api/lib'));
-    this.check('Products API exists', () => this.fileExists('apps/api/app/api/v1/products/route.ts'));
   }
 
   validatePackages() {
@@ -250,7 +237,6 @@ class ProjectValidator {
 
     this.validateProjectStructure();
     this.validateWebApp();
-    this.validateApiApp();
     this.validatePackages();
     this.validateTests();
     this.validateDocumentation();

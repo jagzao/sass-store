@@ -69,7 +69,7 @@ export default async function LoginPage({ params, searchParams }: PageProps) {
   const branding = tenantData.branding as any;
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#F8F9FA] flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         {/* Tenant Branding */}
         <div className="text-center">

@@ -17,23 +17,21 @@ export const TEST_CREDENTIALS = {
 export async function loginAsAdmin(page: Page) {
   const { adminEmail, adminPassword, tenantSlug } = TEST_CREDENTIALS;
 
+  page.on('pageerror', err => console.error('BROWSER CAUGHT ERROR:', err.message));
+  page.on('console', msg => {
+    if (msg.type() === 'error') console.error('BROWSER CONSOLE ERROR:', msg.text());
+  });
+
+  // Navigate exactly as in customer-workflow.spec.ts
   await page.goto(`/t/${tenantSlug}/login`);
+  
+  // Dev server needs time to compile the login page dynamically (up to 30s)
+  await expect(page.locator('input[type="email"]')).toBeVisible({ timeout: 30000 });
 
-  // Wait for page to load (tenant data fetch)
-  await page.waitForLoadState("networkidle", { timeout: 30000 });
-
-  // Wait for login form to be visible (using data-testid)
-  await expect(page.getByTestId("email-input")).toBeVisible({ timeout: 10000 });
-
-  // Fill credentials using data-testid
-  await page.getByTestId("email-input").fill(adminEmail);
-  await page.getByTestId("password-input").fill(adminPassword);
-
-  // Submit form
-  await page.getByTestId("login-btn").click();
-
-  // Wait for successful navigation
-  await page.waitForURL(`**\/t/${tenantSlug}/**`, { timeout: 15000 });
+  await page.fill('input[type="email"]', adminEmail);
+  await page.fill('input[type="password"]', adminPassword);
+  await page.click('button[type="submit"]');
+  await page.waitForURL(`**\/t/${tenantSlug}`);
 }
 
 /**

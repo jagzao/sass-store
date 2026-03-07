@@ -21,6 +21,7 @@ const KPICard = memo<KPICardProps>(
     format = "number",
   }) => {
     const formatValue = (val: number | string) => {
+      if (val === undefined || val === null) return "0";
       if (typeof val === "string") return val;
       if (loading) return "---";
 
@@ -74,7 +75,7 @@ const KPICard = memo<KPICardProps>(
           {formatValue(value)}
         </div>
 
-        {change !== undefined && (
+        {change !== undefined && change !== null && (
           <div className={`text-sm flex items-center ${getTrendColor(trend)}`}>
             <span className="mr-1">{getTrendIcon(trend)}</span>
             {change > 0 ? "+" : ""}

@@ -6,6 +6,7 @@ import { getTenantBySlug } from "@/lib/server/get-tenant";
 import CustomersList from "@/components/customers/CustomersList";
 import CustomersFilters from "@/components/customers/CustomersFilters";
 import ClientesPageWrapper from "./ClientesPageWrapper";
+import { AdminLayoutProvider } from "@/components/home/AdminLayoutProvider";
 
 interface PageProps {
   params: Promise<{
@@ -41,43 +42,45 @@ export default async function CustomersPage({
   console.log(`[CustomersPage] Successfully loaded tenant: ${tenantData.name}`);
 
   return (
-    <ClientesPageWrapper tenantSlug={tenantSlug}>
-      <LiveRegionProvider>
-        <div className="min-h-screen">
-          {/* Main Content */}
-          <main className="container mx-auto px-4 py-8">
-            <div className="mb-8">
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                Gestión de Clientas
-              </h1>
-              <p className="text-gray-600">
-                Administra expedientes, historial de visitas y próximas citas
-              </p>
-            </div>
+    <AdminLayoutProvider tenantSlug={tenantSlug}>
+      <ClientesPageWrapper tenantSlug={tenantSlug}>
+        <LiveRegionProvider>
+          <div className="min-h-screen">
+            {/* Main Content */}
+            <main className="container mx-auto px-4 py-8">
+              <div className="mb-8">
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                  Gestión de Clientas
+                </h1>
+                <p className="text-gray-600">
+                  Administra expedientes, historial de visitas y próximas citas
+                </p>
+              </div>
 
-            {/* Filters */}
-            <Suspense
-              fallback={
-                <div className="h-12 bg-gray-100 rounded-lg animate-pulse" />
-              }
-            >
-              <CustomersFilters
-                tenantSlug={tenantSlug}
-                searchParams={resolvedSearchParams}
-              />
-            </Suspense>
+              {/* Filters */}
+              <Suspense
+                fallback={
+                  <div className="h-12 bg-gray-100 rounded-lg animate-pulse" />
+                }
+              >
+                <CustomersFilters
+                  tenantSlug={tenantSlug}
+                  searchParams={resolvedSearchParams}
+                />
+              </Suspense>
 
-            {/* Customers List */}
-            <Suspense fallback={<CustomersListSkeleton />}>
-              <CustomersList
-                tenantSlug={tenantSlug}
-                searchParams={resolvedSearchParams}
-              />
-            </Suspense>
-          </main>
-        </div>
-      </LiveRegionProvider>
-    </ClientesPageWrapper>
+              {/* Customers List */}
+              <Suspense fallback={<CustomersListSkeleton />}>
+                <CustomersList
+                  tenantSlug={tenantSlug}
+                  searchParams={resolvedSearchParams}
+                />
+              </Suspense>
+            </main>
+          </div>
+        </LiveRegionProvider>
+      </ClientesPageWrapper>
+    </AdminLayoutProvider>
   );
 }
 

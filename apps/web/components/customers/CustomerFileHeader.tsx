@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useImperativeHandle, forwardRef } from "react";
 import { useRouter } from "next/navigation";
 import {
   User,
@@ -26,6 +26,11 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import HistorialMedico, { type HistorialMedicoData, type HistorialMedicoHandle } from "./HistorialMedico";
+
+export interface CustomerFileHeaderHandle {
+  saveHistorial: () => Promise<void>;
+}
 
 interface Customer {
   id: string;
@@ -43,10 +48,19 @@ interface CustomerFileHeaderProps {
   customerId: string;
 }
 
-export default function CustomerFileHeader({
+const CustomerFileHeader = forwardRef<CustomerFileHeaderHandle, CustomerFileHeaderProps>(
+function CustomerFileHeader({
   tenantSlug,
   customerId,
-}: CustomerFileHeaderProps) {
+}, ref) {
+  const historialRef = useRef<HistorialMedicoHandle>(null);
+
+  useImperativeHandle(ref, () => ({
+    saveHistorial: async () => {
+      await historialRef.current?.save();
+    },
+  }));
+
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -500,67 +514,44 @@ export default function CustomerFileHeader({
         </div>
       )}
 
-      {/* General Notes */}
-      <div
-        className={`border-t pt-4 ${isLuxury ? "border-[#D4AF37]/10" : "border-gray-200"}`}
-      >
-        <div className="flex items-center justify-between mb-2">
-          <h3
-            className={`text-sm font-medium ${isLuxury ? "text-[#b3932d]" : "text-gray-700"}`}
-          >
-            Acerca de la clienta
-          </h3>
-          {!editing ? (
-            <button
-              onClick={() => setEditing(true)}
-              className={`text-sm ${isLuxury ? "text-[#b3932d] hover:text-[#8a7022]" : "text-blue-600 hover:text-blue-800"} flex items-center gap-1 transition-colors`}
-            >
-              <Edit className="h-4 w-4" />
-              Editar
-            </button>
-          ) : (
-            <div className="flex gap-2">
-              <button
-                onClick={handleSave}
-                className={`text-sm ${isLuxury ? "text-green-600 hover:text-green-700" : "text-green-600 hover:text-green-800"} flex items-center gap-1`}
-              >
-                <Save className="h-4 w-4" />
-                Guardar
-              </button>
-              <button
-                onClick={() => {
-                  setEditing(false);
-                  setEditedNotes(customer.generalNotes || "");
-                }}
-                className={`text-sm ${isLuxury ? "text-gray-500 hover:text-gray-700" : "text-gray-600 hover:text-gray-800"} flex items-center gap-1`}
-              >
-                <X className="h-4 w-4" />
-                Cancelar
-              </button>
-            </div>
-          )}
-        </div>
-
-        {editing ? (
-          <textarea
-            value={editedNotes}
-            onChange={(e) => setEditedNotes(e.target.value)}
-            rows={4}
-            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 text-sm ${
-              isLuxury
-                ? "bg-white border-gray-200 text-gray-800 focus:ring-[#D4AF37] placeholder-gray-400"
-                : "border-gray-300 focus:ring-blue-500"
-            }`}
-            placeholder="Notas sobre preferencias, alergias, observaciones especiales..."
-          />
-        ) : (
-          <p
-            className={`text-sm whitespace-pre-wrap ${isLuxury ? "text-gray-600" : "text-gray-600"}`}
-          >
-            {customer.generalNotes || "Sin notas"}
-          </p>
-        )}
-      </div>
+      {/* Historial Médico & Medidas — replaces "Acerca de la clienta" */}
+      <HistorialMedico
+        tenantSlug={tenantSlug}
+        customerId={customerId}
+        initialData={{
+          musicaFavorita: (customer as any).medicalHistory?.musicaFavorita || "",
+          snackFavorito: (customer as any).medicalHistory?.snackFavorito || "",
+          enfermedades: (customer as any).medicalHistory?.enfermedades || {},
+          contraindicaciones: (customer as any).medicalHistory?.contraindicaciones || "",
+          medidas: (customer as any).medicalHistory?.medidas || {},
+          formaUna: (customer as any).medicalHistory?.formaUna || "",
+          largoDeseado: (customer as any).medicalHistory?.largoDeseado || "",
+          notasGenerales: customer.generalNotes || "",
+        }}
+        onSave={async (historialData: HistorialMedicoData) => {
+          const { notasGenerales, ...medicinaFields } = historialData;
+          const currentMedical = (customer as any).medicalHistory || {};
+          const response = await fetch(
+            `/api/tenants/${tenantSlug}/customers/${customerId}`,
+            {
+              method: "PATCH",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                generalNotes: notasGenerales,
+                medicalHistory: {
+                  ...currentMedical,
+                  ...medicinaFields,
+                },
+              }),
+            },
+          );
+          if (!response.ok) throw new Error("Failed to save historial médico");
+          const updated = await response.json();
+          setCustomer(updated.customer);
+        }}
+      />
     </div>
   );
-}
+});
+
+export default CustomerFileHeader;

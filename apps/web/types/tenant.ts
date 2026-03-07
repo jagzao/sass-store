@@ -5,6 +5,10 @@
 export interface TenantBranding {
   primaryColor: string;
   secondaryColor: string;
+  accentColor?: string;
+  logoUrl?: string;
+  faviconUrl?: string;
+  // Legacy aliases kept for backward compatibility
   logo?: string;
   favicon?: string;
   theme?: "light" | "dark";

@@ -46,8 +46,10 @@ const isLocalhost =
 function getConnectionString(): string {
   // Use separate env var for testing if available to avoid wiping dev data
   if (isTestEnv && process.env.TEST_DATABASE_URL) {
+    console.log("[DB] Using TEST_DATABASE_URL");
     return process.env.TEST_DATABASE_URL;
   }
+  console.log("[DB] Using DATABASE_URL");
   return process.env.DATABASE_URL || "";
 }
 

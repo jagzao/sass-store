@@ -4,7 +4,7 @@
  */
 
 const { Pool } = require("pg");
-require("dotenv").config({ path: "apps/api/.env.local" });
+require("dotenv").config({ path: "apps/web/.env.local" });
 
 async function testMonitoring() {
   const pool = new Pool({ connectionString: process.env.DATABASE_URL });

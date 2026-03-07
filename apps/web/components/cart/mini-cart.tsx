@@ -57,7 +57,7 @@ export function MiniCart({ isVisible, onClose }: MiniCartProps) {
           <div className="relative">
             <span className="text-xl">🛒</span>
             {items.length > 0 && (
-              <span className="absolute -top-2 -right-2 bg-yellow-400 text-black text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
+              <span className="absolute -top-2 -right-2 bg-stone-400 text-black text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
                 {items.reduce((sum, item) => sum + item.quantity, 0)}
               </span>
             )}

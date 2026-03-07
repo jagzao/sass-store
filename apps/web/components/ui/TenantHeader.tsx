@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import TenantLogo from "@/components/ui/TenantLogo";
 import TenantNavigation from "@/components/ui/TenantNavigation";
 import UserMenu from "@/components/auth/UserMenu";
@@ -16,6 +17,7 @@ export default function TenantHeader({
   variant,
 }: TenantHeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -25,6 +27,32 @@ export default function TenantHeader({
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // DASHBOARD LAYOUT OVERLAP FIX:
+  // If the user is on an admin dashboard route, we completely hide this generic public header
+  // so that the DashboardLayoutWrapper's header and sidebar can take over correctly without overlapping logos.
+  // ALWAYS place early returns AFTER all hooks.
+  const adminRoutes = [
+    "/finance",
+    "/social",
+    "/clientes",
+    "/inventory",
+    "/bookings",
+    "/settings",
+    "/contact",
+    "/admin",
+    "/admin_bookings",
+  ];
+
+  // Keep the tenant public header visible on admin calendar,
+  // because this screen relies on the same top branding/nav context.
+  const isAdminCalendarRoute = pathname?.includes("/admin/calendar");
+  const isDashboardRoute =
+    !isAdminCalendarRoute && adminRoutes.some((route) => pathname?.includes(route));
+
+  if (isDashboardRoute) {
+    return null;
+  }
 
   const effectiveVariant =
     variant || (tenantData.branding.theme === "dark" ? "dark" : "default");
@@ -60,7 +88,7 @@ export default function TenantHeader({
           tenantName={tenantData.name}
           primaryColor={tenantData.branding.primaryColor}
           variant={effectiveVariant}
-          logoUrl={tenantData.branding.logo}
+          logoUrl={tenantData.branding.logoUrl || tenantData.branding.logo}
         />
         <TenantNavigation
           tenantSlug={tenantData.slug}

@@ -3,19 +3,17 @@
  * Tests for order creation, updates, and payment processing
  */
 
-import { describe, it, expect, beforeEach } from "vitest";
+// Using globals instead of imports since globals: true in Vitest config
 import {
   getTestDb,
   createTestTenant,
   createTestProduct,
-  createTestUser,
 } from "../setup/test-database";
 import * as schema from "@sass-store/database/schema";
 import { eq } from "drizzle-orm";
 
 describe("Order Processing", () => {
   let tenant: any;
-  let user: any;
   let product1: any;
   let product2: any;
 
@@ -28,23 +26,18 @@ describe("Order Processing", () => {
       mode: "catalog",
     });
 
-    user = await createTestUser({
-      email: "customer@example.com",
-      name: "Test Customer",
-    });
-
     product1 = await createTestProduct(tenant.id, {
       sku: "PROD-1",
       name: "Product 1",
       price: "29.99",
-      stock: 10,
+      category: "test",
     });
 
     product2 = await createTestProduct(tenant.id, {
       sku: "PROD-2",
       name: "Product 2",
       price: "49.99",
-      stock: 5,
+      category: "test",
     });
   });
 
@@ -57,18 +50,17 @@ describe("Order Processing", () => {
         .insert(schema.orders)
         .values({
           tenantId: tenant.id,
-          userId: user.id,
+          orderNumber: `ORD-${Date.now()}`,
+          customerName: "Test Customer",
+          customerEmail: "customer@example.com",
           status: "pending",
           total: "29.99",
-          subtotal: "29.99",
-          tax: "0.00",
-          discount: "0.00",
         })
         .returning();
 
       expect(order).toBeDefined();
       expect(order.tenantId).toBe(tenant.id);
-      expect(order.userId).toBe(user.id);
+      expect(order.orderNumber).toBeDefined();
       expect(order.status).toBe("pending");
     });
 
@@ -80,12 +72,11 @@ describe("Order Processing", () => {
         .insert(schema.orders)
         .values({
           tenantId: tenant.id,
-          userId: user.id,
+          orderNumber: `ORD-${Date.now()}`,
+          customerName: "Test Customer",
+          customerEmail: "customer@example.com",
           status: "pending",
           total: "109.97",
-          subtotal: "109.97",
-          tax: "0.00",
-          discount: "0.00",
         })
         .returning();
 
@@ -93,17 +84,19 @@ describe("Order Processing", () => {
       await db.insert(schema.orderItems).values([
         {
           orderId: order.id,
-          productId: product1.id,
+          type: "product",
+          name: product1.name,
           quantity: 1,
-          price: "29.99",
-          subtotal: "29.99",
+          unitPrice: "29.99",
+          totalPrice: "29.99",
         },
         {
           orderId: order.id,
-          productId: product2.id,
+          type: "product",
+          name: product2.name,
           quantity: 2,
-          price: "49.99",
-          subtotal: "99.98",
+          unitPrice: "49.99",
+          totalPrice: "99.98",
         },
       ]);
 
@@ -123,24 +116,20 @@ describe("Order Processing", () => {
 
       const subtotal =
         parseFloat(product1.price) * 2 + parseFloat(product2.price) * 1;
-      const tax = subtotal * 0.1; // 10% tax
-      const total = subtotal + tax;
+      const total = subtotal;
 
       const [order] = await db
         .insert(schema.orders)
         .values({
           tenantId: tenant.id,
-          userId: user.id,
+          orderNumber: `ORD-${Date.now()}`,
+          customerName: "Test Customer",
+          customerEmail: "customer@example.com",
           status: "pending",
-          subtotal: subtotal.toFixed(2),
-          tax: tax.toFixed(2),
           total: total.toFixed(2),
-          discount: "0.00",
         })
         .returning();
 
-      expect(parseFloat(order.subtotal)).toBeCloseTo(subtotal, 2);
-      expect(parseFloat(order.tax)).toBeCloseTo(tax, 2);
       expect(parseFloat(order.total)).toBeCloseTo(total, 2);
     });
   });
@@ -154,12 +143,11 @@ describe("Order Processing", () => {
         .insert(schema.orders)
         .values({
           tenantId: tenant.id,
-          userId: user.id,
+          orderNumber: `ORD-${Date.now()}`,
+          customerName: "Test Customer",
+          customerEmail: "customer@example.com",
           status: "pending",
           total: "29.99",
-          subtotal: "29.99",
-          tax: "0.00",
-          discount: "0.00",
         })
         .returning();
 
@@ -180,16 +168,15 @@ describe("Order Processing", () => {
         .insert(schema.orders)
         .values({
           tenantId: tenant.id,
-          userId: user.id,
+          orderNumber: `ORD-${Date.now()}`,
+          customerName: "Test Customer",
+          customerEmail: "customer@example.com",
           status: "pending",
           total: "29.99",
-          subtotal: "29.99",
-          tax: "0.00",
-          discount: "0.00",
         })
         .returning();
 
-      const statuses = ["confirmed", "processing", "shipped", "delivered"];
+      const statuses = ["confirmed", "completed"];
 
       for (const status of statuses) {
         const [updated] = await db
@@ -210,23 +197,21 @@ describe("Order Processing", () => {
         .insert(schema.orders)
         .values({
           tenantId: tenant.id,
-          userId: user.id,
+          orderNumber: `ORD-${Date.now()}`,
+          customerName: "Test Customer",
+          customerEmail: "customer@example.com",
           status: "pending",
           total: "29.99",
-          subtotal: "29.99",
-          tax: "0.00",
-          discount: "0.00",
         })
         .returning();
 
       const [cancelled] = await db
         .update(schema.orders)
-        .set({ status: "cancelled", cancelledAt: new Date() })
+        .set({ status: "cancelled" })
         .where(eq(schema.orders.id, order.id))
         .returning();
 
       expect(cancelled.status).toBe("cancelled");
-      expect(cancelled.cancelledAt).toBeDefined();
     });
   });
 
@@ -239,12 +224,11 @@ describe("Order Processing", () => {
         .insert(schema.orders)
         .values({
           tenantId: tenant.id,
-          userId: user.id,
+          orderNumber: `ORD-${Date.now()}`,
+          customerName: "Test Customer",
+          customerEmail: "customer@example.com",
           status: "pending",
           total: "29.99",
-          subtotal: "29.99",
-          tax: "0.00",
-          discount: "0.00",
         })
         .returning();
 
@@ -252,17 +236,15 @@ describe("Order Processing", () => {
         .insert(schema.payments)
         .values({
           orderId: order.id,
+          tenantId: tenant.id,
           amount: "29.99",
-          currency: "USD",
-          method: "card",
-          provider: "stripe",
+          currency: "MXN",
           status: "succeeded",
-          providerPaymentId: "pi_test_123",
         })
         .returning();
 
       expect(payment.status).toBe("succeeded");
-      expect(payment.provider).toBe("stripe");
+      expect(payment.orderId).toBe(order.id);
     });
 
     it("should handle failed payment", async () => {
@@ -273,12 +255,11 @@ describe("Order Processing", () => {
         .insert(schema.orders)
         .values({
           tenantId: tenant.id,
-          userId: user.id,
+          orderNumber: `ORD-${Date.now()}`,
+          customerName: "Test Customer",
+          customerEmail: "customer@example.com",
           status: "pending",
           total: "29.99",
-          subtotal: "29.99",
-          tax: "0.00",
-          discount: "0.00",
         })
         .returning();
 
@@ -286,18 +267,14 @@ describe("Order Processing", () => {
         .insert(schema.payments)
         .values({
           orderId: order.id,
+          tenantId: tenant.id,
           amount: "29.99",
-          currency: "USD",
-          method: "card",
-          provider: "stripe",
+          currency: "MXN",
           status: "failed",
-          providerPaymentId: "pi_test_456",
-          errorMessage: "Insufficient funds",
         })
         .returning();
 
       expect(payment.status).toBe("failed");
-      expect(payment.errorMessage).toBe("Insufficient funds");
     });
 
     it("should support multiple payment methods", async () => {
@@ -308,107 +285,43 @@ describe("Order Processing", () => {
         .insert(schema.orders)
         .values({
           tenantId: tenant.id,
-          userId: user.id,
+          orderNumber: `ORD-${Date.now()}`,
+          customerName: "Test Customer",
+          customerEmail: "customer@example.com",
           status: "pending",
-          total: "29.99",
-          subtotal: "29.99",
-          tax: "0.00",
-          discount: "0.00",
+          total: "89.97",
         })
         .returning();
 
-      const methods = ["card", "cash", "transfer"];
-
-      for (const method of methods) {
-        const [payment] = await db
-          .insert(schema.payments)
-          .values({
+      // Create multiple payments for the same order
+      const payments = await db
+        .insert(schema.payments)
+        .values([
+          {
             orderId: order.id,
+            tenantId: tenant.id,
             amount: "29.99",
-            currency: "USD",
-            method,
-            provider: method === "card" ? "stripe" : "manual",
+            currency: "MXN",
             status: "succeeded",
-          })
-          .returning();
-
-        expect(payment.method).toBe(method);
-      }
-    });
-  });
-
-  describe("Inventory Management", () => {
-    it("should reduce stock after order confirmation", async () => {
-      const db = getTestDb();
-      if (!db) return;
-
-      const initialStock = product1.stock;
-
-      const [order] = await db
-        .insert(schema.orders)
-        .values({
-          tenantId: tenant.id,
-          userId: user.id,
-          status: "confirmed",
-          total: "29.99",
-          subtotal: "29.99",
-          tax: "0.00",
-          discount: "0.00",
-        })
+          },
+          {
+            orderId: order.id,
+            tenantId: tenant.id,
+            amount: "59.98",
+            currency: "MXN",
+            status: "succeeded",
+          },
+        ])
         .returning();
 
-      await db.insert(schema.orderItems).values({
-        orderId: order.id,
-        productId: product1.id,
-        quantity: 2,
-        price: "29.99",
-        subtotal: "59.98",
-      });
-
-      // Reduce stock
-      await db
-        .update(schema.products)
-        .set({ stock: initialStock - 2 })
-        .where(eq(schema.products.id, product1.id));
-
-      const [updated] = await db
-        .select()
-        .from(schema.products)
-        .where(eq(schema.products.id, product1.id));
-
-      expect(updated.stock).toBe(initialStock - 2);
-    });
-
-    it("should restore stock on order cancellation", async () => {
-      const db = getTestDb();
-      if (!db) return;
-
-      const initialStock = product1.stock;
-      const orderedQuantity = 3;
-
-      // Reduce stock
-      await db
-        .update(schema.products)
-        .set({ stock: initialStock - orderedQuantity })
-        .where(eq(schema.products.id, product1.id));
-
-      // Restore stock
-      await db
-        .update(schema.products)
-        .set({ stock: initialStock })
-        .where(eq(schema.products.id, product1.id));
-
-      const [restored] = await db
-        .select()
-        .from(schema.products)
-        .where(eq(schema.products.id, product1.id));
-
-      expect(restored.stock).toBe(initialStock);
+      expect(payments).toHaveLength(2);
+      expect(payments[0].amount).toBe("29.99");
+      expect(payments[1].amount).toBe("59.98");
     });
   });
 
   describe("Order Queries", () => {
-    it("should retrieve orders for specific user", async () => {
+    it("should retrieve orders for specific tenant", async () => {
       const db = getTestDb();
       if (!db) return;
 
@@ -416,53 +329,73 @@ describe("Order Processing", () => {
       await db.insert(schema.orders).values([
         {
           tenantId: tenant.id,
-          userId: user.id,
+          orderNumber: `ORD-${Date.now()}-1`,
+          customerName: "Customer 1",
+          customerEmail: "customer1@example.com",
           status: "pending",
           total: "29.99",
-          subtotal: "29.99",
-          tax: "0.00",
-          discount: "0.00",
         },
         {
           tenantId: tenant.id,
-          userId: user.id,
+          orderNumber: `ORD-${Date.now()}-2`,
+          customerName: "Customer 2",
+          customerEmail: "customer2@example.com",
           status: "confirmed",
           total: "49.99",
-          subtotal: "49.99",
-          tax: "0.00",
-          discount: "0.00",
         },
       ]);
 
       const orders = await db
         .select()
         .from(schema.orders)
-        .where(eq(schema.orders.userId, user.id));
+        .where(eq(schema.orders.tenantId, tenant.id));
 
       expect(orders.length).toBeGreaterThanOrEqual(2);
     });
 
-    it("should retrieve orders for specific tenant", async () => {
+    it("should retrieve orders with correct tenant isolation", async () => {
       const db = getTestDb();
       if (!db) return;
 
-      await db.insert(schema.orders).values({
-        tenantId: tenant.id,
-        userId: user.id,
-        status: "pending",
-        total: "29.99",
-        subtotal: "29.99",
-        tax: "0.00",
-        discount: "0.00",
+      // Create another tenant
+      const tenant2 = await createTestTenant({
+        slug: "order-test-tenant-2",
+        mode: "catalog",
       });
 
-      const orders = await db
+      // Create order for tenant 1
+      await db.insert(schema.orders).values({
+        tenantId: tenant.id,
+        orderNumber: `ORD-${Date.now()}-t1`,
+        customerName: "Tenant 1 Customer",
+        customerEmail: "t1@example.com",
+        status: "pending",
+        total: "29.99",
+      });
+
+      // Create order for tenant 2
+      await db.insert(schema.orders).values({
+        tenantId: tenant2.id,
+        orderNumber: `ORD-${Date.now()}-t2`,
+        customerName: "Tenant 2 Customer",
+        customerEmail: "t2@example.com",
+        status: "pending",
+        total: "99.99",
+      });
+
+      const tenant1Orders = await db
         .select()
         .from(schema.orders)
         .where(eq(schema.orders.tenantId, tenant.id));
 
-      expect(orders.length).toBeGreaterThan(0);
-      expect(orders.every((o) => o.tenantId === tenant.id)).toBe(true);
+      const tenant2Orders = await db
+        .select()
+        .from(schema.orders)
+        .where(eq(schema.orders.tenantId, tenant2.id));
+
+      // Verify tenant isolation
+      expect(tenant1Orders.every((o) => o.tenantId === tenant.id)).toBe(true);
+      expect(tenant2Orders.every((o) => o.tenantId === tenant2.id)).toBe(true);
     });
   });
 });

@@ -242,7 +242,7 @@
 }
 
 .result-display__error-type.NotFoundError {
-  @apply bg-yellow-100 text-yellow-700;
+  @apply bg-stone-100 text-stone-700;
 }
 
 .result-display__error-type.AuthorizationError {

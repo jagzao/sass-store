@@ -2,8 +2,8 @@
 
 ## Project Structure & Module Organization
 
-- Use the Turbo workspace layout: `apps/web` for the Next.js App Router UI (port 3001) and `apps/api` for the HTTP API (port 4000).
-- Keep routes under `apps/web/app/**`, shared widgets inside `apps/web/components/**`, API handlers in `apps/api/app/api/**`, and domain services under `apps/api/lib/**`.
+- **Monolith Architecture**: `apps/web` is the Next.js App Router application (port 3001) containing both UI and API routes.
+- Keep routes under `apps/web/app/**`, shared widgets inside `apps/web/components/**`, API handlers in `apps/web/app/api/**`, and domain services under `apps/web/lib/**`.
 - Reusable schema, UI primitives, and configs belong inside `packages/*`; update them first, then propagate changes into individual apps.
 - Tests live in `tests/{unit,integration,e2e}` with fixtures at `tests/utils`; migrations, automation, and docs stay in `migrations/`, `commands/`, `tools/`, and `docs/`.
 
@@ -89,10 +89,10 @@ export async function GET(request: NextRequest) {
 
 ## Build, Test, and Development Commands
 
-- `npm run dev -- --filter=@sass-store/web` boots only the web UI; drop the filter to start all workspaces.
+- `npm run dev` boots the monolith web application (port 3001) with all API routes included.
 - `npm run build`, `npm run lint`, and `npm run typecheck` are mandatory before any PR.
 - Test with `npm run test[:unit|:integration|:e2e]`; narrow Playwright via `npm run test:e2e:subset -- --grep "booking"`.
-- Run `npm run db:generate`, `npm run db:push`, and `npm run db:seed` from `apps/api` whenever schema changes land.
+- Run `npm run db:generate`, `npm run db:push`, and `npm run db:seed` from the root directory whenever schema changes land.
 
 ## Coding Style & Naming Conventions
 
@@ -138,7 +138,7 @@ describe("Product Service", () => {
 
 - Vitest specs live in `tests/{unit,integration}` as `*.spec.ts`; Playwright targets port 3001 and writes artifacts to `test-results/`.
 - Maintain >=80% logic coverage and log plan changes in `TESTING_IMPLEMENTATION_SUMMARY.md`.
-- Use fixtures from `tests/utils`, stub API calls through `apps/api/lib/**`, and favor data builders over brittle IDs.
+- Use fixtures from `tests/utils`, stub API calls through `apps/web/lib/**`, and favor data builders over brittle IDs.
 
 ## Migration Strategy
 
@@ -266,6 +266,249 @@ const trackedOperation = withPerformanceTracking(expensiveOperation, {
 - **Validate no exception leaks** in error responses
 - **Check error sanitization** in API responses
 - **Audit DomainError types** for information disclosure
+
+---
+
+## Feature Analysis Workflow ("analiza lo siguiente")
+
+### Trigger Command
+
+Cuando el usuario inicie con **"analiza lo siguiente {}"**, se activa el flujo de análisis exhaustivo para generar un prompt de implementación estructurado.
+
+### Analysis Process
+
+1. **Recepción del requerimiento**: Leer y analizar el contenido proporcionado entre llaves `{}` o en el mensaje completo.
+
+2. **Análisis exhaustivo**:
+   - Identificar el tipo de feature (nuevo módulo, mejora, bug fix, refactor)
+   - Determinar componentes afectados (UI, API, base de datos, servicios)
+   - Evaluar impacto en código existente
+   - Identificar dependencias y riesgos potenciales
+   - Considerar edge cases y escenarios de error
+
+3. **Diálogo de clarificación**:
+   - Si hay ambigüedades, hacer preguntas específicas usando `ask_followup_question`
+   - Preguntar sobre:
+     - Alcance exacto de la funcionalidad
+     - Comportamiento esperado en edge cases
+     - Preferencias de UX/UI
+     - Restricciones técnicas o de negocio
+     - Prioridad de requisitos
+
+4. **Confirmación de entendimiento**:
+   - Resumir el entendimiento del requerimiento
+   - Listar los requisitos identificados
+   - Esperar confirmación del usuario antes de generar el prompt
+
+### Prompt Output Structure
+
+Una vez completado el análisis y confirmado con el usuario, generar un prompt con la siguiente estructura:
+
+```markdown
+Implementa [NOMBRE_DEL_FEATURE]
+
+Requisitos:
+- [Requisito funcional 1]
+- [Requisito funcional 2]
+- [Requisito técnico 1]
+- [Requisito técnico 2]
+- [Consideración de seguridad/rendimiento]
+
+Con:
+- Tests unitarios (Vitest en tests/unit/)
+- Tests E2E (Playwright en tests/e2e/)
+- Video demo (grabar flujo principal)
+```
+
+### Example Interaction
+
+**Usuario**: "analiza lo siguiente {quiero un sistema de notificaciones en tiempo real para cuando un cliente hace una reserva}"
+
+**Agente**:
+1. Analiza: Sistema de notificaciones → WebSockets/SSE/Suscripción DB
+2. Pregunta: "¿Las notificaciones deben ser en tiempo real (WebSocket) o pueden ser polling cada X segundos? ¿Quiénes reciben las notificaciones: solo admin, todos los staff, o configurable?"
+3. Espera respuesta
+4. Genera prompt estructurado
+
+### Checklist para el Análisis
+
+Antes de generar el prompt final, verificar:
+
+- [ ] Entendimiento completo del feature
+- [ ] Requisitos funcionales identificados
+- [ ] Requisitos técnicos definidos
+- [ ] Impacto en código existente evaluado
+- [ ] Dependencias identificadas
+- [ ] Riesgos documentados
+- [ ] Tests necesarios planificados
+- [ ] Confirmación del usuario recibida
+
+### Output Format Requirements
+
+El prompt generado SIEMPRE debe incluir:
+
+1. **Título claro**: "Implementa [FEATURE_NAME]"
+2. **Lista de requisitos**: Funcionales y técnicos
+3. **Sección "Con:"**: Especificando tests unitarios, E2E y video demo
+4. **Sin placeholders vagos**: Cada requisito debe ser específico y accionable
+
+---
+
+## Screen/Feature Correction Workflow ("corrige {X}")
+
+### Trigger Command
+
+Cuando el usuario inicie con **"corrige {X}"** donde X es una pantalla, página o funcionalidad específica, se activa el flujo de corrección exhaustiva con validación completa mediante tests.
+
+### Correction Process
+
+1. **Identificación del alcance**:
+   - Determinar la ruta/URL de la pantalla [X]
+   - Identificar todos los componentes involucrados
+   - Listar todas las funcionalidades y botones presentes
+   - Mapear las APIs y servicios utilizados
+
+2. **Análisis de funcionalidades**:
+   - Navegar/inspeccionar la pantalla para identificar:
+     - Todos los botones y sus acciones
+     - Formularios y validaciones
+     - Llamadas a API
+     - Estados de carga y error
+     - Interacciones de usuario
+
+3. **Crear/Actualizar tests unitarios**:
+   - Ubicación: `tests/unit/` con extensión `.spec.ts`
+   - Cubrir todos los servicios y funciones involucradas
+   - Usar helpers `expectSuccess/expectFailure` para Result Pattern
+   - Mock de dependencias externas
+
+4. **Crear/Actualizar tests E2E**:
+   - Ubicación: `tests/e2e/` con extensión `.spec.ts`
+   - Testear flujos completos de usuario
+   - Verificar navegación y interacciones
+   - Validar respuestas de API
+
+5. **Ejecutar tests iterativamente**:
+   ```bash
+   # Tests unitarios
+   npm run test:unit -- --grep "[X]"
+   
+   # Tests E2E
+   npm run test:e2e:subset -- --grep "[X]"
+   ```
+
+6. **Ciclo de corrección**:
+   - Ejecutar tests
+   - Identificar fallos
+   - Corregir código
+   - Re-ejecutar tests
+   - Repetir hasta que todos pasen
+
+7. **Validación final**:
+   - Todos los tests unitarios pasando
+   - Todos los tests E2E pasando
+   - `npm run build` sin errores
+   - `npm run lint` sin errores
+   - `npm run typecheck` sin errores
+
+### Correction Checklist
+
+Para cada pantalla/funcionalidad [X]:
+
+- [ ] Identificar ruta URL de la pantalla
+- [ ] Listar todos los componentes UI involucrados
+- [ ] Mapear todos los botones y sus handlers
+- [ ] Identificar todas las llamadas API
+- [ ] Crear/actualizar tests unitarios para servicios
+- [ ] Crear/actualizar tests unitarios para componentes
+- [ ] Crear/actualizar tests E2E para flujos principales
+- [ ] Crear/actualizar tests E2E para edge cases
+- [ ] Ejecutar tests y corregir fallos
+- [ ] Iterar hasta 100% de tests pasando
+- [ ] Verificar build, lint y typecheck
+
+### Example Interaction
+
+**Usuario**: "corrige {página de calendario del admin}"
+
+**Agente**:
+1. Identifica ruta: `/t/[tenant]/admin/calendar`
+2. Lista componentes: CalendarView, BookingModal, StaffSelector, etc.
+3. Identifica botones: Nueva reserva, Editar, Cancelar, Filtros, etc.
+4. Crea tests unitarios para servicios de booking
+5. Crea tests E2E para flujos de calendario
+6. Ejecuta tests, corrige fallos, itera
+7. Confirma todo funcionando
+
+### Test Structure Template
+
+```typescript
+// tests/unit/services/booking-service.spec.ts
+describe("BookingService", () => {
+  it("should create booking successfully", async () => {
+    const result = await createBooking(validData);
+    expectSuccess(result);
+  });
+
+  it("should return validation error for invalid data", async () => {
+    const result = await createBooking(invalidData);
+    expectFailure(result).toMatchObject({ type: "ValidationError" });
+  });
+});
+
+// tests/e2e/admin-calendar.spec.ts
+describe("Admin Calendar Page", () => {
+  it("should display calendar view", async () => {
+    await page.goto("/t/wondernails/admin/calendar");
+    await expect(page.locator("[data-testid='calendar-grid']")).toBeVisible();
+  });
+
+  it("should create new booking when clicking create button", async () => {
+    await page.goto("/t/wondernails/admin/calendar");
+    await page.click("[data-testid='btn-new-booking']");
+    // ... complete flow
+  });
+});
+```
+
+### Mandatory Verification Commands
+
+Antes de considerar la corrección completa:
+
+```bash
+# 1. Tests unitarios específicos
+npm run test:unit -- --grep "[pantalla/funcionalidad]"
+
+# 2. Tests E2E específicos  
+npm run test:e2e:subset -- --grep "[pantalla/funcionalidad]"
+
+# 3. Verificaciones de código
+npm run build
+npm run lint
+npm run typecheck
+```
+
+### Output Format
+
+Al completar la corrección, proporcionar:
+
+```markdown
+✅ Corrección completada: [X]
+
+## Funcionalidades verificadas:
+- [ ] Botón/Función 1: [estado]
+- [ ] Botón/Función 2: [estado]
+- [ ] API Endpoint 1: [estado]
+
+## Tests ejecutados:
+- Tests unitarios: X/Y pasando
+- Tests E2E: X/Y pasando
+
+## Comandos de verificación:
+- npm run build: ✅
+- npm run lint: ✅
+- npm run typecheck: ✅
+```
 
 ---
 

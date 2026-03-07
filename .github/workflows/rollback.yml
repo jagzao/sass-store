@@ -50,14 +50,6 @@ jobs:
           directory: apps/web/.next
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: 🔄 Rollback API
-        run: |
-          # Rollback Cloud Run to previous revision
-          gcloud run services update-traffic sass-store-api-${{ inputs.environment }} \
-            --to-revisions=LATEST=0,PREVIOUS=100 \
-            --region=us-central1 \
-            --project=${{ secrets.GCP_PROJECT_ID }}
-
       - name: 🩺 Health Check
         run: |
           sleep 30

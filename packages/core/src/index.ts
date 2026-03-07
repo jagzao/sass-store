@@ -11,3 +11,4 @@ export * from "./monitoring/middleware";
 export * from "./security";
 export * from "./result";
 export * from "./errors/types";
+export * from "./rate-limit";

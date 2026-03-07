@@ -249,18 +249,7 @@ export function Trending() {
   const { addItem } = useCart();
   const router = useRouter();
 
-  // Memoize filtered items
-  const tenantFilteredItems = useMemo(() =>
-    trendingItems.filter((item) => item.tenant === currentTenantSlug),
-    [currentTenantSlug]
-  );
-
-  // If no trending items for current tenant, don't render the section
-  if (tenantFilteredItems.length === 0) {
-    return null;
-  }
-
-  // Memoize action handler
+  // Memoize action handler - MUST be called before any early returns
   const handleAction = useCallback((item: TrendingItem) => {
     if (item.type === "service") {
       // Navigate to booking page for services
@@ -281,6 +270,17 @@ export function Trending() {
       router.push(`/t/${item.tenant}/cart`);
     }
   }, [addItem, router]);
+
+  // Memoize filtered items
+  const tenantFilteredItems = useMemo(() =>
+    trendingItems.filter((item) => item.tenant === currentTenantSlug),
+    [currentTenantSlug]
+  );
+
+  // If no trending items for current tenant, don't render the section
+  if (tenantFilteredItems.length === 0) {
+    return null;
+  }
 
   return (
     <section className="mb-8">

@@ -486,6 +486,8 @@ export const customers = pgTable(
     name: varchar("name", { length: 100 }).notNull(),
     phone: varchar("phone", { length: 20 }),
     email: varchar("email", { length: 255 }),
+    birthday: date("birthday"),
+    medicalHistory: jsonb("medical_history"),
     status: varchar("status", { length: 20 }).notNull().default("active"), // 'active' | 'inactive'
     nextRetouchDate: timestamp("next_retouch_date"),
     retouchServiceId: uuid("retouch_service_id").references(() => services.id),

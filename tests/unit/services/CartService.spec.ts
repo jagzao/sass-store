@@ -5,13 +5,7 @@
  * Tests all major cart operations with proper error handling.
  */
 
-import {
-  describe,
-  it,
-  expect,
-  beforeEach,
-  afterEach,
-} from "../../setup/TestUtilities";
+// Using globals instead of imports since globals: true in Vitest config
 
 import { createTestContext, createTestProduct } from "../../setup/TestContext";
 
@@ -26,7 +20,7 @@ import {
   CartService,
   Cart,
   CartItem,
-} from "../../../apps/api/lib/services/CartService";
+} from "../../../apps/web/lib/services/CartService";
 
 class MockCartDatabase {
   private carts = new Map<string, Cart>();
@@ -173,7 +167,7 @@ describe("Cart Service - Result Pattern Implementation", () => {
   });
 
   afterEach(() => {
-    mockDb.clear();
+    mockDb?.clear?.();
   });
 
   describe("Cart Creation", () => {
@@ -265,6 +259,7 @@ describe("Cart Service - Result Pattern Implementation", () => {
     it("should update quantity when item already exists in cart", async () => {
       // Arrange
       const product = createTestProduct(context.tenant.id);
+      product.stock = 10; // Set sufficient stock for cumulative quantity
       mockDb.addProduct(product);
 
       // Add first item
@@ -309,7 +304,7 @@ describe("Cart Service - Result Pattern Implementation", () => {
     it("should return business rule error when product is not active", async () => {
       // Arrange
       const product = createTestProduct(context.tenant.id);
-      product.status = "inactive";
+      (product as any).status = "inactive";
       mockDb.addProduct(product);
 
       // Act
@@ -382,6 +377,7 @@ describe("Cart Service - Result Pattern Implementation", () => {
     beforeEach(async () => {
       // Create cart with item for testing
       const product = createTestProduct(context.tenant.id);
+      product.stock = 10; // Set sufficient stock for update tests
       mockDb.addProduct(product);
 
       await cartService.addToCart({
@@ -467,16 +463,58 @@ describe("Cart Service - Result Pattern Implementation", () => {
     });
 
     it("should mark cart as abandoned when last item removed", async () => {
-      // Act
+      // Arrange - Get the cart and item from the beforeEach setup
+      const cart = await cartService.getCart(
+        context.user.id,
+        context.tenant.id,
+      );
+      const cartData = expectSuccess(cart);
+      
+      // Skip if no items (defensive check for test isolation)
+      if (!cartData.items || cartData.items.length === 0) {
+        // Create a fresh cart with item for this test
+        const product = createTestProduct(context.tenant.id);
+        mockDb.addProduct(product);
+        
+        const addResult = await cartService.addToCart({
+          productId: product.id,
+          quantity: 1,
+          userId: context.user.id,
+          tenantId: context.tenant.id,
+        });
+        
+        const freshCart = expectSuccess(addResult);
+        const freshItem = freshCart.items[0];
+        
+        // Act - Remove the last item
+        const result = await cartService.removeFromCart({
+          cartId: freshCart.id,
+          itemId: freshItem.id,
+          userId: context.user.id,
+          tenantId: context.tenant.id,
+        });
+
+        // Assert
+        expectSuccess(result);
+        expect(result.data.items).toHaveLength(0);
+        expect(result.data.status).toBe("abandoned");
+        return;
+      }
+
+      const cartItem = cartData.items[0];
+
+      // Act - Remove the last item
       const result = await cartService.removeFromCart({
-        cartId: "some-cart-id",
-        itemId: "some-item-id",
+        cartId: cartData.id,
+        itemId: cartItem.id,
         userId: context.user.id,
         tenantId: context.tenant.id,
       });
 
-      // This test assumes the mock setup properly handles the scenario
+      // Assert
       expectSuccess(result);
+      expect(result.data.items).toHaveLength(0);
+      expect(result.data.status).toBe("abandoned");
     });
   });
 
@@ -631,7 +669,7 @@ describe("Cart Service - Result Pattern Implementation", () => {
 
       const result2 = await cartService.addToCart({
         productId: products[1].id,
-        quantity: 3, // More than available
+        quantity: 6, // More than available (stock is 5)
         userId: context.user.id,
         tenantId: context.tenant.id,
       });

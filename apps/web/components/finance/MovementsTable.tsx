@@ -255,7 +255,7 @@ const MovementsTable = memo(({
                         className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                           movement.reconciled
                             ? "bg-green-100 text-green-800"
-                            : "bg-yellow-100 text-yellow-800"
+                            : "bg-stone-100 text-stone-800"
                         }`}
                       >
                         {movement.reconciled ? "Conciliado" : "Pendiente"}

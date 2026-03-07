@@ -27,6 +27,14 @@ const dataCache = new Map<string, CacheEntry>();
 export function usePrefetch<T = any>(url: string, options: PrefetchOptions = {}): T | null {
   const { ttl = 5 * 60 * 1000, staleWhileRevalidate = 30 * 1000 } = options; // 5 min default TTL
   const urlRef = useRef(url);
+  const ttlRef = useRef(ttl);
+  const staleWhileRevalidateRef = useRef(staleWhileRevalidate);
+  
+  // Update refs when options change
+  useEffect(() => {
+    ttlRef.current = ttl;
+    staleWhileRevalidateRef.current = staleWhileRevalidate;
+  }, [ttl, staleWhileRevalidate]);
   
   useEffect(() => {
     const fetchAndCache = async () => {
@@ -38,13 +46,13 @@ export function usePrefetch<T = any>(url: string, options: PrefetchOptions = {})
         const age = now - cached.timestamp;
         
         // Si los datos aún son frescos, no necesitamos actualizar
-        if (age < ttl) {
+        if (age < ttlRef.current) {
           return;
         }
         
-        // Si los datos están fuera de TTL pero aún dentro del stale window, 
+        // Si los datos están fuera de TTL pero aún dentro del stale window,
         // continuar con la actualización en segundo plano
-        if (age < ttl + staleWhileRevalidate) {
+        if (age < ttlRef.current + staleWhileRevalidateRef.current) {
           // Actualizar en segundo plano
           try {
             const response = await fetch(urlRef.current);
@@ -80,8 +88,8 @@ export function usePrefetch<T = any>(url: string, options: PrefetchOptions = {})
     };
 
     // Solo hacer prefetch si no hay datos cacheados o si han expirado
-    if (!dataCache.has(urlRef.current) || 
-        Date.now() - (dataCache.get(urlRef.current)?.timestamp || 0) > ttl) {
+    if (!dataCache.has(urlRef.current) ||
+        Date.now() - (dataCache.get(urlRef.current)?.timestamp || 0) > ttlRef.current) {
       fetchAndCache();
     }
   }, [url]);

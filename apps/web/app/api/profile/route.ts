@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { db, users } from "@sass-store/database";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
+import { noCacheJson } from "@/lib/cache-headers";
 
 const updateProfileSchema = z.object({
   name: z.string().min(2),
@@ -14,14 +15,14 @@ export async function PUT(req: NextRequest) {
     const session = await auth();
 
     if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return noCacheJson({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await req.json();
     const result = updateProfileSchema.safeParse(body);
 
     if (!result.success) {
-      return NextResponse.json(
+      return noCacheJson(
         { error: "Invalid input", details: result.error.errors },
         { status: 400 },
       );
@@ -35,10 +36,10 @@ export async function PUT(req: NextRequest) {
       .set({ name, updatedAt: new Date() })
       .where(eq(users.id, session.user.id));
 
-    return NextResponse.json({ success: true, name });
+    return noCacheJson({ success: true, name });
   } catch (error) {
     console.error("Error updating profile:", error);
-    return NextResponse.json(
+    return noCacheJson(
       { error: "Internal Server Error" },
       { status: 500 },
     );

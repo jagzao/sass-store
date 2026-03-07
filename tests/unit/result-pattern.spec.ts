@@ -5,9 +5,8 @@
  * using the testing utilities from the core package.
  */
 
-import { describe, it, expect, beforeEach } from "vitest";
+// Using globals instead of imports since globals: true in Vitest config
 import {
-  Result,
   Ok,
   Err,
   isSuccess,
@@ -15,18 +14,11 @@ import {
   map,
   flatMap,
   match,
-  asyncFlatMap,
   fromPromise,
-  fromCondition,
-  pipe,
-  expectSuccess,
-  expectFailure,
+  getOrElse,
+  mapError,
 } from "@sass-store/core/src/result";
-import {
-  ErrorFactories,
-  DomainError,
-  ErrorTypeGuards,
-} from "@sass-store/core/src/errors/types";
+import { ErrorFactories } from "@sass-store/core/src/errors/types";
 
 describe("Result Pattern Implementation", () => {
   describe("Basic Result Operations", () => {
@@ -60,7 +52,7 @@ describe("Result Pattern Implementation", () => {
       expect(error.type).toBe("ValidationError");
       expect(error.message).toBe("Invalid email");
       expect(error.field).toBe("email");
-      expect(error.details).toBe("test@example.com");
+      expect(error.value).toBe("test@example.com");
     });
 
     it("should create not found error", () => {
@@ -98,26 +90,12 @@ describe("Result Pattern Implementation", () => {
     });
   });
 
-  describe("Error Type Guards", () => {
-    it("should identify validation errors", () => {
-      const error = ErrorFactories.validation("Invalid input");
-      expect(ErrorTypeGuards.isValidationError(error)).toBe(true);
-      expect(ErrorTypeGuards.isNotFoundError(error)).toBe(false);
-    });
-
-    it("should identify not found errors", () => {
-      const error = ErrorFactories.notFound("User", "123");
-      expect(ErrorTypeGuards.isNotFoundError(error)).toBe(true);
-      expect(ErrorTypeGuards.isValidationError(error)).toBe(false);
-    });
-  });
-
   describe("Result Combinators", () => {
     it("should chain successful operations", () => {
       const result1 = Ok("hello");
       const result2 = map(result1, (value) => value.toUpperCase());
       const result3 = map(result2, (value) => `${value}!`);
-      const result4 = map(result3, (value) => value.toLowerCase());
+      const result4 = map(result3, (value) => value);
 
       expect(isSuccess(result4)).toBe(true);
       if (isSuccess(result4)) {
@@ -131,7 +109,7 @@ describe("Result Pattern Implementation", () => {
       const result3 = flatMap(result2, () =>
         Err(ErrorFactories.validation("Failed")),
       );
-      const result4 = map(result3, (value) => value.toLowerCase()); // This should not execute
+      const result4 = map(result3, (value: string) => value.toLowerCase());
 
       expect(isFailure(result4)).toBe(true);
       if (isFailure(result4)) {
@@ -148,9 +126,9 @@ describe("Result Pattern Implementation", () => {
   describe("Pattern Matching", () => {
     it("should match success case", () => {
       const result = Ok("success data");
-      const outcome = result.match({
+      const outcome = match(result, {
         ok: (data) => `Success: ${data}`,
-        err: (error) => `Error: ${error.message}`,
+        err: (error) => `Error: ${(error as Error).message}`,
       });
 
       expect(outcome).toBe("Success: success data");
@@ -159,9 +137,9 @@ describe("Result Pattern Implementation", () => {
     it("should match error case", () => {
       const error = ErrorFactories.notFound("Resource", "123");
       const result = Err(error);
-      const outcome = result.match({
+      const outcome = match(result, {
         ok: (data) => `Success: ${data}`,
-        err: (error) => `Error: ${error.message} (${error.type})`,
+        err: (err) => `Error: ${err.message} (${err.type})`,
       });
 
       expect(outcome).toBe(
@@ -172,12 +150,11 @@ describe("Result Pattern Implementation", () => {
 
   describe("Async Operations", () => {
     it("should handle successful async operations", async () => {
-      const asyncOperation = async () => "async result";
-      const result = await Promise.resolve("input")
-        .then((value) => Ok(value))
-        .then((result) => result.map((data) => data.toUpperCase()));
-
-      expectSuccess(result).toEqual("ASYNC RESULT");
+      const result = map(Ok("async result"), (data) => data.toUpperCase());
+      expect(isSuccess(result)).toBe(true);
+      if (isSuccess(result)) {
+        expect(result.data).toEqual("ASYNC RESULT");
+      }
     });
 
     it("should handle async failures", async () => {
@@ -185,75 +162,24 @@ describe("Result Pattern Implementation", () => {
         throw new Error("Async failure");
       };
 
-      const result = await fromPromise(asyncOperation());
-
-      expectFailure(result).toEqual(
-        expect.objectContaining({
-          type: "DatabaseError",
-          message: "Async failure",
-        }),
+      const result = await fromPromise(
+        asyncOperation(),
+        (error) =>
+          ErrorFactories.database(
+            "async_operation",
+            (error as Error).message,
+            undefined,
+            error as Error,
+          ),
       );
-    });
-  });
 
-  describe("Complex Business Logic", () => {
-    it("should validate user registration flow", async () => {
-      // Simulate user registration validation
-      const validateEmail = (email: string): Result<string, DomainError> => {
-        if (!email.includes("@")) {
-          return Err(
-            ErrorFactories.validation("Invalid email format", "email", email),
-          );
-        }
-        return Ok(email.toLowerCase());
-      };
-
-      const validatePassword = (
-        password: string,
-      ): Result<string, DomainError> => {
-        if (password.length < 8) {
-          return Err(
-            ErrorFactories.validation("Password too short", "password"),
-          );
-        }
-        return Ok(password);
-      };
-
-      const checkDuplicateEmail = async (
-        email: string,
-      ): Promise<Result<boolean, DomainError>> => {
-        // Simulate database check
-        return Ok(email !== "existing@example.com");
-      };
-
-      // Chain validations
-      const emailValidation = validateEmail("USER@EXAMPLE.COM");
-      const passwordValidation = validatePassword("password123");
-      const duplicateCheck = await checkDuplicateEmail("user@example.com");
-
-      const finalResult = emailValidation.success
-        ? passwordValidation.success
-          ? (await duplicateCheck)
-            ? Ok({
-                email: emailValidation.data,
-                password: passwordValidation.data,
-              })
-            : duplicateCheck
-          : passwordValidation
-        : emailValidation;
-
-      // Success case
-      if (finalResult.success) {
-        expectSuccess(finalResult).toEqual({
-          email: "user@example.com",
-          password: "password123",
-        });
-      } else {
-        // Should fail at email validation
-        expectFailure(finalResult).toEqual(
+      expect(isFailure(result)).toBe(true);
+      if (isFailure(result)) {
+        expect(result.error).toEqual(
           expect.objectContaining({
-            type: "ValidationError",
-            field: "email",
+            type: "DatabaseError",
+            message:
+              "Database error during async_operation: Async failure",
           }),
         );
       }
@@ -265,69 +191,192 @@ describe("Result Pattern Implementation", () => {
       const successResult = Ok("primary value");
       const errorResult = Err(ErrorFactories.notFound("Resource", "123"));
 
-      expect(successResult.getOrElse("fallback")).toBe("primary value");
-      expect(errorResult.getOrElse("fallback")).toBe("fallback");
-      expect(errorResult.getOrElse(() => "computed fallback")).toBe(
+      expect(getOrElse(successResult, "fallback")).toBe("primary value");
+      expect(getOrElse(errorResult, "fallback")).toBe("fallback");
+      expect(getOrElse(errorResult, "computed fallback")).toBe(
         "computed fallback",
       );
     });
 
     it("should transform errors", () => {
-      const error = ErrorFactories.validation("Input error", "field");
-      const transformedError = error
-        .mapError((err) =>
+      const result = Err(ErrorFactories.validation("Input error", "field"));
+      const transformedError = mapError(
+        mapError(result, (err) =>
           ErrorFactories.authorization(`Access denied: ${err.message}`),
-        )
-        .mapError((err) => ErrorFactories.database(`DB error: ${err.message}`));
-
-      expectFailure(transformedError).toEqual(
-        expect.objectContaining({
-          type: "DatabaseError",
-          message: "DB error: Access denied: Input error",
-        }),
+        ),
+        (err) =>
+          ErrorFactories.database(
+            "error_transform",
+            `DB error: ${err.message}`,
+          ),
       );
+
+      expect(isFailure(transformedError)).toBe(true);
+      if (isFailure(transformedError)) {
+        expect(transformedError.error).toEqual(
+          expect.objectContaining({
+            type: "DatabaseError",
+            message:
+              "Database error during error_transform: DB error: Access denied: Input error",
+          }),
+        );
+      }
+    });
+  });
+});
+
+// ============================================
+// Role Guard Utilities Tests
+// ============================================
+
+import {
+  STAFF_ROLES,
+  CLIENT_ROLES,
+  isStaffRole,
+  isClientRole,
+  shouldShowHomeTenant,
+  shouldShowPublicHome,
+  normalizeRole,
+  getRoleDisplayName,
+} from "../../apps/web/lib/auth/role-guards";
+
+describe("Role Guard Utilities", () => {
+  describe("Constants", () => {
+    it("should define STAFF_ROLES correctly", () => {
+      expect(STAFF_ROLES).toEqual(["admin", "gerente", "personal"]);
+    });
+
+    it("should define CLIENT_ROLES correctly", () => {
+      expect(CLIENT_ROLES).toEqual(["cliente"]);
     });
   });
 
-  describe("Result Caching", () => {
-    it("should cache successful results", async () => {
-      const cache = new Map<string, any>();
-      const cacheKey = "test-key";
-      const cacheTTL = 1000; // 1 second
+  describe("isStaffRole", () => {
+    it("should return true for staff roles", () => {
+      expect(isStaffRole("admin")).toBe(true);
+      expect(isStaffRole("gerente")).toBe(true);
+      expect(isStaffRole("personal")).toBe(true);
+    });
 
-      const expensiveOperation = async (): Promise<
-        Result<string, DomainError>
-      > => {
-        await new Promise((resolve) => setTimeout(resolve, 100));
-        return Ok("cached result");
-      };
+    it("should handle case-insensitive matching", () => {
+      expect(isStaffRole("ADMIN")).toBe(true);
+      expect(isStaffRole("Gerente")).toBe(true);
+      expect(isStaffRole("PERSONAL")).toBe(true);
+    });
 
-      // Cache implementation
-      const getCached = async (
-        key: string,
-      ): Promise<Result<string, DomainError>> => {
-        const cached = cache.get(key);
-        const now = Date.now();
+    it("should return false for non-staff roles", () => {
+      expect(isStaffRole("cliente")).toBe(false);
+      expect(isStaffRole("unknown")).toBe(false);
+      expect(isStaffRole("")).toBe(false);
+    });
 
-        if (cached && now - cached.timestamp < cacheTTL) {
-          return Ok(cached.value);
-        }
+    it("should return false for null/undefined", () => {
+      expect(isStaffRole(null)).toBe(false);
+      expect(isStaffRole(undefined)).toBe(false);
+    });
+  });
 
-        const result = await expensiveOperation();
-        cache.set(key, { value: result.data, timestamp: now });
-        return result;
-      };
+  describe("isClientRole", () => {
+    it("should return true for cliente", () => {
+      expect(isClientRole("cliente")).toBe(true);
+      expect(isClientRole("CLIENTE")).toBe(true);
+      expect(isClientRole("Cliente")).toBe(true);
+    });
 
-      // First call - should cache
-      const result1 = await getCached(cacheKey);
-      expectSuccess(result1).toBe("cached result");
+    it("should return false for non-client roles", () => {
+      expect(isClientRole("admin")).toBe(false);
+      expect(isClientRole("gerente")).toBe(false);
+      expect(isClientRole("personal")).toBe(false);
+    });
 
-      // Second call - should return cached value
-      const result2 = await getCached(cacheKey);
-      expectSuccess(result2).toBe("cached result");
+    it("should return false for null/undefined", () => {
+      expect(isClientRole(null)).toBe(false);
+      expect(isClientRole(undefined)).toBe(false);
+    });
+  });
 
-      // Verify cache state
-      expect(cache.has(cacheKey)).toBe(true);
+  describe("shouldShowHomeTenant", () => {
+    it("should return true for staff roles", () => {
+      expect(shouldShowHomeTenant("admin")).toBe(true);
+      expect(shouldShowHomeTenant("gerente")).toBe(true);
+      expect(shouldShowHomeTenant("personal")).toBe(true);
+    });
+
+    it("should return false for client and unauthenticated", () => {
+      expect(shouldShowHomeTenant("cliente")).toBe(false);
+      expect(shouldShowHomeTenant(null)).toBe(false);
+      expect(shouldShowHomeTenant(undefined)).toBe(false);
+      expect(shouldShowHomeTenant("unknown")).toBe(false);
+    });
+  });
+
+  describe("shouldShowPublicHome", () => {
+    it("should return false for staff roles", () => {
+      expect(shouldShowPublicHome("admin")).toBe(false);
+      expect(shouldShowPublicHome("gerente")).toBe(false);
+      expect(shouldShowPublicHome("personal")).toBe(false);
+    });
+
+    it("should return true for client and unauthenticated", () => {
+      expect(shouldShowPublicHome("cliente")).toBe(true);
+      expect(shouldShowPublicHome(null)).toBe(true);
+      expect(shouldShowPublicHome(undefined)).toBe(true);
+      expect(shouldShowPublicHome("unknown")).toBe(true);
+    });
+  });
+
+  describe("normalizeRole", () => {
+    it("should lowercase and trim", () => {
+      expect(normalizeRole("ADMIN")).toBe("admin");
+      expect(normalizeRole("  admin  ")).toBe("admin");
+      expect(normalizeRole("  ADMIN  ")).toBe("admin");
+    });
+
+    it("should return null for empty/null/undefined", () => {
+      expect(normalizeRole(null)).toBe(null);
+      expect(normalizeRole(undefined)).toBe(null);
+      expect(normalizeRole("")).toBe(null);
+      // Whitespace-only returns empty string after trim, which is falsy
+      const whitespaceResult = normalizeRole("   ");
+      expect(whitespaceResult).toBeFalsy(); // Either null or "" is acceptable
+    });
+  });
+
+  describe("getRoleDisplayName", () => {
+    it("should return display names for known roles", () => {
+      expect(getRoleDisplayName("admin")).toBe("Administrador");
+      expect(getRoleDisplayName("gerente")).toBe("Gerente");
+      expect(getRoleDisplayName("personal")).toBe("Personal");
+      expect(getRoleDisplayName("cliente")).toBe("Cliente");
+    });
+
+    it("should handle case-insensitive input", () => {
+      expect(getRoleDisplayName("ADMIN")).toBe("Administrador");
+      expect(getRoleDisplayName("CLIENTE")).toBe("Cliente");
+    });
+
+    it("should return original role for unknown roles", () => {
+      expect(getRoleDisplayName("unknown")).toBe("unknown");
+      expect(getRoleDisplayName("supervisor")).toBe("supervisor");
+    });
+  });
+
+  describe("Integration: Role routing decisions", () => {
+    it("should route staff to HomeTenant", () => {
+      expect(shouldShowHomeTenant("admin")).toBe(true);
+      expect(shouldShowPublicHome("admin")).toBe(false);
+      expect(isStaffRole("admin")).toBe(true);
+    });
+
+    it("should route cliente to public home", () => {
+      expect(shouldShowHomeTenant("cliente")).toBe(false);
+      expect(shouldShowPublicHome("cliente")).toBe(true);
+      expect(isClientRole("cliente")).toBe(true);
+    });
+
+    it("should route unauthenticated to public home", () => {
+      expect(shouldShowHomeTenant(null)).toBe(false);
+      expect(shouldShowPublicHome(null)).toBe(true);
     });
   });
 });

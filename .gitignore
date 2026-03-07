@@ -33,9 +33,7 @@ yarn-error.log*
 .env.prod
 .env.staging
 .env.free
-apps/api/.env*
 apps/web/.env*
-!apps/api/.env.example
 !apps/web/.env.example
 
 # Vercel

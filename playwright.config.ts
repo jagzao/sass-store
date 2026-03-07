@@ -32,7 +32,7 @@ export default defineConfig({
 
   use: {
     // Base URL from environment
-    baseURL: process.env.BASE_URL || "http://localhost:3001",
+    baseURL: process.env.BASE_URL || "http://localhost:3002",
 
     // Performance: Only capture trace on retry (not every test)
     trace: "on-first-retry",
@@ -83,21 +83,25 @@ export default defineConfig({
   ],
 
   webServer: {
-    command: "npm run dev",
-    port: 3001,
+    command: "npm run build --filter=@sass-store/web && cd apps/web && npm run start -- -p 3002",
+    port: 3002,
 
-    // Performance: Reuse existing server in dev (huge time saver)
-    reuseExistingServer: true,
+    // Performance: Reuse existing server if possible
+    reuseExistingServer: !process.env.CI,
 
-    // Timeout: Give enough time for Next.js to start (2 minutes)
-    timeout: 120000,
+    // Timeout: Give enough time for Next.js to build and start
+    timeout: 300000, // 5 minutes build + start
 
     // Environment variables for test mode
     env: {
-      NODE_ENV: "test",
+      NODE_ENV: "production",
+      PORT: "3002",
+      AUTH_SECRET: "super-secret-test-key-for-nextauth-e2e",
+      NEXTAUTH_SECRET: "super-secret-test-key-for-nextauth-e2e",
+      NEXTAUTH_URL: "http://localhost:3002",
+      AUTH_URL: "http://localhost:3002",
+      GOOGLE_CLIENT_ID: "mock_client_id_for_testing",
+      GOOGLE_CLIENT_SECRET: "mock_client_secret_for_testing",
     },
-
-    // Health check: Wait for server to be ready
-    // This ensures the app is fully loaded before tests start
   },
 });

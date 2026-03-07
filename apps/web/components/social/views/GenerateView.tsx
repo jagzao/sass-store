@@ -610,7 +610,7 @@ export default function GenerateView({ tenant }: GenerateViewProps) {
                                 ? "bg-blue-100 text-blue-800"
                                 : post.contentType === "trends"
                                   ? "bg-green-100 text-green-800"
-                                  : "bg-yellow-100 text-yellow-800"
+                                  : "bg-stone-100 text-stone-800"
                           }`}
                         >
                           {

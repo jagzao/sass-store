@@ -223,3 +223,65 @@ export const withZodValidation = <T>(
 export const isValidationError = (error: any): error is ValidationError => {
   return error && typeof error === "object" && error.type === "ValidationError";
 };
+
+// Financial Matrix Schemas
+export const MatrixGranularitySchema = z.enum([
+  "week",
+  "fortnight",
+  "month",
+  "year",
+]);
+
+export const MatrixLoadQuerySchema = z
+  .object({
+    tenantId: z.string().uuid(),
+    granularity: MatrixGranularitySchema,
+    startDate: z.coerce.date(),
+    endDate: z.coerce.date(),
+    entityId: z.string().uuid().optional(),
+  })
+  .refine((value) => value.startDate <= value.endDate, {
+    message: "startDate must be before or equal to endDate",
+    path: ["endDate"],
+  });
+
+export const MatrixUpsertCellSchema = z
+  .object({
+    tenantId: z.string().uuid(),
+    categoryId: z.string().uuid(),
+    granularity: MatrixGranularitySchema,
+    bucketId: z.string().min(1).optional(),
+    bucketStartDate: z.coerce.date(),
+    bucketEndDate: z.coerce.date(),
+    projectedAmount: z.union([z.string(), z.number()]).transform((value) =>
+      typeof value === "number" ? value.toFixed(2) : value,
+    ),
+    entityId: z.string().uuid().optional(),
+    notes: z.string().max(1000).optional(),
+  })
+  .refine((value) => value.bucketStartDate <= value.bucketEndDate, {
+    message: "bucketStartDate must be before or equal to bucketEndDate",
+    path: ["bucketEndDate"],
+  });
+
+export const MatrixMarkPaidSchema = z.object({
+  tenantId: z.string().uuid(),
+  categoryId: z.string().uuid(),
+  amount: z.union([z.string(), z.number()]).transform((value) =>
+    typeof value === "number" ? value.toFixed(2) : value,
+  ),
+  fechaProgramada: z.coerce.date(),
+  fechaPago: z.coerce.date().optional(),
+  entityId: z.string().uuid().optional(),
+  description: z.string().max(500).optional(),
+  paymentMethod: z.string().max(100).optional(),
+  referenceId: z.string().max(200).optional(),
+  counterparty: z.string().max(200).optional(),
+});
+
+export const MatrixCloneMonthSchema = z.object({
+  tenantId: z.string().uuid(),
+  sourceBucketId: z.string().regex(/^M\d{4}-\d{2}$/),
+  targetBucketId: z.string().regex(/^M\d{4}-\d{2}$/),
+  categoryIds: z.array(z.string().uuid()).optional(),
+});

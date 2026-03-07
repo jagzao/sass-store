@@ -88,7 +88,9 @@ export default function VisitPhotosUpload({
         {/* Before Photos */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <h4 className="text-sm font-medium text-muted-foreground">Antes</h4>
+            <h4 className="text-sm font-medium text-muted-foreground">
+              Clienta
+            </h4>
             <Button
               type="button"
               variant="outline"
@@ -134,7 +136,7 @@ export default function VisitPhotosUpload({
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <h4 className="text-sm font-medium text-muted-foreground">
-              Después
+              Resultado
             </h4>
             <Button
               type="button"

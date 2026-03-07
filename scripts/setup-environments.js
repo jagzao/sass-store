@@ -49,7 +49,7 @@ function setupEnvironments() {
     GCP_PROJECT_ID: "your-gcp-project-id",
   };
 
-  // Create .env files for each environment
+  // Create .env files for each environment (monolith-only: web app contains all API routes)
   const envFiles = {
     "apps/web/.env.local": {
       DATABASE_URL: secrets.DEV_DATABASE_URL,
@@ -57,18 +57,19 @@ function setupEnvironments() {
       GOOGLE_CLIENT_SECRET: "your_google_client_secret",
       NEXTAUTH_URL: "http://localhost:3001",
       NEXTAUTH_SECRET: secrets.DEV_JWT_SECRET,
+      REDIS_URL: secrets.DEV_REDIS_URL,
     },
-    "apps/api/.env.dev": {
+    "apps/web/.env.dev": {
       DATABASE_URL: secrets.DEV_DATABASE_URL,
       JWT_SECRET: secrets.DEV_JWT_SECRET,
       REDIS_URL: secrets.DEV_REDIS_URL,
     },
-    "apps/api/.env.qa": {
+    "apps/web/.env.qa": {
       DATABASE_URL: secrets.QA_DATABASE_URL,
       JWT_SECRET: secrets.QA_JWT_SECRET,
       REDIS_URL: secrets.QA_REDIS_URL,
     },
-    "apps/api/.env.prod": {
+    "apps/web/.env.prod": {
       DATABASE_URL: secrets.PRODUCTION_DATABASE_URL,
       JWT_SECRET: secrets.PRODUCTION_JWT_SECRET,
       REDIS_URL: secrets.PRODUCTION_REDIS_URL,

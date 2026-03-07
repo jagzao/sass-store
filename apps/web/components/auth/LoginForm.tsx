@@ -41,8 +41,6 @@ export function LoginForm({ tenantSlug, primaryColor }: LoginFormProps) {
     setIsLoading(true);
     setError("");
 
-    console.log("[LoginForm] Attempting login with:", { email, tenantSlug });
-
     try {
       const result = await signIn("credentials", {
         email,
@@ -52,10 +50,7 @@ export function LoginForm({ tenantSlug, primaryColor }: LoginFormProps) {
         redirect: false,
       });
 
-      console.log("[LoginForm] SignIn result:", result);
-
       if (result?.error) {
-        console.error("[LoginForm] SignIn error:", result.error);
         if (result.error === "CredentialsSignin") {
           setError(
             "Credenciales no válidas para este tenant. Verifica tu correo y contraseña.",
@@ -67,17 +62,12 @@ export function LoginForm({ tenantSlug, primaryColor }: LoginFormProps) {
       }
 
       if (result?.ok) {
-        console.log(
-          "[LoginForm] SignIn successful, redirecting to:",
-          `/t/${tenantSlug}`,
-        );
         // Store current tenant in localStorage for session persistence
         localStorage.setItem("currentTenant", tenantSlug);
         // Redirect to tenant page on success
         router.push(`/t/${tenantSlug}`);
       }
     } catch (err) {
-      console.error("[LoginForm] Login error:", err);
       setError("Ocurrió un error inesperado. Intenta de nuevo.");
     } finally {
       setIsLoading(false);

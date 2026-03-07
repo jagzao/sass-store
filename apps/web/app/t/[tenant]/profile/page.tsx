@@ -293,7 +293,7 @@ export default function TenantProfilePage() {
       const response = await fetch(`/api/tenants/${tenantSlug}/branding`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ logo: newUrl }),
+        body: JSON.stringify({ logoUrl: newUrl }),
       });
 
       if (response.ok) {
@@ -301,7 +301,11 @@ export default function TenantProfilePage() {
         router.refresh();
         setCurrentTenant((prev: any) => ({
           ...prev,
-          branding: { ...prev.branding, logo: newUrl },
+          branding: {
+            ...prev.branding,
+            logoUrl: newUrl,
+            logo: newUrl,
+          },
         }));
       } else {
         showToast("Error al actualizar el logo", "error");

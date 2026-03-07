@@ -9,9 +9,10 @@ export default defineConfig({
   test: {
     globals: true,
     environment: "node",
+    // Enable both global setup and setup files
     globalSetup: "./tests/setup/vitest.global-setup.ts",
     setupFiles: ["./tests/setup/vitest.setup.ts"],
-    include: ["tests/**/*.{test,spec}.{ts,tsx}"],
+    include: ["tests/**/*.{test,spec}.{ts,tsx,js,jsx,mjs}"],
     exclude: [
       "node_modules",
       "dist",
@@ -42,6 +43,12 @@ export default defineConfig({
       "@sass-store/database": resolve(__dirname, "./packages/database"),
       "@sass-store/config": resolve(__dirname, "./packages/config"),
       "@sass-store/core": resolve(__dirname, "./packages/core"),
+      "@sass-store/validation": resolve(__dirname, "./packages/validation"),
     },
+  },
+  esbuild: {
+    // Enable esbuild to handle TypeScript files
+    target: "node18",
+    jsx: "preserve",
   },
 });

@@ -5,13 +5,7 @@
  * with proper mock database and test utilities.
  */
 
-import {
-  describe,
-  it,
-  expect,
-  beforeEach,
-  afterEach,
-} from "../../setup/TestUtilities";
+// Vitest functions are globally available (globals: true in vitest.config.ts)
 
 import { createTestContext, createTestProduct } from "../../setup/TestContext";
 
@@ -155,9 +149,8 @@ class MockInventoryService {
       };
     }
 
-    const newStock = product.stock + quantityChange;
-
-    if (newStock < 0) {
+    // Check if stock would go negative before atomic update
+    if (product.stock + quantityChange < 0) {
       return {
         success: false,
         error: {
@@ -169,13 +162,14 @@ class MockInventoryService {
       };
     }
 
-    const updatedProduct = {
-      ...product,
-      stock: newStock,
-      updatedAt: new Date(),
-    };
-
-    await this.db.products.update(productId, updatedProduct);
+    // Use atomic update for concurrent operations
+    const updatedProduct = await this.db.products.updateAtomic(
+      productId,
+      (current) => ({
+        ...current,
+        stock: current.stock + quantityChange,
+      }),
+    );
 
     return {
       success: true,
@@ -216,7 +210,7 @@ describe("Inventory Service - Result Pattern Implementation", () => {
   });
 
   afterEach(() => {
-    context.db.clear();
+    context?.db?.clear?.();
   });
 
   describe("Product Lookup", () => {
@@ -252,10 +246,10 @@ describe("Inventory Service - Result Pattern Implementation", () => {
     });
 
     it("should return AuthorizationError when product from different tenant", async () => {
-      // Arrange
-      const otherContext = createTestContext();
-      const product = createTestProduct(otherContext.tenant.id);
-      await otherContext.db.products.insert(product);
+      // Arrange - Create product in same database but different tenant
+      const otherTenantId = `other-tenant-${Date.now()}`;
+      const product = createTestProduct(otherTenantId);
+      await context.db.products.insert(product);
 
       // Act
       const result = await inventoryService.getProduct(
@@ -470,10 +464,10 @@ describe("Inventory Service - Result Pattern Implementation", () => {
 
   describe("Tenant Isolation", () => {
     it("should enforce tenant isolation in all operations", async () => {
-      // Arrange
-      const otherContext = createTestContext();
-      const product = createTestProduct(otherContext.tenant.id);
-      await otherContext.db.products.insert(product);
+      // Arrange - Create product in same database but different tenant
+      const otherTenantId = `other-tenant-${Date.now()}`;
+      const product = createTestProduct(otherTenantId);
+      await context.db.products.insert(product);
 
       // Act & Assert - All operations should fail
       const lookupResult = await inventoryService.getProduct(

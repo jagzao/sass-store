@@ -8,6 +8,7 @@ import FormSelect from "@/components/ui/forms/FormSelect";
 interface CustomerFormProps {
   tenantSlug: string;
   customerId?: string;
+  onSuccess?: () => void;
   initialData?: {
     name: string;
     phone: string;
@@ -16,12 +17,19 @@ interface CustomerFormProps {
     generalNotes?: string;
     tags?: string[];
     status?: "active" | "inactive" | "blocked";
+    birthday?: string;
+    medicalHistory?: {
+      conditions?: string[];
+      allergies?: string[];
+      medications?: string;
+    };
   };
 }
 
 export default function CustomerForm({
   tenantSlug,
   customerId,
+  onSuccess,
   initialData,
 }: CustomerFormProps) {
   const router = useRouter();
@@ -41,6 +49,44 @@ export default function CustomerForm({
   const [status, setStatus] = useState<"active" | "inactive" | "blocked">(
     initialData?.status || "active",
   );
+  
+  // New Fields: Birthday and Medical History
+  const [birthday, setBirthday] = useState(
+    initialData?.birthday ? initialData.birthday.split("T")[0] : "",
+  );
+  const [conditionsTag, setConditionsTag] = useState("");
+  const [conditions, setConditions] = useState<string[]>(
+    initialData?.medicalHistory?.conditions || [],
+  );
+  const [allergiesTag, setAllergiesTag] = useState("");
+  const [allergies, setAllergies] = useState<string[]>(
+    initialData?.medicalHistory?.allergies || [],
+  );
+  const [medications, setMedications] = useState(
+    initialData?.medicalHistory?.medications || "",
+  );
+
+  const handleAddCondition = () => {
+    if (conditionsTag.trim() && !conditions.includes(conditionsTag.trim())) {
+      setConditions([...conditions, conditionsTag.trim()]);
+      setConditionsTag("");
+    }
+  };
+  
+  const handleRemoveCondition = (conditionToRemove: string) => {
+    setConditions(conditions.filter((c) => c !== conditionToRemove));
+  };
+  
+  const handleAddAllergy = () => {
+    if (allergiesTag.trim() && !allergies.includes(allergiesTag.trim())) {
+      setAllergies([...allergies, allergiesTag.trim()]);
+      setAllergiesTag("");
+    }
+  };
+  
+  const handleRemoveAllergy = (allergyToRemove: string) => {
+    setAllergies(allergies.filter((a) => a !== allergyToRemove));
+  };
 
   const handleAddTag = () => {
     if (newTag.trim() && !tags.includes(newTag.trim())) {
@@ -67,6 +113,12 @@ export default function CustomerForm({
         generalNotes: generalNotes.trim() || undefined,
         tags,
         status,
+        birthday: birthday || undefined,
+        medicalHistory: {
+          conditions,
+          allergies,
+          medications: medications.trim(),
+        },
       };
 
       const url = customerId
@@ -96,8 +148,12 @@ export default function CustomerForm({
         );
       }
 
-      // Redirect to customer file page
-      router.push(`/t/${tenantSlug}/clientes/${data.customer.id}`);
+      if (onSuccess) {
+        onSuccess();
+      } else {
+        // Redirect to customer file page
+        router.push(`/t/${tenantSlug}/clientes/${data.customer.id}`);
+      }
     } catch (err) {
       console.error("Error saving customer:", err);
       setError(
@@ -162,6 +218,19 @@ export default function CustomerForm({
             onChange={(e) => setEmail(e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="Ej: maria@example.com"
+          />
+        </div>
+
+        {/* Birthday */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Fecha de Cumpleaños
+          </label>
+          <input
+            type="date"
+            value={birthday}
+            onChange={(e) => setBirthday(e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
@@ -254,8 +323,127 @@ export default function CustomerForm({
             onChange={(e) => setGeneralNotes(e.target.value)}
             rows={4}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Notas sobre preferencias, historial médico, observaciones especiales..."
+            placeholder="Notas sobre preferencias especiales..."
           />
+        </div>
+
+        {/* SECTION: MEDICAL HISTORY */}
+        <div className="pt-6 mt-6 border-t border-gray-200">
+          <h3 className="text-lg font-medium text-gray-900 mb-4">⚕️ Historial Médico</h3>
+          
+          <div className="space-y-5">
+            {/* Conditions */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Condiciones Médicas (Diabetes, Psoriasis, Dermatitis, etc.)
+              </label>
+              <div className="flex gap-2 mb-2">
+                <input
+                  type="text"
+                  value={conditionsTag}
+                  onChange={(e) => setConditionsTag(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      handleAddCondition();
+                    }
+                  }}
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                  placeholder="Ej: Diabetes Tipo 2"
+                />
+                <button
+                  type="button"
+                  onClick={handleAddCondition}
+                  className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 flex items-center gap-1"
+                >
+                  <Plus className="h-4 w-4" />
+                  Agregar
+                </button>
+              </div>
+              {conditions.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {conditions.map((condition, index) => (
+                    <span
+                      key={index}
+                      className="inline-flex items-center gap-1 px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm font-medium"
+                    >
+                      {condition}
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveCondition(condition)}
+                        className="hover:text-red-900"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Allergies */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Alergias Conocidas
+              </label>
+              <div className="flex gap-2 mb-2">
+                <input
+                  type="text"
+                  value={allergiesTag}
+                  onChange={(e) => setAllergiesTag(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      handleAddAllergy();
+                    }
+                  }}
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  placeholder="Ej: Acrilato, Polvo"
+                />
+                <button
+                  type="button"
+                  onClick={handleAddAllergy}
+                  className="px-4 py-2 bg-amber-600 text-white rounded-md hover:bg-amber-700 flex items-center gap-1"
+                >
+                  <Plus className="h-4 w-4" />
+                  Agregar
+                </button>
+              </div>
+              {allergies.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {allergies.map((allergy, index) => (
+                    <span
+                      key={index}
+                      className="inline-flex items-center gap-1 px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-sm font-medium"
+                    >
+                      {allergy}
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveAllergy(allergy)}
+                        className="hover:text-amber-900"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Medications */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Medicamentos Actuales
+              </label>
+              <textarea
+                value={medications}
+                onChange={(e) => setMedications(e.target.value)}
+                rows={2}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Registra si el paciente está tomando algún medicamento o tratamiento médico relevant..."
+              />
+            </div>
+          </div>
         </div>
       </div>
 

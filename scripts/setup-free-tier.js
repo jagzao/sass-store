@@ -37,7 +37,7 @@ function setupFreeTier() {
     },
   };
 
-  // Create free tier environment files
+  // Create free tier environment files (monolith-only: web app contains all API routes)
   const freeEnvFiles = {
     "apps/web/.env.local": `# FREE TIER CONFIGURATION
 DATABASE_URL=${freeConfig.database.url}
@@ -45,15 +45,10 @@ GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_client_secret
 NEXTAUTH_URL=http://localhost:3001
 NEXTAUTH_SECRET=free_tier_jwt_secret_32_chars_minimum
-`,
-
-    "apps/api/.env.local": `# FREE TIER CONFIGURATION
-DATABASE_URL=${freeConfig.database.url}
-JWT_SECRET=free_tier_jwt_secret_32_chars_minimum
 REDIS_URL=${freeConfig.redis.url}
 `,
 
-    "apps/api/.env.free": `# FREE TIER PRODUCTION
+    "apps/web/.env.free": `# FREE TIER PRODUCTION
 DATABASE_URL=${freeConfig.database.url}
 JWT_SECRET=free_tier_jwt_secret_32_chars_minimum
 REDIS_URL=${freeConfig.redis.url}
@@ -137,8 +132,7 @@ GOOGLE_CLIENT_SECRET=your_client_secret
 
 2. **Configure Environment Variables**:
    \`\`\`bash
-   # Update .env files with actual URLs
-   nano apps/api/.env.local
+   # Update .env files with actual URLs (monolith-only)
    nano apps/web/.env.local
    \`\`\`
 

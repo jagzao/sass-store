@@ -180,18 +180,7 @@ export function ContinueShopping() {
   const currentTenantSlug = useTenantSlug();
   const router = useRouter();
 
-  // Memoize filtered items
-  const tenantFilteredItems = useMemo(() =>
-    unfinishedItems.filter((item) => item.tenant === currentTenantSlug),
-    [currentTenantSlug]
-  );
-
-  // If no items for current tenant, don't render the section
-  if (tenantFilteredItems.length === 0) {
-    return null;
-  }
-
-  // Memoize action handlers
+  // Memoize action handlers - MUST be called before any early returns
   const handleContinue = useCallback((item: UnfinishedItem) => {
     // Navigate to appropriate step based on progress
     let targetUrl: string;
@@ -218,10 +207,20 @@ export function ContinueShopping() {
     // This would connect to an API endpoint in production
     if (confirm(`¿Eliminar "${item.name}" de tu lista?`)) {
       // API call would go here: DELETE /api/saved-items/${item.id}
-      console.log(`Removing item ${item.id} for tenant ${item.tenant}`);
       // TODO: Connect to actual API endpoint when implemented
     }
   }, []);
+
+  // Memoize filtered items
+  const tenantFilteredItems = useMemo(() =>
+    unfinishedItems.filter((item) => item.tenant === currentTenantSlug),
+    [currentTenantSlug]
+  );
+
+  // If no items for current tenant, don't render the section
+  if (tenantFilteredItems.length === 0) {
+    return null;
+  }
 
   return (
     <section className="mb-8">

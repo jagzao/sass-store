@@ -24,12 +24,12 @@ export function PaymentErrorBoundary({ children }: PaymentErrorBoundaryProps) {
         // });
       }}
       fallback={
-        <div className="max-w-2xl mx-auto p-8 bg-white rounded-lg shadow-lg border-2 border-yellow-400">
+        <div className="max-w-2xl mx-auto p-8 bg-white rounded-lg shadow-lg border-2 border-stone-400">
           <div className="flex items-start gap-4">
             <div className="flex-shrink-0">
-              <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
+              <div className="w-12 h-12 bg-stone-100 rounded-full flex items-center justify-center">
                 <svg
-                  className="w-6 h-6 text-yellow-600"
+                  className="w-6 h-6 text-stone-600"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"

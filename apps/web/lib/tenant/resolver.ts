@@ -58,29 +58,29 @@ const DEFAULT_TENANT: Tenant = {
  * Now relies on middleware headers for tenant resolution.
  * Returns { id, slug, featureMode, locale, currency } as required.
  */
-export async function resolveTenant(): Promise<Tenant> {
+export async function resolveTenant(urlSlug?: string): Promise<Tenant> {
   const headersList = await headers();
 
   // Get resolved tenant from middleware headers (mandatory)
-  const tenantSlug = headersList.get("x-tenant");
+  const tenantSlug = urlSlug || headersList.get("x-tenant");
   const tenantId = headersList.get("x-tenant-id");
   const tenantMode = headersList.get("x-tenant-mode") as "catalog" | "booking";
   const tenantLocale = headersList.get("x-tenant-locale");
   const tenantCurrency = headersList.get("x-tenant-currency");
 
-  if (!tenantSlug || !tenantId) {
-    console.error("Missing tenant resolution headers from middleware");
-    // Fallback to default if middleware headers are missing
+  if (!tenantSlug) {
+    console.error("Missing tenant resolution headers from middleware and no URL slug provided");
+    // Fallback to default if everything is missing
     return DEFAULT_TENANT;
   }
 
   // Fetch full tenant data using resolved slug
   const tenant = await fetchTenantBySlug(tenantSlug);
   if (tenant) {
-    // Enrich with middleware resolution data
+    // Enrich with middleware resolution data if available
     return {
       ...tenant,
-      id: tenantId,
+      id: tenantId || tenant.id, // Fallback to DB UUID if header missing
       mode: tenantMode || tenant.mode,
       // Add additional resolution metadata if needed
       resolvedAt: new Date().toISOString(),

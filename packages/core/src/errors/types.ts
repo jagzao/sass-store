@@ -105,6 +105,30 @@ export interface StorageError extends BaseDomainError {
   readonly provider?: string;
 }
 
+// Financial Matrix Errors
+export interface MatrixError extends BaseDomainError {
+  readonly type: "MatrixError";
+  readonly operation: string;
+  readonly tenantId?: string;
+}
+
+export interface InvalidGranularityError extends BaseDomainError {
+  readonly type: "InvalidGranularityError";
+  readonly granularity: string;
+}
+
+export interface InvalidDateRangeError extends BaseDomainError {
+  readonly type: "InvalidDateRangeError";
+  readonly startDate: string;
+  readonly endDate: string;
+}
+
+export interface CloneOperationError extends BaseDomainError {
+  readonly type: "CloneOperationError";
+  readonly source: string;
+  readonly target: string;
+}
+
 // Union type for all domain errors
 export type DomainError =
   | ValidationError
@@ -118,7 +142,11 @@ export type DomainError =
   | RateLimitError
   | PaymentError
   | TenantError
-  | StorageError;
+  | StorageError
+  | MatrixError
+  | InvalidGranularityError
+  | InvalidDateRangeError
+  | CloneOperationError;
 
 // Error factories for convenient creation
 export const ErrorFactories = {
@@ -289,6 +317,53 @@ export const ErrorFactories = {
     cause,
     timestamp: new Date(),
   }),
+
+  // Matrix
+  matrix: (
+    operation: string,
+    message: string,
+    tenantId?: string,
+  ): MatrixError => ({
+    type: "MatrixError",
+    message: `Matrix error during ${operation}: ${message}`,
+    operation,
+    tenantId,
+    timestamp: new Date(),
+  }),
+
+  invalidGranularity: (
+    granularity: string,
+    message?: string,
+  ): InvalidGranularityError => ({
+    type: "InvalidGranularityError",
+    message: message || `Invalid granularity: ${granularity}`,
+    granularity,
+    timestamp: new Date(),
+  }),
+
+  invalidDateRange: (
+    startDate: string,
+    endDate: string,
+    message?: string,
+  ): InvalidDateRangeError => ({
+    type: "InvalidDateRangeError",
+    message: message || `Invalid date range: ${startDate} to ${endDate}`,
+    startDate,
+    endDate,
+    timestamp: new Date(),
+  }),
+
+  cloneOperation: (
+    source: string,
+    target: string,
+    message: string,
+  ): CloneOperationError => ({
+    type: "CloneOperationError",
+    message,
+    source,
+    target,
+    timestamp: new Date(),
+  }),
 };
 
 // Type guards for error types
@@ -317,6 +392,16 @@ export const ErrorTypeGuards = {
     error.type === "TenantError",
   isStorageError: (error: DomainError): error is StorageError =>
     error.type === "StorageError",
+  isMatrixError: (error: DomainError): error is MatrixError =>
+    error.type === "MatrixError",
+  isInvalidGranularityError: (
+    error: DomainError,
+  ): error is InvalidGranularityError => error.type === "InvalidGranularityError",
+  isInvalidDateRangeError: (
+    error: DomainError,
+  ): error is InvalidDateRangeError => error.type === "InvalidDateRangeError",
+  isCloneOperationError: (error: DomainError): error is CloneOperationError =>
+    error.type === "CloneOperationError",
 };
 
 // Convert standard Error to DomainError
@@ -359,11 +444,16 @@ export const getHttpStatusCode = (error: DomainError): number => {
     case "DatabaseError":
     case "StorageError":
     case "NetworkError":
+    case "MatrixError":
+    case "CloneOperationError":
       return 500;
     case "PaymentError":
       return 402;
     case "TenantError":
       return 403;
+    case "InvalidGranularityError":
+    case "InvalidDateRangeError":
+      return 400;
     default:
       return 500;
   }

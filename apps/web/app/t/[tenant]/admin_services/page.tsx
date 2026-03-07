@@ -36,6 +36,59 @@ export default function AdminServicesPage() {
   const [showMenuDesigner, setShowMenuDesigner] = useState(false);
   const [editingService, setEditingService] = useState<Service | null>(null);
 
+  // Search, Sort, Pagination State
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortConfig, setSortConfig] = useState<{
+    key: keyof Service;
+    direction: "asc" | "desc";
+  }>({ key: "name", direction: "asc" });
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 10;
+
+  // Derived filtered & sorted services
+  const filteredServices = services
+    .filter((service) => {
+      if (searchTerm.length < 3) return true;
+      const lowerSearch = searchTerm.toLowerCase();
+      return (
+        service.name.toLowerCase().includes(lowerSearch) ||
+        service.description.toLowerCase().includes(lowerSearch)
+      );
+    })
+    .sort((a, b) => {
+      const aValue = a[sortConfig.key];
+      const bValue = b[sortConfig.key];
+
+      if (aValue === undefined || bValue === undefined) return 0;
+
+      if (aValue < bValue) {
+        return sortConfig.direction === "asc" ? -1 : 1;
+      }
+      if (aValue > bValue) {
+        return sortConfig.direction === "asc" ? 1 : -1;
+      }
+      return 0;
+    });
+
+  const totalPages = Math.ceil(filteredServices.length / ITEMS_PER_PAGE);
+  const paginatedServices = filteredServices.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE,
+  );
+
+  const handleSort = (key: keyof Service) => {
+    setSortConfig((current) => ({
+      key,
+      direction:
+        current.key === key && current.direction === "asc" ? "desc" : "asc",
+    }));
+  };
+
+  // Reset pagination on search
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
+
   // Form persistence with localStorage
   const {
     values: formData,
@@ -231,6 +284,34 @@ export default function AdminServicesPage() {
             </div>
           </div>
 
+          {/* Search Bar */}
+          <div className="mb-6">
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Buscar servicios..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+              <div className="absolute left-3 top-2.5 text-gray-400">
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+
           {loading ? (
             <div className="text-center py-12">
               <div className="text-4xl mb-4">⏳</div>
@@ -245,20 +326,60 @@ export default function AdminServicesPage() {
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-10">
                         <span className="sr-only">Editar</span>
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Nombre
+                      <th
+                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                        onClick={() => handleSort("name")}
+                      >
+                        <div className="flex items-center gap-1">
+                          Nombre
+                          {sortConfig.key === "name" && (
+                            <span>
+                              {sortConfig.direction === "asc" ? "▲" : "▼"}
+                            </span>
+                          )}
+                        </div>
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Descripción
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Duración
+                      <th
+                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                        onClick={() => handleSort("duration")}
+                      >
+                        <div className="flex items-center gap-1">
+                          Duración
+                          {sortConfig.key === "duration" && (
+                            <span>
+                              {sortConfig.direction === "asc" ? "▲" : "▼"}
+                            </span>
+                          )}
+                        </div>
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Precio
+                      <th
+                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                        onClick={() => handleSort("price")}
+                      >
+                        <div className="flex items-center gap-1">
+                          Precio
+                          {sortConfig.key === "price" && (
+                            <span>
+                              {sortConfig.direction === "asc" ? "▲" : "▼"}
+                            </span>
+                          )}
+                        </div>
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Estado
+                      <th
+                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                        onClick={() => handleSort("active")}
+                      >
+                        <div className="flex items-center gap-1">
+                          Estado
+                          {sortConfig.key === "active" && (
+                            <span>
+                              {sortConfig.direction === "asc" ? "▲" : "▼"}
+                            </span>
+                          )}
+                        </div>
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-10">
                         <span className="sr-only">Eliminar</span>
@@ -266,7 +387,7 @@ export default function AdminServicesPage() {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {services.map((service) => (
+                    {paginatedServices.map((service) => (
                       <tr key={service.id} className="hover:bg-gray-50">
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                           <button
@@ -300,7 +421,7 @@ export default function AdminServicesPage() {
                             {service.active ? "Activo" : "Inactivo"}
                           </span>
                           {service.featured && (
-                            <span className="ml-2 inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                            <span className="ml-2 inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-stone-100 text-stone-800">
                               Destacado
                             </span>
                           )}
@@ -316,20 +437,63 @@ export default function AdminServicesPage() {
                         </td>
                       </tr>
                     ))}
-                    {services.length === 0 && (
+                    {paginatedServices.length === 0 && (
                       <tr>
                         <td
-                          colSpan={6}
+                          colSpan={7}
                           className="px-6 py-12 text-center text-gray-500"
                         >
-                          No hay servicios registrados aún. Crea tu primer
-                          servicio.
+                          {searchTerm.length >= 3
+                            ? "No se encontraron servicios que coincidan con tu búsqueda."
+                            : "No hay servicios registrados aún."}
                         </td>
                       </tr>
                     )}
                   </tbody>
                 </table>
               </div>
+              
+              {/* Pagination Controls */}
+              {totalPages > 1 && (
+                <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+                  <div className="text-sm text-gray-700">
+                    Mostrando{" "}
+                    <span className="font-medium">
+                      {(currentPage - 1) * ITEMS_PER_PAGE + 1}
+                    </span>{" "}
+                    a{" "}
+                    <span className="font-medium">
+                      {Math.min(
+                        currentPage * ITEMS_PER_PAGE,
+                        filteredServices.length,
+                      )}
+                    </span>{" "}
+                    de{" "}
+                    <span className="font-medium">{filteredServices.length}</span>{" "}
+                    resultados
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() =>
+                        setCurrentPage((prev) => Math.max(prev - 1, 1))
+                      }
+                      disabled={currentPage === 1}
+                      className="px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Anterior
+                    </button>
+                    <button
+                      onClick={() =>
+                        setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                      }
+                      disabled={currentPage === totalPages}
+                      className="px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Siguiente
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>

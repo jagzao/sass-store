@@ -52,7 +52,7 @@ export function useCsrf() {
   /**
    * Make a fetch request with CSRF token automatically included
    */
-  // eslint-disable-next-line no-undef
+   
   const csrfFetch = async (url: string, options: RequestInit = {}) => {
     const headers = new Headers(options.headers);
 

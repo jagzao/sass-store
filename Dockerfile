@@ -1,5 +1,6 @@
 # Dockerfile para SASS Store
 # Construcción multi-etapa para optimizar el tamaño de la imagen
+# Monolith-only: apps/web contains all API routes
 
 # Etapa 1: Construir la aplicación
 FROM node:18-alpine AS builder
@@ -16,7 +17,7 @@ RUN npm ci --only=production
 # Copiar el resto del código fuente
 COPY . .
 
-# Construir la aplicación
+# Construir la aplicación (monolith web app with API routes)
 RUN npm run build
 
 # Etapa 2: Imagen de producción
@@ -30,12 +31,9 @@ WORKDIR /app
 
 # Copiar los archivos construidos desde la etapa de construcción
 COPY --from=builder /app/apps/web/out ./web
-COPY --from=builder /app/apps/api/.next/standalone ./api
-COPY --from=builder /app/apps/api/public ./api/public
-COPY --from=builder /app/apps/api/.next/static ./api/.next/static
 
-# Exponer puertos
-EXPOSE 3001 4000
+# Exponer puerto (monolith-only, single port)
+EXPOSE 3001
 
 # Comando para iniciar la aplicación
-CMD ["sh", "-c", "cd api && node server.js & cd ../web && serve -s out -l 3001"]
+CMD ["serve", "-s", "web", "-l", "3001"]

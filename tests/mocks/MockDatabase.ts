@@ -11,6 +11,7 @@ export interface MockCollection<T> {
   findById: (id: string) => Promise<T | null>;
   findMany: (filter: (item: T) => boolean) => Promise<T[]>;
   update: (id: string, updates: Partial<T>) => Promise<T | null>;
+  updateAtomic: (id: string, transform: (current: T) => T) => Promise<T | null>;
   delete: (id: string) => Promise<boolean>;
   clear: () => void;
   count: () => number;
@@ -48,7 +49,20 @@ function createMockCollection<T extends { id?: string }>(
       const existing = this.data.get(id);
       if (!existing) return null;
 
-      const updated = { ...existing, ...updates, updatedAt: new Date() };
+      // Atomic update: get the latest value and apply updates
+      const latest = this.data.get(id);
+      const updated = { ...latest, ...updates, updatedAt: new Date() };
+      this.data.set(id, updated);
+      return updated;
+    },
+
+    async updateAtomic(id: string, transform: (current: T) => T): Promise<T | null> {
+      const existing = this.data.get(id);
+      if (!existing) return null;
+
+      // Atomic update: read current value and apply transformation
+      const current = this.data.get(id);
+      const updated = { ...transform(current), updatedAt: new Date() };
       this.data.set(id, updated);
       return updated;
     },
@@ -77,6 +91,7 @@ export class MockDatabase {
   public services: MockCollection<any>;
   public bookings: MockCollection<any>;
   public payments: MockCollection<any>;
+  public categories: MockCollection<any>;
 
   constructor() {
     this.tenants = createMockCollection((item: any) => item.id || item.slug);
@@ -85,11 +100,12 @@ export class MockDatabase {
 
     this.users = createMockCollection((item: any) => item.id || item.email);
 
-    this.cart = createMockCollection();
-    this.orders = createMockCollection();
-    this.services = createMockCollection();
-    this.bookings = createMockCollection();
-    this.payments = createMockCollection();
+    this.cart = createMockCollection((item: any) => item.id);
+    this.orders = createMockCollection((item: any) => item.id);
+    this.services = createMockCollection((item: any) => item.id);
+    this.bookings = createMockCollection((item: any) => item.id);
+    this.payments = createMockCollection((item: any) => item.id);
+    this.categories = createMockCollection((item: any) => item.id);
   }
 
   // Clear all collections for test isolation
@@ -102,6 +118,7 @@ export class MockDatabase {
     this.services.clear();
     this.bookings.clear();
     this.payments.clear();
+    this.categories.clear();
   }
 
   // Simulate database errors for testing

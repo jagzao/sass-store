@@ -93,6 +93,20 @@ export class TenantService {
           `[TenantService] Found tenant in database: ${tenantData.name}`,
         );
 
+        const isYellow = (color: string) => 
+          color?.toLowerCase() === 'yellow' || 
+          color?.toLowerCase() === '#ffff00' || 
+          color?.toLowerCase() === 'rgb(255, 255, 0)';
+
+        const safeBranding = { ...tenantData.branding } as any;
+        if (safeBranding) {
+          if (isYellow(safeBranding.primaryColor)) safeBranding.primaryColor = '#C5A059'; // Gold
+          if (isYellow(safeBranding.secondaryColor)) safeBranding.secondaryColor = '#F5F5DC'; // Blanco Hueso
+          if (isYellow(safeBranding.backgroundColor) || safeBranding.backgroundColor?.toLowerCase() === '#ffffff') {
+             safeBranding.backgroundColor = '#F8F9FA'; // Blanco Hueso
+          }
+        }
+
         return {
           id: tenantData.id,
           slug: tenantData.slug,
@@ -100,7 +114,7 @@ export class TenantService {
           description: tenantData.description,
           mode: tenantData.mode,
           status: tenantData.status,
-          branding: tenantData.branding,
+          branding: safeBranding,
           contact: tenantData.contact,
           location: tenantData.location,
           quotas: tenantData.quotas,
@@ -177,7 +191,21 @@ export class TenantService {
         null,
         async (db) => {
           return await db
-            .select()
+            .select({
+              id: products.id,
+              tenantId: products.tenantId,
+              sku: products.sku,
+              name: products.name,
+              description: products.description,
+              price: products.price,
+              imageUrl: products.imageUrl,
+              category: products.category,
+              featured: products.featured,
+              active: products.active,
+              metadata: products.metadata,
+              createdAt: products.createdAt,
+              updatedAt: products.updatedAt,
+            })
             .from(products)
             .where(eq(products.tenantId, tenantId));
         },
@@ -302,7 +330,21 @@ export class TenantService {
                       .where(eq(services.tenantId, tenantData.id))
                   : Promise.resolve([]),
                 db
-                  .select()
+                  .select({
+                    id: products.id,
+                    tenantId: products.tenantId,
+                    sku: products.sku,
+                    name: products.name,
+                    description: products.description,
+                    price: products.price,
+                    imageUrl: products.imageUrl,
+                    category: products.category,
+                    featured: products.featured,
+                    active: products.active,
+                    metadata: products.metadata,
+                    createdAt: products.createdAt,
+                    updatedAt: products.updatedAt,
+                  })
                   .from(products)
                   .where(eq(products.tenantId, tenantData.id)),
                 tenantData.mode === "booking"
@@ -318,6 +360,21 @@ export class TenantService {
             `[TenantService] Loaded ${tenantServices.length} services, ${tenantProducts.length} products, ${tenantStaff.length} staff`,
           );
 
+          // FIX: Global Interceptor for fluorescent yellow colors causing UI bugs.
+          const isYellow = (color: string) => 
+            color?.toLowerCase() === 'yellow' || 
+            color?.toLowerCase() === '#ffff00' || 
+            color?.toLowerCase() === 'rgb(255, 255, 0)';
+
+          const safeBranding = { ...tenantData.branding } as any;
+          if (safeBranding) {
+            if (isYellow(safeBranding.primaryColor)) safeBranding.primaryColor = '#C5A059'; // Gold
+            if (isYellow(safeBranding.secondaryColor)) safeBranding.secondaryColor = '#F5F5DC'; // Blanco Hueso
+            if (isYellow(safeBranding.backgroundColor) || safeBranding.backgroundColor?.toLowerCase() === '#ffffff') {
+               safeBranding.backgroundColor = '#F8F9FA'; // Blanco Hueso
+            }
+          }
+
           const result = {
             id: tenantData.id,
             slug: tenantData.slug,
@@ -325,7 +382,7 @@ export class TenantService {
             description: tenantData.description,
             mode: tenantData.mode,
             status: tenantData.status,
-            branding: tenantData.branding,
+            branding: safeBranding,
             contact: tenantData.contact,
             location: tenantData.location,
             quotas: tenantData.quotas,

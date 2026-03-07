@@ -29,9 +29,9 @@ const updateInventorySchema = z.object({
 });
 
 interface RouteParams {
-  params: {
+  params: Promise<{
     productId: string;
-  };
+  }>;
 }
 
 /**
@@ -45,7 +45,7 @@ export async function GET(request: NextRequest, context: RouteParams) {
     }
 
     // Obtener productId de los params
-    const { productId } = context.params;
+    const { productId } = await context.params;
 
     // Obtener inventario
     const inventory = await InventoryService.getInventoryByProductId(
@@ -79,7 +79,7 @@ export async function PUT(request: NextRequest, context: RouteParams) {
     }
 
     // Obtener productId de los params
-    const { productId } = context.params;
+    const { productId } = await context.params;
 
     // Parsear y validar body
     const body = await request.json();
@@ -125,7 +125,7 @@ export async function DELETE(request: NextRequest, context: RouteParams) {
     }
 
     // Obtener productId de los params
-    const { productId } = context.params;
+    const { productId } = await context.params;
 
     // Eliminar inventario
     const result = await InventoryService.deleteInventory(

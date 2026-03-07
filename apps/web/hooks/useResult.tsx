@@ -7,7 +7,7 @@
 
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 
 interface UseResultReturn<T> {
   data: T | null;
@@ -38,6 +38,16 @@ export function useResult<T>(
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<any>(null);
   const [retryCount, setRetryCount] = useState(0);
+  
+  // Use refs for callbacks to avoid exhaustive-deps issues while maintaining stable references
+  const onSuccessRef = useRef(onSuccess);
+  const onErrorRef = useRef(onError);
+  
+  // Update refs when callbacks change
+  useEffect(() => {
+    onSuccessRef.current = onSuccess;
+    onErrorRef.current = onError;
+  }, [onSuccess, onError]);
 
   // Check cache
   const checkCache = useCallback(
@@ -98,8 +108,8 @@ export function useResult<T>(
             saveCache(cacheKey, res.data);
           }
 
-          if (onSuccess) {
-            onSuccess(res.data);
+          if (onSuccessRef.current) {
+            onSuccessRef.current(res.data);
           }
         } else {
           throw res?.error || new Error("Operation failed");
@@ -109,12 +119,12 @@ export function useResult<T>(
         setError(error);
         setIsLoading(false);
 
-        if (onError) {
-          onError(error);
+        if (onErrorRef.current) {
+          onErrorRef.current(error);
         }
       }
     },
-    [onSuccess, onError, cacheKey, saveCache],
+    [cacheKey, saveCache],
   );
 
   // Execute result processing
@@ -126,8 +136,8 @@ export function useResult<T>(
         if (cached) {
           setData(cached);
           setIsLoading(false);
-          if (onSuccess) {
-            onSuccess(cached);
+          if (onSuccessRef.current) {
+            onSuccessRef.current(cached);
           }
           return;
         }

@@ -5,8 +5,14 @@ import { eq, and } from "drizzle-orm";
 import { z } from "zod";
 
 const updateBrandingSchema = z.object({
+  logoUrl: z.string().nullable().optional(),
+  faviconUrl: z.string().nullable().optional(),
+  primaryColor: z.string().optional(),
+  secondaryColor: z.string().optional(),
+  accentColor: z.string().optional(),
+  // Legacy compatibility
   logo: z.string().nullable().optional(),
-  // Add other branding fields here as needed in the future
+  favicon: z.string().nullable().optional(),
 });
 
 export async function PUT(
@@ -57,13 +63,39 @@ export async function PUT(
       );
     }
 
-    const { logo } = result.data;
+    const {
+      logoUrl,
+      faviconUrl,
+      primaryColor,
+      secondaryColor,
+      accentColor,
+      logo,
+      favicon,
+    } = result.data;
+
+    const resolvedLogoUrl = logoUrl !== undefined ? logoUrl : logo;
+    const resolvedFaviconUrl =
+      faviconUrl !== undefined ? faviconUrl : favicon;
 
     // Merge with existing branding (careful not to overwrite other fields)
     const existingBranding = (tenant.branding as any) || {};
     const updatedBranding = {
       ...existingBranding,
-      logo: logo, // If null, it effectively removes it or sets to null
+      ...(resolvedLogoUrl !== undefined
+        ? {
+            logoUrl: resolvedLogoUrl,
+            logo: resolvedLogoUrl,
+          }
+        : {}),
+      ...(resolvedFaviconUrl !== undefined
+        ? {
+            faviconUrl: resolvedFaviconUrl,
+            favicon: resolvedFaviconUrl,
+          }
+        : {}),
+      ...(primaryColor !== undefined ? { primaryColor } : {}),
+      ...(secondaryColor !== undefined ? { secondaryColor } : {}),
+      ...(accentColor !== undefined ? { accentColor } : {}),
     };
 
     // Clean up undefined/null keys if we want to remove them?

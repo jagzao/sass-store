@@ -44,18 +44,6 @@ jobs:
           directory: apps/web/.next
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: 🐳 Deploy API to Cloud Run (Dev)
-        uses: google-github-actions/deploy-cloudrun@v2
-        with:
-          service: sass-store-api-dev
-          image: gcr.io/${{ secrets.GCP_PROJECT_ID }}/sass-store-api:${{ github.sha }}
-          region: us-central1
-          env_vars: |
-            NODE_ENV=development
-            DATABASE_URL=${{ secrets.DEV_DATABASE_URL }}
-            JWT_SECRET=${{ secrets.DEV_JWT_SECRET }}
-            REDIS_URL=${{ secrets.DEV_REDIS_URL }}
-
       - name: 🩺 Health Check
         run: |
           sleep 30
@@ -64,5 +52,4 @@ jobs:
       - name: 📢 Notify deployment
         run: |
           echo "✅ Development deployment completed successfully!"
-          echo "🌐 Frontend: https://sass-store-dev.pages.dev"
-          echo "🔌 API: https://sass-store-api-dev-abc123.run.app"
+          echo "🌐 Monolith: https://sass-store-dev.pages.dev"

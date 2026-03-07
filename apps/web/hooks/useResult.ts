@@ -7,7 +7,7 @@
 
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Result, isSuccess, isFailure, Err } from "@sass-store/core/src/result";
 import { DomainError, ErrorFactories } from "@sass-store/core/src/errors/types";
 
@@ -51,6 +51,16 @@ export function useResult<T, E extends DomainError>({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<E | null>(null);
   const [retryCount, setRetryCount] = useState(0);
+  
+  // Use refs for callbacks to avoid exhaustive-deps issues while maintaining stable references
+  const onSuccessRef = useRef(onSuccess);
+  const onErrorRef = useRef(onError);
+  
+  // Update refs when callbacks change
+  useEffect(() => {
+    onSuccessRef.current = onSuccess;
+    onErrorRef.current = onError;
+  }, [onSuccess, onError]);
 
   // Check cache
   const checkCache = useCallback(
@@ -97,7 +107,7 @@ export function useResult<T, E extends DomainError>({
 
   // Process result
   const processResult = useCallback(
-    async (res: Result<T, E>) => {
+    async (res: Result<T, E>, currentRetryCount: number = 0) => {
       setIsLoading(true);
       setError(null);
 
@@ -111,8 +121,8 @@ export function useResult<T, E extends DomainError>({
             saveCache(cacheKey, res.data);
           }
 
-          if (onSuccess) {
-            onSuccess(res.data);
+          if (onSuccessRef.current) {
+            onSuccessRef.current(res.data);
           }
         } else {
           throw res.error;
@@ -122,16 +132,17 @@ export function useResult<T, E extends DomainError>({
         setError(error);
         setIsLoading(false);
 
-        if (onError) {
-          onError(error);
+        if (onErrorRef.current) {
+          onErrorRef.current(error);
         }
 
         // Auto retry logic
-        if (autoRetry && retryCount < maxRetries) {
-          setRetryCount((prev) => prev + 1);
+        if (autoRetry && currentRetryCount < maxRetries) {
+          const nextRetryCount = currentRetryCount + 1;
+          setRetryCount(nextRetryCount);
           setTimeout(() => {
-            processResult(res); // Retry with original result
-          }, retryDelay * retryCount);
+            processResult(res, nextRetryCount); // Retry with original result
+          }, retryDelay * nextRetryCount);
         }
       }
     },
@@ -139,8 +150,6 @@ export function useResult<T, E extends DomainError>({
       autoRetry,
       maxRetries,
       retryDelay,
-      onSuccess,
-      onError,
       cacheKey,
       saveCache,
     ],
@@ -155,8 +164,8 @@ export function useResult<T, E extends DomainError>({
         if (cached) {
           setData(cached);
           setIsLoading(false);
-          if (onSuccess) {
-            onSuccess(cached);
+          if (onSuccessRef.current) {
+            onSuccessRef.current(cached);
           }
           return;
         }

@@ -175,18 +175,7 @@ export function BookAgain() {
   const currentTenantSlug = useTenantSlug();
   const router = useRouter();
 
-  // Memoize filtered services
-  const tenantFilteredServices = useMemo(() =>
-    recentBookings.filter((service) => service.tenant === currentTenantSlug),
-    [currentTenantSlug]
-  );
-
-  // If no services for current tenant, don't render the section
-  if (tenantFilteredServices.length === 0) {
-    return null;
-  }
-
-  // Memoize action handlers
+  // Memoize action handlers - MUST be called before any early returns
   const handleBookNow = useCallback((service: Service) => {
     // Direct booking with preferred staff and time
     const bookingUrl = `/t/${service.tenant}/booking/${service.id}?staff=${encodeURIComponent(service.preferredStaff)}&time=${service.nextAvailableSlot}`;
@@ -198,6 +187,17 @@ export function BookAgain() {
     const scheduleUrl = `/t/${service.tenant}/services/${service.id}/schedule`;
     router.push(scheduleUrl);
   }, [router]);
+
+  // Memoize filtered services
+  const tenantFilteredServices = useMemo(() =>
+    recentBookings.filter((service) => service.tenant === currentTenantSlug),
+    [currentTenantSlug]
+  );
+
+  // If no services for current tenant, don't render the section
+  if (tenantFilteredServices.length === 0) {
+    return null;
+  }
 
   return (
     <section className="mb-8">

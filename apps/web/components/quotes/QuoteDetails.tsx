@@ -1,14 +1,27 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import { MessageCircle, Mail, ArrowLeft, CheckCircle, XCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+
 // Using a simple toast implementation to avoid dependency issues
 const toast = {
   success: (message: string) => alert(`✓ ${message}`),
   error: (message: string) => alert(`✗ ${message}`),
 };
+
+interface QuoteItem {
+  id: string;
+  name: string;
+  description?: string;
+  quantity: number;
+  unitPrice: number;
+  subtotal: number;
+  type: "service" | "product";
+}
 
 interface Quote {
   id: string;
@@ -17,18 +30,12 @@ interface Quote {
   customerEmail?: string;
   customerPhone?: string;
   notes?: string;
-  termsConditions?: string;
   status: "pending" | "accepted" | "rejected" | "expired" | "converted";
   createdAt: string;
   expiresAt: string;
-  price: string;
-  duration?: number;
-  service: {
-    id: string;
-    name: string;
-    description: string;
-    imageUrl?: string;
-  };
+  totalAmount: string; // Changed from price
+  validityDays: number;
+  items: QuoteItem[];
 }
 
 export default function QuoteDetails({
@@ -40,14 +47,10 @@ export default function QuoteDetails({
 }) {
   const [quote, setQuote] = useState<Quote | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isConverting, setIsConverting] = useState(false);
   const router = useRouter();
+  const [sendingEmail, setSendingEmail] = useState(false);
 
-  useEffect(() => {
-    fetchQuote();
-  }, [quoteId]);
-
-  const fetchQuote = async () => {
+  const fetchQuote = useCallback(async () => {
     try {
       const response = await fetch(
         `/api/tenants/${tenantSlug}/quotes/${quoteId}`,
@@ -63,14 +66,18 @@ export default function QuoteDetails({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [tenantSlug, quoteId]);
+
+  useEffect(() => {
+    fetchQuote();
+  }, [fetchQuote]);
 
   const handleStatusChange = async (newStatus: string) => {
     try {
       const response = await fetch(
         `/api/tenants/${tenantSlug}/quotes/${quoteId}`,
         {
-          method: "PUT",
+          method: "PUT", // Ensure this endpoint supports PUT for status updates
           headers: {
             "Content-Type": "application/json",
           },
@@ -90,42 +97,42 @@ export default function QuoteDetails({
     }
   };
 
-  const handleConvertToService = async () => {
-    if (!confirm("¿Convertir esta cotización en un nuevo servicio activo?")) {
-      return;
-    }
-
-    setIsConverting(true);
+  const handleSendEmail = async () => {
+    if (!quote?.customerEmail) return;
+    
+    setSendingEmail(true);
     try {
-      const response = await fetch(
-        `/api/tenants/${tenantSlug}/quotes/${quoteId}/convert-to-service`,
-        {
-          method: "POST",
-        },
-      );
+        const response = await fetch(
+            `/api/tenants/${tenantSlug}/quotes/${quote.id}/email`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ email: quote.customerEmail }),
+            },
+        );
 
-      if (response.ok) {
-        toast.success("Cotización convertida en servicio exitosamente");
-        fetchQuote(); // Refresh to see status change
-        // Optionally redirect to services list
-      } else {
-        const error = await response.json();
-        toast.error(error.error || "Error al convertir cotización");
-      }
-    } catch (error) {
-      console.error("Error converting quote:", error);
-      toast.error("Error de conexión");
+        if (response.ok) {
+            toast.success("Correo enviado exitosamente");
+        } else {
+            toast.error("Error al enviar el correo");
+        }
+    } catch (e) {
+        toast.error("Error de conexión");
     } finally {
-      setIsConverting(false);
+        setSendingEmail(false);
     }
-  };
+  }
 
   const getWhatsAppLink = () => {
     if (!quote || !quote.customerPhone) return null;
 
-    const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
-    // Note: Public viewing link not yet implemented, using generic message
-    const message = `Hola ${quote.customerName}, aquí tienes los detalles de tu cotización ${quote.quoteNumber} para ${quote.service.name}. Precio: $${quote.price}.`;
+    let message = `Hola ${quote.customerName}, aquí tienes tu cotización *${quote.quoteNumber}*.\n\n`;
+    message += `*Detalle:*\n`;
+    quote.items.forEach(item => {
+        message += `- ${item.name} (x${item.quantity}): $${Number(item.unitPrice).toFixed(2)}\n`;
+    });
+    message += `\n*Total: $${Number(quote.totalAmount).toFixed(2)}*`;
+    message += `\nVálido hasta: ${format(new Date(quote.expiresAt), "dd/MM/yyyy")}`;
 
     return `https://wa.me/${quote.customerPhone.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(message)}`;
   };
@@ -133,38 +140,27 @@ export default function QuoteDetails({
   const getStatusColor = (status: string) => {
     switch (status) {
       case "pending":
-        return "bg-yellow-100 text-yellow-800 border-yellow-200";
+          return "bg-stone-100 text-stone-800 border-stone-200";
       case "accepted":
-        return "bg-green-100 text-green-800 border-green-200";
+          return "bg-green-100 text-green-800 border-green-200";
       case "converted":
-        return "bg-blue-100 text-blue-800 border-blue-200";
+          return "bg-blue-100 text-blue-800 border-blue-200";
       case "rejected":
-        return "bg-red-100 text-red-800 border-red-200";
+          return "bg-red-100 text-red-800 border-red-200";
       case "expired":
-        return "bg-gray-100 text-gray-800 border-gray-200";
+          return "bg-gray-100 text-gray-800 border-gray-200";
       default:
-        return "bg-gray-100 text-gray-800 border-gray-200";
+          return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className="p-8 text-center animate-pulse">Cargando detalles...</div>
-    );
-  }
-
-  if (!quote) {
-    return (
-      <div className="p-8 text-center text-red-500">
-        Cotización no encontrada
-      </div>
-    );
-  }
+  if (isLoading) return <div className="p-8 text-center animate-pulse">Cargando detalles...</div>;
+  if (!quote) return <div className="p-8 text-center text-red-500">Cotización no encontrada</div>;
 
   return (
     <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden border border-gray-200">
       {/* Header */}
-      <div className="bg-gray-50 px-8 py-6 border-b border-gray-200 flex justify-between items-start">
+      <div className="bg-gray-50 px-8 py-6 border-b border-gray-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">
             Cotización #{quote.quoteNumber}
@@ -192,13 +188,13 @@ export default function QuoteDetails({
         </div>
       </div>
 
-      <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="p-8 grid grid-cols-1 gap-8">
         {/* Customer Info */}
         <div>
           <h3 className="text-lg font-semibold text-gray-900 mb-4 border-b pb-2">
             Información del Cliente
           </h3>
-          <dl className="space-y-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
               <dt className="text-sm font-medium text-gray-500">Nombre</dt>
               <dd className="text-base text-gray-900">{quote.customerName}</dd>
@@ -206,166 +202,128 @@ export default function QuoteDetails({
             {quote.customerEmail && (
               <div>
                 <dt className="text-sm font-medium text-gray-500">Email</dt>
-                <dd className="text-base text-gray-900">
-                  {quote.customerEmail}
-                </dd>
+                <dd className="text-base text-gray-900">{quote.customerEmail}</dd>
               </div>
             )}
             {quote.customerPhone && (
               <div>
                 <dt className="text-sm font-medium text-gray-500">Teléfono</dt>
-                <dd className="text-base text-gray-900">
-                  {quote.customerPhone}
-                </dd>
+                <dd className="text-base text-gray-900">{quote.customerPhone}</dd>
               </div>
             )}
-          </dl>
+          </div>
         </div>
 
-        {/* Service Info */}
+        {/* Items Table */}
         <div>
           <h3 className="text-lg font-semibold text-gray-900 mb-4 border-b pb-2">
-            Detalles del Servicio
+            Detalles de la Cotización
           </h3>
-          <div className="flex items-start gap-4">
-            {quote.service.imageUrl && (
-              <img
-                src={quote.service.imageUrl}
-                alt={quote.service.name}
-                className="w-16 h-16 rounded-lg object-cover bg-gray-100"
-              />
-            )}
-            <div>
-              <h4 className="font-medium text-gray-900">
-                {quote.service.name}
-              </h4>
-              <p className="text-sm text-gray-500 line-clamp-2">
-                {quote.service.description}
-              </p>
-            </div>
-          </div>
-
-          <div className="mt-4 pt-4 border-t border-dashed border-gray-200 grid grid-cols-2 gap-4">
-            <div>
-              <dt className="text-sm font-medium text-gray-500">
-                Precio Cotizado
-              </dt>
-              <dd className="text-xl font-bold text-gray-900">
-                ${quote.price}
-              </dd>
-            </div>
-            {quote.duration && (
-              <div>
-                <dt className="text-sm font-medium text-gray-500">Duración</dt>
-                <dd className="text-base text-gray-900">
-                  {quote.duration} min
-                </dd>
-              </div>
-            )}
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm text-left">
+              <thead className="bg-gray-50 text-gray-500 uppercase font-medium">
+                <tr>
+                  <th className="px-4 py-3">Descripción</th>
+                  <th className="px-4 py-3 text-center">Tipo</th>
+                  <th className="px-4 py-3 text-center">Cant.</th>
+                  <th className="px-4 py-3 text-right">Precio Unit.</th>
+                  <th className="px-4 py-3 text-right">Total</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {quote.items.map((item) => (
+                  <tr key={item.id} className="hover:bg-gray-50/50">
+                    <td className="px-4 py-3">
+                        <div className="font-medium text-gray-900">{item.name}</div>
+                        {item.description && <div className="text-xs text-gray-500 mt-0.5">{item.description}</div>}
+                    </td>
+                    <td className="px-4 py-3 text-center">
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${item.type === 'service' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'}`}>
+                            {item.type === 'service' ? 'Servicio' : 'Producto'}
+                        </span>
+                    </td>
+                    <td className="px-4 py-3 text-center">{Number(item.quantity)}</td>
+                    <td className="px-4 py-3 text-right">${Number(item.unitPrice).toFixed(2)}</td>
+                    <td className="px-4 py-3 text-right font-medium text-gray-900">${Number(item.subtotal).toFixed(2)}</td>
+                  </tr>
+                ))}
+              </tbody>
+              <tfoot className="border-t border-gray-200 bg-gray-50 font-semibold text-gray-900">
+                <tr>
+                  <td colSpan={4} className="px-4 py-3 text-right">Total</td>
+                  <td className="px-4 py-3 text-right text-lg">${Number(quote.totalAmount).toFixed(2)}</td>
+                </tr>
+              </tfoot>
+            </table>
           </div>
         </div>
       </div>
 
-      {/* Notes & Terms */}
-      {(quote.notes || quote.termsConditions) && (
-        <div className="px-8 pb-6 border-t border-gray-100 pt-6">
-          {quote.notes && (
-            <div className="mb-4">
-              <h4 className="text-sm font-semibold text-gray-900 mb-1">
-                Notas Adicionales
-              </h4>
-              <p className="text-sm text-gray-600 bg-yellow-50 p-3 rounded-lg border border-yellow-100">
-                {quote.notes}
-              </p>
-            </div>
-          )}
-          {quote.termsConditions && (
-            <div>
-              <h4 className="text-sm font-semibold text-gray-900 mb-1">
-                Términos y Condiciones
-              </h4>
-              <p className="text-xs text-gray-500">{quote.termsConditions}</p>
-            </div>
-          )}
+      {/* Notes */}
+      {quote.notes && (
+        <div className="px-8 pb-6">
+          <h4 className="text-sm font-semibold text-gray-900 mb-2">Notas Adicionales</h4>
+          <p className="text-sm text-gray-600 bg-stone-50 p-4 rounded-lg border border-stone-100">
+            {quote.notes}
+          </p>
         </div>
       )}
 
       {/* Actions */}
-      <div className="bg-gray-50 px-8 py-4 border-t border-gray-200 flex flex-wrap gap-3 justify-end items-center">
-        <button
+      <div className="bg-gray-50 px-8 py-4 border-t border-gray-200 flex flex-wrap gap-3 justify-between items-center">
+        <Button
+          variant="outline"
           onClick={() => router.back()}
-          className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 text-sm font-medium"
+          className="gap-2"
         >
-          Volver
-        </button>
+          <ArrowLeft className="h-4 w-4" /> Volver
+        </Button>
 
-        {/* WhatsApp Action */}
-        {quote.customerPhone && (
-          <a
-            href={getWhatsAppLink() || "#"}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-4 py-2 bg-[#25D366] text-white rounded-md hover:opacity-90 flex items-center gap-2 text-sm font-medium"
-          >
-            <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
-              <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.913.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-2.846-.828-.924-.38-1.631-.914-2.181-1.464l-.019-.018c-.463-.538-1.554-1.926-1.554-2.774 0-.847.464-1.472 0.72-1.728.257-.257.551-.384.886-.384.333 0 .729.006.886.006.183 0 .337.008.525.437.202.461.706 1.728.706 1.834 0 .105-.021.196-.063.281-.043.085-.236.216-.48.461-.267.268-.537.499-.253.978.281.475 1.258 1.631 2.687 2.261.375.165.738.254 1.01.254.272 0 .564-.085.876-.441.312-.356.516-.763.676-.763.16 0 .428.008.643.111.411.196 1.346.68 1.631.824.281.144.375.197.437.299.063.102.063.606-.079 1.011z" />
-            </svg>
-            Enviar WhatsApp
-          </a>
-        )}
-
-        {/* Status Actions */}
-        {quote.status === "pending" && (
-          <>
-            <button
-              onClick={() => handleStatusChange("rejected")}
-              className="px-4 py-2 border border-red-300 text-red-700 rounded-md hover:bg-red-50 text-sm font-medium"
+        <div className="flex flex-wrap gap-3">
+            {/* Email Action */}
+            <Button
+                variant="outline"
+                onClick={handleSendEmail}
+                disabled={!quote.customerEmail || sendingEmail}
+                className="gap-2"
             >
-              Rechazar
-            </button>
-            <button
-              onClick={() => handleStatusChange("accepted")}
-              className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 text-sm font-medium"
-            >
-              Aceptar
-            </button>
-          </>
-        )}
+                <Mail className="h-4 w-4" />
+                {sendingEmail ? "Enviando..." : "Reenviar Correo"}
+            </Button>
 
-        {/* Conversion Action */}
-        {quote.status === "accepted" && (
-          <button
-            onClick={handleConvertToService}
-            disabled={isConverting}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm font-medium disabled:opacity-50 flex items-center gap-2"
-          >
-            {isConverting ? (
-              <>
-                <svg
-                  className="animate-spin h-4 w-4 text-white"
-                  viewBox="0 0 24 24"
+            {/* WhatsApp Action */}
+            {quote.customerPhone && (
+                <a
+                    href={getWhatsAppLink() || "#"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-[#25D366] text-white rounded-md hover:bg-[#20bd5a] text-sm font-medium transition-colors h-10"
                 >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
-                Creando Servicio...
-              </>
-            ) : (
-              "Convertir a Servicio"
+                    <MessageCircle className="h-4 w-4" />
+                    WhatsApp
+                </a>
             )}
-          </button>
-        )}
+
+            {/* Status Actions */}
+            {quote.status === "pending" && (
+                <>
+                    <Button
+                        variant="destructive"
+                        onClick={() => handleStatusChange("rejected")}
+                        className="gap-2"
+                    >
+                        <XCircle className="h-4 w-4" /> Rechazar
+                    </Button>
+                    <Button
+                        variant="default" // green is usually default for success actions or distinct color
+                        onClick={() => handleStatusChange("accepted")}
+                        className="gap-2 bg-green-600 hover:bg-green-700"
+                    >
+                        <CheckCircle className="h-4 w-4" /> Aceptar
+                    </Button>
+                </>
+            )}
+        </div>
       </div>
     </div>
   );

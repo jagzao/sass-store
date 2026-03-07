@@ -16,6 +16,8 @@ const updateCustomerSchema = z.object({
   address: z.string().optional(),
   status: z.enum(["active", "inactive", "blocked"]).optional(),
   tags: z.array(z.string()).optional(),
+  birthday: z.string().optional(),
+  medicalHistory: z.any().optional(),
 });
 
 export async function GET(

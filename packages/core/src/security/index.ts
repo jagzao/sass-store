@@ -1,7 +1,8 @@
 /**
  * Security utilities for Sass Store
- * Includes CSRF protection and OAuth state management
+ * Includes CSRF protection, OAuth state management, and tenant security
  */
 
 export * from "./csrf";
-export * from "./oauth-state";
+
+export * from "./tenant-security";

@@ -11,16 +11,11 @@ interface TenantStylesProps {
 export function TenantStyles({ isWondernails, isZoSystem }: TenantStylesProps) {
   const css = isWondernails
     ? `
-          /* 1. FIX THE MODAL (Emergency) */
-          /* Target: The modal container, dialog box, or popup form */
+          /* 1. FIX THE MODAL */
           .modal-content, .modal-body, [role="dialog"], .dialog-container {
-              background-color: #FFFFFF !important;
-              background: #FFFFFF !important;
+              background-color: #F8F9FA !important;
+              background: #F8F9FA !important;
               color: #333333 !important; /* Force text to dark gray */
-          }
-          /* Kill the yellow */
-          *[style*="background-color: yellow"], *[style*="background: yellow"] {
-              background-color: #FFFFFF !important;
           }
 
           /* 2. NEUTRALIZE THE SLIDES (Kill Black & Cream) */
@@ -46,9 +41,9 @@ export function TenantStyles({ isWondernails, isZoSystem }: TenantStylesProps) {
               box-shadow: none !important;
           }
 
-          /* 1. Ensure the body handles the base white color */
+          /* 1. Ensure the body handles the base off-white color */
           body {
-              background-color: #FFFFFF !important;
+              background-color: #F8F9FA !important;
               position: relative; /* Needed for absolute positioning context if not fixed */
           }
 
@@ -110,16 +105,16 @@ export function TenantStyles({ isWondernails, isZoSystem }: TenantStylesProps) {
             border: none !important;
           }
           
-          /* Fix for modal background - ensure modals have white background */
+          /* Fix for modal background - ensure modals have bone white background */
           .modal, .modal-content, [role="dialog"], .dialog-panel, .ReactModal__Content {
-            background-color: #FFFFFF !important;
-            background: #FFFFFF !important;
+            background-color: #F8F9FA !important;
+            background: #F8F9FA !important;
           }
           
           /* Override bg-primary for modals specifically */
           .bg-primary.modal, .bg-primary.modal-content, .bg-primary[role="dialog"], .bg-primary.dialog-panel, .bg-primary.ReactModal__Content {
-            background-color: #FFFFFF !important;
-            background: #FFFFFF !important;
+            background-color: #F8F9FA !important;
+            background: #F8F9FA !important;
           }
         `
     : isZoSystem

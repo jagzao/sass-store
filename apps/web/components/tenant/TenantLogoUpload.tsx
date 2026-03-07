@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useRef, type ChangeEvent, useCallback } from "react";
+import { useState, useRef, type ChangeEvent, useCallback, useEffect } from "react";
+import { createPortal } from "react-dom";
 import {
   Upload,
   X,
@@ -14,11 +15,15 @@ import type { Point, Area } from "react-easy-crop";
 interface TenantLogoUploadProps {
   currentLogo?: string;
   onLogoChange: (url: string | null) => void;
+  aspectRatio?: number;
+  lockAspectRatio?: boolean;
 }
 
 export default function TenantLogoUpload({
   currentLogo,
   onLogoChange,
+  aspectRatio = 3 / 2, // Default to standard logo aspect ratio
+  lockAspectRatio = false,
 }: TenantLogoUploadProps) {
   const [uploading, setUploading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -29,7 +34,7 @@ export default function TenantLogoUpload({
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
   const [isCropping, setIsCropping] = useState(false);
-  const [aspect, setAspect] = useState(3 / 2);
+  const [aspect, setAspect] = useState(aspectRatio);
 
   const onCropComplete = useCallback(
     (croppedArea: Area, croppedAreaPixels: Area) => {
@@ -40,9 +45,13 @@ export default function TenantLogoUpload({
 
   const onMediaLoaded = useCallback(
     (mediaSize: { naturalWidth: number; naturalHeight: number }) => {
-      setAspect(mediaSize.naturalWidth / mediaSize.naturalHeight);
+      if (!lockAspectRatio) {
+        setAspect(mediaSize.naturalWidth / mediaSize.naturalHeight);
+      } else {
+        setAspect(aspectRatio);
+      }
     },
-    [],
+    [lockAspectRatio, aspectRatio],
   );
 
   const readFile = (file: File): Promise<string> => {
@@ -172,86 +181,102 @@ export default function TenantLogoUpload({
     }
   };
 
+  // Fix for hydration mismatch & portal
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
+
+  // ... (rest of imports/logic)
+
   const triggerFileInput = () => {
     if (inputRef.current) {
       inputRef.current.click();
     }
   };
 
-  return (
-    <div className="space-y-4">
-      {/* Crop Modal */}
-      {isCropping && imageSrc && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
-            <div className="p-4 border-b border-gray-100 flex justify-between items-center">
-              <h4 className="text-lg font-bold text-gray-800 flex items-center gap-2">
-                <CropIcon className="w-5 h-5 text-blue-600" />
-                Ajustar Logo
-              </h4>
-              <button
-                onClick={handleCropCancel}
-                className="text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-100 transition-colors"
-              >
-                <X className="w-6 h-6" />
-              </button>
-            </div>
+  const cropModal = isCropping && imageSrc ? (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 text-left">
+      <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh] animate-in fade-in zoom-in-95 duration-200">
+        <div className="p-4 border-b border-gray-100 flex justify-between items-center">
+          <h4 className="text-lg font-bold text-gray-800 flex items-center gap-2">
+            <CropIcon className="w-5 h-5 text-blue-600" />
+            Ajustar Logo
+          </h4>
+          <button
+            type="button"
+            onClick={handleCropCancel}
+            className="text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-100 transition-colors"
+          >
+            <X className="w-6 h-6" />
+          </button>
+        </div>
 
-            <div className="relative w-full h-[400px] bg-gray-900">
-              <Cropper
-                image={imageSrc}
-                crop={crop}
-                zoom={zoom}
-                aspect={aspect}
-                onCropChange={setCrop}
-                onCropComplete={onCropComplete}
-                onZoomChange={setZoom}
-                onMediaLoaded={onMediaLoaded}
-                objectFit="contain"
-              />
-            </div>
+        <div className="relative w-full h-[400px] bg-gray-900">
+          <Cropper
+            image={imageSrc}
+            crop={crop}
+            zoom={zoom}
+            aspect={aspect}
+            onCropChange={setCrop}
+            onCropComplete={onCropComplete}
+            onZoomChange={setZoom}
+            onMediaLoaded={onMediaLoaded}
+            objectFit="contain"
+          />
+        </div>
 
-            <div className="p-6 space-y-4">
-              <div className="flex items-center gap-4">
-                <ZoomIn className="w-5 h-5 text-gray-500" />
-                <input
-                  type="range"
-                  value={zoom}
-                  min={1}
-                  max={3}
-                  step={0.1}
-                  aria-labelledby="Zoom"
-                  onChange={(e) => setZoom(Number(e.target.value))}
-                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
-                />
-                <span className="text-sm text-gray-500 w-8 text-right">
-                  {zoom.toFixed(1)}x
-                </span>
-              </div>
+        <div className="p-6 space-y-4">
+          <div className="flex items-center gap-4">
+            <ZoomIn className="w-5 h-5 text-gray-500" />
+            <input
+              type="range"
+              value={zoom}
+              min={1}
+              max={3}
+              step={0.1}
+              aria-labelledby="Zoom"
+              onChange={(e) => setZoom(Number(e.target.value))}
+              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+            />
+            <span className="text-sm text-gray-500 w-8 text-right">
+              {zoom.toFixed(1)}x
+            </span>
+          </div>
 
-              <div className="flex justify-end gap-3 pt-2">
-                <button
-                  onClick={handleCropCancel}
-                  className="px-4 py-2 text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 font-medium transition-colors"
-                >
-                  Cancelar
-                </button>
-                <button
-                  onClick={handleCropSave}
-                  disabled={uploading}
-                  className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-bold shadow-lg transition-all"
-                >
-                  {uploading ? "Procesando..." : "Guardar Logo"}
-                </button>
-              </div>
-            </div>
+          <div className="flex justify-end gap-3 pt-2">
+            <button
+              type="button"
+              onClick={handleCropCancel}
+              className="px-4 py-2 text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 font-medium transition-colors"
+            >
+              Cancelar
+            </button>
+            <button
+              type="button"
+              onClick={handleCropSave}
+              disabled={uploading}
+              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-bold shadow-lg transition-all"
+            >
+              {uploading ? "Procesando..." : "Guardar Logo"}
+            </button>
           </div>
         </div>
-      )}
+      </div>
+    </div>
+  ) : null;
+
+  return (
+    <div className="space-y-4">
+      {/* Crop Modal Portal */}
+      {mounted && typeof document !== "undefined"
+        ? createPortal(cropModal, document.body)
+        : null}
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          Logo del Negocio
+          {aspectRatio === 1 ? "Icono / Favicon" : "Logo del Negocio"}
         </label>
 
         <input
@@ -265,11 +290,17 @@ export default function TenantLogoUpload({
         <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors bg-white">
           {currentLogo ? (
             <div className="relative group inline-block">
-              <div className="bg-gray-50 p-4 rounded-lg border border-gray-100">
+              <div
+                className={`bg-gray-50 p-4 rounded-lg border border-gray-100 ${
+                  aspectRatio === 1 ? "w-32 h-32 flex items-center justify-center" : ""
+                }`}
+              >
                 <img
                   src={currentLogo}
                   alt="Logo actual"
-                  className="max-h-32 max-w-full object-contain mx-auto"
+                  className={`${
+                    aspectRatio === 1 ? "w-16 h-16" : "max-h-32"
+                  } max-w-full object-contain mx-auto`}
                 />
               </div>
               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-lg">
@@ -300,11 +331,16 @@ export default function TenantLogoUpload({
               </div>
               <div className="space-y-1">
                 <p className="text-sm font-medium text-gray-700">
-                  {uploading ? "Subiendo..." : "Haz clic para subir un logo"}
+                  {uploading ? "Subiendo..." : "Haz clic para subir una imagen"}
                 </p>
                 <p className="text-xs text-gray-500">
                   Recomendado: Fondo transparente (PNG)
                 </p>
+                {lockAspectRatio && aspectRatio === 1 && (
+                  <p className="text-xs text-blue-500 font-semibold">
+                    Se forzará formato cuadrado (1:1)
+                  </p>
+                )}
               </div>
               <button
                 type="button"

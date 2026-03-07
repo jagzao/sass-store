@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from "vitest";
+// Using globals instead of imports since globals: true in Vitest config
 import {
   getTestDb,
   createTestTenant,
@@ -117,7 +117,7 @@ describe("Service CRUD Operations", () => {
 
       expect(updated.name).toBe("New Name");
       expect(Number(updated.price)).toBe(45.00);
-      expect(updated.duration).toBe(45);
+      expect(Number(updated.duration)).toBe(45);
     });
 
     it("should toggle service active status", async () => {

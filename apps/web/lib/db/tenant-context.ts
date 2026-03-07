@@ -124,14 +124,14 @@ export async function withTenantContext(
  */
 export async function withTenantContextFromParams(
   request: NextRequest,
-  params: { tenant: string },
+  params: Promise<{ tenant: string }>,
   handler: (request: NextRequest, tenantId: string) => Promise<NextResponse>,
 ) {
   const tenantLogger = logger.withContext("TenantContext");
   const startTime = Date.now();
 
   try {
-    const tenantSlug = params.tenant;
+    const { tenant: tenantSlug } = await params;
 
     if (!tenantSlug) {
       tenantLogger.error("Tenant slug not found in params");
