@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import UserMenu from "@/components/auth/UserMenu";
 import { Trash2, Pencil } from "lucide-react";
 
