@@ -6,9 +6,14 @@ import { useState } from "react";
 interface TenantStylesProps {
   isWondernails: boolean;
   isZoSystem: boolean;
+  primaryColor?: string;
 }
 
-export function TenantStyles({ isWondernails, isZoSystem }: TenantStylesProps) {
+export function TenantStyles({
+  isWondernails,
+  isZoSystem,
+  primaryColor = "#059669",
+}: TenantStylesProps) {
   const css = isWondernails
     ? `
           /* 1. FIX THE MODAL */
@@ -31,14 +36,6 @@ export function TenantStyles({ isWondernails, isZoSystem }: TenantStylesProps) {
               backdrop-filter: blur(20px) !important;
               border: 1px solid rgba(197, 160, 89, 0.2) !important;
               box-shadow: 0 10px 40px rgba(160, 130, 180, 0.15) !important; /* Lilac Shadow */
-          }
-
-          /* 3. CLEAN THE HEADER */
-          /* Target: The Navigation Bar */
-          header, nav, .navbar-container {
-              background-color: transparent !important;
-              background: transparent !important;
-              box-shadow: none !important;
           }
 
           /* 1. Ensure the body handles the base off-white color */
@@ -172,36 +169,51 @@ export function TenantStyles({ isWondernails, isZoSystem }: TenantStylesProps) {
            }
         `
       : `
-          /* Default styles for non-wondernails tenants */
+          /* Default tenant styles — uses tenant's actual primary color */
           body {
             background-color: #F9FAFB !important;
+            color: #1F2937 !important;
           }
-          
+
           [class*="card"] {
             background: white !important;
             border: 1px solid #E5E7EB !important;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
           }
-          
+
           :root {
             --background: 249 250 251;
             --foreground: 31 41 55;
-            --primary: 59 130 246;
             --primary-foreground: 255 255 255;
+            --color-primary: ${primaryColor};
           }
-          
+
           h1, h2, h3, h4, h5, h6 {
             color: #1F2937 !important;
           }
-          
+
           p, span, div, li {
-             color: #374151;
+            color: #374151;
           }
-          
+
           .btn-primary, button[type="submit"], .bg-primary {
-            background-color: #3B82F6 !important;
+            background-color: ${primaryColor} !important;
             color: white !important;
             border: none !important;
+          }
+
+          .text-primary {
+            color: ${primaryColor} !important;
+          }
+
+          /* Modals use neutral border, not wondernails gold */
+          [role="dialog"],
+          .modal,
+          .modal-content,
+          .ReactModal__Content,
+          .dialog-panel {
+            background-color: #FFFFFF !important;
+            border: 1px solid #E5E7EB !important;
           }
         `;
 

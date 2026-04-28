@@ -47,31 +47,32 @@ export default async function TenantLayout({
 
   const isWondernails = tenantSlug === "wondernails";
   const isZoSystem = tenantSlug === "zo-system";
+  const isCentroTenistico = tenantSlug === "centro-tenistico";
+  const isDark =
+    (isZoSystem || tenantData.branding.theme === "dark") && !isCentroTenistico;
 
   return (
     <>
-      <TenantStyles isWondernails={isWondernails} isZoSystem={isZoSystem} />
+      <TenantStyles
+        isWondernails={isWondernails}
+        isZoSystem={isZoSystem}
+        primaryColor={tenantData.branding?.primaryColor}
+      />
       <div
         className={`min-h-screen ${
           isWondernails
             ? "bg-[#F8F9FA] text-[#333333]"
-            : isZoSystem || tenantData.branding.theme === "dark"
+            : isDark
               ? "bg-[#0D0D0D] text-white font-[family-name:var(--font-montserrat)] relative"
               : "bg-[#F8F9FA] text-gray-900"
         }`}
       >
         <LiveRegionProvider>
-          {(isZoSystem || tenantData.branding.theme === "dark") && (
-            <CircuitSpotlight />
-          )}
+          {isDark && <CircuitSpotlight />}
           <TenantHeader
             tenantData={tenantData}
             variant={
-              isWondernails
-                ? "transparent"
-                : tenantData.branding.theme === "dark"
-                  ? "dark"
-                  : "default"
+              isWondernails ? "transparent" : isDark ? "dark" : "default"
             }
           />
           <main>

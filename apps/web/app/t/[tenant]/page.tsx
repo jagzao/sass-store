@@ -27,7 +27,7 @@ interface PageProps {
  * - Automatic caching with Next.js
  * - No client-side JavaScript for initial render
  * - Streaming with Suspense boundaries
- * 
+ *
  * Role-Based Home Selection:
  * - Unauthenticated / Cliente role => Public Home (existing behavior)
  * - Admin / Gerente / Personal role => HomeTenant Dashboard
@@ -41,6 +41,14 @@ export default async function TenantPageServer({ params }: PageProps) {
       await import("@/components/tenant/zo-system/ZoLandingPage")
     ).default;
     return <ZoLandingPage tenantSlug={tenantSlug} />;
+  }
+
+  // Custom Design for Centro Tenístico
+  if (tenantSlug === "centro-tenistico") {
+    const CentroTenisticoLanding = (
+      await import("@/components/tenant/centro-tenistico/CentroTenisticoLanding")
+    ).default;
+    return <CentroTenisticoLanding tenantSlug={tenantSlug} />;
   }
 
   // Get tenant data directly from database (server-side only, no HTTP calls)
