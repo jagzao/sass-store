@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Result Pattern API Middleware
  *

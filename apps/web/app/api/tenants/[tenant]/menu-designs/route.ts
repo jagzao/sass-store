@@ -21,7 +21,7 @@ const createMenuSchema = z.object({
 // GET /api/tenants/[tenant]/menu-designs - List designs
 export async function GET(
   request: NextRequest,
-  { params }: { params: { tenant: string } },
+  { params }: { params: Promise<{ tenant: string }> },
 ) {
   try {
     const session = await auth();
@@ -29,7 +29,7 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const tenantSlug = params.tenant;
+    const { tenant: tenantSlug } = await params;
 
     // Get tenant ID from slug (simplified for brevity, usually middleware handles handle tenant resolution)
     const tenant = await db.query.tenants.findFirst({
@@ -59,10 +59,10 @@ export async function GET(
 // POST /api/tenants/[tenant]/menu-designs - Create design
 export async function POST(
   request: NextRequest,
-  { params }: { params: { tenant: string } },
+  { params }: { params: Promise<{ tenant: string }> },
 ) {
   try {
-    const tenantSlug = params.tenant;
+    const { tenant: tenantSlug } = await params;
     console.log(`[API] Creando menú para tenant: ${tenantSlug}`);
 
     const session = await auth();

@@ -3,6 +3,7 @@
  * Runs before all test suites
  */
 
+import "@testing-library/jest-dom/vitest";
 import { cleanupTestData } from "./test-database";
 
 type HookRegistrar = (hook: () => Promise<void> | void) => void;

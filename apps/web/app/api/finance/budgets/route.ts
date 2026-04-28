@@ -243,17 +243,18 @@ export async function GET(request: NextRequest): Promise<Response> {
 }
 
 export async function POST(request: NextRequest): Promise<Response> {
+  let body: any;
   try {
     // Verificar autenticación
     const session = await auth();
     if (!session?.user) {
-      return NextResponse.json({ 
-        success: false, 
-        error: "Unauthorized" 
+      return NextResponse.json({
+        success: false,
+        error: "Unauthorized"
       }, { status: 401 });
     }
 
-    const body = await request.json();
+    body = await request.json();
     
     // Validar datos del presupuesto
     if (!body.name || !body.periodType || !body.startDate || !body.endDate || !body.totalLimit || !body.tenantSlug) {

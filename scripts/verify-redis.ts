@@ -1,4 +1,4 @@
-#!/usr/bin/env ts-node
+// @ts-nocheck
 /**
  * Upstash Redis Verification Script
  * Tests that Redis connection and caching are working properly

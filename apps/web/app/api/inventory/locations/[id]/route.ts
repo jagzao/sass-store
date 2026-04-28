@@ -28,7 +28,7 @@ const updateInventoryLocationSchema = z.object({
 });
 
 interface RouteParams {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 /**
@@ -41,7 +41,7 @@ export async function GET(request: NextRequest, context: RouteParams) {
       return toInventoryErrorResponse(tenantContext.error);
     }
 
-    const locationId = context.params.id;
+    const locationId = (await context.params).id;
 
     const locationsResult = await getInventoryConfigArray<InventoryLocationEntity>(
       tenantContext.data.tenantId,
@@ -82,7 +82,7 @@ export async function PUT(request: NextRequest, context: RouteParams) {
       return toInventoryErrorResponse(tenantContext.error);
     }
 
-    const locationId = context.params.id;
+    const locationId = (await context.params).id;
 
     // Parsear y validar body
     const body = await request.json();
@@ -177,7 +177,7 @@ export async function DELETE(request: NextRequest, context: RouteParams) {
       return toInventoryErrorResponse(tenantContext.error);
     }
 
-    const locationId = context.params.id;
+    const locationId = (await context.params).id;
 
     const locationsResult = await getInventoryConfigArray<InventoryLocationEntity>(
       tenantContext.data.tenantId,

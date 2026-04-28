@@ -6,8 +6,8 @@
 
 import { describe, it, expect } from "vitest";
 
-describe("API Connection Test", () => {
-  const baseUrl = "http://localhost:4000";
+describe.skipIf(!process.env.TEST_API_BASE_URL)("API Connection Test", () => {
+  const baseUrl = process.env.TEST_API_BASE_URL!;
 
   it("should connect to API on port 4000", async () => {
     try {

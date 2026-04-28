@@ -9,7 +9,7 @@
       "scope": "project-local",
       "enabled": true,
       "path": ".agents/skills/feature-developer/SKILL.md",
-      "purpose": "Desarrollo autonomo completo de features: codigo → tests → correccion → video demo. Sigue el protocolo autonomous-loop.",
+      "purpose": "Desarrollo autonomo completo de features: codigo -> tests -> correccion -> video demo. Sigue el protocolo autonomous-loop.",
       "useWhen": [
         "usuario solicita implementar feature nueva",
         "usuario dice 'implementa [X]' o 'crea [X]'",
@@ -55,6 +55,22 @@
       "doNotUseWhen": [
         "landing pages o sitios de marketing",
         "campanas promocionales"
+      ]
+    },
+    {
+      "id": "customer-service-chatbot",
+      "scope": "project-local",
+      "enabled": true,
+      "path": ".agents/skills/customer-service-chatbot/SKILL.md",
+      "purpose": "Disenar, implementar, depurar o mejorar flujos de chatbot de soporte al cliente con aislamiento por tenant.",
+      "useWhen": [
+        "implementar chatbot de atencion al cliente",
+        "crear o corregir FAQs, intents, respuestas o escalamiento de soporte",
+        "trabajar flujos de chat relacionados con reservas, ordenes, productos o clientes"
+      ],
+      "doNotUseWhen": [
+        "la tarea no involucra soporte conversacional",
+        "solo se requiere una pantalla administrativa sin comportamiento de chat"
       ]
     },
     {
@@ -146,6 +162,39 @@
           "filtro tenantId en todas las queries",
           "RLS habilitado en tablas nuevas",
           "contexto de tenant del usuario autenticado"
+        ]
+      }
+    },
+    {
+      "id": "ci-cd-gate",
+      "scope": "project-local",
+      "enabled": true,
+      "path": ".agents/protocols/validation.md",
+      "purpose": "Gatekeeper de calidad: ejecuta pipeline completo de validación y bloquea merge si no pasa",
+      "useWhen": [
+        "agente declara feature lista",
+        "se requiere verificación antes de merge",
+        "ci pipeline necesita validación"
+      ],
+      "doNotUseWhen": [
+        "feature aun en desarrollo",
+        "solo se modifica documentacion"
+      ],
+      "protocol": {
+        "steps": [
+          "npm run lint",
+          "npm run typecheck",
+          "npm run build",
+          "npx vitest run --reporter=basic",
+          "npx playwright test --reporter=list --timeout=60000"
+        ],
+        "gate": "Si cualquier paso falla, feature NO está lista. Se repite ciclo de corrección.",
+        "metrics": [
+          "cobertura unitaria >= 80%",
+          "E2E >= 1 test por feature",
+          "0 errores lint",
+          "0 errores typecheck",
+          "build exitoso"
         ]
       }
     },

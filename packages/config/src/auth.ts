@@ -281,8 +281,9 @@ const { handlers, auth, signIn, signOut } = NextAuth({
             if (pathSegments.length >= 3) {
               const urlTenantSlug = pathSegments[2];
 
-              // If the URL tenant doesn't match the session tenant, invalidate session
-              if (urlTenantSlug !== token.tenantSlug) {
+              // Only invalidate if token already has a tenant set and it mismatches
+              // (Google OAuth users start with no tenantSlug — don't invalidate them)
+              if (token.tenantSlug && urlTenantSlug !== token.tenantSlug) {
                 console.warn(
                   `[NextAuth] Session tenant mismatch: session is for '${token.tenantSlug}' but URL is for '${urlTenantSlug}' - invalidating session`,
                 );
@@ -384,9 +385,11 @@ const { handlers, auth, signIn, signOut } = NextAuth({
         }
       }
 
-      // Handle session updates (e.g., role change from profile page)
-      if (trigger === "update" && session?.name) {
-        token.name = session.name;
+      // Handle session updates (e.g., role change, Google tenant binding)
+      if (trigger === "update") {
+        if (session?.name) token.name = session.name;
+        if (session?.tenantSlug) token.tenantSlug = session.tenantSlug;
+        if (session?.role) token.role = session.role;
       }
 
       return token;

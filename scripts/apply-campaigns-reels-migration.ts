@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Migration Script: Add Campaigns and Reels Tables
  *

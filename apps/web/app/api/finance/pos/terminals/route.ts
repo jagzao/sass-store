@@ -29,11 +29,11 @@ export async function GET(request: NextRequest) {
       sql`SELECT id FROM tenants WHERE slug = ${tenantSlug}`,
     );
 
-    if (!tenantResult.rows || tenantResult.rows.length === 0) {
+    if (!tenantResult || (tenantResult as any[]).length === 0) {
       return NextResponse.json({ error: "Tenant not found" }, { status: 404 });
     }
 
-    const tenantId = tenantResult.rows[0].id;
+    const tenantId = (tenantResult as any[])[0].id;
 
     // Validar acceso al tenant
     try {
@@ -130,11 +130,11 @@ export async function POST(request: NextRequest) {
       sql`SELECT id FROM tenants WHERE slug = ${tenantSlug}`,
     );
 
-    if (!tenantResult.rows || tenantResult.rows.length === 0) {
+    if (!tenantResult || (tenantResult as any[]).length === 0) {
       return NextResponse.json({ error: "Tenant not found" }, { status: 404 });
     }
 
-    const tenantId = tenantResult.rows[0].id;
+    const tenantId = (tenantResult as any[])[0].id;
 
     // Validar acceso al tenant
     try {
@@ -169,7 +169,7 @@ export async function POST(request: NextRequest) {
       `,
     );
 
-    const terminalId = terminalResult.rows[0].id;
+    const terminalId = terminalResult[0].id;
 
     // Retornar respuesta exitosa
     return NextResponse.json({

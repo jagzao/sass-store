@@ -143,14 +143,57 @@ call npm run dev
 
 ---
 
+### 2026-04-27 - POS E2E: selector login incorrecto + carga lenta
+
+| Campo | Descripción |
+|-------|-------------|
+| **Error** | 2 tests E2E de POS fallaban: selector `"Iniciar sesión o crear cuenta"` no encontrado + carrito no visible |
+| **Causa Raíz** | 1. El texto de login real es `"Inicia sesión en tu cuenta"`, no `"Iniciar sesión o crear cuenta"`<br>2. La página POS muestra `"Cargando punto de venta..."` por ~5s antes de renderizar el carrito |
+| **Solución** | 1. Cambiar selector a `page.locator('input[type="email"]')` (siempre presente en login)<br>2. Agregar `page.waitForFunction(() => !body.innerText.includes("Cargando punto de venta"))` antes de asserts en POS |
+| **Prevención** | - Usar `data-testid` en lugar de strings de texto<br>- Agregar `waitForFunction` para estados de carga intermedios<br>- Hacer screenshot ante fallo para verificar UI |
+| **Referencia** | `tests/e2e/pos/pos-smoke.spec.ts`, `tests/e2e/pos/pos-full-flow.spec.ts` |
+| **Comando Validación** | `npx playwright test tests/e2e/pos/ --reporter=list --timeout=60000` |
+| **Tiempo Debug** | ~20 minutos |
+
+---
+
+### 2026-04-27 - Booking E2E: ruta `/calendar` devuelve 404
+
+| Campo | Descripción |
+|-------|-------------|
+| **Error** | Tests de Booking fallaban con `404 Not Found` al navegar a `/t/wondernails/calendar` |
+| **Causa Raíz** | La ruta real del calendario admin es `/t/wondernails/admin/calendar`, no `/t/wondernails/calendar` |
+| **Solución** | Actualizar URL en E2E a `/admin/calendar`. Añadir `.catch(() => false)` en `isVisible` para manejar elementos no presentes |
+| **Prevención** | - Verificar rutas en `apps/web/app/t/[tenant]/` antes de escribir E2E<br>- Usar `page.goto(..., { timeout: 60000 })` para dev server lento |
+| **Referencia** | `tests/e2e/booking/booking-full-flow.spec.ts` |
+| **Comando Validación** | `npx playwright test tests/e2e/booking/ --reporter=list --timeout=60000` |
+| **Tiempo Debug** | ~15 minutos |
+
+---
+
+### 2026-04-27 - `RouteParams` legacy en 16 rutas API (Next.js 15)
+
+| Campo | Descripción |
+|-------|-------------|
+| **Error** | `npx tsc --noEmit` reportaba ~15 errores: `Property 'id' is missing in type 'Promise<{ id: string }>'` |
+| **Causa Raíz** | Next.js 15 cambió `context.params` de `{ id: string }` a `Promise<{ id: string }>`. 16 handlers aún usaban el patrón antiguo |
+| **Solución** | Cambiar `interface RouteParams { params: { id: string } }` → `interface RouteParams { params: Promise<{ id: string }> }` y agregar `await` antes de desestructurar en cada handler (GET, PUT, DELETE) |
+| **Prevención** | - ESLint rule o script CI que detecte `params:` sin `Promise<>` en `route.ts`<br>- Checklist de migración en AGENTS.md cuando se actualice Next.js |
+| **Referencia** | `.agents/history/decisions.md` ADR-001 |
+| **Comando Validación** | `npx tsc --noEmit -p apps/web/tsconfig.json` |
+| **Tiempo Debug** | ~45 minutos |
+
+---
+
 ## Estadísticas
 
 | Métrica | Valor |
 |---------|-------|
-| Total incidentes documentados | 3 |
+| Total incidentes documentados | 6 |
 | Tiempo promedio de resolución | ~1.5 horas |
-| Categoría más frecuente | #infra (2) |
+| Categoría más frecuente | #infra (3) |
 | Incidentes de seguridad | 1 |
+| Incidentes de E2E/Testing | 3 (nuevos) |
 
 ---
 

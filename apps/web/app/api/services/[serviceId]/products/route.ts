@@ -17,9 +17,7 @@ const addProductSchema = z.object({
 });
 
 interface RouteParams {
-  params: {
-    serviceId: string;
-  };
+  params: Promise<{ serviceId: string }>;
 }
 
 /**

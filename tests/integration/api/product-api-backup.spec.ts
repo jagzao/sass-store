@@ -136,7 +136,8 @@ describe("Product API Integration", () => {
       });
 
       invalidSKUs.forEach((sku) => {
-        const isInvalid = sku.length === 0 || sku !== sku.trim();
+        const isInvalid =
+          sku.length === 0 || sku !== sku.trim() || /\s/.test(sku);
         expect(isInvalid).toBe(true);
       });
     });
@@ -248,7 +249,7 @@ describe("Product API Integration", () => {
         })
         .returning();
 
-      expect(inventory.quantity).toBe("5");
+      expect(Number(inventory.quantity)).toBe(5);
       expect(inventory.productId).toBe(product.id);
     });
 
@@ -270,7 +271,7 @@ describe("Product API Integration", () => {
         })
         .returning();
 
-      expect(inventory.quantity).toBe("0");
+      expect(Number(inventory.quantity)).toBe(0);
     });
 
     it("should update stock on inventory change", async () => {
@@ -299,7 +300,7 @@ describe("Product API Integration", () => {
         .where(eq(schema.productInventory.id, inventory.id))
         .returning();
 
-      expect(updated.quantity).toBe(newStock);
+      expect(Number(updated.quantity)).toBe(Number(newStock));
     });
   });
 });

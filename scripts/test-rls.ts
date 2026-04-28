@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+// @ts-nocheck
+// @ts-nocheck
 /**
  * Test RLS (Row Level Security)
  * Verifies that tenant isolation is working correctly

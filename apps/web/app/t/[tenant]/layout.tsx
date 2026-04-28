@@ -6,6 +6,7 @@ import { CircuitSpotlight } from "@/components/ui/CircuitSpotlight";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { TenantStyles } from "@/components/tenant/TenantStyles";
 import { LiveRegionProvider } from "@/components/a11y/LiveRegion";
+import { GoogleAuthBinder } from "@/components/auth/GoogleAuthBinder";
 
 // Force dynamic rendering for all tenant pages
 export const dynamic = "force-dynamic";
@@ -75,6 +76,7 @@ export default async function TenantLayout({
               isWondernails ? "transparent" : isDark ? "dark" : "default"
             }
           />
+          <GoogleAuthBinder tenantSlug={tenantSlug} />
           <main>
             <ErrorBoundary>{children}</ErrorBoundary>
           </main>

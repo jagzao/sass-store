@@ -1,7 +1,7 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useRouter, useParams } from "next/navigation";
+import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import UserMenu from "@/components/auth/UserMenu";
 import {
@@ -52,6 +52,8 @@ const AVAILABLE_ROLES = [
   },
 ];
 
+const ROLE_CHANGE_TESTER_EMAILS = new Set(["jagzao@gmail.com"]);
+
 export default function TenantProfilePage() {
   useTenantGuard(); // Use the new guard hook
   const { data: session, status, update } = useSession();
@@ -60,10 +62,22 @@ export default function TenantProfilePage() {
   const { showToast } = useToast();
   const tenantSlug = params.tenant as string;
   const [currentTenant, setCurrentTenant] = useState<any>(null);
-  const [isEditing, setIsEditing] = useState(false);
+  const searchParams = useSearchParams();
+  const isWelcome = searchParams.get("welcome") === "1";
+  const [isEditing, setIsEditing] = useState(isWelcome); // auto-open edit on welcome
   const [formData, setFormData] = useState({
     name: "",
+    phone: "",
+    birthdate: "",
+    gender: "" as "" | "masculino" | "femenino" | "otro" | "prefiero_no_decir",
   });
+  const [initialFormData, setInitialFormData] = useState({
+    name: "",
+    phone: "",
+    birthdate: "",
+    gender: "" as "" | "masculino" | "femenino" | "otro" | "prefiero_no_decir",
+  });
+  const [extraProfile, setExtraProfile] = useState<{ phone: string | null; birthdate: string | null; gender: string | null }>({ phone: null, birthdate: null, gender: null });
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [passwordData, setPasswordData] = useState({
     currentPassword: "",
@@ -76,9 +90,22 @@ export default function TenantProfilePage() {
 
   useEffect(() => {
     if (status === "authenticated" && session?.user) {
-      setFormData({
-        name: session.user.name || "",
-      });
+      const baseName = session.user.name || "";
+      setFormData((prev) => ({ ...prev, name: baseName }));
+      fetch("/api/profile")
+        .then((r) => r.json())
+        .then((data) => {
+          setExtraProfile(data);
+          const nextFormData = {
+            name: baseName,
+            phone: data.phone ?? "",
+            birthdate: data.birthdate ? data.birthdate.slice(0, 10) : "",
+            gender: data.gender ?? "",
+          };
+          setFormData(nextFormData);
+          setInitialFormData(nextFormData);
+        })
+        .catch(() => {});
     }
   }, [status, session]);
 
@@ -110,7 +137,20 @@ export default function TenantProfilePage() {
     }
   }, [session?.user?.role]);
 
+  const sessionEmail = session?.user?.email?.toLowerCase() ?? "";
+  const canSelfManageRole =
+    currentRole !== "Cliente" || ROLE_CHANGE_TESTER_EMAILS.has(sessionEmail);
+  const hasProfileChanges =
+    formData.name.trim() !== initialFormData.name.trim() ||
+    formData.phone.trim() !== initialFormData.phone.trim() ||
+    formData.birthdate !== initialFormData.birthdate ||
+    formData.gender !== initialFormData.gender;
+
   const handleRoleChange = (newRole: string) => {
+    if (!canSelfManageRole) {
+      showToast("Tu rol actual no permite cambiar roles", "error");
+      return;
+    }
     setPendingRole(newRole);
     setRoleDialogOpen(true);
   };
@@ -186,35 +226,49 @@ export default function TenantProfilePage() {
   };
 
   const handleEdit = () => {
-    setFormData({
-      name: session?.user?.name || "",
-    });
     setIsEditing(true);
   };
 
   const handleSave = async () => {
-    if (!formData.name.trim()) return;
+    if (!hasProfileChanges) return;
+
+    const fallbackName =
+      session?.user?.name?.trim() ||
+      session?.user?.email?.split("@")[0] ||
+      "Usuario";
+    const normalizedName = formData.name.trim() || fallbackName;
 
     setIsLoading(true);
     try {
       const response = await fetch("/api/profile", {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ name: formData.name.trim(), tenantSlug }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: normalizedName,
+          phone: formData.phone.trim() || null,
+          birthdate: formData.birthdate || null,
+          gender: formData.gender || null,
+          tenantSlug,
+        }),
       });
 
       if (response.ok) {
         // Forzar una actualización completa de la sesión
         await update({
-          name: formData.name.trim(),
+          name: normalizedName,
           // Forzar la actualización de la sesión con una marca de tiempo
           _timestamp: Date.now(),
         });
 
+        const nextFormData = {
+          ...formData,
+          name: normalizedName,
+        };
+        setFormData(nextFormData);
+        setInitialFormData(nextFormData);
+
         setIsEditing(false);
-        showToast("Tu nombre ha sido actualizado correctamente", "success");
+        showToast("Tu perfil fue actualizado correctamente", "success");
 
         // Forzar una recarga de la página para asegurar que todos los componentes reflejen el nuevo nombre
         setTimeout(() => {
@@ -222,17 +276,18 @@ export default function TenantProfilePage() {
         }, 500);
       } else {
         const error = await response.json();
-        showToast(error.error || "Error al actualizar el nombre", "error");
+        showToast(error.error || "Error al actualizar el perfil", "error");
       }
     } catch (error) {
       console.error("Error updating name:", error);
-      showToast("Error al actualizar el nombre", "error");
+      showToast("Error al actualizar el perfil", "error");
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleCancel = () => {
+    setFormData(initialFormData);
     setIsEditing(false);
   };
 
@@ -339,6 +394,19 @@ export default function TenantProfilePage() {
           : "bg-gray-50"
       }`}
     >
+      {/* Welcome banner for new Google users */}
+      {isWelcome && (
+        <div className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-4 py-3">
+          <div className="container mx-auto max-w-4xl flex items-center gap-3">
+            <span className="text-2xl">🎉</span>
+            <div>
+              <p className="font-semibold">¡Bienvenido! Tu cuenta fue creada con Google.</p>
+              <p className="text-sm text-blue-100">Completa tu perfil para una mejor experiencia.</p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
@@ -446,9 +514,7 @@ export default function TenantProfilePage() {
                       <div>
                         <label
                           className={`block text-sm font-medium mb-1 ${
-                            tenantSlug === "zo-system"
-                              ? "text-gray-300"
-                              : "text-gray-700"
+                            tenantSlug === "zo-system" ? "text-gray-300" : "text-gray-700"
                           }`}
                         >
                           Email
@@ -463,12 +529,92 @@ export default function TenantProfilePage() {
                           {session.user.email}
                         </p>
                       </div>
+
+                      {/* Phone */}
+                      <div>
+                        <label className={`block text-sm font-medium mb-1 ${tenantSlug === "zo-system" ? "text-gray-300" : "text-gray-700"}`}>
+                          Teléfono
+                        </label>
+                        {isEditing ? (
+                          <input
+                            type="tel"
+                            value={formData.phone}
+                            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                            maxLength={20}
+                            placeholder="55 1234 5678"
+                            className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:border-transparent ${
+                              tenantSlug === "zo-system"
+                                ? "bg-black/20 border-white/20 text-white focus:ring-[#FF8000] placeholder-gray-500"
+                                : "border-gray-300 focus:ring-blue-500"
+                            }`}
+                          />
+                        ) : (
+                          <p className={`px-3 py-2 rounded ${tenantSlug === "zo-system" ? "text-white bg-white/5 border border-white/5" : "text-gray-900 bg-gray-50"}`}>
+                            {extraProfile.phone || "No especificado"}
+                          </p>
+                        )}
+                      </div>
+
+                      {/* Birthdate */}
+                      <div>
+                        <label className={`block text-sm font-medium mb-1 ${tenantSlug === "zo-system" ? "text-gray-300" : "text-gray-700"}`}>
+                          Fecha de nacimiento
+                        </label>
+                        {isEditing ? (
+                          <input
+                            type="date"
+                            value={formData.birthdate}
+                            onChange={(e) => setFormData({ ...formData, birthdate: e.target.value })}
+                            max={new Date().toISOString().slice(0, 10)}
+                            className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:border-transparent ${
+                              tenantSlug === "zo-system"
+                                ? "bg-black/20 border-white/20 text-white focus:ring-[#FF8000]"
+                                : "border-gray-300 focus:ring-blue-500"
+                            }`}
+                          />
+                        ) : (
+                          <p className={`px-3 py-2 rounded ${tenantSlug === "zo-system" ? "text-white bg-white/5 border border-white/5" : "text-gray-900 bg-gray-50"}`}>
+                            {extraProfile.birthdate
+                              ? new Date(extraProfile.birthdate).toLocaleDateString("es-MX", { year: "numeric", month: "long", day: "numeric" })
+                              : "No especificado"}
+                          </p>
+                        )}
+                      </div>
+
+                      {/* Gender */}
+                      <div>
+                        <label className={`block text-sm font-medium mb-1 ${tenantSlug === "zo-system" ? "text-gray-300" : "text-gray-700"}`}>
+                          Género
+                        </label>
+                        {isEditing ? (
+                          <select
+                            value={formData.gender}
+                            onChange={(e) => setFormData({ ...formData, gender: e.target.value as typeof formData.gender })}
+                            className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:border-transparent ${
+                              tenantSlug === "zo-system"
+                                ? "bg-black/20 border-white/20 text-white focus:ring-[#FF8000]"
+                                : "border-gray-300 focus:ring-blue-500"
+                            }`}
+                          >
+                            <option value="">Seleccionar...</option>
+                            <option value="masculino">Masculino</option>
+                            <option value="femenino">Femenino</option>
+                            <option value="otro">Otro</option>
+                            <option value="prefiero_no_decir">Prefiero no decir</option>
+                          </select>
+                        ) : (
+                          <p className={`px-3 py-2 rounded capitalize ${tenantSlug === "zo-system" ? "text-white bg-white/5 border border-white/5" : "text-gray-900 bg-gray-50"}`}>
+                            {extraProfile.gender
+                              ? { masculino: "Masculino", femenino: "Femenino", otro: "Otro", prefiero_no_decir: "Prefiero no decir" }[extraProfile.gender] ?? extraProfile.gender
+                              : "No especificado"}
+                          </p>
+                        )}
+                      </div>
+
                       <div>
                         <label
                           className={`block text-sm font-medium mb-1 ${
-                            tenantSlug === "zo-system"
-                              ? "text-gray-300"
-                              : "text-gray-700"
+                            tenantSlug === "zo-system" ? "text-gray-300" : "text-gray-700"
                           }`}
                         >
                           Rol
@@ -500,7 +646,7 @@ export default function TenantProfilePage() {
                         </button>
                         <button
                           onClick={handleSave}
-                          disabled={isLoading}
+                          disabled={isLoading || !hasProfileChanges}
                           className={`px-4 py-2 rounded-lg disabled:opacity-50 ${
                             tenantSlug === "zo-system"
                               ? "bg-[#EAFF00] text-black font-bold uppercase tracking-wide hover:shadow-[0_0_15px_rgba(234,255,0,0.4)]"
@@ -759,14 +905,16 @@ export default function TenantProfilePage() {
                       : "text-gray-600"
                   }`}
                 >
-                  Selecciona tu rol en el sistema:
+                  {canSelfManageRole
+                    ? "Selecciona tu rol en el sistema:"
+                    : "Tu rol actual no permite cambiar roles."}
                 </p>
                 <div className="space-y-3">
                   {AVAILABLE_ROLES.map((role) => (
                     <button
                       key={role.id}
                       onClick={() => handleRoleChange(role.id)}
-                      disabled={isLoading}
+                      disabled={isLoading || !canSelfManageRole}
                       className={`w-full text-left px-4 py-3 rounded-lg transition-colors disabled:opacity-50 ${
                         tenantSlug === "zo-system"
                           ? role.id === currentRole

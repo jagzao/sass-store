@@ -1,10 +1,10 @@
 import { notFound } from "next/navigation";
 import { resolveTenant } from "@/lib/tenant/resolver";
 import { getTenantDataForPage } from "@/lib/db/tenant-service";
-import { signIn } from "@/lib/auth";
 import { Metadata } from "next";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { AuthError } from "@/components/auth/AuthError";
+import { GoogleLoginButton } from "@/components/auth/GoogleLoginButton";
 
 interface PageProps {
   params: Promise<{
@@ -127,26 +127,8 @@ export default async function LoginPage({ params, searchParams }: PageProps) {
             </div>
 
             {/* Social Login */}
-            <div className="mt-6 grid grid-cols-2 gap-3">
-              <form
-                action={async () => {
-                  "use server";
-                  const p = await params;
-                  await signIn("google", { redirectTo: `/t/${p.tenant}` });
-                }}
-              >
-                <button
-                  type="submit"
-                  className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 transition-colors"
-                >
-                  <span className="mr-2">📧</span>
-                  Google
-                </button>
-              </form>
-              <button className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 transition-colors opacity-50 cursor-not-allowed">
-                <span className="mr-2">📘</span>
-                Facebook (Soon)
-              </button>
+            <div className="mt-6">
+              <GoogleLoginButton tenantSlug={resolvedParams.tenant} />
             </div>
           </div>
 

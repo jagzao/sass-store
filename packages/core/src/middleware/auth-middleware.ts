@@ -6,7 +6,7 @@ import {
   validateWithZod,
 } from "@sass-store/validation/src/zod-result";
 import { z } from "zod";
-import { SignJWT, jwtVerify, JWTPayloadParsed } from "jose";
+import { SignJWT, jwtVerify } from "jose";
 
 // Types for JWT
 export interface JWTPayload {
@@ -213,7 +213,7 @@ function validateJWTPayload(payload: unknown): Result<JWTPayload, DomainError> {
     );
   }
 
-  return Ok(result.data);
+  return Ok(result.data as JWTPayload);
 }
 
 /**

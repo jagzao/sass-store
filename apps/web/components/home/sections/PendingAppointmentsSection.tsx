@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
-import CalendarClientWrapper from "../../../app/t/[tenant]/admin/calendar/CalendarClientWrapper";
+import CalendarClientWrapper from "@/app/t/[tenant]/admin/calendar/CalendarClientWrapper";
 import { X, Save, Eye } from "lucide-react";
 import CustomerFileHeader, { type CustomerFileHeaderHandle } from "@/components/customers/CustomerFileHeader";
 import CustomerFileSummary from "@/components/customers/CustomerFileSummary";

@@ -23,7 +23,7 @@ export async function loginAsAdmin(page: Page) {
   });
 
   // Navigate exactly as in customer-workflow.spec.ts
-  await page.goto(`/t/${tenantSlug}/login`);
+  await page.goto(`/t/${tenantSlug}/login`, { timeout: 60000 });
   
   // Dev server needs time to compile the login page dynamically (up to 30s)
   await expect(page.locator('input[type="email"]')).toBeVisible({ timeout: 30000 });
@@ -114,13 +114,14 @@ export async function createService(
   }
 
   await page.locator("input[placeholder='0.00']").fill(serviceData.price);
-  await page.locator("input[placeholder='60']").fill(serviceData.duration);
+  await page.locator("input[placeholder='1.5']").fill(serviceData.duration);
 
   if (serviceData.featured) {
     await page.getByRole("checkbox", { name: "Servicio destacado" }).check();
   }
 
   // Submit
+  page.once("dialog", (dialog) => dialog.accept());
   await page.getByRole("button", { name: "Crear Servicio" }).click();
 
   // Wait for modal to close

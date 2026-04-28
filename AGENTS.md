@@ -140,6 +140,15 @@ describe("Product Service", () => {
 - Maintain >=80% logic coverage and log plan changes in `TESTING_IMPLEMENTATION_SUMMARY.md`.
 - Use fixtures from `tests/utils`, stub API calls through `apps/web/lib/**`, and favor data builders over brittle IDs.
 
+### Agent-Specific Testing Guides
+
+Each agent role has a dedicated **Implementation Summary** that serves as the operational source of truth for that area. **These documents must be updated after every significant PR.**
+
+- **QA Leader**: `QA_LEADER_IMPLEMENTATION_SUMMARY.md` — Coverage inventory, pass/fail status, test debt, release validation checklist.
+- **Architect**: `ARCHITECT_IMPLEMENTATION_SUMMARY.md` — ADRs, pattern adoption status, architectural debt, technology inventory.
+- **Dev Leader**: `DEV_LEADER_IMPLEMENTATION_SUMMARY.md` — Coding standards, PR checklist, coverage targets, onboarding guide.
+- **Product Manager (PM)**: `PM_IMPLEMENTATION_SUMMARY.md` — Feature inventory, roadmap, active bugs, KPIs, acceptance criteria.
+
 ## Migration Strategy
 
 ### Phase 1: New Code (Immediate)
@@ -523,3 +532,35 @@ The Result Pattern provides:
 - ✅ Improved debugging
 - ✅ Security benefits
 - ✅ Performance optimization opportunities
+
+---
+
+## 🎭 Regla Obligatoria: Validación E2E con Playwright CLI
+
+**Después de completar CUALQUIER implementación, el agente DEBE:**
+
+1. **Correr Playwright CLI** apuntando al feature implementado — no reportar como terminado sin esto
+2. **Si hay errores** → corregir el código → volver a correr Playwright
+3. **Repetir hasta que el flujo pase limpio**
+4. **Solo entonces reportar la tarea como completada**
+
+### Comandos estándar
+
+```bash
+# Feature específico
+npm run test:e2e:subset -- --grep "nombre-del-feature"
+
+# Tenant específico
+npm run test:e2e:subset -- --grep "wondernails|centro-tenistico"
+
+# Validación completa
+npm run test:e2e
+```
+
+### Aplica a
+- Nuevos componentes, páginas o rutas
+- Cambios en autenticación (login, registro, OAuth)
+- Cambios en estilos globales o layouts de tenant
+- Cualquier fix de UI, lógica de negocio o flujo de usuario
+
+**🚨 NUNCA reportar una implementación como "lista" sin confirmación de Playwright.**

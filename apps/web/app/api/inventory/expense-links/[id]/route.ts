@@ -6,12 +6,16 @@ import {
   toInventoryErrorResponse,
 } from "../../_lib/tenant-context";
 
+interface RouteParams {
+  params: Promise<{ id: string }>;
+}
+
 /**
  * GET /api/inventory/expense-links/[id] - Get specific expense link
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  context: RouteParams,
 ) {
   try {
     const tenantContext = await resolveInventoryTenantContext();
@@ -19,7 +23,7 @@ export async function GET(
       return toInventoryErrorResponse(tenantContext.error);
     }
 
-    const { id } = params;
+    const { id } = await context.params;
 
     const result = await inventoryExpenseLinkService.getExpenseLink(id);
 
@@ -62,7 +66,7 @@ export async function GET(
  */
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  context: RouteParams,
 ) {
   try {
     const tenantContext = await resolveInventoryTenantContext();
@@ -70,7 +74,7 @@ export async function PUT(
       return toInventoryErrorResponse(tenantContext.error);
     }
 
-    const { id } = params;
+    const { id } = await context.params;
     const body = await request.json();
     const { reason } = body;
 
@@ -135,7 +139,7 @@ export async function PUT(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  context: RouteParams,
 ) {
   try {
     const tenantContext = await resolveInventoryTenantContext();
@@ -143,7 +147,7 @@ export async function DELETE(
       return toInventoryErrorResponse(tenantContext.error);
     }
 
-    const { id } = params;
+    const { id } = await context.params;
 
     // First verify ownership
     const existingResult = await inventoryExpenseLinkService.getExpenseLink(id);

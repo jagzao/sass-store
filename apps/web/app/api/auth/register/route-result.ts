@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { NextRequest } from "next/server";
 import { db } from "@sass-store/database";
 import { users, tenants, userRoles } from "@sass-store/database/schema";

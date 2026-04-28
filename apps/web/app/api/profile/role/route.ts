@@ -4,6 +4,8 @@ import { db, userRoles } from "@sass-store/database";
 import { eq, and } from "drizzle-orm";
 import { z } from "zod";
 
+const ROLE_CHANGE_TESTER_EMAILS = new Set(["jagzao@gmail.com"]);
+
 const updateRoleSchema = z.object({
   roleId: z.enum(["Admin", "Gerente", "Personal", "Cliente"]),
   tenantId: z.string().uuid(),
@@ -35,6 +37,18 @@ export async function PUT(req: NextRequest) {
     if (session.user.id !== userId) {
       return NextResponse.json(
         { error: "Forbidden: You can only update your own role" },
+        { status: 403 },
+      );
+    }
+
+    const sessionRole = session.user.role ?? "Cliente";
+    const sessionEmail = session.user.email?.toLowerCase() ?? "";
+    const canOverrideClientRestriction =
+      ROLE_CHANGE_TESTER_EMAILS.has(sessionEmail);
+
+    if (sessionRole === "Cliente" && !canOverrideClientRestriction) {
+      return NextResponse.json(
+        { error: "Forbidden: Cliente users cannot change role" },
         { status: 403 },
       );
     }

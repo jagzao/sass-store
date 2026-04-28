@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@sass-store/database";
-import { serviceQuotes } from "@sass-store/database/schema";
+import { quotes } from "@sass-store/database/schema";
 import { eq, and } from "drizzle-orm";
 import { withTenantContextFromParams } from "@/lib/db/tenant-context";
 import { z } from "zod";
@@ -13,23 +13,24 @@ const updateQuoteSchema = z.object({
     .enum(["pending", "accepted", "rejected", "expired", "converted"])
     .optional(),
   notes: z.string().optional(),
-  price: z.string().optional(), // Decimal as string usually
+  totalAmount: z.number().nonnegative().optional(),
   metadata: z.record(z.any()).optional(),
 });
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { tenant: string; id: string } },
+  { params }: { params: Promise<{ tenant: string; id: string }> },
 ) {
-  return withTenantContextFromParams(request, params, async (req, tenantId) => {
+  const resolvedParams = await params;
+  return withTenantContextFromParams(request, resolvedParams, async (req, tenantId) => {
     try {
-      const quote = await db.query.serviceQuotes.findFirst({
+      const quote = await db.query.quotes.findFirst({
         where: and(
-          eq(serviceQuotes.id, params.id),
-          eq(serviceQuotes.tenantId, tenantId),
+          eq(quotes.id, resolvedParams.id),
+          eq(quotes.tenantId, tenantId),
         ),
         with: {
-          service: true,
+          items: true,
         },
       });
 
@@ -50,18 +51,19 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { tenant: string; id: string } },
+  { params }: { params: Promise<{ tenant: string; id: string }> },
 ) {
-  return withTenantContextFromParams(request, params, async (req, tenantId) => {
+  const resolvedParams = await params;
+  return withTenantContextFromParams(request, resolvedParams, async (req, tenantId) => {
     try {
       const body = await req.json();
       const validatedData = updateQuoteSchema.parse(body);
 
       // Verify existence first
-      const existingQuote = await db.query.serviceQuotes.findFirst({
+      const existingQuote = await db.query.quotes.findFirst({
         where: and(
-          eq(serviceQuotes.id, params.id),
-          eq(serviceQuotes.tenantId, tenantId),
+          eq(quotes.id, resolvedParams.id),
+          eq(quotes.tenantId, tenantId),
         ),
       });
 
@@ -70,12 +72,16 @@ export async function PUT(
       }
 
       const [updatedQuote] = await db
-        .update(serviceQuotes)
+        .update(quotes)
         .set({
           ...validatedData,
+          totalAmount:
+            validatedData.totalAmount !== undefined
+              ? validatedData.totalAmount.toString()
+              : undefined,
           updatedAt: new Date(),
         })
-        .where(eq(serviceQuotes.id, params.id))
+        .where(eq(quotes.id, resolvedParams.id))
         .returning();
 
       return NextResponse.json(updatedQuote);
@@ -97,16 +103,17 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { tenant: string; id: string } },
+  { params }: { params: Promise<{ tenant: string; id: string }> },
 ) {
-  return withTenantContextFromParams(request, params, async (req, tenantId) => {
+  const resolvedParams = await params;
+  return withTenantContextFromParams(request, resolvedParams, async (req, tenantId) => {
     try {
       const result = await db
-        .delete(serviceQuotes)
+        .delete(quotes)
         .where(
           and(
-            eq(serviceQuotes.id, params.id),
-            eq(serviceQuotes.tenantId, tenantId),
+            eq(quotes.id, resolvedParams.id),
+            eq(quotes.tenantId, tenantId),
           ),
         )
         .returning();

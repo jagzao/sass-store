@@ -88,7 +88,7 @@ const getKPIData = async (period: string, tenantSlug: string): Promise<Result<KP
       .limit(1);
 
     if (!tenantResult.length) {
-      return Err(ErrorFactories.resourceNotFound("TENANT_NOT_FOUND", "Tenant not found"));
+      return Err(ErrorFactories.notFound("TENANT_NOT_FOUND", "Tenant not found"));
     }
     const tenantId = tenantResult[0].id;
 

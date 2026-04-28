@@ -203,12 +203,13 @@ export const withZodValidation = <T>(
     const validation = await parseRequestBody(request, schema);
 
     if (!validation.success) {
+      const err = validation as { success: false; error: ValidationError };
       return Response.json(
         {
           success: false,
           error: {
-            message: validation.error.message,
-            details: validation.error.details,
+            message: err.error.message,
+            details: err.error.details,
           },
         },
         { status: 400 },

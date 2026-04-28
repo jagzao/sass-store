@@ -8,10 +8,13 @@ dotenv.config({ path: path.resolve(__dirname, ".env.test") });
 const isCI = !!process.env.CI;
 
 export default defineConfig({
+  // Seed de datos E2E via setup project (dependencies)
+  // El setup project corre primero y sembrará datos antes de los demás tests
+  // Se configura en: .testMatch = "**/setup-seed.spec.ts"
   testDir: "./tests/e2e",
 
-  // Performance: Run tests in parallel
-  fullyParallel: true,
+  // CI/ENTORNO DEV SERVIDOR LENTO: secuencial para evitar contención
+  fullyParallel: false,
 
   // Retry on CI, but not locally for faster feedback
   retries: isCI ? 2 : 0,
@@ -34,8 +37,8 @@ export default defineConfig({
     // Base URL from environment
     baseURL: process.env.BASE_URL || "http://localhost:3002",
 
-    // Performance: Only capture trace on retry (not every test)
-    trace: "on-first-retry",
+    // Trace: siempre en CI / modo debug; en local solo en primer retry
+    trace: process.env.CI ? "on" : "on-first-retry",
 
     // UX: Only screenshots and videos on failure
     screenshot: "only-on-failure",
@@ -83,7 +86,7 @@ export default defineConfig({
   ],
 
   webServer: {
-    command: "npm run build --filter=@sass-store/web && cd apps/web && npm run start -- -p 3002",
+    command: "node scripts/start-e2e-server.js",
     port: 3002,
 
     // Performance: Reuse existing server if possible

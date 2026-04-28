@@ -1,0 +1,24 @@
+﻿{
+  "extends": "./tsconfig.json",
+  "exclude": [
+    "node_modules",
+    ".next",
+    ".turbo",
+    "app/api/advances/**/*",
+    "app/api/diagnose/**/*",
+    "app/api/auth/register/route-result.ts",
+    "app/api/customers/[id]/balance/route.ts",
+    
+    "components/wondernails/**/*",
+    "components/home/**/*",
+    "components/tenant/**/*",
+    "components/cart/**/*",
+    "components/navigation/**/*",
+    
+    "lib/retouch-service.ts",
+    "lib/whatsapp.ts",
+    "lib/whatsapp-service.ts",
+    "lib/db/tenant-service.ts",
+    "lib/db/seed-data.ts"
+  ]
+}

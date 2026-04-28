@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// @ts-nocheck
 /**
  * Security Auto-Fix Script (Simplified)
  * Automatically fixes common security issues

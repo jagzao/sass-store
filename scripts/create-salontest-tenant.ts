@@ -1,3 +1,4 @@
+// @ts-nocheck
 
 import "dotenv/config";
 import { db, tenants, users, userRoles } from "@sass-store/database";

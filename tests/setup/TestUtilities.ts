@@ -6,6 +6,15 @@
  */
 
 import { MockDatabase } from "../mocks/MockDatabase";
+export {
+  describe,
+  it,
+  expect,
+  beforeEach,
+  afterEach,
+  beforeAll,
+  afterAll,
+} from "vitest";
 import {
   createTestContext,
   cleanupTestContext,

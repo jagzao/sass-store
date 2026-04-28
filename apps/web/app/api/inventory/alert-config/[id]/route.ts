@@ -21,7 +21,7 @@ const updateAlertConfigSchema = z.object({
 });
 
 interface RouteParams {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 /**
@@ -34,7 +34,7 @@ export async function GET(request: NextRequest, context: RouteParams) {
       return toInventoryErrorResponse(tenantContext.error);
     }
 
-    const configId = context.params.id;
+    const configId = (await context.params).id;
 
     // Obtener configuración de alerta de inventario
     const result = await inventoryService.getDatabase().getAlertConfig(configId);
@@ -75,7 +75,7 @@ export async function PUT(request: NextRequest, context: RouteParams) {
       return toInventoryErrorResponse(tenantContext.error);
     }
 
-    const configId = context.params.id;
+    const configId = (await context.params).id;
 
     // Check existing config
     const existing = await inventoryService.getDatabase().getAlertConfig(configId);
@@ -133,7 +133,7 @@ export async function DELETE(request: NextRequest, context: RouteParams) {
       return toInventoryErrorResponse(tenantContext.error);
     }
 
-    const configId = context.params.id;
+    const configId = (await context.params).id;
 
     // Check existing config
     const existing = await inventoryService.getDatabase().getAlertConfig(configId);

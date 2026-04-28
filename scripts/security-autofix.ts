@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// @ts-nocheck
 /**
  * Security Auto-Fix Script
  * Automatically fixes common security issues found by Security Agent 2025

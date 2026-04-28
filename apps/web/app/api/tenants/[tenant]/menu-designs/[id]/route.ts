@@ -22,7 +22,7 @@ const updateMenuSchema = z.object({
 // GET - Single Design
 export async function GET(
   request: NextRequest,
-  { params }: { params: { tenant: string; id: string } },
+  { params }: { params: Promise<{ tenant: string; id: string }> },
 ) {
   try {
     const session = await auth();
@@ -30,8 +30,10 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const { id } = await params;
+
     const design = await db.query.menuDesigns.findFirst({
-      where: (menuDesigns, { eq }) => eq(menuDesigns.id, params.id),
+      where: (menuDesigns, { eq }) => eq(menuDesigns.id, id),
     });
 
     if (!design) {
@@ -47,7 +49,7 @@ export async function GET(
 // PATCH - Update Design
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { tenant: string; id: string } },
+  { params }: { params: Promise<{ tenant: string; id: string }> },
 ) {
   try {
     const session = await auth();
@@ -58,13 +60,15 @@ export async function PATCH(
     const body = await request.json();
     const validatedData = updateMenuSchema.parse(body);
 
+    const { id } = await params;
+
     const [updated] = await db
       .update(menuDesigns)
       .set({
         ...validatedData,
         updatedAt: new Date(),
       })
-      .where(eq(menuDesigns.id, params.id))
+      .where(eq(menuDesigns.id, id))
       .returning();
 
     return NextResponse.json(updated);
@@ -79,7 +83,7 @@ export async function PATCH(
 // DELETE - Delete Design
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { tenant: string; id: string } },
+  { params }: { params: Promise<{ tenant: string; id: string }> },
 ) {
   try {
     const session = await auth();
@@ -87,7 +91,9 @@ export async function DELETE(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    await db.delete(menuDesigns).where(eq(menuDesigns.id, params.id));
+    const { id } = await params;
+
+    await db.delete(menuDesigns).where(eq(menuDesigns.id, id));
 
     return NextResponse.json({ success: true });
   } catch (error) {

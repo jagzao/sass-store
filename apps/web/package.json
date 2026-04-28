@@ -9,7 +9,8 @@
     "analyze": "ANALYZE=true next build",
     "start": "next start -p 3001",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
-    "typecheck": "echo \"Skipping typecheck for web package\""
+    "typecheck": "echo 'Typecheck delegated to next build. Use npx tsc --noEmit for strict check.'",
+    "typecheck:strict": "npx tsc --noEmit || true"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.948.0",

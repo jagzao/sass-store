@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import CalendarClientWrapper from "../../../app/t/[tenant]/admin/calendar/CalendarClientWrapper";
+import CalendarClientWrapper from "@/app/t/[tenant]/admin/calendar/CalendarClientWrapper";
 import { format } from "date-fns";
 
 export interface TodayAppointmentsSectionProps {

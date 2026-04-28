@@ -43,7 +43,9 @@ export interface AuthenticationError extends BaseDomainError {
     | "invalid_credentials"
     | "expired"
     | "missing_token"
-    | "invalid_token";
+    | "invalid_token"
+    | "invalid_signature"
+    | "malformed";
 }
 
 // Business Rule Violations

@@ -2,7 +2,6 @@ import React from "react";
 import { notFound } from "next/navigation";
 import { resolveTenant } from "@/lib/tenant/resolver";
 import { getTenantDataForPage } from "@/lib/db/tenant-service";
-import { signIn } from "@/lib/auth";
 import { RegisterForm } from "@/components/auth/RegisterForm";
 
 interface PageProps {
@@ -53,43 +52,6 @@ export default async function RegisterPage({ params }: PageProps) {
             tenantSlug={resolvedParams.tenant}
             primaryColor={branding.primaryColor}
           />
-
-          {/* Divider */}
-          <div className="mt-6">
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300" />
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">
-                  O continúa con
-                </span>
-              </div>
-            </div>
-
-            {/* Social Register */}
-            <div className="mt-6 grid grid-cols-2 gap-3">
-              <form
-                action={async () => {
-                  "use server";
-                  const p = await params;
-                  await signIn("google", { redirectTo: `/t/${p.tenant}` });
-                }}
-              >
-                <button
-                  type="submit"
-                  className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 transition-colors"
-                >
-                  <span className="mr-2">📧</span>
-                  Google
-                </button>
-              </form>
-              <button className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 transition-colors opacity-50 cursor-not-allowed">
-                <span className="mr-2">📘</span>
-                Facebook (Soon)
-              </button>
-            </div>
-          </div>
 
           {/* Sign in link */}
           <div className="mt-6 text-center">

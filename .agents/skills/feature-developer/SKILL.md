@@ -1,212 +1,152 @@
-# Skill: Feature Developer Autónomo
-
-> **Versión:** 1.0.0  
-> **Propósito:** Desarrollo completo de features con ciclo autónomo: código → tests → corrección → video demo
-
+---
+name: feature-developer
+description: Autonomous feature development for this workspace. Use when Codex must implement a new feature or substantial product change in sass-store, including planning, Result Pattern business logic, tests, validation, and an optional Playwright demo.
 ---
 
-## Cuándo Usar Esta Skill
+# Feature Developer
 
-### ✅ Usar cuando:
-- Usuario solicita implementar una feature nueva
-- Usuario dice "implementa [X]" o "crea [X]"
-- Se necesita desarrollo completo con tests y validación
-- Se requiere demo en video de la funcionalidad
+Use this skill to implement complete features in the sass-store monolith while preserving repository conventions, Result Pattern error handling, multitenant isolation, and test coverage.
 
-### ❌ No usar cuando:
-- Solo se necesita un cambio menor (usar debug-agent)
-- Es una consulta sin código (usar modo Ask)
-- Es una refactorización sin nueva funcionalidad
+## Initial Read
 
----
+Read only the files needed for the task, starting with:
 
-## Protocolo de Ejecución
+- `.agents/history/debug_logs.md` for known recurring failures.
+- `.agents/history/test_cases.md` for relevant edge cases.
+- `.agents/memory/context_be.md` for backend rules.
+- `.agents/session/current_task.md` for current session state.
 
-### Paso 1: Lectura Inicial Obligatoria
+If a referenced file is not relevant to the feature, skip it and keep context small.
 
-```
-Leer en orden:
-1. .agents/history/debug_logs.md    → Errores conocidos
-2. .agents/history/test_cases.md    → Casos borde relevantes
-3. .agents/memory/context_be.md     → Reglas de backend
-4. .agents/session/current_task.md  → Estado actual
-```
+## Planning
 
-### Paso 2: Planificación
-
-**Crear plan en `current_task.md`:**
+Create or update the task plan before editing code:
 
 ```markdown
-## Feature: [Nombre]
+## Feature: [name]
 
-### Objetivo
-[Descripción clara de qué se va a implementar]
+### Goal
+[clear implementation goal]
 
-### Archivos a Crear
-- [ ] `lib/services/[feature].ts`
-- [ ] `app/api/[feature]/route.ts`
-- [ ] `components/[feature].tsx`
+### Files to Create
+- [ ] `apps/web/lib/[domain]/[feature].ts`
+- [ ] `apps/web/app/api/[route]/route.ts`
+- [ ] `apps/web/components/[feature].tsx`
 - [ ] `tests/unit/[feature].spec.ts`
 - [ ] `tests/e2e/[feature].spec.ts`
 
-### Archivos a Modificar
-- [ ] `lib/db/schema.ts`
-- [ ] Otros...
+### Files to Modify
+- [ ] [path]
 
-### Criterios de Aceptación
-- [ ] [Criterio 1]
-- [ ] [Criterio 2]
+### Acceptance Criteria
+- [ ] [criterion]
 
-### Tests Requeridos
-- [ ] Unit: [lista]
-- [ ] Integration: [lista]
-- [ ] E2E: [lista]
+### Required Tests
+- [ ] Unit: [cases]
+- [ ] Integration: [cases]
+- [ ] E2E: [cases]
 ```
 
-### Paso 3: Implementación por Capas
+## Implementation Order
 
-**Orden obligatorio:**
+Implement by layers:
 
-```
-1. BASE DE DATOS (si aplica)
-   └─▶ Schema → Migración → Seed
+1. Database, when required: schema, migration, seed.
+2. Backend: types, service, API route.
+3. Frontend: components, pages, integration.
+4. Tests: unit, integration, E2E.
 
-2. BACKEND
-   └─▶ Tipos → Servicio → API Route
+Keep new business logic on the Result Pattern:
 
-3. FRONTEND
-   └─▶ Componentes → Páginas → Integración
+- Return `Result<T, DomainError>` from services.
+- Use typed errors from `ErrorFactories`.
+- Use `validateWithZod` or shared schemas for input validation.
+- Avoid `try/catch` in business logic. Use Result helpers such as `fromPromise`, `map`, `flatMap`, `asyncFlatMap`, and `match`.
+- Use `withResultHandler()` for API handlers when the local route pattern supports it.
 
-4. TESTS
-   └─▶ Unit → Integration → E2E
-```
+## Validation Loop
 
-### Paso 4: Validación Continua
-
-**Después de cada archivo:**
-```bash
-npm run lint && npm run typecheck
-```
-
-**Después de cada módulo:**
-```bash
-npm run test:unit -- [modulo]
-```
-
-### Paso 5: Loop de Corrección
-
-```
-SI test falla:
-  1. Capturar error
-  2. Analizar causa raíz
-  3. Corregir código
-  4. Re-ejecutar test
-  5. Documentar si es error nuevo
-  REPETIR hasta PASS (máx 5 intentos)
-```
-
-### Paso 6: Validación Final
+After meaningful changes, run the narrowest useful checks first:
 
 ```bash
-npm run lint && \
-npm run typecheck && \
-npm run build && \
-npm run test:unit && \
-npm run test:integration && \
+npm run lint
+npm run typecheck
+npm run test:unit -- --grep "[feature]"
+```
+
+When a test fails:
+
+1. Capture the failing command and error.
+2. Identify the root cause.
+3. Patch the smallest relevant code path.
+4. Re-run the failing command.
+5. Record new recurring failures in `.agents/history/debug_logs.md` when useful.
+
+Stop after five unsuccessful attempts on the same failure and report the blocker clearly.
+
+## Final Verification
+
+Before closing a complete feature, run the checks appropriate to the blast radius:
+
+```bash
+npm run lint
+npm run typecheck
+npm run build
+npm run test:unit
+npm run test:integration
 npm run test:e2e:subset -- --grep "[feature]"
 ```
 
-### Paso 7: Video Demo
+If a command cannot be run, explain why and name the residual risk.
 
-**Crear test de demo:**
-```typescript
-// tests/e2e/demo/[feature]-demo.spec.ts
-import { test, expect } from '@playwright/test';
+## Optional Demo
 
-test('[Feature] Demo', async ({ page }) => {
-  // 1. Setup
-  await page.goto('/t/test-tenant/dashboard');
-  
-  // 2. Navegar a feature
-  await page.click('text=[Feature]');
-  
-  // 3. Demostrar funcionalidad
-  await page.click('text=Nuevo');
-  await page.fill('[name="campo"]', 'valor demo');
-  await page.click('button[type="submit"]');
-  
-  // 4. Verificar resultado
-  await expect(page.locator('.success')).toBeVisible();
-});
-```
+When the request asks for a demo, add a focused Playwright scenario under `tests/e2e/demo/` and run it with video enabled:
 
-**Ejecutar con video:**
 ```bash
 npx playwright test tests/e2e/demo/[feature]-demo.spec.ts --video=on
 ```
 
-### Paso 8: Actualizar Memoria
+## Code Templates
 
-**En `current_task.md`:**
-- Marcar como COMPLETADO
-- Agregar link al video
-
-**En `debug_logs.md`:**
-- Documentar errores encontrados (si hubo)
-
----
-
-## Templates de Código
-
-### Servicio con Result Pattern
+### Service
 
 ```typescript
-// lib/services/[feature]-service.ts
 import { Result, Err, Ok } from "@sass-store/core/src/result";
 import { DomainError, ErrorFactories } from "@sass-store/core/src/errors/types";
-import { db } from "@/lib/db";
-import { z } from "zod";
 import { validateWithZod } from "@sass-store/validation/src/zod-result";
 
-// Schema de validación
-const CreateFeatureSchema = z.object({
-  name: z.string().min(1).max(100),
-  // ... más campos
-});
-
-type CreateFeatureInput = z.infer<typeof CreateFeatureSchema>;
-
-// Servicio
 export const createFeature = async (
   data: CreateFeatureInput,
-  context: { tenantId: string; userId: string }
+  context: { tenantId: string; userId: string },
 ): Promise<Result<Feature, DomainError>> => {
-  // 1. Validar input
-  const validationResult = validateWithZod(CreateFeatureSchema, data);
-  if (validationResult.isErr()) {
-    return validationResult;
+  const validation = validateWithZod(CreateFeatureSchema, data);
+  if (validation.isErr()) {
+    return validation;
   }
-  
-  // 2. Crear en DB
-  const result = await fromPromise(
+
+  return fromPromise(
     db.features.create({
       data: {
-        ...validationResult.value,
+        ...validation.value,
         tenantId: context.tenantId,
         createdBy: context.userId,
       },
     }),
-    (error) => ErrorFactories.database("create_feature", "Failed to create feature", undefined, error)
+    (error) =>
+      ErrorFactories.database(
+        "create_feature",
+        "Failed to create feature",
+        undefined,
+        error,
+      ),
   );
-  
-  return result;
 };
 ```
 
 ### API Route
 
 ```typescript
-// app/api/[feature]/route.ts
 import { NextRequest } from "next/server";
 import { withResultHandler } from "@/lib/api/result-handler";
 import { createFeature } from "@/lib/services/[feature]-service";
@@ -214,151 +154,42 @@ import { createFeature } from "@/lib/services/[feature]-service";
 export const POST = withResultHandler(async (request: NextRequest) => {
   const body = await request.json();
   const context = getTenantContext(request);
-  
+
   return createFeature(body, context);
 });
 ```
 
-### Test Unitario
+### Unit Test
 
 ```typescript
-// tests/unit/services/[feature]-service.spec.ts
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect } from "vitest";
 import { createFeature } from "@/lib/services/[feature]-service";
 import { expectSuccess, expectFailure } from "../../utils/helpers";
 
 describe("FeatureService", () => {
   const context = { tenantId: "test-tenant", userId: "test-user" };
 
-  describe("createFeature", () => {
-    it("should create feature with valid data", async () => {
-      const data = { name: "Test Feature" };
-      const result = await createFeature(data, context);
-      
-      expectSuccess(result);
-      expect(result.value.name).toBe("Test Feature");
-      expect(result.value.tenantId).toBe("test-tenant");
-    });
+  it("creates a feature with valid data", async () => {
+    const result = await createFeature({ name: "Test Feature" }, context);
 
-    it("should reject empty name", async () => {
-      const data = { name: "" };
-      const result = await createFeature(data, context);
-      
-      expectFailure(result);
-      expect(result.error.type).toBe("ValidationError");
-    });
+    expectSuccess(result);
+    expect(result.value.tenantId).toBe("test-tenant");
+  });
 
-    it("should isolate tenant data", async () => {
-      const data = { name: "Test" };
-      const contextA = { tenantId: "tenant-a", userId: "user" };
-      const contextB = { tenantId: "tenant-b", userId: "user" };
-      
-      const resultA = await createFeature(data, contextA);
-      const resultB = await createFeature(data, contextB);
-      
-      expectSuccess(resultA);
-      expectSuccess(resultB);
-      expect(resultA.value.tenantId).not.toBe(resultB.value.tenantId);
-    });
+  it("returns validation failure for invalid data", async () => {
+    const result = await createFeature({ name: "" }, context);
+
+    expectFailure(result);
+    expect(result.error.type).toBe("ValidationError");
   });
 });
 ```
 
-### Test E2E
+## Completion Checklist
 
-```typescript
-// tests/e2e/[feature]-flow.spec.ts
-import { test, expect } from "@playwright/test";
-
-test.describe("Feature Flow", () => {
-  test.use({ storageState: "tests/e2e/.auth/admin.json" });
-
-  test("should create and display feature", async ({ page }) => {
-    // Navigate
-    await page.goto("/t/test-tenant/features");
-    
-    // Create
-    await page.click("text=Nueva Feature");
-    await page.fill('[name="name"]', "Mi Feature");
-    await page.click('button[type="submit"]');
-    
-    // Verify
-    await expect(page.locator(".toast-success")).toBeVisible();
-    await expect(page.locator("text=Mi Feature")).toBeVisible();
-  });
-
-  test("should validate required fields", async ({ page }) => {
-    await page.goto("/t/test-tenant/features");
-    await page.click("text=Nueva Feature");
-    await page.click('button[type="submit"]');
-    
-    await expect(page.locator("text=El nombre es requerido")).toBeVisible();
-  });
-});
-```
-
----
-
-## Comandos de Referencia
-
-```bash
-# Desarrollo
-npm run dev
-
-# Validación
-npm run lint
-npm run typecheck
-npm run build
-
-# Tests
-npm run test:unit
-npm run test:integration
-npm run test:security
-npm run test:e2e
-npm run test:e2e:subset -- --grep "[feature]"
-
-# DB
-npm run db:generate
-npm run db:push
-npm run db:seed
-
-# Video Demo
-npx playwright test tests/e2e/demo --video=on
-```
-
----
-
-## Checklist Final
-
-```markdown
-## Feature: [Nombre] - Finalización
-
-### Código
-- [ ] Implementado con Result Pattern
-- [ ] Multitenancy validado
-- [ ] Sin errores de lint/typecheck
-- [ ] Build exitoso
-
-### Tests Unitarios
-- [ ] Happy path
-- [ ] Validaciones
-- [ ] Edge cases
-- [ ] Seguridad
-- [ ] Cobertura >= 80%
-
-### Tests E2E
-- [ ] Flujo completo
-- [ ] Manejo de errores
-
-### Documentación
-- [ ] current_task.md actualizado
-- [ ] debug_logs.md actualizado (si hubo errores)
-
-### Video
-- [ ] Demo grabado
-- [ ] Video en test-results/
-```
-
----
-
-*Esta skill ejecuta el ciclo completo de desarrollo autónomo.*
+- [ ] Result Pattern used for new business logic.
+- [ ] Tenant isolation preserved.
+- [ ] Unit tests cover success and failure branches.
+- [ ] E2E coverage added for user-facing flows when relevant.
+- [ ] `lint`, `typecheck`, `build`, and targeted tests run or blockers documented.
+- [ ] `.agents/session/current_task.md` updated when this workflow is active.

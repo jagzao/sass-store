@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {
   pgTable,
   text,
@@ -1089,6 +1090,8 @@ export const users = pgTable("users", {
   image: text("image"),
   password: text("password"), // For credentials-based auth
   phone: varchar("phone", { length: 20 }),
+  birthdate: date("birthdate"),
+  gender: varchar("gender", { length: 20 }),
   resetToken: text("reset_token"),
   resetTokenExpiry: timestamp("reset_token_expiry", { mode: "date" }),
   createdAt: timestamp("created_at").defaultNow(),

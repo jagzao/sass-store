@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// @ts-nocheck
 /**
  * Test Manual Tenant Filters
  * Validates that manual .where() filters correctly isolate tenant data

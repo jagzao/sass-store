@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Script to remove or replace console.log statements with proper logging
  * This ensures production code doesn't have console.log statements

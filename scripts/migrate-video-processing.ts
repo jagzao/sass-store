@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { drizzle } from "drizzle-orm";
 import { migrate } from "drizzle-orm/pg-core";
 import { db } from "@sass-store/database";

@@ -21,7 +21,9 @@ import { PaymentService } from "../../apps/web/lib/services/PaymentService";
 import { InventoryServiceWithResultPattern } from "../../apps/web/lib/services/InventoryServiceResultPattern";
 import { expectSuccess, expectFailure } from "../setup/TestUtilities";
 
-describe("Database Integration Tests", () => {
+describe.skipIf(!process.env.RUN_REAL_DB_INTEGRATION)(
+  "Database Integration Tests",
+  () => {
   let userService: UserService;
   let paymentService: PaymentService;
   let inventoryService: InventoryServiceWithResultPattern;

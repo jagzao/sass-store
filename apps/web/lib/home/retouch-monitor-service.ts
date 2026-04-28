@@ -1,7 +1,7 @@
 import { Result, Ok, Err, match } from "@sass-store/core/src/result";
 import { DomainError, ErrorFactories } from "@sass-store/core/src/errors/types";
-import { db } from "@/lib/db";
-import { customers, customerVisits, bookings } from "@/lib/db/schema";
+import { db } from "@sass-store/database";
+import { customers, customerVisits, bookings } from "@sass-store/database/schema";
 import { eq, desc, and, isNull, gte, sql } from "drizzle-orm";
 
 export interface RetouchEligibleCustomer {

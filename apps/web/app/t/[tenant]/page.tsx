@@ -43,6 +43,14 @@ export default async function TenantPageServer({ params }: PageProps) {
     return <ZoLandingPage tenantSlug={tenantSlug} />;
   }
 
+  // Custom Design for Nom Nom Taco Truck
+  if (tenantSlug === "nom-nom") {
+    const NomNomLanding = (
+      await import("@/components/tenant/nom-nom/NomNomLanding")
+    ).default;
+    return <NomNomLanding tenantSlug={tenantSlug} />;
+  }
+
   // Custom Design for Centro Tenístico
   if (tenantSlug === "centro-tenistico") {
     const CentroTenisticoLanding = (

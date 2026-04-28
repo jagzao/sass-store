@@ -8,7 +8,6 @@ import { Result, Ok, Err } from "@sass-store/core/src/result";
 import { DomainError, ErrorFactories } from "@sass-store/core/src/errors/types";
 import {
   withResultHandler,
-  withQueryValidation,
 } from "@sass-store/core/src/middleware/result-handler";
 import {
   validateWithZod,
@@ -172,7 +171,8 @@ const queryFinancialMovements = async (
       `,
     );
 
-    const movements = movementsResult.rows.map((row: any) => ({
+    // Use mapped rows for Drizzle 0.x
+    const movements = movementsResult.map((row: any) => ({
       id: row.id,
       type: row.type,
       amount: parseFloat(row.amount),
@@ -217,7 +217,7 @@ const getMovementsCount = async (
       `,
     );
 
-    return Ok(parseInt(countResult.rows[0].total));
+    return Ok(parseInt(String(countResult[0].total)));
   } catch (error) {
     return Err(
       ErrorFactories.database(
@@ -282,9 +282,19 @@ const getFinancialMovements = async (
 /**
  * GET /api/finance/movements - Get financial movements using Result Pattern
  */
-export const GET = withQueryValidation(
-  QuerySchema,
-  async (request: NextRequest, queryParams: any) => {
-    return await getFinancialMovements(request, queryParams);
+export const GET = withResultHandler(
+  async (request: NextRequest): Promise<Result<any, DomainError>> => {
+    const { searchParams } = new URL(request.url);
+    const queryObj: Record<string, unknown> = {};
+    searchParams.forEach((value, key) => {
+      queryObj[key] = value;
+    });
+
+    const validationResult = validateWithZod(QuerySchema, queryObj);
+    if (!validationResult.success) {
+      return validationResult as Result<any, DomainError>;
+    }
+
+    return await getFinancialMovements(request, validationResult.data);
   },
 );
