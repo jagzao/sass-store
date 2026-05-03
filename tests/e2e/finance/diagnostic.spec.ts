@@ -4,7 +4,7 @@ test.describe("Login Diagnostics", () => {
   test("should check login page and capture screenshot", async ({ page }) => {
     // Navigate to login page
     console.log("Navigating to login page...");
-    await page.goto("http://localhost:3001/t/manada-juma/login", {
+    await page.goto("/t/manada-juma/login", {
       waitUntil: "domcontentloaded",
       timeout: 30000,
     });
@@ -44,7 +44,7 @@ test.describe("Login Diagnostics", () => {
     const buttonCount = await loginButton.count();
 
     console.log("Email inputs found:", emailCount);
-    console.log("Password inputs found:", passwordCount);
+    // SECURITY: Redacted sensitive log;
     console.log("Login buttons found:", buttonCount);
 
     // Try alternative selectors
@@ -53,7 +53,7 @@ test.describe("Login Diagnostics", () => {
     const buttonByType = page.locator('button[type="submit"]');
 
     console.log("Email by type:", await emailByType.count());
-    console.log("Password by type:", await passwordByType.count());
+    // SECURITY: Redacted sensitive log);
     console.log("Button by type:", await buttonByType.count());
 
     // Assertions
@@ -69,7 +69,7 @@ test.describe("Login Diagnostics", () => {
   test("should try alternative tenant", async ({ page }) => {
     // Try with different tenant
     console.log("Trying with 'wondernails' tenant...");
-    await page.goto("http://localhost:3001/t/wondernails/login", {
+    await page.goto("/t/wondernails/login", {
       waitUntil: "domcontentloaded",
       timeout: 30000,
     });
@@ -91,7 +91,7 @@ test.describe("Login Diagnostics", () => {
   });
 
   test("should attempt manual login", async ({ page }) => {
-    await page.goto("http://localhost:3001/t/wondernails/login", {
+    await page.goto("/t/wondernails/login", {
       waitUntil: "domcontentloaded",
     });
 

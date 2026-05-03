@@ -74,8 +74,7 @@ export async function PUT(
     } = result.data;
 
     const resolvedLogoUrl = logoUrl !== undefined ? logoUrl : logo;
-    const resolvedFaviconUrl =
-      faviconUrl !== undefined ? faviconUrl : favicon;
+    const resolvedFaviconUrl = faviconUrl !== undefined ? faviconUrl : favicon;
 
     // Merge with existing branding (careful not to overwrite other fields)
     const existingBranding = (tenant.branding as any) || {};

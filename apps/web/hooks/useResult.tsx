@@ -38,11 +38,11 @@ export function useResult<T>(
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<any>(null);
   const [retryCount, setRetryCount] = useState(0);
-  
+
   // Use refs for callbacks to avoid exhaustive-deps issues while maintaining stable references
   const onSuccessRef = useRef(onSuccess);
   const onErrorRef = useRef(onError);
-  
+
   // Update refs when callbacks change
   useEffect(() => {
     onSuccessRef.current = onSuccess;

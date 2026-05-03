@@ -1,11 +1,10 @@
 import { test, expect } from "@playwright/test";
 
-const BASE_URL = "http://localhost:3001";
 const TENANT = "nom-nom";
 
 test.describe("Nom Nom — Landing Page", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto(`${BASE_URL}/t/${TENANT}`, {
+    await page.goto(`/t/${TENANT}`, {
       waitUntil: "domcontentloaded",
       timeout: 60000,
     });
@@ -14,7 +13,7 @@ test.describe("Nom Nom — Landing Page", () => {
   });
 
   test("carga sin errores (no 500, no 404)", async ({ page }) => {
-    const response = await page.goto(`${BASE_URL}/t/${TENANT}`, {
+    const response = await page.goto(`/t/${TENANT}`, {
       waitUntil: "domcontentloaded",
       timeout: 60000,
     });

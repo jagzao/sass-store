@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
-import { resolveTenant } from "@/lib/tenant/resolver";
-import { getTenantDataForPage } from "@/lib/db/tenant-service";
+import { getTenantBySlug } from "@/lib/server/get-tenant";
 import { Metadata } from "next";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { AuthError } from "@/components/auth/AuthError";
@@ -20,13 +19,18 @@ export async function generateMetadata({
 }: PageProps): Promise<Metadata> {
   try {
     const resolvedParams = await params;
-    const tenantData = await getTenantDataForPage(resolvedParams.tenant);
-
+    const tenant = await getTenantBySlug(resolvedParams.tenant);
+    if (!tenant) {
+      return {
+        title: "Iniciar Sesión - Sass Store",
+        description: "Inicia sesión en tu cuenta",
+      };
+    }
     return {
-      title: `Iniciar Sesión - ${tenantData.name}`,
-      description: `Inicia sesión en ${tenantData.name}`,
+      title: `Iniciar Sesión - ${tenant.name}`,
+      description: `Inicia sesión en ${tenant.name}`,
     };
-  } catch (error) {
+  } catch {
     return {
       title: "Iniciar Sesión - Sass Store",
       description: "Inicia sesión en tu cuenta",
@@ -38,35 +42,17 @@ export default async function LoginPage({ params, searchParams }: PageProps) {
   const resolvedParams = await params;
   const resolvedSearchParams = await searchParams;
 
-  // Resolve tenant to ensure it exists and is valid
-  let resolvedTenant;
-  let tenantData;
-
-  try {
-    resolvedTenant = await Promise.race([
-      resolveTenant(),
-      new Promise((_, reject) =>
-        setTimeout(() => reject(new Error("Tenant resolution timeout")), 5000),
-      ),
-    ]);
-
-    if (!resolvedTenant) {
-      notFound();
-    }
-
-    // Fetch tenant data from database with timeout
-    tenantData = (await Promise.race([
-      getTenantDataForPage(resolvedParams.tenant),
-      new Promise((_, reject) =>
-        setTimeout(() => reject(new Error("Tenant data fetch timeout")), 30000),
-      ),
-    ])) as any;
-  } catch (error) {
-    console.error("Error loading tenant data:", error);
+  // Ligero: el layout `[tenant]` ya validó slug; evitar resolveTenant + getTenantWithData
+  // (hasta ~30s de carrera con timeouts) que degradaba TTFB y podía disparar 404 falsos.
+  const tenantRow = await getTenantBySlug(resolvedParams.tenant);
+  if (!tenantRow) {
     notFound();
   }
 
-  const branding = tenantData.branding as any;
+  const branding = (tenantRow.branding || {}) as {
+    primaryColor?: string;
+  };
+  const primaryColor = branding.primaryColor ?? "#6366f1";
 
   return (
     <div className="min-h-screen bg-[#F8F9FA] flex flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -74,17 +60,15 @@ export default async function LoginPage({ params, searchParams }: PageProps) {
         {/* Tenant Branding */}
         <div className="text-center">
           <div className="text-4xl mb-4">
-            {tenantData.name.includes("Wonder")
+            {tenantRow.name.includes("Wonder")
               ? "💅"
-              : tenantData.name.includes("Vigi")
+              : tenantRow.name.includes("Vigi")
                 ? "✂️"
-                : tenantData.name.includes("Zo")
+                : tenantRow.name.includes("Zo")
                   ? "💻"
                   : "🏪"}
           </div>
-          <h2 className="text-3xl font-bold text-gray-900">
-            {tenantData.name}
-          </h2>
+          <h2 className="text-3xl font-bold text-gray-900">{tenantRow.name}</h2>
           <p className="mt-2 text-sm text-gray-600">
             Inicia sesión en tu cuenta
           </p>
@@ -99,7 +83,7 @@ export default async function LoginPage({ params, searchParams }: PageProps) {
           {/* Login Form */}
           <LoginForm
             tenantSlug={resolvedParams.tenant}
-            primaryColor={branding.primaryColor}
+            primaryColor={primaryColor}
           />
 
           {/* Forgot Password Link */}
@@ -107,7 +91,7 @@ export default async function LoginPage({ params, searchParams }: PageProps) {
             <a
               href={`/t/${resolvedParams.tenant}/forgot-password`}
               className="text-sm font-medium hover:opacity-80"
-              style={{ color: branding.primaryColor }}
+              style={{ color: primaryColor }}
             >
               ¿Olvidaste tu contraseña?
             </a>
@@ -139,7 +123,7 @@ export default async function LoginPage({ params, searchParams }: PageProps) {
               <a
                 href={`/t/${resolvedParams.tenant}/register`}
                 className="font-medium hover:opacity-80"
-                style={{ color: branding.primaryColor }}
+                style={{ color: primaryColor }}
               >
                 Regístrate aquí
               </a>

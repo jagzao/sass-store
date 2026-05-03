@@ -22,11 +22,7 @@ import {
   MatrixUpsertCellPayload,
   upsertMatrixCell,
 } from "@/lib/api/financial-matrix";
-import {
-  isFailure,
-  isSuccess,
-  Result,
-} from "@sass-store/core/src/result";
+import { isFailure, isSuccess, Result } from "@sass-store/core/src/result";
 import {
   DomainError,
   getHttpStatusCode,
@@ -198,7 +194,9 @@ interface FinancialMatrixBoardProps {
   tenantId: string;
 }
 
-function FinancialMatrixBoardComponent({ tenantId }: FinancialMatrixBoardProps) {
+function FinancialMatrixBoardComponent({
+  tenantId,
+}: FinancialMatrixBoardProps) {
   const [filters, setFilters] = useState<FilterState>(() => {
     const stored = readStoredFilters();
 
@@ -216,7 +214,8 @@ function FinancialMatrixBoardComponent({ tenantId }: FinancialMatrixBoardProps) 
     }
 
     const defaultGranularity: MatrixGranularity = "week";
-    const defaultDateRange = getDefaultDateRangeByGranularity(defaultGranularity);
+    const defaultDateRange =
+      getDefaultDateRangeByGranularity(defaultGranularity);
 
     return {
       granularity: defaultGranularity,
@@ -226,7 +225,10 @@ function FinancialMatrixBoardComponent({ tenantId }: FinancialMatrixBoardProps) 
     };
   });
 
-  const [matrixResult, setMatrixResult] = useState<Result<MatrixData, DomainError> | null>(null);
+  const [matrixResult, setMatrixResult] = useState<Result<
+    MatrixData,
+    DomainError
+  > | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [actionMessage, setActionMessage] = useState<string>("");
   const [activeCell, setActiveCell] = useState<ActiveCell | null>(null);
@@ -239,13 +241,17 @@ function FinancialMatrixBoardComponent({ tenantId }: FinancialMatrixBoardProps) 
   const [isSavingCell, setIsSavingCell] = useState<boolean>(false);
   const [isPayingCell, setIsPayingCell] = useState<boolean>(false);
   const [isCloning, setIsCloning] = useState<boolean>(false);
-  const [cloneForm, setCloneForm] = useState<{ sourceBucketId: string; targetBucketId: string }>({
+  const [cloneForm, setCloneForm] = useState<{
+    sourceBucketId: string;
+    targetBucketId: string;
+  }>({
     sourceBucketId: "",
     targetBucketId: "",
   });
-  
+
   const [addedCategories, setAddedCategories] = useState<string[]>([]);
-  const [selectCategoryGroup, setSelectCategoryGroup] = useState<SelectCategoryState | null>(null);
+  const [selectCategoryGroup, setSelectCategoryGroup] =
+    useState<SelectCategoryState | null>(null);
 
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
 
@@ -284,7 +290,8 @@ function FinancialMatrixBoardComponent({ tenantId }: FinancialMatrixBoardProps) 
     }
   }, [matrixResult?.success]);
 
-  const matrixData = matrixResult && isSuccess(matrixResult) ? matrixResult.data : null;
+  const matrixData =
+    matrixResult && isSuccess(matrixResult) ? matrixResult.data : null;
   const categories = matrixData?.categories ?? EMPTY_CATEGORIES;
   const buckets = matrixData?.timeBuckets ?? EMPTY_BUCKETS;
 
@@ -404,7 +411,8 @@ function FinancialMatrixBoardComponent({ tenantId }: FinancialMatrixBoardProps) 
       fechaProgramada: cellEditor.paymentDate || activeBucket.startDate,
       fechaPago: cellEditor.paymentDate || activeBucket.startDate,
       entityId: filters.entityId || undefined,
-      description: cellEditor.description || `Pago desde matriz ${activeCell.bucketId}`,
+      description:
+        cellEditor.description || `Pago desde matriz ${activeCell.bucketId}`,
     });
 
     if (isFailure(result)) {
@@ -433,16 +441,34 @@ function FinancialMatrixBoardComponent({ tenantId }: FinancialMatrixBoardProps) 
 
   const groupedCategories = useMemo(() => {
     const incomes = categories
-      .filter((category) => category.type === "income" && (addedCategories.includes(category.id) || Array.from(cellMap.values()).some(cell => cell.categoryId === category.id)))
+      .filter(
+        (category) =>
+          category.type === "income" &&
+          (addedCategories.includes(category.id) ||
+            Array.from(cellMap.values()).some(
+              (cell) => cell.categoryId === category.id,
+            )),
+      )
       .sort((a, b) => a.sortOrder - b.sortOrder);
     const expenses = categories
-      .filter((category) => category.type === "expense" && (addedCategories.includes(category.id) || Array.from(cellMap.values()).some(cell => cell.categoryId === category.id)))
+      .filter(
+        (category) =>
+          category.type === "expense" &&
+          (addedCategories.includes(category.id) ||
+            Array.from(cellMap.values()).some(
+              (cell) => cell.categoryId === category.id,
+            )),
+      )
       .sort((a, b) => a.sortOrder - b.sortOrder);
 
     return [
       { label: "Ingresos", items: incomes, type: "income" },
       { label: "Egresos", items: expenses, type: "expense" },
-    ].filter((group) => group.items.length > 0 || categories.some(cat => cat.type === group.type));
+    ].filter(
+      (group) =>
+        group.items.length > 0 ||
+        categories.some((cat) => cat.type === group.type),
+    );
   }, [categories, addedCategories, cellMap]);
 
   useEffect(() => {
@@ -475,7 +501,10 @@ function FinancialMatrixBoardComponent({ tenantId }: FinancialMatrixBoardProps) 
   }, [monthBuckets]);
 
   const hasRealMatrixData =
-    Boolean(matrixData) && categories.length > 0 && buckets.length > 0 && cellMap.size > 0;
+    Boolean(matrixData) &&
+    categories.length > 0 &&
+    buckets.length > 0 &&
+    cellMap.size > 0;
 
   const handleCloneSubmit = useCallback(
     async (event: FormEvent<HTMLFormElement>) => {
@@ -531,7 +560,9 @@ function FinancialMatrixBoardComponent({ tenantId }: FinancialMatrixBoardProps) 
               className="mt-1 w-full rounded-md border border-gray-300 p-2"
               data-testid="granularity-selector"
               value={filters.granularity}
-              onChange={(event) => setGranularity(event.target.value as MatrixGranularity)}
+              onChange={(event) =>
+                setGranularity(event.target.value as MatrixGranularity)
+              }
             >
               {Object.entries(granularityLabel).map(([value, label]) => (
                 <option key={value} value={value}>
@@ -541,7 +572,10 @@ function FinancialMatrixBoardComponent({ tenantId }: FinancialMatrixBoardProps) 
             </select>
           </label>
 
-          <div className="grid grid-cols-1 gap-3" data-testid="date-range-picker">
+          <div
+            className="grid grid-cols-1 gap-3"
+            data-testid="date-range-picker"
+          >
             <label className="text-sm font-medium text-gray-700">
               Fecha inicio
               <input
@@ -596,7 +630,10 @@ function FinancialMatrixBoardComponent({ tenantId }: FinancialMatrixBoardProps) 
               data-testid="clone-source-select"
               value={cloneForm.sourceBucketId}
               onChange={(event) =>
-                setCloneForm((prev) => ({ ...prev, sourceBucketId: event.target.value }))
+                setCloneForm((prev) => ({
+                  ...prev,
+                  sourceBucketId: event.target.value,
+                }))
               }
             >
               {monthBuckets.map((bucket) => (
@@ -614,7 +651,10 @@ function FinancialMatrixBoardComponent({ tenantId }: FinancialMatrixBoardProps) 
               data-testid="clone-target-select"
               value={cloneForm.targetBucketId}
               onChange={(event) =>
-                setCloneForm((prev) => ({ ...prev, targetBucketId: event.target.value }))
+                setCloneForm((prev) => ({
+                  ...prev,
+                  targetBucketId: event.target.value,
+                }))
               }
             >
               {monthBuckets.map((bucket) => (
@@ -679,7 +719,9 @@ function FinancialMatrixBoardComponent({ tenantId }: FinancialMatrixBoardProps) 
                     data-start-date={bucket.startDate}
                     data-end-date={bucket.endDate}
                   >
-                    <div className="font-semibold text-gray-900">{bucket.label}</div>
+                    <div className="font-semibold text-gray-900">
+                      {bucket.label}
+                    </div>
                     <div className="text-xs text-gray-500">
                       {bucket.startDate} → {bucket.endDate}
                     </div>
@@ -702,7 +744,7 @@ function FinancialMatrixBoardComponent({ tenantId }: FinancialMatrixBoardProps) 
                               onChange={(e) => {
                                 const val = e.target.value;
                                 if (val) {
-                                  setAddedCategories(prev => [...prev, val]);
+                                  setAddedCategories((prev) => [...prev, val]);
                                 }
                                 setSelectCategoryGroup(null);
                               }}
@@ -710,20 +752,30 @@ function FinancialMatrixBoardComponent({ tenantId }: FinancialMatrixBoardProps) 
                             >
                               <option value="">-- Escoger --</option>
                               {categories
-                                .filter(cat => cat.type === group.type && !group.items.some(item => item.id === cat.id))
-                                .map(cat => (
-                                  <option key={`opt-${cat.id}`} value={cat.id}>{cat.name}</option>
-                                ))
-                              }
+                                .filter(
+                                  (cat) =>
+                                    cat.type === group.type &&
+                                    !group.items.some(
+                                      (item) => item.id === cat.id,
+                                    ),
+                                )
+                                .map((cat) => (
+                                  <option key={`opt-${cat.id}`} value={cat.id}>
+                                    {cat.name}
+                                  </option>
+                                ))}
                             </select>
                           )}
-                          <button 
+                          <button
                             className="flex items-center gap-1 rounded px-2 py-1 text-[10px] lowercase font-semibold tracking-normal text-blue-600 hover:bg-blue-100 transition-colors"
                             title={`Agregar a ${group.label}`}
                             onClick={(e) => {
                               e.preventDefault();
                               e.stopPropagation();
-                              setSelectCategoryGroup({ groupLabel: group.label, isOpen: true });
+                              setSelectCategoryGroup({
+                                groupLabel: group.label,
+                                isOpen: true,
+                              });
                             }}
                           >
                             <Plus className="h-3 w-3" />
@@ -742,11 +794,17 @@ function FinancialMatrixBoardComponent({ tenantId }: FinancialMatrixBoardProps) 
                   {group.items.map((category) => (
                     <tr key={category.id}>
                       <td className="sticky left-0 z-10 border-b border-r border-gray-200 bg-white p-3">
-                        <div className="font-medium text-gray-900">{category.name}</div>
-                        <div className="text-xs uppercase text-gray-400">{category.type}</div>
+                        <div className="font-medium text-gray-900">
+                          {category.name}
+                        </div>
+                        <div className="text-xs uppercase text-gray-400">
+                          {category.type}
+                        </div>
                       </td>
                       {buckets.map((bucket) => {
-                        const cell = cellMap.get(`${category.id}::${bucket.id}`);
+                        const cell = cellMap.get(
+                          `${category.id}::${bucket.id}`,
+                        );
 
                         if (!cell) {
                           return (
@@ -756,7 +814,9 @@ function FinancialMatrixBoardComponent({ tenantId }: FinancialMatrixBoardProps) 
                               data-testid="matrix-cell"
                               data-category-id={category.id}
                               data-bucket-id={bucket.id}
-                              onClick={() => openCellEditor(category.id, bucket.id)}
+                              onClick={() =>
+                                openCellEditor(category.id, bucket.id)
+                              }
                             >
                               <div data-testid="cell-empty">Sin registro</div>
                             </td>
@@ -778,17 +838,23 @@ function FinancialMatrixBoardComponent({ tenantId }: FinancialMatrixBoardProps) 
                             data-testid="matrix-cell"
                             data-category-id={category.id}
                             data-bucket-id={bucket.id}
-                            onClick={() => openCellEditor(category.id, bucket.id)}
+                            onClick={() =>
+                              openCellEditor(category.id, bucket.id)
+                            }
                           >
                             <div
                               data-testid="cell-style"
                               className={`space-y-1 ${
-                                isPlanned ? "cell-planned text-gray-500 italic" : ""
+                                isPlanned
+                                  ? "cell-planned text-gray-500 italic"
+                                  : ""
                               } ${isExecuted ? "cell-executed text-gray-900 font-bold" : ""} ${
                                 isOverBudget ? "cell-over-budget" : ""
                               }`}
                             >
-                              <div data-testid="cell-value">Proyectado: {formatMoney(cell.projectedAmount)}</div>
+                              <div data-testid="cell-value">
+                                Proyectado: {formatMoney(cell.projectedAmount)}
+                              </div>
                               <div>Real: {formatMoney(cell.realAmount)}</div>
                             </div>
                           </td>
@@ -822,7 +888,9 @@ function FinancialMatrixBoardComponent({ tenantId }: FinancialMatrixBoardProps) 
             data-testid="quick-entry-popover"
             onClick={(event) => event.stopPropagation()}
           >
-            <h3 className="mb-3 text-lg font-semibold text-gray-900">Quick entry</h3>
+            <h3 className="mb-3 text-lg font-semibold text-gray-900">
+              Quick entry
+            </h3>
 
             <div data-testid="quick-entry-form">
               <label className="mb-3 block text-sm font-medium text-gray-700">
@@ -832,7 +900,10 @@ function FinancialMatrixBoardComponent({ tenantId }: FinancialMatrixBoardProps) 
                   data-testid="planned-amount-input"
                   value={cellEditor.projectedAmount}
                   onChange={(event) =>
-                    setCellEditor((prev) => ({ ...prev, projectedAmount: event.target.value }))
+                    setCellEditor((prev) => ({
+                      ...prev,
+                      projectedAmount: event.target.value,
+                    }))
                   }
                 />
               </label>
@@ -844,7 +915,10 @@ function FinancialMatrixBoardComponent({ tenantId }: FinancialMatrixBoardProps) 
                   className="mt-1 w-full rounded-md border border-gray-300 p-2"
                   value={cellEditor.paymentDate}
                   onChange={(event) =>
-                    setCellEditor((prev) => ({ ...prev, paymentDate: event.target.value }))
+                    setCellEditor((prev) => ({
+                      ...prev,
+                      paymentDate: event.target.value,
+                    }))
                   }
                 />
               </label>
@@ -857,7 +931,10 @@ function FinancialMatrixBoardComponent({ tenantId }: FinancialMatrixBoardProps) 
                   value={cellEditor.paymentAmount}
                   placeholder="0.00"
                   onChange={(event) =>
-                    setCellEditor((prev) => ({ ...prev, paymentAmount: event.target.value }))
+                    setCellEditor((prev) => ({
+                      ...prev,
+                      paymentAmount: event.target.value,
+                    }))
                   }
                 />
               </label>
@@ -870,7 +947,10 @@ function FinancialMatrixBoardComponent({ tenantId }: FinancialMatrixBoardProps) 
                   placeholder="Ej. Pago de Juan, Nómina, etc."
                   value={cellEditor.description}
                   onChange={(event) =>
-                    setCellEditor((prev) => ({ ...prev, description: event.target.value }))
+                    setCellEditor((prev) => ({
+                      ...prev,
+                      description: event.target.value,
+                    }))
                   }
                 />
               </label>

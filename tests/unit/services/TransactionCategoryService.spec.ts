@@ -257,7 +257,10 @@ class MockTransactionCategoryService {
     );
 
     // Sort by sortOrder
-    categories.sort((a: TransactionCategory, b: TransactionCategory) => a.sortOrder - b.sortOrder);
+    categories.sort(
+      (a: TransactionCategory, b: TransactionCategory) =>
+        a.sortOrder - b.sortOrder,
+    );
 
     return { success: true, data: categories };
   }
@@ -283,7 +286,10 @@ class MockTransactionCategoryService {
     );
 
     // Sort by sortOrder
-    categories.sort((a: TransactionCategory, b: TransactionCategory) => a.sortOrder - b.sortOrder);
+    categories.sort(
+      (a: TransactionCategory, b: TransactionCategory) =>
+        a.sortOrder - b.sortOrder,
+    );
 
     return { success: true, data: categories };
   }
@@ -455,10 +461,34 @@ class MockTransactionCategoryService {
     }
 
     const defaultCategories: CreateCategoryData[] = [
-      { tenantId, type: "income", name: "Salario", color: "#10B981", sortOrder: 1 },
-      { tenantId, type: "income", name: "Ventas", color: "#3B82F6", sortOrder: 2 },
-      { tenantId, type: "expense", name: "Vivienda", color: "#EF4444", sortOrder: 1 },
-      { tenantId, type: "expense", name: "Alimentación", color: "#F97316", sortOrder: 2 },
+      {
+        tenantId,
+        type: "income",
+        name: "Salario",
+        color: "#10B981",
+        sortOrder: 1,
+      },
+      {
+        tenantId,
+        type: "income",
+        name: "Ventas",
+        color: "#3B82F6",
+        sortOrder: 2,
+      },
+      {
+        tenantId,
+        type: "expense",
+        name: "Vivienda",
+        color: "#EF4444",
+        sortOrder: 1,
+      },
+      {
+        tenantId,
+        type: "expense",
+        name: "Alimentación",
+        color: "#F97316",
+        sortOrder: 2,
+      },
     ];
 
     const createdCategories: TransactionCategory[] = [];
@@ -755,11 +785,17 @@ describe("TransactionCategoryService - Result Pattern Implementation", () => {
     });
 
     it("should return all categories for a tenant", async () => {
-      const result = await categoryService.getCategoriesByTenant(context.tenant.id);
+      const result = await categoryService.getCategoriesByTenant(
+        context.tenant.id,
+      );
 
       expectSuccess(result);
       expect(result.data.length).toBeGreaterThanOrEqual(2);
-      expect(result.data.every((c: TransactionCategory) => c.tenantId === context.tenant.id)).toBe(true);
+      expect(
+        result.data.every(
+          (c: TransactionCategory) => c.tenantId === context.tenant.id,
+        ),
+      ).toBe(true);
     });
 
     it("should return empty array for tenant with no categories", async () => {
@@ -771,7 +807,8 @@ describe("TransactionCategoryService - Result Pattern Implementation", () => {
     });
 
     it("should return validation error for invalid tenant ID", async () => {
-      const result = await categoryService.getCategoriesByTenant("invalid-uuid");
+      const result =
+        await categoryService.getCategoriesByTenant("invalid-uuid");
 
       expectFailure(result);
       expect(result.error.type).toBe("ValidationError");
@@ -793,21 +830,34 @@ describe("TransactionCategoryService - Result Pattern Implementation", () => {
     });
 
     it("should return only income categories when type is income", async () => {
-      const result = await categoryService.getCategoriesByType(context.tenant.id, "income");
+      const result = await categoryService.getCategoriesByType(
+        context.tenant.id,
+        "income",
+      );
 
       expectSuccess(result);
-      expect(result.data.every((c: TransactionCategory) => c.type === "income")).toBe(true);
+      expect(
+        result.data.every((c: TransactionCategory) => c.type === "income"),
+      ).toBe(true);
     });
 
     it("should return only expense categories when type is expense", async () => {
-      const result = await categoryService.getCategoriesByType(context.tenant.id, "expense");
+      const result = await categoryService.getCategoriesByType(
+        context.tenant.id,
+        "expense",
+      );
 
       expectSuccess(result);
-      expect(result.data.every((c: TransactionCategory) => c.type === "expense")).toBe(true);
+      expect(
+        result.data.every((c: TransactionCategory) => c.type === "expense"),
+      ).toBe(true);
     });
 
     it("should return validation error for invalid tenant ID", async () => {
-      const result = await categoryService.getCategoriesByType("invalid-uuid", "income");
+      const result = await categoryService.getCategoriesByType(
+        "invalid-uuid",
+        "income",
+      );
 
       expectFailure(result);
       expect(result.error.type).toBe("ValidationError");
@@ -833,7 +883,9 @@ describe("TransactionCategoryService - Result Pattern Implementation", () => {
 
       expectSuccess(result);
       expect(result.data.name).toBe("Updated Category Name");
-      expect(result.data.updatedAt.getTime()).toBeGreaterThanOrEqual(testCategory.updatedAt.getTime());
+      expect(result.data.updatedAt.getTime()).toBeGreaterThanOrEqual(
+        testCategory.updatedAt.getTime(),
+      );
     });
 
     it("should update category color", async () => {
@@ -968,23 +1020,32 @@ describe("TransactionCategoryService - Result Pattern Implementation", () => {
 
   describe("createDefaultCategories", () => {
     it("should create default income and expense categories for a tenant", async () => {
-      const result = await categoryService.createDefaultCategories(context.tenant.id);
+      const result = await categoryService.createDefaultCategories(
+        context.tenant.id,
+      );
 
       expectSuccess(result);
       expect(result.data.length).toBeGreaterThan(0);
 
       // Verify we have both income and expense categories
-      const incomeCategories = result.data.filter((c: TransactionCategory) => c.type === "income");
-      const expenseCategories = result.data.filter((c: TransactionCategory) => c.type === "expense");
+      const incomeCategories = result.data.filter(
+        (c: TransactionCategory) => c.type === "income",
+      );
+      const expenseCategories = result.data.filter(
+        (c: TransactionCategory) => c.type === "expense",
+      );
       expect(incomeCategories.length).toBeGreaterThan(0);
       expect(expenseCategories.length).toBeGreaterThan(0);
 
       // Verify all are marked as default
-      expect(result.data.every((c: TransactionCategory) => c.isDefault === true)).toBe(true);
+      expect(
+        result.data.every((c: TransactionCategory) => c.isDefault === true),
+      ).toBe(true);
     });
 
     it("should return validation error for invalid tenant ID", async () => {
-      const result = await categoryService.createDefaultCategories("invalid-uuid");
+      const result =
+        await categoryService.createDefaultCategories("invalid-uuid");
 
       expectFailure(result);
       expect(result.error.type).toBe("ValidationError");
@@ -1008,13 +1069,21 @@ describe("TransactionCategoryService - Result Pattern Implementation", () => {
       await context.db.categories.insert(otherCategory);
 
       // Get categories for test tenant
-      const result = await categoryService.getCategoriesByTenant(context.tenant.id);
+      const result = await categoryService.getCategoriesByTenant(
+        context.tenant.id,
+      );
 
       expectSuccess(result);
       // Should not include other tenant's category
-      expect(result.data.find((c: TransactionCategory) => c.id === otherCategory.id)).toBeUndefined();
+      expect(
+        result.data.find((c: TransactionCategory) => c.id === otherCategory.id),
+      ).toBeUndefined();
       // Should include test tenant's category
-      expect(result.data.find((c: TransactionCategory) => c.id === createResult.data.id)).toBeDefined();
+      expect(
+        result.data.find(
+          (c: TransactionCategory) => c.id === createResult.data.id,
+        ),
+      ).toBeDefined();
     });
   });
 
@@ -1042,7 +1111,10 @@ describe("TransactionCategoryService - Result Pattern Implementation", () => {
       // Small delay to ensure timestamp difference
       await new Promise((resolve) => setTimeout(resolve, 10));
 
-      const result = await categoryService.updateCategory(createResult.data.id, {});
+      const result = await categoryService.updateCategory(
+        createResult.data.id,
+        {},
+      );
 
       expectSuccess(result);
       expect(result.data.updatedAt.getTime()).toBeGreaterThanOrEqual(

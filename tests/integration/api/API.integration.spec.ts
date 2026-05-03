@@ -9,9 +9,7 @@ import { Result, Ok, Err, isFailure } from "@sass-store/core/src/result";
 import { ErrorFactories } from "@sass-store/core/src/errors/types";
 import { createAuthToken } from "@sass-store/core/src/middleware/auth-middleware";
 
-describe.skipIf(!process.env.TEST_API_BASE_URL)(
-  "API Integration Tests",
-  () => {
+describe.skipIf(!process.env.TEST_API_BASE_URL)("API Integration Tests", () => {
   const baseUrl = process.env.TEST_API_BASE_URL!;
   let testUserId: string;
   let testAuthToken: string;
@@ -358,7 +356,9 @@ describe.skipIf(!process.env.TEST_API_BASE_URL)(
         email: "customer@example.com",
         role: "customer",
       });
-      const customerToken = customerTokenResult.success ? customerTokenResult.data : "";
+      const customerToken = customerTokenResult.success
+        ? customerTokenResult.data
+        : "";
 
       // Try to access admin-only endpoint as customer
       const response = await fetch(`${baseUrl}/api/users`, {

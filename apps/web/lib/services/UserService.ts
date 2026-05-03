@@ -6,7 +6,15 @@ import {
 } from "@sass-store/validation/src/zod-result";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
-import { db, users, userRoles, tenants, eq, and, sql } from "@sass-store/database";
+import {
+  db,
+  users,
+  userRoles,
+  tenants,
+  eq,
+  and,
+  sql,
+} from "@sass-store/database";
 import type { InferSelectModel } from "drizzle-orm";
 
 // Strong password schema for registration (12+ chars, uppercase, lowercase, number, symbol)
@@ -203,7 +211,11 @@ export class UserService {
       );
     }
 
-    const result = await db.select().from(users).where(eq(users.id, id)).limit(1);
+    const result = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, id))
+      .limit(1);
 
     if (result.length === 0) {
       return Err(
@@ -574,10 +586,7 @@ export class UserService {
   }
 
   // Helper methods
-  private async verifyPassword(
-    password: string,
-    user: User,
-  ): Promise<boolean> {
+  private async verifyPassword(password: string, user: User): Promise<boolean> {
     if (!user.password) {
       return false; // Users without a password cannot log in this way
     }

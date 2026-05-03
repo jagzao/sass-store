@@ -239,6 +239,39 @@
       "doNotUseWhen": [
         "la skill ya esta instalada y operativa"
       ]
+    },
+    {
+      "id": "story-orchestrator",
+      "scope": "project-local",
+      "enabled": true,
+      "path": ".agents/skills/story-orchestrator/SKILL.md",
+      "purpose": "Orquestador completo de User Stories: PM → Architect → Dev → QA → Done. Ciclo autonomo sin intervencion humana.",
+      "useWhen": [
+        "usuario dice 'Implementa [X]' o 'Desarrolla [X]'",
+        "usuario dice 'valida todo'",
+        "se requiere pipeline completo de story desde backlog hasta merge-ready",
+        "necesita ejecutar el flujo PM → Architect → Dev → QA"
+      ],
+      "doNotUseWhen": [
+        "solo es correccion menor (usar debug-agent)",
+        "solo es consulta de estado (leer summaries)"
+      ],
+      "protocol": {
+        "readFirst": [
+          ".agents/SYSTEM_PROMPT.md",
+          "docs/stories/BACKLOG.md",
+          "docs/stories/_template.md"
+        ],
+        "followProtocol": ".agents/protocols/story-orchestrator.md",
+        "phases": [
+          "pm-analysis",
+          "architect-design",
+          "dev-implementation",
+          "qa-validation",
+          "merge-ready"
+        ],
+        "maxRetries": 5
+      }
     }
   ],
   "governance": {

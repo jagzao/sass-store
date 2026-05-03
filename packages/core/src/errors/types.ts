@@ -398,7 +398,8 @@ export const ErrorTypeGuards = {
     error.type === "MatrixError",
   isInvalidGranularityError: (
     error: DomainError,
-  ): error is InvalidGranularityError => error.type === "InvalidGranularityError",
+  ): error is InvalidGranularityError =>
+    error.type === "InvalidGranularityError",
   isInvalidDateRangeError: (
     error: DomainError,
   ): error is InvalidDateRangeError => error.type === "InvalidDateRangeError",

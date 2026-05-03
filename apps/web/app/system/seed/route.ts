@@ -5,7 +5,7 @@ import { users } from "@sass-store/database/schema";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
@@ -30,24 +30,30 @@ export async function GET() {
         password: hashedPassword,
         emailVerified: new Date(),
       });
-      console.log(`✅ Created default user: ${email}`);
+      console.warn(`âœ… Created default user: ${email}`);
     } else {
-       // Update password to ensure it matches
-       await db.update(users).set({ password: hashedPassword }).where(eq(users.email, email));
-       console.log(`✅ Updated password for user: ${email}`);
+      // Update password to ensure it matches
+      await db
+        .update(users)
+        .set({ password: hashedPassword })
+        .where(eq(users.email, email));
+      // SECURITY: Redacted sensitive log;
     }
 
-    return NextResponse.json({ 
-      success: true, 
-      message: "Database seeded successfully. User created/updated.", 
+    return NextResponse.json({
+      success: true,
+      message: "Database seeded successfully. User created/updated.",
       result,
-      user: { email, password }
+      user: { email, password },
     });
   } catch (error) {
     console.error("Seeding failed:", error);
-    return NextResponse.json({ 
-      success: false, 
-      error: error instanceof Error ? error.message : String(error) 
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        error: error instanceof Error ? error.message : String(error),
+      },
+      { status: 500 },
+    );
   }
 }

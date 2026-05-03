@@ -7,7 +7,7 @@ test.describe("Finance System - Smoke Tests", () => {
   });
 
   test("Categories page loads correctly", async ({ page }) => {
-    await page.goto("http://localhost:3001/t/manada-juma/finance/categories");
+    await page.goto("/t/manada-juma/finance/categories");
 
     // Wait for page content
     await page.waitForSelector("text=Categorías de Transacciones", {
@@ -29,7 +29,7 @@ test.describe("Finance System - Smoke Tests", () => {
   });
 
   test("Budgets page loads correctly", async ({ page }) => {
-    await page.goto("http://localhost:3001/t/manada-juma/finance/budgets");
+    await page.goto("/t/manada-juma/finance/budgets");
 
     await page.waitForSelector("text=Presupuestos", { timeout: 15000 });
 
@@ -47,7 +47,7 @@ test.describe("Finance System - Smoke Tests", () => {
   });
 
   test("Financial dashboard loads correctly", async ({ page }) => {
-    await page.goto("http://localhost:3001/t/manada-juma/finance");
+    await page.goto("/t/manada-juma/finance");
 
     await page.waitForTimeout(5000);
 
@@ -69,7 +69,7 @@ test.describe("Finance System - Smoke Tests", () => {
   });
 
   test("Supply expenses page loads", async ({ page }) => {
-    await page.goto("http://localhost:3001/t/manada-juma/inventory/supplies");
+    await page.goto("/t/manada-juma/inventory/supplies");
 
     await page.waitForTimeout(8000);
 
@@ -88,17 +88,17 @@ test.describe("Finance System - Smoke Tests", () => {
 
   test("All finance navigation works", async ({ page }) => {
     // Start at categories
-    await page.goto("http://localhost:3001/t/manada-juma/finance/categories");
+    await page.goto("/t/manada-juma/finance/categories");
     await page.waitForSelector("text=Categorías de Transacciones", {
       timeout: 15000,
     });
 
     // Navigate to budgets (if there's a nav link)
-    await page.goto("http://localhost:3001/t/manada-juma/finance/budgets");
+    await page.goto("/t/manada-juma/finance/budgets");
     await page.waitForSelector("text=Presupuestos", { timeout: 15000 });
 
     // Navigate to dashboard
-    await page.goto("http://localhost:3001/t/manada-juma/finance");
+    await page.goto("/t/manada-juma/finance");
     await page.waitForTimeout(3000);
 
     // All navigation successful
@@ -108,7 +108,7 @@ test.describe("Finance System - Smoke Tests", () => {
 
 test.describe("Finance System - Public Access", () => {
   test("Login page is accessible", async ({ page }) => {
-    await page.goto("http://localhost:3001/t/manada-juma/login", {
+    await page.goto("/t/manada-juma/login", {
       timeout: 60000,
       waitUntil: "domcontentloaded",
     });
@@ -128,7 +128,7 @@ test.describe("Finance System - Public Access", () => {
     // Clear any existing auth state by opening a fresh context
     // This test assumes we're not logged in
 
-    await page.goto("http://localhost:3001/t/manada-juma/finance/categories", {
+    await page.goto("/t/manada-juma/finance/categories", {
       timeout: 60000,
       waitUntil: "domcontentloaded",
     });

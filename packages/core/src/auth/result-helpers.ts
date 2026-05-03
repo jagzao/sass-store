@@ -229,7 +229,7 @@ export const authenticateUser = async (
   }
 
   // Generate session ID
-  const sessionId = `sess_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  const sessionId = `sess_${Date.now()}_${crypto.randomUUID().replace(/-/g, "").substring(0, 9)}`;
 
   return Ok({
     user: validSessionResult.data,
@@ -258,7 +258,7 @@ export const validateApiKey = (
     return Err(sessionResult.error);
   }
 
-  const sessionId = `api_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  const sessionId = `api_${Date.now()}_${crypto.randomUUID().replace(/-/g, "").substring(0, 9)}`;
 
   return Ok({
     user: sessionResult.data,
@@ -315,7 +315,7 @@ export const getUserContext = async (
     return Err(validSessionResult.error);
   }
 
-  const sessionId = `token_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  const sessionId = `token_${Date.now()}_${crypto.randomUUID().replace(/-/g, "").substring(0, 9)}`;
 
   return Ok({
     user: validSessionResult.data,

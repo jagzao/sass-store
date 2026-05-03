@@ -41,7 +41,9 @@ export default function HomeTenantBottomNav({
 
   const isActive = (href: string) => {
     if (href === "") {
-      return pathname === `/t/${tenantSlug}` || pathname === `/t/${tenantSlug}/`;
+      return (
+        pathname === `/t/${tenantSlug}` || pathname === `/t/${tenantSlug}/`
+      );
     }
     if (href === "/menu") {
       return false; // Menu is never active
@@ -58,9 +60,10 @@ export default function HomeTenantBottomNav({
     >
       {NAV_ITEMS.map((item) => {
         const active = isActive(item.href);
-        const fullPath = item.href === "/menu" 
-          ? `/t/${tenantSlug}/menu` 
-          : `/t/${tenantSlug}${item.href}`;
+        const fullPath =
+          item.href === "/menu"
+            ? `/t/${tenantSlug}/menu`
+            : `/t/${tenantSlug}${item.href}`;
 
         return (
           <Link

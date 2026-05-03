@@ -34,7 +34,13 @@ export interface RateLimitCheckResult {
   result: RateLimitResult;
 }
 
-type RateLimiterType = "auth" | "general" | "customers" | "services" | "upload" | "admin";
+type RateLimiterType =
+  | "auth"
+  | "general"
+  | "customers"
+  | "services"
+  | "upload"
+  | "admin";
 
 // ============================================================================
 // In-Memory Fallback Store (ALWAYS ACTIVE)
@@ -47,7 +53,7 @@ class InMemoryRateLimitStore {
   constructor() {
     // Run cleanup every 5 minutes
     this.cleanupInterval = setInterval(() => this.cleanup(), 5 * 60 * 1000);
-    
+
     // Prevent the interval from keeping the process alive
     if (this.cleanupInterval.unref) {
       this.cleanupInterval.unref();
@@ -58,7 +64,10 @@ class InMemoryRateLimitStore {
     const now = Date.now();
     const entries = Array.from(this.store.entries());
     for (const [key, entry] of entries) {
-      if (now > entry.resetTime && (!entry.blockedUntil || now > entry.blockedUntil)) {
+      if (
+        now > entry.resetTime &&
+        (!entry.blockedUntil || now > entry.blockedUntil)
+      ) {
         this.store.delete(key);
       }
     }
@@ -100,7 +109,10 @@ let redisAvailable = false;
 
 async function initializeRedis(): Promise<boolean> {
   // Check if Redis is configured
-  if (!process.env.UPSTASH_REDIS_REST_URL || !process.env.UPSTASH_REDIS_REST_TOKEN) {
+  if (
+    !process.env.UPSTASH_REDIS_REST_URL ||
+    !process.env.UPSTASH_REDIS_REST_TOKEN
+  ) {
     console.warn("[Rate Limit] Redis not configured, using in-memory fallback");
     redisAvailable = false;
     return false;
@@ -113,14 +125,17 @@ async function initializeRedis(): Promise<boolean> {
       url: process.env.UPSTASH_REDIS_REST_URL,
       token: process.env.UPSTASH_REDIS_REST_TOKEN,
     });
-    
+
     // Test connection
     await redisClient.ping();
     redisAvailable = true;
     console.info("[Rate Limit] Redis connected successfully");
     return true;
   } catch (error) {
-    console.warn("[Rate Limit] Redis connection failed, using in-memory fallback:", error);
+    console.warn(
+      "[Rate Limit] Redis connection failed, using in-memory fallback:",
+      error,
+    );
     redisAvailable = false;
     redisClient = null;
     return false;
@@ -143,35 +158,35 @@ const RATE_LIMIT_CONFIGS: Record<RateLimiterType, RateLimitConfig> = {
     maxRequests: 5,
     blockDurationMs: 60 * 60 * 1000, // 1 hour block after limit exceeded
   },
-  
+
   // General API - moderate: 100 requests per minute
   general: {
     windowMs: 60 * 1000, // 1 minute
     maxRequests: 100,
     blockDurationMs: 15 * 60 * 1000, // 15 minutes block
   },
-  
+
   // Customer endpoints - moderate: 60 requests per minute
   customers: {
     windowMs: 60 * 1000,
     maxRequests: 60,
     blockDurationMs: 15 * 60 * 1000,
   },
-  
+
   // Service endpoints - moderate: 30 requests per minute
   services: {
     windowMs: 60 * 1000,
     maxRequests: 30,
     blockDurationMs: 15 * 60 * 1000,
   },
-  
+
   // Upload endpoints - strict: 10 requests per minute
   upload: {
     windowMs: 60 * 1000,
     maxRequests: 10,
     blockDurationMs: 30 * 60 * 1000, // 30 minutes block
   },
-  
+
   // Admin endpoints - strict: 20 requests per minute
   admin: {
     windowMs: 60 * 1000,
@@ -184,23 +199,28 @@ const RATE_LIMIT_CONFIGS: Record<RateLimiterType, RateLimitConfig> = {
 // Key Generation
 // ============================================================================
 
-function getDefaultKey(request: NextRequest, limiterType: RateLimiterType): string {
+function getDefaultKey(
+  request: NextRequest,
+  limiterType: RateLimiterType,
+): string {
   // Get client IP
   const forwarded = request.headers.get("x-forwarded-for");
   const realIP = request.headers.get("x-real-ip");
   const cfConnectingIP = request.headers.get("cf-connecting-ip");
-  
-  const ip = forwarded?.split(",")[0]?.trim() || realIP || cfConnectingIP || "unknown";
-  
+
+  const ip =
+    forwarded?.split(",")[0]?.trim() || realIP || cfConnectingIP || "unknown";
+
   // Get tenant from headers or path
-  const tenant = request.headers.get("x-tenant") || 
-                 request.headers.get("x-tenant-id") ||
-                 extractTenantFromPath(request.nextUrl?.pathname) ||
-                 "global";
-  
+  const tenant =
+    request.headers.get("x-tenant") ||
+    request.headers.get("x-tenant-id") ||
+    extractTenantFromPath(request.nextUrl?.pathname) ||
+    "global";
+
   // Get user ID if available (from headers set by auth middleware)
   const userId = request.headers.get("x-user-id") || "";
-  
+
   // Build key: ip:tenant:user:type
   return `${ip}:${tenant}:${userId}:${limiterType}`;
 }
@@ -217,7 +237,7 @@ function extractTenantFromPath(pathname: string | undefined): string {
 
 function checkRateLimitInMemory(
   key: string,
-  config: RateLimitConfig
+  config: RateLimitConfig,
 ): RateLimitCheckResult {
   const now = Date.now();
   let entry = inMemoryStore.get(key);
@@ -291,7 +311,7 @@ function checkRateLimitInMemory(
 
 async function checkRateLimitRedis(
   key: string,
-  config: RateLimitConfig
+  config: RateLimitConfig,
 ): Promise<RateLimitCheckResult> {
   if (!redisClient || !redisAvailable) {
     // Fall back to in-memory
@@ -305,23 +325,24 @@ async function checkRateLimitRedis(
 
     // Use Redis transaction for atomicity
     const multi = redisClient.multi();
-    
+
     // Remove old entries outside the window
     multi.zremrangebyscore(redisKey, 0, windowStart);
-    
+
     // Count requests in current window
     multi.zcard(redisKey);
-    
+
     // Get the oldest request time for reset calculation
     multi.zrange(redisKey, 0, 0, "WITHSCORES");
-    
+
     const results = await multi.exec();
     const count = results[1] as number;
     const oldestEntry = results[2] as [string, string] | [];
 
     // Check if limit exceeded
     if (count >= config.maxRequests) {
-      const oldestTime = oldestEntry && oldestEntry[1] ? parseInt(oldestEntry[1], 10) : now;
+      const oldestTime =
+        oldestEntry && oldestEntry[1] ? parseInt(oldestEntry[1], 10) : now;
       const resetTime = oldestTime + config.windowMs;
       const retryAfter = Math.ceil((resetTime - now) / 1000);
 
@@ -339,13 +360,19 @@ async function checkRateLimitRedis(
     }
 
     // Add current request
-    await redisClient.zadd(redisKey, now, `${now}-${Math.random().toString(36).slice(2)}`);
-    
+    await redisClient.zadd(
+      redisKey,
+      now,
+      `${now}-${crypto.randomUUID().replace(/-/g, "").substring(0, 9)}`,
+    );
+
     // Set expiry on the key
     await redisClient.expire(redisKey, Math.ceil(config.windowMs / 1000));
 
     const remaining = Math.max(0, config.maxRequests - count - 1);
-    const resetTime = (oldestEntry && oldestEntry[1] ? parseInt(oldestEntry[1], 10) : now) + config.windowMs;
+    const resetTime =
+      (oldestEntry && oldestEntry[1] ? parseInt(oldestEntry[1], 10) : now) +
+      config.windowMs;
 
     return {
       allowed: true,
@@ -358,7 +385,10 @@ async function checkRateLimitRedis(
       },
     };
   } catch (error) {
-    console.error("[Rate Limit] Redis error, falling back to in-memory:", error);
+    console.error(
+      "[Rate Limit] Redis error, falling back to in-memory:",
+      error,
+    );
     // CRITICAL: Always fall back to in-memory, never bypass
     return checkRateLimitInMemory(key, config);
   }
@@ -375,7 +405,7 @@ async function checkRateLimitRedis(
 export async function checkRateLimit(
   request: NextRequest,
   limiterType: RateLimiterType = "general",
-  customKey?: string
+  customKey?: string,
 ): Promise<Result<RateLimitResult, DomainError>> {
   // Skip rate limiting ONLY in development with explicit flag (for testing)
   if (
@@ -405,8 +435,8 @@ export async function checkRateLimit(
       ErrorFactories.rateLimit(
         checkResult.result.limit,
         limiterType,
-        checkResult.result.retryAfter || 60
-      )
+        checkResult.result.retryAfter || 60,
+      ),
     );
   }
 
@@ -420,7 +450,7 @@ export async function checkRateLimit(
 export async function applyRateLimit(
   request: NextRequest,
   limiterType: RateLimiterType = "general",
-  customKey?: string
+  customKey?: string,
 ): Promise<NextResponse | null> {
   const result = await checkRateLimit(request, limiterType, customKey);
 
@@ -434,7 +464,7 @@ export async function applyRateLimit(
 
   // Rate limit exceeded
   const error = result.error as RateLimitError;
-  
+
   return new NextResponse(
     JSON.stringify({
       success: false,
@@ -451,16 +481,20 @@ export async function applyRateLimit(
         "Retry-After": String(error.retryAfter || 60),
         "X-RateLimit-Limit": String(error.limit),
         "X-RateLimit-Remaining": "0",
-        "X-RateLimit-Reset": String(Date.now() + (error.retryAfter || 60) * 1000),
+        "X-RateLimit-Reset": String(
+          Date.now() + (error.retryAfter || 60) * 1000,
+        ),
       },
-    }
+    },
   );
 }
 
 /**
  * Create rate limit response headers
  */
-export function createRateLimitHeaders(result: RateLimitResult): Record<string, string> {
+export function createRateLimitHeaders(
+  result: RateLimitResult,
+): Record<string, string> {
   return {
     "X-RateLimit-Limit": result.limit.toString(),
     "X-RateLimit-Remaining": result.remaining.toString(),
@@ -474,7 +508,7 @@ export function createRateLimitHeaders(result: RateLimitResult): Record<string, 
  */
 export async function rateLimitMiddleware(
   request: NextRequest,
-  limiterType: RateLimiterType = "general"
+  limiterType: RateLimiterType = "general",
 ): Promise<NextResponse | null> {
   return applyRateLimit(request, limiterType);
 }
@@ -488,7 +522,7 @@ export async function rateLimitMiddleware(
  */
 export function getRateLimitStatus(
   request: NextRequest,
-  limiterType: RateLimiterType = "general"
+  limiterType: RateLimiterType = "general",
 ): RateLimitEntry | null {
   const key = getDefaultKey(request, limiterType);
   return inMemoryStore.get(key) || null;
@@ -499,7 +533,7 @@ export function getRateLimitStatus(
  */
 export function clearRateLimit(
   request: NextRequest,
-  limiterType: RateLimiterType = "general"
+  limiterType: RateLimiterType = "general",
 ): void {
   const key = getDefaultKey(request, limiterType);
   inMemoryStore.delete(key);
@@ -545,7 +579,7 @@ export const rateLimiters = {
 
 type APIHandler = (
   request: NextRequest,
-  context?: any
+  context?: any,
 ) => Promise<NextResponse> | NextResponse;
 
 /**
@@ -553,15 +587,15 @@ type APIHandler = (
  */
 export function withRateLimit(
   handler: APIHandler,
-  limiterType: RateLimiterType = "general"
+  limiterType: RateLimiterType = "general",
 ): APIHandler {
   return async (request: NextRequest, context?: any) => {
     const rateLimitResponse = await applyRateLimit(request, limiterType);
-    
+
     if (rateLimitResponse) {
       return rateLimitResponse;
     }
-    
+
     return handler(request, context);
   };
 }

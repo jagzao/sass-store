@@ -1,11 +1,11 @@
-import { Redis } from '@upstash/redis';
+import { Redis } from "@upstash/redis";
 
 // Initialize Upstash Redis client only if environment variables are set
 const isRedisConfigured =
   process.env.UPSTASH_REDIS_REST_URL &&
-  process.env.UPSTASH_REDIS_REST_URL !== 'your-upstash-redis-url' &&
+  process.env.UPSTASH_REDIS_REST_URL !== "your-upstash-redis-url" &&
   process.env.UPSTASH_REDIS_REST_TOKEN &&
-  process.env.UPSTASH_REDIS_REST_TOKEN !== 'your-upstash-redis-token';
+  process.env.UPSTASH_REDIS_REST_TOKEN !== "your-upstash-redis-token";
 
 const redis = isRedisConfigured
   ? new Redis({
@@ -42,7 +42,7 @@ export class CacheManager {
   async getOrSet<T>(
     key: string,
     fetcher: () => Promise<T>,
-    ttl: number = 3600
+    ttl: number = 3600,
   ): Promise<T> {
     try {
       if (redis) {

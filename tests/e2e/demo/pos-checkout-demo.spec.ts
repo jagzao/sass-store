@@ -21,13 +21,17 @@ test("[DEMO] POS Checkout completo", async ({ page }) => {
   );
 
   // 3. Verificar que carga la UI
-  await expect(page.getByRole("heading", { name: "Punto de Venta" })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Punto de Venta" }),
+  ).toBeVisible();
 
   // 4. (Opcional) Agregar producto al carrito si hay productos
   const addButtons = page.locator("button:has-text('Agregar')");
-  if (await addButtons.count() > 0) {
+  if ((await addButtons.count()) > 0) {
     await addButtons.first().click();
-    await expect(page.getByText("Carrito (1 items)")).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText("Carrito (1 items)")).toBeVisible({
+      timeout: 5000,
+    });
   }
 
   // 5. Pausa para que el video sea claro

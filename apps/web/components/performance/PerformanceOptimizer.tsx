@@ -18,19 +18,18 @@ type IntersectionObserverInit = {
 };
 
 // Extended Window and Navigator interfaces for browser APIs
-interface ExtendedWindow extends Window {
+interface ExtendedWindow extends Omit<Window, "requestIdleCallback"> {
   requestIdleCallback?: (
     callback: IdleRequestCallback,
     options?: IdleRequestOptions,
   ) => number;
-  cancelIdleCallback?: (id: number) => void;
 }
 
 interface ExtendedNavigator extends Navigator {
   deviceMemory?: number;
 }
 
-declare const window: ExtendedWindow;
+declare const window: ExtendedWindow & Window;
 declare const navigator: ExtendedNavigator;
 
 /**

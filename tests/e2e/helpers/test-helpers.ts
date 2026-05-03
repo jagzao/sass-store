@@ -17,16 +17,21 @@ export const TEST_CREDENTIALS = {
 export async function loginAsAdmin(page: Page) {
   const { adminEmail, adminPassword, tenantSlug } = TEST_CREDENTIALS;
 
-  page.on('pageerror', err => console.error('BROWSER CAUGHT ERROR:', err.message));
-  page.on('console', msg => {
-    if (msg.type() === 'error') console.error('BROWSER CONSOLE ERROR:', msg.text());
+  page.on("pageerror", (err) =>
+    console.error("BROWSER CAUGHT ERROR:", err.message),
+  );
+  page.on("console", (msg) => {
+    if (msg.type() === "error")
+      console.error("BROWSER CONSOLE ERROR:", msg.text());
   });
 
   // Navigate exactly as in customer-workflow.spec.ts
   await page.goto(`/t/${tenantSlug}/login`, { timeout: 60000 });
-  
+
   // Dev server needs time to compile the login page dynamically (up to 30s)
-  await expect(page.locator('input[type="email"]')).toBeVisible({ timeout: 30000 });
+  await expect(page.locator('input[type="email"]')).toBeVisible({
+    timeout: 30000,
+  });
 
   await page.fill('input[type="email"]', adminEmail);
   await page.fill('input[type="password"]', adminPassword);

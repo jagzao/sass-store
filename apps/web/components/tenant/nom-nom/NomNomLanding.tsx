@@ -105,7 +105,10 @@ function TacoCard({
   return (
     <div
       className="group rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl bg-white"
-      style={{ border: "1px solid #F3F4F6", boxShadow: "0 2px 8px rgba(0,0,0,0.06)" }}
+      style={{
+        border: "1px solid #F3F4F6",
+        boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
+      }}
     >
       {/* Image placeholder */}
       <div
@@ -117,7 +120,10 @@ function TacoCard({
 
       <div className="p-4 space-y-2">
         <div className="flex items-start justify-between gap-2">
-          <h3 className="font-bold text-sm leading-tight" style={{ color: "#1A1A1A" }}>
+          <h3
+            className="font-bold text-sm leading-tight"
+            style={{ color: "#1A1A1A" }}
+          >
             {name}
           </h3>
           {metadata?.spiciness && (
@@ -148,10 +154,34 @@ function TacoCard({
 
 function StaticMenu() {
   const items = [
-    { name: "Tacos de Carnitas", desc: "Estilo Michoacán, tiernas y jugosas", price: 8.5, veg: false, spicy: "mild" },
-    { name: "Tacos al Pastor", desc: "Con piña asada, cebolla y cilantro", price: 9.0, veg: false, spicy: "medium" },
-    { name: "Quesadilla de Queso", desc: "Queso Oaxaca derretido en tortilla", price: 6.0, veg: true, spicy: "mild" },
-    { name: "Tacos Vegetarianos", desc: "Champiñones, pimientos y aguacate", price: 8.0, veg: true, spicy: "mild" },
+    {
+      name: "Tacos de Carnitas",
+      desc: "Estilo Michoacán, tiernas y jugosas",
+      price: 8.5,
+      veg: false,
+      spicy: "mild",
+    },
+    {
+      name: "Tacos al Pastor",
+      desc: "Con piña asada, cebolla y cilantro",
+      price: 9.0,
+      veg: false,
+      spicy: "medium",
+    },
+    {
+      name: "Quesadilla de Queso",
+      desc: "Queso Oaxaca derretido en tortilla",
+      price: 6.0,
+      veg: true,
+      spicy: "mild",
+    },
+    {
+      name: "Tacos Vegetarianos",
+      desc: "Champiñones, pimientos y aguacate",
+      price: 8.0,
+      veg: true,
+      spicy: "mild",
+    },
   ];
 
   return (
@@ -173,23 +203,45 @@ function StaticMenu() {
 
 function WhyUsSection() {
   const reasons = [
-    { icon: "🌽", title: "Ingredientes frescos", desc: "Tortillas hechas a mano cada día. Nada de conservadores." },
-    { icon: "👨‍🍳", title: "Recetas auténticas", desc: "Sabores de la abuela, directos a tu boca." },
-    { icon: "🚚", title: "Catering disponible", desc: "Llevamos el taco truck a tu evento o empresa." },
+    {
+      icon: "🌽",
+      title: "Ingredientes frescos",
+      desc: "Tortillas hechas a mano cada día. Nada de conservadores.",
+    },
+    {
+      icon: "👨‍🍳",
+      title: "Recetas auténticas",
+      desc: "Sabores de la abuela, directos a tu boca.",
+    },
+    {
+      icon: "🚚",
+      title: "Catering disponible",
+      desc: "Llevamos el taco truck a tu evento o empresa.",
+    },
   ];
 
   return (
     <section className="py-20" style={{ backgroundColor: "#ECFDF5" }}>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-4xl font-black text-center mb-14" style={{ color: "#1A1A1A" }}>
+        <h2
+          className="text-4xl font-black text-center mb-14"
+          style={{ color: "#1A1A1A" }}
+        >
           ¿Por qué nom-nom?
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {reasons.map((r, i) => (
             <div key={i} className="text-center">
               <div className="text-5xl mb-4">{r.icon}</div>
-              <h3 className="text-xl font-bold mb-2" style={{ color: "#1A1A1A" }}>{r.title}</h3>
-              <p className="text-sm" style={{ color: "#6B7280" }}>{r.desc}</p>
+              <h3
+                className="text-xl font-bold mb-2"
+                style={{ color: "#1A1A1A" }}
+              >
+                {r.title}
+              </h3>
+              <p className="text-sm" style={{ color: "#6B7280" }}>
+                {r.desc}
+              </p>
             </div>
           ))}
         </div>
@@ -211,7 +263,10 @@ function CateringSection() {
       />
 
       <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <p className="text-xs font-semibold tracking-widest uppercase mb-4" style={{ color: PRIMARY }}>
+        <p
+          className="text-xs font-semibold tracking-widest uppercase mb-4"
+          style={{ color: PRIMARY }}
+        >
           Eventos y empresas
         </p>
         <h2 className="text-4xl sm:text-5xl font-black text-white mb-6">
@@ -250,14 +305,22 @@ function InfoSection() {
           {[
             { label: "Teléfono", value: "+1-555-0205" },
             { label: "Email", value: "pedidos@nom-nom.local" },
-            { label: "Horario", value: "Lun-Mié 11-21 · Jue 11-22 · Vie-Sáb 11-23 · Dom 10-20" },
+            {
+              label: "Horario",
+              value: "Lun-Mié 11-21 · Jue 11-22 · Vie-Sáb 11-23 · Dom 10-20",
+            },
             { label: "Ubicación", value: "987 Food Truck Plaza, East LA, CA" },
           ].map((item) => (
             <div key={item.label}>
-              <p className="text-xs font-semibold uppercase tracking-wide mb-1" style={{ color: PRIMARY }}>
+              <p
+                className="text-xs font-semibold uppercase tracking-wide mb-1"
+                style={{ color: PRIMARY }}
+              >
                 {item.label}
               </p>
-              <p className="text-sm" style={{ color: "#4B5563" }}>{item.value}</p>
+              <p className="text-sm" style={{ color: "#4B5563" }}>
+                {item.value}
+              </p>
             </div>
           ))}
         </div>
@@ -273,7 +336,10 @@ function MenuSkeleton() {
         <div className="h-8 w-48 bg-gray-100 rounded mx-auto mb-14 animate-pulse" />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="rounded-2xl overflow-hidden border border-gray-100 animate-pulse">
+            <div
+              key={i}
+              className="rounded-2xl overflow-hidden border border-gray-100 animate-pulse"
+            >
               <div className="h-40 bg-gray-100" />
               <div className="p-4 space-y-2">
                 <div className="h-4 bg-gray-100 rounded w-3/4" />

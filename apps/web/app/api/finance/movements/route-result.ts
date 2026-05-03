@@ -6,9 +6,7 @@ import { and, gte, lte, sql, desc, eq } from "drizzle-orm";
 // Import Result pattern utilities
 import { Result, Ok, Err } from "@sass-store/core/src/result";
 import { DomainError, ErrorFactories } from "@sass-store/core/src/errors/types";
-import {
-  withResultHandler,
-} from "@sass-store/core/src/middleware/result-handler";
+import { withResultHandler } from "@sass-store/core/src/middleware/result-handler";
 import {
   validateWithZod,
   CommonSchemas,

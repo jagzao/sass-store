@@ -12,7 +12,8 @@ export class HomeService {
       const recentPurchases = await withTenantContext(
         db,
         tenantId,
-        async (db) => {
+        null,
+        async (db: any) => {
           return await db
             .select({
               id: products.id,
@@ -33,7 +34,7 @@ export class HomeService {
         },
       );
 
-      return recentPurchases.map((item) => ({
+      return (recentPurchases as any[]).map((item: any) => ({
         ...item,
         lastPurchased: new Date().toISOString().split("T")[0], // Mock last purchased date
       }));
@@ -51,7 +52,8 @@ export class HomeService {
       const unfinishedItems = await withTenantContext(
         db,
         tenantId,
-        async (db) => {
+        null,
+        async (db: any) => {
           return await db
             .select({
               id: products.id,
@@ -76,7 +78,7 @@ export class HomeService {
         },
       );
 
-      return unfinishedItems.map((item) => ({
+      return (unfinishedItems as any[]).map((item: any) => ({
         ...item,
         addedToCart: "2024-01-16 10:30", // Mock timestamp
         progress: "cart" as const,
@@ -94,7 +96,8 @@ export class HomeService {
       const recentBookings = await withTenantContext(
         db,
         tenantId,
-        async (db) => {
+        null,
+        async (db: any) => {
           return await db
             .select({
               id: services.id,
@@ -117,7 +120,7 @@ export class HomeService {
         },
       );
 
-      return recentBookings.map((item) => ({
+      return (recentBookings as any[]).map((item: any) => ({
         ...item,
         lastBooked: "2024-01-15", // Mock last booked date
         nextAvailableSlot: "14:30", // Mock available slot
@@ -136,7 +139,8 @@ export class HomeService {
       const [trendingProducts, trendingServices] = await withTenantContext(
         db,
         tenantId,
-        async (db) => {
+        null,
+        async (db: any) => {
           return await Promise.all([
             db
               .select({

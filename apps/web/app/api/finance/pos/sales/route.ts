@@ -28,36 +28,34 @@ const posService = new POSService();
  * POST /api/finance/pos/sales
  * Create a POS sale using Result Pattern.
  */
-export const POST = withResultHandler(
-  async (request: NextRequest) => {
-    const body = await request.json();
+export const POST = withResultHandler(async (request: NextRequest) => {
+  const body = await request.json();
 
-    const validated = validateWithZod(CreateSaleSchema, body);
-    if (!validated.success) {
-      return validated;
-    }
+  const validated = validateWithZod(CreateSaleSchema, body);
+  if (!validated.success) {
+    return validated;
+  }
 
-    const { tenantSlug, items, paymentMethod, customerName } = validated.data;
+  const { tenantSlug, items, paymentMethod, customerName } = validated.data;
 
-    // Resolve tenant from slug
-    const tenantRow = await db
-      .select()
-      .from(tenants)
-      .where(eq(tenants.slug, tenantSlug))
-      .limit(1);
+  // Resolve tenant from slug
+  const tenantRow = await db
+    .select()
+    .from(tenants)
+    .where(eq(tenants.slug, tenantSlug))
+    .limit(1);
 
-    if (tenantRow.length === 0) {
-      return Err(ErrorFactories.notFound("Tenant", tenantSlug));
-    }
+  if (tenantRow.length === 0) {
+    return Err(ErrorFactories.notFound("Tenant", tenantSlug));
+  }
 
-    const tenantId = tenantRow[0].id;
+  const tenantId = tenantRow[0].id;
 
-    const result = await posService.createSale(tenantId, {
-      items,
-      paymentMethod,
-      customerName,
-    });
+  const result = await posService.createSale(tenantId, {
+    items,
+    paymentMethod,
+    customerName,
+  });
 
-    return result;
-  },
-);
+  return result;
+});

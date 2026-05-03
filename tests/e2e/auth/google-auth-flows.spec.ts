@@ -1,16 +1,18 @@
 import { test, expect } from "@playwright/test";
 
 const TENANT = "wondernails";
-const BASE = `http://localhost:3001`;
 
 test.describe("Google Auth & Registration Flows", () => {
-
-  test("login page — Google button has SVG icon and correct text", async ({ page }) => {
-    await page.goto(`${BASE}/t/${TENANT}/login`);
+  test("login page — Google button has SVG icon and correct text", async ({
+    page,
+  }) => {
+    await page.goto(`/t/${TENANT}/login`);
     await page.waitForLoadState("networkidle");
 
     // Google button should exist with SVG (not emoji)
-    const googleBtn = page.locator("button[type='submit']").filter({ hasText: /Google/i });
+    const googleBtn = page
+      .locator("button[type='submit']")
+      .filter({ hasText: /Google/i });
     await expect(googleBtn).toBeVisible({ timeout: 15000 });
 
     const svg = googleBtn.locator("svg");
@@ -23,15 +25,17 @@ test.describe("Google Auth & Registration Flows", () => {
   });
 
   test("login page — link to register page exists", async ({ page }) => {
-    await page.goto(`${BASE}/t/${TENANT}/login`);
+    await page.goto(`/t/${TENANT}/login`);
     await page.waitForLoadState("networkidle");
 
     const registerLink = page.locator(`a[href*='/register']`);
     await expect(registerLink).toBeVisible({ timeout: 15000 });
   });
 
-  test("register page — loads correctly with form and Google button", async ({ page }) => {
-    await page.goto(`${BASE}/t/${TENANT}/register`);
+  test("register page — loads correctly with form and Google button", async ({
+    page,
+  }) => {
+    await page.goto(`/t/${TENANT}/register`);
     await page.waitForLoadState("networkidle");
 
     // Form fields
@@ -40,7 +44,10 @@ test.describe("Google Auth & Registration Flows", () => {
     await expect(page.locator("#password")).toBeVisible();
 
     // Google button inside the form
-    const googleBtn = page.locator("button").filter({ hasText: /Google/i }).first();
+    const googleBtn = page
+      .locator("button")
+      .filter({ hasText: /Google/i })
+      .first();
     await expect(googleBtn).toBeVisible();
 
     // Google SVG icon
@@ -49,23 +56,27 @@ test.describe("Google Auth & Registration Flows", () => {
   });
 
   test("register page — shows link back to login", async ({ page }) => {
-    await page.goto(`${BASE}/t/${TENANT}/register`);
+    await page.goto(`/t/${TENANT}/register`);
     await page.waitForLoadState("networkidle");
 
     const loginLink = page.locator(`a[href*='/login']`);
     await expect(loginLink.first()).toBeVisible({ timeout: 15000 });
   });
 
-  test("register page — API returns 400 for missing fields", async ({ request }) => {
-    const res = await request.post(`${BASE}/api/auth/register`, {
+  test("register page — API returns 400 for missing fields", async ({
+    request,
+  }) => {
+    const res = await request.post(`/api/auth/register`, {
       data: { tenantSlug: TENANT }, // missing name, email, password
     });
     expect(res.status()).toBe(400);
   });
 
-  test("register page — API returns 409 for duplicate email", async ({ request }) => {
+  test("register page — API returns 409 for duplicate email", async ({
+    request,
+  }) => {
     // Use an email we know exists (the test admin)
-    const res = await request.post(`${BASE}/api/auth/register`, {
+    const res = await request.post(`/api/auth/register`, {
       data: {
         name: "Test",
         email: "marialiciavh1984@gmail.com",
@@ -76,9 +87,11 @@ test.describe("Google Auth & Registration Flows", () => {
     expect(res.status()).toBe(409);
   });
 
-  test("profile page — welcome banner visible with ?welcome=1", async ({ page }) => {
+  test("profile page — welcome banner visible with ?welcome=1", async ({
+    page,
+  }) => {
     // Navigate directly (unauthenticated will redirect, but check the URL behavior)
-    await page.goto(`${BASE}/t/${TENANT}/profile?welcome=1`);
+    await page.goto(`/t/${TENANT}/profile?welcome=1`);
     await page.waitForLoadState("networkidle");
 
     // Either shows welcome banner (if somehow accessible) or redirects to login
@@ -98,19 +111,19 @@ test.describe("Google Auth & Registration Flows", () => {
   });
 
   test("bind-tenant API — returns 401 without session", async ({ request }) => {
-    const res = await request.post(`${BASE}/api/auth/bind-tenant`, {
+    const res = await request.post(`/api/auth/bind-tenant`, {
       data: { tenantSlug: TENANT },
     });
     expect(res.status()).toBe(401);
   });
 
   test("profile API GET — returns 401 without session", async ({ request }) => {
-    const res = await request.get(`${BASE}/api/profile`);
+    const res = await request.get(`/api/profile`);
     expect(res.status()).toBe(401);
   });
 
   test("profile API PUT — returns 401 without session", async ({ request }) => {
-    const res = await request.put(`${BASE}/api/profile`, {
+    const res = await request.put(`/api/profile`, {
       data: { name: "Test", tenantSlug: TENANT },
     });
     expect(res.status()).toBe(401);

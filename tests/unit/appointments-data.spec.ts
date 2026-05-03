@@ -5,7 +5,13 @@
  * using Result Pattern for error handling.
  */
 
-import { Result, Ok, Err, isSuccess, isFailure } from "@sass-store/core/src/result";
+import {
+  Result,
+  Ok,
+  Err,
+  isSuccess,
+  isFailure,
+} from "@sass-store/core/src/result";
 import { DomainError, ErrorFactories } from "@sass-store/core/src/errors/types";
 import {
   getUnconfirmedAppointments,
@@ -29,7 +35,11 @@ describe("Appointments Data Service", () => {
         {
           id: "booking-1",
           customerName: "María García",
-          customer: { name: "María García", phone: "521234567890", email: "maria@example.com" },
+          customer: {
+            name: "María García",
+            phone: "521234567890",
+            email: "maria@example.com",
+          },
           service: { name: "Manicure" },
           startTime: "2024-03-15T10:00:00Z",
           endTime: "2024-03-15T11:00:00Z",
@@ -66,7 +76,7 @@ describe("Appointments Data Service", () => {
       if (isSuccess(result)) {
         const appointments = result.data;
         expect(appointments).toHaveLength(2);
-        
+
         const firstAppointment = appointments[0];
         expect(firstAppointment.id).toBe("booking-1");
         expect(firstAppointment.customerName).toBe("María García");
@@ -95,7 +105,7 @@ describe("Appointments Data Service", () => {
           headers: {
             "Content-Type": "application/json",
           },
-        }
+        },
       );
     });
 
@@ -165,7 +175,7 @@ describe("Appointments Data Service", () => {
           headers: {
             "Content-Type": "application/json",
           },
-        })
+        }),
       );
 
       // Verify the URL contains the correct query parameters

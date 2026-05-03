@@ -16,7 +16,7 @@ if (!connectionString || connectionString === "your-database-url-here") {
 // Singleton pattern to prevent connection pool exhaustion
 // CRITICAL: Supabase free tier has only 3-5 connection limit
 declare global {
-  var __db: ReturnType<typeof drizzle> | undefined;
+  var __db: Database | undefined;
 
   var __client: postgres.Sql | undefined;
 
@@ -35,7 +35,7 @@ if (
 }
 
 // Types
-export type Database = ReturnType<typeof drizzle>;
+export type Database = ReturnType<typeof drizzle<typeof schema>>;
 
 // Helper to determine if we're in a test environment
 const isTestEnv = process.env.NODE_ENV === "test";

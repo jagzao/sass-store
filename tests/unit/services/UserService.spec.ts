@@ -3,7 +3,7 @@
  *
  * Comprehensive tests for user management and authentication using Result Pattern.
  * Tests all major user operations with proper error handling.
- * 
+ *
  * Updated for monolith migration - tests mock service that mirrors the DB-backed implementation.
  */
 
@@ -276,9 +276,7 @@ class MockUserService {
       };
     }
 
-    const users = await this.db.users.findMany(
-      (u: User) => u.email === email,
-    );
+    const users = await this.db.users.findMany((u: User) => u.email === email);
 
     if (users.length === 0) {
       return { success: true, data: null };
@@ -408,7 +406,7 @@ class MockUserService {
       isActive: false,
       updatedAt: new Date(),
     };
-    
+
     await this.db.users.update(id, updatedUser);
 
     return {
@@ -438,7 +436,10 @@ class MockUserService {
 
   async authenticateUser(credentials: AuthCredentials) {
     // Validate credentials
-    if (!credentials.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(credentials.email)) {
+    if (
+      !credentials.email ||
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(credentials.email)
+    ) {
       return {
         success: false,
         error: {
@@ -479,7 +480,10 @@ class MockUserService {
     }
 
     // Verify password
-    if (!user.password || !mockVerifyPassword(credentials.password, user.password)) {
+    if (
+      !user.password ||
+      !mockVerifyPassword(credentials.password, user.password)
+    ) {
       return {
         success: false,
         error: {
@@ -522,9 +526,7 @@ class MockUserService {
 }
 
 // Helper to create test user
-function createTestUser(
-  overrides: Partial<User> = {},
-): User {
+function createTestUser(overrides: Partial<User> = {}): User {
   return {
     id: crypto.randomUUID(),
     email: `test-${Date.now()}@example.com`,
@@ -740,7 +742,9 @@ describe("UserService - Result Pattern Implementation", () => {
     });
 
     it("should return null for non-existent email", async () => {
-      const result = await userService.findUserByEmail("nonexistent@example.com");
+      const result = await userService.findUserByEmail(
+        "nonexistent@example.com",
+      );
 
       expectSuccess(result);
       expect(result.data).toBeNull();
@@ -778,7 +782,9 @@ describe("UserService - Result Pattern Implementation", () => {
 
       expectSuccess(result);
       expect(result.data.email).toBe(updateData.email);
-      expect(result.data.updatedAt.getTime()).toBeGreaterThan(testUser.updatedAt.getTime());
+      expect(result.data.updatedAt.getTime()).toBeGreaterThan(
+        testUser.updatedAt.getTime(),
+      );
     });
 
     it("should update user role to admin", async () => {
@@ -832,7 +838,10 @@ describe("UserService - Result Pattern Implementation", () => {
         firstName: "Updated",
       };
 
-      const result = await userService.updateUser(crypto.randomUUID(), updateData);
+      const result = await userService.updateUser(
+        crypto.randomUUID(),
+        updateData,
+      );
 
       expectNotFoundError(result, "User");
     });
@@ -1019,8 +1028,12 @@ describe("UserService - Result Pattern Implementation", () => {
 
       expectSuccess(result);
       expect(result.data.length).toBe(2);
-      expect(result.data.map((u: User) => u.email)).toContain(user1Result.data.email);
-      expect(result.data.map((u: User) => u.email)).toContain(user2Result.data.email);
+      expect(result.data.map((u: User) => u.email)).toContain(
+        user1Result.data.email,
+      );
+      expect(result.data.map((u: User) => u.email)).toContain(
+        user2Result.data.email,
+      );
     });
   });
 

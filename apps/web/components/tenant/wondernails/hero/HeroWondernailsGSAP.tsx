@@ -1,5 +1,11 @@
 "use client";
-import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import Image from "next/image";
 import defaultSlidesData from "./slides.json";
 import styles from "./HeroWondernailsGSAP.module.css";
@@ -7,7 +13,6 @@ import styles from "./HeroWondernailsGSAP.module.css";
 // GSAP SSR-safe imports
 let gsap: any, Flip: any;
 if (typeof window !== "undefined") {
-   
   const GS = require("gsap");
   gsap = GS.gsap;
   Flip = require("gsap/Flip").Flip;
@@ -54,9 +59,10 @@ const HeroWondernailsGSAP: React.FC<WondernailsCarouselProps> = ({
   const [isAnimating, setIsAnimating] = useState(false);
 
   // Detect prefers-reduced-motion
-  const prefersReducedMotion = typeof window !== "undefined"
-    ? window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    : false;
+  const prefersReducedMotion =
+    typeof window !== "undefined"
+      ? window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      : false;
 
   // ==================== POSITIONING ====================
 
@@ -162,7 +168,9 @@ const HeroWondernailsGSAP: React.FC<WondernailsCarouselProps> = ({
     if (!mainItem) return;
 
     const imgWrap = mainItem.querySelector(`.${styles.imgWrap}`) as HTMLElement;
-    const introduce = mainItem.querySelector(`.${styles.introduce}`) as HTMLElement;
+    const introduce = mainItem.querySelector(
+      `.${styles.introduce}`,
+    ) as HTMLElement;
     const title = mainItem.querySelector(`.${styles.title}`);
     const topic = mainItem.querySelector(`.${styles.topic}`);
     const des = mainItem.querySelector(`.${styles.des}`);
@@ -179,7 +187,7 @@ const HeroWondernailsGSAP: React.FC<WondernailsCarouselProps> = ({
         imgWrap,
         { x: 0 },
         { x: imgX, duration: 0.42, ease: "cubic-bezier(0.22, 1, 0.36, 1)" },
-        0
+        0,
       );
       tl.to(imgWrap, { x: 0, duration: 0.3, delay: 0.42 }, 0.42);
     }
@@ -189,7 +197,7 @@ const HeroWondernailsGSAP: React.FC<WondernailsCarouselProps> = ({
         introduce,
         { x: 0 },
         { x: copyX, duration: 0.42, ease: "cubic-bezier(0.22, 1, 0.36, 1)" },
-        0
+        0,
       );
       tl.to(introduce, { x: 0, duration: 0.3, delay: 0.42 }, 0.42);
     }
@@ -232,7 +240,8 @@ const HeroWondernailsGSAP: React.FC<WondernailsCarouselProps> = ({
   }, []);
 
   const toNext = useCallback(() => {
-    if (!gsap || !Flip || !listRef.current || navLockRef.current || showDetail) return;
+    if (!gsap || !Flip || !listRef.current || navLockRef.current || showDetail)
+      return;
 
     // Lock navigation
     navLockRef.current = true;
@@ -269,11 +278,12 @@ const HeroWondernailsGSAP: React.FC<WondernailsCarouselProps> = ({
         // Apply exact positions after FLIP completes
         applyPositions();
         updateAccentColor();
-                   parallaxAndStagger("next");
-                   unlock();
-                   scheduleAuto();
-                   setIsAnimating(false);
-                 },    });
+        parallaxAndStagger("next");
+        unlock();
+        scheduleAuto();
+        setIsAnimating(false);
+      },
+    });
   }, [
     applyPositions,
     updateAccentColor,
@@ -286,7 +296,8 @@ const HeroWondernailsGSAP: React.FC<WondernailsCarouselProps> = ({
   ]);
 
   const toPrev = useCallback(() => {
-    if (!gsap || !Flip || !listRef.current || navLockRef.current || showDetail) return;
+    if (!gsap || !Flip || !listRef.current || navLockRef.current || showDetail)
+      return;
 
     // Lock navigation
     navLockRef.current = true;
@@ -351,10 +362,14 @@ const HeroWondernailsGSAP: React.FC<WondernailsCarouselProps> = ({
     cancelAuto();
 
     const mainItem = listRef.current.children[1] as HTMLElement;
-    const detailPanel = mainItem.querySelector(`.${styles.detail}`) as HTMLElement;
+    const detailPanel = mainItem.querySelector(
+      `.${styles.detail}`,
+    ) as HTMLElement;
     const imgWrap = mainItem.querySelector(`.${styles.imgWrap}`) as HTMLElement;
     const items = Array.from(listRef.current.children) as HTMLElement[];
-    const glow = rootRef.current?.querySelector(`.${styles.glow}`) as HTMLElement;
+    const glow = rootRef.current?.querySelector(
+      `.${styles.glow}`,
+    ) as HTMLElement;
 
     // Kill previous timeline if exists
     if (detailTimelineRef.current) {
@@ -382,7 +397,11 @@ const HeroWondernailsGSAP: React.FC<WondernailsCarouselProps> = ({
 
     // Animate glow
     if (glow) {
-      tl.to(glow, { rotation: 45, scale: 1.2, duration: 0.6, ease: "power2.out" }, 0);
+      tl.to(
+        glow,
+        { rotation: 45, scale: 1.2, duration: 0.6, ease: "power2.out" },
+        0,
+      );
     }
 
     // Show detail panel with stagger
@@ -397,7 +416,7 @@ const HeroWondernailsGSAP: React.FC<WondernailsCarouselProps> = ({
         [detailTitle, detailDes, specs, buttons],
         { autoAlpha: 0, x: 30 },
         { autoAlpha: 1, x: 0, duration: 0.4, stagger: 0.1, ease: "power2.out" },
-        0.5
+        0.5,
       );
     }
   }, [cancelAuto, unlock]);
@@ -408,10 +427,14 @@ const HeroWondernailsGSAP: React.FC<WondernailsCarouselProps> = ({
     navLockRef.current = true;
 
     const mainItem = listRef.current.children[1] as HTMLElement;
-    const detailPanel = mainItem.querySelector(`.${styles.detail}`) as HTMLElement;
+    const detailPanel = mainItem.querySelector(
+      `.${styles.detail}`,
+    ) as HTMLElement;
     const imgWrap = mainItem.querySelector(`.${styles.imgWrap}`) as HTMLElement;
     const items = Array.from(listRef.current.children) as HTMLElement[];
-    const glow = rootRef.current?.querySelector(`.${styles.glow}`) as HTMLElement;
+    const glow = rootRef.current?.querySelector(
+      `.${styles.glow}`,
+    ) as HTMLElement;
 
     // Kill previous timeline if exists
     if (detailTimelineRef.current) {
@@ -451,7 +474,11 @@ const HeroWondernailsGSAP: React.FC<WondernailsCarouselProps> = ({
 
     // Reset glow
     if (glow) {
-      tl.to(glow, { rotation: 0, scale: 1, duration: 0.6, ease: "power2.out" }, 0);
+      tl.to(
+        glow,
+        { rotation: 0, scale: 1, duration: 0.6, ease: "power2.out" },
+        0,
+      );
     }
 
     // Reapply positions after close
@@ -581,7 +608,9 @@ const HeroWondernailsGSAP: React.FC<WondernailsCarouselProps> = ({
               </div>
 
               <div className={styles.introduce}>
-                {slide.badge && <div className={styles.badge}>{slide.badge}</div>}
+                {slide.badge && (
+                  <div className={styles.badge}>{slide.badge}</div>
+                )}
                 <h1 className={styles.title}>{slide.title}</h1>
                 <div className={styles.topic}>{slide.topic}</div>
                 <div className={styles.des}>{slide.description}</div>
@@ -590,7 +619,7 @@ const HeroWondernailsGSAP: React.FC<WondernailsCarouselProps> = ({
                   onClick={openDetail}
                   aria-label={`Ver más del producto ${slide.topic}`}
                   data-testid="see-more-button"
-                  style={{ position: 'relative', zIndex: 9999 }}
+                  style={{ position: "relative", zIndex: 9999 }}
                 >
                   VER MÁS ↗
                 </button>
@@ -612,7 +641,10 @@ const HeroWondernailsGSAP: React.FC<WondernailsCarouselProps> = ({
                 )}
 
                 <div className={styles.detailButtons}>
-                  <button className={styles.addToCart} onClick={handleAddToCart}>
+                  <button
+                    className={styles.addToCart}
+                    onClick={handleAddToCart}
+                  >
                     Agregar al carrito
                   </button>
                   <button className={styles.checkout} onClick={handleCheckout}>

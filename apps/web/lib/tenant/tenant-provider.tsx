@@ -29,13 +29,17 @@ export function TenantProvider({
     const root = document.documentElement;
 
     // Set CSS custom properties for theming (with neon yellow sanitizer)
-    const isYellow = (color: string) => 
-      color?.toLowerCase() === 'yellow' || 
-      color?.toLowerCase() === '#ffff00' || 
-      color?.toLowerCase() === 'rgb(255, 255, 0)';
+    const isYellow = (color: string) =>
+      color?.toLowerCase() === "yellow" ||
+      color?.toLowerCase() === "#ffff00" ||
+      color?.toLowerCase() === "rgb(255, 255, 0)";
 
-    const pColor = isYellow(tenant.branding.primaryColor) ? '#C5A059' : tenant.branding.primaryColor;
-    const sColor = isYellow(tenant.branding.secondaryColor) ? '#F5F5DC' : tenant.branding.secondaryColor;
+    const pColor = isYellow(tenant.branding.primaryColor)
+      ? "#C5A059"
+      : tenant.branding.primaryColor;
+    const sColor = isYellow(tenant.branding.secondaryColor)
+      ? "#F5F5DC"
+      : tenant.branding.secondaryColor;
 
     root.style.setProperty("--color-primary", pColor);
     root.style.setProperty("--color-secondary", sColor);
@@ -53,21 +57,21 @@ export function TenantProvider({
     document.title = `${tenant.name} - Sass Store`;
   }, [tenant]);
 
-  const isYellow = (color: string) => 
-    color?.toLowerCase() === 'yellow' || 
-    color?.toLowerCase() === '#ffff00' || 
-    color?.toLowerCase() === 'rgb(255, 255, 0)';
+  const isYellow = (color: string) =>
+    color?.toLowerCase() === "yellow" ||
+    color?.toLowerCase() === "#ffff00" ||
+    color?.toLowerCase() === "rgb(255, 255, 0)";
 
   const safeTenant = { ...tenant };
   if (safeTenant.branding) {
     if (isYellow(safeTenant.branding.primaryColor)) {
-      safeTenant.branding.primaryColor = '#C5A059'; // Gold
+      safeTenant.branding.primaryColor = "#C5A059"; // Gold
     }
     if (isYellow(safeTenant.branding.secondaryColor)) {
-      safeTenant.branding.secondaryColor = '#F5F5DC'; // Blanco Hueso
+      safeTenant.branding.secondaryColor = "#F5F5DC"; // Blanco Hueso
     }
-    if (isYellow(safeTenant.branding.backgroundColor)) {
-      safeTenant.branding.backgroundColor = '#F8F9FA'; // Blanco Hueso Variant
+    if (isYellow((safeTenant.branding as any).backgroundColor)) {
+      (safeTenant.branding as any).backgroundColor = "#F8F9FA"; // Blanco Hueso Variant
     }
   }
 

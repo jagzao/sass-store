@@ -105,7 +105,8 @@ describe("Product API Integration", () => {
 
       // Use a valid UUID format for non-existent product
       const found = await db.query.products.findFirst({
-        where: (products, { eq }) => eq(products.id, "00000000-0000-0000-0000-000000000000"),
+        where: (products, { eq }) =>
+          eq(products.id, "00000000-0000-0000-0000-000000000000"),
       });
 
       expect(found).toBeUndefined();

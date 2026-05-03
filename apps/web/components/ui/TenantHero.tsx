@@ -4,13 +4,10 @@ import { TenantData } from "@/types/tenant";
 
 // Dynamic import for Wondernails custom hero
 const WondernailsCarouselFinal = dynamic(
-  () =>
-    import(
-      "@/components/tenant/wondernails/hero/HeroWondernailsFinal"
-    ),
+  () => import("@/components/tenant/wondernails/hero/HeroWondernailsFinal"),
   {
     loading: () => <div className="h-[600px] bg-gray-100 animate-pulse" />,
-  }
+  },
 );
 
 interface TenantHeroProps {
@@ -26,6 +23,7 @@ export default function TenantHero({ tenantData }: TenantHeroProps) {
   // Default hero for other tenants
   return (
     <TenantHeroCarousel
+      tenantSlug={tenantData.slug}
       tenantData={tenantData}
       featuredProducts={[]}
       featuredServices={[]}

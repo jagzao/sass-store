@@ -118,7 +118,7 @@ export function generateWhatsAppLink(params: WhatsAppLinkParams): string {
 export function generateQuickConfirmationLink(
   phone: string,
   customerName: string,
-  tenantName: string
+  tenantName: string,
 ): string {
   return generateWhatsAppLink({
     phone,

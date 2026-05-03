@@ -1,6 +1,13 @@
 "use client";
 
-import { createContext, useContext, useState, useCallback, useRef, ReactNode } from 'react';
+import {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useRef,
+  ReactNode,
+} from "react";
 
 /**
  * Live Region Context for Screen Reader Announcements
@@ -14,7 +21,7 @@ import { createContext, useContext, useState, useCallback, useRef, ReactNode } f
  * announce('Producto agregado al carrito', 'polite');
  */
 
-type AnnouncementPriority = 'polite' | 'assertive';
+type AnnouncementPriority = "polite" | "assertive";
 
 interface Announcement {
   message: string;
@@ -26,26 +33,33 @@ interface LiveRegionContextType {
   announce: (message: string, priority?: AnnouncementPriority) => void;
 }
 
-const LiveRegionContext = createContext<LiveRegionContextType | undefined>(undefined);
+const LiveRegionContext = createContext<LiveRegionContextType | undefined>(
+  undefined,
+);
 
 export function LiveRegionProvider({ children }: { children: ReactNode }) {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const idCounter = useRef(0);
 
-  const announce = useCallback((message: string, priority: AnnouncementPriority = 'polite') => {
-    const id = Date.now() * 1000 + (++idCounter.current); // Ensures unique ID with high precision
+  const announce = useCallback(
+    (message: string, priority: AnnouncementPriority = "polite") => {
+      const id = Date.now() * 1000 + ++idCounter.current; // Ensures unique ID with high precision
 
-    // Add announcement
-    setAnnouncements(prev => [...prev, { message, priority, id }]);
+      // Add announcement
+      setAnnouncements((prev) => [...prev, { message, priority, id }]);
 
-    // Remove after 3 seconds
-    setTimeout(() => {
-      setAnnouncements(prev => prev.filter(a => a.id !== id));
-    }, 3000);
-  }, []);
+      // Remove after 3 seconds
+      setTimeout(() => {
+        setAnnouncements((prev) => prev.filter((a) => a.id !== id));
+      }, 3000);
+    },
+    [],
+  );
 
-  const politeMessages = announcements.filter(a => a.priority === 'polite');
-  const assertiveMessages = announcements.filter(a => a.priority === 'assertive');
+  const politeMessages = announcements.filter((a) => a.priority === "polite");
+  const assertiveMessages = announcements.filter(
+    (a) => a.priority === "assertive",
+  );
 
   return (
     <LiveRegionContext.Provider value={{ announce }}>
@@ -58,7 +72,7 @@ export function LiveRegionProvider({ children }: { children: ReactNode }) {
         aria-atomic="true"
         className="sr-only"
       >
-        {politeMessages.map(a => (
+        {politeMessages.map((a) => (
           <div key={a.id}>{a.message}</div>
         ))}
       </div>
@@ -70,7 +84,7 @@ export function LiveRegionProvider({ children }: { children: ReactNode }) {
         aria-atomic="true"
         className="sr-only"
       >
-        {assertiveMessages.map(a => (
+        {assertiveMessages.map((a) => (
           <div key={a.id}>{a.message}</div>
         ))}
       </div>
@@ -84,7 +98,7 @@ export function LiveRegionProvider({ children }: { children: ReactNode }) {
 export function useAnnounce() {
   const context = useContext(LiveRegionContext);
   if (!context) {
-    throw new Error('useAnnounce must be used within LiveRegionProvider');
+    throw new Error("useAnnounce must be used within LiveRegionProvider");
   }
   return context.announce;
 }
@@ -92,13 +106,16 @@ export function useAnnounce() {
 /**
  * Standalone live region component (for use without provider)
  */
-export function LiveRegion({ message, priority = 'polite' }: {
+export function LiveRegion({
+  message,
+  priority = "polite",
+}: {
   message: string;
   priority?: AnnouncementPriority;
 }) {
   return (
     <div
-      role={priority === 'assertive' ? 'alert' : 'status'}
+      role={priority === "assertive" ? "alert" : "status"}
       aria-live={priority}
       aria-atomic="true"
       className="sr-only"

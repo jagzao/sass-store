@@ -43,10 +43,11 @@ export async function GET(request: NextRequest, context: RouteParams) {
 
     const locationId = (await context.params).id;
 
-    const locationsResult = await getInventoryConfigArray<InventoryLocationEntity>(
-      tenantContext.data.tenantId,
-      "locations",
-    );
+    const locationsResult =
+      await getInventoryConfigArray<InventoryLocationEntity>(
+        tenantContext.data.tenantId,
+        "locations",
+      );
 
     if (!locationsResult.success) {
       return toInventoryErrorResponse(locationsResult.error);
@@ -88,10 +89,11 @@ export async function PUT(request: NextRequest, context: RouteParams) {
     const body = await request.json();
     const validatedData = updateInventoryLocationSchema.parse(body);
 
-    const locationsResult = await getInventoryConfigArray<InventoryLocationEntity>(
-      tenantContext.data.tenantId,
-      "locations",
-    );
+    const locationsResult =
+      await getInventoryConfigArray<InventoryLocationEntity>(
+        tenantContext.data.tenantId,
+        "locations",
+      );
 
     if (!locationsResult.success) {
       return toInventoryErrorResponse(locationsResult.error);
@@ -179,10 +181,11 @@ export async function DELETE(request: NextRequest, context: RouteParams) {
 
     const locationId = (await context.params).id;
 
-    const locationsResult = await getInventoryConfigArray<InventoryLocationEntity>(
-      tenantContext.data.tenantId,
-      "locations",
-    );
+    const locationsResult =
+      await getInventoryConfigArray<InventoryLocationEntity>(
+        tenantContext.data.tenantId,
+        "locations",
+      );
 
     if (!locationsResult.success) {
       return toInventoryErrorResponse(locationsResult.error);

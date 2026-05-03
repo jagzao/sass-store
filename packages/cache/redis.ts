@@ -14,7 +14,7 @@
  *    UPSTASH_REDIS_REST_TOKEN=your_token
  */
 
-import { Redis } from '@upstash/redis';
+import { Redis } from "@upstash/redis";
 
 // Initialize Redis client
 const redis = process.env.UPSTASH_REDIS_REST_URL
@@ -83,7 +83,7 @@ export const cache = {
       await redis.del(...keys);
       return;
     }
-    keys.forEach(key => memoryCache.delete(key));
+    keys.forEach((key) => memoryCache.delete(key));
   },
 
   /**
@@ -193,7 +193,11 @@ export const rateLimit = {
    * @param window - Time window in seconds
    * @returns true if rate limited
    */
-  async check(key: string, limit: number = 100, window: number = 60): Promise<boolean> {
+  async check(
+    key: string,
+    limit: number = 100,
+    window: number = 60,
+  ): Promise<boolean> {
     const cacheKey = `ratelimit:${key}`;
     const current = await cache.get<number>(cacheKey);
 

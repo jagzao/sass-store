@@ -60,7 +60,11 @@ describe("RetouchService - Result Pattern", () => {
       expect(() =>
         InMemoryRetouchService.calculateRetouchDate(
           baseDate,
-          { frequencyType: "years" as any, frequencyValue: 1, businessDaysOnly: false },
+          {
+            frequencyType: "years" as any,
+            frequencyValue: 1,
+            businessDaysOnly: false,
+          },
           [],
         ),
       ).toThrow("Unknown frequency type");
@@ -101,12 +105,22 @@ describe("RetouchService - Result Pattern", () => {
   describe("isOverdue", () => {
     it("should return true when past due date", () => {
       const past = new Date("2025-01-01T00:00:00Z");
-      expect(InMemoryRetouchService.isOverdue(past, new Date("2025-06-01T00:00:00Z"))).toBe(true);
+      expect(
+        InMemoryRetouchService.isOverdue(
+          past,
+          new Date("2025-06-01T00:00:00Z"),
+        ),
+      ).toBe(true);
     });
 
     it("should return false when not yet due", () => {
       const future = new Date("2025-12-01T00:00:00Z");
-      expect(InMemoryRetouchService.isOverdue(future, new Date("2025-06-01T00:00:00Z"))).toBe(false);
+      expect(
+        InMemoryRetouchService.isOverdue(
+          future,
+          new Date("2025-06-01T00:00:00Z"),
+        ),
+      ).toBe(false);
     });
   });
 });

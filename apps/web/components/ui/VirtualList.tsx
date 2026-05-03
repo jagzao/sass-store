@@ -82,4 +82,4 @@ export const VirtualList = memo(VirtualListComponent) as <T>(
   props: VirtualListProps<T>,
 ) => React.ReactElement;
 
-VirtualList.displayName = "VirtualList";
+(VirtualList as any).displayName = "VirtualList";

@@ -42,15 +42,21 @@ const MUTATION_METHODS = ["POST", "PUT", "PATCH", "DELETE"];
 // Helper functions for testing
 function validateTenantConsistency(
   sessionTenant: AuthenticatedTenantContext | null,
-  requestTenant: ResolvedTenant | null
+  requestTenant: ResolvedTenant | null,
 ): { success: boolean; error?: { type: string; message: string } } {
   if (!sessionTenant) return { success: true };
   if (!sessionTenant.tenantId) return { success: true };
   if (!requestTenant) {
-    return { success: false, error: { type: "ValidationError", message: "Tenant context required" } };
+    return {
+      success: false,
+      error: { type: "ValidationError", message: "Tenant context required" },
+    };
   }
   if (sessionTenant.tenantId !== requestTenant.id) {
-    return { success: false, error: { type: "AuthorizationError", message: "Tenant context mismatch" } };
+    return {
+      success: false,
+      error: { type: "AuthorizationError", message: "Tenant context mismatch" },
+    };
   }
   return { success: true };
 }
@@ -58,19 +64,25 @@ function validateTenantConsistency(
 function validateTenantAccess(
   userId: string,
   userTenantId: string | undefined,
-  targetTenantId: string | undefined
+  targetTenantId: string | undefined,
 ): { success: boolean; error?: { type: string; message: string } } {
   if (!userTenantId) return { success: true };
   if (!targetTenantId) return { success: true };
   if (userTenantId !== targetTenantId) {
-    return { success: false, error: { type: "AuthorizationError", message: "Cross-tenant access is not allowed" } };
+    return {
+      success: false,
+      error: {
+        type: "AuthorizationError",
+        message: "Cross-tenant access is not allowed",
+      },
+    };
   }
   return { success: true };
 }
 
 function validateOriginForMutation(
   origin: string | null,
-  host: string | null
+  host: string | null,
 ): OriginValidationResult {
   if (!origin) {
     return { isValid: true, reason: "same_origin_request" };
@@ -110,7 +122,7 @@ describe("Tenant Validation Security - SEC-005", () => {
     it("should allow super admin without tenant", () => {
       const result = validateTenantConsistency(
         { userId: "super_admin", tenantId: "", role: "admin" },
-        { id: "tenant_abc", slug: "wondernails", source: "path" }
+        { id: "tenant_abc", slug: "wondernails", source: "path" },
       );
       expect(result.success).toBe(true);
     });
@@ -118,7 +130,7 @@ describe("Tenant Validation Security - SEC-005", () => {
     it("should allow matching tenant context", () => {
       const result = validateTenantConsistency(
         { userId: "user_123", tenantId: "tenant_abc", role: "admin" },
-        { id: "tenant_abc", slug: "wondernails", source: "path" }
+        { id: "tenant_abc", slug: "wondernails", source: "path" },
       );
       expect(result.success).toBe(true);
     });
@@ -126,7 +138,7 @@ describe("Tenant Validation Security - SEC-005", () => {
     it("should reject spoofed tenant header", () => {
       const result = validateTenantConsistency(
         { userId: "user_123", tenantId: "tenant_abc", role: "admin" },
-        { id: "tenant_xyz", slug: "vigistudio", source: "header" }
+        { id: "tenant_xyz", slug: "vigistudio", source: "header" },
       );
       expect(result.success).toBe(false);
       expect(result.error?.type).toBe("AuthorizationError");
@@ -135,7 +147,7 @@ describe("Tenant Validation Security - SEC-005", () => {
     it("should reject request without tenant context for authenticated user", () => {
       const result = validateTenantConsistency(
         { userId: "user_123", tenantId: "tenant_abc", role: "admin" },
-        null
+        null,
       );
       expect(result.success).toBe(false);
       expect(result.error?.type).toBe("ValidationError");
@@ -144,12 +156,20 @@ describe("Tenant Validation Security - SEC-005", () => {
 
   describe("Tenant Access Validation", () => {
     it("should allow access to user's own tenant", () => {
-      const result = validateTenantAccess("user_123", "tenant_abc", "tenant_abc");
+      const result = validateTenantAccess(
+        "user_123",
+        "tenant_abc",
+        "tenant_abc",
+      );
       expect(result.success).toBe(true);
     });
 
     it("should allow super admin to access any tenant", () => {
-      const result = validateTenantAccess("super_admin", undefined, "tenant_any");
+      const result = validateTenantAccess(
+        "super_admin",
+        undefined,
+        "tenant_any",
+      );
       expect(result.success).toBe(true);
     });
 
@@ -159,7 +179,11 @@ describe("Tenant Validation Security - SEC-005", () => {
     });
 
     it("should block cross-tenant access", () => {
-      const result = validateTenantAccess("user_123", "tenant_abc", "tenant_xyz");
+      const result = validateTenantAccess(
+        "user_123",
+        "tenant_abc",
+        "tenant_xyz",
+      );
       expect(result.success).toBe(false);
       expect(result.error?.type).toBe("AuthorizationError");
     });
@@ -173,23 +197,35 @@ describe("Tenant Validation Security - SEC-005", () => {
     });
 
     it("should allow localhost origins", () => {
-      const result = validateOriginForMutation("http://localhost:3001", "localhost:3001");
+      const result = validateOriginForMutation(
+        "http://localhost:3001",
+        "localhost:3001",
+      );
       expect(result.isValid).toBe(true);
     });
 
     it("should allow 127.0.0.1 origins", () => {
-      const result = validateOriginForMutation("http://127.0.0.1:3001", "127.0.0.1:3001");
+      const result = validateOriginForMutation(
+        "http://127.0.0.1:3001",
+        "127.0.0.1:3001",
+      );
       expect(result.isValid).toBe(true);
     });
 
     it("should reject unknown origin", () => {
-      const result = validateOriginForMutation("https://evil.com", "localhost:3001");
+      const result = validateOriginForMutation(
+        "https://evil.com",
+        "localhost:3001",
+      );
       expect(result.isValid).toBe(false);
       expect(result.reason).toBe("origin_not_allowed");
     });
 
     it("should reject cross-origin from different domain", () => {
-      const result = validateOriginForMutation("https://attacker.com", "sassstore.com");
+      const result = validateOriginForMutation(
+        "https://attacker.com",
+        "sassstore.com",
+      );
       expect(result.isValid).toBe(false);
     });
   });
@@ -227,10 +263,21 @@ describe("Tenant Validation Security - SEC-005", () => {
   describe("Security Integration Scenarios", () => {
     it("should block attacker trying to spoof tenant header", () => {
       // User from tenant_abc tries to access tenant_xyz
-      const sessionTenant = { userId: "user_123", tenantId: "tenant_abc", role: "admin" };
-      const spoofedRequestTenant = { id: "tenant_xyz", slug: "vigistudio", source: "header" };
-      
-      const result = validateTenantConsistency(sessionTenant, spoofedRequestTenant);
+      const sessionTenant = {
+        userId: "user_123",
+        tenantId: "tenant_abc",
+        role: "admin",
+      };
+      const spoofedRequestTenant = {
+        id: "tenant_xyz",
+        slug: "vigistudio",
+        source: "header",
+      };
+
+      const result = validateTenantConsistency(
+        sessionTenant,
+        spoofedRequestTenant,
+      );
       expect(result.success).toBe(false);
     });
 
@@ -241,19 +288,37 @@ describe("Tenant Validation Security - SEC-005", () => {
     });
 
     it("should allow legitimate request", () => {
-      const sessionTenant = { userId: "user_123", tenantId: "tenant_abc", role: "admin" };
-      const requestTenant = { id: "tenant_abc", slug: "wondernails", source: "path" };
-      
-      const tenantResult = validateTenantConsistency(sessionTenant, requestTenant);
-      const originResult = validateOriginForMutation("http://localhost:3001", "localhost:3001");
-      
+      const sessionTenant = {
+        userId: "user_123",
+        tenantId: "tenant_abc",
+        role: "admin",
+      };
+      const requestTenant = {
+        id: "tenant_abc",
+        slug: "wondernails",
+        source: "path",
+      };
+
+      const tenantResult = validateTenantConsistency(
+        sessionTenant,
+        requestTenant,
+      );
+      const originResult = validateOriginForMutation(
+        "http://localhost:3001",
+        "localhost:3001",
+      );
+
       expect(tenantResult.success).toBe(true);
       expect(originResult.isValid).toBe(true);
     });
 
     it("should block cross-tenant user from accessing resource", () => {
       // User from tenant B tries to access tenant A's resource
-      const result = validateTenantAccess("user_456", "tenant_xyz", "tenant_abc");
+      const result = validateTenantAccess(
+        "user_456",
+        "tenant_xyz",
+        "tenant_abc",
+      );
       expect(result.success).toBe(false);
     });
   });

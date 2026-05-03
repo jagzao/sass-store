@@ -28,8 +28,8 @@ async function main() {
   const args = process.argv.slice(2);
 
   if (args.length < 2) {
-    console.error('Usage: npx tsx scripts/generate-api-key.ts <tenant-slug> <key-name>');
-    console.error('Example: npx tsx scripts/generate-api-key.ts delirios "Production API Key"');
+    // SECURITY: Redacted sensitive log;
+    // SECURITY: Redacted sensitive log;
     process.exit(1);
   }
 
@@ -68,29 +68,29 @@ async function main() {
       })
       .returning({ id: apiKeys.id, createdAt: apiKeys.createdAt });
 
-    console.log('🎉 API Key Generated Successfully!');
+    // SECURITY: Redacted sensitive log;
     console.log('═══════════════════════════════════════════════════════════');
     console.log('');
-    console.log('⚠️  IMPORTANT: Save this key now! It will not be shown again.');
+    // SECURITY: Redacted sensitive log;
     console.log('');
-    console.log(`API Key:     ${key}`);
+    // SECURITY: Redacted sensitive log;
     console.log(`Prefix:      ${prefix}`);
     console.log(`Tenant:      ${tenant.slug}`);
-    console.log(`Name:        ${keyName}`);
+    // SECURITY: Redacted sensitive log;
     console.log(`Permissions: ${JSON.stringify(permissions)}`);
-    console.log(`Created:     ${insertedKey.createdAt}`);
+    // SECURITY: Redacted sensitive log;
     console.log('');
     console.log('═══════════════════════════════════════════════════════════');
     console.log('');
     console.log('Usage in API requests:');
     console.log('');
-    console.log('  curl -H "X-API-Key: ' + key + '" \\');
+    // SECURITY: Redacted sensitive log;
     console.log('       -H "X-Tenant: ' + tenant.slug + '" \\');
     console.log('       https://your-api-url.com/api/endpoint');
     console.log('');
 
   } catch (error) {
-    console.error('❌ Error generating API key:', error);
+    // SECURITY: Redacted sensitive log;
     process.exit(1);
   }
 

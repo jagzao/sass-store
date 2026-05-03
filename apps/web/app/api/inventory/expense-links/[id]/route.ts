@@ -13,10 +13,7 @@ interface RouteParams {
 /**
  * GET /api/inventory/expense-links/[id] - Get specific expense link
  */
-export async function GET(
-  request: NextRequest,
-  context: RouteParams,
-) {
+export async function GET(request: NextRequest, context: RouteParams) {
   try {
     const tenantContext = await resolveInventoryTenantContext();
     if (!tenantContext.success) {
@@ -64,10 +61,7 @@ export async function GET(
 /**
  * PUT /api/inventory/expense-links/[id] - Cancel expense link
  */
-export async function PUT(
-  request: NextRequest,
-  context: RouteParams,
-) {
+export async function PUT(request: NextRequest, context: RouteParams) {
   try {
     const tenantContext = await resolveInventoryTenantContext();
     if (!tenantContext.success) {
@@ -84,7 +78,10 @@ export async function PUT(
       return NextResponse.json(
         {
           success: false,
-          error: { message: existingResult.error.message, type: existingResult.error.type },
+          error: {
+            message: existingResult.error.message,
+            type: existingResult.error.type,
+          },
         },
         { status: existingResult.error.type === "NotFoundError" ? 404 : 500 },
       );
@@ -100,7 +97,10 @@ export async function PUT(
       );
     }
 
-    const result = await inventoryExpenseLinkService.cancelExpenseLink(id, reason);
+    const result = await inventoryExpenseLinkService.cancelExpenseLink(
+      id,
+      reason,
+    );
 
     if (!isSuccess(result)) {
       const statusCode =
@@ -137,10 +137,7 @@ export async function PUT(
 /**
  * DELETE /api/inventory/expense-links/[id] - Delete expense link
  */
-export async function DELETE(
-  request: NextRequest,
-  context: RouteParams,
-) {
+export async function DELETE(request: NextRequest, context: RouteParams) {
   try {
     const tenantContext = await resolveInventoryTenantContext();
     if (!tenantContext.success) {
@@ -155,7 +152,10 @@ export async function DELETE(
       return NextResponse.json(
         {
           success: false,
-          error: { message: existingResult.error.message, type: existingResult.error.type },
+          error: {
+            message: existingResult.error.message,
+            type: existingResult.error.type,
+          },
         },
         { status: existingResult.error.type === "NotFoundError" ? 404 : 500 },
       );

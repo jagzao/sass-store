@@ -30,7 +30,10 @@ export interface HomeTenantProps {
 /**
  * HomeTenant Dashboard with Master-Detail layout
  */
-export default function HomeTenant({ tenantSlug, tenantData }: HomeTenantProps) {
+export default function HomeTenant({
+  tenantSlug,
+  tenantData,
+}: HomeTenantProps) {
   const tenantName = tenantData?.name || "Negocio";
 
   return (
@@ -41,7 +44,7 @@ export default function HomeTenant({ tenantSlug, tenantData }: HomeTenantProps) 
           <section className="h-full overflow-y-auto pr-1 pb-2">
             <TodayAppointmentsSection tenantSlug={tenantSlug} />
           </section>
-          
+
           <section className="h-full overflow-y-auto pr-1 pb-2">
             <PendingAppointmentsSection tenantSlug={tenantSlug} />
           </section>

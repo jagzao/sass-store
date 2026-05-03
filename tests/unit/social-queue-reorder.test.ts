@@ -4,7 +4,7 @@
  */
 
 // Using globals instead of imports since globals: true in Vitest config
-import { vi } from 'vitest';
+import { vi } from "vitest";
 import { POST } from "../../apps/web/app/api/v1/social/queue/reorder/route";
 import {
   getTestDb,

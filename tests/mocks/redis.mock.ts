@@ -29,8 +29,8 @@ export class MockRedis {
   async set(
     key: string,
     value: any,
-    opts?: { ex?: number; px?: number; exat?: number; pxat?: number }
-  ): Promise<'OK'> {
+    opts?: { ex?: number; px?: number; exat?: number; pxat?: number },
+  ): Promise<"OK"> {
     let expiry: number | undefined;
 
     if (opts) {
@@ -50,7 +50,7 @@ export class MockRedis {
     }
 
     this.store.set(key, { value: String(value), expiry });
-    return 'OK';
+    return "OK";
   }
 
   /**
@@ -149,33 +149,33 @@ export class MockRedis {
   /**
    * Set multiple values
    */
-  async mset(data: Record<string, any>): Promise<'OK'> {
+  async mset(data: Record<string, any>): Promise<"OK"> {
     for (const [key, value] of Object.entries(data)) {
       await this.set(key, value);
     }
-    return 'OK';
+    return "OK";
   }
 
   /**
    * Get all keys matching pattern
    */
   async keys(pattern: string): Promise<string[]> {
-    const regex = new RegExp(pattern.replace('*', '.*'));
+    const regex = new RegExp(pattern.replace("*", ".*"));
     return Array.from(this.store.keys()).filter((key) => regex.test(key));
   }
 
   /**
    * Delete all keys
    */
-  async flushall(): Promise<'OK'> {
+  async flushall(): Promise<"OK"> {
     this.store.clear();
-    return 'OK';
+    return "OK";
   }
 
   /**
    * Delete all keys in current database
    */
-  async flushdb(): Promise<'OK'> {
+  async flushdb(): Promise<"OK"> {
     return this.flushall();
   }
 

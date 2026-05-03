@@ -1,29 +1,29 @@
-'use client';
+"use client";
 
-import { create } from 'zustand';
+import { create } from "zustand";
 
 export interface TenantData {
   id: string;
   name: string;
   slug: string;
   description: string;
-  mode: 'catalog' | 'booking' | 'mixed';
+  mode: "catalog" | "booking" | "mixed";
   branding: {
     primaryColor: string;
     secondaryColor?: string;
     heroConfig?: {
       title?: string;
       subtitle?: string;
-      backgroundType?: 'gradient' | 'image' | 'solid';
+      backgroundType?: "gradient" | "image" | "solid";
       backgroundImage?: string;
       showContactInfo?: boolean;
       showActionButtons?: boolean;
       customCTA?: Array<{
         text: string;
         href: string;
-        style?: 'primary' | 'secondary';
+        style?: "primary" | "secondary";
       }>;
-      layout?: 'center' | 'left' | 'right';
+      layout?: "center" | "left" | "right";
       textColor?: string;
       overlayOpacity?: number;
       useCarousel?: boolean;
@@ -95,16 +95,19 @@ interface TenantStore {
   setSEOData: (seo: Partial<SEOData>) => void;
 
   // Loading Actions
-  setLoadingState: (key: keyof TenantStore['loadingStates'], loading: boolean) => void;
+  setLoadingState: (
+    key: keyof TenantStore["loadingStates"],
+    loading: boolean,
+  ) => void;
 
   // Computed getters
-  getBranding: () => TenantData['branding'] | undefined;
-  getHeroConfig: () => TenantData['branding']['heroConfig'] | undefined;
+  getBranding: () => TenantData["branding"] | undefined;
+  getHeroConfig: () => TenantData["branding"]["heroConfig"] | undefined;
   getPrimaryColor: () => string;
   getSecondaryColor: () => string;
-  getContact: () => TenantData['contact'] | undefined;
-  getFeaturedProducts: () => TenantData['products'];
-  getFeaturedServices: () => TenantData['services'];
+  getContact: () => TenantData["contact"] | undefined;
+  getFeaturedProducts: () => TenantData["products"];
+  getFeaturedServices: () => TenantData["services"];
   getDynamicSEO: () => SEOData;
   isBookingMode: () => boolean;
   isCatalogMode: () => boolean;
@@ -119,8 +122,9 @@ export const useTenantStore = create<TenantStore>()((set, get) => ({
   error: null,
 
   seoData: {
-    title: 'Sass Store - Multi-tenant E-commerce Platform',
-    description: 'Plataforma de comercio electrónico multi-tenant para negocios',
+    title: "Sass Store - Multi-tenant E-commerce Platform",
+    description:
+      "Plataforma de comercio electrónico multi-tenant para negocios",
   },
 
   loadingStates: {
@@ -146,8 +150,8 @@ export const useTenantStore = create<TenantStore>()((set, get) => ({
         title: tenant.name,
         description: tenant.description,
         structuredData: {
-          '@context': 'https://schema.org',
-          '@type': 'LocalBusiness',
+          "@context": "https://schema.org",
+          "@type": "LocalBusiness",
           name: tenant.name,
           description: tenant.description,
           address: tenant.contact.address,
@@ -194,7 +198,8 @@ export const useTenantStore = create<TenantStore>()((set, get) => ({
 
   getHeroConfig: () => get().currentTenant?.branding?.heroConfig,
 
-  getPrimaryColor: () => get().currentTenant?.branding?.primaryColor || '#DC2626',
+  getPrimaryColor: () =>
+    get().currentTenant?.branding?.primaryColor || "#DC2626",
 
   getSecondaryColor: () =>
     get().currentTenant?.branding?.secondaryColor || get().getPrimaryColor(),
@@ -223,8 +228,8 @@ export const useTenantStore = create<TenantStore>()((set, get) => ({
       title: currentTenant.name,
       description: currentTenant.description,
       structuredData: {
-        '@context': 'https://schema.org',
-        '@type': 'LocalBusiness',
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
         name: currentTenant.name,
         description: currentTenant.description,
         address: currentTenant.contact.address,
@@ -234,20 +239,21 @@ export const useTenantStore = create<TenantStore>()((set, get) => ({
     };
   },
 
-  isBookingMode: () => get().currentTenant?.mode === 'booking',
+  isBookingMode: () => get().currentTenant?.mode === "booking",
 
-  isCatalogMode: () => get().currentTenant?.mode === 'catalog',
+  isCatalogMode: () => get().currentTenant?.mode === "catalog",
 
-  isMixedMode: () => get().currentTenant?.mode === 'mixed',
+  isMixedMode: () => get().currentTenant?.mode === "mixed",
 }));
 
 // Selectors for optimized access
 export const selectTenant = (state: TenantStore) => state.currentTenant;
 export const selectSlug = (state: TenantStore) => state.slug;
 export const selectIsLoading = (state: TenantStore) => state.isLoading;
-export const selectBranding = (state: TenantStore) => state.currentTenant?.branding;
+export const selectBranding = (state: TenantStore) =>
+  state.currentTenant?.branding;
 export const selectPrimaryColor = (state: TenantStore) =>
-  state.currentTenant?.branding?.primaryColor || '#DC2626';
+  state.currentTenant?.branding?.primaryColor || "#DC2626";
 export const selectHeroConfig = (state: TenantStore) =>
   state.currentTenant?.branding?.heroConfig;
 export const selectFeaturedProducts = (state: TenantStore) =>

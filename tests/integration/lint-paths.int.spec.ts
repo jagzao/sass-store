@@ -1,13 +1,13 @@
 // @ts-nocheck
-import { describe, it, expect } from 'vitest';
-import { readFileSync, readdirSync, statSync } from 'fs';
-import { join, extname } from 'path';
+import { describe, it, expect } from "vitest";
+import { readFileSync, readdirSync, statSync } from "fs";
+import { join, extname } from "path";
 
-describe('Import Path Linting Integration Tests', () => {
+describe("Import Path Linting Integration Tests", () => {
   const projectRoot = process.cwd();
-  const appsToCheck = ['web'].filter((app) => {
+  const appsToCheck = ["web"].filter((app) => {
     try {
-      statSync(join(projectRoot, 'apps', app));
+      statSync(join(projectRoot, "apps", app));
       return true;
     } catch {
       return false;
@@ -29,12 +29,12 @@ describe('Import Path Linting Integration Tests', () => {
 
         if (stat.isDirectory()) {
           // Skip node_modules and .next directories
-          if (!['node_modules', '.next', 'dist', 'build'].includes(item)) {
+          if (!["node_modules", ".next", "dist", "build"].includes(item)) {
             traverse(itemPath);
           }
         } else if (stat.isFile()) {
           const ext = extname(item);
-          if (['.ts', '.tsx'].includes(ext)) {
+          if ([".ts", ".tsx"].includes(ext)) {
             files.push(itemPath);
           }
         }
@@ -71,7 +71,10 @@ describe('Import Path Linting Integration Tests', () => {
     if (deepRelative) return true;
 
     // If importing from apps/* or packages/* across boundaries
-    if (importPath.includes('../apps/') || importPath.includes('../packages/')) {
+    if (
+      importPath.includes("../apps/") ||
+      importPath.includes("../packages/")
+    ) {
       return true;
     }
 
@@ -79,25 +82,30 @@ describe('Import Path Linting Integration Tests', () => {
   }
 
   for (const app of appsToCheck) {
-    const appDir = join(projectRoot, 'apps', app);
+    const appDir = join(projectRoot, "apps", app);
 
     describe(`App: ${app}`, () => {
-      it('should not contain deep relative imports (../../..)', () => {
+      it("should not contain deep relative imports (../../..)", () => {
         const tsFiles = findTsFiles(appDir);
-        const violations: Array<{ file: string; line: number; import: string; suggestion?: string }> = [];
+        const violations: Array<{
+          file: string;
+          line: number;
+          import: string;
+          suggestion?: string;
+        }> = [];
 
         for (const file of tsFiles) {
-          const content = readFileSync(file, 'utf8');
-          const lines = content.split('\n');
+          const content = readFileSync(file, "utf8");
+          const lines = content.split("\n");
 
           lines.forEach((line, index) => {
             if (hasDeepRelativeImport(line)) {
               const importPath = extractImportPath(line);
               violations.push({
-                file: file.replace(projectRoot, '.'),
+                file: file.replace(projectRoot, "."),
                 line: index + 1,
                 import: importPath || line.trim(),
-                suggestion: getSuggestion(importPath, app)
+                suggestion: getSuggestion(importPath, app),
               });
             }
           });
@@ -106,36 +114,42 @@ describe('Import Path Linting Integration Tests', () => {
         if (violations.length > 0) {
           const errorMessage = [
             `Found ${violations.length} deep relative import violations in ${app}:`,
-            '',
-            ...violations.map(v =>
-              `  ${v.file}:${v.line} - ${v.import}${v.suggestion ? ` → ${v.suggestion}` : ''}`
+            "",
+            ...violations.map(
+              (v) =>
+                `  ${v.file}:${v.line} - ${v.import}${v.suggestion ? ` → ${v.suggestion}` : ""}`,
             ),
-            '',
-            'Use @/ alias imports instead of deep relative paths (../../..)',
-            'Configure tsconfig.json paths and update imports accordingly.'
-          ].join('\n');
+            "",
+            "Use @/ alias imports instead of deep relative paths (../../..)",
+            "Configure tsconfig.json paths and update imports accordingly.",
+          ].join("\n");
 
           throw new Error(errorMessage);
         }
       });
 
-      it('should use @/ aliases for cross-boundary imports', () => {
+      it("should use @/ aliases for cross-boundary imports", () => {
         const tsFiles = findTsFiles(appDir);
-        const violations: Array<{ file: string; line: number; import: string; suggestion: string }> = [];
+        const violations: Array<{
+          file: string;
+          line: number;
+          import: string;
+          suggestion: string;
+        }> = [];
 
         for (const file of tsFiles) {
-          const content = readFileSync(file, 'utf8');
-          const lines = content.split('\n');
+          const content = readFileSync(file, "utf8");
+          const lines = content.split("\n");
 
           lines.forEach((line, index) => {
             const importPath = extractImportPath(line);
             if (importPath && shouldUseAlias(importPath, file)) {
               const suggestion = getSuggestion(importPath, app);
               violations.push({
-                file: file.replace(projectRoot, '.'),
+                file: file.replace(projectRoot, "."),
                 line: index + 1,
                 import: importPath,
-                suggestion
+                suggestion,
               });
             }
           });
@@ -144,24 +158,24 @@ describe('Import Path Linting Integration Tests', () => {
         if (violations.length > 0) {
           const errorMessage = [
             `Found ${violations.length} imports that should use @/ aliases in ${app}:`,
-            '',
-            ...violations.map(v =>
-              `  ${v.file}:${v.line} - ${v.import} → ${v.suggestion}`
+            "",
+            ...violations.map(
+              (v) => `  ${v.file}:${v.line} - ${v.import} → ${v.suggestion}`,
             ),
-            '',
-            'Use @/ aliases for cleaner and more maintainable imports.'
-          ].join('\n');
+            "",
+            "Use @/ aliases for cleaner and more maintainable imports.",
+          ].join("\n");
 
           throw new Error(errorMessage);
         }
       });
 
-      it('should have proper tsconfig.json path configuration', () => {
-        const tsconfigPath = join(appDir, 'tsconfig.json');
+      it("should have proper tsconfig.json path configuration", () => {
+        const tsconfigPath = join(appDir, "tsconfig.json");
         let tsconfig: any;
 
         try {
-          const content = readFileSync(tsconfigPath, 'utf8');
+          const content = readFileSync(tsconfigPath, "utf8");
           tsconfig = JSON.parse(content);
         } catch (error) {
           throw new Error(`Failed to read tsconfig.json for ${app}: ${error}`);
@@ -172,12 +186,12 @@ describe('Import Path Linting Integration Tests', () => {
 
         // Check that @/* path is configured
         expect(tsconfig.compilerOptions?.paths).toBeDefined();
-        expect(tsconfig.compilerOptions.paths['@/*']).toBeDefined();
+        expect(tsconfig.compilerOptions.paths["@/*"]).toBeDefined();
 
         // Check that common aliases are present
-        const expectedAliases = ['@/*'];
-        if (app === 'web') {
-          expectedAliases.push('@/lib/*', '@/components/*', '@/app/*');
+        const expectedAliases = ["@/*"];
+        if (app === "web") {
+          expectedAliases.push("@/lib/*", "@/components/*", "@/app/*");
         }
 
         for (const alias of expectedAliases) {
@@ -191,12 +205,12 @@ describe('Import Path Linting Integration Tests', () => {
    * Generate suggestion for better import path
    */
   function getSuggestion(importPath: string | null, app: string): string {
-    if (!importPath) return '';
+    if (!importPath) return "";
 
     // Convert relative paths to alias paths
-    if (importPath.startsWith('../')) {
+    if (importPath.startsWith("../")) {
       // For cross-app imports
-      if (importPath.includes('../packages/')) {
+      if (importPath.includes("../packages/")) {
         const packageName = importPath.match(/\.\.\/packages\/([^\/]+)/)?.[1];
         if (packageName) {
           return `@sass-store/${packageName}`;
@@ -204,40 +218,47 @@ describe('Import Path Linting Integration Tests', () => {
       }
 
       // For intra-app imports
-      const pathParts = importPath.split('/');
-      const relevantParts = pathParts.filter(part => part !== '..' && part !== '.');
+      const pathParts = importPath.split("/");
+      const relevantParts = pathParts.filter(
+        (part) => part !== ".." && part !== ".",
+      );
 
       if (relevantParts.length > 0) {
-        if (app === 'web') {
+        if (app === "web") {
           // Map common directories to aliases
           const firstPart = relevantParts[0];
-          if (['lib', 'components', 'app'].includes(firstPart)) {
-            return `@/${relevantParts.join('/')}`;
+          if (["lib", "components", "app"].includes(firstPart)) {
+            return `@/${relevantParts.join("/")}`;
           }
         }
 
         // Generic @/ alias
-        return `@/${relevantParts.join('/')}`;
+        return `@/${relevantParts.join("/")}`;
       }
     }
 
-    return '@/...'; // Generic suggestion
+    return "@/..."; // Generic suggestion
   }
 
-  describe('Global Import Rules', () => {
-    it('should not have any imports with more than 3 relative levels', () => {
-      const allApps = appsToCheck.map(app => join(projectRoot, 'apps', app));
+  describe("Global Import Rules", () => {
+    it("should not have any imports with more than 3 relative levels", () => {
+      const allApps = appsToCheck.map((app) => join(projectRoot, "apps", app));
       const allFiles: string[] = [];
 
       for (const appDir of allApps) {
         allFiles.push(...findTsFiles(appDir));
       }
 
-      const violations: Array<{ file: string; line: number; import: string; levels: number }> = [];
+      const violations: Array<{
+        file: string;
+        line: number;
+        import: string;
+        levels: number;
+      }> = [];
 
       for (const file of allFiles) {
-        const content = readFileSync(file, 'utf8');
-        const lines = content.split('\n');
+        const content = readFileSync(file, "utf8");
+        const lines = content.split("\n");
 
         lines.forEach((line, index) => {
           const importPath = extractImportPath(line);
@@ -245,10 +266,10 @@ describe('Import Path Linting Integration Tests', () => {
             const levels = (importPath.match(/\.\.\//g) || []).length;
             if (levels > 3) {
               violations.push({
-                file: file.replace(projectRoot, '.'),
+                file: file.replace(projectRoot, "."),
                 line: index + 1,
                 import: importPath,
-                levels
+                levels,
               });
             }
           }
@@ -258,23 +279,23 @@ describe('Import Path Linting Integration Tests', () => {
       if (violations.length > 0) {
         const errorMessage = [
           `Found ${violations.length} imports with excessive relative levels:`,
-          '',
-          ...violations.map(v =>
-            `  ${v.file}:${v.line} - ${v.import} (${v.levels} levels)`
+          "",
+          ...violations.map(
+            (v) => `  ${v.file}:${v.line} - ${v.import} (${v.levels} levels)`,
           ),
-          '',
-          'Maximum allowed: 3 levels (../../..)',
-          'Use @/ aliases for deeper imports.'
-        ].join('\n');
+          "",
+          "Maximum allowed: 3 levels (../../..)",
+          "Use @/ aliases for deeper imports.",
+        ].join("\n");
 
         throw new Error(errorMessage);
       }
     });
 
-    it('should use consistent import patterns', () => {
+    it("should use consistent import patterns", () => {
       // This test checks for consistent import patterns across the codebase
       const packageImports = new Set<string>();
-      const allApps = appsToCheck.map(app => join(projectRoot, 'apps', app));
+      const allApps = appsToCheck.map((app) => join(projectRoot, "apps", app));
       const allFiles: string[] = [];
 
       for (const appDir of allApps) {
@@ -283,25 +304,33 @@ describe('Import Path Linting Integration Tests', () => {
 
       // Collect all @sass-store package imports
       for (const file of allFiles) {
-        const content = readFileSync(file, 'utf8');
-        const lines = content.split('\n');
+        const content = readFileSync(file, "utf8");
+        const lines = content.split("\n");
 
-        lines.forEach(line => {
+        lines.forEach((line) => {
           const importPath = extractImportPath(line);
-          if (importPath?.startsWith('@sass-store/')) {
+          if (importPath?.startsWith("@sass-store/")) {
             packageImports.add(importPath);
           }
         });
       }
 
       // Expected package imports based on workspace structure
-      const expectedPackages = ['@sass-store/ui', '@sass-store/database', '@sass-store/config'];
+      const expectedPackages = [
+        "@sass-store/ui",
+        "@sass-store/database",
+        "@sass-store/config",
+      ];
 
       for (const expectedPkg of expectedPackages) {
-        const hasImport = Array.from(packageImports).some(imp => imp.startsWith(expectedPkg));
+        const hasImport = Array.from(packageImports).some((imp) =>
+          imp.startsWith(expectedPkg),
+        );
         if (hasImport) {
           // If the package is used, ensure it's imported consistently
-          const variations = Array.from(packageImports).filter(imp => imp.startsWith(expectedPkg));
+          const variations = Array.from(packageImports).filter((imp) =>
+            imp.startsWith(expectedPkg),
+          );
           expect(variations.length).toBeGreaterThan(0);
         }
       }

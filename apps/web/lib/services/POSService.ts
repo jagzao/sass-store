@@ -2,7 +2,12 @@ import { Result, Ok, Err, fromPromise } from "@sass-store/core/src/result";
 import { DomainError, ErrorFactories } from "@sass-store/core/src/errors/types";
 import { sql, eq, and } from "drizzle-orm";
 import { db } from "@sass-store/database";
-import { orders, orderItems, productInventory, inventoryTransactions } from "@sass-store/database/schema";
+import {
+  orders,
+  orderItems,
+  productInventory,
+  inventoryTransactions,
+} from "@sass-store/database/schema";
 
 export interface POSSaleItem {
   productId: string;
@@ -40,7 +45,9 @@ const generateOrderNumber = (tenantId: string): string => {
     String(now.getHours()).padStart(2, "0") +
     String(now.getMinutes()).padStart(2, "0") +
     String(now.getSeconds()).padStart(2, "0");
-  const random = Math.floor(Math.random() * 1000).toString().padStart(3, "0");
+  const random = Math.floor(Math.random() * 1000)
+    .toString()
+    .padStart(3, "0");
   return `POS-${prefix}-${timestamp}-${random}`;
 };
 
@@ -59,11 +66,16 @@ export class POSService implements IPOSService {
     // 1. Validaciones
     if (!data.items || data.items.length === 0) {
       return Err(
-        ErrorFactories.validation("Sale must contain at least one item", "items"),
+        ErrorFactories.validation(
+          "Sale must contain at least one item",
+          "items",
+        ),
       );
     }
 
-    if (data.items.some((item) => item.quantity <= 0 || item.quantity % 1 !== 0)) {
+    if (
+      data.items.some((item) => item.quantity <= 0 || item.quantity % 1 !== 0)
+    ) {
       return Err(
         ErrorFactories.validation(
           "Each item must have a positive integer quantity",
@@ -87,7 +99,10 @@ export class POSService implements IPOSService {
     }
 
     const validPaymentMethods = ["cash", "card", "mercadopago"];
-    if (!data.paymentMethod || !validPaymentMethods.includes(data.paymentMethod)) {
+    if (
+      !data.paymentMethod ||
+      !validPaymentMethods.includes(data.paymentMethod)
+    ) {
       return Err(
         ErrorFactories.validation(
           "Invalid payment method. Allowed: cash, card, mercadopago",
@@ -226,11 +241,16 @@ export class InMemoryPOSService implements IPOSService {
   ): Promise<Result<POSSale, DomainError>> {
     if (!data.items || data.items.length === 0) {
       return Err(
-        ErrorFactories.validation("Sale must contain at least one item", "items"),
+        ErrorFactories.validation(
+          "Sale must contain at least one item",
+          "items",
+        ),
       );
     }
 
-    if (data.items.some((item) => item.quantity <= 0 || item.quantity % 1 !== 0)) {
+    if (
+      data.items.some((item) => item.quantity <= 0 || item.quantity % 1 !== 0)
+    ) {
       return Err(
         ErrorFactories.validation(
           "Each item must have a positive integer quantity",
@@ -253,7 +273,10 @@ export class InMemoryPOSService implements IPOSService {
     }
 
     const validPaymentMethods = ["cash", "card", "mercadopago"];
-    if (!data.paymentMethod || !validPaymentMethods.includes(data.paymentMethod)) {
+    if (
+      !data.paymentMethod ||
+      !validPaymentMethods.includes(data.paymentMethod)
+    ) {
       return Err(
         ErrorFactories.validation(
           "Invalid payment method. Allowed: cash, card, mercadopago",

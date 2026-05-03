@@ -31,7 +31,9 @@ export default function AppointmentsSection({
   tenantName = "Negocio",
   limit = 5,
 }: AppointmentsSectionProps) {
-  const [appointments, setAppointments] = useState<UnconfirmedAppointment[]>([]);
+  const [appointments, setAppointments] = useState<UnconfirmedAppointment[]>(
+    [],
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 

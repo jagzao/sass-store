@@ -109,7 +109,7 @@ export async function validateApiKey(request: RequestWithHeaders) {
       permissions: apiKeyRecord.apiKeyPermissions as string[],
     };
   } catch (error) {
-    console.error("[API Auth] Error validating API key:", error);
+    // SECURITY: Redacted sensitive log;
     return {
       success: false,
       error: "Internal server error",
@@ -177,7 +177,7 @@ export async function validateSimpleApiKey(request: RequestWithHeaders) {
       error: null,
     };
   } catch (error) {
-    console.error("[Simple API Auth] Error validating API key:", error);
+    // SECURITY: Redacted sensitive log;
     return {
       success: false,
       error: "Internal server error",

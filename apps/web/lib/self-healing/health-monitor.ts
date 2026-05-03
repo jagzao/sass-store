@@ -109,7 +109,7 @@ export class HealthMonitor {
       return;
     }
 
-    console.log(
+    console.warn(
       `[Self-Healing] Attempting database healing (${attempts + 1}/${this.maxHealingAttempts})`,
     );
     this.healingAttempts.database = attempts + 1;
@@ -127,7 +127,7 @@ export class HealthMonitor {
       // Re-test connection
       const isHealthy = await this.checkDatabaseHealth();
       if (isHealthy) {
-        console.log("[Self-Healing] Database healing successful");
+        console.warn("[Self-Healing] Database healing successful");
         this.healingAttempts.database = 0;
       }
     } catch (error) {
@@ -143,7 +143,7 @@ export class HealthMonitor {
       return;
     }
 
-    console.log(
+    console.warn(
       `[Self-Healing] Attempting API healing (${attempts + 1}/${this.maxHealingAttempts})`,
     );
     this.healingAttempts.api = attempts + 1;
@@ -167,7 +167,7 @@ export class HealthMonitor {
       // Re-test API health
       const isHealthy = await this.checkApiHealth();
       if (isHealthy) {
-        console.log("[Self-Healing] API healing successful");
+        console.warn("[Self-Healing] API healing successful");
         this.healingAttempts.api = 0;
       }
     } catch (error) {
@@ -183,7 +183,7 @@ export class HealthMonitor {
       return;
     }
 
-    console.log(
+    console.warn(
       `[Self-Healing] Attempting storage healing (${attempts + 1}/${this.maxHealingAttempts})`,
     );
     this.healingAttempts.storage = attempts + 1;
@@ -202,7 +202,7 @@ export class HealthMonitor {
       // Test storage again
       const isHealthy = await this.checkStorageHealth();
       if (isHealthy) {
-        console.log("[Self-Healing] Storage healing successful");
+        console.warn("[Self-Healing] Storage healing successful");
         this.healingAttempts.storage = 0;
       }
     } catch (error) {
@@ -216,7 +216,7 @@ export class HealthMonitor {
     details: Record<string, boolean>;
     healingAttempts: Record<string, number>;
   }> {
-    console.log("[Self-Healing] Starting comprehensive health check...");
+    console.warn("[Self-Healing] Starting comprehensive health check...");
 
     const [database, api, storage] = await Promise.all([
       this.checkDatabaseHealth(),
@@ -236,14 +236,14 @@ export class HealthMonitor {
       healingAttempts: { ...this.healingAttempts },
     };
 
-    console.log("[Self-Healing] Health check completed:", result);
+    console.warn("[Self-Healing] Health check completed:", result);
     return result;
   }
 
   // Reset healing attempts (called on successful operations)
   resetHealingAttempts(): void {
     this.healingAttempts = {};
-    console.log("[Self-Healing] Healing attempts reset");
+    console.warn("[Self-Healing] Healing attempts reset");
   }
 
   // Get current health status

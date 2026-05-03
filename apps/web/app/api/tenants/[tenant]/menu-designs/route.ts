@@ -63,16 +63,16 @@ export async function POST(
 ) {
   try {
     const { tenant: tenantSlug } = await params;
-    console.log(`[API] Creando menú para tenant: ${tenantSlug}`);
+    console.warn(`[API] Creando menÃº para tenant: ${tenantSlug}`);
 
     const session = await auth();
     if (!session) {
-      console.log("[API] Unauthorized: No session");
+      console.warn("[API] Unauthorized: No session");
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await request.json();
-    console.log("[API] Body recibido:", JSON.stringify(body, null, 2));
+    console.warn("[API] Body recibido:", JSON.stringify(body, null, 2));
 
     const validatedData = createMenuSchema.parse(body);
 
@@ -81,11 +81,11 @@ export async function POST(
     });
 
     if (!tenant) {
-      console.log(`[API] Tenant no encontrado: ${tenantSlug}`);
+      console.warn(`[API] Tenant no encontrado: ${tenantSlug}`);
       return NextResponse.json({ error: "Tenant not found" }, { status: 404 });
     }
 
-    console.log(`[API] Tenant ID encontrado: ${tenant.id}`);
+    console.warn(`[API] Tenant ID encontrado: ${tenant.id}`);
 
     try {
       const [newDesign] = await db
@@ -100,10 +100,10 @@ export async function POST(
         })
         .returning();
 
-      console.log(`[API] Diseño creado exitosamente: ${newDesign.id}`);
+      console.warn(`[API] DiseÃ±o creado exitosamente: ${newDesign.id}`);
       return NextResponse.json(newDesign);
     } catch (dbError: any) {
-      console.error("[API] Error de base de datos al insertar menú:", dbError);
+      console.error("[API] Error de base de datos al insertar menÃº:", dbError);
       console.error(
         "[API] Detalle del error:",
         JSON.stringify(dbError, null, 2),
@@ -115,10 +115,10 @@ export async function POST(
     }
   } catch (error) {
     if (error instanceof z.ZodError) {
-      console.error("[API] Error de validación Zod:", error.errors);
+      console.error("[API] Error de validaciÃ³n Zod:", error.errors);
       return NextResponse.json({ error: error.errors }, { status: 400 });
     }
-    console.error("[API] Error general creando menú:", error);
+    console.error("[API] Error general creando menÃº:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 },

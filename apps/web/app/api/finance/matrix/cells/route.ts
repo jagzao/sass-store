@@ -46,4 +46,3 @@ export const PUT = withResultHandler(async (request: NextRequest) => {
 });
 
 export const PATCH = PUT;
-

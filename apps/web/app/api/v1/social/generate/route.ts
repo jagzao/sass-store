@@ -175,7 +175,7 @@ Return the content as a JSON array with this structure:
     const { text } = await generateText({
       model: anthropic("claude-3-5-sonnet-20241022"),
       prompt: systemPrompt,
-      maxTokens: 4000,
+      maxOutputTokens: 4000,
       temperature: 0.8,
     });
 

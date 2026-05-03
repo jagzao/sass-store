@@ -32,7 +32,10 @@ export async function GET(request: NextRequest) {
     const tenantId = tenantResult[0].id;
 
     // Build query to get products using Drizzle query builder
-    const conditions = [eq(products.tenantId, tenantId), eq(products.active, true)];
+    const conditions = [
+      eq(products.tenantId, tenantId),
+      eq(products.active, true),
+    ];
 
     if (featured) {
       conditions.push(eq(products.featured, true));

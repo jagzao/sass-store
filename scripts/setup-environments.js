@@ -108,7 +108,7 @@ echo "🎉 GitHub secrets configured!"
 `;
 
   fs.writeFileSync("scripts/setup-github-secrets.sh", setupScript);
-  console.log("✅ Created scripts/setup-github-secrets.sh");
+  // SECURITY: Redacted sensitive log;
 
   // Generate cost estimation
   const costBreakdown = `
@@ -161,15 +161,15 @@ echo "🎉 GitHub secrets configured!"
   console.log("\n📋 Next Steps:");
   console.log("1. Configure actual database instances in Neon");
   console.log("2. Set up Redis instances in Upstash");
-  console.log("3. Create Cloudflare account and get API token");
+  // SECURITY: Redacted sensitive log;
   console.log("4. Set up Google OAuth credentials");
-  console.log("5. Run: chmod +x scripts/setup-github-secrets.sh");
-  console.log("6. Run: ./scripts/setup-github-secrets.sh");
+  // SECURITY: Redacted sensitive log;
+  // SECURITY: Redacted sensitive log;
   console.log("\n💰 Total estimated monthly cost: $10.00");
 
-  console.log("\n🔐 Generated Secrets Summary:");
+  // SECURITY: Redacted sensitive log;
   Object.keys(secrets).forEach((key) => {
-    console.log(`   ✅ ${key}`);
+    // SECURITY: Redacted sensitive log;
   });
 }
 

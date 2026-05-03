@@ -1,4 +1,4 @@
-import { Resend } from 'resend';
+import { Resend } from "resend";
 
 // Lazy initialization to ensure env vars are loaded
 let resendInstance: Resend | null = null;
@@ -7,8 +7,10 @@ function getResendClient() {
   if (!resendInstance) {
     const apiKey = process.env.RESEND_API_KEY;
     if (!apiKey) {
-      console.error("❌ RESEND_API_KEY is not configured in environment variables. Email will not be sent.");
-      throw new Error('RESEND_API_KEY is not configured in environment variables');
+      // SECURITY: Redacted sensitive log;
+      throw new Error(
+        "RESEND_API_KEY is not configured in environment variables",
+      );
     }
     resendInstance = new Resend(apiKey);
   }
@@ -26,28 +28,33 @@ export interface SendPasswordResetEmailParams {
 export async function sendPasswordResetEmail({
   email,
   resetLink,
-  tenantName = 'SaaS Store',
-  tenantColor = '#4F46E5',
+  tenantName = "SaaS Store",
+  tenantColor = "#4F46E5",
   tenantLogo,
 }: SendPasswordResetEmailParams) {
   try {
     const resend = getResendClient();
     const { data, error } = await resend.emails.send({
-      from: process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev',
+      from: process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev",
       to: email,
-      subject: `🔐 Recuperar Contraseña - ${tenantName}`,
-      html: getPasswordResetEmailTemplate(resetLink, tenantName, tenantColor, tenantLogo),
+      subject: `ðŸ” Recuperar ContraseÃ±a - ${tenantName}`,
+      html: getPasswordResetEmailTemplate(
+        resetLink,
+        tenantName,
+        tenantColor,
+        tenantLogo,
+      ),
     });
 
     if (error) {
-      console.error('❌ Error sending password reset email:', error);
+      // SECURITY: Redacted sensitive log;
       throw new Error(`Failed to send email: ${error.message}`);
     }
 
-    console.log('✅ Password reset email sent successfully:', data?.id);
+    // SECURITY: Redacted sensitive log;
     return { success: true, messageId: data?.id };
   } catch (error) {
-    console.error('❌ Error in sendPasswordResetEmail:', error);
+    // SECURITY: Redacted sensitive log;
     throw error;
   }
 }
@@ -55,8 +62,8 @@ export async function sendPasswordResetEmail({
 function getPasswordResetEmailTemplate(
   resetLink: string,
   tenantName: string,
-  tenantColor: string = '#4F46E5',
-  tenantLogo?: string
+  tenantColor: string = "#4F46E5",
+  tenantLogo?: string,
 ): string {
   return `
 <!DOCTYPE html>
@@ -64,7 +71,7 @@ function getPasswordResetEmailTemplate(
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Recuperar Contraseña - ${tenantName}</title>
+  <title>Recuperar ContraseÃ±a - ${tenantName}</title>
 </head>
 <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f3f4f6;">
   <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f3f4f6; padding: 40px 20px;">
@@ -74,7 +81,7 @@ function getPasswordResetEmailTemplate(
           <!-- Header -->
           <tr>
             <td style="padding: 40px 40px 30px 40px; text-align: center; background: linear-gradient(135deg, ${tenantColor} 0%, ${tenantColor}dd 100%);">
-              ${tenantLogo ? `<img src="${tenantLogo}" alt="${tenantName}" style="max-width: 150px; height: auto; margin-bottom: 16px;">` : ''}
+              ${tenantLogo ? `<img src="${tenantLogo}" alt="${tenantName}" style="max-width: 150px; height: auto; margin-bottom: 16px;">` : ""}
               <h1 style="margin: 0; color: #ffffff; font-size: 32px; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.1);">${tenantName}</h1>
             </td>
           </tr>
@@ -83,11 +90,11 @@ function getPasswordResetEmailTemplate(
           <tr>
             <td style="padding: 40px;">
               <h2 style="margin: 0 0 20px 0; color: #1f2937; font-size: 24px; font-weight: 600;">
-                Recuperar Contraseña
+                Recuperar ContraseÃ±a
               </h2>
 
               <p style="margin: 0 0 20px 0; color: #4b5563; font-size: 16px; line-height: 1.6;">
-                Hemos recibido una solicitud para restablecer tu contraseña. Haz clic en el botón de abajo para crear una nueva contraseña:
+                Hemos recibido una solicitud para restablecer tu contraseÃ±a. Haz clic en el botÃ³n de abajo para crear una nueva contraseÃ±a:
               </p>
 
               <!-- CTA Button -->
@@ -96,14 +103,14 @@ function getPasswordResetEmailTemplate(
                   <td align="center">
                     <a href="${resetLink}"
                        style="display: inline-block; padding: 18px 40px; background-color: ${tenantColor}; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 12px ${tenantColor}40; transition: all 0.3s;">
-                      🔒 Restablecer Contraseña
+                      ðŸ”’ Restablecer ContraseÃ±a
                     </a>
                   </td>
                 </tr>
               </table>
 
               <p style="margin: 20px 0 0 0; color: #6b7280; font-size: 14px; line-height: 1.6;">
-                Si no puedes hacer clic en el botón, copia y pega este enlace en tu navegador:
+                Si no puedes hacer clic en el botÃ³n, copia y pega este enlace en tu navegador:
               </p>
 
               <p style="margin: 10px 0 0 0; padding: 12px; background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 4px; color: #4b5563; font-size: 12px; word-break: break-all;">
@@ -113,7 +120,7 @@ function getPasswordResetEmailTemplate(
               <hr style="margin: 30px 0; border: none; border-top: 1px solid #e5e7eb;">
 
               <p style="margin: 0; color: #6b7280; font-size: 14px; line-height: 1.6;">
-                <strong>Nota de seguridad:</strong> Este enlace expirará en 1 hora. Si no solicitaste restablecer tu contraseña, puedes ignorar este correo de forma segura.
+                <strong>Nota de seguridad:</strong> Este enlace expirarÃ¡ en 1 hora. Si no solicitaste restablecer tu contraseÃ±a, puedes ignorar este correo de forma segura.
               </p>
             </td>
           </tr>
@@ -122,7 +129,7 @@ function getPasswordResetEmailTemplate(
           <tr>
             <td style="padding: 30px 40px; background-color: #f9fafb; border-top: 1px solid #e5e7eb; border-radius: 0 0 8px 8px;">
               <p style="margin: 0; color: #9ca3af; font-size: 12px; text-align: center;">
-                © ${new Date().getFullYear()} ${tenantName}. Todos los derechos reservados.
+                Â© ${new Date().getFullYear()} ${tenantName}. Todos los derechos reservados.
               </p>
             </td>
           </tr>
@@ -156,18 +163,18 @@ export async function sendPaymentConfirmation({
   try {
     const resend = getResendClient();
     const { data, error } = await resend.emails.send({
-      from: process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev',
+      from: process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev",
       to,
-      subject: `✅ Pago Confirmado - Orden #${orderId.slice(0, 8)}`,
+      subject: `âœ… Pago Confirmado - Orden #${orderId.slice(0, 8)}`,
       html: `
 <!DOCTYPE html>
 <html>
 <body style="font-family: Arial, sans-serif; padding: 20px;">
-  <h1 style="color: #10B981;">✅ Pago Confirmado</h1>
+  <h1 style="color: #10B981;">âœ… Pago Confirmado</h1>
   <p>Tu pago ha sido procesado exitosamente.</p>
   <p><strong>Orden:</strong> #${orderId.slice(0, 8)}</p>
   <p><strong>Monto:</strong> ${currency} $${amount.toFixed(2)}</p>
-  <p>¡Gracias por tu compra!</p>
+  <p>Â¡Gracias por tu compra!</p>
 </body>
 </html>`,
     });
@@ -175,7 +182,7 @@ export async function sendPaymentConfirmation({
     if (error) throw new Error(`Failed to send email: ${error.message}`);
     return { success: true, messageId: data?.id };
   } catch (error) {
-    console.error('❌ Error in sendPaymentConfirmation:', error);
+    console.error("âŒ Error in sendPaymentConfirmation:", error);
     throw error;
   }
 }
@@ -198,18 +205,18 @@ export async function sendPaymentFailedNotification({
   try {
     const resend = getResendClient();
     const { data, error } = await resend.emails.send({
-      from: process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev',
+      from: process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev",
       to,
-      subject: `❌ Pago Fallido - Orden #${orderId.slice(0, 8)}`,
+      subject: `âŒ Pago Fallido - Orden #${orderId.slice(0, 8)}`,
       html: `
 <!DOCTYPE html>
 <html>
 <body style="font-family: Arial, sans-serif; padding: 20px;">
-  <h1 style="color: #EF4444;">❌ Pago No Procesado</h1>
+  <h1 style="color: #EF4444;">âŒ Pago No Procesado</h1>
   <p>Tu pago no pudo ser procesado.</p>
   <p><strong>Orden:</strong> #${orderId.slice(0, 8)}</p>
   <p><strong>Monto:</strong> ${currency} ${amount.toFixed(2)}</p>
-  <p><strong>Razón:</strong> ${reason}</p>
+  <p><strong>RazÃ³n:</strong> ${reason}</p>
   <p>Por favor, intenta nuevamente o contacta a soporte.</p>
 </body>
 </html>`,
@@ -218,7 +225,7 @@ export async function sendPaymentFailedNotification({
     if (error) throw new Error(`Failed to send email: ${error.message}`);
     return { success: true, messageId: data?.id };
   } catch (error) {
-    console.error('❌ Error in sendPaymentFailedNotification:', error);
+    console.error("âŒ Error in sendPaymentFailedNotification:", error);
     throw error;
   }
 }
@@ -245,19 +252,19 @@ export async function sendDisputeNotification({
   try {
     const resend = getResendClient();
     const { data, error } = await resend.emails.send({
-      from: process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev',
+      from: process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev",
       to,
-      subject: `⚠️ Disputa de Pago - Orden #${orderId.slice(0, 8)}`,
+      subject: `âš ï¸ Disputa de Pago - Orden #${orderId.slice(0, 8)}`,
       html: `
 <!DOCTYPE html>
 <html>
 <body style="font-family: Arial, sans-serif; padding: 20px;">
-  <h1 style="color: #F59E0B;">⚠️ Disputa de Pago</h1>
+  <h1 style="color: #F59E0B;">âš ï¸ Disputa de Pago</h1>
   <p>Se ha iniciado una disputa para tu pago.</p>
   <p><strong>Orden:</strong> #${orderId.slice(0, 8)}</p>
   <p><strong>Disputa:</strong> ${disputeId}</p>
   <p><strong>Monto:</strong> ${currency} ${amount.toFixed(2)}</p>
-  <p><strong>Razón:</strong> ${reason}</p>
+  <p><strong>RazÃ³n:</strong> ${reason}</p>
   <p><strong>Estado:</strong> ${status}</p>
   <p>Por favor, contacta a soporte para resolver esta disputa.</p>
 </body>
@@ -267,7 +274,7 @@ export async function sendDisputeNotification({
     if (error) throw new Error(`Failed to send email: ${error.message}`);
     return { success: true, messageId: data?.id };
   } catch (error) {
-    console.error('❌ Error in sendDisputeNotification:', error);
+    console.error("âŒ Error in sendDisputeNotification:", error);
     throw error;
   }
 }
@@ -306,7 +313,7 @@ export async function sendQuoteEmail({
     const { data, error } = await resend.emails.send({
       from: process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev",
       to,
-      subject: `📄 Cotización #${quoteNumber} - ${tenantName}`,
+      subject: `ðŸ“„ CotizaciÃ³n #${quoteNumber} - ${tenantName}`,
       html: getQuoteEmailTemplate({
         quoteNumber,
         customerName,
@@ -320,14 +327,14 @@ export async function sendQuoteEmail({
     });
 
     if (error) {
-      console.error("❌ Error sending quote email:", error);
+      console.error("âŒ Error sending quote email:", error);
       throw new Error(`Failed to send email: ${error.message}`);
     }
 
-    console.log("✅ Quote email sent successfully:", data?.id);
+    console.warn("âœ… Quote email sent successfully:", data?.id);
     return { success: true, messageId: data?.id };
   } catch (error: any) {
-    console.error("❌ Error in sendQuoteEmail:", error);
+    console.error("âŒ Error in sendQuoteEmail:", error);
     throw error;
   }
 }
@@ -374,7 +381,7 @@ function getQuoteEmailTemplate({
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cotización #${quoteNumber} - ${tenantName}</title>
+  <title>CotizaciÃ³n #${quoteNumber} - ${tenantName}</title>
 </head>
 <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f3f4f6;">
   <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f3f4f6; padding: 40px 20px;">
@@ -389,7 +396,7 @@ function getQuoteEmailTemplate({
                   ? `<img src="${tenantLogo}" alt="${tenantName}" style="max-width: 150px; height: auto; margin-bottom: 16px;">`
                   : ""
               }
-              <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.1);">Cotización</h1>
+              <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.1);">CotizaciÃ³n</h1>
               <p style="margin: 8px 0 0 0; color: rgba(255,255,255,0.9); font-size: 16px;">#${quoteNumber}</p>
             </td>
           </tr>
@@ -401,14 +408,14 @@ function getQuoteEmailTemplate({
                 Hola <strong>${customerName}</strong>,
               </p>
               <p style="margin: 0 0 30px 0; color: #4b5563; font-size: 16px; line-height: 1.6;">
-                Aquí tienes los detalles de la cotización solicitada. Esta cotización es válida por <strong>${validityDays} días</strong>.
+                AquÃ­ tienes los detalles de la cotizaciÃ³n solicitada. Esta cotizaciÃ³n es vÃ¡lida por <strong>${validityDays} dÃ­as</strong>.
               </p>
 
               <!-- Items Table -->
               <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 30px; border-collapse: collapse;">
                 <thead>
                   <tr style="background-color: #f9fafb;">
-                    <th style="padding: 12px; text-align: left; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #6b7280; border-bottom: 1px solid #e5e7eb;">Descripción</th>
+                    <th style="padding: 12px; text-align: left; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #6b7280; border-bottom: 1px solid #e5e7eb;">DescripciÃ³n</th>
                     <th style="padding: 12px; text-align: center; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #6b7280; border-bottom: 1px solid #e5e7eb;">Cant.</th>
                     <th style="padding: 12px; text-align: right; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #6b7280; border-bottom: 1px solid #e5e7eb;">Precio Unit.</th>
                     <th style="padding: 12px; text-align: right; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #6b7280; border-bottom: 1px solid #e5e7eb;">Total</th>
@@ -430,7 +437,7 @@ function getQuoteEmailTemplate({
               <hr style="margin: 30px 0; border: none; border-top: 1px solid #e5e7eb;">
 
               <p style="margin: 0; color: #6b7280; font-size: 14px; line-height: 1.6; text-align: center;">
-                Si tienes alguna pregunta sobre esta cotización, no dudes en contactarnos.
+                Si tienes alguna pregunta sobre esta cotizaciÃ³n, no dudes en contactarnos.
               </p>
             </td>
           </tr>
@@ -439,7 +446,7 @@ function getQuoteEmailTemplate({
           <tr>
             <td style="padding: 30px 40px; background-color: #f9fafb; border-top: 1px solid #e5e7eb; border-radius: 0 0 8px 8px;">
               <p style="margin: 0; color: #9ca3af; font-size: 12px; text-align: center;">
-                © ${new Date().getFullYear()} ${tenantName}. Todos los derechos reservados.
+                Â© ${new Date().getFullYear()} ${tenantName}. Todos los derechos reservados.
               </p>
             </td>
           </tr>

@@ -32,6 +32,8 @@ export default function TenantHeader({
   // If the user is on an admin dashboard route, we completely hide this generic public header
   // so that the DashboardLayoutWrapper's header and sidebar can take over correctly without overlapping logos.
   // ALWAYS place early returns AFTER all hooks.
+  // Rutas donde otro layout (dashboard) lleva su propia cabecera.
+  // No incluir `/contact`: la página pública es `/t/{slug}/contact` y debe mostrar este header.
   const adminRoutes = [
     "/finance",
     "/social",
@@ -39,7 +41,6 @@ export default function TenantHeader({
     "/inventory",
     "/bookings",
     "/settings",
-    "/contact",
     "/admin",
     "/admin_bookings",
   ];
@@ -48,7 +49,8 @@ export default function TenantHeader({
   // because this screen relies on the same top branding/nav context.
   const isAdminCalendarRoute = pathname?.includes("/admin/calendar");
   const isDashboardRoute =
-    !isAdminCalendarRoute && adminRoutes.some((route) => pathname?.includes(route));
+    !isAdminCalendarRoute &&
+    adminRoutes.some((route) => pathname?.includes(route));
 
   if (isDashboardRoute) {
     return null;

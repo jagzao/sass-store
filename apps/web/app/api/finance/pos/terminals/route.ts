@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@sass-store/config/auth";
 import { assertTenantAccess } from "@/lib/auth/api-auth";
 import { db } from "@sass-store/database";
-import { sql } from "drizzle-orm";
+import { posTerminals } from "@sass-store/database/schema";
+import { and, eq, ne, sql } from "drizzle-orm";
 
 export async function GET(request: NextRequest) {
   try {
@@ -45,44 +46,39 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Construir query
-    const conditions = [];
+    const filters =
+      active === "true"
+        ? and(
+            eq(posTerminals.tenantId, tenantId),
+            eq(posTerminals.status, "active"),
+          )
+        : active === "false"
+          ? and(
+              eq(posTerminals.tenantId, tenantId),
+              ne(posTerminals.status, "active"),
+            )
+          : eq(posTerminals.tenantId, tenantId);
 
-    if (active !== null) {
-      conditions.push(sql`is_active = ${active === "true"}`);
-    }
+    const rows = await db
+      .select({
+        id: posTerminals.id,
+        tenantId: posTerminals.tenantId,
+        name: posTerminals.name,
+        terminalId: posTerminals.terminalId,
+        status: posTerminals.status,
+        location: posTerminals.location,
+        lastSync: posTerminals.lastSync,
+        metadata: posTerminals.metadata,
+        createdAt: posTerminals.createdAt,
+        updatedAt: posTerminals.updatedAt,
+      })
+      .from(posTerminals)
+      .where(filters)
+      .orderBy(posTerminals.name);
 
-    const whereClause =
-      conditions.length > 0 ? sql`WHERE ${conditions.join(" AND ")}` : sql``;
-
-    // Consultar terminales POS
-    const terminalsResult = await db.execute(
-      sql`
-        SELECT 
-          id,
-          tenant_id as "tenantId",
-          name,
-          description,
-          location,
-          is_active as "isActive",
-          created_at as "createdAt",
-          updated_at as "updatedAt"
-        FROM pos_terminals
-        WHERE tenant_id = ${tenantId}
-          ${whereClause}
-        ORDER BY name
-      `,
-    );
-
-    const terminals = terminalsResult.rows.map((row: any) => ({
-      id: row.id,
-      tenantId: row.tenantId,
-      name: row.name,
-      description: row.description,
-      location: row.location,
-      isActive: row.isActive,
-      createdAt: row.createdAt,
-      updatedAt: row.updatedAt,
+    const terminals = rows.map((row) => ({
+      ...row,
+      isActive: row.status === "active",
     }));
 
     // Retornar terminales
@@ -146,41 +142,33 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Crear terminal POS
-    const terminalResult = await db.execute(
-      sql`
-        INSERT INTO pos_terminals (
-          tenant_id,
-          name,
-          description,
-          location,
-          is_active,
-          created_at,
-          updated_at
-        ) VALUES (
-          ${tenantId},
-          ${name},
-          ${description || null},
-          ${location || null},
-          ${isActive},
-          NOW(),
-          NOW()
-        ) RETURNING id
-      `,
-    );
+    const terminalIdValue =
+      (body.terminalId as string | undefined)?.trim() ||
+      `web-${crypto.randomUUID?.() ?? `${Date.now()}`}`;
 
-    const terminalId = terminalResult[0].id;
+    const status = isActive !== false ? "active" : "inactive";
 
-    // Retornar respuesta exitosa
+    const [inserted] = await db
+      .insert(posTerminals)
+      .values({
+        tenantId,
+        name,
+        terminalId: terminalIdValue,
+        status,
+        location: (location as string | undefined) || null,
+        metadata: description ? { description } : undefined,
+      })
+      .returning({ id: posTerminals.id });
+
     return NextResponse.json({
       success: true,
       message: "POS terminal created successfully",
       data: {
-        id: terminalId,
+        id: inserted?.id,
         name,
-        description,
-        location,
-        isActive,
+        terminalId: terminalIdValue,
+        location: location || null,
+        isActive: status === "active",
       },
     });
   } catch (error) {

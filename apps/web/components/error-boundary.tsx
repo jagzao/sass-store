@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import React, { Component, ErrorInfo, ReactNode } from 'react';
-import { Button } from '@sass-store/ui';
+import React, { Component, ErrorInfo, ReactNode } from "react";
+import { Button } from "@sass-store/ui";
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -16,7 +16,10 @@ interface ErrorBoundaryState {
   errorInfo: ErrorInfo | null;
 }
 
-export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+export class ErrorBoundary extends Component<
+  ErrorBoundaryProps,
+  ErrorBoundaryState
+> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = {
@@ -35,7 +38,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     // Log error to error reporting service
-    console.error('ErrorBoundary caught an error:', error, errorInfo);
+    console.error("ErrorBoundary caught an error:", error, errorInfo);
 
     this.setState({
       errorInfo,
@@ -106,10 +109,11 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
             </h1>
 
             <p className="text-center text-gray-600 mb-6">
-              Lo sentimos, ocurrió un error inesperado. Por favor intenta recargar la página.
+              Lo sentimos, ocurrió un error inesperado. Por favor intenta
+              recargar la página.
             </p>
 
-            {process.env.NODE_ENV === 'development' && error && (
+            {process.env.NODE_ENV === "development" && error && (
               <details className="mb-6 p-4 bg-gray-50 rounded border border-gray-200">
                 <summary className="cursor-pointer font-medium text-sm text-gray-700 mb-2">
                   Detalles del error (solo desarrollo)
@@ -126,15 +130,11 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
             )}
 
             <div className="flex gap-3">
-              <Button
-                onClick={this.reset}
-                variant="outline"
-                className="flex-1"
-              >
+              <Button onClick={this.reset} variant="outline" className="flex-1">
                 Reintentar
               </Button>
               <Button
-                onClick={() => window.location.href = '/'}
+                onClick={() => (window.location.href = "/")}
                 className="flex-1"
               >
                 Ir al inicio
@@ -152,7 +152,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 // Component-level error boundary for smaller sections
 export function ComponentErrorBoundary({
   children,
-  componentName = 'Component',
+  componentName = "Component",
 }: {
   children: ReactNode;
   componentName?: string;

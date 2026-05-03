@@ -1,18 +1,17 @@
 import { test, expect } from "@playwright/test";
 
-const BASE_URL = "http://localhost:3001";
 const TENANT = "centro-tenistico";
 
 test.describe("Centro Tenístico — Landing Page", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto(`${BASE_URL}/t/${TENANT}`, {
+    await page.goto(`/t/${TENANT}`, {
       waitUntil: "domcontentloaded",
       timeout: 60000,
     });
   });
 
   test("carga sin errores (no 500)", async ({ page }) => {
-    const response = await page.goto(`${BASE_URL}/t/${TENANT}`);
+    const response = await page.goto(`/t/${TENANT}`);
     expect(response?.status()).not.toBe(500);
     expect(response?.status()).not.toBe(404);
   });

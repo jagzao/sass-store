@@ -10,7 +10,7 @@ import { eq } from "drizzle-orm";
  */
 export async function verifyTenantAccess(
   request: NextRequest,
-  tenantSlug: string
+  tenantSlug: string,
 ) {
   try {
     // Get session
@@ -61,14 +61,14 @@ export async function verifyTenantAccess(
  */
 export function createTenantResponse(
   data: any,
-  status: number = 200
+  status: number = 200,
 ): NextResponse {
   return NextResponse.json(data, { status });
 }
 
 export function createTenantError(
   error: string,
-  status: number = 500
+  status: number = 500,
 ): NextResponse {
   return NextResponse.json({ error }, { status });
 }
@@ -77,11 +77,11 @@ export function createTenantError(
  * Higher-order function to wrap API handlers with tenant verification
  */
 export function withTenantVerification(
-  handler: (request: NextRequest, tenantData: any) => Promise<NextResponse>
+  handler: (request: NextRequest, tenantData: any) => Promise<NextResponse>,
 ) {
   return async function tenantProtectedHandler(
     request: NextRequest,
-    context: { params: { tenant: string } }
+    context: { params: { tenant: string } },
   ) {
     const tenantSlug = context.params.tenant;
 
@@ -94,7 +94,7 @@ export function withTenantVerification(
     if (!accessResult.hasAccess) {
       return createTenantError(
         accessResult.error || "Access denied",
-        accessResult.status || 403
+        accessResult.status || 403,
       );
     }
 

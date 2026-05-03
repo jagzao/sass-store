@@ -9,16 +9,22 @@ function AuthErrorContent() {
   const error = searchParams.get("error");
 
   const errorMessages: { [key: string]: string } = {
-    TenantMismatch: "You are trying to access a different tenant. Please log in to the correct tenant.",
+    TenantMismatch:
+      "You are trying to access a different tenant. Please log in to the correct tenant.",
     Default: "An authentication error occurred. Please try again.",
   };
 
-  const message = error && errorMessages[error] ? errorMessages[error] : errorMessages.Default;
+  const message =
+    error && errorMessages[error]
+      ? errorMessages[error]
+      : errorMessages.Default;
 
   return (
     <div className="min-h-screen bg-red-50 flex items-center justify-center">
       <div className="bg-white p-8 rounded-lg shadow-md max-w-md text-center">
-        <h1 className="text-2xl font-bold text-red-600 mb-4">Authentication Error</h1>
+        <h1 className="text-2xl font-bold text-red-600 mb-4">
+          Authentication Error
+        </h1>
         <p className="text-gray-700 mb-4">{message}</p>
         <Link
           href="/"
@@ -33,13 +39,15 @@ function AuthErrorContent() {
 
 export default function AuthErrorPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-red-50 flex items-center justify-center">
-        <div className="bg-white p-8 rounded-lg shadow-md max-w-md text-center">
-          <h1 className="text-2xl font-bold text-red-600 mb-4">Loading...</h1>
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-red-50 flex items-center justify-center">
+          <div className="bg-white p-8 rounded-lg shadow-md max-w-md text-center">
+            <h1 className="text-2xl font-bold text-red-600 mb-4">Loading...</h1>
+          </div>
         </div>
-      </div>
-    }>
+      }
+    >
       <AuthErrorContent />
     </Suspense>
   );

@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@sass-store/database";
-import { products, serviceProducts, services } from "@sass-store/database/schema";
+import {
+  products,
+  serviceProducts,
+  services,
+} from "@sass-store/database/schema";
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 import {
@@ -82,14 +86,25 @@ export async function GET(request: NextRequest, context: RouteParams) {
     const product = await db
       .select({ id: products.id })
       .from(products)
-      .where(and(eq(products.tenantId, tenantContext.data.tenantId), eq(products.id, productId)))
+      .where(
+        and(
+          eq(products.tenantId, tenantContext.data.tenantId),
+          eq(products.id, productId),
+        ),
+      )
       .limit(1);
 
     if (!product[0]) {
-      return NextResponse.json({ error: "Producto no encontrado" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Producto no encontrado" },
+        { status: 404 },
+      );
     }
 
-    const data = await getRelationsAndServices(tenantContext.data.tenantId, productId);
+    const data = await getRelationsAndServices(
+      tenantContext.data.tenantId,
+      productId,
+    );
     return NextResponse.json(data);
   } catch (error: any) {
     console.error("Error en GET /api/inventory/[productId]/services:", error);
@@ -139,11 +154,17 @@ export async function POST(request: NextRequest, context: RouteParams) {
     ]);
 
     if (!product[0]) {
-      return NextResponse.json({ error: "Producto no encontrado" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Producto no encontrado" },
+        { status: 404 },
+      );
     }
 
     if (!service[0]) {
-      return NextResponse.json({ error: "Servicio no encontrado" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Servicio no encontrado" },
+        { status: 404 },
+      );
     }
 
     const existing = await db
@@ -174,7 +195,10 @@ export async function POST(request: NextRequest, context: RouteParams) {
       metadata: {},
     });
 
-    const data = await getRelationsAndServices(tenantContext.data.tenantId, productId);
+    const data = await getRelationsAndServices(
+      tenantContext.data.tenantId,
+      productId,
+    );
     return NextResponse.json(data, { status: 201 });
   } catch (error) {
     console.error("Error en POST /api/inventory/[productId]/services:", error);
@@ -187,9 +211,8 @@ export async function POST(request: NextRequest, context: RouteParams) {
     }
 
     return NextResponse.json(
-      { error: error?.message || "Error interno del servidor" },
+      { error: (error as any)?.message || "Error interno del servidor" },
       { status: 500 },
     );
   }
 }
-

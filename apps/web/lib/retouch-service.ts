@@ -33,21 +33,18 @@ export class RetouchService {
         .limit(1);
 
       if (!customer.length) {
-        return Err({
-          type: "NotFoundError",
-          resource: "customer",
-          message: `Customer with ID ${customerId} not found`,
-        });
+        return Err(ErrorFactories.notFound("Customer", customerId));
       }
 
       // Determine which service to use for retouch calculation
       const targetServiceId = serviceId || customer[0].retouchServiceId;
       if (!targetServiceId) {
-        return Err({
-          type: "ValidationError",
-          field: "serviceId",
-          message: "No service specified for retouch calculation",
-        });
+        return Err(
+          ErrorFactories.validation(
+            "No service specified for retouch calculation",
+            "serviceId",
+          ),
+        );
       }
 
       // Get service retouch configuration
@@ -64,11 +61,12 @@ export class RetouchService {
         .limit(1);
 
       if (!retouchConfig.length) {
-        return Err({
-          type: "NotFoundError",
-          resource: "retouch_config",
-          message: `No active retouch configuration found for service ${targetServiceId}`,
-        });
+        return Err(
+          ErrorFactories.notFound(
+            "Retouch configuration",
+            `service ${targetServiceId}`,
+          ),
+        );
       }
 
       // Get customer's last visit
@@ -88,12 +86,12 @@ export class RetouchService {
         .limit(1);
 
       if (!lastVisit.length) {
-        return Err({
-          type: "ValidationError",
-          field: "visits",
-          message:
+        return Err(
+          ErrorFactories.validation(
             "Customer has no completed visits to calculate retouch date from",
-        });
+            "visits",
+          ),
+        );
       }
 
       const lastVisitDate = new Date(lastVisit[0].visitDate);
@@ -124,11 +122,14 @@ export class RetouchService {
 
       return Ok(nextRetouchDate);
     } catch (error) {
-      return Err({
-        type: "DatabaseError",
-        operation: "calculate_retouch_date",
-        message: `Failed to calculate retouch date for customer ${customerId}`,
-      });
+      return Err(
+        ErrorFactories.database(
+          "calculate_retouch_date",
+          `Failed to calculate retouch date for customer ${customerId}`,
+          undefined,
+          error as Error,
+        ),
+      );
     }
   }
 
@@ -147,11 +148,11 @@ export class RetouchService {
         serviceId,
       );
 
-      if (calculationResult.isErr) {
+      if (!calculationResult.success) {
         return calculationResult;
       }
 
-      const nextRetouchDate = calculationResult.value;
+      const nextRetouchDate = calculationResult.data;
 
       // Update customer's next retouch date
       await db
@@ -166,11 +167,14 @@ export class RetouchService {
 
       return Ok(nextRetouchDate);
     } catch (error) {
-      return Err({
-        type: "DatabaseError",
-        operation: "update_retouch_date",
-        message: `Failed to update retouch date for customer ${customerId}`,
-      });
+      return Err(
+        ErrorFactories.database(
+          "update_retouch_date",
+          `Failed to update retouch date for customer ${customerId}`,
+          undefined,
+          error as Error,
+        ),
+      );
     }
   }
 
@@ -212,6 +216,7 @@ export class RetouchService {
       // Calculate days until retouch for each customer
       const customersWithDays = customerList.map((customer) => ({
         ...customer,
+        phone: customer.phone ?? "",
         daysUntilRetouch: customer.nextRetouchDate
           ? Math.ceil(
               (customer.nextRetouchDate.getTime() - new Date().getTime()) /
@@ -222,11 +227,14 @@ export class RetouchService {
 
       return Ok(customersWithDays);
     } catch (error) {
-      return Err({
-        type: "DatabaseError",
-        operation: "get_customers_by_retouch",
-        message: `Failed to get customers by retouch date for tenant ${tenantId}`,
-      });
+      return Err(
+        ErrorFactories.database(
+          "get_customers_by_retouch",
+          `Failed to get customers by retouch date for tenant ${tenantId}`,
+          undefined,
+          error as Error,
+        ),
+      );
     }
   }
 
@@ -264,13 +272,21 @@ export class RetouchService {
         .leftJoin(services, eq(serviceRetouchConfig.serviceId, services.id))
         .where(eq(serviceRetouchConfig.tenantId, tenantId));
 
-      return Ok(configs);
+      return Ok(
+        configs.map((c) => ({
+          ...c,
+          serviceName: c.serviceName ?? "",
+        })),
+      );
     } catch (error) {
-      return Err({
-        type: "DatabaseError",
-        operation: "get_retouch_configs",
-        message: `Failed to get retouch configurations for tenant ${tenantId}`,
-      });
+      return Err(
+        ErrorFactories.database(
+          "get_retouch_configs",
+          `Failed to get retouch configurations for tenant ${tenantId}`,
+          undefined,
+          error as Error,
+        ),
+      );
     }
   }
 
@@ -294,11 +310,7 @@ export class RetouchService {
         .limit(1);
 
       if (!service.length) {
-        return Err({
-          type: "NotFoundError",
-          resource: "service",
-          message: `Service with ID ${serviceId} not found for tenant ${tenantId}`,
-        });
+        return Err(ErrorFactories.notFound("Service", serviceId));
       }
 
       // If setting as default, remove default from other configs
@@ -343,11 +355,14 @@ export class RetouchService {
 
       return Ok(undefined);
     } catch (error) {
-      return Err({
-        type: "DatabaseError",
-        operation: "upsert_retouch_config",
-        message: `Failed to upsert retouch configuration for service ${serviceId}`,
-      });
+      return Err(
+        ErrorFactories.database(
+          "upsert_retouch_config",
+          `Failed to upsert retouch configuration for service ${serviceId}`,
+          undefined,
+          error as Error,
+        ),
+      );
     }
   }
 

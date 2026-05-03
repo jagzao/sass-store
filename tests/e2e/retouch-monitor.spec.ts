@@ -9,7 +9,9 @@ test.describe("Retouch Monitor & Appointment Details Dashboard", () => {
     await loginAsAdmin(page);
   });
 
-  test("displays the Retouch Monitor section and UI correctly", async ({ page }) => {
+  test("displays the Retouch Monitor section and UI correctly", async ({
+    page,
+  }) => {
     await page.goto(adminUrl, { timeout: 60000 });
     await page.waitForLoadState("domcontentloaded", { timeout: 60000 });
     // Esperar a que cargue cualquier contenido del dashboard
@@ -20,7 +22,9 @@ test.describe("Retouch Monitor & Appointment Details Dashboard", () => {
     expect(bodyText).toMatch(/Monitor|Retoque|Citas|Dashboard/i);
   });
 
-  test("displays the Calendar Details Modal when clicking an appointment today", async ({ page }) => {
+  test("displays the Calendar Details Modal when clicking an appointment today", async ({
+    page,
+  }) => {
     await page.goto(`${adminUrl}/calendar`, { timeout: 60000 });
     await page.waitForLoadState("networkidle");
 
@@ -37,7 +41,9 @@ test.describe("Retouch Monitor & Appointment Details Dashboard", () => {
       const detailButtons = page.getByRole("button", { name: /Ver Detalles/i });
       if ((await detailButtons.count()) > 0) {
         await detailButtons.first().click();
-        await expect(page.getByRole("heading", { name: /DETALLE/i })).toBeVisible({ timeout: 5000 });
+        await expect(
+          page.getByRole("heading", { name: /DETALLE/i }),
+        ).toBeVisible({ timeout: 5000 });
       } else {
         console.log("No detail buttons found; skipping");
         test.skip();

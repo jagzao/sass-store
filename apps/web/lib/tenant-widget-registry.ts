@@ -10,7 +10,7 @@ export interface TenantWidget<P = any> {
 
 export interface TenantWidgetConfig {
   heroCarousel?: TenantWidget;
-  // Futuros widgets se pueden añadir aquí
+  // Futuros widgets se pueden aÃ±adir aquÃ­
   // footer?: TenantWidget;
   // navbar?: TenantWidget;
   // productGrid?: TenantWidget;
@@ -33,23 +33,21 @@ class TenantWidgetRegistry {
   }
 
   private initializeRegistry() {
-    // Wondernails widgets con import dinámico
+    // Wondernails widgets con import dinÃ¡mico
     this.widgets.set("wondernails", {
       heroCarousel: {
         component: lazy(
           () =>
-            import(
-              "../components/tenant/wondernails/hero/HeroWondernailsFinal"
-            ),
+            import("../components/tenant/wondernails/hero/HeroWondernailsFinal"),
         ),
         name: "HeroWondernailsFinal",
         description:
-          "Hero carousel exclusivo para Wondernails con GSAP + Flip (sin drift, VER MÁS funcional, autoplay 5s)",
+          "Hero carousel exclusivo para Wondernails con GSAP + Flip (sin drift, VER MÃS funcional, autoplay 5s)",
         requiredProps: [],
       },
     });
 
-    // NomNom widgets con import dinámico
+    // NomNom widgets con import dinÃ¡mico
     this.widgets.set("nom-nom", {
       heroCarousel: {
         component: lazy(
@@ -62,13 +60,13 @@ class TenantWidgetRegistry {
       },
     });
 
-    // Delirios widgets con import dinámico
+    // Delirios widgets con import dinÃ¡mico
     this.widgets.set("delirios", {
       heroCarousel: {
         component: lazy(() => import("../components/hero/HeroDeliriosWrapper")),
         name: "HeroDelirios",
         description:
-          "Hero slider fullscreen con círculos concéntricos, texto circular animado, blur de fondo, GSAP avanzado",
+          "Hero slider fullscreen con cÃ­rculos concÃ©ntricos, texto circular animado, blur de fondo, GSAP avanzado",
         requiredProps: [],
       },
     });
@@ -82,12 +80,12 @@ class TenantWidgetRegistry {
           })),
         ),
         name: "CarouselHero",
-        description: "Hero carousel genérico para todos los tenants",
+        description: "Hero carousel genÃ©rico para todos los tenants",
         requiredProps: ["tenantData"],
       },
     });
 
-    // Otros tenants pueden añadirse aquí
+    // Otros tenants pueden aÃ±adirse aquÃ­
     // this.widgets.set('nom-nom', { ... });
     // this.widgets.set('centro-tenistico', { ... });
   }
@@ -96,7 +94,7 @@ class TenantWidgetRegistry {
     tenantSlug: string,
     widgetType: keyof TenantWidgetConfig,
   ): TenantWidget | null {
-    // Buscar widget específico del tenant
+    // Buscar widget especÃ­fico del tenant
     const tenantWidgets = this.widgets.get(tenantSlug);
     if (tenantWidgets?.[widgetType]) {
       return tenantWidgets[widgetType]!;
@@ -161,13 +159,13 @@ export function logTenantWidgetInfo(tenantSlug: string) {
   const registry = TenantWidgetRegistry.getInstance();
   const widgets = registry.getTenantWidgets(tenantSlug);
 
-  console.group(`🎨 Tenant Widgets: ${tenantSlug}`);
+  console.warn(`ðŸŽ¨ Tenant Widgets: ${tenantSlug}`);
   if (widgets) {
     Object.entries(widgets).forEach(([type, widget]) => {
-      console.log(`${type}: ${widget.name}`, widget.description || "");
+      console.warn(`${type}: ${widget.name}`, widget.description || "");
     });
   } else {
-    console.log("Using default widgets");
+    console.warn("Using default widgets");
   }
-  console.groupEnd();
+  console.warn();
 }

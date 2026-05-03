@@ -1,6 +1,12 @@
 "use client";
 
-import { useState, useEffect, useRef, useImperativeHandle, forwardRef } from "react";
+import {
+  useState,
+  useEffect,
+  useRef,
+  useImperativeHandle,
+  forwardRef,
+} from "react";
 import { useRouter } from "next/navigation";
 import {
   User,
@@ -26,7 +32,10 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import HistorialMedico, { type HistorialMedicoData, type HistorialMedicoHandle } from "./HistorialMedico";
+import HistorialMedico, {
+  type HistorialMedicoData,
+  type HistorialMedicoHandle,
+} from "./HistorialMedico";
 
 export interface CustomerFileHeaderHandle {
   saveHistorial: () => Promise<void>;
@@ -48,11 +57,10 @@ interface CustomerFileHeaderProps {
   customerId: string;
 }
 
-const CustomerFileHeader = forwardRef<CustomerFileHeaderHandle, CustomerFileHeaderProps>(
-function CustomerFileHeader({
-  tenantSlug,
-  customerId,
-}, ref) {
+const CustomerFileHeader = forwardRef<
+  CustomerFileHeaderHandle,
+  CustomerFileHeaderProps
+>(function CustomerFileHeader({ tenantSlug, customerId }, ref) {
   const historialRef = useRef<HistorialMedicoHandle>(null);
 
   useImperativeHandle(ref, () => ({
@@ -519,10 +527,12 @@ function CustomerFileHeader({
         tenantSlug={tenantSlug}
         customerId={customerId}
         initialData={{
-          musicaFavorita: (customer as any).medicalHistory?.musicaFavorita || "",
+          musicaFavorita:
+            (customer as any).medicalHistory?.musicaFavorita || "",
           snackFavorito: (customer as any).medicalHistory?.snackFavorito || "",
           enfermedades: (customer as any).medicalHistory?.enfermedades || {},
-          contraindicaciones: (customer as any).medicalHistory?.contraindicaciones || "",
+          contraindicaciones:
+            (customer as any).medicalHistory?.contraindicaciones || "",
           medidas: (customer as any).medicalHistory?.medidas || {},
           formaUna: (customer as any).medicalHistory?.formaUna || "",
           largoDeseado: (customer as any).medicalHistory?.largoDeseado || "",

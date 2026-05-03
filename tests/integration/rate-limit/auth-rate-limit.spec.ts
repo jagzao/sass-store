@@ -121,17 +121,29 @@ describe("Auth Rate Limiting - Integration Tests", () => {
 
       // Exhaust limit for tenant A
       for (let i = 0; i < limit; i++) {
-        const request = createMockRequest({ ip, tenant: tenant1, path: "/api/auth/login" });
+        const request = createMockRequest({
+          ip,
+          tenant: tenant1,
+          path: "/api/auth/login",
+        });
         await applyRateLimit(request, "auth");
       }
 
       // Tenant A should be rate limited
-      const request1 = createMockRequest({ ip, tenant: tenant1, path: "/api/auth/login" });
+      const request1 = createMockRequest({
+        ip,
+        tenant: tenant1,
+        path: "/api/auth/login",
+      });
       const response1 = await applyRateLimit(request1, "auth");
       expect(response1?.status).toBe(429);
 
       // Tenant B should still be allowed (same IP, different tenant)
-      const request2 = createMockRequest({ ip, tenant: tenant2, path: "/api/auth/login" });
+      const request2 = createMockRequest({
+        ip,
+        tenant: tenant2,
+        path: "/api/auth/login",
+      });
       const response2 = await applyRateLimit(request2, "auth");
       expect(response2).toBeNull();
     });
@@ -226,7 +238,9 @@ describe("Auth Rate Limiting - Integration Tests", () => {
       let handlerCalled = 0;
       const mockHandler = async () => {
         handlerCalled++;
-        return new NextResponse(JSON.stringify({ success: true }), { status: 200 });
+        return new NextResponse(JSON.stringify({ success: true }), {
+          status: 200,
+        });
       };
 
       const protectedHandler = withRateLimit(mockHandler, "auth");
@@ -280,7 +294,14 @@ describe("Auth Rate Limiting - Integration Tests", () => {
 
   describe("Rate Limit Configuration Validation", () => {
     it("should have valid configurations for all endpoint types", () => {
-      const types = ["auth", "general", "customers", "services", "upload", "admin"] as const;
+      const types = [
+        "auth",
+        "general",
+        "customers",
+        "services",
+        "upload",
+        "admin",
+      ] as const;
 
       types.forEach((type) => {
         const config = RATE_LIMIT_CONFIGS[type];
@@ -298,7 +319,9 @@ describe("Auth Rate Limiting - Integration Tests", () => {
       const generalConfig = RATE_LIMIT_CONFIGS.general;
 
       expect(authConfig.maxRequests).toBeLessThan(generalConfig.maxRequests);
-      expect(authConfig.windowMs).toBeGreaterThanOrEqual(generalConfig.windowMs);
+      expect(authConfig.windowMs).toBeGreaterThanOrEqual(
+        generalConfig.windowMs,
+      );
     });
   });
 });

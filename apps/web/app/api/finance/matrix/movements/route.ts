@@ -44,4 +44,3 @@ export const POST = withResultHandler(async (request: NextRequest) => {
     amount: String(parsed.data.amount),
   });
 });
-

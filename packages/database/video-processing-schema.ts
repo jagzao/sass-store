@@ -31,7 +31,7 @@ export const videoProcessingJobs = pgTable(
     audioFile: text("audio_file"),
     textOverlay: text("text_overlay"),
     overlayType: varchar("overlay_type", { length: 50 }).default(
-      "golden-frame"
+      "golden-frame",
     ),
 
     // Processing configuration
@@ -58,7 +58,7 @@ export const videoProcessingJobs = pgTable(
     statusIdx: index("video_jobs_status_idx").on(table.status),
     priorityIdx: index("video_jobs_priority_idx").on(table.priority),
     createdIdx: index("video_jobs_created_idx").on(table.createdAt),
-  })
+  }),
 );
 
 // Video Processing Assets table
@@ -79,7 +79,7 @@ export const videoProcessingAssets = pgTable(
   (table) => ({
     tenantIdx: index("video_assets_tenant_idx").on(table.tenantId),
     assetTypeIdx: index("video_assets_asset_type_idx").on(table.assetType),
-  })
+  }),
 );
 
 // Relations
@@ -90,7 +90,7 @@ export const videoProcessingJobsRelations = relations(
       fields: [videoProcessingJobs.tenantId],
       references: [tenants.id],
     }),
-  })
+  }),
 );
 
 export const videoProcessingAssetsRelations = relations(
@@ -100,7 +100,7 @@ export const videoProcessingAssetsRelations = relations(
       fields: [videoProcessingAssets.tenantId],
       references: [tenants.id],
     }),
-  })
+  }),
 );
 
 // Add video processing relations to existing tenants relations
@@ -109,5 +109,5 @@ export const tenantsVideoProcessingRelations = relations(
   ({ many }) => ({
     videoProcessingJobs: many(videoProcessingJobs),
     videoProcessingAssets: many(videoProcessingAssets),
-  })
+  }),
 );

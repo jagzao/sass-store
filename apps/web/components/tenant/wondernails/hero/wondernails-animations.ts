@@ -1,4 +1,3 @@
- 
 /**
  * Wondernails Carousel Animation Configuration
  *

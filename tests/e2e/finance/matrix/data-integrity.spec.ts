@@ -74,11 +74,14 @@ test.describe("Financial Matrix - Seguridad/Integridad (P0/P1)", () => {
       return;
     }
 
-    const matrixOnTenantB = (await waitForMatrixRenderState(page, 10000)) === "grid-ready";
+    const matrixOnTenantB =
+      (await waitForMatrixRenderState(page, 10000)) === "grid-ready";
 
     if (!matrixOnTenantB) {
       // Si B no tiene matriz disponible, validar al menos que no haya fuga del monto de A
-      await expect(page.getByText(uniqueAmountText, { exact: false })).toHaveCount(0);
+      await expect(
+        page.getByText(uniqueAmountText, { exact: false }),
+      ).toHaveCount(0);
       return;
     }
 
@@ -88,9 +91,10 @@ test.describe("Financial Matrix - Seguridad/Integridad (P0/P1)", () => {
       endDate: MATRIX_TEST_DATES.emptyMonth2030.end,
     });
 
-    await expect(page.getByText(uniqueAmountText, { exact: false })).toHaveCount(0);
+    await expect(
+      page.getByText(uniqueAmountText, { exact: false }),
+    ).toHaveCount(0);
   });
-
 });
 
 test.describe("Financial Matrix - Seguridad/Integridad (P1 pendiente)", () => {
@@ -103,4 +107,3 @@ test.describe("Financial Matrix - Seguridad/Integridad (P1 pendiente)", () => {
     // skip justificado arriba
   });
 });
-

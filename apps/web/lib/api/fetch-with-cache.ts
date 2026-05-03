@@ -116,9 +116,7 @@ export async function fetchWithCache<T = unknown>(
     } else {
       // External API calls (if ever needed)
       const baseUrl =
-        process.env.API_URL ||
-        process.env.NEXT_PUBLIC_API_URL ||
-        "";
+        process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || "";
       fullUrl = url.startsWith("http") ? url : `${baseUrl}${url}`;
       // eslint-disable-next-line no-console
       console.log(`[fetchWithCache] SERVER - External API: ${fullUrl}`);
@@ -135,10 +133,11 @@ export async function fetchWithCache<T = unknown>(
     const response = await fetch(fullUrl, finalConfig);
 
     if (!response.ok) {
-      throw new Error(
+      const err = new Error(
         `Fetch failed: ${response.status} ${response.statusText}`,
-        { cause: response },
       );
+      (err as any).cause = response;
+      throw err;
     }
 
     return response.json();

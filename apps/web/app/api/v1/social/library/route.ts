@@ -97,10 +97,10 @@ export async function GET(request: NextRequest) {
     // Apply sorting
     switch (sortBy) {
       case "name":
-        query = query.orderBy(socialPosts.title);
+        query = (query as any).orderBy(socialPosts.title);
         break;
       case "usage":
-        query = query.orderBy(
+        query = (query as any).orderBy(
           desc(
             sql`CAST(COALESCE(${socialPosts.metadata}->>'usageCount', '0') AS INTEGER)`,
           ),
@@ -108,7 +108,7 @@ export async function GET(request: NextRequest) {
         break;
       case "recent":
       default:
-        query = query.orderBy(desc(socialPosts.updatedAt));
+        query = (query as any).orderBy(desc(socialPosts.updatedAt));
         break;
     }
 

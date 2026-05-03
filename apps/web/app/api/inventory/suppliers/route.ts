@@ -20,7 +20,9 @@ const createSupplierSchema = z.object({
 });
 
 const sortSuppliers = (suppliers: SupplierEntity[]) =>
-  [...suppliers].sort((a, b) => a.name.localeCompare(b.name, "es", { sensitivity: "base" }));
+  [...suppliers].sort((a, b) =>
+    a.name.localeCompare(b.name, "es", { sensitivity: "base" }),
+  );
 
 export async function GET() {
   const tenantContext = await resolveInventoryTenantContext();
@@ -98,4 +100,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-

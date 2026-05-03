@@ -9,8 +9,10 @@ import { cleanupTestData } from "./test-database";
 type HookRegistrar = (hook: () => Promise<void> | void) => void;
 
 const registerCleanupHooks = () => {
-  const maybeBeforeEach = (globalThis as { beforeEach?: HookRegistrar }).beforeEach;
-  const maybeAfterEach = (globalThis as { afterEach?: HookRegistrar }).afterEach;
+  const maybeBeforeEach = (globalThis as { beforeEach?: HookRegistrar })
+    .beforeEach;
+  const maybeAfterEach = (globalThis as { afterEach?: HookRegistrar })
+    .afterEach;
 
   // Guard to avoid executing hook registration in non-runner contexts
   if (typeof maybeBeforeEach === "function") {

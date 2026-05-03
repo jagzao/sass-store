@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { motion } from 'framer-motion';
-import { ReactNode } from 'react';
+import { motion } from "framer-motion";
+import { ReactNode } from "react";
 
 interface PageTransitionProps {
   children: ReactNode;
@@ -13,27 +13,30 @@ const pageVariants = {
   initial: {
     opacity: 0,
     y: 20,
-    scale: 0.98
+    scale: 0.98,
   },
   in: {
     opacity: 1,
     y: 0,
-    scale: 1
+    scale: 1,
   },
   out: {
     opacity: 0,
     y: -20,
-    scale: 1.02
-  }
+    scale: 1.02,
+  },
 };
 
 const pageTransition = {
-  type: 'tween',
+  type: "tween",
   ease: [0.25, 0.1, 0.25, 1], // Custom ease-in-out for smoothness
-  duration: 0.6
+  duration: 0.6,
 };
 
-export function PageTransition({ children, className = '' }: PageTransitionProps) {
+export function PageTransition({
+  children,
+  className = "",
+}: PageTransitionProps) {
   return (
     <motion.div
       initial="initial"
@@ -52,20 +55,20 @@ export function PageTransition({ children, className = '' }: PageTransitionProps
 export const slideVariants = {
   initial: (direction: number) => ({
     x: direction > 0 ? 300 : -300,
-    opacity: 0
+    opacity: 0,
   }),
   in: {
     x: 0,
-    opacity: 1
+    opacity: 1,
   },
   out: (direction: number) => ({
     x: direction < 0 ? 300 : -300,
-    opacity: 0
-  })
+    opacity: 0,
+  }),
 };
 
 export const slideTransition = {
-  type: 'spring',
+  type: "spring",
   stiffness: 300,
-  damping: 30
+  damping: 30,
 };

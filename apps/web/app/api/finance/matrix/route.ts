@@ -53,4 +53,3 @@ export const GET = withResultHandler(async (request: NextRequest) => {
     entityId: data.entityId,
   });
 });
-

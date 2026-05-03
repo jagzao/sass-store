@@ -88,7 +88,7 @@ export function useUserRole(): UseUserRoleResult {
       isLoading,
       isAuthenticated,
     }),
-    [role, normalizedRole, isLoading, isAuthenticated]
+    [role, normalizedRole, isLoading, isAuthenticated],
   );
 }
 

@@ -16,7 +16,6 @@ import {
 } from "@sass-store/core";
 import { verifyAuthToken } from "@sass-store/core/src/middleware/auth-middleware";
 
-
 // Known tenant slugs from seed data
 const KNOWN_TENANTS = [
   "wondernails",
@@ -125,9 +124,7 @@ export async function middleware(request: NextRequest) {
       );
 
       if (!csrfTokenFromHeader || !csrfTokenFromCookie) {
-        console.warn(
-          `[SECURITY] Missing CSRF token for ${method} ${pathname}`,
-        );
+        // SECURITY: Redacted sensitive log;
         return new NextResponse("CSRF token missing", { status: 403 });
       }
 
@@ -137,9 +134,7 @@ export async function middleware(request: NextRequest) {
         csrfTokenFromCookie,
       );
       if (!isValid) {
-        console.warn(
-          `[SECURITY] Invalid CSRF token for ${method} ${pathname}`,
-        );
+        // SECURITY: Redacted sensitive log;
         return new NextResponse("Invalid CSRF token", { status: 403 });
       }
     }
@@ -204,7 +199,7 @@ export async function middleware(request: NextRequest) {
         urlTenantSlug !== resolvedTenant.slug &&
         !KNOWN_TENANTS.includes(urlTenantSlug)
       ) {
-        console.log(
+        console.warn(
           `Tenant URL '${urlTenantSlug}' might be new or custom domain. Passing to app layer.`,
         );
       }
@@ -255,7 +250,9 @@ export async function middleware(request: NextRequest) {
       // Set cookie with the hash
       response.cookies.set(CSRF_COOKIE_NAME, csrfHash, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production" && !request.url.includes("localhost"),
+        secure:
+          process.env.NODE_ENV === "production" &&
+          !request.url.includes("localhost"),
         sameSite: "lax", // Changed from strict to lax to allow testing without HTTPS
         path: "/",
         maxAge: 60 * 60 * 24, // 24 hours
@@ -269,7 +266,7 @@ export async function middleware(request: NextRequest) {
   // Log metrics for unknown hosts
   const unknownHostRate = (unknownHostCount / totalHostResolutions) * 100;
   if (unknownHostRate > 5) {
-    console.log(
+    console.warn(
       `High unknown host rate: ${unknownHostRate.toFixed(2)}% (${unknownHostCount}/${totalHostResolutions})`,
     );
   }
@@ -280,7 +277,7 @@ export async function middleware(request: NextRequest) {
 /**
  * Set tenant headers on response
  */
-function setTenantHeaders(response: NextResponse, tenant: ResolvedTenant) {
+function setTenantHeaders(response: NextResponse, tenant: any) {
   response.headers.set("x-tenant", tenant.slug);
   response.headers.set("x-tenant-id", tenant.id);
   response.headers.set("x-tenant-mode", tenant.featureMode);
@@ -334,7 +331,11 @@ async function resolveTenantStrict(
     request.headers.get("x-internal-request") === "true" ||
     request.headers.get("user-agent")?.includes("internal-service");
 
-  if (tenantHeader && isInternalRequest && KNOWN_TENANTS.includes(tenantHeader)) {
+  if (
+    tenantHeader &&
+    isInternalRequest &&
+    KNOWN_TENANTS.includes(tenantHeader)
+  ) {
     return {
       tenant: buildTenantResponse(tenantHeader),
       source: "header",
@@ -369,7 +370,7 @@ async function resolveTenantStrict(
 
   // Fallback: Use default tenant and log
   unknownHostCount++;
-  console.log(
+  console.warn(
     `[TenantResolution] Unknown host '${host}' using fallback tenant 'zo-system'`,
   );
   return {

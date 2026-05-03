@@ -40,7 +40,9 @@ test.describe("Financial Matrix - Interacción Matriz (P0)", () => {
     });
   });
 
-  test("crear valor planeado en celda vacía y persistir tras recargar", async ({ page }) => {
+  test("crear valor planeado en celda vacía y persistir tras recargar", async ({
+    page,
+  }) => {
     await setMatrixFilters(page, {
       granularity: "month",
       startDate: "2032-03-01",
@@ -53,11 +55,19 @@ test.describe("Financial Matrix - Interacción Matriz (P0)", () => {
     await openQuickEntry(page, target.categoryId, target.bucketId);
     await saveProjectedAmount(page, plannedAmount);
 
-    await expect(page.getByText("Planeación guardada correctamente")).toBeVisible({
+    await expect(
+      page.getByText("Planeación guardada correctamente"),
+    ).toBeVisible({
       timeout: 15000,
     });
 
-    await waitForCellAmount(page, target.categoryId, target.bucketId, "P", 1234.56);
+    await waitForCellAmount(
+      page,
+      target.categoryId,
+      target.bucketId,
+      "P",
+      1234.56,
+    );
 
     const afterSave = await getCellProjectedAndReal(
       page,
@@ -110,11 +120,15 @@ test.describe("Financial Matrix - Interacción Matriz (P0)", () => {
       target.categoryId,
       target.bucketId,
     );
-    const expectedRealAfterPayment = Number((initialValues.real + paymentAmountNumber).toFixed(2));
+    const expectedRealAfterPayment = Number(
+      (initialValues.real + paymentAmountNumber).toFixed(2),
+    );
 
     await openQuickEntry(page, target.categoryId, target.bucketId);
     await saveProjectedAmount(page, plannedAmount);
-    await expect(page.getByText("Planeación guardada correctamente")).toBeVisible({
+    await expect(
+      page.getByText("Planeación guardada correctamente"),
+    ).toBeVisible({
       timeout: 15000,
     });
 
@@ -151,4 +165,3 @@ test.describe("Financial Matrix - Interacción Matriz (P0)", () => {
     // por dependencia de módulos externos y estabilidad de datos entre entornos.
   });
 });
-

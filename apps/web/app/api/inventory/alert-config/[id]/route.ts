@@ -37,7 +37,9 @@ export async function GET(request: NextRequest, context: RouteParams) {
     const configId = (await context.params).id;
 
     // Obtener configuración de alerta de inventario
-    const result = await inventoryService.getDatabase().getAlertConfig(configId);
+    const result = await inventoryService
+      .getDatabase()
+      .getAlertConfig(configId);
 
     if (!result) {
       return NextResponse.json(
@@ -78,7 +80,9 @@ export async function PUT(request: NextRequest, context: RouteParams) {
     const configId = (await context.params).id;
 
     // Check existing config
-    const existing = await inventoryService.getDatabase().getAlertConfig(configId);
+    const existing = await inventoryService
+      .getDatabase()
+      .getAlertConfig(configId);
     if (!existing) {
       return NextResponse.json(
         { error: "Configuración de alerta de inventario no encontrada" },
@@ -99,7 +103,9 @@ export async function PUT(request: NextRequest, context: RouteParams) {
     const validatedData = updateAlertConfigSchema.parse(body);
 
     // Actualizar configuración de alerta de inventario
-    const updated = await inventoryService.getDatabase().updateAlertConfig(configId, validatedData);
+    const updated = await inventoryService
+      .getDatabase()
+      .updateAlertConfig(configId, validatedData);
 
     return NextResponse.json(updated);
   } catch (error) {
@@ -136,7 +142,9 @@ export async function DELETE(request: NextRequest, context: RouteParams) {
     const configId = (await context.params).id;
 
     // Check existing config
-    const existing = await inventoryService.getDatabase().getAlertConfig(configId);
+    const existing = await inventoryService
+      .getDatabase()
+      .getAlertConfig(configId);
     if (!existing) {
       return NextResponse.json(
         { error: "Configuración de alerta de inventario no encontrada" },
@@ -154,7 +162,9 @@ export async function DELETE(request: NextRequest, context: RouteParams) {
 
     // Note: The InventoryServiceWithResultPattern doesn't have a deleteAlertConfig method
     // For now, we'll mark it as inactive instead
-    await inventoryService.getDatabase().updateAlertConfig(configId, { isActive: false });
+    await inventoryService
+      .getDatabase()
+      .updateAlertConfig(configId, { isActive: false });
 
     return NextResponse.json({
       message: "Configuración de alerta de inventario eliminada exitosamente",

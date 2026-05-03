@@ -125,7 +125,7 @@ export class SecurityAuditLogger {
    */
   private async alertHighRiskEvent(
     event: SecurityEvent,
-    riskScore: number
+    riskScore: number,
   ): Promise<void> {
     console.warn(
       `🚨 HIGH RISK SECURITY EVENT: ${event.type} (Risk: ${riskScore})`,
@@ -134,7 +134,7 @@ export class SecurityAuditLogger {
         tenantId: event.tenantId,
         ipAddress: event.ipAddress,
         details: event.details,
-      }
+      },
     );
 
     // Send alert to Slack if webhook is configured
@@ -142,7 +142,7 @@ export class SecurityAuditLogger {
       try {
         await this.sendSlackAlert(event, riskScore);
       } catch (error) {
-        console.error('Failed to send Slack alert:', error);
+        console.error("Failed to send Slack alert:", error);
       }
     }
 
@@ -151,7 +151,7 @@ export class SecurityAuditLogger {
       try {
         await this.sendEmailAlert(event, riskScore);
       } catch (error) {
-        console.error('Failed to send email alert:', error);
+        console.error("Failed to send email alert:", error);
       }
     }
   }
@@ -159,59 +159,63 @@ export class SecurityAuditLogger {
   /**
    * Send a Slack alert for high-risk events
    */
-  private async sendSlackAlert(event: SecurityEvent, riskScore: number): Promise<void> {
+  private async sendSlackAlert(
+    event: SecurityEvent,
+    riskScore: number,
+  ): Promise<void> {
     const message = {
       text: `🚨 HIGH RISK SECURITY EVENT`,
       attachments: [
         {
-          color: riskScore >= 9 ? "danger" : riskScore >= 7 ? "warning" : "#36a64f",
+          color:
+            riskScore >= 9 ? "danger" : riskScore >= 7 ? "warning" : "#36a64f",
           fields: [
             {
               title: "Event Type",
               value: event.type,
-              short: true
+              short: true,
             },
             {
               title: "Risk Score",
               value: riskScore.toString(),
-              short: true
+              short: true,
             },
             {
               title: "Severity",
               value: event.severity,
-              short: true
+              short: true,
             },
             {
               title: "Tenant ID",
               value: event.tenantId || "N/A",
-              short: true
+              short: true,
             },
             {
               title: "User ID",
               value: event.userId || "N/A",
-              short: true
+              short: true,
             },
             {
               title: "IP Address",
               value: event.ipAddress || "N/A",
-              short: true
+              short: true,
             },
             {
               title: "Details",
               value: JSON.stringify(event.details || {}, null, 2),
-              short: false
-            }
+              short: false,
+            },
           ],
           footer: "Security Alert System",
-          ts: Math.floor(Date.now() / 1000)
-        }
-      ]
+          ts: Math.floor(Date.now() / 1000),
+        },
+      ],
     };
 
     await fetch(process.env.SLACK_WEBHOOK_URL!, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(message),
     });
@@ -220,9 +224,12 @@ export class SecurityAuditLogger {
   /**
    * Send an email alert for high-risk events
    */
-  private async sendEmailAlert(event: SecurityEvent, riskScore: number): Promise<void> {
+  private async sendEmailAlert(
+    event: SecurityEvent,
+    riskScore: number,
+  ): Promise<void> {
     // This is a placeholder - in a real implementation, you would use a proper email service
-    console.info('Sending email alert to:', process.env.ALERT_EMAIL);
+    console.warn("Sending email alert to:", process.env.ALERT_EMAIL);
   }
 
   /**
@@ -234,7 +241,7 @@ export class SecurityAuditLogger {
     tenantSlug: string | null,
     ipAddress: string,
     userAgent: string,
-    details?: Record<string, any>
+    details?: Record<string, any>,
   ): Promise<void> {
     const severity = type === "failure" ? "medium" : "low";
 
@@ -258,7 +265,7 @@ export class SecurityAuditLogger {
     tenantId: string,
     granted: boolean,
     ipAddress: string,
-    userAgent: string
+    userAgent: string,
   ): Promise<void> {
     await this.logEvent({
       type: "tenant_access",
@@ -281,7 +288,7 @@ export class SecurityAuditLogger {
     resource: string,
     action: string,
     ipAddress: string,
-    userAgent: string
+    userAgent: string,
   ): Promise<void> {
     await this.logEvent({
       type: "permission_denied",
@@ -306,7 +313,7 @@ export class SecurityAuditLogger {
     oldValue: any,
     newValue: any,
     ipAddress: string,
-    userAgent: string
+    userAgent: string,
   ): Promise<void> {
     await this.logEvent({
       type: "config_change",
@@ -331,7 +338,7 @@ export class SecurityAuditLogger {
     riskFactors: string[],
     ipAddress: string,
     userAgent: string,
-    details?: Record<string, any>
+    details?: Record<string, any>,
   ): Promise<void> {
     const riskScore = riskFactors.length * 2; // Each risk factor adds 2 points
 

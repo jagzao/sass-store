@@ -70,7 +70,7 @@ export async function GET(request: NextRequest) {
       data: configuredChannels,
     });
   } catch (error) {
-    console.error("Error fetching tokens:", error);
+    // SECURITY: Redacted sensitive log;
     return NextResponse.json(
       { success: false, error: "Failed to fetch tokens" },
       { status: 500 },
@@ -225,7 +225,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Error saving token:", error);
+    // SECURITY: Redacted sensitive log;
     return NextResponse.json(
       { success: false, error: "Failed to save token" },
       { status: 500 },

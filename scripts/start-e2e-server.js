@@ -1,5 +1,4 @@
 // @ts-nocheck
-#!/usr/bin/env node
 /**
  * Script de arranque de servidor E2E con detección de build previo.
  * Uso: node scripts/start-e2e-server.js

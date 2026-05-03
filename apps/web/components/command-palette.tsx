@@ -1,39 +1,46 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useMemo } from 'react';
-import { Command } from 'cmdk';
-import { Search, Calendar, ShoppingBag, User, Settings, ArrowRight } from 'lucide-react';
-import { useTenant } from '@/lib/tenant/tenant-provider';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, useMemo } from "react";
+import { Command } from "cmdk";
+import {
+  Search,
+  Calendar,
+  ShoppingBag,
+  User,
+  Settings,
+  ArrowRight,
+} from "lucide-react";
+import { useTenant } from "@/lib/tenant/tenant-provider";
+import { useRouter } from "next/navigation";
 
 interface CommandItem {
   id: string;
   title: string;
   description?: string;
   action: () => void;
-  category: 'products' | 'services' | 'actions' | 'staff' | 'settings';
+  category: "products" | "services" | "actions" | "staff" | "settings";
   keywords: string[];
 }
 
 export function CommandPalette() {
   const [isOpen, setIsOpen] = useState(false);
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
   const { tenant } = useTenant();
   const router = useRouter();
 
   // Open with Cmd+K or Ctrl+K
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
         e.preventDefault();
         setIsOpen(true);
-      } else if (e.key === 'Escape') {
+      } else if (e.key === "Escape") {
         setIsOpen(false);
       }
     };
 
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
 
   // Generate command items based on tenant data
@@ -42,7 +49,7 @@ export function CommandPalette() {
 
     // Products
     if (tenant.products) {
-      tenant.products.forEach(product => {
+      tenant.products.forEach((product) => {
         items.push({
           id: `product-${product.sku}`,
           title: product.name,
@@ -51,15 +58,20 @@ export function CommandPalette() {
             setIsOpen(false);
             router.push(`/products/${product.sku}`);
           },
-          category: 'products',
-          keywords: [product.name, product.category, product.description, product.sku]
+          category: "products",
+          keywords: [
+            product.name,
+            product.category,
+            product.description,
+            product.sku,
+          ],
         });
       });
     }
 
     // Services
     if (tenant.services) {
-      tenant.services.forEach(service => {
+      tenant.services.forEach((service) => {
         items.push({
           id: `service-${service.id}`,
           title: service.name,
@@ -68,15 +80,15 @@ export function CommandPalette() {
             setIsOpen(false);
             router.push(`/booking?service=${service.id}`);
           },
-          category: 'services',
-          keywords: [service.name, service.description, 'book', 'appointment']
+          category: "services",
+          keywords: [service.name, service.description, "book", "appointment"],
         });
       });
     }
 
     // Staff
     if (tenant.staff) {
-      tenant.staff.forEach(staff => {
+      tenant.staff.forEach((staff) => {
         items.push({
           id: `staff-${staff.id}`,
           title: staff.name,
@@ -85,8 +97,8 @@ export function CommandPalette() {
             setIsOpen(false);
             router.push(`/booking?staff=${staff.id}`);
           },
-          category: 'staff',
-          keywords: [staff.name, staff.role, ...staff.specialties]
+          category: "staff",
+          keywords: [staff.name, staff.role, ...staff.specialties],
         });
       });
     }
@@ -94,38 +106,38 @@ export function CommandPalette() {
     // Quick actions
     items.push(
       {
-        id: 'action-book',
-        title: 'Book Appointment',
-        description: 'Schedule a new appointment',
+        id: "action-book",
+        title: "Book Appointment",
+        description: "Schedule a new appointment",
         action: () => {
           setIsOpen(false);
-          router.push('/booking');
+          router.push("/booking");
         },
-        category: 'actions',
-        keywords: ['book', 'appointment', 'schedule', 'reserve']
+        category: "actions",
+        keywords: ["book", "appointment", "schedule", "reserve"],
       },
       {
-        id: 'action-products',
-        title: 'Browse Products',
-        description: 'View all products',
+        id: "action-products",
+        title: "Browse Products",
+        description: "View all products",
         action: () => {
           setIsOpen(false);
-          router.push('/products');
+          router.push("/products");
         },
-        category: 'actions',
-        keywords: ['products', 'shop', 'buy', 'browse']
+        category: "actions",
+        keywords: ["products", "shop", "buy", "browse"],
       },
       {
-        id: 'action-cart',
-        title: 'View Cart',
-        description: 'See items in your cart',
+        id: "action-cart",
+        title: "View Cart",
+        description: "See items in your cart",
         action: () => {
           setIsOpen(false);
-          router.push('/cart');
+          router.push("/cart");
         },
-        category: 'actions',
-        keywords: ['cart', 'checkout', 'purchase', 'buy']
-      }
+        category: "actions",
+        keywords: ["cart", "checkout", "purchase", "buy"],
+      },
     );
 
     return items;
@@ -136,12 +148,13 @@ export function CommandPalette() {
     if (!query) return commandItems.slice(0, 8); // Show recent/popular items
 
     const normalizedQuery = query.toLowerCase();
-    return commandItems.filter(item =>
-      item.keywords.some(keyword =>
-        keyword.toLowerCase().includes(normalizedQuery)
-      ) ||
-      item.title.toLowerCase().includes(normalizedQuery) ||
-      item.description?.toLowerCase().includes(normalizedQuery)
+    return commandItems.filter(
+      (item) =>
+        item.keywords.some((keyword) =>
+          keyword.toLowerCase().includes(normalizedQuery),
+        ) ||
+        item.title.toLowerCase().includes(normalizedQuery) ||
+        item.description?.toLowerCase().includes(normalizedQuery),
     );
   }, [commandItems, query]);
 
@@ -150,14 +163,17 @@ export function CommandPalette() {
     services: Calendar,
     actions: ArrowRight,
     staff: User,
-    settings: Settings
+    settings: Settings,
   };
 
   if (!isOpen) return null;
 
   return (
     <div className="command-palette" onClick={() => setIsOpen(false)}>
-      <div className="command-palette-content" onClick={(e) => e.stopPropagation()}>
+      <div
+        className="command-palette-content"
+        onClick={(e) => e.stopPropagation()}
+      >
         <Command>
           <div className="flex items-center border-b px-4 py-3">
             <Search className="h-4 w-4 mr-2 text-muted-foreground" />
@@ -178,23 +194,30 @@ export function CommandPalette() {
             </Command.Empty>
 
             {Object.entries(
-              filteredItems.reduce((groups, item) => {
-                const category = item.category;
-                if (!groups[category]) groups[category] = [];
-                groups[category].push(item);
-                return groups;
-              }, {} as Record<string, CommandItem[]>)
+              filteredItems.reduce(
+                (groups, item) => {
+                  const category = item.category;
+                  if (!groups[category]) groups[category] = [];
+                  groups[category].push(item);
+                  return groups;
+                },
+                {} as Record<string, CommandItem[]>,
+              ),
             ).map(([category, items]) => {
-              const Icon = categoryIcons[category as keyof typeof categoryIcons];
+              const Icon =
+                categoryIcons[category as keyof typeof categoryIcons];
 
               return (
-                <Command.Group key={category} heading={
-                  <div className="flex items-center gap-2 px-2 py-1.5 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                    <Icon className="h-3 w-3" />
-                    {category}
-                  </div>
-                }>
-                  {items.map(item => (
+                <Command.Group
+                  key={category}
+                  heading={
+                    <div className="flex items-center gap-2 px-2 py-1.5 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                      <Icon className="h-3 w-3" />
+                      {category}
+                    </div>
+                  }
+                >
+                  {items.map((item) => (
                     <Command.Item
                       key={item.id}
                       onSelect={item.action}
@@ -202,7 +225,9 @@ export function CommandPalette() {
                     >
                       <Icon className="h-4 w-4 text-muted-foreground" />
                       <div className="flex-1 min-w-0">
-                        <div className="font-medium text-sm truncate">{item.title}</div>
+                        <div className="font-medium text-sm truncate">
+                          {item.title}
+                        </div>
                         {item.description && (
                           <div className="text-xs text-muted-foreground truncate">
                             {item.description}

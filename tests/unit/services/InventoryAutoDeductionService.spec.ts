@@ -10,8 +10,18 @@ describe("InventoryAutoDeductionService", () => {
   });
 
   it("should deduct stock successfully when quantities available", () => {
-    service.registerProduct({ productId: "prod-1", name: "Shampoo", sku: "SHP-001", stock: 100 });
-    service.registerProduct({ productId: "prod-2", name: "Conditioner", sku: "CON-001", stock: 50 });
+    service.registerProduct({
+      productId: "prod-1",
+      name: "Shampoo",
+      sku: "SHP-001",
+      stock: 100,
+    });
+    service.registerProduct({
+      productId: "prod-2",
+      name: "Conditioner",
+      sku: "CON-001",
+      stock: 50,
+    });
 
     const result = service.deductFromSale(
       [
@@ -28,7 +38,12 @@ describe("InventoryAutoDeductionService", () => {
   });
 
   it("should return error when product not found", () => {
-    service.registerProduct({ productId: "prod-1", name: "Shampoo", sku: "SHP-001", stock: 10 });
+    service.registerProduct({
+      productId: "prod-1",
+      name: "Shampoo",
+      sku: "SHP-001",
+      stock: 10,
+    });
 
     const result = service.deductFromSale(
       [{ productId: "prod-99", quantity: 1, reason: "test" }],
@@ -40,7 +55,12 @@ describe("InventoryAutoDeductionService", () => {
   });
 
   it("should return error when stock insufficient", () => {
-    service.registerProduct({ productId: "prod-1", name: "Shampoo", sku: "SHP-001", stock: 2 });
+    service.registerProduct({
+      productId: "prod-1",
+      name: "Shampoo",
+      sku: "SHP-001",
+      stock: 2,
+    });
 
     const result = service.deductFromSale(
       [{ productId: "prod-1", quantity: 5, reason: "test" }],
@@ -53,8 +73,18 @@ describe("InventoryAutoDeductionService", () => {
   });
 
   it("should not deduct anything if one item fails (atomic)", () => {
-    service.registerProduct({ productId: "prod-1", name: "Shampoo", sku: "SHP-001", stock: 10 });
-    service.registerProduct({ productId: "prod-2", name: "Conditioner", sku: "CON-001", stock: 0 });
+    service.registerProduct({
+      productId: "prod-1",
+      name: "Shampoo",
+      sku: "SHP-001",
+      stock: 10,
+    });
+    service.registerProduct({
+      productId: "prod-2",
+      name: "Conditioner",
+      sku: "CON-001",
+      stock: 0,
+    });
 
     const result = service.deductFromSale(
       [

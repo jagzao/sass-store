@@ -39,14 +39,12 @@ function getJWTSecret(): Result<Uint8Array, DomainError> {
       return Err(
         ErrorFactories.configuration(
           "JWT_SECRET environment variable is required in production",
-          "JWT_SECRET"
-        )
+          "JWT_SECRET",
+        ),
       );
     }
     // Development only - use a deterministic dev secret for consistency
-    console.warn(
-      "⚠️ WARNING: Using development JWT secret. Set JWT_SECRET environment variable for production."
-    );
+    // SECURITY: Redacted sensitive log;
     const devSecret = "dev-jwt-secret-do-not-use-in-production-min32ch";
     return Ok(new TextEncoder().encode(devSecret));
   }
@@ -57,8 +55,8 @@ function getJWTSecret(): Result<Uint8Array, DomainError> {
         `JWT_SECRET must be at least ${MIN_SECRET_LENGTH} characters for HS256 security`,
         "JWT_SECRET",
         undefined,
-        undefined
-      )
+        undefined,
+      ),
     );
   }
 
@@ -82,9 +80,15 @@ const JWTPayloadSchema = z.object({
   tenantId: z
     .string()
     .min(1)
-    .refine((val) => UUID_REGEX.test(val) || val.startsWith("tenant_") || val.startsWith("user_"), {
-      message: "tenantId must be a valid UUID or have a valid prefix",
-    })
+    .refine(
+      (val) =>
+        UUID_REGEX.test(val) ||
+        val.startsWith("tenant_") ||
+        val.startsWith("user_"),
+      {
+        message: "tenantId must be a valid UUID or have a valid prefix",
+      },
+    )
     .optional(),
   iat: z.number().int().positive(),
   exp: z.number().int().positive(),
@@ -100,7 +104,9 @@ class SecureJWTService {
    * Generate a cryptographically signed JWT token
    * Uses HMAC-SHA256 algorithm via jose library
    */
-  static async generateToken(payload: Omit<JWTPayload, "iat" | "exp">): Promise<Result<string, DomainError>> {
+  static async generateToken(
+    payload: Omit<JWTPayload, "iat" | "exp">,
+  ): Promise<Result<string, DomainError>> {
     const secretResult = getJWTSecret();
     if (isFailure(secretResult)) {
       return secretResult;
@@ -127,8 +133,8 @@ class SecureJWTService {
           "Failed to generate authentication token",
           undefined,
           undefined,
-          error as Error
-        )
+          error as Error,
+        ),
       );
     }
   }
@@ -137,7 +143,9 @@ class SecureJWTService {
    * Verify and decode a JWT token with cryptographic signature validation
    * SECURITY: This properly verifies the HMAC-SHA256 signature
    */
-  static async verifyToken(token: string): Promise<Result<JWTPayload, DomainError>> {
+  static async verifyToken(
+    token: string,
+  ): Promise<Result<JWTPayload, DomainError>> {
     const secretResult = getJWTSecret();
     if (isFailure(secretResult)) {
       return secretResult;
@@ -146,7 +154,7 @@ class SecureJWTService {
     try {
       const { payload } = await jwtVerify(
         token,
-        secretResult.success ? secretResult.data : new Uint8Array()
+        secretResult.success ? secretResult.data : new Uint8Array(),
       );
 
       // Additional validation for our specific payload structure
@@ -155,27 +163,41 @@ class SecureJWTService {
         return validationResult;
       }
 
-      return Ok(validationResult.success ? validationResult.data : undefined as any);
+      return Ok(
+        validationResult.success ? validationResult.data : (undefined as any),
+      );
     } catch (error: any) {
       // Map jose errors to secure error messages (no internal details exposed)
       if (error?.code === "ERR_JWT_EXPIRED") {
         return Err(
-          ErrorFactories.authentication("expired", "Authentication token has expired")
+          ErrorFactories.authentication(
+            "expired",
+            "Authentication token has expired",
+          ),
         );
       }
       if (error?.code === "ERR_JWT_SIGNATURE_MISMATCH") {
         return Err(
-          ErrorFactories.authentication("invalid_signature", "Invalid authentication token")
+          ErrorFactories.authentication(
+            "invalid_signature",
+            "Invalid authentication token",
+          ),
         );
       }
       if (error?.code === "ERR_JWT_MALFORMED") {
         return Err(
-          ErrorFactories.authentication("malformed", "Invalid authentication token")
+          ErrorFactories.authentication(
+            "malformed",
+            "Invalid authentication token",
+          ),
         );
       }
       // Generic error for any other JWT issues - don't expose details
       return Err(
-        ErrorFactories.authentication("invalid_token", "Invalid authentication token")
+        ErrorFactories.authentication(
+          "invalid_token",
+          "Invalid authentication token",
+        ),
       );
     }
   }
@@ -193,15 +215,15 @@ function validateJWTPayload(payload: unknown): Result<JWTPayload, DomainError> {
         "Invalid JWT payload structure",
         "payload",
         undefined, // Don't expose actual payload
-        result.error.issues
-      )
+        result.error.issues,
+      ),
     );
   }
 
   // Additional business rule validation
   if (result.data.iat >= result.data.exp) {
     return Err(
-      ErrorFactories.authentication("invalid_token", "Invalid token timing")
+      ErrorFactories.authentication("invalid_token", "Invalid token timing"),
     );
   }
 
@@ -209,7 +231,10 @@ function validateJWTPayload(payload: unknown): Result<JWTPayload, DomainError> {
   const now = Math.floor(Date.now() / 1000);
   if (result.data.exp < now) {
     return Err(
-      ErrorFactories.authentication("expired", "Authentication token has expired")
+      ErrorFactories.authentication(
+        "expired",
+        "Authentication token has expired",
+      ),
     );
   }
 
@@ -228,8 +253,8 @@ export async function authenticateRequest(
       return Err(
         ErrorFactories.authentication(
           "missing_token",
-          "Authorization header with Bearer token is required"
-        )
+          "Authorization header with Bearer token is required",
+        ),
       );
     }
 
@@ -242,7 +267,9 @@ export async function authenticateRequest(
     }
 
     const authenticatedRequest = request as AuthenticatedRequest;
-    authenticatedRequest.user = verifyResult.success ? verifyResult.data : undefined;
+    authenticatedRequest.user = verifyResult.success
+      ? verifyResult.data
+      : undefined;
 
     return Ok(authenticatedRequest);
   } catch (error) {
@@ -251,8 +278,8 @@ export async function authenticateRequest(
         "Failed to authenticate request",
         undefined,
         undefined,
-        error as Error
-      )
+        error as Error,
+      ),
     );
   }
 }
@@ -266,8 +293,8 @@ export function requireRole(requiredRole: string | string[]) {
       return Err(
         ErrorFactories.authentication(
           "missing_token",
-          "User authentication required"
-        )
+          "User authentication required",
+        ),
       );
     }
 
@@ -280,8 +307,8 @@ export function requireRole(requiredRole: string | string[]) {
       return Err(
         ErrorFactories.authorization(
           `User role '${userRole}' is not authorized for this operation`,
-          requiredRoles.join(", ")
-        )
+          requiredRoles.join(", "),
+        ),
       );
     }
 
@@ -315,8 +342,8 @@ export async function createAuthToken(user: {
         "Invalid user ID format - must be UUID or have valid prefix",
         "userId",
         undefined,
-        undefined
-      )
+        undefined,
+      ),
     );
   }
 
@@ -339,18 +366,16 @@ export function createAuthTokenSync(user: {
   tenantId?: string;
 }): Result<string, DomainError> {
   // This is deprecated - log warning
-  console.warn(
-    "⚠️ createAuthTokenSync is deprecated. Use async createAuthToken instead."
-  );
-  
+  // SECURITY: Redacted sensitive log;
+
   // Return error indicating to use async version
   return Err(
     ErrorFactories.validation(
       "Synchronous token creation is deprecated. Use async createAuthToken instead.",
       undefined,
       undefined,
-      undefined
-    )
+      undefined,
+    ),
   );
 }
 
@@ -358,7 +383,7 @@ export function createAuthTokenSync(user: {
  * Verify a JWT token - Public API
  */
 export async function verifyAuthToken(
-  token: string
+  token: string,
 ): Promise<Result<JWTPayload, DomainError>> {
   return SecureJWTService.verifyToken(token);
 }
@@ -375,8 +400,8 @@ export function getUserFromRequest(
     return Err(
       ErrorFactories.authentication(
         "missing_token",
-        "No user found in request"
-      )
+        "No user found in request",
+      ),
     );
   }
 
@@ -394,8 +419,8 @@ export function checkResourceOwnership(
     return Err(
       ErrorFactories.authentication(
         "missing_token",
-        "User authentication required"
-      )
+        "User authentication required",
+      ),
     );
   }
 
@@ -403,8 +428,8 @@ export function checkResourceOwnership(
     return Err(
       ErrorFactories.authorization(
         "User does not have permission to access this resource",
-        "resource_access"
-      )
+        "resource_access",
+      ),
     );
   }
 

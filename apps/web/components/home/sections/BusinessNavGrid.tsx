@@ -75,9 +75,7 @@ export default function BusinessNavGrid({ tenantSlug }: BusinessNavGridProps) {
       </div>
 
       {/* Grid */}
-      <div
-        className="grid grid-cols-2 md:grid-cols-3 gap-3 lg:gap-4"
-      >
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 lg:gap-4">
         {NAV_ITEMS.map((item) => {
           const fullPath = item.external
             ? item.href

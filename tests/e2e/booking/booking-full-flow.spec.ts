@@ -26,13 +26,17 @@ test.describe("Booking E2E - Crear reserva con slots", () => {
       await newBookingBtn.click();
 
       // Seleccionar servicio
-      const serviceSelect = page.locator("select[name='service'], [data-testid='service-select']");
+      const serviceSelect = page.locator(
+        "select[name='service'], [data-testid='service-select']",
+      );
       if (await serviceSelect.isVisible({ timeout: 5000 }).catch(() => false)) {
         await serviceSelect.selectOption({ index: 0 });
       }
 
       // Seleccionar cliente
-      const customerInput = page.locator("input[name='customerName'], [data-testid='customer-input']");
+      const customerInput = page.locator(
+        "input[name='customerName'], [data-testid='customer-input']",
+      );
       if (await customerInput.isVisible({ timeout: 5000 }).catch(() => false)) {
         await customerInput.fill("Cliente E2E Test");
       }
@@ -41,7 +45,9 @@ test.describe("Booking E2E - Crear reserva con slots", () => {
       const confirmBtn = page.getByRole("button", { name: /Confirmar/i });
       if (await confirmBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
         await confirmBtn.click();
-        await expect(page.getByText(/confirmada|éxito/i)).toBeVisible({ timeout: 10000 });
+        await expect(page.getByText(/confirmada|éxito/i)).toBeVisible({
+          timeout: 10000,
+        });
       } else {
         console.log("⚠️ Confirm button not found; skipping assert");
         test.skip();
@@ -52,15 +58,21 @@ test.describe("Booking E2E - Crear reserva con slots", () => {
     }
   });
 
-  test("should show booking details if appointments exist", async ({ page }) => {
+  test("should show booking details if appointments exist", async ({
+    page,
+  }) => {
     await page.goto(`/t/${tenantSlug}/admin/calendar`);
     await page.waitForTimeout(2000);
 
     const detailButtons = page.getByRole("button", { name: /Ver Detalles/i });
-    if (await detailButtons.count() > 0) {
+    if ((await detailButtons.count()) > 0) {
       await detailButtons.first().click();
-      await expect(page.getByRole("heading", { name: /DETALLE DE CITA/i })).toBeVisible();
-      await expect(page.getByText(/Costo Total|Servicio|Horario/i)).toBeVisible();
+      await expect(
+        page.getByRole("heading", { name: /DETALLE DE CITA/i }),
+      ).toBeVisible();
+      await expect(
+        page.getByText(/Costo Total|Servicio|Horario/i),
+      ).toBeVisible();
     } else {
       console.log("⚠️ No appointments to test detail modal; skipping");
       test.skip();

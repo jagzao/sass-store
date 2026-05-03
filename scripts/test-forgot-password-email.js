@@ -6,14 +6,14 @@
 const testEmail = process.argv[2] || 'test@example.com';
 const tenantSlug = process.argv[3] || 'demo';
 
-console.log('\n📧 Testing Forgot Password Email\n');
+// SECURITY: Redacted sensitive log;
 console.log(`Email: ${testEmail}`);
 console.log(`Tenant: ${tenantSlug}`);
 console.log('\n-----------------------------------\n');
 
 async function testForgotPassword() {
   try {
-    const response = await fetch('http://localhost:3001/api/auth/forgot-password', {
+    const response = await fetch('https://localhost:3001/api/auth/forgot-password', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

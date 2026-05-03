@@ -278,11 +278,306 @@ const trackedOperation = withPerformanceTracking(expensiveOperation, {
 
 ---
 
-## Feature Analysis Workflow ("analiza lo siguiente")
+---
+
+## 🎭 Regla Obligatoria: Validación E2E con Playwright CLI
+
+**Proceso obligatorio en 4 pasos — NUNCA reportar como terminado sin completarlos todos.**
+
+### Paso 1 — Playwright CLI headed (**lo ejecuta el agente**, como haría una persona)
+
+El **agente** corre Playwright en modo headed para inspeccionar flujos, cazar errores visuales o de UX y corregirlos **antes** de pedirte nada. El **dueño no** sustituye este paso: tú solo das **visto bueno** al final sobre trabajo **ya** probado, corregido y verde por CLI (ver § 1.4).
+
+```bash
+# Feature específico, headed
+npm run test:e2e:subset -- --headed --grep "nombre-del-feature"
+
+# Tenant específico, headed
+npm run test:e2e:subset -- --headed --grep "wondernails|centro-tenistico"
+
+# Validación visual completa
+npm run test:e2e -- --headed
+```
+
+### Paso 2 — Fix & iterate si hay errores
+
+Si se detecta cualquier error o comportamiento no deseado:
+
+1. Corregir el código
+2. Volver al paso 1
+3. Repetir hasta que el flujo se vea y funcione correctamente
+
+**No avanzar al paso 3 si algo está roto o incorrecto visualmente.**
+
+### Paso 3 — Crear o actualizar tests E2E
+
+Con la app validada y funcionando:
+
+- Crear tests en `tests/e2e/` que cubran el flujo validado (`.spec.ts`)
+- Actualizar tests existentes si el comportamiento cambió
+- Cubrir: happy path + validaciones + casos de error
+
+### Paso 4 — Ejecutar los tests (deben pasar)
+
+```bash
+# Headless — deben pasar limpios
+npm run test:e2e:subset -- --grep "nombre-del-feature"
+```
+
+Si algún test falla → corregir test o código → re-ejecutar → debe pasar limpio.
+
+### Aplica a
+- Nuevos componentes, páginas o rutas
+- Cambios en autenticación (login, registro, OAuth)
+- Cambios en estilos globales o layouts de tenant
+- Cualquier fix de UI, lógica de negocio o flujo de usuario
+
+**🚨 NUNCA reportar una implementación como "lista" sin completar los 4 pasos.**
+
+**Dueño de producto:** no se te debe pedir “probar la app” como QA. Lo que recibes es un paquete **ya validado** por el agente (headed + headless + UT); tu acción es **visto bueno** o rechazo con motivo concreto, no repetir toda la batería.
+
+---
+
+---
+
+## 🏢 Nuevo Workflow: User Stories + Autonomía Total
+
+A partir de 2026-04-28, el proyecto opera con **User Stories** como unidad de trabajo y un **orquestador de agentes** para autonomía completa.
+
+---
+
+### 1. Estructura de User Stories
+
+Las historias se gestionan en `docs/stories/`:
+
+```
+docs/stories/
+├── BACKLOG.md              # Inventario de todas las stories
+├── _template.md            # Template para nuevas stories
+├── active/                 # Stories en progreso
+│   └── STRY-XXX-*.md
+└── completed/              # Stories terminadas
+    └── STRY-XXX-*.md
+```
+
+#### 1.1 Carpeta de sprint por User Story (`.agents/sprint/`)
+
+Cada entrega al cliente está **ligada a una User Story**. Además del markdown canónico en `docs/stories/`, cada story activa tiene una carpeta operativa para la **fábrica de desarrollo autónoma**:
+
+```
+.agents/sprint/{STRY-XXX-nombre-corto}/
+├── plan.md                 # Plan de ejecución (orden de tareas, archivos, APIs, riesgos) — guía para implementar la US de punta a punta sin ambigüedad
+├── implementacion.md       # Alcance de implementación enlazado a los CA de la US: desarrollo, testing exhaustivo de inicio a fin, implementación final y trazabilidad AC → código → tests
+└── testing-usuario.md      # Pasos reproducibles que el **agente / QA automatizado** ejecuta (no el PO manual); mismo documento es la **fuente de verdad** para escribir y mantener pruebas Playwright CLI (`test:e2e:subset`, `grep` por story o tag)
+```
+
+**Credencial de prueba estándar (multitenant):** `jagzao@gmail.com` / `admin` — usar por defecto en `testing-usuario.md` y en Playwright salvo que la US exija otro rol documentado.
+
+**Reglas obligatorias para el agente**
+
+1. **Análisis de reuniones u observaciones**: Si el usuario pide analizar una reunión, notas, o un conjunto de observaciones, el agente debe **preguntar explícitamente** si ese contenido debe incorporarse a la **User Story en curso** (`docs/stories/active/`) y, en caso afirmativo, actualizar la story y los tres artefactos bajo `.agents/sprint/{id}/` (no dejar hallazgos sueltos).
+2. **Planes y cambios**: Todo plan de trabajo, diff conceptual o lista de cambios debe **nombrar y enlazar** el ID de la story (`STRY-XXX`) y, cuando exista, la ruta `.agents/sprint/{STRY-XXX-…}/`.
+3. **Orden de creación**: Al mover o crear una story en `active/`, crear o completar de inmediato la carpeta `.agents/sprint/{mismo-id-slug}/` y mantener `plan.md` → `implementacion.md` → `testing-usuario.md` alineados con el estado de la story.
+
+El protocolo detallado del orquestador (fases y checklists) vive en `.agents/protocols/story-orchestrator.md`.
+
+#### 1.2 Definición de Hecho (DoD) — cuándo marcar la US completa y publicar
+
+Una User Story **solo** pasa a estado **completa** (`done`) y al flujo **subir cambios + publicar** cuando se cumplen **todas** las condiciones siguientes, en orden:
+
+1. **Implementación completa** según los CA de la story y `implementacion.md`.
+2. **Testeada** por el agente (flujos principales y errores previstos).
+3. **Corregida (fix)** — bugs encontrados en QA resueltos en código o en tests.
+4. **Retesteada con tests unitarios** — `npm run test:unit` (o subset acordado del alcance de la US) **verde** después de los fixes.
+5. **Barrera del agente (§ 1.3)** — `testing-usuario.md` basado en la US/CA, proyecto levantado, acceso con `jagzao@gmail.com`/`admin` **en cada slug** listado como tenant activo (o resuelto con seed/usuario por tenant), **todos** los escenarios del documento ejecutados con éxito **en cada uno de esos tenants**; fallos corregidos y re-ejecutado hasta verde.
+6. **Playwright CLI — flujo E2E completo de la US** — `npm run test:e2e:subset` (o suite acordada) con **grep/tag alineado a la story** (p. ej. `STRY-001`), **headless**, sin skips obligatorios del alcance.
+7. **Visto bueno del dueño de producto** (tú) — **no** es una segunda ronda de QA: es la **aprobación explícita** sobre entrega **ya** probada, corregida y validada por el agente (§ 1.3 + Playwright CLI § 1.2.6). Registrada en story, PR o chat. El agente **no** marca `done` ni mueve a `completed/` sin este paso.
+8. **Solo después del punto 7:** actualizar estado a `done`, mover `docs/stories/active/` → `docs/stories/completed/`, `BACKLOG.md`, summaries; **commit**; **push** (rama/PR); **publicar** según el pipeline del equipo (p. ej. merge a main, deploy Vercel/staging/prod).
+
+Si falta cualquier punto anterior al 7, la story permanece en `dev` o `qa`, no en `done`.
+
+#### 1.3 Barrera del agente (QA exhaustivo antes del visto bueno)
+
+Antes de decir “lista para tu **visto bueno**”, el agente **debe** haber hecho lo siguiente. Objetivo: **encontrar errores como haría un usuario** (flujos, bordes, tenants), **corregirlos al momento** y dejar **Playwright CLI + UT** en verde. **Tú no re-ejecutas** esta fase; solo confirmas sobre trabajo ya cerrado técnicamente.
+
+1. **Plan en `testing-usuario.md`** — El documento debe estar **derivado de la US y los CA** (tablas de pasos por escenario, precondiciones, resultados esperados). No basta un esqueleto vacío: debe reflejar lo que se va a ejecutar. **Multitenancy:** si la funcionalidad aplica por tenant, el doc debe listar los **tenants activos** del entorno y repetir los escenarios relevantes **por cada slug** (salvo que la US limite explícitamente el alcance a un solo tenant).
+2. **Levantar el proyecto** — Si `npm run dev`, el servidor E2E (`scripts/start-e2e-server.js` o el que use el repo), DB o env fallan, el agente **diagnostica y corrige** (config, `.env`, puerto 3001, seeds, etc.) hasta que el entorno permita ejecutar los casos.
+3. **Acceso y usuarios** — Por defecto: **`jagzao@gmail.com`** / **`admin`** en **cada slug** listado en `testing-usuario.md`. Si login, rol o datos faltan en un tenant, el agente **ajusta seed, crea usuario o corrige permisos** hasta completar los escenarios en **todos** los slugs del doc.
+4. **Ejecución exitosa de todos los casos del documento** — Recorrer **cada** escenario/fila y **cada tenant** que el doc liste. Orden: **Playwright CLI `--headed`** (como persona) sobre esos pasos → fixes → **Playwright `headless`** (grep/tag de la US). **Todos en verde**. Si algo falla en un tenant: arreglar código, datos o tests; **re-ejecutar** los escenarios afectados en **todos** los tenants que el doc exija hasta cero fallos. El punto 6 del § 1.2 cierra con headless en regresión.
+5. **Solo entonces** solicitar al dueño el **visto bueno** (punto 7 del § 1.2), con evidencia de comandos Playwright/UT y resumen por tenant si aplica.
+
+#### 1.4 Rol del dueño: visto bueno (no sustituto de Playwright)
+
+- **Agente:** validación exhaustiva con **Playwright CLI** (headed para inspección “como persona”, headless para regresión), más `testing-usuario.md` y UT; iterar **find bug → fix → re-run** hasta cero fallos en el alcance de la US (incl. **cada tenant** listado en el doc).
+- **Dueño:** solo **prueba o revisa lo que ya está validado y corregido**; tu interacción es **visto bueno final** (o rechazo motivado), **no** sustituir la batería E2E del agente ni “descubrir” lo que Playwright debió cubrir antes.
+
+### 2. Estándar de Story
+
+Cada story debe contener:
+1. **Narrativa** — rol, acción, beneficio
+2. **Criterios de aceptación Gherkin** — mínimo 3 (happy path, validación, error)
+3. **Contrato técnico** — Zod schema + DomainError variants
+4. **Impacto multitenancy** — tablas, RLS, tenant de prueba
+5. **Plan de implementación** — servicio → API → UI → UAT → E2E
+6. **Checklist de calidad** — build, lint, typecheck, tests, cobertura
+
+### 3. Orquestador de Agentes (Ciclo Autónomo)
+
+Cuando el usuario dice `Implementa [Nombre de Story]`, el orquestador ejecuta esta cadena sin intervención humana:
+
+```
+PM → Architect → Dev → QA (agente: Playwright CLI headed+headless, UT, fixes hasta verde)
+  → Dueño (solo visto bueno; no repite la batería E2E) → Publicación (tras `done`)
+```
+
+#### Fase 1: PM Agent (Análisis)
+- Leer `docs/stories/active/` y `BACKLOG.md`
+- Identificar si existe story para el feature solicitado
+- Si no existe: crear desde `_template.md`
+- Validar AC con el usuario si hay ambigüedad
+- Confirmar entendimiento antes de pasar a Architect
+- Asegurar carpeta `.agents/sprint/{STRY-XXX-slug}/` con `plan.md`, `implementacion.md`, `testing-usuario.md` (crear o actualizar según la story)
+
+#### Fase 2: Architect Agent (Diseño)
+- Evaluar impacto en esquema existente
+- Definir API contract (Zod + DomainError)
+- Verificar necesidad de nuevas tablas/columnas
+- Revisar deuda técnica relacionada
+- Estimar tiempo y riesgos
+- Guardar ADR en `ARCHITECT_IMPLEMENTATION_SUMMARY.md`
+
+#### Fase 3: Dev Agent (Implementación)
+- Branch: `feature/STRY-XXX-{nombre}`
+- Seguir y actualizar `.agents/sprint/{STRY-XXX-slug}/plan.md` y `implementacion.md` conforme avance el código
+- Implementar servicio con Result Pattern
+- Implementar API con `withResultHandler()`
+- Implementar UI (si aplica)
+- Tests unitarios por cada servicio (expectSuccess/expectFailure)
+- Documentar en `current_task.md`
+- **No considerar la codificación “cerrada”** hasta encomendar la Fase 4 siguiente (el dueño no sustituye esto).
+
+#### Transición obligatoria: tras la codificación (plan / story en implementación)
+
+Cuando un **plan** (`plan.md` / US) está en ejecución y **ya hay código** entregado o tocado para ese alcance:
+
+1. **Inmediatamente después de la codificación** (antes del visto bueno del dueño), el agente debe ejecutar pruebas **como las haría una persona**: navegación real, flujos completos documentados en `testing-usuario.md`, búsqueda activa de fallos de UI/UX y de regresión.
+2. **Herramienta obligatoria:** **Playwright CLI** — en este orden: **`--headed`** primero (validación “humana” por el agente con ventana visible), corrección de bugs, luego fijar o ampliar `tests/e2e/*.spec.ts`, y por último **`headless`** en regresión (`grep`/`tag` de la US). Ver también `CLAUDE.md` (4 pasos E2E).
+3. **Si falta escenario en el doc o en el spec**, ampliar `testing-usuario.md` y el código de prueba hasta que el comportamiento acordado en la US quede cubierto; no declarar listo por “solo UT”.
+
+**Qué no es excusa:** no hay bloqueo técnico para esto en el repo; si algo no se “completó” antes fue por **alcance del spec** o por **no haber ejecutado aún el paso headed / no haber ampliado escenarios** — el agente debe cerrar esos huecos, no el dueño.
+
+#### Fase 4: QA Agent (Validación — **toda** la ejecución Playwright la hace el agente)
+- **Fuente de pasos**: `.agents/sprint/{STRY-XXX-slug}/testing-usuario.md` (derivado de la US y CA; ver **§ 1.3**)
+- **Entorno**: Levantar app y dependencias; si falla el arranque, corregir hasta poder ejecutar pruebas
+- **Acceso**: Por **cada** tenant listado en `testing-usuario.md`, probar `jagzao@gmail.com` / `admin` (salvo otra credencial en la US); si falla en un slug, seed/usuario/permisos hasta acceso OK **en todos** los listados
+- **Paso 1**: Completar/ajustar `testing-usuario.md` y ejecutar **todos** los escenarios con éxito (**Playwright headed** donde aplique — ver `CLAUDE.md` — como exploración humana)
+- **Paso 2**: Si hay errores → fix código/datos/tests **al momento** → repetir hasta **todos** los casos del doc en verde
+- **Paso 3**: Crear/actualizar tests E2E basados en `testing-usuario.md` ya validado por ejecución
+- **Paso 4**: **Playwright CLI headless** — deben pasar limpios (`grep`/`tag` de la US)
+- Verificar cobertura >=80%
+- Si pasa **§ 1.3 y DoD hasta el punto 6** (incl. Playwright headless): **listo para visto bueno del dueño** (no es `done` todavía). Si falla: loop de corrección (max 5 intentos)
+
+#### Fase 5: Cierre solo tras visto bueno del dueño (DoD § 1.2)
+
+- El agente entrega evidencia: `testing-usuario.md` ejecutado al 100 % en verde, UT verdes, **Playwright CLI** (headed + headless) de la US en verde, enlaces a PR/diff. **No** pedir al dueño que repita QA.
+- **Esperar** **visto bueno explícito** del dueño (sí/no con motivo); no confundir con “ir a probar desde cero”.
+- **Solo entonces:** `Estado: done`, mover story a `docs/stories/completed/`, actualizar `BACKLOG.md` y summaries, commit, push y publicar según proceso del equipo.
+- Generar video demo (si aplica) antes o después del deploy, según convención.
+- Reportar al usuario con métricas finales.
+
+### 4. Comando `valida todo`
+
+Cuando el agente recibe `valida todo`, ejecuta este pipeline iterativo:
+
+```bash
+# Paso 1: Formato
+npx prettier --write "apps/**/*.{ts,tsx}" "packages/**/*.{ts,tsx}"
+
+# Paso 2: Lint
+npm run lint
+# → Si falla: --fix + revisión manual
+
+# Paso 3: Type Check
+npm run typecheck
+# → Si falla: corregir tipos
+
+# Paso 4: Tests Unitarios
+npm run test:unit
+# → Si timeout DB: migrar a MockDatabase o usar Docker Postgres
+# → Si falla lógica: corregir servicio → re-ejecutar
+
+# Paso 5: Tests E2E
+npm run test:e2e:subset -- --grep "[feature-name]"
+# → Si falla por timeout: aumentar timeout
+# → Si falla por selector: corregir test o UI
+
+# Paso 6: Seguridad
+npm run security:autofix
+
+# Paso 7: Cobertura
+npx vitest run --coverage
+# → Verificar >=80% en archivos nuevos/modificados
+
+# Paso 8: Build Final
+npm run build
+```
+
+**Regla de oro:** Si cualquier paso falla, corregir y re-ejecutar. Máximo 5 intentos por paso. Si persiste → reportar bloqueo.
+
+### 5. Instrucciones para Usuario
+
+Para iniciar una nueva story:
+```
+Implementa POS completo con flujo de caja y cierre de turno
+```
+
+Para validar el estado actual:
+```
+valida todo
+```
+
+Para ver backlog:
+```
+Estado del proyecto
+```
+
+### 6. Autonomía: ¿Qué puede hacer solo?
+
+| Tarea | Autonomía | Notas |
+|-------|-----------|-------|
+| Analizar requerimiento | ✅ 100% | Template de story auto-llenable |
+| Diseñar API contract | ✅ 100% | Zod + DomainError auto-generable |
+| Implementar servicios | ✅ 100% | Result Pattern + tests unitarios |
+| Corregir build/lint/typecheck | ✅ 100% | Auto-fix + iteración |
+| Ejecutar Playwright E2E | ✅ 100% | Con auto-retry |
+| Migrar legacy `.test.ts` | ⚠️ 80% | Necesita confirmación de mocks |
+| Diseñar mockups complejos | ❌ 20% | Requiere visión del diseñador/PO |
+| Decidir prioridad P0 vs P1 | ❌ 10% | Requiere contexto de negocio |
+| Merge a main | ❌ 0% | Siempre requiere aprobación humana |
+| Marcar US `done` + push/publicar | ❌ 0% | Solo tras **visto bueno** explícito del dueño sobre trabajo ya verde por Playwright CLI (DoD § 1.2 / § 1.4) |
+
+### 7. Roadmap hacia Autonomía Total
+
+| Meta | Estado | Bloqueador |
+|------|--------|------------|
+| Pipeline `valida todo` auto-corregible | ✅ Implementado | — |
+| Estructura de stories + orquestador | ✅ Implementado | — |
+| Artefactos por story en `.agents/sprint/{STRY-XXX}/` (plan, implementación, testing-usuario) | ✅ Definido | Mantener sincronía con `docs/stories/active/` |
+| Docker Postgres para tests locales | ⏳ Pendiente | Tiempo de setup |
+| Migración `.test.ts` legacy a `.spec.ts` | 🔄 En progreso | 12 archivos legacy |
+| 100% Result Pattern en `lib/db/` | ⏳ Pendiente | ~40 archivos legacy |
+| Orquestador sin input humano (swarm) | ⚠️ Parcial | Necesita definir triggers automáticos |
+| Auto-deploy a staging tras validación | ⏳ Pendiente | CI/CD pipeline |
+
+---
+
+## 🎭 Feature Analysis Workflow ("analiza lo siguiente")
 
 ### Trigger Command
 
 Cuando el usuario inicie con **"analiza lo siguiente {}"**, se activa el flujo de análisis exhaustivo para generar un prompt de implementación estructurado.
+
+Lo mismo aplica cuando el usuario pida **analizar una reunión, acta, notas o un conjunto de observaciones** (con o sin el trigger literal): antes de consolidar conclusiones, el agente debe **preguntar** si el material debe incorporarse a la **User Story en proceso** y reflejarse en `.agents/sprint/{STRY-XXX}/` (`plan.md`, `implementacion.md`, `testing-usuario.md`). Ningún plan de entrega queda huérfano de un `STRY-XXX`.
 
 ### Analysis Process
 
@@ -394,7 +689,7 @@ Cuando el usuario inicie con **"corrige {X}"** donde X es una pantalla, página 
 4. **Crear/Actualizar tests E2E**:
    - Ubicación: `tests/e2e/` con extensión `.spec.ts`
    - Testear flujos completos de usuario
-   - Verificar navegación y interacciones
+   - Verificar navegación e interacciones
    - Validar respuestas de API
 
 5. **Ejecutar tests iterativamente**:
@@ -521,6 +816,32 @@ Al completar la corrección, proporcionar:
 
 ---
 
+## 🚨 Regla Obligatoria: Validación Exhaustiva Post-Implementación
+
+**Después de CUALQUIER implementación, fix, refactor o cambio de código — sin excepción — el agente DEBE ejecutar validación exhaustiva ANTES de reportar la tarea como completa.**
+
+### Pipeline obligatorio (orden fijo)
+
+1. **Formato**: `npx prettier --write` sobre archivos modificados.
+2. **Lint**: `npm run lint` → si hay errores, corregir y repetir.
+3. **Typecheck**: `npm run typecheck` (`tsc --noEmit --incremental false`) → corregir tipos si falla.
+4. **Build**: `npm run build` → no debe haber errores de compilación.
+5. **Tests Unitarios**: `npm run test:unit` (o subset por grep) → todos los tests deben pasar.
+6. **Tests E2E**:
+   - Primero **headed** (`--headed --grep "story-name"`) para inspección visual como haría una persona.
+   - Luego **headless** (`--grep "story-name"`) para regresión automatizada.
+   - Si falla cualquier test → fix → re-ejecutar hasta cero fallos.
+7. **Seguridad**: `npm run security:autofix` (si aplica).
+
+**Regla de oro:** Si un paso falla, arreglar y repetir. Máximo 5 intentos por paso. Si persiste, reportar bloqueo. **NUNCA reportar "listo" sin haber pasado todo el pipeline.**
+
+### Propósito
+- Evitar que el dueño de producto se topé con errores.
+- Detectar regresiones, typos y fallos de UI/UX en el momento.
+- Asegurar que todo código entregado esté verificado por el agente antes del visto bueno del dueño.
+
+---
+
 **🚨 CRITICAL: Compliance with the Result Pattern is mandatory for all new code. PRs violating these guidelines will be automatically rejected.**
 
 The Result Pattern provides:
@@ -532,35 +853,3 @@ The Result Pattern provides:
 - ✅ Improved debugging
 - ✅ Security benefits
 - ✅ Performance optimization opportunities
-
----
-
-## 🎭 Regla Obligatoria: Validación E2E con Playwright CLI
-
-**Después de completar CUALQUIER implementación, el agente DEBE:**
-
-1. **Correr Playwright CLI** apuntando al feature implementado — no reportar como terminado sin esto
-2. **Si hay errores** → corregir el código → volver a correr Playwright
-3. **Repetir hasta que el flujo pase limpio**
-4. **Solo entonces reportar la tarea como completada**
-
-### Comandos estándar
-
-```bash
-# Feature específico
-npm run test:e2e:subset -- --grep "nombre-del-feature"
-
-# Tenant específico
-npm run test:e2e:subset -- --grep "wondernails|centro-tenistico"
-
-# Validación completa
-npm run test:e2e
-```
-
-### Aplica a
-- Nuevos componentes, páginas o rutas
-- Cambios en autenticación (login, registro, OAuth)
-- Cambios en estilos globales o layouts de tenant
-- Cualquier fix de UI, lógica de negocio o flujo de usuario
-
-**🚨 NUNCA reportar una implementación como "lista" sin confirmación de Playwright.**

@@ -37,7 +37,10 @@ describe("POSService - Result Pattern Implementation", () => {
     });
 
     it("should create a sale with mercadopago payment", async () => {
-      const input: CreateSaleInput = { ...validInput, paymentMethod: "mercadopago" };
+      const input: CreateSaleInput = {
+        ...validInput,
+        paymentMethod: "mercadopago",
+      };
       const result = await service.createSale("tenant-1", input);
       const sale = expectSuccess(result);
       expect(sale.paymentMethod).toBe("mercadopago");

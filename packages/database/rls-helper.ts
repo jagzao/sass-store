@@ -3,22 +3,27 @@
  * Ensures all database queries respect tenant isolation
  */
 
-import { sql } from 'drizzle-orm';
-import type { Database } from './connection';
+import { sql } from "drizzle-orm";
+import type { Database } from "./connection";
 
 /**
  * Set the tenant context for RLS policies
  * MUST be called before any database queries in multi-tenant context
  * NOTE: This sets context for the current transaction only (local=TRUE)
  */
-export async function setTenantContext(db: any, tenantId: string): Promise<void> {
+export async function setTenantContext(
+  db: any,
+  tenantId: string,
+): Promise<void> {
   if (!tenantId) {
-    throw new Error('SECURITY: tenantId is required for RLS');
+    throw new Error("SECURITY: tenantId is required for RLS");
   }
 
   // Set the app.current_tenant_id session variable
   // TRUE = local to current transaction (persists for the transaction only)
-  await db.execute(sql`SELECT set_config('app.current_tenant_id', ${tenantId}, TRUE)`);
+  await db.execute(
+    sql`SELECT set_config('app.current_tenant_id', ${tenantId}, TRUE)`,
+  );
 }
 
 /**
@@ -26,10 +31,12 @@ export async function setTenantContext(db: any, tenantId: string): Promise<void>
  */
 export async function getCurrentTenant(db: Database): Promise<string | null> {
   try {
-    const result: any = await db.execute(sql`SELECT get_current_tenant_id() as tenant_id`);
+    const result: any = await db.execute(
+      sql`SELECT get_current_tenant_id() as tenant_id`,
+    );
     return (result[0]?.tenant_id as string) || null;
   } catch (error) {
-    console.error('Failed to get current tenant:', error);
+    console.error("Failed to get current tenant:", error);
     return null;
   }
 }
@@ -58,21 +65,27 @@ export async function withTenantContext<T>(
   db: Database,
   tenantId: string,
   user: { id: string; role: string } | null,
-  queryFn: (db: any) => Promise<T>
+  queryFn: (db: any) => Promise<T>,
 ): Promise<T> {
   if (!tenantId) {
-    throw new Error('SECURITY: tenantId is required for RLS');
+    throw new Error("SECURITY: tenantId is required for RLS");
   }
 
   // Use a transaction to ensure context persists
   return await db.transaction(async (tx) => {
     // Set tenant context within transaction (local=TRUE)
-    await tx.execute(sql`SELECT set_config('app.current_tenant_id', ${tenantId}, TRUE)`);
+    await tx.execute(
+      sql`SELECT set_config('app.current_tenant_id', ${tenantId}, TRUE)`,
+    );
 
     // Set user context if provided
     if (user?.id && user?.role) {
-      await tx.execute(sql`SELECT set_config('app.current_user_id', ${user.id}, TRUE)`);
-      await tx.execute(sql`SELECT set_config('app.current_user_role', ${user.role}, TRUE)`);
+      await tx.execute(
+        sql`SELECT set_config('app.current_user_id', ${user.id}, TRUE)`,
+      );
+      await tx.execute(
+        sql`SELECT set_config('app.current_user_role', ${user.role}, TRUE)`,
+      );
     }
 
     // Execute query with both RLS and manual filters applied
@@ -100,11 +113,15 @@ export async function withTenantContext<T>(
  * Use this in API routes to automatically set RLS context
  */
 export function createTenantMiddleware(getTenantId: (req: any) => string) {
-  return async function tenantMiddleware(req: any, db: any, next: () => Promise<any>) {
+  return async function tenantMiddleware(
+    req: any,
+    db: any,
+    next: () => Promise<any>,
+  ) {
     const tenantId = getTenantId(req);
 
     if (!tenantId) {
-      throw new Error('SECURITY: Missing tenant context');
+      throw new Error("SECURITY: Missing tenant context");
     }
 
     await setTenantContext(db, tenantId);
@@ -119,13 +136,13 @@ export function createTenantMiddleware(getTenantId: (req: any) => string) {
  */
 export function validateTenantIsolation<T extends { tenantId?: string }>(
   results: T[],
-  expectedTenantId: string
+  expectedTenantId: string,
 ): void {
   for (const result of results) {
     if (result.tenantId && result.tenantId !== expectedTenantId) {
       throw new Error(
         `SECURITY VIOLATION: Query returned data from different tenant! ` +
-        `Expected: ${expectedTenantId}, Got: ${result.tenantId}`
+          `Expected: ${expectedTenantId}, Got: ${result.tenantId}`,
       );
     }
   }

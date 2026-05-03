@@ -111,7 +111,8 @@ test.describe("Financial Matrix - Edge mínima (P1)", () => {
       target.bucketId,
     );
     expect(negativeResult.projected).toBeGreaterThanOrEqual(0);
-    expect(negativeResult.projected).toBeGreaterThanOrEqual(beforeNegativeAttempt.projected);
+    expect(negativeResult.projected).toBeGreaterThanOrEqual(
+      beforeNegativeAttempt.projected,
+    );
   });
 });
-

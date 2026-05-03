@@ -44,9 +44,9 @@ async function testQuoteEmail() {
     // Check if it's a configuration error
     if (error.message.includes('RESEND_API_KEY')) {
       console.log('\n💡 This is a configuration error. To fix it:');
-      console.log('1. Make sure RESEND_API_KEY is set in your .env.local file');
+      // SECURITY: Redacted sensitive log;
       console.log('2. Make sure RESEND_FROM_EMAIL is set in your .env.local file');
-      console.log('3. Make sure the API key is valid and has email sending permissions');
+      // SECURITY: Redacted sensitive log;
     }
     
     return { success: false, error: error.message };

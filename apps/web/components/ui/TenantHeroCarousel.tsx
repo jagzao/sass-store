@@ -1,7 +1,11 @@
-'use client';
+"use client";
 
-import React, { Suspense } from 'react';
-import { useTenantWidget, useHasCustomWidget, logTenantWidgetInfo } from '@/lib/tenant-widget-registry';
+import React, { Suspense } from "react";
+import {
+  useTenantWidget,
+  useHasCustomWidget,
+  logTenantWidgetInfo,
+} from "@/lib/tenant-widget-registry";
 
 interface TenantHeroCarouselProps {
   tenantSlug: string;
@@ -51,7 +55,10 @@ function HeroCarouselSkeleton() {
             <div className="w-12 h-12 bg-gray-700 rounded-full animate-pulse"></div>
             <div className="flex gap-2">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className="w-2 h-2 bg-gray-700 rounded-full animate-pulse"></div>
+                <div
+                  key={i}
+                  className="w-2 h-2 bg-gray-700 rounded-full animate-pulse"
+                ></div>
               ))}
             </div>
             <div className="w-12 h-12 bg-gray-700 rounded-full animate-pulse"></div>
@@ -63,17 +70,26 @@ function HeroCarouselSkeleton() {
 }
 
 // Error fallback component
-function HeroCarouselError({ tenantSlug, error }: { tenantSlug: string; error?: Error }) {
+function HeroCarouselError({
+  tenantSlug,
+  error,
+}: {
+  tenantSlug: string;
+  error?: Error;
+}) {
   return (
     <div className="w-full h-screen bg-gradient-to-br from-red-900 to-gray-900 flex items-center justify-center">
       <div className="text-center text-white p-8">
         <h2 className="text-2xl font-bold mb-4">Error en Hero Carousel</h2>
         <p className="text-gray-600 mb-4">
-          No se pudo cargar el carousel para el tenant: <code className="bg-gray-800 px-2 py-1 rounded">{tenantSlug}</code>
+          No se pudo cargar el carousel para el tenant:{" "}
+          <code className="bg-gray-800 px-2 py-1 rounded">{tenantSlug}</code>
         </p>
         {error && (
           <details className="mt-4 text-left">
-            <summary className="cursor-pointer text-gray-600">Detalles del error</summary>
+            <summary className="cursor-pointer text-gray-600">
+              Detalles del error
+            </summary>
             <pre className="mt-2 text-sm text-gray-500 bg-gray-800 p-4 rounded overflow-auto">
               {error.message}
             </pre>
@@ -87,38 +103,42 @@ function HeroCarouselError({ tenantSlug, error }: { tenantSlug: string; error?: 
 export default function TenantHeroCarousel({
   tenantSlug,
   tenantData,
-  className = '',
+  className = "",
   autoRotate = true,
   ...props
 }: TenantHeroCarouselProps) {
-  const widget = useTenantWidget(tenantSlug, 'heroCarousel');
-  const hasCustomWidget = useHasCustomWidget(tenantSlug, 'heroCarousel');
+  const widget = useTenantWidget(tenantSlug, "heroCarousel");
+  const hasCustomWidget = useHasCustomWidget(tenantSlug, "heroCarousel");
 
   // Log para desarrollo (solo en desarrollo)
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env.NODE_ENV === "development") {
     logTenantWidgetInfo(tenantSlug);
   }
 
   if (!widget) {
-    console.error(`No se encontró widget heroCarousel para tenant: ${tenantSlug}`);
+    console.error(
+      `No se encontró widget heroCarousel para tenant: ${tenantSlug}`,
+    );
     return <HeroCarouselError tenantSlug={tenantSlug} />;
   }
 
   const WidgetComponent = widget.component;
 
   // Props específicos según el tipo de widget
-  const widgetProps = hasCustomWidget ? {
-    // Widgets personalizados (como Wondernails) no necesitan tenantData
-    className,
-    autoRotate,
-    ...props
-  } : {
-    // Widget default necesita tenantData
-    tenantData,
-    className,
-    autoRotate,
-    ...props
-  };
+  const widgetProps = hasCustomWidget
+    ? {
+        // Widgets personalizados (como Wondernails) no necesitan tenantData
+        className,
+        autoRotate,
+        ...props,
+      }
+    : {
+        // Widget default necesita tenantData
+        tenantData,
+        className,
+        autoRotate,
+        ...props,
+      };
 
   try {
     return (

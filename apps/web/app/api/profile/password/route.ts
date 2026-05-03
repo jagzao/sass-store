@@ -67,7 +67,7 @@ export async function PUT(req: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Error updating password:", error);
+    // SECURITY: Redacted sensitive log;
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 },

@@ -39,7 +39,9 @@ test.describe.serial("Service CRUD Operations", () => {
 
     // Cleanup: Delete the test service
     setupDialogHandler(page, "accept");
-    await serviceRow(page, serviceName).getByRole("button", { name: "Eliminar" }).click();
+    await serviceRow(page, serviceName)
+      .getByRole("button", { name: "Eliminar" })
+      .click();
     await expect(page.getByText(serviceName)).not.toBeVisible({
       timeout: 5000,
     });
@@ -59,7 +61,9 @@ test.describe.serial("Service CRUD Operations", () => {
     });
 
     // Edit the service
-    await serviceRow(page, serviceName).getByRole("button", { name: "Editar" }).click();
+    await serviceRow(page, serviceName)
+      .getByRole("button", { name: "Editar" })
+      .click();
     await expect(page.getByText("Editar Servicio")).toBeVisible();
 
     // Update fields
@@ -73,7 +77,9 @@ test.describe.serial("Service CRUD Operations", () => {
     await page.locator("input[placeholder='0.00']").fill("99.00");
 
     // Verify empty image handling (bug fix validation)
-    await expect(page.getByText("Click para subir imagen").first()).toBeVisible();
+    await expect(
+      page.getByText("Click para subir imagen").first(),
+    ).toBeVisible();
 
     // Submit update
     page.once("dialog", (dialog) => dialog.accept());
@@ -86,7 +92,9 @@ test.describe.serial("Service CRUD Operations", () => {
 
     // Cleanup
     setupDialogHandler(page, "accept");
-    await serviceRow(page, updatedName).getByRole("button", { name: "Eliminar" }).click();
+    await serviceRow(page, updatedName)
+      .getByRole("button", { name: "Eliminar" })
+      .click();
     await expect(page.getByText(updatedName)).not.toBeVisible({
       timeout: 5000,
     });
@@ -110,7 +118,9 @@ test.describe.serial("Service CRUD Operations", () => {
 
     // Delete service
     setupDialogHandler(page, "accept");
-    await serviceRow(page, serviceName).getByRole("button", { name: "Eliminar" }).click();
+    await serviceRow(page, serviceName)
+      .getByRole("button", { name: "Eliminar" })
+      .click();
 
     // Verify deletion
     await expect(page.getByText(serviceName)).not.toBeVisible({

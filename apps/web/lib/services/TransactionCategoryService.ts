@@ -11,11 +11,20 @@ import {
   CommonSchemas,
 } from "@sass-store/validation/src/zod-result";
 import { z } from "zod";
-import { db, transactionCategories, financialMovements, eq, and, sql } from "@sass-store/database";
+import {
+  db,
+  transactionCategories,
+  financialMovements,
+  eq,
+  and,
+  sql,
+} from "@sass-store/database";
 import type { InferSelectModel } from "drizzle-orm";
 
 // Types
-export type TransactionCategory = InferSelectModel<typeof transactionCategories>;
+export type TransactionCategory = InferSelectModel<
+  typeof transactionCategories
+>;
 
 export interface CreateCategoryData {
   tenantId: string;

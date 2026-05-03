@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import dynamic from 'next/dynamic';
-import { ComponentProps } from 'react';
+import dynamic from "next/dynamic";
+import { ComponentProps } from "react";
 
 /**
  * Lazy-loaded Framer Motion components
@@ -12,35 +12,37 @@ import { ComponentProps } from 'react';
 
 // Dynamic import with no SSR (animations don't need server rendering)
 const FramerMotionDiv = dynamic(
-  () => import('framer-motion').then((mod) => ({ default: mod.motion.div })),
+  () => import("framer-motion").then((mod) => ({ default: mod.motion.div })),
   {
     ssr: false,
     loading: () => <div />, // Fallback to regular div while loading
-  }
+  },
 );
 
 const FramerMotionSection = dynamic(
-  () => import('framer-motion').then((mod) => ({ default: mod.motion.section })),
+  () =>
+    import("framer-motion").then((mod) => ({ default: mod.motion.section })),
   {
     ssr: false,
     loading: () => <section />,
-  }
+  },
 );
 
 const FramerMotionArticle = dynamic(
-  () => import('framer-motion').then((mod) => ({ default: mod.motion.article })),
+  () =>
+    import("framer-motion").then((mod) => ({ default: mod.motion.article })),
   {
     ssr: false,
     loading: () => <article />,
-  }
+  },
 );
 
 const FramerMotionSpan = dynamic(
-  () => import('framer-motion').then((mod) => ({ default: mod.motion.span })),
+  () => import("framer-motion").then((mod) => ({ default: mod.motion.span })),
   {
     ssr: false,
     loading: () => <span />,
-  }
+  },
 );
 
 /**
@@ -97,12 +99,12 @@ export function useCSSAnimation(name: string) {
 
 // Export CSS animation classes as constants for type safety
 export const CSS_ANIMATIONS = {
-  fadeInUp: 'animate-fade-in-up',
-  fadeIn: 'animate-fade-in',
-  slideInRight: 'animate-slide-in-right',
-  pulse: 'animate-pulse',
-  bounce: 'animate-bounce',
-  spin: 'animate-spin',
+  fadeInUp: "animate-fade-in-up",
+  fadeIn: "animate-fade-in",
+  slideInRight: "animate-slide-in-right",
+  pulse: "animate-pulse",
+  bounce: "animate-bounce",
+  spin: "animate-spin",
 } as const;
 
 /**

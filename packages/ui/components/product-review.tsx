@@ -57,13 +57,9 @@ export function ProductReview({
         </div>
       </div>
 
-      {review.title && (
-        <h4 className="font-semibold mb-2">{review.title}</h4>
-      )}
+      {review.title && <h4 className="font-semibold mb-2">{review.title}</h4>}
 
-      {review.comment && (
-        <p className="text-gray-700 mb-3">{review.comment}</p>
-      )}
+      {review.comment && <p className="text-gray-700 mb-3">{review.comment}</p>}
 
       <div className="flex items-center gap-4 text-sm">
         {onHelpful && (

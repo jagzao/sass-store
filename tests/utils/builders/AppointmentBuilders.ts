@@ -66,8 +66,7 @@ const testFaker = {
       array[Math.floor(Math.random() * array.length)],
   },
   lorem: {
-    sentence: () =>
-      `Notes ${Math.random().toString(36).substring(7)}`,
+    sentence: () => `Notes ${Math.random().toString(36).substring(7)}`,
   },
 };
 
@@ -227,7 +226,8 @@ export class AppointmentBuilder {
         this.appointment.endTime ||
         new Date(startTime.getTime() + 60 * 60 * 1000),
       status: this.appointment.status || "pending",
-      totalPrice: this.appointment.totalPrice || testFaker.datatype.number(100, 500),
+      totalPrice:
+        this.appointment.totalPrice || testFaker.datatype.number(100, 500),
       notes: this.appointment.notes,
     };
   }
@@ -250,7 +250,7 @@ export class AppointmentBuilder {
  */
 export function createAppointments(
   count: number,
-  options?: { status?: AppointmentData["status"] }
+  options?: { status?: AppointmentData["status"] },
 ): AppointmentData[] {
   return Array.from({ length: count }, () => {
     const builder = AppointmentBuilder.random();

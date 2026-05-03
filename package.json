@@ -61,7 +61,7 @@
     "perf:analyze": "ts-node -e \"console.log('Running performance analysis...')\"",
     "security:full": "npm run swarm:start \"security scan full\"",
     "security:quick": "ts-node ./scripts/security-quick-scan.ts",
-    "security:autofix": "npx ts-node ./scripts/security-autofix-simple.ts",
+    "security:autofix": "npx tsx ./scripts/security-autofix-simple.ts",
     "security:check-deps": "npm audit --audit-level=high",
     "security:update-deps": "npm audit fix && npm update",
     "rls:apply": "npx ts-node ./scripts/apply-rls.ts",

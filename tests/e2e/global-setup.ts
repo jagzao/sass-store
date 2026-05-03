@@ -23,8 +23,12 @@ export default async function globalSetup(config: FullConfig) {
           console.log("[Global Setup] Servidor listo ✅");
           return true;
         }
-      } catch { /* ignore */ }
-      console.log(`[Global Setup] Esperando servidor... intento ${i + 1}/${retries}`);
+      } catch {
+        /* ignore */
+      }
+      console.log(
+        `[Global Setup] Esperando servidor... intento ${i + 1}/${retries}`,
+      );
       await new Promise((r) => setTimeout(r, 3000));
     }
     throw new Error("[Global Setup] Servidor no respondió a tiempo");
@@ -34,13 +38,17 @@ export default async function globalSetup(config: FullConfig) {
 
   // 2. Seed opcional: si existe endpoint de seed
   try {
-    const seedRes = await fetch(`${baseURL}/api/debug/seed-e2e`, { method: "POST" });
+    const seedRes = await fetch(`${baseURL}/api/debug/seed-e2e`, {
+      method: "POST",
+    });
     if (seedRes.ok) {
       console.log("[Global Setup] Seed de datos E2E completado ✅");
     } else {
       console.warn("[Global Setup] Seed no disponible (endpoint no expuesto)");
     }
   } catch {
-    console.warn("[Global Setup] Seed no configurado, tests usarán datos existentes");
+    console.warn(
+      "[Global Setup] Seed no configurado, tests usarán datos existentes",
+    );
   }
 }

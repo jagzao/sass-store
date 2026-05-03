@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { loadStripe } from '@stripe/stripe-js';
+import { useState, useEffect } from "react";
+import { loadStripe } from "@stripe/stripe-js";
 import {
   Elements,
   CardElement,
   useStripe,
-  useElements
-} from '@stripe/react-stripe-js';
-import { useTenantSlug } from '@/lib/tenant/client-resolver';
+  useElements,
+} from "@stripe/react-stripe-js";
+import { useTenantSlug } from "@/lib/tenant/client-resolver";
 
 const stripePromise = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
   ? loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
@@ -48,7 +48,7 @@ function PaymentForm({
   customerInfo,
   clientSecret,
   onSuccess,
-  onError
+  onError,
 }: PaymentFormProps) {
   const stripe = useStripe();
   const elements = useElements();
@@ -58,40 +58,43 @@ function PaymentForm({
     event.preventDefault();
 
     if (!stripe || !elements) {
-      onError('Stripe has not loaded yet');
+      onError("Stripe has not loaded yet");
       return;
     }
 
     const cardElement = elements.getElement(CardElement);
     if (!cardElement) {
-      onError('Card element not found');
+      onError("Card element not found");
       return;
     }
 
     setIsProcessing(true);
 
     try {
-      const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
-        payment_method: {
-          card: cardElement,
-          billing_details: {
-            name: customerInfo.name,
-            email: customerInfo.email,
-            phone: customerInfo.phone
-          }
-        }
-      });
+      const { error, paymentIntent } = await stripe.confirmCardPayment(
+        clientSecret,
+        {
+          payment_method: {
+            card: cardElement,
+            billing_details: {
+              name: customerInfo.name,
+              email: customerInfo.email,
+              phone: customerInfo.phone,
+            },
+          },
+        },
+      );
 
       if (error) {
-        onError(error.message || 'Payment failed');
-      } else if (paymentIntent && paymentIntent.status === 'succeeded') {
+        onError(error.message || "Payment failed");
+      } else if (paymentIntent && paymentIntent.status === "succeeded") {
         onSuccess(paymentIntent as StripePaymentIntent);
       } else {
-        onError('Payment was not successful');
+        onError("Payment was not successful");
       }
     } catch (err) {
-      onError('An unexpected error occurred');
-      console.error('Payment error:', err);
+      onError("An unexpected error occurred");
+      console.error("Payment error:", err);
     } finally {
       setIsProcessing(false);
     }
@@ -100,15 +103,15 @@ function PaymentForm({
   const cardElementOptions = {
     style: {
       base: {
-        fontSize: '16px',
-        color: '#424770',
-        '::placeholder': {
-          color: '#aab7c4',
+        fontSize: "16px",
+        color: "#424770",
+        "::placeholder": {
+          color: "#aab7c4",
         },
-        fontFamily: 'system-ui, -apple-system, sans-serif'
+        fontFamily: "system-ui, -apple-system, sans-serif",
       },
       invalid: {
-        color: '#9e2146',
+        color: "#9e2146",
       },
     },
   };
@@ -127,7 +130,9 @@ function PaymentForm({
       <div className="bg-gray-50 p-4 rounded-lg">
         <div className="flex justify-between items-center text-sm">
           <span className="text-gray-600">Subtotal:</span>
-          <span>${amount.toFixed(2)} {currency.toUpperCase()}</span>
+          <span>
+            ${amount.toFixed(2)} {currency.toUpperCase()}
+          </span>
         </div>
         <div className="flex justify-between items-center text-sm mt-1">
           <span className="text-gray-600">Procesamiento:</span>
@@ -136,7 +141,9 @@ function PaymentForm({
         <hr className="my-2" />
         <div className="flex justify-between items-center font-semibold">
           <span>Total:</span>
-          <span>${amount.toFixed(2)} {currency.toUpperCase()}</span>
+          <span>
+            ${amount.toFixed(2)} {currency.toUpperCase()}
+          </span>
         </div>
       </div>
 
@@ -184,7 +191,7 @@ export function CheckoutForm({
   tenantId,
   customerInfo,
   onSuccess,
-  onError
+  onError,
 }: CheckoutFormProps) {
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -193,28 +200,30 @@ export function CheckoutForm({
   useEffect(() => {
     const createPaymentIntent = async () => {
       try {
-        const response = await fetch('/api/payments/create-intent', {
-          method: 'POST',
+        const response = await fetch("/api/payments/create-intent", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
-            'x-tenant-id': tenantId
+            "Content-Type": "application/json",
+            "x-tenant-id": tenantId,
           },
           body: JSON.stringify({
             orderId,
-            currency
-          })
+            currency,
+          }),
         });
 
         if (!response.ok) {
           const errorData = await response.json();
-          throw new Error(errorData.error || 'Failed to create payment intent');
+          throw new Error(errorData.error || "Failed to create payment intent");
         }
 
         const data = await response.json();
         setClientSecret(data.clientSecret);
       } catch (err) {
-        console.error('Payment intent creation error:', err);
-        onError(err instanceof Error ? err.message : 'Failed to initialize payment');
+        console.error("Payment intent creation error:", err);
+        onError(
+          err instanceof Error ? err.message : "Failed to initialize payment",
+        );
       } finally {
         setIsLoading(false);
       }
@@ -251,24 +260,26 @@ export function CheckoutForm({
   const stripeOptions = {
     clientSecret,
     appearance: {
-      theme: 'stripe' as const,
+      theme: "stripe" as const,
       variables: {
-        colorPrimary: '#2563eb',
-        colorBackground: '#ffffff',
-        colorText: '#30313d',
-        colorDanger: '#df1b41',
-        fontFamily: 'system-ui, -apple-system, sans-serif',
-        spacingUnit: '4px',
-        borderRadius: '8px'
-      }
-    }
+        colorPrimary: "#2563eb",
+        colorBackground: "#ffffff",
+        colorText: "#30313d",
+        colorDanger: "#df1b41",
+        fontFamily: "system-ui, -apple-system, sans-serif",
+        spacingUnit: "4px",
+        borderRadius: "8px",
+      },
+    },
   };
 
   if (!stripePromise) {
     return (
       <div className="text-center py-8">
         <div className="text-stone-600 mb-4">⚠️</div>
-        <p className="text-gray-600 mb-4">Stripe no está configurado correctamente</p>
+        <p className="text-gray-600 mb-4">
+          Stripe no está configurado correctamente
+        </p>
         <p className="text-sm text-gray-500">
           Para procesar pagos, configura las variables de entorno de Stripe
         </p>

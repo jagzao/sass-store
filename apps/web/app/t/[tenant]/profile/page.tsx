@@ -1,8 +1,13 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useRouter, useParams, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import {
+  useRouter,
+  useParams,
+  useSearchParams,
+  usePathname,
+} from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import UserMenu from "@/components/auth/UserMenu";
 import {
   AlertDialog,
@@ -59,12 +64,14 @@ export default function TenantProfilePage() {
   const { data: session, status, update } = useSession();
   const router = useRouter();
   const params = useParams();
+  const pathname = usePathname();
   const { showToast } = useToast();
   const tenantSlug = params.tenant as string;
   const [currentTenant, setCurrentTenant] = useState<any>(null);
   const searchParams = useSearchParams();
   const isWelcome = searchParams.get("welcome") === "1";
-  const [isEditing, setIsEditing] = useState(isWelcome); // auto-open edit on welcome
+  const [isEditing, setIsEditing] = useState(false);
+  const hasConsumedWelcomeRef = useRef(false);
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -77,7 +84,11 @@ export default function TenantProfilePage() {
     birthdate: "",
     gender: "" as "" | "masculino" | "femenino" | "otro" | "prefiero_no_decir",
   });
-  const [extraProfile, setExtraProfile] = useState<{ phone: string | null; birthdate: string | null; gender: string | null }>({ phone: null, birthdate: null, gender: null });
+  const [extraProfile, setExtraProfile] = useState<{
+    phone: string | null;
+    birthdate: string | null;
+    gender: string | null;
+  }>({ phone: null, birthdate: null, gender: null });
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [passwordData, setPasswordData] = useState({
     currentPassword: "",
@@ -87,6 +98,16 @@ export default function TenantProfilePage() {
   const [isLoading, setIsLoading] = useState(false);
   const [roleDialogOpen, setRoleDialogOpen] = useState(false);
   const [pendingRole, setPendingRole] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!isWelcome || hasConsumedWelcomeRef.current) {
+      return;
+    }
+
+    hasConsumedWelcomeRef.current = true;
+    setIsEditing(true);
+    router.replace(pathname, { scroll: false });
+  }, [isWelcome, pathname, router]);
 
   useEffect(() => {
     if (status === "authenticated" && session?.user) {
@@ -132,10 +153,10 @@ export default function TenantProfilePage() {
 
   // Sincronizar currentRole con la sesión cuando cambia
   useEffect(() => {
-    if (session?.user?.role) {
-      setCurrentRole(session.user.role);
+    if ((session?.user as any)?.role) {
+      setCurrentRole((session?.user as any).role);
     }
-  }, [session?.user?.role]);
+  }, [(session?.user as any)?.role]);
 
   const sessionEmail = session?.user?.email?.toLowerCase() ?? "";
   const canSelfManageRole =
@@ -270,10 +291,11 @@ export default function TenantProfilePage() {
         setIsEditing(false);
         showToast("Tu perfil fue actualizado correctamente", "success");
 
-        // Forzar una recarga de la página para asegurar que todos los componentes reflejen el nuevo nombre
-        setTimeout(() => {
-          window.location.reload();
-        }, 500);
+        // Keep profile UX stable after welcome flow and avoid full-page reloads
+        if (isWelcome) {
+          router.replace(`/t/${tenantSlug}/profile`, { scroll: false });
+        }
+        router.refresh();
       } else {
         const error = await response.json();
         showToast(error.error || "Error al actualizar el perfil", "error");
@@ -334,7 +356,7 @@ export default function TenantProfilePage() {
         showToast(error.error || "Error al cambiar la contraseña", "error");
       }
     } catch (error) {
-      console.error("Error changing password:", error);
+      // SECURITY: Redacted sensitive log;
       showToast("Error al cambiar la contraseña", "error");
     } finally {
       setIsLoading(false);
@@ -400,8 +422,12 @@ export default function TenantProfilePage() {
           <div className="container mx-auto max-w-4xl flex items-center gap-3">
             <span className="text-2xl">🎉</span>
             <div>
-              <p className="font-semibold">¡Bienvenido! Tu cuenta fue creada con Google.</p>
-              <p className="text-sm text-blue-100">Completa tu perfil para una mejor experiencia.</p>
+              <p className="font-semibold">
+                ¡Bienvenido! Tu cuenta fue creada con Google.
+              </p>
+              <p className="text-sm text-blue-100">
+                Completa tu perfil para una mejor experiencia.
+              </p>
             </div>
           </div>
         </div>
@@ -514,7 +540,9 @@ export default function TenantProfilePage() {
                       <div>
                         <label
                           className={`block text-sm font-medium mb-1 ${
-                            tenantSlug === "zo-system" ? "text-gray-300" : "text-gray-700"
+                            tenantSlug === "zo-system"
+                              ? "text-gray-300"
+                              : "text-gray-700"
                           }`}
                         >
                           Email
@@ -532,14 +560,21 @@ export default function TenantProfilePage() {
 
                       {/* Phone */}
                       <div>
-                        <label className={`block text-sm font-medium mb-1 ${tenantSlug === "zo-system" ? "text-gray-300" : "text-gray-700"}`}>
+                        <label
+                          className={`block text-sm font-medium mb-1 ${tenantSlug === "zo-system" ? "text-gray-300" : "text-gray-700"}`}
+                        >
                           Teléfono
                         </label>
                         {isEditing ? (
                           <input
                             type="tel"
                             value={formData.phone}
-                            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                phone: e.target.value,
+                              })
+                            }
                             maxLength={20}
                             placeholder="55 1234 5678"
                             className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:border-transparent ${
@@ -549,7 +584,9 @@ export default function TenantProfilePage() {
                             }`}
                           />
                         ) : (
-                          <p className={`px-3 py-2 rounded ${tenantSlug === "zo-system" ? "text-white bg-white/5 border border-white/5" : "text-gray-900 bg-gray-50"}`}>
+                          <p
+                            className={`px-3 py-2 rounded ${tenantSlug === "zo-system" ? "text-white bg-white/5 border border-white/5" : "text-gray-900 bg-gray-50"}`}
+                          >
                             {extraProfile.phone || "No especificado"}
                           </p>
                         )}
@@ -557,14 +594,21 @@ export default function TenantProfilePage() {
 
                       {/* Birthdate */}
                       <div>
-                        <label className={`block text-sm font-medium mb-1 ${tenantSlug === "zo-system" ? "text-gray-300" : "text-gray-700"}`}>
+                        <label
+                          className={`block text-sm font-medium mb-1 ${tenantSlug === "zo-system" ? "text-gray-300" : "text-gray-700"}`}
+                        >
                           Fecha de nacimiento
                         </label>
                         {isEditing ? (
                           <input
                             type="date"
                             value={formData.birthdate}
-                            onChange={(e) => setFormData({ ...formData, birthdate: e.target.value })}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                birthdate: e.target.value,
+                              })
+                            }
                             max={new Date().toISOString().slice(0, 10)}
                             className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:border-transparent ${
                               tenantSlug === "zo-system"
@@ -573,9 +617,17 @@ export default function TenantProfilePage() {
                             }`}
                           />
                         ) : (
-                          <p className={`px-3 py-2 rounded ${tenantSlug === "zo-system" ? "text-white bg-white/5 border border-white/5" : "text-gray-900 bg-gray-50"}`}>
+                          <p
+                            className={`px-3 py-2 rounded ${tenantSlug === "zo-system" ? "text-white bg-white/5 border border-white/5" : "text-gray-900 bg-gray-50"}`}
+                          >
                             {extraProfile.birthdate
-                              ? new Date(extraProfile.birthdate).toLocaleDateString("es-MX", { year: "numeric", month: "long", day: "numeric" })
+                              ? new Date(
+                                  extraProfile.birthdate,
+                                ).toLocaleDateString("es-MX", {
+                                  year: "numeric",
+                                  month: "long",
+                                  day: "numeric",
+                                })
                               : "No especificado"}
                           </p>
                         )}
@@ -583,13 +635,21 @@ export default function TenantProfilePage() {
 
                       {/* Gender */}
                       <div>
-                        <label className={`block text-sm font-medium mb-1 ${tenantSlug === "zo-system" ? "text-gray-300" : "text-gray-700"}`}>
+                        <label
+                          className={`block text-sm font-medium mb-1 ${tenantSlug === "zo-system" ? "text-gray-300" : "text-gray-700"}`}
+                        >
                           Género
                         </label>
                         {isEditing ? (
                           <select
                             value={formData.gender}
-                            onChange={(e) => setFormData({ ...formData, gender: e.target.value as typeof formData.gender })}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                gender: e.target
+                                  .value as typeof formData.gender,
+                              })
+                            }
                             className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:border-transparent ${
                               tenantSlug === "zo-system"
                                 ? "bg-black/20 border-white/20 text-white focus:ring-[#FF8000]"
@@ -600,12 +660,21 @@ export default function TenantProfilePage() {
                             <option value="masculino">Masculino</option>
                             <option value="femenino">Femenino</option>
                             <option value="otro">Otro</option>
-                            <option value="prefiero_no_decir">Prefiero no decir</option>
+                            <option value="prefiero_no_decir">
+                              Prefiero no decir
+                            </option>
                           </select>
                         ) : (
-                          <p className={`px-3 py-2 rounded capitalize ${tenantSlug === "zo-system" ? "text-white bg-white/5 border border-white/5" : "text-gray-900 bg-gray-50"}`}>
+                          <p
+                            className={`px-3 py-2 rounded capitalize ${tenantSlug === "zo-system" ? "text-white bg-white/5 border border-white/5" : "text-gray-900 bg-gray-50"}`}
+                          >
                             {extraProfile.gender
-                              ? { masculino: "Masculino", femenino: "Femenino", otro: "Otro", prefiero_no_decir: "Prefiero no decir" }[extraProfile.gender] ?? extraProfile.gender
+                              ? ({
+                                  masculino: "Masculino",
+                                  femenino: "Femenino",
+                                  otro: "Otro",
+                                  prefiero_no_decir: "Prefiero no decir",
+                                }[extraProfile.gender] ?? extraProfile.gender)
                               : "No especificado"}
                           </p>
                         )}
@@ -614,7 +683,9 @@ export default function TenantProfilePage() {
                       <div>
                         <label
                           className={`block text-sm font-medium mb-1 ${
-                            tenantSlug === "zo-system" ? "text-gray-300" : "text-gray-700"
+                            tenantSlug === "zo-system"
+                              ? "text-gray-300"
+                              : "text-gray-700"
                           }`}
                         >
                           Rol

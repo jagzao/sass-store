@@ -1,23 +1,23 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { PostComposer } from '@/components/social-planner/post-composer';
-import { SocialCalendar } from '@/components/social-planner/social-calendar';
-import { PostsList } from '@/components/social-planner/posts-list';
-import { ScheduleTimeline } from '@/components/social-planner/schedule-timeline';
+import { useState } from "react";
+import { PostComposer } from "@/components/social-planner/post-composer";
+import { SocialCalendar } from "@/components/social-planner/social-calendar";
+import { PostsList } from "@/components/social-planner/posts-list";
+import { ScheduleTimeline } from "@/components/social-planner/schedule-timeline";
 
-type ViewMode = 'calendar' | 'timeline' | 'posts' | 'compose';
+type ViewMode = "calendar" | "timeline" | "posts" | "compose";
 
 export default function SocialPlannerPage() {
-  const [currentView, setCurrentView] = useState<ViewMode>('calendar');
+  const [currentView, setCurrentView] = useState<ViewMode>("calendar");
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
   const handleCreatePost = () => {
-    setCurrentView('compose');
+    setCurrentView("compose");
   };
 
   const handlePostCreated = () => {
-    setCurrentView('calendar');
+    setCurrentView("calendar");
     // Refresh data would happen here
   };
 
@@ -25,18 +25,18 @@ export default function SocialPlannerPage() {
 
   const handleEditPost = (postId: string) => {
     setEditingPostId(postId);
-    setCurrentView('compose');
+    setCurrentView("compose");
   };
 
   const handlePostEdited = () => {
     setEditingPostId(null);
-    setCurrentView('posts');
+    setCurrentView("posts");
     // Refresh data would happen here
   };
 
   const handleCancelEdit = () => {
     setEditingPostId(null);
-    setCurrentView('posts');
+    setCurrentView("posts");
   };
 
   return (
@@ -46,39 +46,43 @@ export default function SocialPlannerPage() {
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Social Planner</h1>
-              <p className="text-gray-600">Gestiona tu contenido en redes sociales</p>
+              <h1 className="text-2xl font-bold text-gray-900">
+                Social Planner
+              </h1>
+              <p className="text-gray-600">
+                Gestiona tu contenido en redes sociales
+              </p>
             </div>
 
             <div className="flex items-center space-x-4">
               {/* View Toggle */}
               <div className="flex bg-gray-100 rounded-lg p-1">
                 <button
-                  onClick={() => setCurrentView('calendar')}
+                  onClick={() => setCurrentView("calendar")}
                   className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-                    currentView === 'calendar'
-                      ? 'bg-white text-blue-600 shadow-sm'
-                      : 'text-gray-600 hover:text-gray-900'
+                    currentView === "calendar"
+                      ? "bg-white text-blue-600 shadow-sm"
+                      : "text-gray-600 hover:text-gray-900"
                   }`}
                 >
                   📅 Calendario
                 </button>
                 <button
-                  onClick={() => setCurrentView('timeline')}
+                  onClick={() => setCurrentView("timeline")}
                   className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-                    currentView === 'timeline'
-                      ? 'bg-white text-blue-600 shadow-sm'
-                      : 'text-gray-600 hover:text-gray-900'
+                    currentView === "timeline"
+                      ? "bg-white text-blue-600 shadow-sm"
+                      : "text-gray-600 hover:text-gray-900"
                   }`}
                 >
                   📋 Timeline
                 </button>
                 <button
-                  onClick={() => setCurrentView('posts')}
+                  onClick={() => setCurrentView("posts")}
                   className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-                    currentView === 'posts'
-                      ? 'bg-white text-blue-600 shadow-sm'
-                      : 'text-gray-600 hover:text-gray-900'
+                    currentView === "posts"
+                      ? "bg-white text-blue-600 shadow-sm"
+                      : "text-gray-600 hover:text-gray-900"
                   }`}
                 >
                   📝 Posts
@@ -100,7 +104,7 @@ export default function SocialPlannerPage() {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 py-6">
-        {currentView === 'compose' && (
+        {currentView === "compose" && (
           <PostComposer
             onCancel={handleCancelEdit}
             onSuccess={editingPostId ? handlePostEdited : handlePostCreated}
@@ -109,7 +113,7 @@ export default function SocialPlannerPage() {
           />
         )}
 
-        {currentView === 'calendar' && (
+        {currentView === "calendar" && (
           <SocialCalendar
             selectedDate={selectedDate}
             onDateSelect={setSelectedDate}
@@ -117,13 +121,9 @@ export default function SocialPlannerPage() {
           />
         )}
 
-        {currentView === 'timeline' && (
-          <ScheduleTimeline />
-        )}
+        {currentView === "timeline" && <ScheduleTimeline />}
 
-        {currentView === 'posts' && (
-          <PostsList onEditPost={handleEditPost} />
-        )}
+        {currentView === "posts" && <PostsList onEditPost={handleEditPost} />}
       </div>
     </div>
   );

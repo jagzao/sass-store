@@ -32,11 +32,12 @@ export async function GET(request: NextRequest) {
       sql`SELECT id FROM tenants WHERE slug = ${tenantSlug}`,
     );
 
-    if (!tenantResult.rows || tenantResult.rows.length === 0) {
+    const tenantRows = tenantResult as unknown as any[];
+    if (!tenantRows || tenantRows.length === 0) {
       return NextResponse.json({ error: "Tenant not found" }, { status: 404 });
     }
 
-    const tenantId = tenantResult.rows[0].id;
+    const tenantId = tenantRows[0].id;
 
     // Validar acceso al tenant
     try {
@@ -96,7 +97,7 @@ export async function GET(request: NextRequest) {
       `,
     );
 
-    const salesData = salesResult.rows.map((row: any) => ({
+    const salesData = (salesResult as unknown as any[]).map((row: any) => ({
       period: row.period,
       orderCount: parseInt(row.ordercount),
       totalSales: parseFloat(row.totalsales),
@@ -122,11 +123,13 @@ export async function GET(request: NextRequest) {
       `,
     );
 
-    const paymentMethods = paymentMethodsResult.rows.map((row: any) => ({
-      paymentMethod: row.payment_method,
-      paymentCount: parseInt(row.paymentcount),
-      totalAmount: parseFloat(row.totalamount),
-    }));
+    const paymentMethods = (paymentMethodsResult as unknown as any[]).map(
+      (row: any) => ({
+        paymentMethod: row.payment_method,
+        paymentCount: parseInt(row.paymentcount),
+        totalAmount: parseFloat(row.totalamount),
+      }),
+    );
 
     // Consultar productos más vendidos
     const topProductsResult = await db.execute(
@@ -149,13 +152,15 @@ export async function GET(request: NextRequest) {
       `,
     );
 
-    const topProducts = topProductsResult.rows.map((row: any) => ({
-      id: row.id,
-      name: row.name,
-      price: parseFloat(row.price),
-      totalQuantity: parseInt(row.totalquantity),
-      totalRevenue: parseFloat(row.totalrevenue),
-    }));
+    const topProducts = (topProductsResult as unknown as any[]).map(
+      (row: any) => ({
+        id: row.id,
+        name: row.name,
+        price: parseFloat(row.price),
+        totalQuantity: parseInt(row.totalquantity),
+        totalRevenue: parseFloat(row.totalrevenue),
+      }),
+    );
 
     // Retornar reporte de ventas
     return NextResponse.json({

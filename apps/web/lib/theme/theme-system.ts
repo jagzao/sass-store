@@ -34,9 +34,9 @@ export interface ThemeTypography {
     base: string;
     lg: string;
     xl: string;
-    '2xl': string;
-    '3xl': string;
-    '4xl': string;
+    "2xl": string;
+    "3xl": string;
+    "4xl": string;
   };
   fontWeight: {
     normal: number;
@@ -57,8 +57,8 @@ export interface ThemeSpacing {
   md: string;
   lg: string;
   xl: string;
-  '2xl': string;
-  '3xl': string;
+  "2xl": string;
+  "3xl": string;
 }
 
 export interface ThemeRadius {
@@ -76,13 +76,13 @@ export interface ThemeShadows {
   md: string;
   lg: string;
   xl: string;
-  '2xl': string;
+  "2xl": string;
   none: string;
 }
 
 export interface Theme {
   name: string;
-  mode: 'light' | 'dark';
+  mode: "light" | "dark";
   colors: ThemeColors;
   typography: ThemeTypography;
   spacing: ThemeSpacing;
@@ -92,39 +92,39 @@ export interface Theme {
 
 // Default light theme
 export const defaultLightTheme: Theme = {
-  name: 'default-light',
-  mode: 'light',
+  name: "default-light",
+  mode: "light",
   colors: {
-    primary: '#DC2626', // Red-600
-    secondary: '#7C3AED', // Violet-600
-    accent: '#F59E0B', // Amber-500
-    background: '#FFFFFF',
-    foreground: '#09090B', // Zinc-950
-    muted: '#F4F4F5', // Zinc-100
-    mutedForeground: '#71717A', // Zinc-500
-    border: '#E4E4E7', // Zinc-200
-    input: '#E4E4E7',
-    ring: '#DC2626',
-    success: '#16A34A', // Green-600
-    warning: '#F59E0B', // Amber-500
-    error: '#DC2626', // Red-600
-    info: '#3B82F6', // Blue-500
+    primary: "#DC2626", // Red-600
+    secondary: "#7C3AED", // Violet-600
+    accent: "#F59E0B", // Amber-500
+    background: "#FFFFFF",
+    foreground: "#09090B", // Zinc-950
+    muted: "#F4F4F5", // Zinc-100
+    mutedForeground: "#71717A", // Zinc-500
+    border: "#E4E4E7", // Zinc-200
+    input: "#E4E4E7",
+    ring: "#DC2626",
+    success: "#16A34A", // Green-600
+    warning: "#F59E0B", // Amber-500
+    error: "#DC2626", // Red-600
+    info: "#3B82F6", // Blue-500
   },
   typography: {
     fontFamily: {
-      sans: 'system-ui, -apple-system, sans-serif',
-      serif: 'Georgia, serif',
-      mono: 'ui-monospace, monospace',
+      sans: "system-ui, -apple-system, sans-serif",
+      serif: "Georgia, serif",
+      mono: "ui-monospace, monospace",
     },
     fontSize: {
-      xs: '0.75rem',
-      sm: '0.875rem',
-      base: '1rem',
-      lg: '1.125rem',
-      xl: '1.25rem',
-      '2xl': '1.5rem',
-      '3xl': '1.875rem',
-      '4xl': '2.25rem',
+      xs: "0.75rem",
+      sm: "0.875rem",
+      base: "1rem",
+      lg: "1.125rem",
+      xl: "1.25rem",
+      "2xl": "1.5rem",
+      "3xl": "1.875rem",
+      "4xl": "2.25rem",
     },
     fontWeight: {
       normal: 400,
@@ -139,46 +139,46 @@ export const defaultLightTheme: Theme = {
     },
   },
   spacing: {
-    xs: '0.25rem',
-    sm: '0.5rem',
-    md: '1rem',
-    lg: '1.5rem',
-    xl: '2rem',
-    '2xl': '3rem',
-    '3xl': '4rem',
+    xs: "0.25rem",
+    sm: "0.5rem",
+    md: "1rem",
+    lg: "1.5rem",
+    xl: "2rem",
+    "2xl": "3rem",
+    "3xl": "4rem",
   },
   radius: {
-    none: '0',
-    sm: '0.25rem',
-    md: '0.5rem',
-    lg: '0.75rem',
-    xl: '1rem',
-    full: '9999px',
+    none: "0",
+    sm: "0.25rem",
+    md: "0.5rem",
+    lg: "0.75rem",
+    xl: "1rem",
+    full: "9999px",
   },
   shadows: {
-    none: 'none',
-    xs: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
-    sm: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
-    md: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
-    lg: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
-    xl: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
-    '2xl': '0 25px 50px -12px rgb(0 0 0 / 0.25)',
+    none: "none",
+    xs: "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+    sm: "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)",
+    md: "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
+    lg: "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)",
+    xl: "0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)",
+    "2xl": "0 25px 50px -12px rgb(0 0 0 / 0.25)",
   },
 };
 
 // Default dark theme
 export const defaultDarkTheme: Theme = {
   ...defaultLightTheme,
-  name: 'default-dark',
-  mode: 'dark',
+  name: "default-dark",
+  mode: "dark",
   colors: {
     ...defaultLightTheme.colors,
-    background: '#09090B',
-    foreground: '#FAFAFA',
-    muted: '#27272A',
-    mutedForeground: '#A1A1AA',
-    border: '#27272A',
-    input: '#27272A',
+    background: "#09090B",
+    foreground: "#FAFAFA",
+    muted: "#27272A",
+    mutedForeground: "#A1A1AA",
+    border: "#27272A",
+    input: "#27272A",
   },
 };
 
@@ -190,7 +190,7 @@ export function createTenantTheme(
     primaryColor: string;
     secondaryColor?: string;
   },
-  baseTheme: Theme = defaultLightTheme
+  baseTheme: Theme = defaultLightTheme,
 ): Theme {
   return {
     ...baseTheme,
@@ -210,37 +210,37 @@ export function createTenantTheme(
 export function themeToCSSVariables(theme: Theme): Record<string, string> {
   return {
     // Colors
-    '--color-primary': theme.colors.primary,
-    '--color-secondary': theme.colors.secondary || theme.colors.primary,
-    '--color-accent': theme.colors.accent,
-    '--color-background': theme.colors.background,
-    '--color-foreground': theme.colors.foreground,
-    '--color-muted': theme.colors.muted,
-    '--color-muted-foreground': theme.colors.mutedForeground,
-    '--color-border': theme.colors.border,
-    '--color-input': theme.colors.input,
-    '--color-ring': theme.colors.ring,
-    '--color-success': theme.colors.success,
-    '--color-warning': theme.colors.warning,
-    '--color-error': theme.colors.error,
-    '--color-info': theme.colors.info,
+    "--color-primary": theme.colors.primary,
+    "--color-secondary": theme.colors.secondary || theme.colors.primary,
+    "--color-accent": theme.colors.accent ?? theme.colors.primary,
+    "--color-background": theme.colors.background,
+    "--color-foreground": theme.colors.foreground,
+    "--color-muted": theme.colors.muted,
+    "--color-muted-foreground": theme.colors.mutedForeground,
+    "--color-border": theme.colors.border,
+    "--color-input": theme.colors.input,
+    "--color-ring": theme.colors.ring,
+    "--color-success": theme.colors.success,
+    "--color-warning": theme.colors.warning,
+    "--color-error": theme.colors.error,
+    "--color-info": theme.colors.info,
 
     // Typography
-    '--font-sans': theme.typography.fontFamily.sans,
-    '--font-serif': theme.typography.fontFamily.serif,
-    '--font-mono': theme.typography.fontFamily.mono,
+    "--font-sans": theme.typography.fontFamily.sans,
+    "--font-serif": theme.typography.fontFamily.serif,
+    "--font-mono": theme.typography.fontFamily.mono,
 
     // Border radius
-    '--radius-sm': theme.radius.sm,
-    '--radius-md': theme.radius.md,
-    '--radius-lg': theme.radius.lg,
-    '--radius-xl': theme.radius.xl,
+    "--radius-sm": theme.radius.sm,
+    "--radius-md": theme.radius.md,
+    "--radius-lg": theme.radius.lg,
+    "--radius-xl": theme.radius.xl,
 
     // Shadows
-    '--shadow-sm': theme.shadows.sm,
-    '--shadow-md': theme.shadows.md,
-    '--shadow-lg': theme.shadows.lg,
-    '--shadow-xl': theme.shadows.xl,
+    "--shadow-sm": theme.shadows.sm,
+    "--shadow-md": theme.shadows.md,
+    "--shadow-lg": theme.shadows.lg,
+    "--shadow-xl": theme.shadows.xl,
   };
 }
 
@@ -248,7 +248,7 @@ export function themeToCSSVariables(theme: Theme): Record<string, string> {
  * Applies theme CSS variables to the document
  */
 export function applyTheme(theme: Theme) {
-  if (typeof document === 'undefined') return;
+  if (typeof document === "undefined") return;
 
   const root = document.documentElement;
   const cssVars = themeToCSSVariables(theme);
@@ -258,8 +258,8 @@ export function applyTheme(theme: Theme) {
   });
 
   // Also set data-theme attribute for CSS selectors
-  root.setAttribute('data-theme', theme.name);
-  root.setAttribute('data-mode', theme.mode);
+  root.setAttribute("data-theme", theme.name);
+  root.setAttribute("data-mode", theme.mode);
 }
 
 /**
@@ -267,8 +267,8 @@ export function applyTheme(theme: Theme) {
  */
 export function withOpacity(color: string, opacity: number): string {
   // Handle hex colors
-  if (color.startsWith('#')) {
-    const hex = color.replace('#', '');
+  if (color.startsWith("#")) {
+    const hex = color.replace("#", "");
     const r = parseInt(hex.substring(0, 2), 16);
     const g = parseInt(hex.substring(2, 4), 16);
     const b = parseInt(hex.substring(4, 6), 16);
@@ -276,8 +276,8 @@ export function withOpacity(color: string, opacity: number): string {
   }
 
   // Handle rgb/rgba
-  if (color.startsWith('rgb')) {
-    return color.replace('rgb(', 'rgba(').replace(')', `, ${opacity})`);
+  if (color.startsWith("rgb")) {
+    return color.replace("rgb(", "rgba(").replace(")", `, ${opacity})`);
   }
 
   return color;
@@ -288,8 +288,8 @@ export function withOpacity(color: string, opacity: number): string {
  */
 export function isLightColor(color: string): boolean {
   // Simple luminance calculation for hex colors
-  if (color.startsWith('#')) {
-    const hex = color.replace('#', '');
+  if (color.startsWith("#")) {
+    const hex = color.replace("#", "");
     const r = parseInt(hex.substring(0, 2), 16);
     const g = parseInt(hex.substring(2, 4), 16);
     const b = parseInt(hex.substring(4, 6), 16);
@@ -307,5 +307,5 @@ export function isLightColor(color: string): boolean {
  * Get contrasting text color for a background
  */
 export function getContrastingTextColor(backgroundColor: string): string {
-  return isLightColor(backgroundColor) ? '#000000' : '#FFFFFF';
+  return isLightColor(backgroundColor) ? "#000000" : "#FFFFFF";
 }

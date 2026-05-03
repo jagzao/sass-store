@@ -45,7 +45,7 @@ function normalizeRole(role: string | null | undefined): RbacRole {
   return "Cliente";
 }
 
-const { handlers, auth, signIn, signOut } = NextAuth({
+const { handlers, auth, signIn, signOut } = (NextAuth as any)({
   secret: process.env.NEXTAUTH_SECRET,
   providers: [
     Google({
@@ -97,7 +97,7 @@ const { handlers, auth, signIn, signOut } = NextAuth({
           }
 
           if (!user.password) {
-            console.log("[NextAuth] User has no password set");
+            // SECURITY: Redacted sensitive log;
             return null;
           }
 
@@ -108,11 +108,11 @@ const { handlers, auth, signIn, signOut } = NextAuth({
           );
 
           if (!passwordMatch) {
-            console.log("[NextAuth] Password mismatch for user:", user.email);
+            // SECURITY: Redacted sensitive log;
             return null;
           }
 
-          console.log("[NextAuth] Password verified for:", user.email);
+          // SECURITY: Redacted sensitive log;
 
           // Find tenant - critical for RLS
           const [tenant] = await db
@@ -284,9 +284,7 @@ const { handlers, auth, signIn, signOut } = NextAuth({
               // Only invalidate if token already has a tenant set and it mismatches
               // (Google OAuth users start with no tenantSlug — don't invalidate them)
               if (token.tenantSlug && urlTenantSlug !== token.tenantSlug) {
-                console.warn(
-                  `[NextAuth] Session tenant mismatch: session is for '${token.tenantSlug}' but URL is for '${urlTenantSlug}' - invalidating session`,
-                );
+                // SECURITY: Redacted sensitive log;
 
                 // Clear session data to force re-authentication
                 session.user = null;
@@ -313,9 +311,7 @@ const { handlers, auth, signIn, signOut } = NextAuth({
 
             // If the URL tenant doesn't match the token tenant, invalidate token
             if (urlTenantSlug !== token.tenantSlug) {
-              console.warn(
-                `[NextAuth] JWT tenant mismatch: token is for '${token.tenantSlug}' but URL is for '${urlTenantSlug}' - invalidating token`,
-              );
+              // SECURITY: Redacted sensitive log;
 
               // Clear token data to force re-authentication
               return {

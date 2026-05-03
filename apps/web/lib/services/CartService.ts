@@ -29,9 +29,19 @@ export interface AddItemInput {
 
 export interface ICartService {
   createCart(userId: string): Promise<Result<Cart, DomainError>>;
-  addItem(cartId: string, item: AddItemInput): Promise<Result<Cart, DomainError>>;
-  updateQuantity(cartId: string, productId: string, quantity: number): Promise<Result<Cart, DomainError>>;
-  removeItem(cartId: string, productId: string): Promise<Result<Cart, DomainError>>;
+  addItem(
+    cartId: string,
+    item: AddItemInput,
+  ): Promise<Result<Cart, DomainError>>;
+  updateQuantity(
+    cartId: string,
+    productId: string,
+    quantity: number,
+  ): Promise<Result<Cart, DomainError>>;
+  removeItem(
+    cartId: string,
+    productId: string,
+  ): Promise<Result<Cart, DomainError>>;
   getCart(cartId: string): Promise<Result<Cart, DomainError>>;
   clearCart(cartId: string): Promise<Result<Cart, DomainError>>;
   calculateTotal(items: CartItem[]): number;
@@ -64,12 +74,17 @@ export class InMemoryCartService implements ICartService {
 
     if (item.quantity <= 0 || item.quantity % 1 !== 0) {
       return Err(
-        ErrorFactories.validation("Quantity must be a positive integer", "quantity"),
+        ErrorFactories.validation(
+          "Quantity must be a positive integer",
+          "quantity",
+        ),
       );
     }
 
     if (item.price < 0) {
-      return Err(ErrorFactories.validation("Price cannot be negative", "price"));
+      return Err(
+        ErrorFactories.validation("Price cannot be negative", "price"),
+      );
     }
 
     const existingIndex = cart.items.findIndex(
@@ -106,7 +121,10 @@ export class InMemoryCartService implements ICartService {
   ): Promise<Result<Cart, DomainError>> {
     if (quantity <= 0 || quantity % 1 !== 0) {
       return Err(
-        ErrorFactories.validation("Quantity must be a positive integer", "quantity"),
+        ErrorFactories.validation(
+          "Quantity must be a positive integer",
+          "quantity",
+        ),
       );
     }
 

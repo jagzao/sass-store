@@ -69,7 +69,9 @@ export async function resolveTenant(urlSlug?: string): Promise<Tenant> {
   const tenantCurrency = headersList.get("x-tenant-currency");
 
   if (!tenantSlug) {
-    console.error("Missing tenant resolution headers from middleware and no URL slug provided");
+    console.error(
+      "Missing tenant resolution headers from middleware and no URL slug provided",
+    );
     // Fallback to default if everything is missing
     return DEFAULT_TENANT;
   }
@@ -118,10 +120,10 @@ async function fetchTenantBySlug(slug: string): Promise<Tenant | null> {
         description: tenant.description || "No description",
         mode: tenant.mode as "catalog" | "booking",
         status: tenant.status as "active" | "inactive" | "suspended",
-        branding: tenant.branding,
-        contact: tenant.contact,
-        location: tenant.location,
-        quotas: tenant.quotas,
+        branding: tenant.branding as any,
+        contact: tenant.contact as any,
+        location: tenant.location as any,
+        quotas: tenant.quotas as any,
       };
     }
   } catch (error) {

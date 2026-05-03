@@ -22,7 +22,7 @@ export function InventoryTransactions({
     loadTransactions,
     exportToCSV,
     getTransactionStats,
-  } = useInventoryTransactions();
+  } = useInventoryTransactions() as any;
 
   const [productId, setProductId] = useState("");
   const [transactionType, setTransactionType] = useState("");
@@ -301,34 +301,34 @@ export function InventoryTransactions({
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {transactions.map((transaction) => (
+            {transactions.map((transaction: any) => (
               <tr key={transaction.id} className="hover:bg-gray-50">
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {formatDate(transaction.createdAt.toString())}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm font-medium text-gray-900">
-                    {transaction.productName}
+                    {(transaction as any).productName}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span
-                    className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getTransactionTypeClass(transaction.type)}`}
+                    className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getTransactionTypeClass((transaction as any).type)}`}
                   >
-                    {getTransactionTypeText(transaction.type)}
+                    {getTransactionTypeText((transaction as any).type)}
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div
                     className={`text-sm font-medium ${
-                      transaction.type === "deduction"
+                      (transaction as any).type === "deduction"
                         ? "text-red-600"
-                        : transaction.type === "addition"
+                        : (transaction as any).type === "addition"
                           ? "text-green-600"
                           : "text-gray-600"
                     }`}
                   >
-                    {transaction.type === "deduction" ? "-" : "+"}
+                    {(transaction as any).type === "deduction" ? "-" : "+"}
                     {transaction.quantity}
                   </div>
                   <div className="text-xs text-gray-500">
@@ -345,7 +345,7 @@ export function InventoryTransactions({
                   )}
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-500">
-                  {transaction.notes || "-"}
+                  {(transaction as any).notes || "-"}
                 </td>
               </tr>
             ))}
@@ -404,7 +404,7 @@ export function InventoryTransactions({
                 {Array.from(
                   { length: Math.min(5, pagination.totalPages) },
                   (_, i) => {
-                    let page;
+                    let page: number;
                     if (pagination.totalPages <= 5) {
                       page = i + 1;
                     } else if (pagination.page <= 3) {

@@ -241,7 +241,7 @@ const TrendingCard = memo<TrendingCardProps>(({ item, onAction }) => {
   );
 });
 
-TrendingCard.displayName = 'TrendingCard';
+TrendingCard.displayName = "TrendingCard";
 
 export function Trending() {
   // TENANT-AWARE: Only show trending items from current tenant
@@ -250,31 +250,34 @@ export function Trending() {
   const router = useRouter();
 
   // Memoize action handler - MUST be called before any early returns
-  const handleAction = useCallback((item: TrendingItem) => {
-    if (item.type === "service") {
-      // Navigate to booking page for services
-      router.push(`/t/${item.tenant}/booking/new?service=${item.id}`);
-    } else {
-      // Add product to cart
-      addItem({
-        sku: item.id,
-        name: item.name,
-        price: item.price,
-        image: item.image,
-        variant: {
-          tenant: item.tenant,
-          type: "product",
-        },
-      });
-      // Navigate to cart
-      router.push(`/t/${item.tenant}/cart`);
-    }
-  }, [addItem, router]);
+  const handleAction = useCallback(
+    (item: TrendingItem) => {
+      if (item.type === "service") {
+        // Navigate to booking page for services
+        router.push(`/t/${item.tenant}/booking/new?service=${item.id}`);
+      } else {
+        // Add product to cart
+        addItem({
+          sku: item.id,
+          name: item.name,
+          price: item.price,
+          image: item.image,
+          variant: {
+            tenant: item.tenant,
+            type: "product",
+          },
+        });
+        // Navigate to cart
+        router.push(`/t/${item.tenant}/cart`);
+      }
+    },
+    [addItem, router],
+  );
 
   // Memoize filtered items
-  const tenantFilteredItems = useMemo(() =>
-    trendingItems.filter((item) => item.tenant === currentTenantSlug),
-    [currentTenantSlug]
+  const tenantFilteredItems = useMemo(
+    () => trendingItems.filter((item) => item.tenant === currentTenantSlug),
+    [currentTenantSlug],
   );
 
   // If no trending items for current tenant, don't render the section
@@ -293,11 +296,7 @@ export function Trending() {
 
       <StaggerContainer className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
         {tenantFilteredItems.map((item) => (
-          <TrendingCard
-            key={item.id}
-            item={item}
-            onAction={handleAction}
-          />
+          <TrendingCard key={item.id} item={item} onAction={handleAction} />
         ))}
       </StaggerContainer>
     </section>

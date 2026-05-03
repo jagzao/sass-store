@@ -66,7 +66,7 @@ export default async function ProductsPage({ params }: ProductsPageProps) {
                 category={category}
                 primaryColor={primaryColor}
                 tenantSlug={tenantSlug}
-                metadata={metadata}
+                metadata={metadata as any}
                 variant={tenantSlug === "wondernails" ? "luxury" : "default"}
               />
             );

@@ -41,7 +41,7 @@ export async function GET(request: NextRequest, context: RouteParams) {
     }
 
     // Obtener serviceId de los params
-    const { serviceId } = context.params;
+    const { serviceId } = await context.params;
 
     // Obtener productos del servicio
     const serviceProducts = await InventoryService.getServiceProducts(
@@ -81,7 +81,7 @@ export async function POST(request: NextRequest, context: RouteParams) {
     }
 
     // Obtener serviceId de los params
-    const { serviceId } = context.params;
+    const { serviceId } = await context.params;
 
     // Parsear y validar body
     const body = await request.json();

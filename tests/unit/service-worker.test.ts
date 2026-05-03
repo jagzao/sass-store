@@ -40,9 +40,9 @@ describe("Service Worker Cache Policy - SEC-011", () => {
       });
 
       it("should match nested API paths", () => {
-        expect(
-          shouldNeverCache("/api/tenants/t1/customers/c1/visits/v1"),
-        ).toBe(true);
+        expect(shouldNeverCache("/api/tenants/t1/customers/c1/visits/v1")).toBe(
+          true,
+        );
         expect(shouldNeverCache("/api/auth/google/callback")).toBe(true);
         expect(shouldNeverCache("/api/finance/matrix/cells")).toBe(true);
       });

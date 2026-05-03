@@ -15,7 +15,10 @@ interface CustomerFileSummaryProps {
   customerId: string;
 }
 
-export default function CustomerFileSummary({ tenantSlug, customerId }: CustomerFileSummaryProps) {
+export default function CustomerFileSummary({
+  tenantSlug,
+  customerId,
+}: CustomerFileSummaryProps) {
   const [summary, setSummary] = useState<CustomerSummary | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -23,7 +26,7 @@ export default function CustomerFileSummary({ tenantSlug, customerId }: Customer
     async function fetchSummary() {
       try {
         const response = await fetch(
-          `/api/tenants/${tenantSlug}/customers/${customerId}/summary`
+          `/api/tenants/${tenantSlug}/customers/${customerId}/summary`,
         );
         if (!response.ok) throw new Error("Failed to fetch summary");
         const data = await response.json();
@@ -94,21 +97,36 @@ export default function CustomerFileSummary({ tenantSlug, customerId }: Customer
     },
   ];
 
-  const isLuxury = tenantSlug === 'wondernails';
+  const isLuxury = tenantSlug === "wondernails";
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       {stats.map((stat) => {
         const Icon = stat.icon;
         return (
-          <div key={stat.name} className={`${isLuxury ? 'bg-white/80 border border-[#D4AF37]/20 backdrop-blur-md shadow-sm' : 'bg-white shadow'} rounded-lg p-6`}>
+          <div
+            key={stat.name}
+            className={`${isLuxury ? "bg-white/80 border border-[#D4AF37]/20 backdrop-blur-md shadow-sm" : "bg-white shadow"} rounded-lg p-6`}
+          >
             <div className="flex items-center">
-              <div className={`flex-shrink-0 ${isLuxury ? 'bg-[#D4AF37]/10' : stat.bgColor} rounded-md p-3`}>
-                <Icon className={`h-6 w-6 ${isLuxury ? 'text-[#b3932d]' : stat.color}`} />
+              <div
+                className={`flex-shrink-0 ${isLuxury ? "bg-[#D4AF37]/10" : stat.bgColor} rounded-md p-3`}
+              >
+                <Icon
+                  className={`h-6 w-6 ${isLuxury ? "text-[#b3932d]" : stat.color}`}
+                />
               </div>
               <div className="ml-4">
-                <p className={`text-sm font-medium ${isLuxury ? 'text-gray-500' : 'text-gray-500'}`}>{stat.name}</p>
-                <p className={`text-2xl font-semibold ${isLuxury ? 'text-[#1a1a1a] font-serif' : 'text-gray-900'}`}>{stat.value}</p>
+                <p
+                  className={`text-sm font-medium ${isLuxury ? "text-gray-500" : "text-gray-500"}`}
+                >
+                  {stat.name}
+                </p>
+                <p
+                  className={`text-2xl font-semibold ${isLuxury ? "text-[#1a1a1a] font-serif" : "text-gray-900"}`}
+                >
+                  {stat.value}
+                </p>
               </div>
             </div>
           </div>

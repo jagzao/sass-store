@@ -35,7 +35,8 @@ export const resolveInventoryTenantContext = async (): Promise<
   }
 
   const tenantResult = await fromPromise(
-    db.select({ id: tenants.id, slug: tenants.slug })
+    db
+      .select({ id: tenants.id, slug: tenants.slug })
       .from(tenants)
       .where(eq(tenants.slug, tenantSlug))
       .limit(1),
@@ -88,4 +89,3 @@ export const toInventoryErrorResponse = (error: DomainError) =>
     },
     { status: getHttpStatusCode(error) },
   );
-

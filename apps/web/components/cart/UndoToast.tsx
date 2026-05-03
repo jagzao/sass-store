@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useEffect, useRef, useState } from 'react';
-import { useCart } from '@/lib/cart/cart-store';
-import gsap from 'gsap';
+import { useEffect, useRef, useState } from "react";
+import { useCart } from "@/lib/cart/cart-store";
+import gsap from "gsap";
 
 interface UndoToastProps {
   itemName: string;
@@ -22,16 +22,16 @@ export default function UndoToast({ itemName, sku, onClose }: UndoToastProps) {
       gsap.fromTo(
         toastRef.current,
         { y: 100, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.3, ease: 'power2.out' }
+        { y: 0, opacity: 1, duration: 0.3, ease: "power2.out" },
       );
     }
 
     // Progress bar animation
     if (progressRef.current) {
       gsap.to(progressRef.current, {
-        width: '0%',
+        width: "0%",
         duration: 8,
-        ease: 'linear'
+        ease: "linear",
       });
     }
 
@@ -56,8 +56,8 @@ export default function UndoToast({ itemName, sku, onClose }: UndoToastProps) {
         y: 100,
         opacity: 0,
         duration: 0.2,
-        ease: 'power2.in',
-        onComplete: onClose
+        ease: "power2.in",
+        onComplete: onClose,
       });
     } else {
       onClose();
@@ -81,7 +81,7 @@ export default function UndoToast({ itemName, sku, onClose }: UndoToastProps) {
         <div
           ref={progressRef}
           className="h-full bg-blue-500"
-          style={{ width: '100%' }}
+          style={{ width: "100%" }}
         />
       </div>
 

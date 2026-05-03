@@ -1,6 +1,6 @@
 /**
  * API Connection Test
- * 
+ *
  * Simple test to verify API is accessible on port 4000
  */
 

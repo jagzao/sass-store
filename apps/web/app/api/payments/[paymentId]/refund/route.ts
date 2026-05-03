@@ -21,7 +21,10 @@ const paymentService = new PaymentService();
 
 // POST /api/payments/[paymentId]/refund - Refund a payment
 export const POST = withResultHandler<any, DomainError>(
-  async (request: NextRequest, { params }: { params: { paymentId: string } }) => {
+  async (
+    request: NextRequest,
+    { params }: { params: { paymentId: string } },
+  ) => {
     // Authenticate the request
     const authResult = await authenticateRequest(request);
     if (!authResult.success) {
@@ -72,10 +75,7 @@ export const POST = withResultHandler<any, DomainError>(
     }
 
     // Check if user owns this payment or is admin
-    if (
-      user?.role !== "admin" &&
-      paymentResult.data.userId !== user?.userId
-    ) {
+    if (user?.role !== "admin" && paymentResult.data.userId !== user?.userId) {
       return Err(
         ErrorFactories.authorization(
           "You can only refund your own payments",

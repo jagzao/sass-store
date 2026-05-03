@@ -199,10 +199,11 @@ export function ScheduleTimeline() {
             <SearchableSelectSingle
               options={platformOptions}
               value={filters.platform}
-              onChange={(option: SelectOption | null) =>
+              onChange={(option: string | SelectOption | null) =>
                 setFilters((prev) => ({
                   ...prev,
-                  platform: option?.value || "",
+                  platform:
+                    typeof option === "string" ? option : option?.value || "",
                 }))
               }
               placeholder="Seleccionar plataforma"
@@ -221,8 +222,12 @@ export function ScheduleTimeline() {
             <SearchableSelectSingle
               options={statusOptions}
               value={filters.status}
-              onChange={(option: SelectOption | null) =>
-                setFilters((prev) => ({ ...prev, status: option?.value || "" }))
+              onChange={(option: string | SelectOption | null) =>
+                setFilters((prev) => ({
+                  ...prev,
+                  status:
+                    typeof option === "string" ? option : option?.value || "",
+                }))
               }
               placeholder="Seleccionar estado"
               isSearchable={false}
@@ -276,9 +281,11 @@ export function ScheduleTimeline() {
             <SearchableSelectSingle
               options={sortOptions}
               value={`${filters.sort}_${filters.order}`}
-              onChange={(option: SelectOption | null) => {
-                if (option?.value) {
-                  const [sort, order] = option.value.split("_");
+              onChange={(option: string | SelectOption | null) => {
+                const value =
+                  typeof option === "string" ? option : option?.value;
+                if (value) {
+                  const [sort, order] = value.split("_");
                   setFilters((prev) => ({ ...prev, sort, order }));
                 }
               }}

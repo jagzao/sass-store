@@ -35,7 +35,7 @@ export default defineConfig({
 
   use: {
     // Base URL from environment
-    baseURL: process.env.BASE_URL || "http://localhost:3002",
+    baseURL: process.env.BASE_URL || "http://127.0.0.1:3002",
 
     // Trace: siempre en CI / modo debug; en local solo en primer retry
     trace: process.env.CI ? "on" : "on-first-retry",

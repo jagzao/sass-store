@@ -3,13 +3,27 @@ import { db } from "@sass-store/database";
 import { products, tenants } from "@sass-store/database/schema";
 import { eq } from "drizzle-orm";
 
+const SLUG_RE = /^[a-z0-9-]{1,64}$/;
+
 /**
  * POST /api/debug/seed-e2e
- * Endpoint de semilla usado solo por Playwright globalSetup.
- * Verifica que el tenant wondernails tenga al menos 1 producto para E2E de POS.
+ * Endpoint de semilla usado por Playwright (STRY-001 y POS).
+ * Body opcional: `{ "tenantSlug": "wondernails" | "centro-tenistico" | ... }`
+ * Garantiza al menos 1 producto activo para E2E de POS en ese tenant.
  */
 export async function POST(request: NextRequest) {
-  const tenantSlug = "wondernails";
+  let tenantSlug = "wondernails";
+  try {
+    const body = (await request.json().catch(() => null)) as {
+      tenantSlug?: string;
+    } | null;
+    const raw = body?.tenantSlug?.trim().toLowerCase();
+    if (raw && SLUG_RE.test(raw)) {
+      tenantSlug = raw;
+    }
+  } catch {
+    /* use default */
+  }
 
   const [tenant] = await db
     .select()
@@ -28,7 +42,9 @@ export async function POST(request: NextRequest) {
     .limit(1);
 
   if (existing.length > 0) {
-    return NextResponse.json({ message: "Seed skipped: products already exist" });
+    return NextResponse.json({
+      message: "Seed skipped: products already exist",
+    });
   }
 
   await db.insert(products).values([

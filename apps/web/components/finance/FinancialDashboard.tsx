@@ -85,10 +85,10 @@ export function FinancialDashboard({
 
       {/* Monthly Summary */}
       <MonthlySummaryWidget
-        income={monthlyIncome}
-        expense={monthlyExpense}
-        previousMonthIncome={previousMonthIncome}
-        previousMonthExpense={previousMonthExpense}
+        income={monthlyIncome ?? 0}
+        expense={monthlyExpense ?? 0}
+        previousMonthIncome={previousMonthIncome ?? 0}
+        previousMonthExpense={previousMonthExpense ?? 0}
       />
 
       {/* Grid for Budgets and Distribution */}
@@ -105,7 +105,7 @@ export function FinancialDashboard({
         {/* Expense Distribution */}
         <ExpenseDistributionWidget
           spendings={expenseByCategory}
-          totalExpense={monthlyExpense}
+          totalExpense={monthlyExpense ?? 0}
         />
       </div>
 

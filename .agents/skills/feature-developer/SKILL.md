@@ -11,6 +11,7 @@ Use this skill to implement complete features in the sass-store monolith while p
 
 Read only the files needed for the task, starting with:
 
+- `.agents/sprint/{STRY-XXX-*}/plan.md`, `implementacion.md`, and `testing-usuario.md` when the work maps to an active User Story.
 - `.agents/history/debug_logs.md` for known recurring failures.
 - `.agents/history/test_cases.md` for relevant edge cases.
 - `.agents/memory/context_be.md` for backend rules.

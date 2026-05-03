@@ -22,31 +22,38 @@ export async function GET(
   { params }: { params: Promise<{ tenant: string; id: string }> },
 ) {
   const resolvedParams = await params;
-  return withTenantContextFromParams(request, resolvedParams, async (req, tenantId) => {
-    try {
-      const quote = await db.query.quotes.findFirst({
-        where: and(
-          eq(quotes.id, resolvedParams.id),
-          eq(quotes.tenantId, tenantId),
-        ),
-        with: {
-          items: true,
-        },
-      });
+  return withTenantContextFromParams(
+    request,
+    resolvedParams as any,
+    async (req, tenantId) => {
+      try {
+        const quote = await db.query.quotes.findFirst({
+          where: and(
+            eq(quotes.id, resolvedParams.id),
+            eq(quotes.tenantId, tenantId),
+          ),
+          with: {
+            items: true,
+          },
+        });
 
-      if (!quote) {
-        return NextResponse.json({ error: "Quote not found" }, { status: 404 });
+        if (!quote) {
+          return NextResponse.json(
+            { error: "Quote not found" },
+            { status: 404 },
+          );
+        }
+
+        return NextResponse.json(quote);
+      } catch (error) {
+        console.error("Error fetching quote:", error);
+        return NextResponse.json(
+          { error: "Failed to fetch quote" },
+          { status: 500 },
+        );
       }
-
-      return NextResponse.json(quote);
-    } catch (error) {
-      console.error("Error fetching quote:", error);
-      return NextResponse.json(
-        { error: "Failed to fetch quote" },
-        { status: 500 },
-      );
-    }
-  });
+    },
+  );
 }
 
 export async function PUT(
@@ -54,51 +61,58 @@ export async function PUT(
   { params }: { params: Promise<{ tenant: string; id: string }> },
 ) {
   const resolvedParams = await params;
-  return withTenantContextFromParams(request, resolvedParams, async (req, tenantId) => {
-    try {
-      const body = await req.json();
-      const validatedData = updateQuoteSchema.parse(body);
+  return withTenantContextFromParams(
+    request,
+    resolvedParams as any,
+    async (req, tenantId) => {
+      try {
+        const body = await req.json();
+        const validatedData = updateQuoteSchema.parse(body);
 
-      // Verify existence first
-      const existingQuote = await db.query.quotes.findFirst({
-        where: and(
-          eq(quotes.id, resolvedParams.id),
-          eq(quotes.tenantId, tenantId),
-        ),
-      });
+        // Verify existence first
+        const existingQuote = await db.query.quotes.findFirst({
+          where: and(
+            eq(quotes.id, resolvedParams.id),
+            eq(quotes.tenantId, tenantId),
+          ),
+        });
 
-      if (!existingQuote) {
-        return NextResponse.json({ error: "Quote not found" }, { status: 404 });
-      }
+        if (!existingQuote) {
+          return NextResponse.json(
+            { error: "Quote not found" },
+            { status: 404 },
+          );
+        }
 
-      const [updatedQuote] = await db
-        .update(quotes)
-        .set({
-          ...validatedData,
-          totalAmount:
-            validatedData.totalAmount !== undefined
-              ? validatedData.totalAmount.toString()
-              : undefined,
-          updatedAt: new Date(),
-        })
-        .where(eq(quotes.id, resolvedParams.id))
-        .returning();
+        const [updatedQuote] = await db
+          .update(quotes)
+          .set({
+            ...validatedData,
+            totalAmount:
+              validatedData.totalAmount !== undefined
+                ? validatedData.totalAmount.toString()
+                : undefined,
+            updatedAt: new Date(),
+          })
+          .where(eq(quotes.id, resolvedParams.id))
+          .returning();
 
-      return NextResponse.json(updatedQuote);
-    } catch (error) {
-      console.error("Error updating quote:", error);
-      if (error instanceof z.ZodError) {
+        return NextResponse.json(updatedQuote);
+      } catch (error) {
+        console.error("Error updating quote:", error);
+        if (error instanceof z.ZodError) {
+          return NextResponse.json(
+            { error: "Validation error", details: error.errors },
+            { status: 400 },
+          );
+        }
         return NextResponse.json(
-          { error: "Validation error", details: error.errors },
-          { status: 400 },
+          { error: "Failed to update quote" },
+          { status: 500 },
         );
       }
-      return NextResponse.json(
-        { error: "Failed to update quote" },
-        { status: 500 },
-      );
-    }
-  });
+    },
+  );
 }
 
 export async function DELETE(
@@ -106,29 +120,36 @@ export async function DELETE(
   { params }: { params: Promise<{ tenant: string; id: string }> },
 ) {
   const resolvedParams = await params;
-  return withTenantContextFromParams(request, resolvedParams, async (req, tenantId) => {
-    try {
-      const result = await db
-        .delete(quotes)
-        .where(
-          and(
-            eq(quotes.id, resolvedParams.id),
-            eq(quotes.tenantId, tenantId),
-          ),
-        )
-        .returning();
+  return withTenantContextFromParams(
+    request,
+    resolvedParams as any,
+    async (req, tenantId) => {
+      try {
+        const result = await db
+          .delete(quotes)
+          .where(
+            and(
+              eq(quotes.id, resolvedParams.id),
+              eq(quotes.tenantId, tenantId),
+            ),
+          )
+          .returning();
 
-      if (result.length === 0) {
-        return NextResponse.json({ error: "Quote not found" }, { status: 404 });
+        if (result.length === 0) {
+          return NextResponse.json(
+            { error: "Quote not found" },
+            { status: 404 },
+          );
+        }
+
+        return NextResponse.json({ message: "Quote deleted successfully" });
+      } catch (error) {
+        console.error("Error deleting quote:", error);
+        return NextResponse.json(
+          { error: "Failed to delete quote" },
+          { status: 500 },
+        );
       }
-
-      return NextResponse.json({ message: "Quote deleted successfully" });
-    } catch (error) {
-      console.error("Error deleting quote:", error);
-      return NextResponse.json(
-        { error: "Failed to delete quote" },
-        { status: 500 },
-      );
-    }
-  });
+    },
+  );
 }

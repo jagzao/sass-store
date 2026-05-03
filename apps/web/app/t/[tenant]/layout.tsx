@@ -24,9 +24,9 @@ export default async function TenantLayout({
   params,
 }: TenantLayoutProps) {
   const resolvedParams = await params;
-  console.log("[TenantLayout] Resolved params:", resolvedParams);
+  console.warn("[TenantLayout] Resolved params:", resolvedParams);
   const { tenant: tenantSlug } = resolvedParams;
-  console.log("[TenantLayout] Extracted tenantSlug:", tenantSlug);
+  console.warn("[TenantLayout] Extracted tenantSlug:", tenantSlug);
 
   // Get tenant data directly from database (server-side only, no HTTP calls)
   const tenantRaw = await getTenantBySlug(tenantSlug);
@@ -44,7 +44,7 @@ export default async function TenantLayout({
     notFound();
   }
 
-  console.log(`[TenantLayout] Successfully loaded tenant: ${tenantData.name}`);
+  console.warn(`[TenantLayout] Successfully loaded tenant: ${tenantData.name}`);
 
   const isWondernails = tenantSlug === "wondernails";
   const isZoSystem = tenantSlug === "zo-system";

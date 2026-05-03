@@ -69,7 +69,9 @@ export default function NavGridItem({
 
       {/* Description */}
       {description && (
-        <span className="text-xs text-gray-400 mt-1 block flex-1">{description}</span>
+        <span className="text-xs text-gray-400 mt-1 block flex-1">
+          {description}
+        </span>
       )}
 
       {/* Auth Protected Badge */}
@@ -89,7 +91,12 @@ export default function NavGridItem({
           className="text-xs text-gray-400 mt-2 flex items-center gap-1
                       group-hover:text-[#C5A059] transition-colors"
         >
-          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg
+            className="w-3 h-3"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
             <path
               strokeLinecap="round"
               strokeLinejoin="round"

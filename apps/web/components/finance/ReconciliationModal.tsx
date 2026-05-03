@@ -21,7 +21,7 @@ interface ReconciliationModalProps {
   onReconcile: (
     movementId: string,
     reconciled: boolean,
-    reconciliationId?: string
+    reconciliationId?: string,
   ) => Promise<void>;
   loading?: boolean;
 }
@@ -35,7 +35,7 @@ const ReconciliationModal = ({
 }: ReconciliationModalProps) => {
   const [reconciled, setReconciled] = useState(movement?.reconciled || false);
   const [reconciliationId, setReconciliationId] = useState(
-    movement?.reconciliationId || ""
+    movement?.reconciliationId || "",
   );
   const [notes, setNotes] = useState("");
 
@@ -47,7 +47,7 @@ const ReconciliationModal = ({
       await onReconcile(
         movement.id,
         reconciled,
-        reconciliationId.trim() || undefined
+        reconciliationId.trim() || undefined,
       );
       onClose();
     } catch (error) {

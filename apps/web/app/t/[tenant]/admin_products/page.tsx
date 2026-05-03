@@ -48,11 +48,6 @@ export default function AdminProductsPage() {
   }
   */
 
-  useEffect(() => {
-    loadTenantData();
-    loadProducts();
-  }, [tenantSlug, loadTenantData, loadProducts]);
-
   const loadTenantData = useCallback(async () => {
     try {
       const response = await fetch(`/api/tenants/${tenantSlug}`);
@@ -69,7 +64,6 @@ export default function AdminProductsPage() {
     setLoading(true);
     setError(null);
     try {
-      // Session-based auth - API routes will verify session server-side
       const response = await fetch(`/api/v1/products?limit=100`);
       if (response.ok) {
         const data = await response.json();

@@ -5,7 +5,12 @@ import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { noCacheJson } from "@/lib/cache-headers";
 
-const GENDER_VALUES = ["masculino", "femenino", "otro", "prefiero_no_decir"] as const;
+const GENDER_VALUES = [
+  "masculino",
+  "femenino",
+  "otro",
+  "prefiero_no_decir",
+] as const;
 
 const updateProfileSchema = z.object({
   name: z.string().trim().min(1),
@@ -37,13 +42,11 @@ export async function PUT(req: NextRequest) {
 
     const updateData: Record<string, unknown> = { name, updatedAt: new Date() };
     if (phone !== undefined) updateData.phone = phone;
-    if (birthdate !== undefined) updateData.birthdate = birthdate ? new Date(birthdate) : null;
+    if (birthdate !== undefined)
+      updateData.birthdate = birthdate ? new Date(birthdate) : null;
     if (gender !== undefined) updateData.gender = gender;
 
-    await db
-      .update(users)
-      .set(updateData)
-      .where(eq(users.id, session.user.id));
+    await db.update(users).set(updateData).where(eq(users.id, session.user.id));
 
     return noCacheJson({ success: true, name });
   } catch (error) {
@@ -60,12 +63,20 @@ export async function GET(req: NextRequest) {
     }
 
     const [user] = await db
-      .select({ phone: users.phone, birthdate: users.birthdate, gender: users.gender })
+      .select({
+        phone: users.phone,
+        birthdate: users.birthdate,
+        gender: users.gender,
+      })
       .from(users)
       .where(eq(users.id, session.user.id))
       .limit(1);
 
-    return noCacheJson({ phone: user?.phone ?? null, birthdate: user?.birthdate ?? null, gender: user?.gender ?? null });
+    return noCacheJson({
+      phone: user?.phone ?? null,
+      birthdate: user?.birthdate ?? null,
+      gender: user?.gender ?? null,
+    });
   } catch (error) {
     console.error("Error fetching profile:", error);
     return noCacheJson({ error: "Internal Server Error" }, { status: 500 });

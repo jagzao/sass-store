@@ -39,7 +39,9 @@ export interface IBookingService {
     bookingId: string,
     status: Booking["status"],
   ): Promise<Result<Booking, DomainError>>;
-  getBookingsByTenant(tenantId: string): Promise<Result<Booking[], DomainError>>;
+  getBookingsByTenant(
+    tenantId: string,
+  ): Promise<Result<Booking[], DomainError>>;
   getDurationMinutes(booking: Booking): number;
 }
 

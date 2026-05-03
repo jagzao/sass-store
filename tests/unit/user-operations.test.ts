@@ -148,8 +148,8 @@ describe("User Operations", () => {
         .where(eq(schema.userRoles.userId, user.id));
 
       expect(roles).toHaveLength(2);
-      expect(roles.map(r => r.role)).toContain("Admin");
-      expect(roles.map(r => r.role)).toContain("Cliente");
+      expect(roles.map((r) => r.role)).toContain("Admin");
+      expect(roles.map((r) => r.role)).toContain("Cliente");
     });
   });
 
@@ -308,9 +308,7 @@ describe("User Operations", () => {
       const user = await createTestUser();
 
       // Delete the user
-      await db
-        .delete(schema.users)
-        .where(eq(schema.users.id, user.id));
+      await db.delete(schema.users).where(eq(schema.users.id, user.id));
 
       const [result] = await db
         .select()

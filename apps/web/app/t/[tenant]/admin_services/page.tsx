@@ -452,7 +452,7 @@ export default function AdminServicesPage() {
                   </tbody>
                 </table>
               </div>
-              
+
               {/* Pagination Controls */}
               {totalPages > 1 && (
                 <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
@@ -469,7 +469,9 @@ export default function AdminServicesPage() {
                       )}
                     </span>{" "}
                     de{" "}
-                    <span className="font-medium">{filteredServices.length}</span>{" "}
+                    <span className="font-medium">
+                      {filteredServices.length}
+                    </span>{" "}
                     resultados
                   </div>
                   <div className="flex gap-2">

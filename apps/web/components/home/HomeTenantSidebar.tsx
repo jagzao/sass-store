@@ -49,7 +49,9 @@ export default function HomeTenantSidebar({
 
   const isActive = (href: string) => {
     if (href === "") {
-      return pathname === `/t/${tenantSlug}` || pathname === `/t/${tenantSlug}/`;
+      return (
+        pathname === `/t/${tenantSlug}` || pathname === `/t/${tenantSlug}/`
+      );
     }
     return pathname.startsWith(`/t/${tenantSlug}${href}`);
   };
@@ -62,10 +64,10 @@ export default function HomeTenantSidebar({
     >
       {/* Logo/Brand Area */}
       <div className="p-6 border-b border-[#C5A059]/20">
-        <TenantLogo 
-          tenantSlug={tenantSlug} 
-          tenantName={tenantName} 
-          primaryColor="#C5A059" 
+        <TenantLogo
+          tenantSlug={tenantSlug}
+          tenantName={tenantName}
+          primaryColor="#C5A059"
         />
       </div>
 
@@ -74,7 +76,7 @@ export default function HomeTenantSidebar({
         <p className="text-xs font-medium text-gray-400 uppercase tracking-wider px-3 mb-3">
           Menú Principal
         </p>
-        
+
         {NAV_ITEMS.map((item) => {
           const active = isActive(item.href);
           const fullPath = `/t/${tenantSlug}${item.href}`;

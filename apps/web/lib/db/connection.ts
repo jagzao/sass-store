@@ -158,7 +158,7 @@ function createDatabaseInstance() {
     // Extract hostname for debugging (only in development)
     if (process.env.NODE_ENV === "development") {
       const url = new URL(connectionString.replace("postgresql://", "http://"));
-      console.log("[DB] Connecting to host:", url.hostname);
+      console.warn("[DB] Connecting to host:", url.hostname);
     }
 
     const client = postgres(connectionString, {
@@ -183,7 +183,7 @@ function createDatabaseInstance() {
 
 // FORCE INVALIDATE CACHE - hostname was corrected
 if (globalThis.__webDbConnectionString?.includes("pooler.supabase.com")) {
-  console.log("[DB] FORCE INVALIDATING - pooler connection detected in cache");
+  console.warn("[DB] FORCE INVALIDATING - pooler connection detected in cache");
   globalThis.__webDbInstance = undefined;
   globalThis.__webDbConnectionString = undefined;
 }
@@ -193,7 +193,7 @@ if (
   globalThis.__webDbConnectionString &&
   globalThis.__webDbConnectionString !== connectionString
 ) {
-  console.log("[DB] Connection string changed, invalidating web db cache");
+  console.warn("[DB] Connection string changed, invalidating web db cache");
   globalThis.__webDbInstance = undefined;
 }
 

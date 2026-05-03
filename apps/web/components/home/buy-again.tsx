@@ -78,7 +78,7 @@ export function BuyAgain() {
   const router = useRouter();
 
   const tenantFilteredPurchases = recentPurchases.filter(
-    (product) => product.tenant === currentTenantSlug
+    (product) => product.tenant === currentTenantSlug,
   );
 
   // If no products for current tenant, don't render the section

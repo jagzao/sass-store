@@ -1,33 +1,53 @@
-import dynamic from 'next/dynamic';
+import dynamic from "next/dynamic";
 
-const CarouselHero = dynamic(() => import('./carousel-hero').then(mod => ({ default: mod.CarouselHero })), {
-  ssr: false,
-  loading: () => <div className="h-[800px] bg-gradient-to-r from-pink-500 to-gray-700 animate-pulse" />
-});
+const CarouselHero = dynamic(
+  () =>
+    import("./carousel-hero").then((mod) => ({ default: mod.CarouselHero })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-[800px] bg-gradient-to-r from-pink-500 to-gray-700 animate-pulse" />
+    ),
+  },
+);
 
-const NomNomCarousel = dynamic(() => import('./nomnom-carousel').then(mod => ({ default: mod.NomNomCarousel })), {
-  ssr: false,
-  loading: () => <div className="h-screen bg-gradient-to-br from-green-600 to-green-800 animate-pulse" />
-});
+const NomNomCarousel = dynamic(
+  () =>
+    import("./nomnom-carousel").then((mod) => ({
+      default: mod.NomNomCarousel,
+    })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-screen bg-gradient-to-br from-green-600 to-green-800 animate-pulse" />
+    ),
+  },
+);
 
-const DeliriosCarousel = dynamic(() => import('./delirios-carousel').then(mod => ({ default: mod.DeliriosCarousel })), {
-  ssr: false,
-  loading: () => <div className="h-screen bg-gray-900 animate-pulse" />
-});
+const DeliriosCarousel = dynamic(
+  () =>
+    import("./delirios-carousel").then((mod) => ({
+      default: mod.DeliriosCarousel,
+    })),
+  {
+    ssr: false,
+    loading: () => <div className="h-screen bg-gray-900 animate-pulse" />,
+  },
+);
 
 interface HeroConfig {
   title?: string;
   subtitle?: string;
-  backgroundType?: 'gradient' | 'image' | 'solid';
+  backgroundType?: "gradient" | "image" | "solid";
   backgroundImage?: string;
   showContactInfo?: boolean;
   showActionButtons?: boolean;
   customCTA?: {
     text: string;
     href: string;
-    style?: 'primary' | 'secondary';
+    style?: "primary" | "secondary";
   }[];
-  layout?: 'center' | 'left' | 'right';
+  layout?: "center" | "left" | "right";
   textColor?: string;
   overlayOpacity?: number;
   useCarousel?: boolean; // New option for carousel
@@ -57,17 +77,17 @@ export function HeroSection({ tenantData }: HeroSectionProps) {
   const heroConfig = branding.heroConfig || {};
 
   // Use carousel for wondernails or if explicitly configured
-  if (tenantData.slug === 'wondernails' || heroConfig.useCarousel) {
+  if (tenantData.slug === "wondernails" || heroConfig.useCarousel) {
     return <CarouselHero tenantData={tenantData} />;
   }
 
   // Use NomNom carousel for nomnom tenant
-  if (tenantData.slug === 'nomnom') {
+  if (tenantData.slug === "nomnom") {
     return <NomNomCarousel tenantData={tenantData} />;
   }
 
   // Use Delirios carousel for delirios tenant
-  if (tenantData.slug === 'delirios') {
+  if (tenantData.slug === "delirios") {
     return <DeliriosCarousel tenantData={tenantData} />;
   }
 
@@ -75,29 +95,31 @@ export function HeroSection({ tenantData }: HeroSectionProps) {
   const config = {
     title: heroConfig.title || `Bienvenido a ${tenantData.name}`,
     subtitle: heroConfig.subtitle || tenantData.description,
-    backgroundType: heroConfig.backgroundType || 'gradient',
+    backgroundType: heroConfig.backgroundType || "gradient",
     backgroundImage: heroConfig.backgroundImage,
     showContactInfo: heroConfig.showContactInfo !== false, // Default true
     showActionButtons: heroConfig.showActionButtons !== false, // Default true
     customCTA: heroConfig.customCTA || [],
-    layout: heroConfig.layout || 'center',
-    textColor: heroConfig.textColor || 'white',
+    layout: heroConfig.layout || "center",
+    textColor: heroConfig.textColor || "white",
     overlayOpacity: heroConfig.overlayOpacity || 0.8,
   };
 
   // Generate background style
   const getBackgroundStyle = () => {
     switch (config.backgroundType) {
-      case 'image':
-        return config.backgroundImage ? {
-          backgroundImage: `url(${config.backgroundImage})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          position: 'relative' as const,
-        } : {
-          background: `linear-gradient(135deg, ${branding.primaryColor}dd, ${branding.secondaryColor || branding.primaryColor}aa)`,
-        };
-      case 'solid':
+      case "image":
+        return config.backgroundImage
+          ? {
+              backgroundImage: `url(${config.backgroundImage})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              position: "relative" as const,
+            }
+          : {
+              background: `linear-gradient(135deg, ${branding.primaryColor}dd, ${branding.secondaryColor || branding.primaryColor}aa)`,
+            };
+      case "solid":
         return {
           backgroundColor: branding.primaryColor,
         };
@@ -109,40 +131,38 @@ export function HeroSection({ tenantData }: HeroSectionProps) {
   };
 
   const layoutClasses = {
-    center: 'text-center',
-    left: 'text-left',
-    right: 'text-right',
+    center: "text-center",
+    left: "text-left",
+    right: "text-right",
   };
 
   const textColorClasses = {
-    white: 'text-white',
-    black: 'text-gray-900',
-    primary: 'text-gray-900',
+    white: "text-white",
+    black: "text-gray-900",
+    primary: "text-gray-900",
   };
 
   return (
     <div
-      className={`relative py-20 ${textColorClasses[config.textColor as keyof typeof textColorClasses] || 'text-white'}`}
+      className={`relative py-20 ${textColorClasses[config.textColor as keyof typeof textColorClasses] || "text-white"}`}
       style={getBackgroundStyle()}
     >
       {/* Overlay for image backgrounds */}
-      {config.backgroundType === 'image' && config.backgroundImage && (
+      {config.backgroundType === "image" && config.backgroundImage && (
         <div
           className="absolute inset-0 bg-black"
           style={{ opacity: 1 - config.overlayOpacity }}
         />
       )}
 
-      <div className={`container mx-auto px-4 relative z-10 ${layoutClasses[config.layout]}`}>
+      <div
+        className={`container mx-auto px-4 relative z-10 ${layoutClasses[config.layout]}`}
+      >
         {/* Title */}
-        <h1 className="text-5xl font-bold mb-6">
-          {config.title}
-        </h1>
+        <h1 className="text-5xl font-bold mb-6">{config.title}</h1>
 
         {/* Subtitle */}
-        <p className="text-xl mb-8 opacity-90">
-          {config.subtitle}
-        </p>
+        <p className="text-xl mb-8 opacity-90">{config.subtitle}</p>
 
         {/* Contact Info */}
         {config.showContactInfo && (
@@ -170,7 +190,7 @@ export function HeroSection({ tenantData }: HeroSectionProps) {
                 key={index}
                 href={cta.href}
                 className={
-                  cta.style === 'secondary'
+                  cta.style === "secondary"
                     ? "bg-white/20 backdrop-blur-sm text-white border border-white/30 px-8 py-4 rounded-lg font-semibold hover:bg-white/30"
                     : "bg-white text-gray-900 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 shadow-lg"
                 }

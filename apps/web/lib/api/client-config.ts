@@ -11,11 +11,7 @@ export function getApiUrl(): string {
   }
 
   // Server-side fallback (shouldn't be used, but just in case)
-  return (
-    process.env.API_URL ||
-    process.env.NEXT_PUBLIC_API_URL ||
-    ""
-  );
+  return process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || "";
 }
 
 /**

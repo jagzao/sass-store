@@ -64,10 +64,10 @@ export default function ForgotPasswordPage() {
       }
 
       const data = await response.json().catch(() => ({ success: true }));
-      console.log("[ForgotPassword] Success response:", data);
+      // SECURITY: Redacted sensitive log;
       setSuccess(true);
     } catch (err: any) {
-      console.error("[ForgotPassword] Error:", err);
+      // SECURITY: Redacted sensitive log;
       setError(err.message);
     } finally {
       setIsLoading(false);

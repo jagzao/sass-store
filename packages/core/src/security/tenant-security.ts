@@ -1,7 +1,7 @@
 /**
  * Tenant Security Utilities
  * SEC-005: Prevents tenant header spoofing and enforces strict tenant isolation
- * 
+ *
  * Security Principles:
  * 1. Never trust client-provided tenant headers for authorization
  * 2. Always validate tenant against authenticated session/token
@@ -66,14 +66,14 @@ const getAllowedOrigins = (): string[] => {
 /**
  * Validate Origin header for mutation requests
  * Prevents CSRF attacks by ensuring request comes from allowed origin
- * 
+ *
  * @param origin - The Origin header value
  * @param host - The Host header value
  * @returns OriginValidationResult
  */
 export function validateOriginForMutation(
   origin: string | null,
-  host: string | null
+  host: string | null,
 ): OriginValidationResult {
   // If no origin (same-origin request), check host
   if (!origin) {
@@ -86,7 +86,7 @@ export function validateOriginForMutation(
   }
 
   const allowedOrigins = getAllowedOrigins();
-  
+
   // Check if origin is in allowed list
   if (allowedOrigins.includes(origin)) {
     return {
@@ -98,10 +98,11 @@ export function validateOriginForMutation(
   // Check if origin matches host (same-origin)
   if (host) {
     const originHost = extractHostFromOrigin(origin);
-    const isSameOrigin = originHost === host || 
-                         originHost === `localhost:${host.split(":")[1]}` ||
-                         host.startsWith(originHost);
-    
+    const isSameOrigin =
+      originHost === host ||
+      originHost === `localhost:${host.split(":")[1]}` ||
+      host.startsWith(originHost);
+
     if (isSameOrigin) {
       return {
         isValid: true,
@@ -154,10 +155,16 @@ function extractHostnameFromOrigin(origin: string): string {
 /**
  * Check if origin is a valid tenant subdomain
  */
-function isValidTenantSubdomain(originHostname: string, host: string | null): boolean {
+function isValidTenantSubdomain(
+  originHostname: string,
+  host: string | null,
+): boolean {
   // Allow localhost with any subdomain for development
   if (process.env.NODE_ENV === "development") {
-    if (originHostname === "localhost" || originHostname.endsWith(".localhost")) {
+    if (
+      originHostname === "localhost" ||
+      originHostname.endsWith(".localhost")
+    ) {
       return true;
     }
   }
@@ -174,14 +181,14 @@ function isValidTenantSubdomain(originHostname: string, host: string | null): bo
 /**
  * Validate tenant consistency between session and request
  * This is the core security check to prevent tenant spoofing
- * 
+ *
  * @param sessionTenant - Tenant from authenticated session/token
  * @param requestTenant - Tenant from request (header/path/subdomain)
  * @returns Result indicating if tenant context is valid
  */
 export function validateTenantConsistency(
   sessionTenant: AuthenticatedTenantContext | null,
-  requestTenant: ResolvedTenant | null
+  requestTenant: ResolvedTenant | null,
 ): Result<void, DomainError> {
   // If no session (unauthenticated), allow request to proceed
   // Public routes don't require tenant validation
@@ -199,8 +206,8 @@ export function validateTenantConsistency(
     return Err(
       ErrorFactories.validation(
         "tenant_required",
-        "Tenant context required for authenticated request"
-      )
+        "Tenant context required for authenticated request",
+      ),
     );
   }
 
@@ -209,14 +216,14 @@ export function validateTenantConsistency(
   if (sessionTenant.tenantId !== requestTenant.id) {
     // Log security event (in production, use proper security logging)
     console.warn(
-      `[SECURITY] Tenant mismatch detected: session=${sessionTenant.tenantId}, request=${requestTenant.id}, user=${sessionTenant.userId}`
+      `[SECURITY] Tenant mismatch detected: session=${sessionTenant.tenantId}, request=${requestTenant.id}, user=${sessionTenant.userId}`,
     );
 
     return Err(
       ErrorFactories.authorization(
         "Tenant context mismatch",
-        "tenant_isolation_violation"
-      )
+        "tenant_isolation_violation",
+      ),
     );
   }
 
@@ -226,7 +233,7 @@ export function validateTenantConsistency(
 /**
  * Validate that a user has access to a specific tenant
  * This should be called for all authenticated mutation operations
- * 
+ *
  * @param userId - User ID from session
  * @param userTenantId - User's tenant ID from session
  * @param targetTenantId - Target tenant ID from request/resource
@@ -235,7 +242,7 @@ export function validateTenantConsistency(
 export function validateTenantAccess(
   userId: string,
   userTenantId: string | undefined,
-  targetTenantId: string | undefined
+  targetTenantId: string | undefined,
 ): Result<void, DomainError> {
   // Super admin (no tenant) can access any tenant
   if (!userTenantId) {
@@ -250,14 +257,14 @@ export function validateTenantAccess(
   // CRITICAL: User can only access their own tenant
   if (userTenantId !== targetTenantId) {
     console.warn(
-      `[SECURITY] Cross-tenant access blocked: user=${userId}, userTenant=${userTenantId}, targetTenant=${targetTenantId}`
+      `[SECURITY] Cross-tenant access blocked: user=${userId}, userTenant=${userTenantId}, targetTenant=${targetTenantId}`,
     );
 
     return Err(
       ErrorFactories.authorization(
         "Cross-tenant access is not allowed",
-        "tenant_isolation"
-      )
+        "tenant_isolation",
+      ),
     );
   }
 
@@ -294,7 +301,7 @@ export function isMutationRequest(method: string): boolean {
 /**
  * Combined security validation for mutation requests
  * Performs all security checks in one call
- * 
+ *
  * @param method - HTTP method
  * @param origin - Origin header
  * @param host - Host header
@@ -307,20 +314,20 @@ export function validateMutationSecurity(
   origin: string | null,
   host: string | null,
   sessionTenant: AuthenticatedTenantContext | null,
-  requestTenant: ResolvedTenant | null
+  requestTenant: ResolvedTenant | null,
 ): Result<void, DomainError> {
   // 1. Validate Origin for mutation requests
   if (isMutationRequest(method)) {
     const originResult = validateOriginForMutation(origin, host);
     if (!originResult.isValid) {
       console.warn(
-        `[SECURITY] Invalid origin for mutation: origin=${origin}, host=${host}, reason=${originResult.reason}`
+        `[SECURITY] Invalid origin for mutation: origin=${origin}, host=${host}, reason=${originResult.reason}`,
       );
       return Err(
         ErrorFactories.authorization(
           "Invalid request origin",
-          "origin_validation_failed"
-        )
+          "origin_validation_failed",
+        ),
       );
     }
   }
@@ -373,7 +380,7 @@ export function extractTenantFromRequest(request: {
  */
 function extractSubdomain(host: string): string | null {
   const hostWithoutPort = host.split(":")[0];
-  
+
   // Localhost handling
   if (hostWithoutPort === "localhost" || hostWithoutPort === "127.0.0.1") {
     return null;
@@ -390,9 +397,10 @@ function extractSubdomain(host: string): string | null {
 /**
  * Create a safe error response that doesn't leak internal information
  */
-export function createSafeTenantError(
-  error: DomainError
-): { status: number; message: string } {
+export function createSafeTenantError(error: DomainError): {
+  status: number;
+  message: string;
+} {
   // Map internal errors to safe public messages
   switch (error.type) {
     case "AuthorizationError":

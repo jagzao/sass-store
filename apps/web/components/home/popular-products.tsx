@@ -1,9 +1,15 @@
-'use client';
+"use client";
 
-import { memo, useCallback, useMemo } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@sass-store/ui';
-import { useTenant } from '@/lib/tenant/tenant-provider';
-import { useCart } from '@/lib/cart/cart-store';
+import { memo, useCallback, useMemo } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@sass-store/ui";
+import { useTenant } from "@/lib/tenant/tenant-provider";
+import { useCart } from "@/lib/cart/cart-store";
 
 interface Product {
   sku: string;
@@ -46,7 +52,7 @@ const ProductCard = memo<ProductCardProps>(({ product, onAddToCart }) => {
   );
 });
 
-ProductCard.displayName = 'ProductCard';
+ProductCard.displayName = "ProductCard";
 
 export function PopularProducts() {
   const { tenant } = useTenant();
@@ -54,17 +60,20 @@ export function PopularProducts() {
 
   // Memoize the filtered products list
   const featuredProducts = useMemo(() => {
-    return tenant.products?.filter(product => product.featured) || [];
+    return tenant.products?.filter((product) => product.featured) || [];
   }, [tenant.products]);
 
   // Memoize the add to cart handler
-  const handleAddToCart = useCallback((product: Product) => {
-    addItem({
-      sku: product.sku,
-      name: product.name,
-      price: product.price
-    });
-  }, [addItem]);
+  const handleAddToCart = useCallback(
+    (product: Product) => {
+      addItem({
+        sku: product.sku,
+        name: product.name,
+        price: product.price,
+      });
+    },
+    [addItem],
+  );
 
   if (!tenant.products || featuredProducts.length === 0) {
     return null;
@@ -74,13 +83,18 @@ export function PopularProducts() {
     <section className="py-16 bg-muted/30">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold tracking-tight mb-4">Popular Products</h2>
+          <h2 className="text-3xl font-bold tracking-tight mb-4">
+            Popular Products
+          </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
             Add to cart with just 1 click
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" data-testid="product-grid">
+        <div
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+          data-testid="product-grid"
+        >
           {featuredProducts.map((product) => (
             <ProductCard
               key={product.sku}

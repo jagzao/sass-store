@@ -9,7 +9,7 @@ const { Resend } = require('resend');
 const testEmail = process.argv[2] || 'jagzao@gmail.com';
 
 console.log('\n🔍 Testing Resend Configuration\n');
-console.log('RESEND_API_KEY:', process.env.RESEND_API_KEY ? '✅ Found' : '❌ Not found');
+// SECURITY: Redacted sensitive log;
 console.log('RESEND_FROM_EMAIL:', process.env.RESEND_FROM_EMAIL || '❌ Not set');
 console.log('Target email:', testEmail);
 console.log('\n-----------------------------------\n');
@@ -17,7 +17,7 @@ console.log('\n-----------------------------------\n');
 async function testResend() {
   try {
     if (!process.env.RESEND_API_KEY) {
-      console.error('❌ RESEND_API_KEY not found in environment');
+      // SECURITY: Redacted sensitive log;
       process.exit(1);
     }
 

@@ -5,7 +5,7 @@
  * Docs: https://developers.facebook.com/docs/whatsapp
  */
 
-const WHATSAPP_API_URL = 'https://graph.facebook.com/v18.0';
+const WHATSAPP_API_URL = "https://graph.facebook.com/v18.0";
 const PHONE_NUMBER_ID = process.env.WHATSAPP_PHONE_NUMBER_ID!;
 const ACCESS_TOKEN = process.env.WHATSAPP_ACCESS_TOKEN!;
 
@@ -14,25 +14,25 @@ const ACCESS_TOKEN = process.env.WHATSAPP_ACCESS_TOKEN!;
  */
 export async function enviarMensajeWhatsApp(
   numeroDestino: string,
-  texto: string
+  texto: string,
 ): Promise<WhatsAppResponse> {
   const response = await fetch(
     `${WHATSAPP_API_URL}/${PHONE_NUMBER_ID}/messages`,
     {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Authorization': `Bearer ${ACCESS_TOKEN}`,
-        'Content-Type': 'application/json',
+        Authorization: `Bearer ${ACCESS_TOKEN}`,
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        messaging_product: 'whatsapp',
-        to: numeroDestino.replace(/\D/g, ''),
-        type: 'text',
+        messaging_product: "whatsapp",
+        to: numeroDestino.replace(/\D/g, ""),
+        type: "text",
         text: {
           body: texto,
         },
       }),
-    }
+    },
   );
 
   if (!response.ok) {
@@ -50,46 +50,43 @@ export async function enviarMensajeWhatsApp(
 export async function enviarPlantillaWhatsApp(
   numeroDestino: string,
   nombrePlantilla: string,
-  parametros: string[] = []
+  parametros: string[] = [],
 ): Promise<WhatsAppResponse> {
   const body: Record<string, unknown> = {
-    messaging_product: 'whatsapp',
-    to: numeroDestino.replace(/\D/g, ''),
-    type: 'template',
+    messaging_product: "whatsapp",
+    to: numeroDestino.replace(/\D/g, ""),
+    type: "template",
     template: {
       name: nombrePlantilla,
       language: {
-        code: 'es_MX', // Español México
+        code: "es_MX",
       },
     },
   };
 
-  // Agregar parámetros si existen
   if (parametros.length > 0) {
-    body.template = {
-      ...body.template,
-      components: [
-        {
-          type: 'body',
-          parameters: parametros.map((param) => ({
-            type: 'text',
-            text: param,
-          })),
-        },
-      ],
-    };
+    const tpl = body.template as Record<string, unknown>;
+    tpl.components = [
+      {
+        type: "body",
+        parameters: parametros.map((param) => ({
+          type: "text",
+          text: param,
+        })),
+      },
+    ];
   }
 
   const response = await fetch(
     `${WHATSAPP_API_URL}/${PHONE_NUMBER_ID}/messages`,
     {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Authorization': `Bearer ${ACCESS_TOKEN}`,
-        'Content-Type': 'application/json',
+        Authorization: `Bearer ${ACCESS_TOKEN}`,
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(body),
-    }
+    },
   );
 
   if (!response.ok) {
@@ -106,28 +103,28 @@ export async function enviarPlantillaWhatsApp(
 export async function enviarMensajeConBotones(
   numeroDestino: string,
   texto: string,
-  botones: Array<{ id: string; titulo: string }>
+  botones: Array<{ id: string; titulo: string }>,
 ): Promise<WhatsAppResponse> {
   const response = await fetch(
     `${WHATSAPP_API_URL}/${PHONE_NUMBER_ID}/messages`,
     {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Authorization': `Bearer ${ACCESS_TOKEN}`,
-        'Content-Type': 'application/json',
+        Authorization: `Bearer ${ACCESS_TOKEN}`,
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        messaging_product: 'whatsapp',
-        to: numeroDestino.replace(/\D/g, ''),
-        type: 'interactive',
+        messaging_product: "whatsapp",
+        to: numeroDestino.replace(/\D/g, ""),
+        type: "interactive",
         interactive: {
-          type: 'button',
+          type: "button",
           body: {
             text: texto,
           },
           action: {
             buttons: botones.map((btn) => ({
-              type: 'reply',
+              type: "reply",
               reply: {
                 id: btn.id,
                 title: btn.titulo.substring(0, 20), // Max 20 caracteres
@@ -136,7 +133,7 @@ export async function enviarMensajeConBotones(
           },
         },
       }),
-    }
+    },
   );
 
   if (!response.ok) {
@@ -154,27 +151,27 @@ export async function enviarMensajeConLista(
   numeroDestino: string,
   texto: string,
   tituloSeccion: string,
-  opciones: Array<{ id: string; titulo: string; descripcion?: string }>
+  opciones: Array<{ id: string; titulo: string; descripcion?: string }>,
 ): Promise<WhatsAppResponse> {
   const response = await fetch(
     `${WHATSAPP_API_URL}/${PHONE_NUMBER_ID}/messages`,
     {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Authorization': `Bearer ${ACCESS_TOKEN}`,
-        'Content-Type': 'application/json',
+        Authorization: `Bearer ${ACCESS_TOKEN}`,
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        messaging_product: 'whatsapp',
-        to: numeroDestino.replace(/\D/g, ''),
-        type: 'interactive',
+        messaging_product: "whatsapp",
+        to: numeroDestino.replace(/\D/g, ""),
+        type: "interactive",
         interactive: {
-          type: 'list',
+          type: "list",
           body: {
             text: texto,
           },
           action: {
-            button: 'Ver opciones',
+            button: "Ver opciones",
             sections: [
               {
                 title: tituloSeccion,
@@ -188,7 +185,7 @@ export async function enviarMensajeConLista(
           },
         },
       }),
-    }
+    },
   );
 
   if (!response.ok) {

@@ -137,7 +137,7 @@ export function ResultDisplaySuccess<T>({
     <div className={`result-display result-display--success ${className}`}>
       <div className="result-display__icon">✅</div>
       <div className="result-display__content">
-        {children ? children(data) : data}
+        {children ? children(data) : (data as React.ReactNode)}
       </div>
     </div>
   );

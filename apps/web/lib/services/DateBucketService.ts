@@ -22,7 +22,11 @@ const toUtcDate = (value: Date | string): Date => {
 
   const parsed = new Date(value);
   return new Date(
-    Date.UTC(parsed.getUTCFullYear(), parsed.getUTCMonth(), parsed.getUTCDate()),
+    Date.UTC(
+      parsed.getUTCFullYear(),
+      parsed.getUTCMonth(),
+      parsed.getUTCDate(),
+    ),
   );
 };
 
@@ -46,7 +50,10 @@ const getIsoWeekMeta = (date: Date): { week: number; isoYear: number } => {
 
   const jan4 = new Date(Date.UTC(isoYear, 0, 4));
   const jan4WeekStart = getIsoWeekStart(jan4);
-  const week = Math.round((weekStart.getTime() - jan4WeekStart.getTime()) / (7 * DAY_IN_MS)) + 1;
+  const week =
+    Math.round(
+      (weekStart.getTime() - jan4WeekStart.getTime()) / (7 * DAY_IN_MS),
+    ) + 1;
 
   return { week, isoYear };
 };

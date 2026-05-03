@@ -33,7 +33,9 @@ test.describe("Financial Matrix - Granularidad/Render (P0/P1)", () => {
     );
   });
 
-  test("TC-01 (P0): mensual consistente con suma semanal en marzo", async ({ page }) => {
+  test("TC-01 (P0): mensual consistente con suma semanal en marzo", async ({
+    page,
+  }) => {
     await setMatrixFilters(page, {
       granularity: "week",
       startDate: MATRIX_TEST_DATES.march2026.start,
@@ -61,14 +63,23 @@ test.describe("Financial Matrix - Granularidad/Render (P0/P1)", () => {
       endDate: MATRIX_TEST_DATES.march2026.end,
     });
 
-    const monthBucketIds = await getBucketIdsWithStartDatePrefix(page, "2026-03");
+    const monthBucketIds = await getBucketIdsWithStartDatePrefix(
+      page,
+      "2026-03",
+    );
     expect(monthBucketIds.length).toBe(1);
 
-    const monthly = await getCellProjectedAndReal(page, categoryId, monthBucketIds[0]);
+    const monthly = await getCellProjectedAndReal(
+      page,
+      categoryId,
+      monthBucketIds[0],
+    );
     expect(monthly.real).toBeCloseTo(weeklyRealSum, 2);
   });
 
-  test("TC-02 (P0): corte quincenal exacto Q1(1-15) y Q2(16-fin)", async ({ page }) => {
+  test("TC-02 (P0): corte quincenal exacto Q1(1-15) y Q2(16-fin)", async ({
+    page,
+  }) => {
     await setMatrixFilters(page, {
       granularity: "fortnight",
       startDate: MATRIX_TEST_DATES.march2026.start,
@@ -92,7 +103,9 @@ test.describe("Financial Matrix - Granularidad/Render (P0/P1)", () => {
     await expect(q2).toHaveAttribute("data-end-date", "2026-03-31");
   });
 
-  test("TC-03 (P1): persistencia de filtro anual y posición de scroll", async ({ page }) => {
+  test("TC-03 (P1): persistencia de filtro anual y posición de scroll", async ({
+    page,
+  }) => {
     await setMatrixFilters(page, {
       granularity: "month",
       startDate: MATRIX_TEST_DATES.fullYear2026.start,
@@ -135,4 +148,3 @@ test.describe("Financial Matrix - Granularidad/Render (P0/P1)", () => {
     expect(restoredScroll).toBeGreaterThanOrEqual(Math.max(1, savedScroll - 5));
   });
 });
-

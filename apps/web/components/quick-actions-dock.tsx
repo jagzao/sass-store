@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
-import { Button } from '@sass-store/ui';
+import { useState, useEffect, useMemo, useCallback } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@sass-store/ui";
 import {
   ShoppingCart,
   Calendar,
@@ -17,41 +17,86 @@ import {
   Download,
   DollarSign,
   Building2,
-  TrendingUp
-} from 'lucide-react';
-import { useTenant } from '@/lib/tenant/tenant-provider';
-import { useCart } from '@/lib/cart/cart-store';
+  TrendingUp,
+} from "lucide-react";
+import { useTenant } from "@/lib/tenant/tenant-provider";
+import { useCart } from "@/lib/cart/cart-store";
 
 // Mock user role - in real app, this would come from auth
 const useUserRole = () => {
-  return 'customer'; // customer | staff | admin | owner
+  return "customer"; // customer | staff | admin | owner
 };
 
 const roleActions = {
   customer: [
-    { icon: Calendar, label: 'Book Now', action: 'book', href: '/booking' },
-    { icon: ShoppingCart, label: 'Reorder', action: 'reorder' },
-    { icon: Heart, label: 'Favorites', action: 'favorites', href: '/favorites' },
-    { icon: HelpCircle, label: 'Help', action: 'help', href: '/help' }
+    { icon: Calendar, label: "Book Now", action: "book", href: "/booking" },
+    { icon: ShoppingCart, label: "Reorder", action: "reorder" },
+    {
+      icon: Heart,
+      label: "Favorites",
+      action: "favorites",
+      href: "/favorites",
+    },
+    { icon: HelpCircle, label: "Help", action: "help", href: "/help" },
   ],
   staff: [
-    { icon: UserCheck, label: 'Check In', action: 'checkin' },
-    { icon: Clock, label: 'Update Schedule', action: 'schedule' },
-    { icon: Plus, label: 'New Booking', action: 'newbooking', href: '/booking' },
-    { icon: CreditCard, label: 'Process Payment', action: 'payment' }
+    { icon: UserCheck, label: "Check In", action: "checkin" },
+    { icon: Clock, label: "Update Schedule", action: "schedule" },
+    {
+      icon: Plus,
+      label: "New Booking",
+      action: "newbooking",
+      href: "/booking",
+    },
+    { icon: CreditCard, label: "Process Payment", action: "payment" },
   ],
   admin: [
-    { icon: Plus, label: 'Add Product', action: 'addproduct', href: '/admin/products/new' },
-    { icon: BarChart3, label: 'Analytics', action: 'analytics', href: '/admin/analytics' },
-    { icon: Settings, label: 'Manage Staff', action: 'staff', href: '/admin/staff' },
-    { icon: Download, label: 'Export Data', action: 'export' }
+    {
+      icon: Plus,
+      label: "Add Product",
+      action: "addproduct",
+      href: "/admin/products/new",
+    },
+    {
+      icon: BarChart3,
+      label: "Analytics",
+      action: "analytics",
+      href: "/admin/analytics",
+    },
+    {
+      icon: Settings,
+      label: "Manage Staff",
+      action: "staff",
+      href: "/admin/staff",
+    },
+    { icon: Download, label: "Export Data", action: "export" },
   ],
   owner: [
-    { icon: DollarSign, label: 'Cost Dashboard', action: 'costs', href: '/owner/costs' },
-    { icon: Building2, label: 'Tenant Overview', action: 'tenants', href: '/owner/tenants' },
-    { icon: TrendingUp, label: 'Performance', action: 'performance', href: '/owner/performance' },
-    { icon: Settings, label: 'Settings', action: 'settings', href: '/owner/settings' }
-  ]
+    {
+      icon: DollarSign,
+      label: "Cost Dashboard",
+      action: "costs",
+      href: "/owner/costs",
+    },
+    {
+      icon: Building2,
+      label: "Tenant Overview",
+      action: "tenants",
+      href: "/owner/tenants",
+    },
+    {
+      icon: TrendingUp,
+      label: "Performance",
+      action: "performance",
+      href: "/owner/performance",
+    },
+    {
+      icon: Settings,
+      label: "Settings",
+      action: "settings",
+      href: "/owner/settings",
+    },
+  ],
 };
 
 export function QuickActionsDock() {
@@ -63,9 +108,10 @@ export function QuickActionsDock() {
   const router = useRouter();
 
   // Memoize actions based on user role
-  const actions = useMemo(() =>
-    roleActions[userRole as keyof typeof roleActions] || roleActions.customer,
-    [userRole]
+  const actions = useMemo(
+    () =>
+      roleActions[userRole as keyof typeof roleActions] || roleActions.customer,
+    [userRole],
   );
 
   // Auto-hide dock on scroll down, show on scroll up
@@ -82,35 +128,38 @@ export function QuickActionsDock() {
       setLastScrollY(currentScrollY);
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
 
   // Memoize action handler
-  const handleAction = useCallback((action: string, href?: string) => {
-    switch (action) {
-      case 'book':
-        if (tenant.mode === 'booking') {
-          router.push(href || '/booking');
-        }
-        break;
-      case 'reorder':
-        // Implement reorder logic
-        console.log('Reorder action');
-        break;
-      case 'favorites':
-        router.push(href || '/favorites');
-        break;
-      case 'help':
-        router.push(href || '/help');
-        break;
-      default:
-        if (href) {
-          router.push(href);
-        }
-        break;
-    }
-  }, [tenant.mode, router]);
+  const handleAction = useCallback(
+    (action: string, href?: string) => {
+      switch (action) {
+        case "book":
+          if (tenant.mode === "booking") {
+            router.push(href || "/booking");
+          }
+          break;
+        case "reorder":
+          // Implement reorder logic
+          console.warn("Reorder action");
+          break;
+        case "favorites":
+          router.push(href || "/favorites");
+          break;
+        case "help":
+          router.push(href || "/help");
+          break;
+        default:
+          if (href) {
+            router.push(href);
+          }
+          break;
+      }
+    },
+    [tenant.mode, router],
+  );
 
   if (!isVisible) return null;
 
@@ -118,7 +167,7 @@ export function QuickActionsDock() {
     <div className="quick-actions-dock">
       {actions.map((action) => {
         const Icon = action.icon;
-        const isCart = action.action === 'reorder' || action.action === 'cart';
+        const isCart = action.action === "reorder" || action.action === "cart";
         const hasCartItems = isCart && items.length > 0;
 
         return (

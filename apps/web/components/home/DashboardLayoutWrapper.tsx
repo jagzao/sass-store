@@ -36,10 +36,7 @@ export default function DashboardLayoutWrapper({
       </div>
 
       {/* Mobile Bottom Navigation */}
-      <HomeTenantBottomNav
-        tenantSlug={tenantSlug}
-        className="lg:hidden"
-      />
+      <HomeTenantBottomNav tenantSlug={tenantSlug} className="lg:hidden" />
 
       {/* Mobile Hamburger Menu (Tablet) */}
       <HomeTenantMobileMenu

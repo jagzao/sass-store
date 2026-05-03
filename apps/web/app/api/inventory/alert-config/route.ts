@@ -94,8 +94,11 @@ export async function POST(request: NextRequest) {
     // Create alert configuration
     const result = await InventoryService.createInventoryAlertConfig({
       tenantId: tenantContext.data.tenantId,
-      ...validatedData,
-    });
+      productId: validatedData.productId,
+      type: (validatedData as any).alertType || "reorder_point",
+      message: `Threshold set: min=${(validatedData as any).minStock}, max=${(validatedData as any).maxStock}`,
+      resolved: false,
+    } as any);
 
     if (!result.success) {
       return toInventoryErrorResponse(result.error);

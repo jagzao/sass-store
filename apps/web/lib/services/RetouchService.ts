@@ -19,7 +19,9 @@ export class InMemoryRetouchService {
     { frequencyType, frequencyValue, businessDaysOnly }: RetouchConfig,
     holidays: Date[],
   ): Date {
-    const holidaySet = new Set(holidays.map((h) => h.toISOString().split("T")[0]));
+    const holidaySet = new Set(
+      holidays.map((h) => h.toISOString().split("T")[0]),
+    );
 
     const baseDate = new Date(lastVisitDate);
     let nextDate = new Date(baseDate);
@@ -41,7 +43,11 @@ export class InMemoryRetouchService {
 
     // Ajustar solo días hábiles si se indica
     if (businessDaysOnly) {
-      while (nextDate.getDay() === 0 || nextDate.getDay() === 6 || holidaySet.has(nextDate.toISOString().split("T")[0])) {
+      while (
+        nextDate.getDay() === 0 ||
+        nextDate.getDay() === 6 ||
+        holidaySet.has(nextDate.toISOString().split("T")[0])
+      ) {
         nextDate.setDate(nextDate.getDate() + 1);
       }
     }
@@ -52,13 +58,19 @@ export class InMemoryRetouchService {
   static validateConfig(config: RetouchConfig): Result<void, DomainError> {
     if (config.frequencyValue <= 0 || config.frequencyValue % 1 !== 0) {
       return Err(
-        ErrorFactories.validation("Frequency value must be a positive integer", "frequencyValue"),
+        ErrorFactories.validation(
+          "Frequency value must be a positive integer",
+          "frequencyValue",
+        ),
       );
     }
     const validTypes = ["days", "weeks", "months"];
     if (!validTypes.includes(config.frequencyType)) {
       return Err(
-        ErrorFactories.validation("Frequency type must be days, weeks, or months", "frequencyType"),
+        ErrorFactories.validation(
+          "Frequency type must be days, weeks, or months",
+          "frequencyType",
+        ),
       );
     }
     return Ok(undefined);

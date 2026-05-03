@@ -34,7 +34,9 @@ const step2Schema = z.object({
   adminUser: z.object({
     name: z.string().optional(),
     email: z.string().email("Email inválido"),
-    password: z.string().min(6, "La contraseña debe tener al menos 6 caracteres"),
+    password: z
+      .string()
+      .min(6, "La contraseña debe tener al menos 6 caracteres"),
   }),
 });
 
@@ -662,10 +664,10 @@ function CreateTenantModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Final validation before submit (Step 4 implies previous steps are valid, but good to check)
     // Actually step 4 has no fields to validate itself, just confirmation.
-    
+
     setLoading(true);
     setError(null);
     setServerErrors([]);
@@ -681,27 +683,27 @@ function CreateTenantModal({
 
       if (!response.ok) {
         const data = await response.json();
-        
+
         // Handle structured validation errors from backend
         if (data.details && Array.isArray(data.details)) {
-            // Transform Zod-like backend errors to clickable summary
-            const newServerErrors = data.details.map((detail: any) => {
-                // Map backend paths to steps (heuristically)
-                const path = detail.path.join(".");
-                let step = 1;
-                if (path.startsWith("adminUser")) step = 2;
-                if (path.startsWith("theme")) step = 3;
-                
-                return {
-                    step,
-                    field: path,
-                    message: detail.message
-                };
-            });
-            setServerErrors(newServerErrors);
-            setError("Hay errores en el formulario. Por favor revísalos abajo.");
+          // Transform Zod-like backend errors to clickable summary
+          const newServerErrors = data.details.map((detail: any) => {
+            // Map backend paths to steps (heuristically)
+            const path = detail.path.join(".");
+            let step = 1;
+            if (path.startsWith("adminUser")) step = 2;
+            if (path.startsWith("theme")) step = 3;
+
+            return {
+              step,
+              field: path,
+              message: detail.message,
+            };
+          });
+          setServerErrors(newServerErrors);
+          setError("Hay errores en el formulario. Por favor revísalos abajo.");
         } else {
-            throw new Error(data.error || "Error al crear el tenant");
+          throw new Error(data.error || "Error al crear el tenant");
         }
         setLoading(false); // Stop loading if error
         return;
@@ -728,11 +730,11 @@ function CreateTenantModal({
     }));
     // Clear error for this field
     if (fieldErrors[name]) {
-        setFieldErrors(prev => {
-            const next = { ...prev };
-            delete next[name];
-            return next;
-        });
+      setFieldErrors((prev) => {
+        const next = { ...prev };
+        delete next[name];
+        return next;
+      });
     }
   };
 
@@ -748,14 +750,14 @@ function CreateTenantModal({
         [field]: value,
       },
     }));
-    
+
     const path = `${parent}.${field}`;
     if (fieldErrors[path]) {
-        setFieldErrors(prev => {
-            const next = { ...prev };
-            delete next[path];
-            return next;
-        });
+      setFieldErrors((prev) => {
+        const next = { ...prev };
+        delete next[path];
+        return next;
+      });
     }
   };
 
@@ -777,25 +779,25 @@ function CreateTenantModal({
         <div className="p-6">
           {error && (
             <div className="mb-6 p-4 bg-red-900/20 border border-red-500/50 text-red-200 rounded text-sm animate-in fade-in slide-in-from-top-2">
-              <p className="font-bold flex items-center gap-2">
-                 ⚠️ {error}
-              </p>
+              <p className="font-bold flex items-center gap-2">⚠️ {error}</p>
               {serverErrors.length > 0 && (
                 <div className="mt-3 pl-4 border-l-2 border-red-500/30">
-                    <p className="text-xs uppercase text-red-400 font-bold mb-2">Detalles:</p>
-                    <ul className="space-y-1">
-                        {serverErrors.map((err, idx) => (
-                            <li key={idx}>
-                                <button
-                                    type="button"
-                                    onClick={() => handleJumpToError(err.step, err.field)}
-                                    className="text-left hover:text-white underline decoration-red-500/50 hover:decoration-white transition-all text-sm"
-                                >
-                                    Paso {err.step}: {err.message}
-                                </button>
-                            </li>
-                        ))}
-                    </ul>
+                  <p className="text-xs uppercase text-red-400 font-bold mb-2">
+                    Detalles:
+                  </p>
+                  <ul className="space-y-1">
+                    {serverErrors.map((err, idx) => (
+                      <li key={idx}>
+                        <button
+                          type="button"
+                          onClick={() => handleJumpToError(err.step, err.field)}
+                          className="text-left hover:text-white underline decoration-red-500/50 hover:decoration-white transition-all text-sm"
+                        >
+                          Paso {err.step}: {err.message}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               )}
             </div>
@@ -827,7 +829,11 @@ function CreateTenantModal({
                       onChange={handleChange}
                       className={`${inputClass} ${fieldErrors["name"] ? "border-red-500" : ""}`}
                     />
-                    {fieldErrors["name"] && <p className="text-red-400 text-xs mt-1">{fieldErrors["name"]}</p>}
+                    {fieldErrors["name"] && (
+                      <p className="text-red-400 text-xs mt-1">
+                        {fieldErrors["name"]}
+                      </p>
+                    )}
                   </div>
 
                   <div>
@@ -839,7 +845,11 @@ function CreateTenantModal({
                       onChange={handleChange}
                       className={`${inputClass} ${fieldErrors["slug"] ? "border-red-500" : ""}`}
                     />
-                    {fieldErrors["slug"] && <p className="text-red-400 text-xs mt-1">{fieldErrors["slug"]}</p>}
+                    {fieldErrors["slug"] && (
+                      <p className="text-red-400 text-xs mt-1">
+                        {fieldErrors["slug"]}
+                      </p>
+                    )}
                   </div>
 
                   <div>
@@ -934,7 +944,11 @@ function CreateTenantModal({
                       }
                       className={`${inputClass} ${fieldErrors["adminUser.email"] ? "border-red-500" : ""}`}
                     />
-                    {fieldErrors["adminUser.email"] && <p className="text-red-400 text-xs mt-1">{fieldErrors["adminUser.email"]}</p>}
+                    {fieldErrors["adminUser.email"] && (
+                      <p className="text-red-400 text-xs mt-1">
+                        {fieldErrors["adminUser.email"]}
+                      </p>
+                    )}
                   </div>
                   <div>
                     <label className={labelClass}>Contraseña *</label>
@@ -950,7 +964,11 @@ function CreateTenantModal({
                       }
                       className={`${inputClass} ${fieldErrors["adminUser.password"] ? "border-red-500" : ""}`}
                     />
-                    {fieldErrors["adminUser.password"] && <p className="text-red-400 text-xs mt-1">{fieldErrors["adminUser.password"]}</p>}
+                    {fieldErrors["adminUser.password"] && (
+                      <p className="text-red-400 text-xs mt-1">
+                        {fieldErrors["adminUser.password"]}
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -1066,23 +1084,22 @@ function CreateTenantModal({
                     </p>
 
                     <div className="mt-4">
-                      <label className={labelClass + " mb-2 block"}>Favicon</label>
+                      <label className={labelClass + " mb-2 block"}>
+                        Favicon
+                      </label>
                       <div className="bg-white rounded-lg p-2 max-w-sm mx-auto">
                         <TenantLogoUpload
                           currentLogo={formData.theme.faviconUrl}
                           onLogoChange={(url) =>
-                            handleNestedChange(
-                              "theme",
-                              "faviconUrl",
-                              url || "",
-                            )
+                            handleNestedChange("theme", "faviconUrl", url || "")
                           }
                           aspectRatio={1}
                           lockAspectRatio={true}
                         />
                       </div>
                       <p className="text-xs text-gray-500 mt-2 text-center">
-                        Formato recomendado: PNG transparente o ICO (Cuadrado 1:1)
+                        Formato recomendado: PNG transparente o ICO (Cuadrado
+                        1:1)
                       </p>
                     </div>
                   </div>
@@ -1177,19 +1194,19 @@ function CreateTenantModal({
 
               {step < 4 ? (
                 <button
-                    type="button"
-                    onClick={handleNext}
-                    className={buttonPrimaryClass}
+                  type="button"
+                  onClick={handleNext}
+                  className={buttonPrimaryClass}
                 >
-                    Siguiente
+                  Siguiente
                 </button>
               ) : (
                 <button
-                    type="submit"
-                    disabled={loading}
-                    className={buttonPrimaryClass}
+                  type="submit"
+                  disabled={loading}
+                  className={buttonPrimaryClass}
                 >
-                    {loading ? "Procesando..." : "Crear Tenant"}
+                  {loading ? "Procesando..." : "Crear Tenant"}
                 </button>
               )}
             </div>
@@ -1209,7 +1226,7 @@ function EditTenantModal({
   onClose: () => void;
   onSuccess: () => void;
 }) {
-  console.log("EditTenantModal tenant data:", tenant);
+  console.warn("EditTenantModal tenant data:", tenant);
   const [activeTab, setActiveTab] = useState<"general" | "branding" | "admin">(
     "general",
   );
@@ -1566,10 +1583,14 @@ function EditTenantModal({
                     </p>
 
                     <div className="mt-4">
-                      <label className={labelClass + " mb-2 block"}>Favicon</label>
+                      <label className={labelClass + " mb-2 block"}>
+                        Favicon
+                      </label>
                       <div className="bg-white rounded-lg p-2 max-w-sm mx-auto">
                         <TenantLogoUpload
-                          currentLogo={(formData.branding as any).faviconUrl || ""}
+                          currentLogo={
+                            (formData.branding as any).faviconUrl || ""
+                          }
                           onLogoChange={(url) =>
                             handleNestedChange(
                               "branding",
@@ -1582,7 +1603,8 @@ function EditTenantModal({
                         />
                       </div>
                       <p className="text-xs text-gray-500 mt-2 text-center">
-                        Formato recomendado: PNG transparente o ICO (Cuadrado 1:1)
+                        Formato recomendado: PNG transparente o ICO (Cuadrado
+                        1:1)
                       </p>
                     </div>
                   </div>

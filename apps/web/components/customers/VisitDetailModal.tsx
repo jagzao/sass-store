@@ -25,12 +25,21 @@ interface VisitDetailModalProps {
   onClose: () => void;
 }
 
-export default function VisitDetailModal({ visit, onClose }: VisitDetailModalProps) {
+export default function VisitDetailModal({
+  visit,
+  onClose,
+}: VisitDetailModalProps) {
   const getStatusBadge = (status: Visit["status"]) => {
     const statusConfig = {
       pending: { label: "Pendiente", className: "bg-stone-100 text-stone-800" },
-      scheduled: { label: "Programada", className: "bg-blue-100 text-blue-800" },
-      completed: { label: "Completada", className: "bg-green-100 text-green-800" },
+      scheduled: {
+        label: "Programada",
+        className: "bg-blue-100 text-blue-800",
+      },
+      completed: {
+        label: "Completada",
+        className: "bg-green-100 text-green-800",
+      },
       cancelled: { label: "Cancelada", className: "bg-red-100 text-red-800" },
     };
 
@@ -72,7 +81,9 @@ export default function VisitDetailModal({ visit, onClose }: VisitDetailModalPro
                 <Calendar className="h-5 w-5 text-gray-400" />
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-500">Fecha de Atención</p>
+                <p className="text-sm font-medium text-gray-500">
+                  Fecha de Atención
+                </p>
                 <p className="mt-1 text-base text-gray-900">
                   {new Date(visit.visitDate).toLocaleDateString("es-MX", {
                     year: "numeric",
@@ -104,7 +115,9 @@ export default function VisitDetailModal({ visit, onClose }: VisitDetailModalPro
 
           {/* Services */}
           <div>
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Servicios Realizados</h3>
+            <h3 className="text-lg font-medium text-gray-900 mb-4">
+              Servicios Realizados
+            </h3>
             <div className="bg-gray-50 rounded-lg overflow-hidden">
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-100">
@@ -165,7 +178,9 @@ export default function VisitDetailModal({ visit, onClose }: VisitDetailModalPro
                 <Clock className="h-5 w-5 text-blue-600" />
               </div>
               <div>
-                <p className="text-sm font-medium text-blue-900">Próxima Cita Sugerida</p>
+                <p className="text-sm font-medium text-blue-900">
+                  Próxima Cita Sugerida
+                </p>
                 <p className="mt-1 text-base text-blue-800">
                   {visit.nextVisitFrom &&
                     new Date(visit.nextVisitFrom).toLocaleDateString("es-MX")}
@@ -183,9 +198,13 @@ export default function VisitDetailModal({ visit, onClose }: VisitDetailModalPro
                 <FileText className="h-5 w-5 text-gray-400" />
               </div>
               <div className="flex-1">
-                <p className="text-sm font-medium text-gray-500 mb-2">Observaciones</p>
+                <p className="text-sm font-medium text-gray-500 mb-2">
+                  Observaciones
+                </p>
                 <div className="bg-gray-50 rounded-lg p-4">
-                  <p className="text-sm text-gray-700 whitespace-pre-wrap">{visit.notes}</p>
+                  <p className="text-sm text-gray-700 whitespace-pre-wrap">
+                    {visit.notes}
+                  </p>
                 </div>
               </div>
             </div>

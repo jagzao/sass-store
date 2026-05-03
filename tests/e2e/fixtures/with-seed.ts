@@ -21,7 +21,7 @@ export const test = base.extend<{
       // En su lugar, llamamos al endpoint de seed o esperamos que
       // el server ya tenga datos.
       // Este fixture asegura que el tenant existe y navegamos correctamente.
-      await page.goto(`http://localhost:3002/t/${tenantSlug}`);
+      await page.goto(`/t/${tenantSlug}`);
       await page.waitForSelector("body", { timeout: 15000 });
       await use({ tenantSlug });
     },

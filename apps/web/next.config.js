@@ -32,6 +32,8 @@ function generateCSP(env) {
       "'self'",
       // Next.js requires inline styles for CSS-in-JS
       "'unsafe-inline'",
+      // Allow Google Fonts stylesheets used by tenant themes
+      'https://fonts.googleapis.com',
     ],
     'img-src': [
       "'self'",
@@ -42,6 +44,8 @@ function generateCSP(env) {
     'font-src': [
       "'self'",
       'data:',
+      // Allow Google Fonts files used by tenant themes
+      'https://fonts.gstatic.com',
     ],
     'connect-src': [
       "'self'",

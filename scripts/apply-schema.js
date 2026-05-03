@@ -66,7 +66,7 @@ async function main() {
     `);
     
     console.log('Database schema applied successfully!');
-    console.log('Added reset_token and reset_token_expiry columns to users table');
+    // SECURITY: Redacted sensitive log;
     
     // Verify the columns exist
     const result = await db.execute(`

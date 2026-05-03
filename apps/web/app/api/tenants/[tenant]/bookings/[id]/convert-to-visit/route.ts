@@ -97,7 +97,7 @@ export async function POST(
               tenantId: tenant.id,
               name: booking.customerName,
               email: booking.customerEmail,
-              phone: booking.customerPhone || null,
+              phone: booking.customerPhone ?? "",
             })
             .returning();
           customerId = newCustomer.id;
@@ -110,7 +110,7 @@ export async function POST(
             tenantId: tenant.id,
             name: booking.customerName,
             email: null,
-            phone: booking.customerPhone || null,
+            phone: booking.customerPhone ?? "",
           })
           .returning();
         customerId = newCustomer.id;
@@ -153,7 +153,7 @@ export async function POST(
       unitPrice: booking.totalPrice,
       quantity: "1",
       subtotal: booking.totalPrice,
-      description: booking.service.description || null,
+      description: (booking.service as any).description || null,
     });
 
     // Update booking status and link customer

@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 // Service Worker para SASS Store - Secure Configuration
 // SEC-011: API responses are NEVER cached to prevent sensitive data exposure
 // Version: 2.0.0 - Security Hardened
