@@ -11,7 +11,7 @@ Use this skill to implement complete features in the sass-store monolith while p
 
 Read only the files needed for the task, starting with:
 
-- `.agents/sprint/{STRY-XXX-*}/plan.md`, `implementacion.md`, and `testing-usuario.md` when the work maps to an active User Story.
+- `.agents/sprint/{STRY-XXX-*}/plan.md`, `implementacion.md`, and `testing-usuario.md` when the work maps to an active User Story. If the user asks for a **robust plan** / **robust testing** / **exhaustive QA**, extend those docs per `AGENTS.md` (Plan robusto de testing: crawler, negative paths, multitenant matrix) and `docs/TESTING_MASTER_PLAN.md` §12.1+.
 - `.agents/history/debug_logs.md` for known recurring failures.
 - `.agents/history/test_cases.md` for relevant edge cases.
 - `.agents/memory/context_be.md` for backend rules.
@@ -27,9 +27,11 @@ Create or update the task plan before editing code:
 ## Feature: [name]
 
 ### Goal
+
 [clear implementation goal]
 
 ### Files to Create
+
 - [ ] `apps/web/lib/[domain]/[feature].ts`
 - [ ] `apps/web/app/api/[route]/route.ts`
 - [ ] `apps/web/components/[feature].tsx`
@@ -37,12 +39,15 @@ Create or update the task plan before editing code:
 - [ ] `tests/e2e/[feature].spec.ts`
 
 ### Files to Modify
+
 - [ ] [path]
 
 ### Acceptance Criteria
+
 - [ ] [criterion]
 
 ### Required Tests
+
 - [ ] Unit: [cases]
 - [ ] Integration: [cases]
 - [ ] E2E: [cases]

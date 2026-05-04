@@ -54,12 +54,12 @@ test.describe("Centro Tenístico — Landing Page", () => {
   });
 
   test("sección 'Reserva en 3 pasos' está visible", async ({ page }) => {
-    const howItWorks = page.locator("text=Reserva en 3 pasos");
+    const howItWorks = page.locator("text=Reserva en 3 pasos").first();
     await expect(howItWorks).toBeVisible({ timeout: 15000 });
   });
 
   test("sección CTA verde aparece con enlace de reserva", async ({ page }) => {
-    const ctaSection = page.locator("text=Empieza a jugar");
+    const ctaSection = page.locator("text=Empieza a jugar").first();
     await expect(ctaSection).toBeVisible({ timeout: 15000 });
   });
 

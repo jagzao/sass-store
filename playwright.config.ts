@@ -8,9 +8,6 @@ dotenv.config({ path: path.resolve(__dirname, ".env.test") });
 const isCI = !!process.env.CI;
 
 export default defineConfig({
-  // Seed de datos E2E via setup project (dependencies)
-  // El setup project corre primero y sembrará datos antes de los demás tests
-  // Se configura en: .testMatch = "**/setup-seed.spec.ts"
   testDir: "./tests/e2e",
 
   // CI/ENTORNO DEV SERVIDOR LENTO: secuencial para evitar contención

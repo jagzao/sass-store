@@ -9,11 +9,12 @@ Cada story activa (`docs/stories/active/STRY-XXX-*.md`) tiene una carpeta homón
 └── testing-usuario.md   # Pasos reproducibles para agente/Playwright (no manual del PO); base de `test:e2e:subset`
 ```
 
-## Flujo
+## Flujo (orden estricto, autonomía)
 
-1. PM activa story → crear o completar los tres archivos.
-2. Architect / Dev → actualizar `plan.md` e `implementacion.md`.
-3. QA → ejecutar y refinar `testing-usuario.md`, luego generar `tests/e2e/*.spec.ts`.
+1. **Fase 0 + PM:** story activa → tres archivos; **bloque único de preguntas** al inicio o “cero preguntas”; **`plan.md` completo** (pasos numerados, asunciones) antes de codificar en serio.
+2. **Architect** → **Dev** → **QA** en secuencia **sin** pedir autorización entre fases (`AGENTS.md` § 3).
+3. Si QA falla: **bucle Dev ⟲ QA** (fixes + Playwright CLI de nuevo) hasta verde o tope de ciclos.
+4. Con todo verde: el agente **notifica** al usuario (implementado + validado); pendiente **reviewer** (skill `pr-reviewer` en `.agents/skills/pr-reviewer/SKILL.md`) + **visto bueno** para `done`/merge/deploy.
 
 Protocolo: `.agents/protocols/story-orchestrator.md`.
 

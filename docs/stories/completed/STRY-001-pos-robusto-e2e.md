@@ -6,7 +6,7 @@
 > **Sprint:** S1  
 > **Asignado:** Dev  
 > **Creado:** 2026-04-28  
-> **Actualizado:** 2026-05-03  
+> **Actualizado:** 2026-05-03
 
 **Artefactos de sprint:** `.agents/sprint/STRY-001-pos-robusto-e2e/`
 
@@ -100,10 +100,10 @@ Ver **`.agents/sprint/STRY-001-pos-robusto-e2e/plan.md`** (plan vivo). Esta stor
 
 ## 8. Métricas de Éxito
 
-| Métrica        | Target | Actual |
-|----------------|--------|--------|
-| E2E flujo POS  | 100% pasando en CI/local | — |
-| Cobertura UT   | ≥80% archivos tocados | — |
+| Métrica       | Target                   | Actual |
+| ------------- | ------------------------ | ------ |
+| E2E flujo POS | 100% pasando en CI/local | —      |
+| Cobertura UT  | ≥80% archivos tocados    | —      |
 
 ---
 

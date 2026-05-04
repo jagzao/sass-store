@@ -1,5 +1,9 @@
 # CLAUDE.md — Instrucciones para Claude Code
 
+## Inbox móvil / remoto
+
+Si el usuario trabaja desde el **celular**: las peticiones pueden ir en **`docs/stories/inbox/QUEUE.md`** (commit por GitHub). Al iniciar tarea o cuando diga **“procesá inbox”**, leer ese archivo, ejecutar según tipo (`US`, `cambio`, `continuar-plan`, …) y dejar **Respuesta agente** en la cola. Protocolo: `.agents/protocols/mobile-remote-async.md`.
+
 ## Regla Obligatoria: Validación E2E al terminar implementaciones
 
 **Proceso obligatorio en 4 pasos — no reportar como terminado sin completarlos todos.**
@@ -7,6 +11,10 @@
 ### Workflow con plan / story en curso (tras codificar)
 
 En cuanto hay **codificación** aplicada al plan (`plan.md`) o a la US activa, **antes** de pedir visto bueno al dueño el agente debe correr **Playwright CLI** como haría una persona: **headed** primero (inspección visual y flujos de `testing-usuario.md`), iterar fixes, materializar en `tests/e2e/`, y cerrar en **headless**. No es opcional ni sustituible por “solo unit tests”. Detalle: `AGENTS.md` (transición tras codificación + Fase 4).
+
+### Orquestación `Implementa …` (autonomía)
+
+Ejecutar **fases en orden** (Fase 0 → PM → Architect → Dev → QA) **sin pedir “¿continúo?”** al usuario. Al **inicio**, un solo bloque con **todas** las preguntas abiertas **o** cero preguntas + asunciones en `plan.md`. Si QA falla, **bucle Dev→QA** automático hasta verde (tope en `.agents/protocols/story-orchestrator.md`). Con todo verde, **notificar** al usuario que queda pendiente reviewer/visto bueno. Revisión técnica de PR/diff: skill **`pr-reviewer`** (`.agents/skills/pr-reviewer/SKILL.md`). Protocolo: `.agents/protocols/story-orchestrator.md`.
 
 ### Paso 1 — Playwright CLI headed (**agente**, como lo haría una persona)
 
@@ -53,6 +61,7 @@ Si algún test falla → corregir test o código → re-ejecutar → debe pasar 
 ---
 
 **Aplica a:**
+
 - Nuevos componentes o páginas (landing, hero, sections)
 - Cambios en estilos globales (globals.css, TenantStyles)
 - Cambios en rutas o layouts de tenant
@@ -80,6 +89,10 @@ Ver `AGENTS.md` para reglas de arquitectura, Result Pattern (MANDATORIO), y estr
 - E2E subset: `npm run test:e2e:subset -- --grep "X"`
 - Usuario de testing estándar (admin): `jagzao@gmail.com/admin`
 - Coverage targets: rutas críticas >80%, lógica de negocio >70%
+
+### Plan robusto (trigger: “plan robusto”, “testing robusto”, “QA exhaustivo”)
+
+Además de E2E headed/headless estándar, incluir **crawler/smoke de enlaces internos**, **negative testing** (auth, tenant, validación, rate limit, red), **API negativa**, regresión **por tenant**, smoke **seguridad**, **resiliencia** (reload/back), **a11y/teclado + viewport móvil**, y **observabilidad** según entorno. Detalle y matriz: `AGENTS.md` (sección Plan robusto de testing) y `docs/TESTING_MASTER_PLAN.md`.
 
 ## Tenants
 

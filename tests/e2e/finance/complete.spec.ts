@@ -1,5 +1,7 @@
 import { test, expect } from "@playwright/test";
-import { loginAsAdmin } from "../helpers/test-helpers";
+import { loginAsAdmin, TEST_CREDENTIALS } from "../helpers/test-helpers";
+
+const { tenantSlug } = TEST_CREDENTIALS;
 
 test.describe("Finance - Categories Management", () => {
   test.beforeEach(async ({ page }) => {
@@ -8,7 +10,7 @@ test.describe("Finance - Categories Management", () => {
   });
 
   test("should display categories page", async ({ page }) => {
-    await page.goto("/t/manada-juma/finance/categories");
+    await page.goto(`/t/${tenantSlug}/finance/categories`);
 
     // Wait for page to load
     await page.waitForSelector("text=Categorías", { timeout: 15000 });
@@ -25,7 +27,7 @@ test.describe("Finance - Categories Management", () => {
   });
 
   test("should create a new income category", async ({ page }) => {
-    await page.goto("/t/manada-juma/finance/categories");
+    await page.goto(`/t/${tenantSlug}/finance/categories`);
     await page.waitForSelector("text=Categorías", { timeout: 15000 });
 
     // Click add category button
@@ -49,7 +51,7 @@ test.describe("Finance - Categories Management", () => {
   });
 
   test("should create a new expense category", async ({ page }) => {
-    await page.goto("/t/manada-juma/finance/categories");
+    await page.goto(`/t/${tenantSlug}/finance/categories`);
     await page.waitForSelector("text=Categorías", { timeout: 15000 });
 
     // Click add category button
@@ -68,7 +70,7 @@ test.describe("Finance - Categories Management", () => {
   });
 
   test("should edit an existing category", async ({ page }) => {
-    await page.goto("/t/manada-juma/finance/categories");
+    await page.goto(`/t/${tenantSlug}/finance/categories`);
     await page.waitForSelector("text=Categorías", { timeout: 15000 });
 
     // Find first category and click edit
@@ -88,7 +90,7 @@ test.describe("Finance - Categories Management", () => {
   });
 
   test("should filter categories by type", async ({ page }) => {
-    await page.goto("/t/manada-juma/finance/categories");
+    await page.goto(`/t/${tenantSlug}/finance/categories`);
     await page.waitForSelector("text=Categorías", { timeout: 15000 });
 
     // Filter by income
@@ -112,7 +114,7 @@ test.describe("Finance - Budgets Management", () => {
   });
 
   test("should display budgets page", async ({ page }) => {
-    await page.goto("/t/manada-juma/finance/budgets");
+    await page.goto(`/t/${tenantSlug}/finance/budgets`);
 
     await page.waitForSelector("text=Presupuestos", { timeout: 15000 });
     await expect(page.getByText("Presupuestos").first()).toBeVisible();
@@ -124,7 +126,7 @@ test.describe("Finance - Budgets Management", () => {
   });
 
   test("should create a monthly budget", async ({ page }) => {
-    await page.goto("/t/manada-juma/finance/budgets");
+    await page.goto(`/t/${tenantSlug}/finance/budgets`);
     await page.waitForSelector("text=Presupuestos", { timeout: 15000 });
 
     // Click add budget
@@ -144,7 +146,7 @@ test.describe("Finance - Budgets Management", () => {
   });
 
   test("should show budget progress", async ({ page }) => {
-    await page.goto("/t/manada-juma/finance/budgets");
+    await page.goto(`/t/${tenantSlug}/finance/budgets`);
     await page.waitForSelector("text=Presupuestos", { timeout: 15000 });
 
     // Should see budget cards with progress
@@ -153,7 +155,7 @@ test.describe("Finance - Budgets Management", () => {
   });
 
   test("should display budget alerts when exceeded", async ({ page }) => {
-    await page.goto("/t/manada-juma/finance/budgets");
+    await page.goto(`/t/${tenantSlug}/finance/budgets`);
     await page.waitForSelector("text=Presupuestos", { timeout: 15000 });
 
     // Look for alert indicators
@@ -172,7 +174,7 @@ test.describe("Finance - Dashboard", () => {
   });
 
   test("should display financial dashboard", async ({ page }) => {
-    await page.goto("/t/manada-juma/finance");
+    await page.goto(`/t/${tenantSlug}/finance`);
 
     await page.waitForTimeout(5000);
 
@@ -188,7 +190,7 @@ test.describe("Finance - Dashboard", () => {
   });
 
   test("should show monthly summary widget", async ({ page }) => {
-    await page.goto("/t/manada-juma/finance");
+    await page.goto(`/t/${tenantSlug}/finance`);
     await page.waitForTimeout(3000);
 
     // Look for summary information
@@ -207,7 +209,7 @@ test.describe("Finance - Dashboard", () => {
   });
 
   test("should show expense distribution chart", async ({ page }) => {
-    await page.goto("/t/manada-juma/finance");
+    await page.goto(`/t/${tenantSlug}/finance`);
     await page.waitForTimeout(3000);
 
     // Look for chart or distribution section
@@ -220,7 +222,7 @@ test.describe("Finance - Dashboard", () => {
   });
 
   test("should show active budgets widget", async ({ page }) => {
-    await page.goto("/t/manada-juma/finance");
+    await page.goto(`/t/${tenantSlug}/finance`);
     await page.waitForTimeout(3000);
 
     // Look for budgets section
@@ -234,7 +236,7 @@ test.describe("Finance - Supply Expenses", () => {
   });
 
   test("should display supplies expense page", async ({ page }) => {
-    await page.goto("/t/manada-juma/inventory/supplies");
+    await page.goto(`/t/${tenantSlug}/inventory/supplies`);
 
     await page.waitForTimeout(5000);
 
@@ -252,7 +254,7 @@ test.describe("Finance - Supply Expenses", () => {
   });
 
   test("should show supply expense report", async ({ page }) => {
-    await page.goto("/t/manada-juma/inventory/supplies");
+    await page.goto(`/t/${tenantSlug}/inventory/supplies`);
     await page.waitForTimeout(5000);
 
     // Look for report elements

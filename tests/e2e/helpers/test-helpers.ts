@@ -29,13 +29,16 @@ export async function loginAsAdmin(page: Page) {
   await page.goto(`/t/${tenantSlug}/login`, { timeout: 60000 });
 
   // Dev server needs time to compile the login page dynamically (up to 30s)
-  await expect(page.locator('input[type="email"]')).toBeVisible({
+  await expect(page.getByTestId("email-input").first()).toBeVisible({
     timeout: 30000,
   });
 
-  await page.fill('input[type="email"]', adminEmail);
+  await page.fill('[data-testid="email-input"] >> visible=true', adminEmail);
   await page.fill('input[type="password"]', adminPassword);
-  await page.click('button[type="submit"]');
+  await page
+    .getByRole("button", { name: /iniciar|ingresar|login/i })
+    .first()
+    .click();
   await page.waitForURL(`**\/t/${tenantSlug}`);
 }
 

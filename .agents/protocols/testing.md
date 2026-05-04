@@ -1,8 +1,8 @@
 # Protocolo de Testing
 
-> **Versión:** 1.0.0  
-> **Última actualización:** 2026-03-02  
-> **Proyecto:** sass-store  
+> **Versión:** 1.1.0  
+> **Última actualización:** 2026-05-03  
+> **Proyecto:** sass-store
 
 ---
 
@@ -38,13 +38,13 @@ tests/
 
 ### 1.2 Convenciones de Nombres
 
-| Tipo | Patrón | Ejemplo |
-|------|--------|---------|
-| Unit | `*.spec.ts` | `product-service.spec.ts` |
-| Integration | `*.spec.ts` | `booking-api.spec.ts` |
-| E2E | `*.spec.ts` | `checkout-flow.spec.ts` |
-| Fixtures | `*.ts` | `fixtures.ts` |
-| Builders | `*.ts` | `data-builders.ts` |
+| Tipo        | Patrón      | Ejemplo                   |
+| ----------- | ----------- | ------------------------- |
+| Unit        | `*.spec.ts` | `product-service.spec.ts` |
+| Integration | `*.spec.ts` | `booking-api.spec.ts`     |
+| E2E         | `*.spec.ts` | `checkout-flow.spec.ts`   |
+| Fixtures    | `*.ts`      | `fixtures.ts`             |
+| Builders    | `*.ts`      | `data-builders.ts`        |
 
 ---
 
@@ -54,52 +54,56 @@ tests/
 
 ```typescript
 // tests/unit/services/product-service.spec.ts
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { createProduct, getProduct, updateProduct } from '@/lib/services/product-service';
-import { expectSuccess, expectFailure } from '../../utils/helpers';
+import { describe, it, expect, beforeEach, vi } from "vitest";
+import {
+  createProduct,
+  getProduct,
+  updateProduct,
+} from "@/lib/services/product-service";
+import { expectSuccess, expectFailure } from "../../utils/helpers";
 
-describe('ProductService', () => {
-  describe('createProduct', () => {
-    it('should create product with valid data', async () => {
+describe("ProductService", () => {
+  describe("createProduct", () => {
+    it("should create product with valid data", async () => {
       // Arrange
-      const data = { name: 'Test Product', price: 100 };
-      const context = { tenantId: 'tenant-123', userId: 'user-456' };
+      const data = { name: "Test Product", price: 100 };
+      const context = { tenantId: "tenant-123", userId: "user-456" };
 
       // Act
       const result = await createProduct(data, context);
 
       // Assert
       expectSuccess(result);
-      expect(result.value.name).toBe('Test Product');
-      expect(result.value.tenantId).toBe('tenant-123');
+      expect(result.value.name).toBe("Test Product");
+      expect(result.value.tenantId).toBe("tenant-123");
     });
 
-    it('should return ValidationError for invalid price', async () => {
+    it("should return ValidationError for invalid price", async () => {
       // Arrange
-      const data = { name: 'Test Product', price: -10 };
-      const context = { tenantId: 'tenant-123', userId: 'user-456' };
+      const data = { name: "Test Product", price: -10 };
+      const context = { tenantId: "tenant-123", userId: "user-456" };
 
       // Act
       const result = await createProduct(data, context);
 
       // Assert
       expectFailure(result);
-      expect(result.error.type).toBe('ValidationError');
+      expect(result.error.type).toBe("ValidationError");
     });
   });
 
-  describe('getProduct', () => {
-    it('should return NotFoundError for non-existent product', async () => {
+  describe("getProduct", () => {
+    it("should return NotFoundError for non-existent product", async () => {
       // Arrange
-      const productId = 'non-existent-id';
-      const tenantId = 'tenant-123';
+      const productId = "non-existent-id";
+      const tenantId = "tenant-123";
 
       // Act
       const result = await getProduct(productId, tenantId);
 
       // Assert
       expectFailure(result);
-      expect(result.error.type).toBe('NotFoundError');
+      expect(result.error.type).toBe("NotFoundError");
     });
   });
 });
@@ -109,7 +113,7 @@ describe('ProductService', () => {
 
 ```typescript
 // Mock de dependencias
-vi.mock('@/lib/db', () => ({
+vi.mock("@/lib/db", () => ({
   db: {
     products: {
       findMany: vi.fn(),
@@ -117,25 +121,25 @@ vi.mock('@/lib/db', () => ({
       create: vi.fn(),
       update: vi.fn(),
       delete: vi.fn(),
-    }
-  }
+    },
+  },
 }));
 
 // Uso en test
-it('should call database with correct parameters', async () => {
+it("should call database with correct parameters", async () => {
   // Arrange
   const mockCreate = vi.mocked(db.products.create);
-  mockCreate.mockResolvedValueOnce({ id: '1', name: 'Test' });
+  mockCreate.mockResolvedValueOnce({ id: "1", name: "Test" });
 
   // Act
-  await createProduct({ name: 'Test' }, context);
+  await createProduct({ name: "Test" }, context);
 
   // Assert
   expect(mockCreate).toHaveBeenCalledWith({
     data: {
-      name: 'Test',
-      tenantId: context.tenantId
-    }
+      name: "Test",
+      tenantId: context.tenantId,
+    },
   });
 });
 ```
@@ -148,9 +152,9 @@ it('should call database with correct parameters', async () => {
 
 ```typescript
 // tests/utils/test-db.ts
-import { drizzle } from 'drizzle-orm/postgres-js';
-import postgres from 'postgres';
-import * as schema from '@/lib/db/schema';
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
+import * as schema from "@/lib/db/schema";
 
 const TEST_DATABASE_URL = process.env.TEST_DATABASE_URL!;
 
@@ -177,9 +181,9 @@ export const seedTestDb = async () => {
   const db = getTestDb();
   // Crear tenant de prueba
   await db.insert(schema.tenants).values({
-    id: 'test-tenant-1',
-    name: 'Test Tenant',
-    slug: 'test-tenant',
+    id: "test-tenant-1",
+    name: "Test Tenant",
+    slug: "test-tenant",
   });
   // ... más seed data
 };
@@ -189,12 +193,12 @@ export const seedTestDb = async () => {
 
 ```typescript
 // tests/integration/api/products-api.spec.ts
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { GET, POST } from '@/app/api/products/route';
-import { cleanupTestDb, seedTestDb } from '../../utils/test-db';
-import { createAuthenticatedRequest } from '../../utils/helpers';
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
+import { GET, POST } from "@/app/api/products/route";
+import { cleanupTestDb, seedTestDb } from "../../utils/test-db";
+import { createAuthenticatedRequest } from "../../utils/helpers";
 
-describe('Products API', () => {
+describe("Products API", () => {
   beforeEach(async () => {
     await cleanupTestDb();
     await seedTestDb();
@@ -204,11 +208,11 @@ describe('Products API', () => {
     await cleanupTestDb();
   });
 
-  describe('GET /api/products', () => {
-    it('should return products for authenticated tenant', async () => {
+  describe("GET /api/products", () => {
+    it("should return products for authenticated tenant", async () => {
       // Arrange
-      const request = createAuthenticatedRequest('/api/products', {
-        tenantId: 'test-tenant-1'
+      const request = createAuthenticatedRequest("/api/products", {
+        tenantId: "test-tenant-1",
       });
 
       // Act
@@ -221,9 +225,9 @@ describe('Products API', () => {
       expect(Array.isArray(data.data)).toBe(true);
     });
 
-    it('should return 401 for unauthenticated request', async () => {
+    it("should return 401 for unauthenticated request", async () => {
       // Arrange
-      const request = new Request('/api/products');
+      const request = new Request("/api/products");
 
       // Act
       const response = await GET(request);
@@ -233,14 +237,14 @@ describe('Products API', () => {
     });
   });
 
-  describe('POST /api/products', () => {
-    it('should create product with valid data', async () => {
+  describe("POST /api/products", () => {
+    it("should create product with valid data", async () => {
       // Arrange
-      const body = { name: 'New Product', price: 100 };
-      const request = createAuthenticatedRequest('/api/products', {
-        tenantId: 'test-tenant-1',
-        method: 'POST',
-        body
+      const body = { name: "New Product", price: 100 };
+      const request = createAuthenticatedRequest("/api/products", {
+        tenantId: "test-tenant-1",
+        method: "POST",
+        body,
       });
 
       // Act
@@ -250,7 +254,7 @@ describe('Products API', () => {
       // Assert
       expect(response.status).toBe(201);
       expect(data.success).toBe(true);
-      expect(data.data.name).toBe('New Product');
+      expect(data.data.name).toBe("New Product");
     });
   });
 });
@@ -264,26 +268,26 @@ describe('Products API', () => {
 
 ```typescript
 // tests/e2e/auth.setup.ts
-import { test as setup } from '@playwright/test';
-import { prisma } from '@/lib/db';
+import { test as setup } from "@playwright/test";
+import { prisma } from "@/lib/db";
 
-setup('authenticate', async ({ page }) => {
+setup("authenticate", async ({ page }) => {
   // Crear usuario de prueba
   const testUser = await prisma.users.create({
     data: {
-      email: 'test@example.com',
+      email: "test@example.com",
       // ...
-    }
+    },
   });
 
   // Login
-  await page.goto('/login');
-  await page.fill('[name="email"]', 'test@example.com');
-  await page.fill('[name="password"]', 'password123');
+  await page.goto("/login");
+  await page.fill('[name="email"]', "test@example.com");
+  await page.fill('[name="password"]', "password123");
   await page.click('button[type="submit"]');
 
   // Guardar estado
-  await page.context().storageState({ path: 'tests/e2e/.auth/user.json' });
+  await page.context().storageState({ path: "tests/e2e/.auth/user.json" });
 });
 ```
 
@@ -291,37 +295,37 @@ setup('authenticate', async ({ page }) => {
 
 ```typescript
 // tests/e2e/booking-flow.spec.ts
-import { test, expect } from '@playwright/test';
+import { test, expect } from "@playwright/test";
 
-test.describe('Booking Flow', () => {
-  test.use({ storageState: 'tests/e2e/.auth/user.json' });
+test.describe("Booking Flow", () => {
+  test.use({ storageState: "tests/e2e/.auth/user.json" });
 
-  test('should complete a booking successfully', async ({ page }) => {
+  test("should complete a booking successfully", async ({ page }) => {
     // Navigate to tenant dashboard
-    await page.goto('/t/test-tenant/dashboard');
+    await page.goto("/t/test-tenant/dashboard");
 
     // Go to bookings
-    await page.click('text=Reservas');
+    await page.click("text=Reservas");
     await expect(page).toHaveURL(/.*bookings/);
 
     // Create new booking
-    await page.click('text=Nueva Reserva');
+    await page.click("text=Nueva Reserva");
 
     // Fill form
-    await page.selectOption('#service', 'Corte de Cabello');
-    await page.fill('#date', '2026-03-15');
-    await page.fill('#time', '10:00');
-    await page.selectOption('#customer', 'Juan Pérez');
+    await page.selectOption("#service", "Corte de Cabello");
+    await page.fill("#date", "2026-03-15");
+    await page.fill("#time", "10:00");
+    await page.selectOption("#customer", "Juan Pérez");
 
     // Submit
     await page.click('button[type="submit"]');
 
     // Verify success
-    await expect(page.locator('.toast-success')).toBeVisible();
-    await expect(page.locator('text=Reserva creada')).toBeVisible();
+    await expect(page.locator(".toast-success")).toBeVisible();
+    await expect(page.locator("text=Reserva creada")).toBeVisible();
   });
 
-  test('should show error for conflicting booking', async ({ page }) => {
+  test("should show error for conflicting booking", async ({ page }) => {
     // ... test para conflicto de horario
   });
 });
@@ -335,34 +339,34 @@ test.describe('Booking Flow', () => {
 
 ```typescript
 // tests/utils/builders.ts
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
 export const ProductBuilder = {
   build: (overrides: Partial<Product> = {}) => ({
     id: uuidv4(),
-    name: 'Default Product',
+    name: "Default Product",
     price: 100,
-    tenantId: 'default-tenant',
+    tenantId: "default-tenant",
     createdAt: new Date(),
     updatedAt: new Date(),
-    ...overrides
+    ...overrides,
   }),
 
   withTenant: (tenantId: string) => ProductBuilder.build({ tenantId }),
-  
+
   withPrice: (price: number) => ProductBuilder.build({ price }),
-  
-  buildMany: (count: number, overrides: Partial<Product> = {}) => 
-    Array.from({ length: count }, () => ProductBuilder.build(overrides))
+
+  buildMany: (count: number, overrides: Partial<Product> = {}) =>
+    Array.from({ length: count }, () => ProductBuilder.build(overrides)),
 };
 
 export const BookingBuilder = {
   build: (overrides: Partial<Booking> = {}) => ({
     id: uuidv4(),
     date: new Date(),
-    status: 'pending',
-    tenantId: 'default-tenant',
-    ...overrides
+    status: "pending",
+    tenantId: "default-tenant",
+    ...overrides,
   }),
   // ...
 };
@@ -372,8 +376,8 @@ export const BookingBuilder = {
 
 ```typescript
 // tests/utils/helpers.ts
-import { expect } from 'vitest';
-import { Result } from '@sass-store/core/src/result';
+import { expect } from "vitest";
+import { Result } from "@sass-store/core/src/result";
 
 export const expectSuccess = <T, E>(result: Result<T, E>): T => {
   if (result.isErr()) {
@@ -390,8 +394,8 @@ export const expectFailure = <T, E>(result: Result<T, E>): E => {
 };
 
 export const expectErrorType = <T, E>(
-  result: Result<T, E>, 
-  errorType: string
+  result: Result<T, E>,
+  errorType: string,
 ) => {
   const error = expectFailure(result);
   expect(error.type).toBe(errorType);
@@ -405,14 +409,14 @@ export const expectErrorType = <T, E>(
 
 ### 6.1 Requisitos Mínimos
 
-| Tipo de Código | Cobertura | Crítico |
-|----------------|-----------|---------|
-| Servicios de dominio | 80% | ✅ |
-| API routes | 70% | ✅ |
-| Validación | 90% | ✅ |
-| Utilidades | 90% | ✅ |
-| Componentes UI | 60% | ⚠️ |
-| Hooks | 80% | ✅ |
+| Tipo de Código       | Cobertura | Crítico |
+| -------------------- | --------- | ------- |
+| Servicios de dominio | 80%       | ✅      |
+| API routes           | 70%       | ✅      |
+| Validación           | 90%       | ✅      |
+| Utilidades           | 90%       | ✅      |
+| Componentes UI       | 60%       | ⚠️      |
+| Hooks                | 80%       | ✅      |
 
 ### 6.2 Comandos de Cobertura
 
@@ -434,22 +438,17 @@ npm run test:unit -- --coverage && npm run test:integration -- --coverage
 export default defineConfig({
   test: {
     coverage: {
-      provider: 'v8',
-      reporter: ['text', 'json', 'html'],
-      exclude: [
-        'node_modules/',
-        'tests/',
-        '**/*.d.ts',
-        '**/*.config.*',
-      ],
+      provider: "v8",
+      reporter: ["text", "json", "html"],
+      exclude: ["node_modules/", "tests/", "**/*.d.ts", "**/*.config.*"],
       thresholds: {
         lines: 80,
         functions: 80,
         branches: 70,
-        statements: 80
-      }
-    }
-  }
+        statements: 80,
+      },
+    },
+  },
 });
 ```
 
@@ -465,17 +464,20 @@ Para cada nuevo feature, verificar:
 ## Tests para [Feature Name]
 
 ### Unit Tests
+
 - [ ] Test de caso exitoso (happy path)
 - [ ] Test de validación de input
 - [ ] Test de errores de negocio
 - [ ] Test de edge cases
 
 ### Integration Tests
+
 - [ ] Test de endpoint/route
 - [ ] Test de persistencia en DB
 - [ ] Test de aislamiento multitenant
 
 ### E2E Tests (si aplica)
+
 - [ ] Test de flujo completo en UI
 - [ ] Test de error handling en UI
 ```
@@ -484,14 +486,14 @@ Para cada nuevo feature, verificar:
 
 ```typescript
 // tests/unit/services/[feature]-service.spec.ts
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach } from "vitest";
 
-describe('[Feature]Service', () => {
+describe("[Feature]Service", () => {
   // ============================================
   // HAPPY PATH
   // ============================================
-  describe('happy path', () => {
-    it('should [action] successfully', async () => {
+  describe("happy path", () => {
+    it("should [action] successfully", async () => {
       // ...
     });
   });
@@ -499,8 +501,8 @@ describe('[Feature]Service', () => {
   // ============================================
   // VALIDATION
   // ============================================
-  describe('validation', () => {
-    it('should reject invalid [field]', async () => {
+  describe("validation", () => {
+    it("should reject invalid [field]", async () => {
       // ...
     });
   });
@@ -508,8 +510,8 @@ describe('[Feature]Service', () => {
   // ============================================
   // BUSINESS RULES
   // ============================================
-  describe('business rules', () => {
-    it('should enforce [rule]', async () => {
+  describe("business rules", () => {
+    it("should enforce [rule]", async () => {
       // ...
     });
   });
@@ -517,8 +519,8 @@ describe('[Feature]Service', () => {
   // ============================================
   // EDGE CASES
   // ============================================
-  describe('edge cases', () => {
-    it('should handle [edge case]', async () => {
+  describe("edge cases", () => {
+    it("should handle [edge case]", async () => {
       // ...
     });
   });
@@ -526,12 +528,12 @@ describe('[Feature]Service', () => {
   // ============================================
   // SECURITY
   // ============================================
-  describe('security', () => {
-    it('should prevent unauthorized access', async () => {
+  describe("security", () => {
+    it("should prevent unauthorized access", async () => {
       // ...
     });
 
-    it('should isolate tenant data', async () => {
+    it("should isolate tenant data", async () => {
       // ...
     });
   });
@@ -557,7 +559,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
       - run: npm ci
       - run: npm run test:unit -- --coverage
       - uses: codecov/codecov-action@v3
@@ -635,7 +637,7 @@ npm run test:unit -- -u
 screen.debug();
 
 // Usar console.log con contexto
-console.log('🔍 Test context:', { tenantId, productId });
+console.log("🔍 Test context:", { tenantId, productId });
 
 // Usar page.pause() en E2E para debug interactivo
 await page.pause();
@@ -643,13 +645,31 @@ await page.pause();
 
 ---
 
-## 10. Referencias
+## 10. Plan robusto (trigger del dueño)
+
+Si el usuario pide un **plan robusto**, **testing robusto** o **QA exhaustivo**, el alcance de `plan.md` / `testing-usuario.md` **no** puede limitarse al happy path. Incluir como mínimo:
+
+| Pilar                | Contenido mínimo                                                                               |
+| -------------------- | ---------------------------------------------------------------------------------------------- |
+| Crawler / link smoke | Grafo acotado de URLs internas por tenant; sin 404; consola sin errores no allowlist           |
+| Negative testing     | Auth inválida, roles, cross-tenant, validación, 404/NotFound, 429, red degradada, doble submit |
+| API negativa         | Códigos y cuerpos de error tipados; sin fugas entre tenants                                    |
+| Multitenant          | Repetir escenarios relevantes por slug listado                                                 |
+| A11y + viewport      | Teclado en 1 flujo admin + 1 storefront; viewport móvil en flujo crítico                       |
+| Resiliencia          | Reload, back/forward, cancelar modal donde aplique                                             |
+
+Norma canónica del repositorio: `AGENTS.md` (sección **Plan robusto de testing**) y `docs/TESTING_MASTER_PLAN.md` (§12.1 y siguientes).
+
+---
+
+## 11. Referencias
 
 - [Vitest Documentation](https://vitest.dev/)
 - [Playwright Documentation](https://playwright.dev/)
 - [Testing Library](https://testing-library.com/)
 - [test_cases.md](../history/test_cases.md)
+- [TESTING_MASTER_PLAN.md](../../docs/TESTING_MASTER_PLAN.md)
 
 ---
 
-*Este protocolo es obligatorio. Todo código nuevo debe incluir tests según estas especificaciones.*
+_Este protocolo es obligatorio. Todo código nuevo debe incluir tests según estas especificaciones._

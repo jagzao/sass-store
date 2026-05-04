@@ -1,9 +1,12 @@
 import { test, expect } from "@playwright/test";
+import { TEST_CREDENTIALS } from "../helpers/test-helpers";
+
+const { tenantSlug } = TEST_CREDENTIALS;
 
 test.describe("Finance Pages - Simple Load Test", () => {
   test("should verify categories page exists", async ({ page }) => {
     // Simple navigation without login helper
-    await page.goto("/t/manada-juma/finance/categories", {
+    await page.goto(`/t/${tenantSlug}/finance/categories`, {
       timeout: 60000,
       waitUntil: "domcontentloaded",
     });
@@ -37,7 +40,7 @@ test.describe("Finance Pages - Simple Load Test", () => {
   });
 
   test("should verify budgets page exists", async ({ page }) => {
-    await page.goto("/t/manada-juma/finance/budgets", {
+    await page.goto(`/t/${tenantSlug}/finance/budgets`, {
       timeout: 60000,
       waitUntil: "domcontentloaded",
     });
@@ -58,7 +61,7 @@ test.describe("Finance Pages - Simple Load Test", () => {
   });
 
   test("should verify supplies page exists", async ({ page }) => {
-    await page.goto("/t/manada-juma/inventory/supplies", {
+    await page.goto(`/t/${tenantSlug}/inventory/supplies`, {
       timeout: 60000,
       waitUntil: "domcontentloaded",
     });
@@ -79,7 +82,7 @@ test.describe("Finance Pages - Simple Load Test", () => {
   });
 
   test("should verify finance dashboard exists", async ({ page }) => {
-    await page.goto("/t/manada-juma/finance", {
+    await page.goto(`/t/${tenantSlug}/finance`, {
       timeout: 60000,
       waitUntil: "domcontentloaded",
     });

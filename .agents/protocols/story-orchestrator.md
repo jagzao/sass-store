@@ -1,228 +1,227 @@
 # Protocolo del Orquestador de User Stories
 
-> Orquestador: PM → Architect → Dev → QA → Merge Ready
-> Versión: 1.0
-> Estado: VIGENTE
+> Orquestador: **Fase 0** → PM → Architect → Dev **⟲** QA → **notificación** → reviewer / visto bueno → Done + push  
+> Versión: **1.6**  
+> Estado: VIGENTE  
+> Reglas de autonomía alineadas con `AGENTS.md` § 3.
 
 ---
 
 ## Trigger
 
 Cuando el usuario dice:
+
 - `Implementa [Feature]`
 - `Desarrolla [Feature]`
-- `Crea [Feature]`
+- `Implementa STRY-XXX`
 - `valida todo`
 - `kilo run story --id STRY-XXX`
+- `plan robusto`, `testing robusto`, `QA exhaustivo` (sobre una US o la app): ampliar `plan.md` / `testing-usuario.md` según `AGENTS.md` (Plan robusto de testing) y `docs/TESTING_MASTER_PLAN.md` §12.1 y §13–§15
 
 El orquestador lee `docs/stories/BACKLOG.md` y `docs/stories/active/` para determinar la story a ejecutar.
 
 ---
 
-## Fase 0: Detección
+## Principios (autonomía)
+
+1. **Fases en orden estricto:** no saltar; no iniciar Dev (código de negocio) sin Architect cerrado; no cerrar Dev sin pasar por QA según `AGENTS.md`.
+2. **Sin autorización intermedia:** el agente **no** pregunta “¿sigo con la siguiente fase?” al dueño entre PM → Architect → Dev → QA.
+3. **Preguntas al inicio:** en **Fase 0 / inicio de Fase 1**, un **solo bloque** con **todas** las preguntas abiertas **o** la declaración “cero preguntas”. **Solo si el dueño no responde en ese turno**, documentar **defaults comentados** en `plan.md` (Asunciones / defaults) y **continuar**; si respondió, **no** reemplazar sus respuestas por asunciones. Salvo decisión técnica irresoluble (dos diseños incompatibles sin criterio en US/plan) → **sí** pedir una decisión al dueño.
+4. **`plan.md` completo antes de codificar en serio:** orden numerado, rutas/capas, criterios de hecho por paso, riesgos — suficiente para implementación **de inicio a fin** sin adivinar.
+5. **Bucle Dev ⟲ QA:** fallo en QA → Dev corrige → QA de nuevo, **sin** permiso del dueño por iteración; tope **5 ciclos completos** Dev→QA; si tras eso sigue rojo → **bloqueo** documentado (síntoma, logs, siguiente acción sugerida).
+6. **Notificación:** con build + lint + typecheck + UT + Playwright (headed + headless según `AGENTS.md` § 1.3) **verdes**, el agente **avisa al usuario** que la entrega está **implementada y validada por el agente** y que queda **pendiente reviewer / visto bueno** para merge/`done`/deploy.
+
+---
+
+## Fase 0: Detección + amarrar alcance
 
 ```
-1. ¿Existe story.md en docs/stories/active/ para este feature?
-   ├── Sí → Leer, confirmar scope, empezar Fase 1
-   └── No  → Crear story desde _template.md (PM auto-llena), guardar en active/
-2. Carpeta de sprint operativa:
+1. ¿Existe STRY-XXX en docs/stories/active/ para este feature?
+   ├── Sí → Leer, confirmar scope
+   └── No → Crear story desde _template.md (PM), guardar en active/
+2. Carpeta de sprint:
    .agents/sprint/{STRY-XXX-nombre-corto}/
-   ├── plan.md
+   ├── plan.md          ← debe quedar COMPLETO (pasos numerados, asunciones)
    ├── implementacion.md
    └── testing-usuario.md
-   → Si falta: crear archivos (mínimo esqueleto con secciones del template) al activar la story
+   → Si falta: crear; si existe: completar huecos antes de Fase 2
+3. Bloque único de aclaraciones (ver Principios §3): preguntas al dueño O cero + asunciones en plan.md
+4. Solo entonces → Fase 1 (PM formal) o fusionar PM aquí si la story ya está madura
 ```
 
 ### Entrada: reunión u observaciones
 
-Si el input es acta de reunión, notas u observaciones sueltas (no solo “Implementa X”):
+Si el input es acta de reunión o notas sueltas:
 
-1. **Preguntar al usuario** si el contenido debe incorporarse a la **User Story en curso** (`docs/stories/active/`).
-2. Si sí → actualizar la story (narrativa, AC, contrato) y los tres `.md` bajo `.agents/sprint/{STRY-XXX}/`.
-3. Si no → proponer nueva story o backlog; no dejar conclusiones sin `STRY-XXX` asociado.
+1. Incorporar a la story en curso **o** nueva STRY; actualizar `plan.md` / AC / `testing-usuario.md`.
+2. Volver a ejecutar **bloque de preguntas** si aparecen nuevas ambigüedades.
 
 ---
 
 ## Fase 1: PM Agent — Análisis
 
 ### Responsabilidad
-Confirmar entendimiento del requerimiento y que AC están claros.
+
+AC claros, prioridad, tenants de prueba; **`plan.md` listo para el codificador**.
 
 ### Checklist
-- [ ] Story.md existe en `docs/stories/active/`
-- [ ] Existe `.agents/sprint/{STRY-XXX}/` con `plan.md`, `implementacion.md`, `testing-usuario.md` (alineados con la story)
-- [ ] Criterios de aceptación están definidos
-- [ ] Tenant de prueba está especificado
-- [ ] Prioridad P0/P1/P2/P3 está clara
-- [ ] No hay placeholders vacíos en AC, contrato técnico o impacto
+
+- [ ] Story en `docs/stories/active/`
+- [ ] `.agents/sprint/{STRY-XXX}/` con los tres `.md`
+- [ ] AC sin placeholders críticos
+- [ ] **`plan.md`:** pasos **numerados**, alcance, dependencias, sección **Asunciones / defaults** si aplica
+- [ ] Bloque de aclaraciones **emitido** (preguntas o “cero preguntas”)
 
 ### Output
-Si AC claros: mover a Fase 2.
-Si ambigüedad: hacer preguntas al usuario (máx 3) y esperar respuesta.
-Si sin AC: usar template auto-llenable y pedir confirmación final.
-- Rellenar o ajustar `plan.md` (alcance, orden de trabajo, dependencias) y `implementacion.md` (trazabilidad AC → entregables).
+
+- **No** esperar micromensajes de aprobación para pasar a Fase 2.
+- Si ambigüedad de **negocio** sin respuesta: asunción en `plan.md` y seguir.
+- Si **decisión técnica irresoluble**: documentar opciones A/B y **pausar** con una sola pregunta al dueño.
 
 ---
 
 ## Fase 2: Architect Agent — Diseño Técnico
 
 ### Responsabilidad
-Diseñar contrato técnico y verificar impacto.
+
+Contrato técnico y riesgos; cerrar diseño en `plan.md` / `implementacion.md`.
 
 ### Checklist
-- [ ] ¿Nuevas tablas necesarias? >→ Agregar tenant_id + RLS
-- [ ] ¿Nuevos DomainError? >→ Definir en ErrorFactories
-- [ ] ¿Nuevo endpoint? >→ Zod schema + withResultHandler
-- [ ] ¿Toque código legacy try/catch? >→ Migrar a Result Pattern
-- [ ] ¿Impacto bundle > 50KB? >→ Evaluar lazy-load
-- [ ] Riesgo de deuda técnica identificado
+
+- [ ] Tablas / `tenant_id` / RLS si aplica
+- [ ] DomainError / Zod / `withResultHandler` donde aplique
+- [ ] Deuda técnica identificada
+- [ ] ADR breve en `ARCHITECT_IMPLEMENTATION_SUMMARY.md` si hay decisión de arquitectura
 
 ### Output
-- Actualizar `ARCHITECT_IMPLEMENTATION_SUMMARY.md` con ADR
-- Marcar story con checkboxes de diseño completado
-- Actualizar `plan.md` y `implementacion.md` con decisiones técnicas y riesgos
-- Pasa a Fase 3
+
+→ **Fase 3** sin pedir OK al dueño.
 
 ---
 
 ## Fase 3: Dev Agent — Implementación
 
 ### Responsabilidad
-Código + tests unitarios + auto-fix.
+
+Código + tests unitarios + build/lint/typecheck del alcance.
 
 ### Secuencia
+
 ```
 1. Branch: feature/STRY-XXX-nombre
-2. Servicio con Result Pattern
-3. Tests unitarios (expectSuccess/expectFailure)
-4. API con withResultHandler
-5. Tests integración
-6. UI (si aplica)
-7. npm run agent:build (lint + typecheck + build)
-   → Si falla: corregir → reintentar (max 5)
-8. Actualizar .agents/session/current_task.md
-9. Mantener `implementacion.md` al día (estado por CA, ramas de tests, definición de “hecho”)
-10. Tras codificación sustancial del plan: **no** dar por terminado el trabajo de dev sin disparar **Fase 4** — pruebas “como persona” con **Playwright CLI** (`--headed` luego headless), según `AGENTS.md` (transición tras codificación).
+2. Servicio (Result Pattern) + UT
+3. API withResultHandler + tests integración si aplica
+4. UI si aplica
+5. npm run build / lint / typecheck (o agent:build del repo)
+6. current_task.md + implementacion.md al día
+7. Tramo de plan marcado hecho → pasar a Fase 4 (no “cerrar” sin QA)
 ```
 
 ### Output
-- Archivos creados/modificados
-- Cobertura >= 80% en nuevos archivos
-- Build, lint, typecheck limpio
+
+→ **Fase 4** obligatoria tras codificación del tramo (`AGENTS.md` transición tras codificación).
 
 ---
 
-## Fase 4: QA Agent — Validación E2E
+## Fase 4: QA Agent — Validación (Playwright CLI + UT)
 
 ### Responsabilidad
-UAT + E2E + cobertura: **toda** la validación exhaustiva la ejecuta el **agente** con **Playwright CLI** (headed + headless), buscando errores y corrigiendo al vuelo. Cumplir **`AGENTS.md` § 1.3** antes de pedir **visto bueno** al dueño (el dueño **no** sustituye esta fase; ver § 1.4).
+
+UAT documentado + E2E; **todo** por el agente.
 
 ### Secuencia
+
 ```
-0. Entorno: levantar app (npm run dev / script E2E del repo). Si no arranca → diagnosticar .env, puerto 3001, DB, seeds → corregir hasta OK
-1. Redactar o completar testing-usuario.md a partir de la US + CA (no dejar escenarios vacíos “por definir”)
-2. Acceso: **por cada** tenant listado en `testing-usuario.md` (p. ej. todos los activos: wondernails, centro-tenistico), login con `jagzao@gmail.com` / `admin`. Si falla en uno → seed, usuario o permisos **por ese slug** hasta login y flujos OK en **todos** los listados
-3. **Playwright CLI `--headed`:** ejecutar **todos** los escenarios del `testing-usuario.md` como los haría una persona (ventana visible, mismos pasos); si falla → fix → re-ejecutar hasta verde
-4. (Opcional) `--headed` con slow-mo si el repo lo usa para depuración visual
-5. Validar AC uno por uno (cotejar con implementacion.md)
-   → Si falla: documentar en debug_logs.md → corregir código/datos → volver a paso 3
-6. Generar tests E2E en tests/e2e/ derivados 1:1 de testing-usuario.md (tags/grep alineados al STRY-XXX)
-7. npm run agent:e2e (o test:e2e:subset con grep STRY-XXX) → headless verde
-   → Si falla: corregir UI/test → reintentar (max 5)
-8. npx vitest run --coverage
-   → Cobertura >= 80%
+0. Entorno arriba (dev o start-e2e-server)
+1. testing-usuario.md alineado a US/CA
+2. Acceso por cada tenant del doc (jagzao@gmail.com / admin salvo US)
+3. Playwright --headed sobre escenarios del doc → fix si falla
+4. AC cotejados con implementacion.md
+5. tests/e2e alineados al doc (grep STRY-XXX o tag)
+6. Playwright headless verde
+7. Cobertura objetivo según AGENTS.md
 ```
 
-### UAT obligatorio antes de E2E
-Sin `testing-usuario.md` **rellenado según la US**, **ejecutado con todos los casos en verde** por el agente → no escribir tests E2E ni pedir **visto bueno** al dueño.
+### Bucle Dev ⟲ QA (autónomo)
 
-**Nota:** `docs/UAT/STRY-XXX-uat.md` es opcional y legacy; la fuente canónica para autonomía es `.agents/sprint/{STRY-XXX}/testing-usuario.md`.
+```
+Si paso 3–7 falla:
+  → Volver a Fase 3 (corregir código / datos / tests)
+  → Re-ejecutar Fase 4 desde el paso mínimo necesario (normalmente desde 3 o 6)
+Repetir hasta VERDE o hasta 5 ciclos completos Fase3→Fase4
+```
 
 ### Output
-- Todos los AC pasan
-- Tests E2E pasando
-- Cobertura >= 80%
+
+- Con **verde:** mensaje al usuario: **implementado y validado por el agente**; pendiente **reviewer** + **visto bueno** dueño para `done`/merge/deploy.
+- Con **rojo tras 5 ciclos:** reporte de bloqueo.
 
 ---
 
-## Fase 5: Listo para visto bueno del dueño (pre-done)
-
-### Responsabilidad
-Cerrar el trabajo **técnico** de la US con **Playwright CLI + UT** en verde; **no** marcar `done` ni publicar aún. El dueño **no** debe repetir toda la batería E2E.
-
-### Checklist (obligatorio antes de pedir visto bueno)
-- [ ] `testing-usuario.md` alineado a la US/CA y **cada escenario ejecutado con éxito** por el agente (§ 1.3)
-- [ ] Proyecto y entorno E2E levantados sin bloqueo; acceso con `jagzao@gmail.com`/`admin` verificado **en cada tenant** que el doc liste (activos del producto)
-- [ ] Implementación completa según AC e `implementacion.md`
-- [ ] Bugs encontrados en QA corregidos y **retesteada** con `npm run test:unit` (alcance US) en verde
-- [ ] Playwright CLI: **flujo E2E completo de la US** (`test:e2e:subset` + grep/tag `STRY-XXX`) en verde headless
-- [ ] Build, lint, typecheck verdes
-- [ ] Actualizar `QA_LEADER_IMPLEMENTATION_SUMMARY.md` (borrador / inventario de tests)
-
-### Salida
-Pedir al **dueño** el **visto bueno** (sí apruebo / no + motivo) sobre la **evidencia** ya verde — mensaje en chat, PR o story. **No** pedirle que haga de tester desde cero. Sin respuesta afirmativa → la story **no** avanza a Fase 6.
-
----
-
-## Fase 6: Done + push + publicar (solo tras visto bueno)
-
-### Responsabilidad
-Ejecutar **solo** cuando el dueño dio **visto bueno explícito** (aprobación sobre trabajo ya validado por el agente).
+## Fase 5: Listo para reviewer + visto bueno del dueño (pre-done)
 
 ### Checklist
-- [ ] Marcar story `Estado: done`
-- [ ] Mover `docs/stories/active/STRY-XXX-*.md` → `docs/stories/completed/`
-- [ ] Actualizar `BACKLOG.md` (marcar como done)
-- [ ] Actualizar `ARCHITECT_IMPLEMENTATION_SUMMARY.md` / `DEV_LEADER_IMPLEMENTATION_SUMMARY.md` / `PM_IMPLEMENTATION_SUMMARY.md` si aplica
-- [ ] Commit con Conventional Commits
-- [ ] **Push** (rama o merge de PR según política del repo)
-- [ ] **Publicar** (deploy staging/prod según pipeline del equipo: Vercel, CI, etc.)
-- [ ] Generar video demo (opcional, si hay UI)
+
+- [ ] Evidencia: comandos Playwright + UT + build/lint/tc
+- [ ] PR o diff enlazado para **reviewer** (humano o agente con skill **`pr-reviewer`**: `.agents/skills/pr-reviewer/SKILL.md`)
+- [ ] **No** pedir al dueño que repita toda la batería E2E
+
+### Salida
+
+Solicitar **visto bueno explícito** del dueño (producto) sobre la evidencia ya verde. El **reviewer** ejecuta checklist técnico del skill `pr-reviewer` sobre el PR/diff; puede ser la misma persona que el dueño, pero el rol es distinto de “tester desde cero”.
+
+---
+
+## Fase 6: Done + push + publicar
+
+Solo tras **visto bueno** del dueño (`AGENTS.md` § 1.2).
+
+### Checklist
+
+- [ ] `Estado: done`, mover a `completed/`, `BACKLOG.md`
+- [ ] Summaries si aplica
+- [ ] Commit, push, deploy según pipeline
 
 ### Salida al usuario
 
-**Fase 5 (listo para visto bueno):**
+**Tras Fase 4 verde (antes del visto bueno):**
+
 ```markdown
-## Story lista para tu visto bueno: [STRY-XXX] [Nombre]
-- El agente ya ejecutó QA exhaustivo (Playwright headed+headless, UT, tenants del doc) — todo verde.
-- Evidencia: comandos/resumen, PR/enlace al diff.
-- Tu rol: **visto bueno** (o rechazo motivado); no se espera que repitas toda la batería E2E. Ver `AGENTS.md` § 1.2 y § 1.4.
-- Confirma explícitamente para Fase 6 (done, push, publicar).
+## Listo para revisión: [STRY-XXX] [Nombre]
+
+- Implementación y validación **agente** completas (UT + Playwright headed + headless).
+- Pendiente: **reviewer** (PR) + tu **visto bueno** para merge / `done` / deploy.
 ```
 
-**Fase 6 (tras tu OK):**
+**Tras Fase 6:**
+
 ```markdown
-## ✅ Story completada y publicada: [STRY-XXX] [Nombre]
-### Métricas
-- Tests unitarios / cobertura / E2E / tiempo
-### Archivos tocados + comandos de verificación (build, lint, typecheck, unit, e2e subset)
+## Story completada: [STRY-XXX] — métricas y comandos de verificación
 ```
 
 ---
 
 ## Reglas de Oro del Orquestador
 
-1. **Nunca omitir una fase.** Si faltan AC, no pasa a Architect. Si falta diseño, no pasa a Dev.
-2. **Si un paso falla más de 5 veces, reportar bloqueo.**
-3. **Si no hay tests E2E pasando, no reportar feature como completada.**
-4. **No marcar `done`, no mover a `completed/`, no push ni deploy sin visto bueno explícito del dueño** sobre trabajo **ya** verde por Playwright CLI + § 1.3 (`AGENTS.md` § 1.2 / § 1.4).
-5. **Si no hay tests unitarios con cobertura >= 80%, no pasar a QA.**
-6. **Si hay `.test.ts` legacy en archivos tocados, migrarlos antes de decir "listo".**
-7. **Si se usa `console.error` o `console.log`, reemplazar con `logResult()` antes de merge.**
-8. **Todos los commits deben pasar `npm run validate`.**
+1. **Nunca omitir una fase** del orden 0 → 1 → 2 → 3 → 4.
+2. **No pedir permiso entre fases** salvo decisión técnica irresoluble (Principios §3).
+3. **Plan completo** (`plan.md`) antes de implementación sustancial.
+4. **Bucle Dev↔QA** automático hasta verde o tope de ciclos.
+5. **Si un paso falla más de 5 veces dentro de un mismo ciclo estrecho**, escalar a bloqueo documentado.
+6. **Sin E2E/Playwright verde en el alcance de la US**, no declarar “validado por agente”.
+7. **No `done`/push/deploy sin visto bueno** del dueño (`AGENTS.md`).
+8. **Commits** alineados a validación del repo (`npm run validate` o equivalente si existe).
 
 ---
 
 ## Comandos Rápidos del Orquestador
 
-| Comando | Qué hace |
-|---------|----------|
-| `Implementa X` | Crea story si no existe → ejecuta pipeline completo |
-| `valida todo` | Ejecuta pipeline de validación completo |
-| `corrige {feature}` | Loop de corrección con tests |
-| `analiza lo siguiente {X}` | Análisis PM → generar story template; si es reunión/observaciones, preguntar si va a la story en curso |
-| `Estado del proyecto` | Lee active/ + BACKLOG + summaries |
+| Comando                        | Qué hace                                        |
+| ------------------------------ | ----------------------------------------------- |
+| `Implementa X`                 | Fase 0–6 según protocolo (autónomo entre fases) |
+| `valida todo`                  | Pipeline global `AGENTS.md`                     |
+| `kilo run story --id STRY-XXX` | Igual que Implementa STRY-XXX                   |
 
 ---
 
-*Versión 1.5 | 2026-05-01 — Tras codificación: PW-CLI headed (como persona) obligatorio antes de visto bueno (`AGENTS.md` transición)*
+_Versión 1.6 | 2026-05-03 — Fases secuenciales, bloque de preguntas inicial, bucle Dev↔QA autónomo, notificación pre–visto bueno._

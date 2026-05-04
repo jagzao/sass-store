@@ -42,7 +42,7 @@ async function MenuSection({ tenantSlug }: { tenantSlug: string }) {
   const products = res?.data ?? [];
 
   return (
-    <section className="py-20 bg-white">
+    <section id="menu" className="py-20 bg-white">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto mb-14">
           <p
@@ -285,7 +285,7 @@ function CateringSection() {
             Cotizar catering
           </a>
           <a
-            href="/t/nom-nom/menu"
+            href="/t/nom-nom#menu"
             className="px-8 py-4 rounded-xl font-bold text-sm text-white transition-all hover:scale-[1.02]"
             style={{ border: "1.5px solid rgba(255,255,255,0.3)" }}
           >

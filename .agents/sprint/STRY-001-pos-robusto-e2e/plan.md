@@ -24,11 +24,11 @@ Robustecer el POS (API/UI según alcance acordado en `implementacion.md`) y deja
 
 ## Estado
 
-| Fase        | Estado |
-|------------|--------|
-| Inventario | [x] |
-| Implementación | [x] |
-| UT         | [x] 445 passed |
-| testing-usuario.md | [x] |
-| E2E CLI    | [x] headed 13/13 · headless 13/13 |
-| Validación humana | [ ] pendiente visto bueno del dueño |
+| Fase               | Estado                              |
+| ------------------ | ----------------------------------- |
+| Inventario         | [x]                                 |
+| Implementación     | [x]                                 |
+| UT                 | [x] 445 passed                      |
+| testing-usuario.md | [x]                                 |
+| E2E CLI            | [x] headed 13/13 · headless 13/13   |
+| Validación humana  | [ ] pendiente visto bueno del dueño |

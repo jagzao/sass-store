@@ -112,7 +112,9 @@ async function removeConsoleLogs(dryRun: boolean = true): Promise<void> {
       fs.writeFileSync(fullPath, newContent, "utf-8");
     }
 
-    // SECURITY: Redacted sensitive log.length} files`,
+    console.log(
+      `\n\n🔧 Removed console statements from ` +
+        `${Object.keys(byFile).length} files`,
     );
   }
 }

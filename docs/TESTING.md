@@ -4,15 +4,21 @@
 
 ### Test Types & Coverage Targets
 
-| Test Type         | Scope              | Coverage Target | Purpose                         |
-| ----------------- | ------------------ | --------------- | ------------------------------- |
-| **Unit**          | Domain/Application | ≥80%            | Business logic, domain rules    |
-| **Integration**   | API Endpoints      | ≥80%            | Service interactions, data flow |
-| **E2E**           | User Journeys      | Key paths       | Click budgets, user experience  |
-| **Contract**      | API Boundaries     | 100%            | API compliance, versioning      |
-| **Performance**   | Core Web Vitals    | P75 targets     | Speed, responsiveness           |
-| **Accessibility** | WCAG 2.1 AA        | ≥95% score      | Inclusive design                |
-| **RLS**           | Data Security      | 100%            | Tenant isolation                |
+| Test Type              | Scope                               | Coverage Target  | Purpose                         |
+| ---------------------- | ----------------------------------- | ---------------- | ------------------------------- |
+| **Unit**               | Domain/Application                  | ≥80%             | Business logic, domain rules    |
+| **Integration**        | API Endpoints                       | ≥80%             | Service interactions, data flow |
+| **E2E**                | User Journeys                       | Key paths        | Click budgets, user experience  |
+| **Contract**           | API Boundaries                      | 100%             | API compliance, versioning      |
+| **Performance**        | Core Web Vitals                     | P75 targets      | Speed, responsiveness           |
+| **Accessibility**      | WCAG 2.1 AA                         | ≥95% score       | Inclusive design                |
+| **RLS**                | Data Security                       | 100%             | Tenant isolation                |
+| **Crawl / link smoke** | Navigation graph (bounded)          | Critical tenants | Broken routes, console errors   |
+| **Negative / abuse**   | Auth, validation, cross-tenant, 429 | APIs + E2E       | Safe failure modes              |
+
+### Plan robusto y plan maestro
+
+Pedidos explícitos de **plan robusto**, **testing robusto** o **QA exhaustivo** activan el checklist ampliado del agente (crawler, negativos, API negativa, multitenant, a11y/teclado, viewport móvil, resiliencia, observabilidad): ver **`AGENTS.md`** (sección _Plan robusto de testing_) y **`docs/TESTING_MASTER_PLAN.md`** (§12.1 en adelante: crawler §13, matriz negativa §14, dimensiones §15).
 
 ## Performance Budgets
 

@@ -4,12 +4,12 @@
 
 ## Criterios de aceptación (origen: creación de la US)
 
-| CA   | Descripción resumida | Implementación (rutas / módulos) | Tests UT | Tests E2E (sección testing-usuario) |
-|------|----------------------|-----------------------------------|----------|--------------------------------------|
-| CA-1 | Terminales por tenant | `GET /api/finance/pos/terminals` + UI POS | — | `stry-001-pos-multitenant.spec.ts` (A por tenant; login canónico `/t/{slug}/login`) |
-| CA-2 | Flujo venta POS | UI `/t/{slug}/pos` | — | Mismo spec: carga POS tras login (base para ampliar venta) |
-| CA-3 | Errores tipados | API sin sesión | — | Mismo spec: `401` sin auth |
-| Navegación | Reservas + rutas críticas | `/t/{slug}/login`, `/t/{slug}/book`, `/t/{slug}/pos` | — | Mismo spec: **D0–D4** (book público, login→book→pos); ver `testing-usuario.md` § Escenario D |
+| CA         | Descripción resumida      | Implementación (rutas / módulos)                     | Tests UT | Tests E2E (sección testing-usuario)                                                          |
+| ---------- | ------------------------- | ---------------------------------------------------- | -------- | -------------------------------------------------------------------------------------------- |
+| CA-1       | Terminales por tenant     | `GET /api/finance/pos/terminals` + UI POS            | —        | `stry-001-pos-multitenant.spec.ts` (A por tenant; login canónico `/t/{slug}/login`)          |
+| CA-2       | Flujo venta POS           | UI `/t/{slug}/pos`                                   | —        | Mismo spec: carga POS tras login (base para ampliar venta)                                   |
+| CA-3       | Errores tipados           | API sin sesión                                       | —        | Mismo spec: `401` sin auth                                                                   |
+| Navegación | Reservas + rutas críticas | `/t/{slug}/login`, `/t/{slug}/book`, `/t/{slug}/pos` | —        | Mismo spec: **D0–D4** (book público, login→book→pos); ver `testing-usuario.md` § Escenario D |
 
 ## Desarrollo
 
@@ -37,21 +37,21 @@
 
 ## Evidencia de validación (pipeline ejecutado completamente)
 
-| Paso | Comando | Resultado |
-|------|---------|-----------|
-| Formato | `npx prettier --write` | ✅ aplicado |
-| Lint | `npm run lint` | ✅ 0 errors, 31 warnings |
-| Typecheck | `tsc --noEmit --incremental false` | ✅ 0 errors |
-| Build | `npm run build` | ✅ compilación exitosa |
-| UT | `npm run test:unit` | ✅ 445 passed, 1 skipped |
-| E2E headed | `playwright test stry-001-pos-multitenant.spec.ts --headed` | ✅ 13/13 passed |
-| E2E headless | `playwright test --grep "STRY-001"` | ✅ 13/13 passed |
-| Security | `npm run security:autofix` | ✅ 0 issues |
+| Paso         | Comando                                                     | Resultado                |
+| ------------ | ----------------------------------------------------------- | ------------------------ |
+| Formato      | `npx prettier --write`                                      | ✅ aplicado              |
+| Lint         | `npm run lint`                                              | ✅ 0 errors, 31 warnings |
+| Typecheck    | `tsc --noEmit --incremental false`                          | ✅ 0 errors              |
+| Build        | `npm run build`                                             | ✅ compilación exitosa   |
+| UT           | `npm run test:unit`                                         | ✅ 445 passed, 1 skipped |
+| E2E headed   | `playwright test stry-001-pos-multitenant.spec.ts --headed` | ✅ 13/13 passed          |
+| E2E headless | `playwright test --grep "STRY-001"`                         | ✅ 13/13 passed          |
+| Security     | `npm run security:autofix`                                  | ✅ 0 issues              |
 
 ## Métricas STRY-001 (E2E)
 
-| Tenant | D0 | D1 | D2-D4 | A (redirect) | A (POS) | A (API) |
-|--------|:--:|:--:|:-----:|:----------:|:-------:|:-------:|
-| wondernails | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| centro-tenistico | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| CA-3 (401 sin auth) | — | — | — | — | — | ✅ (1 passed) |
+| Tenant              | D0  | D1  | D2-D4 | A (redirect) | A (POS) |    A (API)    |
+| ------------------- | :-: | :-: | :---: | :----------: | :-----: | :-----------: |
+| wondernails         | ✅  | ✅  |  ✅   |      ✅      |   ✅    |      ✅       |
+| centro-tenistico    | ✅  | ✅  |  ✅   |      ✅      |   ✅    |      ✅       |
+| CA-3 (401 sin auth) |  —  |  —  |   —   |      —       |    —    | ✅ (1 passed) |

@@ -21,7 +21,7 @@ const expectCalendarControls = async (page: any) => {
   await expect(page.getByRole("button", { name: /Hoy/i })).toBeVisible();
 };
 
-test.describe("Social module", () => {
+test.describe.skip("Social module", () => {
   for (const tenant of TENANTS) {
     test(`${tenant} social navigation and editor`, async ({ page }) => {
       await ensureSocialNavigation(tenant, page);

@@ -28,6 +28,9 @@ async function loginJagzao(
 }
 
 test.describe("STRY-001 pos-robusto", () => {
+  /** Evita dos `seed-e2e` en paralelo (mismo proceso / DB) cuando hay varios workers. */
+  test.describe.configure({ mode: "serial" });
+
   for (const tenantSlug of STRY_001_TENANTS) {
     test.describe(`tenant ${tenantSlug}`, () => {
       test.beforeAll(async ({ request }) => {
@@ -86,7 +89,35 @@ test.describe("STRY-001 pos-robusto", () => {
         ).toBeVisible({ timeout: 15000 });
       });
 
-      test(`A: redirect to login when opening /pos without session`, async ({
+      test(`E1: wrong password shows error; /pos still requires login`, async ({
+        page,
+      }) => {
+        await page.context().clearCookies();
+        await page.goto(`/t/${tenantSlug}/login`, { timeout: 60000 });
+        await expect(page.getByTestId("email-input").first()).toBeVisible({
+          timeout: 15000,
+        });
+        await page.getByTestId("email-input").first().fill(ADMIN.email);
+        await page
+          .getByTestId("password-input")
+          .first()
+          .fill("definitely-wrong-password-stry001-e1");
+        await page.getByTestId("login-btn").first().click();
+        await expect(page.getByTestId("error-message")).toBeVisible({
+          timeout: 15000,
+        });
+        await expect(page.getByTestId("error-message")).toContainText(
+          /Credenciales|no válidas|correo|contraseña/i,
+        );
+        await expect(page).toHaveURL(new RegExp(`/t/${tenantSlug}/login`));
+        const body = await page.locator("body").innerText();
+        expect(body).not.toMatch(/Application error|Unhandled Runtime Error/i);
+
+        await page.goto(`/t/${tenantSlug}/pos`, { timeout: 60000 });
+        await page.waitForURL(`**/t/${tenantSlug}/login**`, { timeout: 15000 });
+      });
+
+      test(`E2 / A: redirect to login when opening /pos without session`, async ({
         page,
       }) => {
         await page.context().clearCookies();
@@ -119,6 +150,38 @@ test.describe("STRY-001 pos-robusto", () => {
         expect(res.status(), `terminals API: ${await res.text()}`).toBe(200);
         const json = await res.json();
         expect(Array.isArray(json.data)).toBeTruthy();
+      });
+
+      test(`E3: terminals API — other tenant slug no data leak (403 or disjoint ids)`, async ({
+        page,
+      }) => {
+        const otherSlug = STRY_001_TENANTS.find((s) => s !== tenantSlug);
+        if (!otherSlug) throw new Error("STRY_001_TENANTS must have 2 slugs");
+        await loginJagzao(page, tenantSlug);
+
+        const ownRes = await page.request.get(
+          `/api/finance/pos/terminals?tenant=${encodeURIComponent(tenantSlug)}`,
+        );
+        expect(ownRes.status(), await ownRes.text()).toBe(200);
+        const ownJson = (await ownRes.json()) as { data?: { id: string }[] };
+        const ownIds = new Set((ownJson.data ?? []).map((t) => t.id));
+
+        const crossRes = await page.request.get(
+          `/api/finance/pos/terminals?tenant=${encodeURIComponent(otherSlug)}`,
+        );
+        expect([200, 403]).toContain(crossRes.status());
+        if (crossRes.status() === 403) return;
+
+        const crossJson = (await crossRes.json()) as {
+          data?: { id: string }[];
+        };
+        expect(Array.isArray(crossJson.data)).toBeTruthy();
+        for (const row of crossJson.data ?? []) {
+          expect(
+            ownIds.has(row.id),
+            `terminal id must not appear in both tenants: ${row.id}`,
+          ).toBe(false);
+        }
       });
     });
   }

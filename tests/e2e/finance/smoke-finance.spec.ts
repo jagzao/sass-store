@@ -1,13 +1,15 @@
 import { test, expect } from "@playwright/test";
-import { loginAsAdmin } from "../helpers/test-helpers";
+import { loginAsAdmin, TEST_CREDENTIALS } from "../helpers/test-helpers";
 
 test.describe("Finance System - Smoke Tests", () => {
+  const { tenantSlug } = TEST_CREDENTIALS;
+
   test.beforeEach(async ({ page }) => {
     await loginAsAdmin(page);
   });
 
   test("Categories page loads correctly", async ({ page }) => {
-    await page.goto("/t/manada-juma/finance/categories");
+    await page.goto(`/t/${tenantSlug}/finance/categories`);
 
     // Wait for page content
     await page.waitForSelector("text=Categorías de Transacciones", {
@@ -29,7 +31,7 @@ test.describe("Finance System - Smoke Tests", () => {
   });
 
   test("Budgets page loads correctly", async ({ page }) => {
-    await page.goto("/t/manada-juma/finance/budgets");
+    await page.goto("/t/${tenantSlug}/finance/budgets");
 
     await page.waitForSelector("text=Presupuestos", { timeout: 15000 });
 
@@ -47,7 +49,7 @@ test.describe("Finance System - Smoke Tests", () => {
   });
 
   test("Financial dashboard loads correctly", async ({ page }) => {
-    await page.goto("/t/manada-juma/finance");
+    await page.goto("/t/${tenantSlug}/finance");
 
     await page.waitForTimeout(5000);
 
@@ -69,7 +71,7 @@ test.describe("Finance System - Smoke Tests", () => {
   });
 
   test("Supply expenses page loads", async ({ page }) => {
-    await page.goto("/t/manada-juma/inventory/supplies");
+    await page.goto("/t/${tenantSlug}/inventory/supplies");
 
     await page.waitForTimeout(8000);
 
@@ -88,17 +90,17 @@ test.describe("Finance System - Smoke Tests", () => {
 
   test("All finance navigation works", async ({ page }) => {
     // Start at categories
-    await page.goto("/t/manada-juma/finance/categories");
+    await page.goto("/t/${tenantSlug}/finance/categories");
     await page.waitForSelector("text=Categorías de Transacciones", {
       timeout: 15000,
     });
 
     // Navigate to budgets (if there's a nav link)
-    await page.goto("/t/manada-juma/finance/budgets");
+    await page.goto("/t/${tenantSlug}/finance/budgets");
     await page.waitForSelector("text=Presupuestos", { timeout: 15000 });
 
     // Navigate to dashboard
-    await page.goto("/t/manada-juma/finance");
+    await page.goto("/t/${tenantSlug}/finance");
     await page.waitForTimeout(3000);
 
     // All navigation successful
@@ -108,7 +110,7 @@ test.describe("Finance System - Smoke Tests", () => {
 
 test.describe("Finance System - Public Access", () => {
   test("Login page is accessible", async ({ page }) => {
-    await page.goto("/t/manada-juma/login", {
+    await page.goto("/t/${tenantSlug}/login", {
       timeout: 60000,
       waitUntil: "domcontentloaded",
     });
@@ -128,7 +130,7 @@ test.describe("Finance System - Public Access", () => {
     // Clear any existing auth state by opening a fresh context
     // This test assumes we're not logged in
 
-    await page.goto("/t/manada-juma/finance/categories", {
+    await page.goto("/t/${tenantSlug}/finance/categories", {
       timeout: 60000,
       waitUntil: "domcontentloaded",
     });

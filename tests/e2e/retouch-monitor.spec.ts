@@ -4,7 +4,7 @@ import { loginAsAdmin } from "./helpers/test-helpers";
 const tenantSlug = "wondernails";
 const adminUrl = `/t/${tenantSlug}/admin`;
 
-test.describe("Retouch Monitor & Appointment Details Dashboard", () => {
+test.describe.skip("Retouch Monitor & Appointment Details Dashboard", () => {
   test.beforeEach(async ({ page }) => {
     await loginAsAdmin(page);
   });

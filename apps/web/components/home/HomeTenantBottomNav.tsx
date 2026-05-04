@@ -25,9 +25,9 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { label: "Inicio", href: "", emoji: "🏠" },
-  { label: "Citas", href: "/bookings", emoji: "📅" },
+  { label: "Citas", href: "/admin_bookings", emoji: "📅" },
   { label: "Clientas", href: "/clientes", emoji: "👥" },
-  { label: "Más", href: "/menu", emoji: "☰" },
+  { label: "Más", href: "/admin", emoji: "☰" },
 ];
 
 /**
@@ -45,9 +45,6 @@ export default function HomeTenantBottomNav({
         pathname === `/t/${tenantSlug}` || pathname === `/t/${tenantSlug}/`
       );
     }
-    if (href === "/menu") {
-      return false; // Menu is never active
-    }
     return pathname.startsWith(`/t/${tenantSlug}${href}`);
   };
 
@@ -60,10 +57,7 @@ export default function HomeTenantBottomNav({
     >
       {NAV_ITEMS.map((item) => {
         const active = isActive(item.href);
-        const fullPath =
-          item.href === "/menu"
-            ? `/t/${tenantSlug}/menu`
-            : `/t/${tenantSlug}${item.href}`;
+        const fullPath = `/t/${tenantSlug}${item.href}`;
 
         return (
           <Link

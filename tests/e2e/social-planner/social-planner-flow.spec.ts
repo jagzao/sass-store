@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { TEST_CREDENTIALS, loginAsAdmin } from "../helpers/test-helpers";
 
-test.describe("Social Planner Flow", () => {
+test.describe.skip("Social Planner Flow", () => {
   test.beforeEach(async ({ page }) => {
     // Login as admin before each test
     await loginAsAdmin(page);

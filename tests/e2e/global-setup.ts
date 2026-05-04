@@ -15,7 +15,7 @@ export default async function globalSetup(config: FullConfig) {
   console.log(`[Global Setup] Base URL: ${baseURL}`);
 
   // 1. Verificar que el servidor responde (implica que build terminó)
-  const healthCheck = async (retries = 10): Promise<boolean> => {
+  const healthCheck = async (retries = 20): Promise<boolean> => {
     for (let i = 0; i < retries; i++) {
       try {
         const res = await fetch(`${baseURL}/api/debug/ping`);
@@ -29,7 +29,7 @@ export default async function globalSetup(config: FullConfig) {
       console.log(
         `[Global Setup] Esperando servidor... intento ${i + 1}/${retries}`,
       );
-      await new Promise((r) => setTimeout(r, 3000));
+      await new Promise((r) => setTimeout(r, 5000));
     }
     throw new Error("[Global Setup] Servidor no respondió a tiempo");
   };

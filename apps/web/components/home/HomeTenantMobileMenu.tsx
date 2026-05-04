@@ -31,7 +31,7 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { label: "Inicio", href: "", emoji: "🏠" },
-  { label: "Citas", href: "/bookings", emoji: "📅" },
+  { label: "Citas", href: "/admin_bookings", emoji: "📅" },
   { label: "Clientas", href: "/clientes", emoji: "👥" },
   { label: "Finanzas", href: "/finance", emoji: "💰", authProtected: true },
   { label: "Redes", href: "/social", emoji: "📱" },
