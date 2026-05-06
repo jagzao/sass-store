@@ -6,8 +6,8 @@ const path = require('path');
  * Production: Strict CSP without unsafe-eval, minimal unsafe-inline
  * Development: Relaxed CSP for Next.js HMR and Fast Refresh
  *
- * NOTE: Stripe.js requires 'unsafe-inline' in script-src for their embedded checkout
- * See: https://stripe.com/docs/security/guide#content-security-policy
+ * NOTE: MercadoPago requires 'unsafe-inline' in script-src for embedded checkout
+ * See: https://www.mercadopago.com/developers
  */
 
 /**
@@ -23,8 +23,9 @@ function generateCSP(env) {
     'default-src': ["'self'"],
     'script-src': [
       "'self'",
-      // Stripe.js - required for payment processing
-      'https://js.stripe.com',
+      // MercadoPago SDK
+      'https://sdk.mercadopago.com',
+      'https://secure.mlstatic.com',
       // Cloudflare Turnstile - CAPTCHA alternative
       'https://challenges.cloudflare.com',
     ],
@@ -49,19 +50,18 @@ function generateCSP(env) {
     ],
     'connect-src': [
       "'self'",
-      // Stripe API
-      'https://api.stripe.com',
       // Upstash Redis
       'https://upstash.io',
       'https://*.upstash.io',
       // MercadoPago API
       'https://api.mercadopago.com',
+      'https://www.mercadopago.com',
     ],
     'frame-src': [
       "'self'",
-      // Stripe.js frames
-      'https://js.stripe.com',
-      'https://hooks.stripe.com',
+      // MercadoPago checkout
+      'https://www.mercadopago.com',
+      'https://sdk.mercadopago.com',
       // Cloudflare Turnstile
       'https://challenges.cloudflare.com',
     ],
@@ -80,8 +80,8 @@ function generateCSP(env) {
     // Allow WebSocket connections for HMR
     directives['connect-src'].push('ws://localhost:*', 'ws://127.0.0.1:*');
   } else {
-    // Production: Stripe.js requires unsafe-inline for their embedded components
-    // This is a known limitation - see Stripe CSP documentation
+    // NOTE: MercadoPago requires 'unsafe-inline' in script-src for embedded checkout
+    // This is a known limitation - see MercadoPago CSP documentation
     // We mitigate with strict frame-ancestors and other directives
     directives['script-src'].push("'unsafe-inline'");
     // Add upgrade-insecure-requests only in production
@@ -128,7 +128,7 @@ function getSecurityHeaders(isProduction) {
         'microphone=()',
         'geolocation=()',
         'interest-cohort=()',
-        'payment=()', // Disable Payment Request API - we use Stripe directly
+        'payment=()', // Disable Payment Request API - we use MercadoPago directly
         'usb=()',
         'magnetometer=()',
         'gyroscope=()',
@@ -159,9 +159,9 @@ const nextConfig = {
   // Monorepo support - tell Next.js where the root is
   outputFileTracingRoot: path.join(__dirname, '../../'),
 
-  // Skip typecheck during builds
+  // TypeScript — build strict (no ignoreBuildErrors)
   typescript: {
-    ignoreBuildErrors: true,
+    // ignoreBuildErrors eliminado en STRY-019 — build ahora es estricto
   },
 
   // Transpile internal monorepo packages (excluding database - it's external)

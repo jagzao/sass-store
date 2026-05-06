@@ -5,10 +5,8 @@ import { Page, expect } from "@playwright/test";
  */
 export const TEST_CREDENTIALS = {
   tenantSlug: process.env.TEST_TENANT_SLUG || "wondernails",
-  adminEmail:
-    process.env.TEST_ADMIN_EMAIL ||
-    `admin@${process.env.TEST_TENANT_SLUG || "wondernails"}.com`,
-  adminPassword: process.env.TEST_ADMIN_PASSWORD || "Password123!",
+  adminEmail: process.env.TEST_ADMIN_EMAIL || "jagzao@gmail.com",
+  adminPassword: process.env.TEST_ADMIN_PASSWORD || "admin",
 };
 
 /**
@@ -39,7 +37,11 @@ export async function loginAsAdmin(page: Page) {
     .getByRole("button", { name: /iniciar|ingresar|login/i })
     .first()
     .click();
-  await page.waitForURL(`**\/t/${tenantSlug}`);
+  await page.waitForURL(
+    (url) =>
+      url.href.includes(`/t/${tenantSlug}`) && !url.href.includes("/login"),
+    { timeout: 30000 },
+  );
 }
 
 /**

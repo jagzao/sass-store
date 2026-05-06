@@ -199,3 +199,28 @@ describe("FeatureService", () => {
 - [ ] E2E coverage added for user-facing flows when relevant.
 - [ ] `lint`, `typecheck`, `build`, and targeted tests run or blockers documented.
 - [ ] `.agents/session/current_task.md` updated when this workflow is active.
+- [ ] `data-testid` attributes added to interactive elements and result indicators in every new or modified component (see below).
+
+## `data-testid` — contrato Dev → QA
+
+**Regla:** Dev agrega los `data-testid` al mismo tiempo que implementa el componente, no después de que QA falle buscando selectores. Si el atributo no está en el componente, el spec de Playwright no puede encontrarlo.
+
+Elementos que **siempre** necesitan `data-testid`:
+
+| Elemento                              | Ejemplo de atributo                 |
+| ------------------------------------- | ----------------------------------- |
+| Botón de submit de formulario         | `data-testid="submit-btn"`          |
+| Toast / notificación de éxito         | `data-testid="toast-success"`       |
+| Toast / notificación de error         | `data-testid="toast-error"`         |
+| Mensaje de error de validación inline | `data-testid="error-msg"`           |
+| Fila o card del item recién creado    | `data-testid="item-row"`            |
+| Contenedor principal de la feature    | `data-testid="[feature]-container"` |
+
+```tsx
+// Ejemplo en componente
+<Button data-testid="submit-btn" type="submit">Guardar</Button>
+<Toast data-testid="toast-success">Guardado correctamente</Toast>
+<p data-testid="error-msg" className="text-red-500">{error}</p>
+```
+
+Estos atributos no afectan el comportamiento ni los estilos. Son invisibles para el usuario y estables para los tests.

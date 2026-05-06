@@ -1,9 +1,10 @@
 # Protocolo del Orquestador de User Stories
 
 > Orquestador: **Fase 0** → PM → Architect → Dev **⟲** QA → **notificación** → reviewer / visto bueno → Done + push  
-> Versión: **1.6**  
+> Versión: **1.7**  
 > Estado: VIGENTE  
-> Reglas de autonomía alineadas con `AGENTS.md` § 3.
+> Reglas de autonomía alineadas con `AGENTS.md` § 3.  
+> Protocolo E2E canónico: **`.agents/protocols/e2e-validation.md`** (server lifecycle + validación como persona + loop auto-correctivo).
 
 ---
 
@@ -127,34 +128,69 @@ Código + tests unitarios + build/lint/typecheck del alcance.
 
 ### Responsabilidad
 
-UAT documentado + E2E; **todo** por el agente.
+El agente ejecuta la validación completa sin intervención del dueño: levanta el servidor si es necesario, valida visualmente como una persona real, corrige bugs encontrados y cierra en headless verde. Protocolo canónico completo: **`.agents/protocols/e2e-validation.md`**.
 
-### Secuencia
+### Secuencia obligatoria
 
 ```
-0. Entorno arriba (dev o start-e2e-server)
-1. testing-usuario.md alineado a US/CA
-2. Acceso por cada tenant del doc (jagzao@gmail.com / admin salvo US)
-3. Playwright --headed sobre escenarios del doc → fix si falla
-4. AC cotejados con implementacion.md
-5. tests/e2e alineados al doc (grep STRY-XXX o tag)
-6. Playwright headless verde
-7. Cobertura objetivo según AGENTS.md
+PASO 0 — Servidor
+  a. curl -s http://localhost:3001/api/health → ¿responde 200?
+     SÍ → continuar
+     NO → npm run dev (background) → polling cada 2s hasta 200 o 90s → si no arranca: bloqueo
+
+PASO 1 — Alinear testing-usuario.md
+  - Verificar que cubre todos los AC de la US
+  - Ajustar si hay AC nuevos de la implementación
+
+PASO 2 — Playwright --headed (validación como persona real)
+  - Comando: npm run test:e2e:subset -- --headed --grep "STRY-XXX"
+  - El agente observa y verifica:
+      * Página carga en < 3s (sin pantalla blanca, sin spinner eterno)
+      * Datos del tenant aparecen correctamente (no "undefined", no vacíos)
+      * Flujo completo: navegar → llenar form → enviar → ver resultado
+      * Toast de éxito visible tras submit
+      * Reload → dato persiste
+      * Caso de error: input inválido → mensaje de error correcto y visible
+  - Si hay fallo → árbol de diagnóstico (§3 de e2e-validation.md) → fix dirigido → repetir
+  - Máximo 5 ciclos auto-correctivos (ver Bucle Dev↔QA abajo)
+  - Documentar cada ciclo en implementacion.md (tabla ciclo/error/fix/resultado)
+
+PASO 3 — Cotejar AC vs implementacion.md
+  - Cada AC de la US debe estar cubierto por al menos un paso del flujo headed
+
+PASO 4 — Crear / actualizar tests E2E formales
+  - Archivo: tests/e2e/[módulo]/stry-xxx-[nombre].spec.ts
+  - Tag @stry-xxx en el describe para que --grep lo encuentre
+  - Mínimo: 1 happy path completo + 1 caso de error
+  - Usar data-testid para selectores estables
+
+PASO 5 — Playwright headless (gate final)
+  - Comando: npm run test:e2e:subset -- --grep "STRY-XXX"
+  - Criterios: 0 fallidos, 0 skipped sin justificación, < 2 min
+  - Si headless falla pero headed pasó → fix de timing (waitFor / networkidle) → re-run
+
+PASO 6 — Cobertura y cierre
+  - npm run test:unit (no regresiones en UT del módulo)
+  - Checklist completo de e2e-validation.md §7 marcado
 ```
 
 ### Bucle Dev ⟲ QA (autónomo)
 
 ```
-Si paso 3–7 falla:
-  → Volver a Fase 3 (corregir código / datos / tests)
-  → Re-ejecutar Fase 4 desde el paso mínimo necesario (normalmente desde 3 o 6)
-Repetir hasta VERDE o hasta 5 ciclos completos Fase3→Fase4
+Si el headed o el headless falla en cualquier paso 2-5:
+  → Identificar capa rota con árbol de diagnóstico (e2e-validation.md §3)
+  → Fix dirigido (solo la capa rota; no refactorizar alrededor)
+  → Re-ejecutar desde el paso mínimo necesario (normalmente desde 2 o 5)
+  → Documentar en implementacion.md (tabla de ciclos)
+  → Repetir sin pedir permiso al dueño
+Tope: 5 ciclos completos Dev→QA
+Si tras 5 ciclos sigue rojo → BLOQUEO documentado (error + fixes intentados + hipótesis + próxima acción)
 ```
 
 ### Output
 
-- Con **verde:** mensaje al usuario: **implementado y validado por el agente**; pendiente **reviewer** + **visto bueno** dueño para `done`/merge/deploy.
-- Con **rojo tras 5 ciclos:** reporte de bloqueo.
+- Con **verde (headed + headless + UT):** mensaje al usuario: **implementado y validado por el agente**; pendiente **reviewer** + **visto bueno** dueño para `done`/merge/deploy.
+- Con **rojo tras 5 ciclos:** reporte de bloqueo con evidencia completa.
 
 ---
 
@@ -224,4 +260,4 @@ Solo tras **visto bueno** del dueño (`AGENTS.md` § 1.2).
 
 ---
 
-_Versión 1.6 | 2026-05-03 — Fases secuenciales, bloque de preguntas inicial, bucle Dev↔QA autónomo, notificación pre–visto bueno._
+_Versión 1.7 | 2026-05-05 — Fase 4 expandida: server lifecycle autónomo, validación como persona real, árbol de diagnóstico, loop auto-correctivo documentado. Protocolo E2E canónico separado en `e2e-validation.md`._

@@ -102,6 +102,7 @@ export default defineConfig({
       AUTH_URL: "http://localhost:3002",
       GOOGLE_CLIENT_ID: "mock_client_id_for_testing",
       GOOGLE_CLIENT_SECRET: "mock_client_secret_for_testing",
+      E2E_SEED_ENABLED: "true",
     },
   },
 });

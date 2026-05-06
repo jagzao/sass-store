@@ -18,7 +18,7 @@ export default async function globalSetup(config: FullConfig) {
   const healthCheck = async (retries = 20): Promise<boolean> => {
     for (let i = 0; i < retries; i++) {
       try {
-        const res = await fetch(`${baseURL}/api/debug/ping`);
+        const res = await fetch(`${baseURL}/api/health`);
         if (res.status === 200) {
           console.log("[Global Setup] Servidor listo ✅");
           return true;
@@ -37,18 +37,46 @@ export default async function globalSetup(config: FullConfig) {
   await healthCheck();
 
   // 2. Seed opcional: si existe endpoint de seed
-  try {
-    const seedRes = await fetch(`${baseURL}/api/debug/seed-e2e`, {
-      method: "POST",
-    });
-    if (seedRes.ok) {
-      console.log("[Global Setup] Seed de datos E2E completado ✅");
-    } else {
-      console.warn("[Global Setup] Seed no disponible (endpoint no expuesto)");
+  const TENANTS_TO_SEED = ["wondernails", "centro-tenistico"];
+
+  for (const slug of TENANTS_TO_SEED) {
+    try {
+      const seedRes = await fetch(`${baseURL}/api/debug/seed-e2e`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tenantSlug: slug }),
+      });
+      if (seedRes.ok) {
+        console.log(
+          `[Global Setup] Seed de datos E2E para ${slug} completado ✅`,
+        );
+      } else {
+        console.warn(
+          `[Global Setup] Seed para ${slug} no disponible (status ${seedRes.status})`,
+        );
+      }
+    } catch {
+      console.warn(
+        `[Global Setup] Seed no configurado para ${slug}, tests usarán datos existentes`,
+      );
     }
-  } catch {
-    console.warn(
-      "[Global Setup] Seed no configurado, tests usarán datos existentes",
-    );
+
+    // Finance seed
+    try {
+      const financeRes = await fetch(`${baseURL}/api/finance/seed`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tenantSlug: slug }),
+      });
+      if (financeRes.ok) {
+        console.log(`[Global Setup] Finance seed para ${slug} ✅`);
+      } else {
+        console.warn(
+          `[Global Setup] Finance seed para ${slug} no disponible (status ${financeRes.status})`,
+        );
+      }
+    } catch {
+      console.warn(`[Global Setup] Finance seed no configurado para ${slug}`);
+    }
   }
 }

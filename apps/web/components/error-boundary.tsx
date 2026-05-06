@@ -47,8 +47,16 @@ export class ErrorBoundary extends Component<
     // Call custom error handler if provided
     this.props.onError?.(error, errorInfo);
 
-    // TODO: Send to error tracking service (e.g., Sentry)
-    // Sentry.captureException(error, { extra: errorInfo });
+    // Send to error tracking service (Sentry)
+    if (process.env.NEXT_PUBLIC_SENTRY_DSN) {
+      import("@sentry/nextjs").then((Sentry) => {
+        Sentry.captureException(error, {
+          extra: {
+            componentStack: errorInfo.componentStack,
+          },
+        });
+      });
+    }
   }
 
   componentDidUpdate(prevProps: ErrorBoundaryProps) {

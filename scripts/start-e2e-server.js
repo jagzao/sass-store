@@ -11,6 +11,11 @@ const { existsSync } = require("fs");
 const { spawn } = require("child_process");
 const path = require("path");
 
+// Load .env.local so Next.js server gets DATABASE_URL, NEXTAUTH_SECRET, etc.
+const { config } = require("dotenv");
+config({ path: path.resolve(__dirname, "..", ".env.local") });
+config({ path: path.resolve(__dirname, "..", ".env.test") });
+
 const buildDir = path.resolve(__dirname, "..", "apps", "web", ".next");
 const hasBuild = existsSync(buildDir);
 

@@ -5,6 +5,8 @@ import {
   tenants,
   users,
   userRoles,
+  transactionCategories,
+  budgets,
 } from "@sass-store/database/schema";
 import { and, eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
@@ -21,12 +23,27 @@ const TEST_USER = {
 /**
  * POST /api/debug/seed-e2e
  * Endpoint de semilla usado por Playwright (STRY-001 y POS).
- * Body opcional: `{ "tenantSlug": "wondernails" | "centro-tenistico" | ... }`
- * Garantiza:
- * - Al menos 1 producto activo para E2E de POS en ese tenant.
- * - Usuario de prueba estándar `jagzao@gmail.com` / `admin` con rol admin.
+ * Solo disponible en desarrollo y test.
  */
 export async function POST(request: NextRequest) {
+  if (process.env.VERCEL_ENV === "production") {
+    return NextResponse.json(
+      { error: "Not available in production" },
+      { status: 403 },
+    );
+  }
+
+  if (process.env.NODE_ENV === "production" && !process.env.E2E_SEED_ENABLED) {
+    return NextResponse.json({ error: "E2E seed disabled" }, { status: 403 });
+  }
+
+  if (process.env.VERCEL_ENV === "production") {
+    return NextResponse.json(
+      { error: "Not available in production" },
+      { status: 403 },
+    );
+  }
+
   let tenantSlug = "wondernails";
   try {
     const body = (await request.json().catch(() => null)) as {
@@ -114,10 +131,70 @@ export async function POST(request: NextRequest) {
     ]);
   }
 
+  // 4. Seed finance categories and budget if none exist
+  const existingCats = await db
+    .select()
+    .from(transactionCategories)
+    .where(eq(transactionCategories.tenantId, tenant.id))
+    .limit(1);
+
+  if (existingCats.length === 0) {
+    await db.insert(transactionCategories).values([
+      {
+        tenantId: tenant.id,
+        type: "income",
+        name: "Ventas",
+        color: "#10B981",
+        isDefault: true,
+      },
+      {
+        tenantId: tenant.id,
+        type: "income",
+        name: "Servicios",
+        color: "#3B82F6",
+      },
+      {
+        tenantId: tenant.id,
+        type: "expense",
+        name: "Insumos",
+        color: "#EF4444",
+        isDefault: true,
+      },
+      {
+        tenantId: tenant.id,
+        type: "expense",
+        name: "Sueldos",
+        color: "#F59E0B",
+      },
+    ]);
+  }
+
+  const existingBudgets = await db
+    .select()
+    .from(budgets)
+    .where(eq(budgets.tenantId, tenant.id))
+    .limit(1);
+
+  if (existingBudgets.length === 0) {
+    const now = new Date();
+    const end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+    await db.insert(budgets).values({
+      tenantId: tenant.id,
+      name: "Presupuesto Mensual E2E",
+      periodType: "monthly",
+      startDate: now.toISOString().split("T")[0],
+      endDate: end.toISOString().split("T")[0],
+      totalLimit: "50000.00",
+      status: "active",
+    });
+  }
+
   return NextResponse.json({
     message: "E2E seed completed",
     tenant: tenantSlug,
     user: TEST_USER.email,
     productSeeded: existingProduct.length === 0,
+    financeSeeded: existingCats.length === 0,
+    budgetSeeded: existingBudgets.length === 0,
   });
 }

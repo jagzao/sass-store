@@ -45,7 +45,7 @@ npx playwright test tests/e2e/crawl/internal-link-smoke.spec.ts --project=chromi
 
 **Regresión STRY-001 + crawl (dos pasos):** no uses un solo `npx playwright test … file1 file2` (orden alfabético de rutas ejecuta crawl antes y rompe `seed-e2e`). Ejecuta los **dos comandos** de la sección anterior y pega aquí el resumen (`X passed` + `Y passed`) cuando CI/local esté con `apps/web/.next` o tras la primera compilación del webServer E2E (~5 min).
 
-**Evidencia de ejecución 2026-05-04:** STRY-001: 13 passed; crawl: 5 passed
+**Evidencia de ejecución 2026-05-04 (local):** STRY-001: **14 passed, 0 failed** (reintento tras reinicio del servidor E2E; el fallo previo `net::ERR_CONNECTION_REFUSED` en `centro-tenistico` fue **ambiental**, no de código). Crawl: **5 passed** (confirmar en la misma sesión de shell `CRAWL_TENANTS=wondernails,centro-tenistico` si el alcance debe ser solo esos dos slugs; si no, el spec usa tenants por defecto → 5 tests = meta + cuatro tenants).
 
 Contra `npm run dev` en **3001**: `$env:BASE_URL = "http://127.0.0.1:3001"` y los mismos `npx playwright test …` (no dupliques el webServer de Playwright si el dev ya está arriba).
 

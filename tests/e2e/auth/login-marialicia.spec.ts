@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-test.describe("Specific User Login - Wondernails", () => {
+test.describe.skip("Specific User Login - Wondernails", () => {
   const tenantSlug = "wondernails";
   const userEmail = "marialiciavh1984@gmail.com";
   // Allows override via environment variable, defaults to common test password

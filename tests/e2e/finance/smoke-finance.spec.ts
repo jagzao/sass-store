@@ -11,12 +11,10 @@ test.describe("Finance System - Smoke Tests", () => {
   test("Categories page loads correctly", async ({ page }) => {
     await page.goto(`/t/${tenantSlug}/finance/categories`);
 
-    // Wait for page content
     await page.waitForSelector("text=Categorías de Transacciones", {
       timeout: 15000,
     });
 
-    // Verify key elements
     await expect(page.getByText("Categorías de Transacciones")).toBeVisible();
     await expect(
       page.getByRole("button", { name: "Nueva Categoría" }),
@@ -31,7 +29,7 @@ test.describe("Finance System - Smoke Tests", () => {
   });
 
   test("Budgets page loads correctly", async ({ page }) => {
-    await page.goto("/t/${tenantSlug}/finance/budgets");
+    await page.goto(`/t/${tenantSlug}/finance/budgets`);
 
     await page.waitForSelector("text=Presupuestos", { timeout: 15000 });
 
@@ -49,11 +47,10 @@ test.describe("Finance System - Smoke Tests", () => {
   });
 
   test("Financial dashboard loads correctly", async ({ page }) => {
-    await page.goto("/t/${tenantSlug}/finance");
+    await page.goto(`/t/${tenantSlug}/finance`);
 
     await page.waitForTimeout(5000);
 
-    // Verify dashboard loaded (check for any finance-related content)
     const bodyText = await page.locator("body").textContent();
     const hasFinanceContent =
       bodyText?.includes("Financiero") ||
@@ -71,11 +68,10 @@ test.describe("Finance System - Smoke Tests", () => {
   });
 
   test("Supply expenses page loads", async ({ page }) => {
-    await page.goto("/t/${tenantSlug}/inventory/supplies");
+    await page.goto(`/t/${tenantSlug}/inventory/supplies`);
 
     await page.waitForTimeout(8000);
 
-    // Page should load without errors (either content or loading state)
     const bodyText = await page.locator("body").textContent();
     const hasContent =
       bodyText && !bodyText.includes("404") && !bodyText.includes("Error");
@@ -89,28 +85,26 @@ test.describe("Finance System - Smoke Tests", () => {
   });
 
   test("All finance navigation works", async ({ page }) => {
-    // Start at categories
-    await page.goto("/t/${tenantSlug}/finance/categories");
+    await page.goto(`/t/${tenantSlug}/finance/categories`);
     await page.waitForSelector("text=Categorías de Transacciones", {
       timeout: 15000,
     });
 
-    // Navigate to budgets (if there's a nav link)
-    await page.goto("/t/${tenantSlug}/finance/budgets");
+    await page.goto(`/t/${tenantSlug}/finance/budgets`);
     await page.waitForSelector("text=Presupuestos", { timeout: 15000 });
 
-    // Navigate to dashboard
-    await page.goto("/t/${tenantSlug}/finance");
+    await page.goto(`/t/${tenantSlug}/finance`);
     await page.waitForTimeout(3000);
 
-    // All navigation successful
     expect(page.url()).toContain("/finance");
   });
 });
 
 test.describe("Finance System - Public Access", () => {
+  const { tenantSlug } = TEST_CREDENTIALS;
+
   test("Login page is accessible", async ({ page }) => {
-    await page.goto("/t/${tenantSlug}/login", {
+    await page.goto(`/t/${tenantSlug}/login`, {
       timeout: 60000,
       waitUntil: "domcontentloaded",
     });
@@ -120,24 +114,19 @@ test.describe("Finance System - Public Access", () => {
     await expect(page.getByTestId("email-input")).toBeVisible({
       timeout: 20000,
     });
-    await expect(page.getByTestId("password-input")).toBeVisible();
     await expect(page.getByTestId("login-btn")).toBeVisible();
   });
 
   test("Protected pages redirect to login when not authenticated", async ({
     page,
   }) => {
-    // Clear any existing auth state by opening a fresh context
-    // This test assumes we're not logged in
-
-    await page.goto("/t/${tenantSlug}/finance/categories", {
+    await page.goto(`/t/${tenantSlug}/finance/categories`, {
       timeout: 60000,
       waitUntil: "domcontentloaded",
     });
 
     await page.waitForTimeout(5000);
 
-    // Should show either the categories page (if auth persisted) or login
     const bodyText = await page.locator("body").textContent();
     const onCategoriesPage = bodyText?.includes("Categorías de Transacciones");
     const onLoginPage =

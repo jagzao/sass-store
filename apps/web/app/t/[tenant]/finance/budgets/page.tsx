@@ -1,22 +1,22 @@
-import { BudgetManagerClient } from "@/components/finance/BudgetManagerClient";
+import { BudgetManager } from "@/components/finance/BudgetManager";
+import { getTenantDataForPage } from "@/lib/db/tenant-service";
 
 export const metadata = {
-  title: "Presupuestos - Gestión Financiera",
-  description: "Administra tus presupuestos y límites de gasto",
+  title: "Presupuestos - Gestion Financiera",
+  description: "Administra tus presupuestos y limites de gasto",
 };
 
 interface BudgetsPageProps {
   params: Promise<{ tenant: string }>;
 }
 
-// This is now a client component to avoid server-side rendering issues
-export default function BudgetsPage({ params }: BudgetsPageProps) {
-  // We'll get the tenant slug from the params
-  const tenantSlug = "manada-juma"; // This would normally come from resolvedParams.tenant
+export default async function BudgetsPage({ params }: BudgetsPageProps) {
+  const resolvedParams = await params;
+  const tenantData = await getTenantDataForPage(resolvedParams.tenant);
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <BudgetManagerClient tenantId={tenantSlug} />
+      <BudgetManager tenantId={tenantData.id} />
     </div>
   );
 }

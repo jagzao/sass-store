@@ -1,25 +1,37 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
+import { GET } from "@/app/api/health/route";
+import { NextRequest } from "next/server";
 
-/**
- * Health endpoint smoke test.
- * Requiere servidor E2E corriendo en localhost:3002.
- * Si no responde, el test se omite sin fallar.
- */
+// Mock database
+vi.mock("@sass-store/database", () => ({
+  db: {
+    execute: vi.fn().mockResolvedValue([{ 1: 1 }]),
+  },
+}));
+
 describe("Health Endpoint", () => {
-  it("should return 200 with ok status", async () => {
-    try {
-      const res = await fetch("http://127.0.0.1:3002/api/health");
-      expect(res.status).toBe(200);
-      const json = await res.json();
-      expect(json.status).toBe("ok");
-      expect(json.timestamp).toBeDefined();
-      expect(new Date(json.timestamp).toISOString()).toBe(json.timestamp);
-    } catch (err: any) {
-      if (err?.cause?.code === "ECONNREFUSED") {
-        console.warn("E2E server not running on :3002; skipping health check");
-        return;
-      }
-      throw err;
-    }
+  it("should return 200 with status ok when DB is healthy", async () => {
+    const response = await GET();
+    const data = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(data.status).toBe("ok");
+    expect(data.version).toBeDefined();
+    expect(data.timestamp).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/);
+    expect(data.checks.database.status).toBe("ok");
+    expect(data.checks.database.latencyMs).toBeGreaterThanOrEqual(0);
+  });
+
+  it("should return 503 when DB fails", async () => {
+    // Override mock for this test
+    const { db } = await import("@sass-store/database");
+    (db.execute as any).mockRejectedValueOnce(new Error("DB timeout"));
+
+    const response = await GET();
+    const data = await response.json();
+
+    expect(response.status).toBe(503);
+    expect(data.status).toBe("degraded");
+    expect(data.checks.database.status).toBe("error");
   });
 });
