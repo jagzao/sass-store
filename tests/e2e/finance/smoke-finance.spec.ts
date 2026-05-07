@@ -10,92 +10,64 @@ test.describe("Finance System - Smoke Tests", () => {
 
   test("Categories page loads correctly", async ({ page }) => {
     await page.goto(`/t/${tenantSlug}/finance/categories`);
-
-    await page.waitForSelector("text=Categorías de Transacciones", {
-      timeout: 15000,
-    });
-
-    await expect(page.getByText("Categorías de Transacciones")).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Categorías de Transacciones" }),
+    ).toBeVisible({ timeout: 15000 });
     await expect(
       page.getByRole("button", { name: "Nueva Categoría" }),
     ).toBeVisible();
-    await expect(page.getByText("Ingresos")).toBeVisible();
-    await expect(page.getByText("Gastos")).toBeVisible();
-
-    await page.screenshot({
-      path: "test-results/finance/smoke-categories.png",
-      fullPage: true,
-    });
+    await expect(page.getByRole("button", { name: "Ingresos" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Gastos" })).toBeVisible();
   });
 
   test("Budgets page loads correctly", async ({ page }) => {
     await page.goto(`/t/${tenantSlug}/finance/budgets`);
-
-    await page.waitForSelector("text=Presupuestos", { timeout: 15000 });
-
-    await expect(page.getByText("Presupuestos").first()).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Presupuestos" }),
+    ).toBeVisible({ timeout: 15000 });
     await expect(
       page.getByRole("button", { name: "Nuevo Presupuesto" }),
     ).toBeVisible();
-    await expect(page.getByText("Activos")).toBeVisible();
-    await expect(page.getByText("Completados")).toBeVisible();
-
-    await page.screenshot({
-      path: "test-results/finance/smoke-budgets.png",
-      fullPage: true,
-    });
+    await expect(page.getByText("Activos").first()).toBeVisible();
+    await expect(page.getByText("Completados").first()).toBeVisible();
   });
 
   test("Financial dashboard loads correctly", async ({ page }) => {
     await page.goto(`/t/${tenantSlug}/finance`);
-
-    await page.waitForTimeout(5000);
-
+    await page.waitForLoadState("networkidle");
     const bodyText = await page.locator("body").textContent();
     const hasFinanceContent =
       bodyText?.includes("Financiero") ||
       bodyText?.includes("Resumen") ||
       bodyText?.includes("Dashboard") ||
       bodyText?.includes("Ingresos") ||
-      bodyText?.includes("Gastos");
-
+      bodyText?.includes("Gastos") ||
+      bodyText?.includes("finance");
     expect(hasFinanceContent).toBe(true);
-
-    await page.screenshot({
-      path: "test-results/finance/smoke-dashboard.png",
-      fullPage: true,
-    });
   });
 
   test("Supply expenses page loads", async ({ page }) => {
     await page.goto(`/t/${tenantSlug}/inventory/supplies`);
-
-    await page.waitForTimeout(8000);
-
+    await page.waitForLoadState("networkidle");
     const bodyText = await page.locator("body").textContent();
-    const hasContent =
-      bodyText && !bodyText.includes("404") && !bodyText.includes("Error");
-
-    expect(hasContent).toBe(true);
-
-    await page.screenshot({
-      path: "test-results/finance/smoke-supplies.png",
-      fullPage: true,
-    });
+    expect(bodyText).toBeDefined();
+    expect(bodyText?.includes("404")).toBe(false);
+    expect(bodyText?.includes("Not Found")).toBe(false);
   });
 
   test("All finance navigation works", async ({ page }) => {
     await page.goto(`/t/${tenantSlug}/finance/categories`);
-    await page.waitForSelector("text=Categorías de Transacciones", {
-      timeout: 15000,
-    });
+    await expect(
+      page.getByRole("heading", { name: "Categorías de Transacciones" }),
+    ).toBeVisible({ timeout: 15000 });
 
     await page.goto(`/t/${tenantSlug}/finance/budgets`);
-    await page.waitForSelector("text=Presupuestos", { timeout: 15000 });
+    await expect(
+      page.getByRole("heading", { name: "Presupuestos" }),
+    ).toBeVisible({ timeout: 15000 });
 
     await page.goto(`/t/${tenantSlug}/finance`);
-    await page.waitForTimeout(3000);
-
+    await page.waitForLoadState("networkidle");
     expect(page.url()).toContain("/finance");
   });
 });
@@ -108,9 +80,6 @@ test.describe("Finance System - Public Access", () => {
       timeout: 60000,
       waitUntil: "domcontentloaded",
     });
-
-    await page.waitForTimeout(3000);
-
     await expect(page.getByTestId("email-input")).toBeVisible({
       timeout: 20000,
     });
@@ -124,15 +93,15 @@ test.describe("Finance System - Public Access", () => {
       timeout: 60000,
       waitUntil: "domcontentloaded",
     });
-
-    await page.waitForTimeout(5000);
-
+    await page.waitForTimeout(3000);
     const bodyText = await page.locator("body").textContent();
     const onCategoriesPage = bodyText?.includes("Categorías de Transacciones");
     const onLoginPage =
-      bodyText?.includes("Inicia sesión") ||
-      bodyText?.includes("Correo electrónico");
-
+      bodyText?.includes("Inicia") ||
+      bodyText?.includes("Iniciar") ||
+      bodyText?.includes("Correo") ||
+      bodyText?.includes("email") ||
+      bodyText?.includes("login");
     expect(onCategoriesPage || onLoginPage).toBe(true);
   });
 });

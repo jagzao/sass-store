@@ -93,7 +93,7 @@ test.describe("Auth Regression Smoke Tests", () => {
       await page.goto(`/t/${tenantSlug}/login`, { timeout: 60000 });
 
       // Verify login form elements are present
-      await expect(page.locator('input[type="email"]')).toBeVisible({
+      await expect(page.locator('input[type="email"]').first()).toBeVisible({
         timeout: 30000,
       });
       await expect(page.locator('input[type="password"]')).toBeVisible();
@@ -106,7 +106,7 @@ test.describe("Auth Regression Smoke Tests", () => {
     test("should reject invalid credentials", async ({ page }) => {
       await page.goto(`/t/${tenantSlug}/login`, { timeout: 60000 });
 
-      await expect(page.locator('input[type="email"]')).toBeVisible({
+      await expect(page.locator('input[type="email"]').first()).toBeVisible({
         timeout: 30000,
       });
 
@@ -165,7 +165,7 @@ test.describe("Auth Regression Smoke Tests", () => {
 
       await page.goto(`/t/${tenantSlug}/login`, { timeout: 60000 });
 
-      await expect(page.locator('input[type="email"]')).toBeVisible({
+      await expect(page.locator('input[type="email"]').first()).toBeVisible({
         timeout: 30000,
       });
 
