@@ -21,7 +21,6 @@ const KNOWN_TENANTS = [
   "wondernails",
   "vigistudio",
   "centro-tenistico",
-  "vainilla-vargas",
   "delirios",
   "nom-nom",
   "zo-system",

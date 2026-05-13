@@ -1,0 +1,711 @@
+[
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico",
+    "status": "ok",
+    "title": "Centro TenÃ­stico Villafuerte - Professional tennis training and court rental",
+    "consoleErrors": [
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <Head>\n      <__next_root_layout_boundary__>\n        <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n          <SegmentTrieNode>\n          <link>\n          <script>\n          <script>\n          <script>\n          <script>\n          <RootLayout>\n            <html lang=\"en\" suppressHydrationWarning={true}>\n              <head>\n              <body className=\"antialiased\" suppressHydrationWarning={true}>\n                <ClientInit>\n                <Providers>\n                  <QueryClientProvider client={{}}>\n                    <AuthSessionProvider>\n                      <SessionProvider basePath=\"/api/auth\" refetchOnWindowFocus={false}>\n                        <ToastProvider>\n                          <CartSyncProvider>\n                            <div\n+                             className=\"min-h-screen bg-background\"\n-                             className=\"min-h-screen bg-[#F8F9FA] text-gray-900\"\n                            >\n                              ...\n                                <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n                                  <SegmentTrieNode>\n                                  <script>\n                                  <script>\n                                  <script>\n                                  <TenantLayout>\n                                    <TenantStyles>\n                                    <TenantLayout>\n+                                     <div className=\"min-h-screen bg-[#F8F9FA] text-gray-900\">\n-                                     <main>\n                    ...\n      ...\n"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__.png",
+    "loadTimeMs": 1842
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/services",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/services",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [
+      "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <Head>\n      <__next_root_layout_boundary__>\n        <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n          <SegmentTrieNode>\n          <link>\n          <script>\n          <script>\n          <script>\n          <script>\n          <RootLayout>\n            <html lang=\"en\" suppressHydrationWarning={true}>\n              <head>\n              <body className=\"antialiased\" suppressHydrationWarning={true}>\n                <ClientInit>\n                <Providers>\n                  <QueryClientProvider client={{}}>\n                    <AuthSessionProvider>\n                      <SessionProvider basePath=\"/api/auth\" refetchOnWindowFocus={false}>\n                        <ToastProvider>\n                          <CartSyncProvider>\n                            <div\n+                             className=\"min-h-screen bg-background\"\n-                             className=\"min-h-screen bg-[#F8F9FA] text-gray-900\"\n                            >\n                              ...\n                                <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n                                  <SegmentTrieNode>\n                                  <script>\n                                  <script>\n                                  <script>\n                                  <TenantLayout>\n                                    <TenantStyles>\n                                    <TenantLayout>\n+                                     <div className=\"min-h-screen bg-[#F8F9FA] text-gray-900\">\n-                                     <main>\n                    ...\n      ...\n"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__services.png",
+    "loadTimeMs": 2089
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/products",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/products",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <Head>\n      <__next_root_layout_boundary__>\n        <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n          <SegmentTrieNode>\n          <link>\n          <script>\n          <script>\n          <script>\n          <script>\n          <RootLayout>\n            <html lang=\"en\" suppressHydrationWarning={true}>\n              <head>\n              <body className=\"antialiased\" suppressHydrationWarning={true}>\n                <ClientInit>\n                <Providers>\n                  <QueryClientProvider client={{}}>\n                    <AuthSessionProvider>\n                      <SessionProvider basePath=\"/api/auth\" refetchOnWindowFocus={false}>\n                        <ToastProvider>\n                          <CartSyncProvider>\n                            <div\n+                             className=\"min-h-screen bg-background\"\n-                             className=\"min-h-screen bg-[#F8F9FA] text-gray-900\"\n                            >\n                              ...\n                                <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n                                  <SegmentTrieNode>\n                                  <script>\n                                  <script>\n                                  <script>\n                                  <TenantLayout>\n                                    <TenantStyles>\n                                    <TenantLayout>\n+                                     <div className=\"min-h-screen bg-[#F8F9FA] text-gray-900\">\n-                                     <main>\n                    ...\n      ...\n"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__products.png",
+    "loadTimeMs": 2021
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/book",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/book",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <Head>\n      <__next_root_layout_boundary__>\n        <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n          <SegmentTrieNode>\n          <link>\n          <script>\n          <script>\n          <script>\n          <script>\n          <RootLayout>\n            <html lang=\"en\" suppressHydrationWarning={true}>\n              <head>\n              <body className=\"antialiased\" suppressHydrationWarning={true}>\n                <ClientInit>\n                <Providers>\n                  <QueryClientProvider client={{}}>\n                    <AuthSessionProvider>\n                      <SessionProvider basePath=\"/api/auth\" refetchOnWindowFocus={false}>\n                        <ToastProvider>\n                          <CartSyncProvider>\n                            <div\n+                             className=\"min-h-screen bg-background\"\n-                             className=\"min-h-screen bg-[#F8F9FA] text-gray-900\"\n                            >\n                              ...\n                                <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n                                  <SegmentTrieNode>\n                                  <script>\n                                  <script>\n                                  <script>\n                                  <TenantLayout>\n                                    <TenantStyles>\n                                    <TenantLayout>\n+                                     <div className=\"min-h-screen bg-[#F8F9FA] text-gray-900\">\n-                                     <main>\n                    ...\n      ...\n"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__book.png",
+    "loadTimeMs": 1453
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/contact",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/contact",
+    "status": "ok",
+    "title": "Contacto - Centro TenÃ­stico Villafuerte",
+    "consoleErrors": [
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <Head>\n      <__next_root_layout_boundary__>\n        <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n          <SegmentTrieNode>\n          <link>\n          <script>\n          <script>\n          <script>\n          <script>\n          <RootLayout>\n            <html lang=\"en\" suppressHydrationWarning={true}>\n              <head>\n              <body className=\"antialiased\" suppressHydrationWarning={true}>\n                <ClientInit>\n                <Providers>\n                  <QueryClientProvider client={{}}>\n                    <AuthSessionProvider>\n                      <SessionProvider basePath=\"/api/auth\" refetchOnWindowFocus={false}>\n                        <ToastProvider>\n                          <CartSyncProvider>\n                            <div\n+                             className=\"min-h-screen bg-background\"\n-                             className=\"min-h-screen bg-[#F8F9FA] text-gray-900\"\n                            >\n                              ...\n                                <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n                                  <SegmentTrieNode>\n                                  <script>\n                                  <script>\n                                  <script>\n                                  <TenantLayout>\n                                    <TenantStyles>\n                                    <TenantLayout>\n+                                     <div className=\"min-h-screen bg-[#F8F9FA] text-gray-900\">\n-                                     <main>\n                    ...\n      ...\n"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__contact.png",
+    "loadTimeMs": 1297
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/login",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/login",
+    "status": "ok",
+    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
+    "consoleErrors": [
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <Head>\n      <__next_root_layout_boundary__>\n        <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n          <SegmentTrieNode>\n          <link>\n          <script>\n          <script>\n          <script>\n          <script>\n          <RootLayout>\n            <html lang=\"en\" suppressHydrationWarning={true}>\n              <head>\n              <body className=\"antialiased\" suppressHydrationWarning={true}>\n                <ClientInit>\n                <Providers>\n                  <QueryClientProvider client={{}}>\n                    <AuthSessionProvider>\n                      <SessionProvider basePath=\"/api/auth\" refetchOnWindowFocus={false}>\n                        <ToastProvider>\n                          <CartSyncProvider>\n                            <div\n+                             className=\"min-h-screen bg-background\"\n-                             className=\"min-h-screen bg-[#F8F9FA] text-gray-900\"\n                            >\n                              ...\n                                <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n                                  <SegmentTrieNode>\n                                  <script>\n                                  <script>\n                                  <script>\n                                  <TenantLayout>\n                                    <TenantStyles>\n                                    <TenantLayout>\n+                                     <div className=\"min-h-screen bg-[#F8F9FA] text-gray-900\">\n-                                     <main>\n                    ...\n      ...\n"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__login.png",
+    "loadTimeMs": 1269
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/register",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/register",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <Head>\n      <__next_root_layout_boundary__>\n        <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n          <SegmentTrieNode>\n          <link>\n          <script>\n          <script>\n          <script>\n          <script>\n          <RootLayout>\n            <html lang=\"en\" suppressHydrationWarning={true}>\n              <head>\n              <body className=\"antialiased\" suppressHydrationWarning={true}>\n                <ClientInit>\n                <Providers>\n                  <QueryClientProvider client={{}}>\n                    <AuthSessionProvider>\n                      <SessionProvider basePath=\"/api/auth\" refetchOnWindowFocus={false}>\n                        <ToastProvider>\n                          <CartSyncProvider>\n                            <div\n+                             className=\"min-h-screen bg-background\"\n-                             className=\"min-h-screen bg-[#F8F9FA] text-gray-900\"\n                            >\n                              ...\n                                <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n                                  <SegmentTrieNode>\n                                  <script>\n                                  <script>\n                                  <script>\n                                  <TenantLayout>\n                                    <TenantStyles>\n                                    <TenantLayout>\n+                                     <div className=\"min-h-screen bg-[#F8F9FA] text-gray-900\">\n-                                     <main>\n                    ...\n      ...\n"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__register.png",
+    "loadTimeMs": 1512
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/forgot-password",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/forgot-password",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <Head>\n      <__next_root_layout_boundary__>\n        <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n          <SegmentTrieNode>\n          <link>\n          <script>\n          <script>\n          <script>\n          <script>\n          <RootLayout>\n            <html lang=\"en\" suppressHydrationWarning={true}>\n              <head>\n              <body className=\"antialiased\" suppressHydrationWarning={true}>\n                <ClientInit>\n                <Providers>\n                  <QueryClientProvider client={{}}>\n                    <AuthSessionProvider>\n                      <SessionProvider basePath=\"/api/auth\" refetchOnWindowFocus={false}>\n                        <ToastProvider>\n                          <CartSyncProvider>\n                            <div\n+                             className=\"min-h-screen bg-background\"\n-                             className=\"min-h-screen bg-[#F8F9FA] text-gray-900\"\n                            >\n                              ...\n                                <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n                                  <SegmentTrieNode>\n                                  <script>\n                                  <script>\n                                  <script>\n                                  <TenantLayout>\n                                    <TenantStyles>\n                                    <TenantLayout>\n+                                     <div className=\"min-h-screen bg-[#F8F9FA] text-gray-900\">\n-                                     <main>\n                    ...\n      ...\n"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__forgot_password.png",
+    "loadTimeMs": 1518
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/admin",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/admin",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [
+      "ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at fetchData (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:514:22)\n    at async getCsrfToken (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:694:22)\n    at async signIn (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:726:23)\n    at async handleSubmit (http://localhost:3003/_next/static/chunks/apps_web_5dda85de._.js:1258:28)",
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <Head>\n      <__next_root_layout_boundary__>\n        <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n          <SegmentTrieNode>\n          <link>\n          <script>\n          <script>\n          <script>\n          <script>\n          <RootLayout>\n            <html lang=\"en\" suppressHydrationWarning={true}>\n              <head>\n              <body className=\"antialiased\" suppressHydrationWarning={true}>\n                <ClientInit>\n                <Providers>\n                  <QueryClientProvider client={{}}>\n                    <AuthSessionProvider>\n                      <SessionProvider basePath=\"/api/auth\" refetchOnWindowFocus={false}>\n                        <ToastProvider>\n                          <CartSyncProvider>\n                            <div\n+                             className=\"min-h-screen bg-background\"\n-                             className=\"min-h-screen bg-[#F8F9FA] text-gray-900\"\n                            >\n                              ...\n                                <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n                                  <SegmentTrieNode>\n                                  <script>\n                                  <script>\n                                  <script>\n                                  <TenantLayout>\n                                    <TenantStyles>\n                                    <TenantLayout>\n+                                     <div className=\"min-h-screen bg-[#F8F9FA] text-gray-900\">\n-                                     <main>\n                    ...\n      ...\n"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__admin.png",
+    "loadTimeMs": 1684
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/admin/calendar",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/admin/calendar",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <Head>\n      <__next_root_layout_boundary__>\n        <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n          <SegmentTrieNode>\n          <link>\n          <script>\n          <script>\n          <script>\n          <script>\n          <RootLayout>\n            <html lang=\"en\" suppressHydrationWarning={true}>\n              <head>\n              <body className=\"antialiased\" suppressHydrationWarning={true}>\n                <ClientInit>\n                <Providers>\n                  <QueryClientProvider client={{}}>\n                    <AuthSessionProvider>\n                      <SessionProvider basePath=\"/api/auth\" refetchOnWindowFocus={false}>\n                        <ToastProvider>\n                          <CartSyncProvider>\n                            <div\n+                             className=\"min-h-screen bg-background\"\n-                             className=\"min-h-screen bg-[#F8F9FA] text-gray-900\"\n                            >\n                              ...\n                                <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n                                  <SegmentTrieNode>\n                                  <script>\n                                  <script>\n                                  <script>\n                                  <TenantLayout>\n                                    <TenantStyles>\n                                    <TenantLayout>\n+                                     <div className=\"min-h-screen bg-[#F8F9FA] text-gray-900\">\n-                                     <main>\n                    ...\n      ...\n"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__admin_calendar.png",
+    "loadTimeMs": 2118
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/admin/products",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/admin/products",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <Head>\n      <__next_root_layout_boundary__>\n        <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n          <SegmentTrieNode>\n          <link>\n          <script>\n          <script>\n          <script>\n          <script>\n          <RootLayout>\n            <html lang=\"en\" suppressHydrationWarning={true}>\n              <head>\n              <body className=\"antialiased\" suppressHydrationWarning={true}>\n                <ClientInit>\n                <Providers>\n                  <QueryClientProvider client={{}}>\n                    <AuthSessionProvider>\n                      <SessionProvider basePath=\"/api/auth\" refetchOnWindowFocus={false}>\n                        <ToastProvider>\n                          <CartSyncProvider>\n                            <div\n+                             className=\"min-h-screen bg-background\"\n-                             className=\"min-h-screen bg-[#F8F9FA] text-gray-900\"\n                            >\n                              ...\n                                <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n                                  <SegmentTrieNode>\n                                  <script>\n                                  <script>\n                                  <script>\n                                  <TenantLayout>\n                                    <TenantStyles>\n                                    <TenantLayout>\n+                                     <div className=\"min-h-screen bg-[#F8F9FA] text-gray-900\">\n-                                     <main>\n                    ...\n      ...\n"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__admin_products.png",
+    "loadTimeMs": 1463
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/admin/content",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/admin/content",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <Head>\n      <__next_root_layout_boundary__>\n        <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n          <SegmentTrieNode>\n          <link>\n          <script>\n          <script>\n          <script>\n          <script>\n          <RootLayout>\n            <html lang=\"en\" suppressHydrationWarning={true}>\n              <head>\n              <body className=\"antialiased\" suppressHydrationWarning={true}>\n                <ClientInit>\n                <Providers>\n                  <QueryClientProvider client={{}}>\n                    <AuthSessionProvider>\n                      <SessionProvider basePath=\"/api/auth\" refetchOnWindowFocus={false}>\n                        <ToastProvider>\n                          <CartSyncProvider>\n                            <div\n+                             className=\"min-h-screen bg-background\"\n-                             className=\"min-h-screen bg-[#F8F9FA] text-gray-900\"\n                            >\n                              ...\n                                <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n                                  <SegmentTrieNode>\n                                  <script>\n                                  <script>\n                                  <script>\n                                  <TenantLayout>\n                                    <TenantStyles>\n                                    <TenantLayout>\n+                                     <div className=\"min-h-screen bg-[#F8F9FA] text-gray-900\">\n-                                     <main>\n                    ...\n      ...\n"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__admin_content.png",
+    "loadTimeMs": 1624
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/admin/quotes",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/login",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
+    "consoleErrors": [
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <Head>\n      <__next_root_layout_boundary__>\n        <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n          <SegmentTrieNode>\n          <link>\n          <script>\n          <script>\n          <script>\n          <script>\n          <RootLayout>\n            <html lang=\"en\" suppressHydrationWarning={true}>\n              <head>\n              <body className=\"antialiased\" suppressHydrationWarning={true}>\n                <ClientInit>\n                <Providers>\n                  <QueryClientProvider client={{}}>\n                    <AuthSessionProvider>\n                      <SessionProvider basePath=\"/api/auth\" refetchOnWindowFocus={false}>\n                        <ToastProvider>\n                          <CartSyncProvider>\n                            <div\n+                             className=\"min-h-screen bg-background\"\n-                             className=\"min-h-screen bg-[#F8F9FA] text-gray-900\"\n                            >\n                              ...\n                                <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n                                  <SegmentTrieNode>\n                                  <script>\n                                  <script>\n                                  <script>\n                                  <TenantLayout>\n                                    <TenantStyles>\n                                    <TenantLayout>\n+                                     <div className=\"min-h-screen bg-[#F8F9FA] text-gray-900\">\n-                                     <main>\n                    ...\n      ...\n"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__admin_quotes.png",
+    "loadTimeMs": 2508
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/admin_services",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/login",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
+    "consoleErrors": [
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <Head>\n      <__next_root_layout_boundary__>\n        <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n          <SegmentTrieNode>\n          <link>\n          <script>\n          <script>\n          <script>\n          <script>\n          <RootLayout>\n            <html lang=\"en\" suppressHydrationWarning={true}>\n              <head>\n              <body className=\"antialiased\" suppressHydrationWarning={true}>\n                <ClientInit>\n                <Providers>\n                  <QueryClientProvider client={{}}>\n                    <AuthSessionProvider>\n                      <SessionProvider basePath=\"/api/auth\" refetchOnWindowFocus={false}>\n                        <ToastProvider>\n                          <CartSyncProvider>\n                            <div\n+                             className=\"min-h-screen bg-background\"\n-                             className=\"min-h-screen bg-[#F8F9FA] text-gray-900\"\n                            >\n                              ...\n                                <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n                                  <SegmentTrieNode>\n                                  <script>\n                                  <script>\n                                  <script>\n                                  <TenantLayout>\n                                    <TenantStyles>\n                                    <TenantLayout>\n+                                     <div className=\"min-h-screen bg-[#F8F9FA] text-gray-900\">\n-                                     <main>\n                    ...\n      ...\n"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__admin_services.png",
+    "loadTimeMs": 2019
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/admin_bookings",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/login",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
+    "consoleErrors": [
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <Head>\n      <__next_root_layout_boundary__>\n        <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n          <SegmentTrieNode>\n          <link>\n          <script>\n          <script>\n          <script>\n          <script>\n          <RootLayout>\n            <html lang=\"en\" suppressHydrationWarning={true}>\n              <head>\n              <body className=\"antialiased\" suppressHydrationWarning={true}>\n                <ClientInit>\n                <Providers>\n                  <QueryClientProvider client={{}}>\n                    <AuthSessionProvider>\n                      <SessionProvider basePath=\"/api/auth\" refetchOnWindowFocus={false}>\n                        <ToastProvider>\n                          <CartSyncProvider>\n                            <div\n+                             className=\"min-h-screen bg-background\"\n-                             className=\"min-h-screen bg-[#F8F9FA] text-gray-900\"\n                            >\n                              ...\n                                <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n                                  <SegmentTrieNode>\n                                  <script>\n                                  <script>\n                                  <script>\n                                  <TenantLayout>\n                                    <TenantStyles>\n                                    <TenantLayout>\n+                                     <div className=\"min-h-screen bg-[#F8F9FA] text-gray-900\">\n-                                     <main>\n                    ...\n      ...\n"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__admin_bookings.png",
+    "loadTimeMs": 2679
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/admin_tenants",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico",
+    "status": "ok",
+    "title": "Centro TenÃ­stico Villafuerte - Professional tennis training and court rental",
+    "consoleErrors": [
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <Head>\n      <__next_root_layout_boundary__>\n        <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n          <SegmentTrieNode>\n          <link>\n          <script>\n          <script>\n          <script>\n          <script>\n          <RootLayout>\n            <html lang=\"en\" suppressHydrationWarning={true}>\n              <head>\n              <body className=\"antialiased\" suppressHydrationWarning={true}>\n                <ClientInit>\n                <Providers>\n                  <QueryClientProvider client={{}}>\n                    <AuthSessionProvider>\n                      <SessionProvider basePath=\"/api/auth\" refetchOnWindowFocus={false}>\n                        <ToastProvider>\n                          <CartSyncProvider>\n                            <div\n+                             className=\"min-h-screen bg-background\"\n-                             className=\"min-h-screen bg-[#F8F9FA] text-gray-900\"\n                            >\n                              ...\n                                <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n                                  <SegmentTrieNode>\n                                  <script>\n                                  <script>\n                                  <script>\n                                  <TenantLayout>\n                                    <TenantStyles>\n                                    <TenantLayout>\n+                                     <div className=\"min-h-screen bg-[#F8F9FA] text-gray-900\">\n-                                     <main>\n                    ...\n      ...\n"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__admin_tenants.png",
+    "loadTimeMs": 2382
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/admin_products",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/login",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
+    "consoleErrors": [
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <Head>\n      <__next_root_layout_boundary__>\n        <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n          <SegmentTrieNode>\n          <link>\n          <script>\n          <script>\n          <script>\n          <script>\n          <RootLayout>\n            <html lang=\"en\" suppressHydrationWarning={true}>\n              <head>\n              <body className=\"antialiased\" suppressHydrationWarning={true}>\n                <ClientInit>\n                <Providers>\n                  <QueryClientProvider client={{}}>\n                    <AuthSessionProvider>\n                      <SessionProvider basePath=\"/api/auth\" refetchOnWindowFocus={false}>\n                        <ToastProvider>\n                          <CartSyncProvider>\n                            <div\n+                             className=\"min-h-screen bg-background\"\n-                             className=\"min-h-screen bg-[#F8F9FA] text-gray-900\"\n                            >\n                              ...\n                                <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n                                  <SegmentTrieNode>\n                                  <script>\n                                  <script>\n                                  <script>\n                                  <TenantLayout>\n                                    <TenantStyles>\n                                    <TenantLayout>\n+                                     <div className=\"min-h-screen bg-[#F8F9FA] text-gray-900\">\n-                                     <main>\n                    ...\n      ...\n"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__admin_products.png",
+    "loadTimeMs": 1822
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/pos",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/login",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
+    "consoleErrors": [
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <Head>\n      <__next_root_layout_boundary__>\n        <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n          <SegmentTrieNode>\n          <link>\n          <script>\n          <script>\n          <script>\n          <script>\n          <RootLayout>\n            <html lang=\"en\" suppressHydrationWarning={true}>\n              <head>\n              <body className=\"antialiased\" suppressHydrationWarning={true}>\n                <ClientInit>\n                <Providers>\n                  <QueryClientProvider client={{}}>\n                    <AuthSessionProvider>\n                      <SessionProvider basePath=\"/api/auth\" refetchOnWindowFocus={false}>\n                        <ToastProvider>\n                          <CartSyncProvider>\n                            <div\n+                             className=\"min-h-screen bg-background\"\n-                             className=\"min-h-screen bg-[#F8F9FA] text-gray-900\"\n                            >\n                              ...\n                                <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n                                  <SegmentTrieNode>\n                                  <script>\n                                  <script>\n                                  <script>\n                                  <TenantLayout>\n                                    <TenantStyles>\n                                    <TenantLayout>\n+                                     <div className=\"min-h-screen bg-[#F8F9FA] text-gray-900\">\n-                                     <main>\n                    ...\n      ...\n"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__pos.png",
+    "loadTimeMs": 1872
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/reports",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/login",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
+    "consoleErrors": [
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <Head>\n      <__next_root_layout_boundary__>\n        <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n          <SegmentTrieNode>\n          <link>\n          <script>\n          <script>\n          <script>\n          <script>\n          <RootLayout>\n            <html lang=\"en\" suppressHydrationWarning={true}>\n              <head>\n              <body className=\"antialiased\" suppressHydrationWarning={true}>\n                <ClientInit>\n                <Providers>\n                  <QueryClientProvider client={{}}>\n                    <AuthSessionProvider>\n                      <SessionProvider basePath=\"/api/auth\" refetchOnWindowFocus={false}>\n                        <ToastProvider>\n                          <CartSyncProvider>\n                            <div\n+                             className=\"min-h-screen bg-background\"\n-                             className=\"min-h-screen bg-[#F8F9FA] text-gray-900\"\n                            >\n                              ...\n                                <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n                                  <SegmentTrieNode>\n                                  <script>\n                                  <script>\n                                  <script>\n                                  <TenantLayout>\n                                    <TenantStyles>\n                                    <TenantLayout>\n+                                     <div className=\"min-h-screen bg-[#F8F9FA] text-gray-900\">\n-                                     <main>\n                    ...\n      ...\n"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__reports.png",
+    "loadTimeMs": 2739
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/finance",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/login",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
+    "consoleErrors": [
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <Head>\n      <__next_root_layout_boundary__>\n        <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n          <SegmentTrieNode>\n          <link>\n          <script>\n          <script>\n          <script>\n          <script>\n          <RootLayout>\n            <html lang=\"en\" suppressHydrationWarning={true}>\n              <head>\n              <body className=\"antialiased\" suppressHydrationWarning={true}>\n                <ClientInit>\n                <Providers>\n                  <QueryClientProvider client={{}}>\n                    <AuthSessionProvider>\n                      <SessionProvider basePath=\"/api/auth\" refetchOnWindowFocus={false}>\n                        <ToastProvider>\n                          <CartSyncProvider>\n                            <div\n+                             className=\"min-h-screen bg-background\"\n-                             className=\"min-h-screen bg-[#F8F9FA] text-gray-900\"\n                            >\n                              ...\n                                <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n                                  <SegmentTrieNode>\n                                  <script>\n                                  <script>\n                                  <script>\n                                  <TenantLayout>\n                                    <TenantStyles>\n                                    <TenantLayout>\n+                                     <div className=\"min-h-screen bg-[#F8F9FA] text-gray-900\">\n-                                     <main>\n                    ...\n      ...\n"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__finance.png",
+    "loadTimeMs": 1909
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/finance/movements",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/login",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
+    "consoleErrors": [
+      "Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <Head>\n      <__next_root_layout_boundary__>\n        <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n          <SegmentTrieNode>\n          <link>\n          <script>\n          <script>\n          <script>\n          <script>\n          <RootLayout>\n            <html lang=\"en\" suppressHydrationWarning={true}>\n              <head>\n              <body className=\"antialiased\" suppressHydrationWarning={true}>\n                <ClientInit>\n                <Providers>\n                  <QueryClientProvider client={{}}>\n                    <AuthSessionProvider>\n                      <SessionProvider basePath=\"/api/auth\" refetchOnWindowFocus={false}>\n                        <ToastProvider>\n                          <CartSyncProvider>\n                            <div\n+                             className=\"min-h-screen bg-background\"\n-                             className=\"min-h-screen bg-[#F8F9FA] text-gray-900\"\n                            >\n                              ...\n                                <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n                                  <SegmentTrieNode>\n                                  <script>\n                                  <script>\n                                  <script>\n                                  <TenantLayout>\n                                    <TenantStyles>\n                                    <TenantLayout>\n+                                     <div className=\"min-h-screen bg-[#F8F9FA] text-gray-900\">\n-                                     <main>\n                    ...\n      ...\n"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__finance_movements.png",
+    "loadTimeMs": 1901
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/finance/budgets",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/finance/budgets",
+    "status": "ok",
+    "title": "Presupuestos - Gestion Financiera",
+    "consoleErrors": [
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <Head>\n      <__next_root_layout_boundary__>\n        <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n          <SegmentTrieNode>\n          <link>\n          <script>\n          <script>\n          <script>\n          <script>\n          <RootLayout>\n            <html lang=\"en\" suppressHydrationWarning={true}>\n              <head>\n              <body className=\"antialiased\" suppressHydrationWarning={true}>\n                <ClientInit>\n                <Providers>\n                  <QueryClientProvider client={{}}>\n                    <AuthSessionProvider>\n                      <SessionProvider basePath=\"/api/auth\" refetchOnWindowFocus={false}>\n                        <ToastProvider>\n                          <CartSyncProvider>\n                            <div\n+                             className=\"min-h-screen bg-background\"\n-                             className=\"min-h-screen bg-[#F8F9FA] text-gray-900\"\n                            >\n                              ...\n                                <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n                                  <SegmentTrieNode>\n                                  <script>\n                                  <script>\n                                  <script>\n                                  <TenantLayout>\n                                    <TenantStyles>\n                                    <TenantLayout>\n+                                     <div className=\"min-h-screen bg-[#F8F9FA] text-gray-900\">\n-                                     <main>\n                    ...\n      ...\n"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__finance_budgets.png",
+    "loadTimeMs": 1260
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/finance/categories",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/finance/categories",
+    "status": "ok",
+    "title": "Categorías - Gestión Financiera",
+    "consoleErrors": [
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <Head>\n      <__next_root_layout_boundary__>\n        <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n          <SegmentTrieNode>\n          <link>\n          <script>\n          <script>\n          <script>\n          <script>\n          <RootLayout>\n            <html lang=\"en\" suppressHydrationWarning={true}>\n              <head>\n              <body className=\"antialiased\" suppressHydrationWarning={true}>\n                <ClientInit>\n                <Providers>\n                  <QueryClientProvider client={{}}>\n                    <AuthSessionProvider>\n                      <SessionProvider basePath=\"/api/auth\" refetchOnWindowFocus={false}>\n                        <ToastProvider>\n                          <CartSyncProvider>\n                            <div\n+                             className=\"min-h-screen bg-background\"\n-                             className=\"min-h-screen bg-[#F8F9FA] text-gray-900\"\n                            >\n                              ...\n                                <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n                                  <SegmentTrieNode>\n                                  <script>\n                                  <script>\n                                  <script>\n                                  <TenantLayout>\n                                    <TenantStyles>\n                                    <TenantLayout>\n+                                     <div className=\"min-h-screen bg-[#F8F9FA] text-gray-900\">\n-                                     <main>\n                    ...\n      ...\n"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__finance_categories.png",
+    "loadTimeMs": 1291
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/inventory",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/inventory",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [
+      "Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+      "Inventory error: Error: No autorizado\n    at useInventory.useCallback[apiRequest] (http://localhost:3003/_next/static/chunks/apps_web_lib_528de20d._.js:1714:27)\n    at async InventoryList.useCallback[loadInventory] (http://localhost:3003/_next/static/chunks/apps_web_components_inventory_4de36db5._.js:4858:34)",
+      "Error loading inventory: Error: No autorizado\n    at useInventory.useCallback[apiRequest] (http://localhost:3003/_next/static/chunks/apps_web_lib_528de20d._.js:1714:27)\n    at async InventoryList.useCallback[loadInventory] (http://localhost:3003/_next/static/chunks/apps_web_components_inventory_4de36db5._.js:4858:34)",
+      "Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+      "Inventory error: Error: No autorizado\n    at useInventory.useCallback[apiRequest] (http://localhost:3003/_next/static/chunks/apps_web_lib_528de20d._.js:1714:27)\n    at async InventoryList.useCallback[loadInventory] (http://localhost:3003/_next/static/chunks/apps_web_components_inventory_4de36db5._.js:4858:34)",
+      "Error loading inventory: Error: No autorizado\n    at useInventory.useCallback[apiRequest] (http://localhost:3003/_next/static/chunks/apps_web_lib_528de20d._.js:1714:27)\n    at async InventoryList.useCallback[loadInventory] (http://localhost:3003/_next/static/chunks/apps_web_components_inventory_4de36db5._.js:4858:34)",
+      "Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+      "Inventory error: Error: No autorizado\n    at useInventory.useCallback[apiRequest] (http://localhost:3003/_next/static/chunks/apps_web_lib_528de20d._.js:1714:27)\n    at async InventoryList.useCallback[loadInventory] (http://localhost:3003/_next/static/chunks/apps_web_components_inventory_4de36db5._.js:4858:34)",
+      "Error loading inventory: Error: No autorizado\n    at useInventory.useCallback[apiRequest] (http://localhost:3003/_next/static/chunks/apps_web_lib_528de20d._.js:1714:27)\n    at async InventoryList.useCallback[loadInventory] (http://localhost:3003/_next/static/chunks/apps_web_components_inventory_4de36db5._.js:4858:34)",
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <Head>\n      <__next_root_layout_boundary__>\n        <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n          <SegmentTrieNode>\n          <link>\n          <script>\n          <script>\n          <script>\n          <script>\n          <RootLayout>\n            <html lang=\"en\" suppressHydrationWarning={true}>\n              <head>\n              <body className=\"antialiased\" suppressHydrationWarning={true}>\n                <ClientInit>\n                <Providers>\n                  <QueryClientProvider client={{}}>\n                    <AuthSessionProvider>\n                      <SessionProvider basePath=\"/api/auth\" refetchOnWindowFocus={false}>\n                        <ToastProvider>\n                          <CartSyncProvider>\n                            <div\n+                             className=\"min-h-screen bg-background\"\n-                             className=\"min-h-screen bg-[#F8F9FA] text-gray-900\"\n                            >\n                              ...\n                                <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n                                  <SegmentTrieNode>\n                                  <script>\n                                  <script>\n                                  <script>\n                                  <TenantLayout>\n                                    <TenantStyles>\n                                    <TenantLayout>\n+                                     <div className=\"min-h-screen bg-[#F8F9FA] text-gray-900\">\n-                                     <main>\n                    ...\n      ...\n"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__inventory.png",
+    "loadTimeMs": 2151
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/inventory/supplies",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/inventory/supplies",
+    "status": "ok",
+    "title": "Gastos de Insumos - Inventario",
+    "consoleErrors": [
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <Head>\n      <__next_root_layout_boundary__>\n        <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n          <SegmentTrieNode>\n          <link>\n          <script>\n          <script>\n          <script>\n          <script>\n          <RootLayout>\n            <html lang=\"en\" suppressHydrationWarning={true}>\n              <head>\n              <body className=\"antialiased\" suppressHydrationWarning={true}>\n                <ClientInit>\n                <Providers>\n                  <QueryClientProvider client={{}}>\n                    <AuthSessionProvider>\n                      <SessionProvider basePath=\"/api/auth\" refetchOnWindowFocus={false}>\n                        <ToastProvider>\n                          <CartSyncProvider>\n                            <div\n+                             className=\"min-h-screen bg-background\"\n-                             className=\"min-h-screen bg-[#F8F9FA] text-gray-900\"\n                            >\n                              ...\n                                <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n                                  <SegmentTrieNode>\n                                  <script>\n                                  <script>\n                                  <script>\n                                  <TenantLayout>\n                                    <TenantStyles>\n                                    <TenantLayout>\n+                                     <div className=\"min-h-screen bg-[#F8F9FA] text-gray-900\">\n-                                     <main>\n                    ...\n      ...\n"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__inventory_supplies.png",
+    "loadTimeMs": 2177
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/clientes",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/login",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
+    "consoleErrors": [
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <Head>\n      <__next_root_layout_boundary__>\n        <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n          <SegmentTrieNode>\n          <link>\n          <script>\n          <script>\n          <script>\n          <script>\n          <RootLayout>\n            <html lang=\"en\" suppressHydrationWarning={true}>\n              <head>\n              <body className=\"antialiased\" suppressHydrationWarning={true}>\n                <ClientInit>\n                <Providers>\n                  <QueryClientProvider client={{}}>\n                    <AuthSessionProvider>\n                      <SessionProvider basePath=\"/api/auth\" refetchOnWindowFocus={false}>\n                        <ToastProvider>\n                          <CartSyncProvider>\n                            <div\n+                             className=\"min-h-screen bg-background\"\n-                             className=\"min-h-screen bg-[#F8F9FA] text-gray-900\"\n                            >\n                              ...\n                                <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n                                  <SegmentTrieNode>\n                                  <script>\n                                  <script>\n                                  <script>\n                                  <TenantLayout>\n                                    <TenantStyles>\n                                    <TenantLayout>\n+                                     <div className=\"min-h-screen bg-[#F8F9FA] text-gray-900\">\n-                                     <main>\n                    ...\n      ...\n"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__clientes.png",
+    "loadTimeMs": 3093
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/clientes/nueva",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/clientes/nueva",
+    "status": "ok",
+    "title": "Nueva Clienta - Centro TenÃ­stico Villafuerte",
+    "consoleErrors": [
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <Head>\n      <__next_root_layout_boundary__>\n        <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n          <SegmentTrieNode>\n          <link>\n          <script>\n          <script>\n          <script>\n          <script>\n          <RootLayout>\n            <html lang=\"en\" suppressHydrationWarning={true}>\n              <head>\n              <body className=\"antialiased\" suppressHydrationWarning={true}>\n                <ClientInit>\n                <Providers>\n                  <QueryClientProvider client={{}}>\n                    <AuthSessionProvider>\n                      <SessionProvider basePath=\"/api/auth\" refetchOnWindowFocus={false}>\n                        <ToastProvider>\n                          <CartSyncProvider>\n                            <div\n+                             className=\"min-h-screen bg-background\"\n-                             className=\"min-h-screen bg-[#F8F9FA] text-gray-900\"\n                            >\n                              ...\n                                <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n                                  <SegmentTrieNode>\n                                  <script>\n                                  <script>\n                                  <script>\n                                  <TenantLayout>\n                                    <TenantStyles>\n                                    <TenantLayout>\n+                                     <div className=\"min-h-screen bg-[#F8F9FA] text-gray-900\">\n-                                     <main>\n                    ...\n      ...\n"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__clientes_nueva.png",
+    "loadTimeMs": 1335
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/clientes/test",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/clientes/test",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <Head>\n      <__next_root_layout_boundary__>\n        <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n          <SegmentTrieNode>\n          <link>\n          <script>\n          <script>\n          <script>\n          <script>\n          <RootLayout>\n            <html lang=\"en\" suppressHydrationWarning={true}>\n              <head>\n              <body className=\"antialiased\" suppressHydrationWarning={true}>\n                <ClientInit>\n                <Providers>\n                  <QueryClientProvider client={{}}>\n                    <AuthSessionProvider>\n                      <SessionProvider basePath=\"/api/auth\" refetchOnWindowFocus={false}>\n                        <ToastProvider>\n                          <CartSyncProvider>\n                            <div\n+                             className=\"min-h-screen bg-background\"\n-                             className=\"min-h-screen bg-[#F8F9FA] text-gray-900\"\n                            >\n                              ...\n                                <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n                                  <SegmentTrieNode>\n                                  <script>\n                                  <script>\n                                  <script>\n                                  <TenantLayout>\n                                    <TenantStyles>\n                                    <TenantLayout>\n+                                     <div className=\"min-h-screen bg-[#F8F9FA] text-gray-900\">\n-                                     <main>\n                    ...\n      ...\n"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__clientes_test.png",
+    "loadTimeMs": 1332
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/cart",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/cart",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <Head>\n      <__next_root_layout_boundary__>\n        <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n          <SegmentTrieNode>\n          <link>\n          <script>\n          <script>\n          <script>\n          <script>\n          <RootLayout>\n            <html lang=\"en\" suppressHydrationWarning={true}>\n              <head>\n              <body className=\"antialiased\" suppressHydrationWarning={true}>\n                <ClientInit>\n                <Providers>\n                  <QueryClientProvider client={{}}>\n                    <AuthSessionProvider>\n                      <SessionProvider basePath=\"/api/auth\" refetchOnWindowFocus={false}>\n                        <ToastProvider>\n                          <CartSyncProvider>\n                            <div\n+                             className=\"min-h-screen bg-background\"\n-                             className=\"min-h-screen bg-[#F8F9FA] text-gray-900\"\n                            >\n                              ...\n                                <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n                                  <SegmentTrieNode>\n                                  <script>\n                                  <script>\n                                  <script>\n                                  <TenantLayout>\n                                    <TenantStyles>\n                                    <TenantLayout>\n+                                     <div className=\"min-h-screen bg-[#F8F9FA] text-gray-900\">\n-                                     <main>\n                    ...\n      ...\n"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__cart.png",
+    "loadTimeMs": 1393
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/checkout",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/checkout",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [
+      "Loading the script 'https://js.stripe.com/basil/stripe.js' violates the following Content Security Policy directive: \"script-src 'self' https://sdk.mercadopago.com https://secure.mlstatic.com https://challenges.cloudflare.com 'unsafe-eval' 'unsafe-inline'\". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback. The action has been blocked.",
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <Head>\n      <__next_root_layout_boundary__>\n        <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n          <SegmentTrieNode>\n          <link>\n          <script>\n          <script>\n          <script>\n          <script>\n          <RootLayout>\n            <html lang=\"en\" suppressHydrationWarning={true}>\n              <head>\n              <body className=\"antialiased\" suppressHydrationWarning={true}>\n                <ClientInit>\n                <Providers>\n                  <QueryClientProvider client={{}}>\n                    <AuthSessionProvider>\n                      <SessionProvider basePath=\"/api/auth\" refetchOnWindowFocus={false}>\n                        <ToastProvider>\n                          <CartSyncProvider>\n                            <div\n+                             className=\"min-h-screen bg-background\"\n-                             className=\"min-h-screen bg-[#F8F9FA] text-gray-900\"\n                            >\n                              ...\n                                <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n                                  <SegmentTrieNode>\n                                  <script>\n                                  <script>\n                                  <script>\n                                  <TenantLayout>\n                                    <TenantStyles>\n                                    <TenantLayout>\n+                                     <div className=\"min-h-screen bg-[#F8F9FA] text-gray-900\">\n-                                     <main>\n                    ...\n      ...\n"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__checkout.png",
+    "loadTimeMs": 1411
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/checkout/success",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/checkout/success",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <Head>\n      <__next_root_layout_boundary__>\n        <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n          <SegmentTrieNode>\n          <link>\n          <script>\n          <script>\n          <script>\n          <script>\n          <RootLayout>\n            <html lang=\"en\" suppressHydrationWarning={true}>\n              <head>\n              <body className=\"antialiased\" suppressHydrationWarning={true}>\n                <ClientInit>\n                <Providers>\n                  <QueryClientProvider client={{}}>\n                    <AuthSessionProvider>\n                      <SessionProvider basePath=\"/api/auth\" refetchOnWindowFocus={false}>\n                        <ToastProvider>\n                          <CartSyncProvider>\n                            <div\n+                             className=\"min-h-screen bg-background\"\n-                             className=\"min-h-screen bg-[#F8F9FA] text-gray-900\"\n                            >\n                              ...\n                                <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n                                  <SegmentTrieNode>\n                                  <script>\n                                  <script>\n                                  <script>\n                                  <TenantLayout>\n                                    <TenantStyles>\n                                    <TenantLayout>\n+                                     <div className=\"min-h-screen bg-[#F8F9FA] text-gray-900\">\n-                                     <main>\n                    ...\n      ...\n"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__checkout_success.png",
+    "loadTimeMs": 1408
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/orders",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/orders",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <Head>\n      <__next_root_layout_boundary__>\n        <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n          <SegmentTrieNode>\n          <link>\n          <script>\n          <script>\n          <script>\n          <script>\n          <RootLayout>\n            <html lang=\"en\" suppressHydrationWarning={true}>\n              <head>\n              <body className=\"antialiased\" suppressHydrationWarning={true}>\n                <ClientInit>\n                <Providers>\n                  <QueryClientProvider client={{}}>\n                    <AuthSessionProvider>\n                      <SessionProvider basePath=\"/api/auth\" refetchOnWindowFocus={false}>\n                        <ToastProvider>\n                          <CartSyncProvider>\n                            <div\n+                             className=\"min-h-screen bg-background\"\n-                             className=\"min-h-screen bg-[#F8F9FA] text-gray-900\"\n                            >\n                              ...\n                                <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n                                  <SegmentTrieNode>\n                                  <script>\n                                  <script>\n                                  <script>\n                                  <TenantLayout>\n                                    <TenantStyles>\n                                    <TenantLayout>\n+                                     <div className=\"min-h-screen bg-[#F8F9FA] text-gray-900\">\n-                                     <main>\n                    ...\n      ...\n"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__orders.png",
+    "loadTimeMs": 1951
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/profile",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/login",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
+    "consoleErrors": [
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <Head>\n      <__next_root_layout_boundary__>\n        <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n          <SegmentTrieNode>\n          <link>\n          <script>\n          <script>\n          <script>\n          <script>\n          <RootLayout>\n            <html lang=\"en\" suppressHydrationWarning={true}>\n              <head>\n              <body className=\"antialiased\" suppressHydrationWarning={true}>\n                <ClientInit>\n                <Providers>\n                  <QueryClientProvider client={{}}>\n                    <AuthSessionProvider>\n                      <SessionProvider basePath=\"/api/auth\" refetchOnWindowFocus={false}>\n                        <ToastProvider>\n                          <CartSyncProvider>\n                            <div\n+                             className=\"min-h-screen bg-background\"\n-                             className=\"min-h-screen bg-[#F8F9FA] text-gray-900\"\n                            >\n                              ...\n                                <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n                                  <SegmentTrieNode>\n                                  <script>\n                                  <script>\n                                  <script>\n                                  <TenantLayout>\n                                    <TenantStyles>\n                                    <TenantLayout>\n+                                     <div className=\"min-h-screen bg-[#F8F9FA] text-gray-900\">\n-                                     <main>\n                    ...\n      ...\n"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__profile.png",
+    "loadTimeMs": 2567
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/account",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/account",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <Head>\n      <__next_root_layout_boundary__>\n        <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n          <SegmentTrieNode>\n          <link>\n          <script>\n          <script>\n          <script>\n          <script>\n          <RootLayout>\n            <html lang=\"en\" suppressHydrationWarning={true}>\n              <head>\n              <body className=\"antialiased\" suppressHydrationWarning={true}>\n                <ClientInit>\n                <Providers>\n                  <QueryClientProvider client={{}}>\n                    <AuthSessionProvider>\n                      <SessionProvider basePath=\"/api/auth\" refetchOnWindowFocus={false}>\n                        <ToastProvider>\n                          <CartSyncProvider>\n                            <div\n+                             className=\"min-h-screen bg-background\"\n-                             className=\"min-h-screen bg-[#F8F9FA] text-gray-900\"\n                            >\n                              ...\n                                <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n                                  <SegmentTrieNode>\n                                  <script>\n                                  <script>\n                                  <script>\n                                  <TenantLayout>\n                                    <TenantStyles>\n                                    <TenantLayout>\n+                                     <div className=\"min-h-screen bg-[#F8F9FA] text-gray-900\">\n-                                     <main>\n                    ...\n      ...\n"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__account.png",
+    "loadTimeMs": 1621
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/settings/calendar",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/settings/calendar",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <Head>\n      <__next_root_layout_boundary__>\n        <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n          <SegmentTrieNode>\n          <link>\n          <script>\n          <script>\n          <script>\n          <script>\n          <RootLayout>\n            <html lang=\"en\" suppressHydrationWarning={true}>\n              <head>\n              <body className=\"antialiased\" suppressHydrationWarning={true}>\n                <ClientInit>\n                <Providers>\n                  <QueryClientProvider client={{}}>\n                    <AuthSessionProvider>\n                      <SessionProvider basePath=\"/api/auth\" refetchOnWindowFocus={false}>\n                        <ToastProvider>\n                          <CartSyncProvider>\n                            <div\n+                             className=\"min-h-screen bg-background\"\n-                             className=\"min-h-screen bg-[#F8F9FA] text-gray-900\"\n                            >\n                              ...\n                                <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n                                  <SegmentTrieNode>\n                                  <script>\n                                  <script>\n                                  <script>\n                                  <TenantLayout>\n                                    <TenantStyles>\n                                    <TenantLayout>\n+                                     <div className=\"min-h-screen bg-[#F8F9FA] text-gray-900\">\n-                                     <main>\n                    ...\n      ...\n"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__settings_calendar.png",
+    "loadTimeMs": 1260
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/config",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/login",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
+    "consoleErrors": [
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <Head>\n      <__next_root_layout_boundary__>\n        <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n          <SegmentTrieNode>\n          <link>\n          <script>\n          <script>\n          <script>\n          <script>\n          <RootLayout>\n            <html lang=\"en\" suppressHydrationWarning={true}>\n              <head>\n              <body className=\"antialiased\" suppressHydrationWarning={true}>\n                <ClientInit>\n                <Providers>\n                  <QueryClientProvider client={{}}>\n                    <AuthSessionProvider>\n                      <SessionProvider basePath=\"/api/auth\" refetchOnWindowFocus={false}>\n                        <ToastProvider>\n                          <CartSyncProvider>\n                            <div\n+                             className=\"min-h-screen bg-background\"\n-                             className=\"min-h-screen bg-[#F8F9FA] text-gray-900\"\n                            >\n                              ...\n                                <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n                                  <SegmentTrieNode>\n                                  <script>\n                                  <script>\n                                  <script>\n                                  <TenantLayout>\n                                    <TenantStyles>\n                                    <TenantLayout>\n+                                     <div className=\"min-h-screen bg-[#F8F9FA] text-gray-900\">\n-                                     <main>\n                    ...\n      ...\n"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__config.png",
+    "loadTimeMs": 1951
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/favorites",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/favorites",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <Head>\n      <__next_root_layout_boundary__>\n        <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n          <SegmentTrieNode>\n          <link>\n          <script>\n          <script>\n          <script>\n          <script>\n          <RootLayout>\n            <html lang=\"en\" suppressHydrationWarning={true}>\n              <head>\n              <body className=\"antialiased\" suppressHydrationWarning={true}>\n                <ClientInit>\n                <Providers>\n                  <QueryClientProvider client={{}}>\n                    <AuthSessionProvider>\n                      <SessionProvider basePath=\"/api/auth\" refetchOnWindowFocus={false}>\n                        <ToastProvider>\n                          <CartSyncProvider>\n                            <div\n+                             className=\"min-h-screen bg-background\"\n-                             className=\"min-h-screen bg-[#F8F9FA] text-gray-900\"\n                            >\n                              ...\n                                <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n                                  <SegmentTrieNode>\n                                  <script>\n                                  <script>\n                                  <script>\n                                  <TenantLayout>\n                                    <TenantStyles>\n                                    <TenantLayout>\n+                                     <div className=\"min-h-screen bg-[#F8F9FA] text-gray-900\">\n-                                     <main>\n                    ...\n      ...\n"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__favorites.png",
+    "loadTimeMs": 1574
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/social",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/social",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <Head>\n      <__next_root_layout_boundary__>\n        <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n          <SegmentTrieNode>\n          <link>\n          <script>\n          <script>\n          <script>\n          <script>\n          <RootLayout>\n            <html lang=\"en\" suppressHydrationWarning={true}>\n              <head>\n              <body className=\"antialiased\" suppressHydrationWarning={true}>\n                <ClientInit>\n                <Providers>\n                  <QueryClientProvider client={{}}>\n                    <AuthSessionProvider>\n                      <SessionProvider basePath=\"/api/auth\" refetchOnWindowFocus={false}>\n                        <ToastProvider>\n                          <CartSyncProvider>\n                            <div\n+                             className=\"min-h-screen bg-background\"\n-                             className=\"min-h-screen bg-[#F8F9FA] text-gray-900\"\n                            >\n                              ...\n                                <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n                                  <SegmentTrieNode>\n                                  <script>\n                                  <script>\n                                  <script>\n                                  <TenantLayout>\n                                    <TenantStyles>\n                                    <TenantLayout>\n+                                     <div className=\"min-h-screen bg-[#F8F9FA] text-gray-900\">\n-                                     <main>\n                    ...\n      ...\n"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__social.png",
+    "loadTimeMs": 1929
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/retouch",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/retouch",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <Head>\n      <__next_root_layout_boundary__>\n        <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n          <SegmentTrieNode>\n          <link>\n          <script>\n          <script>\n          <script>\n          <script>\n          <RootLayout>\n            <html lang=\"en\" suppressHydrationWarning={true}>\n              <head>\n              <body className=\"antialiased\" suppressHydrationWarning={true}>\n                <ClientInit>\n                <Providers>\n                  <QueryClientProvider client={{}}>\n                    <AuthSessionProvider>\n                      <SessionProvider basePath=\"/api/auth\" refetchOnWindowFocus={false}>\n                        <ToastProvider>\n                          <CartSyncProvider>\n                            <div\n+                             className=\"min-h-screen bg-background\"\n-                             className=\"min-h-screen bg-[#F8F9FA] text-gray-900\"\n                            >\n                              ...\n                                <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n                                  <SegmentTrieNode>\n                                  <script>\n                                  <script>\n                                  <script>\n                                  <TenantLayout>\n                                    <TenantStyles>\n                                    <TenantLayout>\n+                                     <div className=\"min-h-screen bg-[#F8F9FA] text-gray-900\">\n-                                     <main>\n                    ...\n      ...\n"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__retouch.png",
+    "loadTimeMs": 1772
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/reorder",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/reorder",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <Head>\n      <__next_root_layout_boundary__>\n        <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n          <SegmentTrieNode>\n          <link>\n          <script>\n          <script>\n          <script>\n          <script>\n          <RootLayout>\n            <html lang=\"en\" suppressHydrationWarning={true}>\n              <head>\n              <body className=\"antialiased\" suppressHydrationWarning={true}>\n                <ClientInit>\n                <Providers>\n                  <QueryClientProvider client={{}}>\n                    <AuthSessionProvider>\n                      <SessionProvider basePath=\"/api/auth\" refetchOnWindowFocus={false}>\n                        <ToastProvider>\n                          <CartSyncProvider>\n                            <div\n+                             className=\"min-h-screen bg-background\"\n-                             className=\"min-h-screen bg-[#F8F9FA] text-gray-900\"\n                            >\n                              ...\n                                <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n                                  <SegmentTrieNode>\n                                  <script>\n                                  <script>\n                                  <script>\n                                  <TenantLayout>\n                                    <TenantStyles>\n                                    <TenantLayout>\n+                                     <div className=\"min-h-screen bg-[#F8F9FA] text-gray-900\">\n-                                     <main>\n                    ...\n      ...\n"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__reorder.png",
+    "loadTimeMs": 1466
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/booking",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/services",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [
+      "ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at fetchData (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:514:22)\n    at async getSession (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:681:21)\n    at async SessionProvider.useEffect [as _getSession] (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:824:51)",
+      "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <Head>\n      <__next_root_layout_boundary__>\n        <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n          <SegmentTrieNode>\n          <link>\n          <script>\n          <script>\n          <script>\n          <script>\n          <RootLayout>\n            <html lang=\"en\" suppressHydrationWarning={true}>\n              <head>\n              <body className=\"antialiased\" suppressHydrationWarning={true}>\n                <ClientInit>\n                <Providers>\n                  <QueryClientProvider client={{}}>\n                    <AuthSessionProvider>\n                      <SessionProvider basePath=\"/api/auth\" refetchOnWindowFocus={false}>\n                        <ToastProvider>\n                          <CartSyncProvider>\n                            <div\n+                             className=\"min-h-screen bg-background\"\n-                             className=\"min-h-screen bg-[#F8F9FA] text-gray-900\"\n                            >\n                              ...\n                                <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n                                  <SegmentTrieNode>\n                                  <script>\n                                  <script>\n                                  <script>\n                                  <TenantLayout>\n                                    <TenantStyles>\n                                    <TenantLayout>\n+                                     <div className=\"min-h-screen bg-[#F8F9FA] text-gray-900\">\n-                                     <main>\n                    ...\n      ...\n"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__booking.png",
+    "loadTimeMs": 2430
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/booking/test-booking-123",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/booking/test-booking-123",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <Head>\n      <__next_root_layout_boundary__>\n        <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n          <SegmentTrieNode>\n          <link>\n          <script>\n          <script>\n          <script>\n          <script>\n          <RootLayout>\n            <html lang=\"en\" suppressHydrationWarning={true}>\n              <head>\n              <body className=\"antialiased\" suppressHydrationWarning={true}>\n                <ClientInit>\n                <Providers>\n                  <QueryClientProvider client={{}}>\n                    <AuthSessionProvider>\n                      <SessionProvider basePath=\"/api/auth\" refetchOnWindowFocus={false}>\n                        <ToastProvider>\n                          <CartSyncProvider>\n                            <div\n+                             className=\"min-h-screen bg-background\"\n-                             className=\"min-h-screen bg-[#F8F9FA] text-gray-900\"\n                            >\n                              ...\n                                <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n                                  <SegmentTrieNode>\n                                  <script>\n                                  <script>\n                                  <script>\n                                  <TenantLayout>\n                                    <TenantStyles>\n                                    <TenantLayout>\n+                                     <div className=\"min-h-screen bg-[#F8F9FA] text-gray-900\">\n-                                     <main>\n                    ...\n      ...\n"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__booking_test_booking_123.png",
+    "loadTimeMs": 1249
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/booking/nonexistent",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/booking/nonexistent",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <Head>\n      <__next_root_layout_boundary__>\n        <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n          <SegmentTrieNode>\n          <link>\n          <script>\n          <script>\n          <script>\n          <script>\n          <RootLayout>\n            <html lang=\"en\" suppressHydrationWarning={true}>\n              <head>\n              <body className=\"antialiased\" suppressHydrationWarning={true}>\n                <ClientInit>\n                <Providers>\n                  <QueryClientProvider client={{}}>\n                    <AuthSessionProvider>\n                      <SessionProvider basePath=\"/api/auth\" refetchOnWindowFocus={false}>\n                        <ToastProvider>\n                          <CartSyncProvider>\n                            <div\n+                             className=\"min-h-screen bg-background\"\n-                             className=\"min-h-screen bg-[#F8F9FA] text-gray-900\"\n                            >\n                              ...\n                                <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n                                  <SegmentTrieNode>\n                                  <script>\n                                  <script>\n                                  <script>\n                                  <TenantLayout>\n                                    <TenantStyles>\n                                    <TenantLayout>\n+                                     <div className=\"min-h-screen bg-[#F8F9FA] text-gray-900\">\n-                                     <main>\n                    ...\n      ...\n"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__booking_nonexistent.png",
+    "loadTimeMs": 1488
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/clientes/test-client-123",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/clientes/test-client-123",
+    "status": "ok",
+    "title": "Expediente de Clienta - Centro TenÃ­stico Villafuerte",
+    "consoleErrors": [
+      "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+      "Error fetching customer: Error: Internal server error\n    at fetchCustomer (http://localhost:3003/_next/static/chunks/_ef76d322._.js:1096:31)",
+      "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+      "Error fetching visits: Error: Failed to fetch visits\n    at fetchVisits (http://localhost:3003/_next/static/chunks/_ef76d322._.js:6338:37)",
+      "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+      "Error fetching visits: Error: Failed to fetch visits\n    at fetchVisits (http://localhost:3003/_next/static/chunks/_ef76d322._.js:6338:37)",
+      "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+      "Error fetching summary: Error: Failed to fetch summary\n    at fetchSummary (http://localhost:3003/_next/static/chunks/_ef76d322._.js:1905:45)",
+      "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+      "Error fetching customer: Error: Internal server error\n    at fetchCustomer (http://localhost:3003/_next/static/chunks/_ef76d322._.js:1096:31)",
+      "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+      "Error fetching summary: Error: Failed to fetch summary\n    at fetchSummary (http://localhost:3003/_next/static/chunks/_ef76d322._.js:1905:45)",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <Head>\n      <__next_root_layout_boundary__>\n        <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n          <SegmentTrieNode>\n          <link>\n          <script>\n          <script>\n          <script>\n          <script>\n          <RootLayout>\n            <html lang=\"en\" suppressHydrationWarning={true}>\n              <head>\n              <body className=\"antialiased\" suppressHydrationWarning={true}>\n                <ClientInit>\n                <Providers>\n                  <QueryClientProvider client={{}}>\n                    <AuthSessionProvider>\n                      <SessionProvider basePath=\"/api/auth\" refetchOnWindowFocus={false}>\n                        <ToastProvider>\n                          <CartSyncProvider>\n                            <div\n+                             className=\"min-h-screen bg-background\"\n-                             className=\"min-h-screen bg-[#F8F9FA] text-gray-900\"\n                            >\n                              ...\n                                <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n                                  <SegmentTrieNode>\n                                  <script>\n                                  <script>\n                                  <script>\n                                  <TenantLayout>\n                                    <TenantStyles>\n                                    <TenantLayout>\n+                                     <div className=\"min-h-screen bg-[#F8F9FA] text-gray-900\">\n-                                     <main>\n                    ...\n      ...\n"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__clientes_test_client_123.png",
+    "loadTimeMs": 3124
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/clientes/nonexistent",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/clientes/nonexistent",
+    "status": "ok",
+    "title": "Expediente de Clienta - Centro TenÃ­stico Villafuerte",
+    "consoleErrors": [
+      "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+      "Error fetching customer: Error: Internal server error\n    at fetchCustomer (http://localhost:3003/_next/static/chunks/_ef76d322._.js:1096:31)",
+      "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+      "Error fetching visits: Error: Failed to fetch visits\n    at fetchVisits (http://localhost:3003/_next/static/chunks/_ef76d322._.js:6338:37)",
+      "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+      "Error fetching summary: Error: Failed to fetch summary\n    at fetchSummary (http://localhost:3003/_next/static/chunks/_ef76d322._.js:1905:45)",
+      "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+      "Error fetching visits: Error: Failed to fetch visits\n    at fetchVisits (http://localhost:3003/_next/static/chunks/_ef76d322._.js:6338:37)",
+      "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+      "Error fetching customer: Error: Internal server error\n    at fetchCustomer (http://localhost:3003/_next/static/chunks/_ef76d322._.js:1096:31)",
+      "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+      "Error fetching summary: Error: Failed to fetch summary\n    at fetchSummary (http://localhost:3003/_next/static/chunks/_ef76d322._.js:1905:45)",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <Head>\n      <__next_root_layout_boundary__>\n        <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n          <SegmentTrieNode>\n          <link>\n          <script>\n          <script>\n          <script>\n          <script>\n          <RootLayout>\n            <html lang=\"en\" suppressHydrationWarning={true}>\n              <head>\n              <body className=\"antialiased\" suppressHydrationWarning={true}>\n                <ClientInit>\n                <Providers>\n                  <QueryClientProvider client={{}}>\n                    <AuthSessionProvider>\n                      <SessionProvider basePath=\"/api/auth\" refetchOnWindowFocus={false}>\n                        <ToastProvider>\n                          <CartSyncProvider>\n                            <div\n+                             className=\"min-h-screen bg-background\"\n-                             className=\"min-h-screen bg-[#F8F9FA] text-gray-900\"\n                            >\n                              ...\n                                <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n                                  <SegmentTrieNode>\n                                  <script>\n                                  <script>\n                                  <script>\n                                  <TenantLayout>\n                                    <TenantStyles>\n                                    <TenantLayout>\n+                                     <div className=\"min-h-screen bg-[#F8F9FA] text-gray-900\">\n-                                     <main>\n                    ...\n      ...\n"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__clientes_nonexistent.png",
+    "loadTimeMs": 3081
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/services/test-service-123/inventory",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/services/test-service-123/inventory",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [
+      "A param property was accessed directly with `params.serviceId`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis",
+      "A param property was accessed directly with `params.serviceId`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <Head>\n      <__next_root_layout_boundary__>\n        <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n          <SegmentTrieNode>\n          <link>\n          <script>\n          <script>\n          <script>\n          <script>\n          <RootLayout>\n            <html lang=\"en\" suppressHydrationWarning={true}>\n              <head>\n              <body className=\"antialiased\" suppressHydrationWarning={true}>\n                <ClientInit>\n                <Providers>\n                  <QueryClientProvider client={{}}>\n                    <AuthSessionProvider>\n                      <SessionProvider basePath=\"/api/auth\" refetchOnWindowFocus={false}>\n                        <ToastProvider>\n                          <CartSyncProvider>\n                            <div\n+                             className=\"min-h-screen bg-background\"\n-                             className=\"min-h-screen bg-[#F8F9FA] text-gray-900\"\n                            >\n                              ...\n                                <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n                                  <SegmentTrieNode>\n                                  <script>\n                                  <script>\n                                  <script>\n                                  <TenantLayout>\n                                    <TenantStyles>\n                                    <TenantLayout>\n+                                     <div className=\"min-h-screen bg-[#F8F9FA] text-gray-900\">\n-                                     <main>\n                    ...\n      ...\n"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__services_test_service_123_inventory.png",
+    "loadTimeMs": 1441
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/services/nonexistent/inventory",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/services/nonexistent/inventory",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [
+      "A param property was accessed directly with `params.serviceId`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis",
+      "A param property was accessed directly with `params.serviceId`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__services_nonexistent_inventory.png",
+    "loadTimeMs": 1488
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/admin/quotes/test-quote-123",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/login",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
+    "consoleErrors": [],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__admin_quotes_test_quote_123.png",
+    "loadTimeMs": 2832
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/admin/quotes/nonexistent",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/login",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
+    "consoleErrors": [],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__admin_quotes_nonexistent.png",
+    "loadTimeMs": 3326
+  }
+]
