@@ -48,8 +48,12 @@ export async function GET() {
     },
     env: {
       nextAuthUrl: process.env.NEXTAUTH_URL || "NOT_SET",
-      hasSecret: !!process.env.NEXTAUTH_SECRET,
-      hasGoogleId: !!process.env.GOOGLE_CLIENT_ID,
+      authUrl: process.env.AUTH_URL || "NOT_SET",
+      hasSecret: !!(
+        process.env.AUTH_SECRET?.trim() || process.env.NEXTAUTH_SECRET?.trim()
+      ),
+      hasGoogleId: !!process.env.GOOGLE_CLIENT_ID?.trim(),
+      hasGoogleSecret: !!process.env.GOOGLE_CLIENT_SECRET?.trim(),
       nodeEnv: process.env.NODE_ENV,
     },
     database: {

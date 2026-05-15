@@ -28,7 +28,10 @@ export async function GET(
 
     if (!tenant) {
       return NextResponse.json(
-        { success: false, error: { message: "tenant query parameter is required" } },
+        {
+          success: false,
+          error: { message: "tenant query parameter is required" },
+        },
         { status: 400 },
       );
     }
@@ -37,7 +40,10 @@ export async function GET(
 
     if (!isSuccess(result)) {
       return NextResponse.json(
-        { success: false, error: { message: result.error.message, type: result.error.type } },
+        {
+          success: false,
+          error: { message: result.error.message, type: result.error.type },
+        },
         { status: 404 },
       );
     }
@@ -74,7 +80,10 @@ export async function PUT(
 
     if (!tenant) {
       return NextResponse.json(
-        { success: false, error: { message: "tenant query parameter is required" } },
+        {
+          success: false,
+          error: { message: "tenant query parameter is required" },
+        },
         { status: 400 },
       );
     }
@@ -84,7 +93,13 @@ export async function PUT(
 
     if (!isSuccess(validation)) {
       return NextResponse.json(
-        { success: false, error: { message: validation.error.message, details: validation.error } },
+        {
+          success: false,
+          error: {
+            message: validation.error.message,
+            details: validation.error,
+          },
+        },
         { status: 400 },
       );
     }
@@ -105,11 +120,17 @@ export async function PUT(
       );
     }
 
-    const result = await transactionCategoryService.updateCategory(id, validation.data);
+    const result = await transactionCategoryService.updateCategory(
+      id,
+      validation.data,
+    );
 
     if (!isSuccess(result)) {
       return NextResponse.json(
-        { success: false, error: { message: result.error.message, type: result.error.type } },
+        {
+          success: false,
+          error: { message: result.error.message, type: result.error.type },
+        },
         { status: 500 },
       );
     }
@@ -138,7 +159,10 @@ export async function DELETE(
 
     if (!tenant) {
       return NextResponse.json(
-        { success: false, error: { message: "tenant query parameter is required" } },
+        {
+          success: false,
+          error: { message: "tenant query parameter is required" },
+        },
         { status: 400 },
       );
     }
@@ -163,12 +187,18 @@ export async function DELETE(
 
     if (!isSuccess(result)) {
       return NextResponse.json(
-        { success: false, error: { message: result.error.message, type: result.error.type } },
+        {
+          success: false,
+          error: { message: result.error.message, type: result.error.type },
+        },
         { status: 500 },
       );
     }
 
-    return NextResponse.json({ success: true, data: { message: "Category deleted successfully" } });
+    return NextResponse.json({
+      success: true,
+      data: { message: "Category deleted successfully" },
+    });
   } catch (error) {
     console.error("Error deleting category:", error);
     return NextResponse.json(

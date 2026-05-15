@@ -48,7 +48,9 @@ export function InventoryServiceLinkingTab({
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Error al cargar vinculación de servicios");
+        throw new Error(
+          data.error || "Error al cargar vinculación de servicios",
+        );
       }
 
       setRelations(data.relations ?? []);
@@ -65,7 +67,9 @@ export function InventoryServiceLinkingTab({
   }, [loadData]);
 
   const availableServices = useMemo(() => {
-    const linkedServiceIds = new Set(relations.map((relation) => relation.serviceId));
+    const linkedServiceIds = new Set(
+      relations.map((relation) => relation.serviceId),
+    );
     return services.filter((service) => !linkedServiceIds.has(service.id));
   }, [relations, services]);
 
@@ -135,9 +139,12 @@ export function InventoryServiceLinkingTab({
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-sm font-semibold text-gray-900">Vinculación a Servicios</h3>
+        <h3 className="text-sm font-semibold text-gray-900">
+          Vinculación a Servicios
+        </h3>
         <p className="text-xs text-gray-500 mt-1">
-          Configura en qué servicios se descuenta este producto y con qué cantidad.
+          Configura en qué servicios se descuenta este producto y con qué
+          cantidad.
         </p>
       </div>
 
@@ -250,4 +257,3 @@ export function InventoryServiceLinkingTab({
     </div>
   );
 }
-

@@ -45,12 +45,16 @@ const navigationItems = [
 export function AdminSidebar() {
   const pathname = usePathname();
   const tenantSlug = useTenantSlug();
+  const tenantBase = tenantSlug ? `/t/${tenantSlug}` : "";
 
-  const isActive = (href: string) => {
-    if (href === "/admin") {
-      return pathname === "/admin";
+  const toHref = (path: string) => `${tenantBase}${path}`;
+
+  const isActive = (path: string) => {
+    const full = toHref(path);
+    if (path === "/admin") {
+      return pathname === full || pathname === `${full}/`;
     }
-    return pathname?.startsWith(href);
+    return pathname?.startsWith(full);
   };
 
   return (
@@ -75,7 +79,7 @@ export function AdminSidebar() {
             {navigationItems.map((item) => (
               <Link
                 key={item.name}
-                href={item.href}
+                href={toHref(item.href)}
                 className={`
                   group flex items-center px-3 py-2 text-sm font-medium rounded-sm transition-all duration-200 border border-transparent
                   ${
@@ -99,7 +103,7 @@ export function AdminSidebar() {
 
           <div className="space-y-1">
             <Link
-              href="/admin/social-planner"
+              href={toHref("/admin/social-planner")}
               className="group flex items-center px-3 py-2 text-sm font-medium text-gray-400 hover:bg-white/5 hover:text-white rounded-sm transition-colors duration-200"
             >
               <span className="mr-3 text-lg">✏️</span>
@@ -107,7 +111,7 @@ export function AdminSidebar() {
             </Link>
 
             <Link
-              href="/admin/products"
+              href={toHref("/admin/products")}
               className="group flex items-center px-3 py-2 text-sm font-medium text-gray-400 hover:bg-white/5 hover:text-white rounded-sm transition-colors duration-200"
             >
               <span className="mr-3 text-lg">➕</span>
@@ -115,7 +119,7 @@ export function AdminSidebar() {
             </Link>
 
             <Link
-              href="/admin/services"
+              href={toHref("/admin/services")}
               className="group flex items-center px-3 py-2 text-sm font-medium text-gray-400 hover:bg-white/5 hover:text-white rounded-sm transition-colors duration-200"
             >
               <span className="mr-3 text-lg">🛠️</span>

@@ -290,7 +290,9 @@ export default function AdminBookingsPage() {
                       <td className="px-6 py-4">
                         <p className="font-medium">{booking.service.name}</p>
                         {booking.notes && (
-                          <p className="text-sm text-gray-500">{booking.notes}</p>
+                          <p className="text-sm text-gray-500">
+                            {booking.notes}
+                          </p>
                         )}
                       </td>
                       <td className="px-6 py-4 text-sm">

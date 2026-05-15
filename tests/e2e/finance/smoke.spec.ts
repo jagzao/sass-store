@@ -2,6 +2,9 @@ import { test, expect } from "@playwright/test";
 import { TEST_CREDENTIALS, loginAsAdmin } from "../helpers/test-helpers";
 
 test.describe("Financial Management - Smoke Tests", () => {
+  // Login + navigation can exceed the default 60s when the E2E webServer is rebuilding.
+  test.describe.configure({ timeout: 120000 });
+
   test.beforeEach(async ({ page }) => {
     // Login as admin before each test
     await loginAsAdmin(page);
@@ -36,7 +39,9 @@ test.describe("Financial Management - Smoke Tests", () => {
     await page.waitForLoadState("networkidle");
 
     // Verify page loaded without errors
-    await expect(page.getByText("Presupuestos")).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Presupuestos" }),
+    ).toBeVisible();
 
     // Verify no 404 or error
     const bodyText = await page.locator("body").textContent();
@@ -73,17 +78,16 @@ test.describe("Financial Management - Smoke Tests", () => {
 
     await page.waitForLoadState("networkidle");
 
-    // Verify dashboard loaded
-    await expect(page.getByText("Panel Financiero")).toBeVisible();
+    // Finance home is now the planning matrix (legacy "Panel Financiero" copy removed)
+    await expect(
+      page.getByRole("heading", { name: "Matriz de Planeación Financiera" }),
+    ).toBeVisible({ timeout: 20000 });
 
-    // Verify new widgets are present
-    await expect(page.getByText("Acciones Rápidas")).toBeVisible();
-    await expect(page.getByText("Resumen del Mes")).toBeVisible();
-
-    // Verify navigation links exist
-    await expect(page.getByText("Categorías")).toBeVisible();
-    await expect(page.getByText("Presupuestos")).toBeVisible();
-    await expect(page.getByText("Gastos Insumos")).toBeVisible();
+    await expect(page.getByTestId("matrix-container")).toBeVisible({
+      timeout: 20000,
+    });
+    await expect(page.getByTestId("granularity-selector")).toBeVisible();
+    await expect(page.getByTestId("clone-action")).toBeVisible();
 
     // Verify no 404 or error
     const bodyText = await page.locator("body").textContent();
@@ -105,7 +109,7 @@ test.describe("Financial Management - Smoke Tests", () => {
 
     // Test budgets API
     const budgetsResponse = await page.request.get(
-      `/api/budgets?tenant=${tenantSlug}`,
+      `/api/finance/budgets?tenant=${tenantSlug}`,
     );
     expect(budgetsResponse.status()).toBe(200);
 
@@ -139,7 +143,8 @@ test.describe("Financial Management - Smoke Tests", () => {
 
     // Test tablet viewport
     await page.setViewportSize({ width: 768, height: 1024 });
-    await page.reload({ waitUntil: "networkidle" });
+    await page.reload({ waitUntil: "domcontentloaded" });
+    await page.waitForLoadState("networkidle");
 
     await expect(page.getByText("Categorías de Transacciones")).toBeVisible();
 

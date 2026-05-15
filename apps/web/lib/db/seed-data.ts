@@ -1,10 +1,11 @@
 import { db } from "./connection";
 import { tenants, services, products, staff } from "./schema";
+import { users, userRoles } from "@sass-store/database/schema";
 import { eq } from "drizzle-orm";
 
 // Seed data that replaces the TENANTS_DATA mock
 export async function seedTenantData() {
-  console.log("🌱 Starting database seed...");
+  console.warn("ðŸŒ± Starting database seed...");
 
   try {
     // 1. Seed Tenants
@@ -20,9 +21,9 @@ export async function seedTenantData() {
           secondaryColor: "#1F2937",
           logo: null,
           heroConfig: {
-            title: "💅 ¡Transforma tus uñas en obras de arte!",
+            title: "ðŸ’… Â¡Transforma tus uÃ±as en obras de arte!",
             subtitle:
-              "El estudio de uñas más exclusivo de Texcoco. Especialistas en nail art personalizado y técnicas avanzadas.",
+              "El estudio de uÃ±as mÃ¡s exclusivo de Texcoco. Especialistas en nail art personalizado y tÃ©cnicas avanzadas.",
             backgroundType: "gradient",
             showContactInfo: true,
             showActionButtons: true,
@@ -31,12 +32,12 @@ export async function seedTenantData() {
             overlayOpacity: 0.8,
             customCTA: [
               {
-                text: "🎨 Ver Nail Art",
+                text: "ðŸŽ¨ Ver Nail Art",
                 href: "/t/wondernails/services",
                 style: "primary",
               },
               {
-                text: "💎 Productos Premium",
+                text: "ðŸ’Ž Productos Premium",
                 href: "/t/wondernails/products",
                 style: "secondary",
               },
@@ -47,7 +48,7 @@ export async function seedTenantData() {
           phone: "+52 55 6406 8409",
           email: "marialiciavh1984@gmail.com",
           address:
-            "Cda. 1-a Rtno. 21-3, San Lorenzo, 56140 Texcoco de Mora, 56140 México, Méx.",
+            "Cda. 1-a Rtno. 21-3, San Lorenzo, 56140 Texcoco de Mora, 56140 MÃ©xico, MÃ©x.",
           website: "https://wondernails.local",
           googleMaps: "https://maps.app.goo.gl/FS471vtXdFdPTyjEA",
           hours: {
@@ -72,50 +73,49 @@ export async function seedTenantData() {
         },
       },
       {
-        slug: "vigistudio",
-        name: "Vigi Studio",
-        description: "Modern hair salon and beauty treatments",
+        slug: "manada-juma",
+        name: "Manada Juma",
+        description: "Servicios de bienestar y aventura al aire libre",
         mode: "booking",
         status: "active",
         branding: {
           primaryColor: "#7C3AED",
-          secondaryColor: "#1F2937",
+          secondaryColor: "#F59E0B",
         },
         contact: {
-          phone: "+1-555-0202",
-          email: "appointments@vigistudio.local",
-          address:
-            "Cda. 1-a Rtno. 21-3, San Lorenzo, 56140 Texcoco de Mora, 56140 México, Méx.",
-          website: "https://vigistudio.local",
+          phone: "+52 55 5555 0001",
+          email: "hola@manadajuma.local",
+          address: "CDMX, México",
+          website: "https://manadajuma.local",
           hours: {
-            monday: "Closed",
+            monday: "9:00-18:00",
             tuesday: "9:00-18:00",
             wednesday: "9:00-18:00",
-            thursday: "9:00-20:00",
-            friday: "9:00-20:00",
-            saturday: "8:00-17:00",
-            sunday: "10:00-16:00",
+            thursday: "9:00-18:00",
+            friday: "9:00-18:00",
+            saturday: "9:00-14:00",
+            sunday: "Closed",
           },
         },
         location: {
-          lat: 34.0736,
-          lng: -118.4004,
-          timezone: "America/Los_Angeles",
+          lat: 19.4326,
+          lng: -99.1332,
+          timezone: "America/Mexico_City",
         },
         quotas: {
-          maxServices: 50,
+          maxServices: 30,
           maxProducts: 50,
-          maxStaff: 15,
+          maxStaff: 10,
         },
       },
       {
         slug: "centro-tenistico",
-        name: "Centro Tenístico Villafuerte",
+        name: "Centro TenÃ­stico Villafuerte",
         description: "Professional tennis training and court rental",
         mode: "booking",
         status: "active",
         branding: {
-          primaryColor: "#059669",
+          primaryColor: "#B85C38",
           secondaryColor: "#1F2937",
         },
         contact: {
@@ -149,7 +149,7 @@ export async function seedTenantData() {
         name: "Delirios",
         description:
           "Restaurante gourmet con cocina fusión y experiencias culinarias únicas",
-        mode: "booking",
+        mode: "catalog",
         status: "active",
         branding: {
           primaryColor: "#8B4513",
@@ -179,42 +179,6 @@ export async function seedTenantData() {
           maxServices: 40,
           maxProducts: 60,
           maxStaff: 20,
-        },
-      },
-      {
-        slug: "nom-nom",
-        name: "nom-nom",
-        description: "Authentic Mexican street tacos and catering",
-        mode: "catalog",
-        status: "active",
-        branding: {
-          primaryColor: "#10B981",
-          secondaryColor: "#1F2937",
-        },
-        contact: {
-          phone: "+1-555-0205",
-          email: "pedidos@nom-nom.local",
-          address: "987 Food Truck Plaza, East LA, CA 90063",
-          website: "https://nom-nom.local",
-          hours: {
-            monday: "11:00-21:00",
-            tuesday: "11:00-21:00",
-            wednesday: "11:00-21:00",
-            thursday: "11:00-22:00",
-            friday: "11:00-23:00",
-            saturday: "10:00-23:00",
-            sunday: "10:00-20:00",
-          },
-        },
-        location: {
-          lat: 34.0224,
-          lng: -118.1804,
-          timezone: "America/Los_Angeles",
-        },
-        quotas: {
-          maxServices: 10,
-          maxProducts: 50,
-          maxStaff: 8,
         },
       },
       {
@@ -277,13 +241,13 @@ export async function seedTenantData() {
           .limit(1);
 
         if (existingTenant) {
-          console.log(`✅ Tenant ${tenant.slug} already exists`);
+          console.warn(`âœ… Tenant ${tenant.slug} already exists`);
           return existingTenant;
         }
 
         const [newTenant] = await db.insert(tenants).values(tenant).returning();
 
-        console.log(`✅ Created tenant: ${tenant.slug}`);
+        console.warn(`âœ… Created tenant: ${tenant.slug}`);
         return newTenant;
       }),
     );
@@ -310,7 +274,7 @@ export async function seedTenantData() {
         duration: 45,
         featured: true,
         active: true,
-        metadata: { image: "💅", category: "manicure" },
+        metadata: { image: "ðŸ’…", category: "manicure" },
       },
       {
         tenantId: tenantMap["wondernails"],
@@ -320,7 +284,7 @@ export async function seedTenantData() {
         duration: 60,
         featured: false,
         active: true,
-        metadata: { image: "✨", category: "manicure" },
+        metadata: { image: "âœ¨", category: "manicure" },
       },
       {
         tenantId: tenantMap["wondernails"],
@@ -330,7 +294,7 @@ export async function seedTenantData() {
         duration: 90,
         featured: true,
         active: true,
-        metadata: { image: "🎨", category: "nail-art" },
+        metadata: { image: "ðŸŽ¨", category: "nail-art" },
       },
       // Vigi Studio Services
       {
@@ -341,7 +305,7 @@ export async function seedTenantData() {
         duration: 90,
         featured: true,
         active: true,
-        metadata: { image: "✂️", category: "haircut" },
+        metadata: { image: "âœ‚ï¸", category: "haircut" },
       },
       {
         tenantId: tenantMap["vigistudio"],
@@ -351,7 +315,7 @@ export async function seedTenantData() {
         duration: 180,
         featured: true,
         active: true,
-        metadata: { image: "🎨", category: "color" },
+        metadata: { image: "ðŸŽ¨", category: "color" },
       },
       {
         tenantId: tenantMap["vigistudio"],
@@ -361,9 +325,9 @@ export async function seedTenantData() {
         duration: 45,
         featured: false,
         active: true,
-        metadata: { image: "💨", category: "styling" },
+        metadata: { image: "ðŸ’¨", category: "styling" },
       },
-      // Centro Tenístico Services
+      // Centro TenÃ­stico Services
       {
         tenantId: tenantMap["centro-tenistico"],
         name: "Court Rental",
@@ -372,7 +336,7 @@ export async function seedTenantData() {
         duration: 60,
         featured: true,
         active: true,
-        metadata: { image: "🎾", category: "courts" },
+        metadata: { image: "ðŸŽ¾", category: "courts" },
       },
       {
         tenantId: tenantMap["centro-tenistico"],
@@ -382,7 +346,7 @@ export async function seedTenantData() {
         duration: 60,
         featured: true,
         active: true,
-        metadata: { image: "🏆", category: "lessons" },
+        metadata: { image: "ðŸ†", category: "lessons" },
       },
       {
         tenantId: tenantMap["centro-tenistico"],
@@ -392,7 +356,7 @@ export async function seedTenantData() {
         duration: 90,
         featured: false,
         active: true,
-        metadata: { image: "👥", category: "lessons" },
+        metadata: { image: "ðŸ‘¥", category: "lessons" },
       },
       // Zo System Services
       {
@@ -404,7 +368,7 @@ export async function seedTenantData() {
         duration: 60,
         featured: true,
         active: true,
-        metadata: { image: "🧠", category: "consulting" },
+        metadata: { image: "ðŸ§ ", category: "consulting" },
       },
       {
         tenantId: tenantMap["zo-system"],
@@ -415,7 +379,7 @@ export async function seedTenantData() {
         duration: 90,
         featured: true,
         active: true,
-        metadata: { image: "🔍", category: "development" },
+        metadata: { image: "ðŸ”", category: "development" },
       },
       {
         tenantId: tenantMap["zo-system"],
@@ -425,23 +389,25 @@ export async function seedTenantData() {
         duration: 120,
         featured: false,
         active: true,
-        metadata: { image: "🔗", category: "development" },
+        metadata: { image: "ðŸ”—", category: "development" },
       },
     ];
 
     await Promise.all(
-      serviceData.map(async (service) => {
-        const [existing] = await db
-          .select()
-          .from(services)
-          .where(eq(services.name, service.name))
-          .limit(1);
+      serviceData
+        .filter((s) => s.tenantId != null) // Skip services for removed tenants
+        .map(async (service) => {
+          const [existing] = await db
+            .select()
+            .from(services)
+            .where(eq(services.name, service.name))
+            .limit(1);
 
-        if (!existing) {
-          await db.insert(services).values(service);
-          console.log(`✅ Created service: ${service.name}`);
-        }
-      }),
+          if (!existing) {
+            await db.insert(services).values(service);
+            console.warn(`✅ Created service: ${service.name}`);
+          }
+        }),
     );
 
     // 3. Seed Products
@@ -456,7 +422,7 @@ export async function seedTenantData() {
         category: "nail-polish",
         featured: true,
         active: true,
-        metadata: { image: "🧡", color: "#FF6B35" },
+        metadata: { image: "ðŸ§¡", color: "#FF6B35" },
       },
       {
         tenantId: tenantMap["wondernails"],
@@ -467,7 +433,7 @@ export async function seedTenantData() {
         category: "nail-polish",
         featured: false,
         active: true,
-        metadata: { image: "💙", color: "#1E3A8A" },
+        metadata: { image: "ðŸ’™", color: "#1E3A8A" },
       },
       {
         tenantId: tenantMap["wondernails"],
@@ -478,7 +444,7 @@ export async function seedTenantData() {
         category: "care",
         featured: false,
         active: true,
-        metadata: { image: "🌿", ingredients: ["Vitamin E", "Jojoba Oil"] },
+        metadata: { image: "ðŸŒ¿", ingredients: ["Vitamin E", "Jojoba Oil"] },
       },
       // nom-nom Products
       {
@@ -490,7 +456,7 @@ export async function seedTenantData() {
         category: "tacos",
         featured: true,
         active: true,
-        metadata: { image: "🌮", quantity: 3, spiciness: "mild" },
+        metadata: { image: "ðŸŒ®", quantity: 3, spiciness: "mild" },
       },
       {
         tenantId: tenantMap["nom-nom"],
@@ -501,7 +467,7 @@ export async function seedTenantData() {
         category: "tacos",
         featured: true,
         active: true,
-        metadata: { image: "🍍", quantity: 3, spiciness: "medium" },
+        metadata: { image: "ðŸ", quantity: 3, spiciness: "medium" },
       },
       {
         tenantId: tenantMap["nom-nom"],
@@ -512,7 +478,7 @@ export async function seedTenantData() {
         category: "quesadillas",
         featured: false,
         active: true,
-        metadata: { image: "🧀", cheese: "Oaxaca", vegetarian: true },
+        metadata: { image: "ðŸ§€", cheese: "Oaxaca", vegetarian: true },
       },
       // Zo System Products
       {
@@ -526,7 +492,7 @@ export async function seedTenantData() {
         featured: true,
         active: true,
         metadata: {
-          image: "💻",
+          image: "ðŸ’»",
           tech: ["Next.js", "Drizzle", "Neon", "TypeScript"],
           license: "MIT",
         },
@@ -541,7 +507,7 @@ export async function seedTenantData() {
         featured: true,
         active: true,
         metadata: {
-          image: "🔗",
+          image: "ðŸ”—",
           includes: ["OpenAPI spec", "Postman collection", "SDK"],
           delivery: "7-14 days",
         },
@@ -549,18 +515,20 @@ export async function seedTenantData() {
     ];
 
     await Promise.all(
-      productData.map(async (product) => {
-        const [existing] = await db
-          .select()
-          .from(products)
-          .where(eq(products.sku, product.sku))
-          .limit(1);
+      productData
+        .filter((p) => p.tenantId != null) // Skip products for removed tenants
+        .map(async (product) => {
+          const [existing] = await db
+            .select()
+            .from(products)
+            .where(eq(products.sku, product.sku))
+            .limit(1);
 
-        if (!existing) {
-          await db.insert(products).values(product);
-          console.log(`✅ Created product: ${product.name}`);
-        }
-      }),
+          if (!existing) {
+            await db.insert(products).values(product);
+            console.warn(`✅ Created product: ${product.name}`);
+          }
+        }),
     );
 
     // 4. Seed Staff
@@ -586,15 +554,57 @@ export async function seedTenantData() {
 
         if (!existing) {
           await db.insert(staff).values(member);
-          console.log(`✅ Created staff: ${member.name}`);
+          console.warn(`âœ… Created staff: ${member.name}`);
         }
       }),
     );
 
-    console.log("🎉 Database seed completed successfully!");
+    // 5. Seed Admin User Roles — jagzao@gmail.com as Admin in all active tenants
+    const adminEmail = "jagzao@gmail.com";
+    const [adminUser] = await db
+      .select({ id: users.id })
+      .from(users)
+      .where(eq(users.email, adminEmail))
+      .limit(1);
+
+    if (adminUser) {
+      const activeSlugs = [
+        "wondernails",
+        "centro-tenistico",
+        "delirios",
+        "manada-juma",
+        "zo-system",
+      ];
+      await Promise.all(
+        activeSlugs.map(async (slug) => {
+          const tenantId = tenantMap[slug];
+          if (!tenantId) return;
+
+          await db
+            .insert(userRoles)
+            .values({
+              userId: adminUser.id,
+              tenantId,
+              role: "Admin",
+              updatedAt: new Date(),
+            })
+            .onConflictDoUpdate({
+              target: [userRoles.userId, userRoles.tenantId],
+              set: { role: "Admin", updatedAt: new Date() },
+            });
+          console.warn(`✅ Admin role set: ${adminEmail} → ${slug}`);
+        }),
+      );
+    } else {
+      console.warn(
+        `⚠️  User ${adminEmail} not found — skipping user_roles seed`,
+      );
+    }
+
+    console.warn("ðŸŽ‰ Database seed completed successfully!");
     return { success: true, tenantCount: insertedTenants.length };
   } catch (error) {
-    console.error("❌ Database seed failed:", error);
+    console.error("âŒ Database seed failed:", error);
     throw error;
   }
 }
@@ -603,7 +613,7 @@ export async function seedTenantData() {
 if (require.main === module) {
   seedTenantData()
     .then(() => {
-      console.log("Seed completed!");
+      console.warn("Seed completed!");
       process.exit(0);
     })
     .catch((error) => {

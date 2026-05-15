@@ -1,7 +1,7 @@
 {
   "project": "sass-store",
   "schemaVersion": "1.3.0",
-  "updatedAt": "2026-03-02",
+  "updatedAt": "2026-05-03",
   "description": "Definicion tecnica de skills disponibles para este workspace y sesion.",
   "skills": [
     {
@@ -9,7 +9,7 @@
       "scope": "project-local",
       "enabled": true,
       "path": ".agents/skills/feature-developer/SKILL.md",
-      "purpose": "Desarrollo autonomo completo de features: codigo → tests → correccion → video demo. Sigue el protocolo autonomous-loop.",
+      "purpose": "Desarrollo autonomo completo de features: codigo -> tests -> correccion -> video demo. Sigue el protocolo autonomous-loop.",
       "useWhen": [
         "usuario solicita implementar feature nueva",
         "usuario dice 'implementa [X]' o 'crea [X]'",
@@ -55,6 +55,22 @@
       "doNotUseWhen": [
         "landing pages o sitios de marketing",
         "campanas promocionales"
+      ]
+    },
+    {
+      "id": "customer-service-chatbot",
+      "scope": "project-local",
+      "enabled": true,
+      "path": ".agents/skills/customer-service-chatbot/SKILL.md",
+      "purpose": "Disenar, implementar, depurar o mejorar flujos de chatbot de soporte al cliente con aislamiento por tenant.",
+      "useWhen": [
+        "implementar chatbot de atencion al cliente",
+        "crear o corregir FAQs, intents, respuestas o escalamiento de soporte",
+        "trabajar flujos de chat relacionados con reservas, ordenes, productos o clientes"
+      ],
+      "doNotUseWhen": [
+        "la tarea no involucra soporte conversacional",
+        "solo se requiere una pantalla administrativa sin comportamiento de chat"
       ]
     },
     {
@@ -138,14 +154,44 @@
           ".agents/protocols/multitenancy.md",
           ".agents/memory/context_be.md"
         ],
-        "validateWith": [
-          "npm run test:security",
-          "npm run rls:test"
-        ],
+        "validateWith": ["npm run test:security", "npm run rls:test"],
         "checklist": [
           "filtro tenantId en todas las queries",
           "RLS habilitado en tablas nuevas",
           "contexto de tenant del usuario autenticado"
+        ]
+      }
+    },
+    {
+      "id": "ci-cd-gate",
+      "scope": "project-local",
+      "enabled": true,
+      "path": ".agents/protocols/validation.md",
+      "purpose": "Gatekeeper de calidad: ejecuta pipeline completo de validación y bloquea merge si no pasa",
+      "useWhen": [
+        "agente declara feature lista",
+        "se requiere verificación antes de merge",
+        "ci pipeline necesita validación"
+      ],
+      "doNotUseWhen": [
+        "feature aun en desarrollo",
+        "solo se modifica documentacion"
+      ],
+      "protocol": {
+        "steps": [
+          "npm run lint",
+          "npm run typecheck",
+          "npm run build",
+          "npx vitest run --reporter=basic",
+          "npx playwright test --reporter=list --timeout=60000"
+        ],
+        "gate": "Si cualquier paso falla, feature NO está lista. Se repite ciclo de corrección.",
+        "metrics": [
+          "cobertura unitaria >= 80%",
+          "E2E >= 1 test por feature",
+          "0 errores lint",
+          "0 errores typecheck",
+          "build exitoso"
         ]
       }
     },
@@ -159,9 +205,7 @@
         "el usuario pregunta si existe una skill para una tarea",
         "se requiere ampliar capacidades del agente"
       ],
-      "doNotUseWhen": [
-        "la tarea ya se cubre con skills actuales"
-      ]
+      "doNotUseWhen": ["la tarea ya se cubre con skills actuales"]
     },
     {
       "id": "skill-creator",
@@ -187,9 +231,60 @@
         "se necesita instalar skill externa",
         "se requiere bootstrap rapido de capacidad nueva"
       ],
+      "doNotUseWhen": ["la skill ya esta instalada y operativa"]
+    },
+    {
+      "id": "pr-reviewer",
+      "scope": "project-local",
+      "enabled": true,
+      "path": ".agents/skills/pr-reviewer/SKILL.md",
+      "purpose": "Revision tecnica de PR o entrega post-QA: diff, Result Pattern, multitenancy, seguridad, alineacion con US/plan.md antes de merge o visto bueno.",
+      "useWhen": [
+        "usuario pide revisar PR o pre-merge o reviewer",
+        "agente notifico listo para revision tras Playwright verde",
+        "se necesita checklist tecnico antes de visto bueno o merge"
+      ],
       "doNotUseWhen": [
-        "la skill ya esta instalada y operativa"
-      ]
+        "aun no hay diff ni PR ni entrega para revisar",
+        "solo se pide ejecutar tests (usar story-orchestrator o test-generator)"
+      ],
+      "protocol": {
+        "readFirst": ["docs/stories/active/", ".agents/sprint/", "AGENTS.md"],
+        "followSkill": ".agents/skills/pr-reviewer/SKILL.md"
+      }
+    },
+    {
+      "id": "story-orchestrator",
+      "scope": "project-local",
+      "enabled": true,
+      "path": ".agents/skills/story-orchestrator/SKILL.md",
+      "purpose": "Orquestador completo de User Stories: PM → Architect → Dev → QA → Done. Ciclo autonomo sin intervencion humana.",
+      "useWhen": [
+        "usuario dice 'Implementa [X]' o 'Desarrolla [X]'",
+        "usuario dice 'valida todo'",
+        "se requiere pipeline completo de story desde backlog hasta merge-ready",
+        "necesita ejecutar el flujo PM → Architect → Dev → QA"
+      ],
+      "doNotUseWhen": [
+        "solo es correccion menor (usar debug-agent)",
+        "solo es consulta de estado (leer summaries)"
+      ],
+      "protocol": {
+        "readFirst": [
+          ".agents/SYSTEM_PROMPT.md",
+          "docs/stories/BACKLOG.md",
+          "docs/stories/_template.md"
+        ],
+        "followProtocol": ".agents/protocols/story-orchestrator.md",
+        "phases": [
+          "pm-analysis",
+          "architect-design",
+          "dev-implementation",
+          "qa-validation",
+          "merge-ready"
+        ],
+        "maxRetries": 5
+      }
     }
   ],
   "governance": {
@@ -213,15 +308,9 @@
         ".agents/memory/context_be.md",
         ".agents/session/current_task.md"
       ],
-      "updateOnSessionStart": [
-        ".agents/session/current_task.md"
-      ],
-      "updateOnError": [
-        ".agents/history/debug_logs.md"
-      ],
-      "updateOnSessionEnd": [
-        ".agents/session/current_task.md"
-      ]
+      "updateOnSessionStart": [".agents/session/current_task.md"],
+      "updateOnError": [".agents/history/debug_logs.md"],
+      "updateOnSessionEnd": [".agents/session/current_task.md"]
     }
   }
 }

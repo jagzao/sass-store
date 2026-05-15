@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from "react";
 
 interface LazyLoadProps {
   children: React.ReactNode;
@@ -16,10 +16,10 @@ interface LazyLoadProps {
  */
 export const LazyLoad = ({
   children,
-  height = '200px',
-  rootMargin = '100px',
+  height = "200px",
+  rootMargin = "100px",
   threshold = 0.1,
-  className = '',
+  className = "",
   fallback = null,
 }: LazyLoadProps) => {
   const [isVisible, setIsVisible] = useState(false);
@@ -36,7 +36,7 @@ export const LazyLoad = ({
       {
         rootMargin,
         threshold,
-      }
+      },
     );
 
     if (elementRef.current) {
@@ -51,7 +51,11 @@ export const LazyLoad = ({
   }, [rootMargin, threshold]);
 
   return (
-    <div ref={elementRef} style={{ minHeight: isVisible ? undefined : height }} className={className}>
+    <div
+      ref={elementRef}
+      style={{ minHeight: isVisible ? undefined : height }}
+      className={className}
+    >
       {isVisible ? children : fallback || <div style={{ height }} />}
     </div>
   );

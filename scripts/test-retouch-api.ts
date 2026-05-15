@@ -1,3 +1,4 @@
+// @ts-nocheck
 // We'll import the service directly in this test script
 // The actual import will be done after setting up the environment
 

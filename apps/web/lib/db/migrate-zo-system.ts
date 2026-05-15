@@ -3,7 +3,7 @@ import { tenants, services } from "./schema";
 import { eq } from "drizzle-orm";
 
 async function migrateZoSystemToBooking() {
-  console.log("🔄 Migrating zo-system to booking mode...\n");
+  console.warn("ðŸ”„ Migrating zo-system to booking mode...\n");
 
   try {
     // 1. Update zo-system to booking mode
@@ -16,8 +16,8 @@ async function migrateZoSystemToBooking() {
       .where(eq(tenants.slug, "zo-system"))
       .returning();
 
-    console.log(
-      "✅ Updated tenant:",
+    console.warn(
+      "âœ… Updated tenant:",
       updatedTenant.slug,
       "mode:",
       updatedTenant.mode,
@@ -29,19 +29,19 @@ async function migrateZoSystemToBooking() {
       .from(services)
       .where(eq(services.tenantId, updatedTenant.id));
 
-    console.log(
-      `\n📋 Existing services for zo-system: ${existingServices.length}`,
+    console.warn(
+      `\nðŸ“‹ Existing services for zo-system: ${existingServices.length}`,
     );
 
     if (existingServices.length === 0) {
-      console.log("📝 Adding sample services for zo-system...\n");
+      console.warn("ðŸ“ Adding sample services for zo-system...\n");
 
       const sampleServices = [
         {
           tenantId: updatedTenant.id,
           name: "Desarrollo SaaS Personalizado",
           description:
-            "Desarrollo de aplicaciones multi-tenant escalables con Next.js, PostgreSQL y arquitectura cloud-native. Incluye diseño, implementación y deployment.",
+            "Desarrollo de aplicaciones multi-tenant escalables con Next.js, PostgreSQL y arquitectura cloud-native. Incluye diseÃ±o, implementaciÃ³n y deployment.",
           price: "15000.00",
           duration: 160,
           featured: true,
@@ -54,9 +54,9 @@ async function migrateZoSystemToBooking() {
         },
         {
           tenantId: updatedTenant.id,
-          name: "Consultoría de Arquitectura de Software",
+          name: "ConsultorÃ­a de Arquitectura de Software",
           description:
-            "Auditoría técnica de tu arquitectura actual, identificación de bottlenecks y roadmap de optimización.",
+            "AuditorÃ­a tÃ©cnica de tu arquitectura actual, identificaciÃ³n de bottlenecks y roadmap de optimizaciÃ³n.",
           price: "2500.00",
           duration: 8,
           featured: true,
@@ -70,7 +70,7 @@ async function migrateZoSystemToBooking() {
           tenantId: updatedTenant.id,
           name: "Starter Kit SaaS Premium",
           description:
-            "Plantilla completa lista para producción con autenticación, pagos Stripe, dashboard admin, API GraphQL y más.",
+            "Plantilla completa lista para producciÃ³n con autenticaciÃ³n, pagos Stripe, dashboard admin, API GraphQL y mÃ¡s.",
           price: "499.00",
           duration: 2,
           featured: true,
@@ -92,7 +92,7 @@ async function migrateZoSystemToBooking() {
           tenantId: updatedTenant.id,
           name: "Mantenimiento y Soporte Mensual",
           description:
-            "Soporte continuo, actualizaciones de seguridad, backups automáticos y monitoreo 24/7.",
+            "Soporte continuo, actualizaciones de seguridad, backups automÃ¡ticos y monitoreo 24/7.",
           price: "999.00",
           duration: 4,
           featured: false,
@@ -104,9 +104,9 @@ async function migrateZoSystemToBooking() {
         },
         {
           tenantId: updatedTenant.id,
-          name: "Integración de IA Personalizada",
+          name: "IntegraciÃ³n de IA Personalizada",
           description:
-            "Implementación de modelos de IA para automatización, análisis de datos o asistentes virtuales.",
+            "ImplementaciÃ³n de modelos de IA para automatizaciÃ³n, anÃ¡lisis de datos o asistentes virtuales.",
           price: "5000.00",
           duration: 40,
           featured: true,
@@ -121,7 +121,7 @@ async function migrateZoSystemToBooking() {
           tenantId: updatedTenant.id,
           name: "E-Commerce Template",
           description:
-            "Tienda online completa con carrito, checkout, gestión de inventario y panel de administración.",
+            "Tienda online completa con carrito, checkout, gestiÃ³n de inventario y panel de administraciÃ³n.",
           price: "349.00",
           duration: 2,
           featured: true,
@@ -132,8 +132,8 @@ async function migrateZoSystemToBooking() {
             features: [
               "Carrito de compras completo",
               "Checkout con Stripe",
-              "Gestión de inventario",
-              "Panel de administración",
+              "GestiÃ³n de inventario",
+              "Panel de administraciÃ³n",
               "Reportes de ventas",
             ],
           },
@@ -142,7 +142,7 @@ async function migrateZoSystemToBooking() {
           tenantId: updatedTenant.id,
           name: "API REST/GraphQL Development",
           description:
-            "Desarrollo de APIs robustas y documentadas para tu aplicación.",
+            "Desarrollo de APIs robustas y documentadas para tu aplicaciÃ³n.",
           price: "3000.00",
           duration: 24,
           featured: false,
@@ -157,7 +157,7 @@ async function migrateZoSystemToBooking() {
           tenantId: updatedTenant.id,
           name: "DevOps & Infrastructure Setup",
           description:
-            "Configuración de infraestructura cloud, CI/CD pipelines, Docker, Kubernetes y monitoreo.",
+            "ConfiguraciÃ³n de infraestructura cloud, CI/CD pipelines, Docker, Kubernetes y monitoreo.",
           price: "2000.00",
           duration: 16,
           featured: false,
@@ -174,14 +174,14 @@ async function migrateZoSystemToBooking() {
         .insert(services)
         .values(sampleServices)
         .returning();
-      console.log(`✅ Added ${insertedServices.length} sample services`);
+      console.warn(`âœ… Added ${insertedServices.length} sample services`);
     } else {
-      console.log("✅ Services already exist, skipping seed");
+      console.warn("âœ… Services already exist, skipping seed");
     }
 
-    console.log("\n🎉 Migration completed successfully!");
+    console.warn("\nðŸŽ‰ Migration completed successfully!");
   } catch (error) {
-    console.error("❌ Migration failed:", error);
+    console.error("âŒ Migration failed:", error);
     throw error;
   }
 }

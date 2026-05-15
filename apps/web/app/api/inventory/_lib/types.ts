@@ -52,4 +52,3 @@ export const AlertConfigSchema = z.object({
 export type SupplierEntity = z.infer<typeof SupplierSchema>;
 export type InventoryLocationEntity = z.infer<typeof InventoryLocationSchema>;
 export type AlertConfigEntity = z.infer<typeof AlertConfigSchema>;
-

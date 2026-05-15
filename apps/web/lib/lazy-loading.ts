@@ -1,30 +1,33 @@
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
 // Lazy loading inteligente con Intersection Observer (gratis)
-export function createIntersectionObserver(callback: IntersectionObserverCallback, options?: IntersectionObserverInit) {
-  if (typeof window === 'undefined') return null;
+export function createIntersectionObserver(
+  callback: IntersectionObserverCallback,
+  options?: IntersectionObserverInit,
+) {
+  if (typeof window === "undefined") return null;
 
   return new IntersectionObserver(callback, {
     root: null,
-    rootMargin: '50px', // Cargar 50px antes de que el elemento sea visible
+    rootMargin: "50px", // Cargar 50px antes de que el elemento sea visible
     threshold: 0.1,
-    ...options
+    ...options,
   });
 }
 
 export function useLazyLoadImages() {
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === "undefined") return;
 
     const imageObserver = createIntersectionObserver((entries) => {
-      entries.forEach(entry => {
+      entries.forEach((entry) => {
         if (entry.isIntersecting) {
           const img = entry.target as HTMLImageElement;
           const src = img.dataset.src;
 
           if (src) {
             img.src = src;
-            img.classList.remove('lazy');
+            img.classList.remove("lazy");
             imageObserver?.unobserve(img);
           }
         }
@@ -32,8 +35,8 @@ export function useLazyLoadImages() {
     });
 
     // Observar todas las imágenes lazy
-    const lazyImages = document.querySelectorAll('img[data-src]');
-    lazyImages.forEach(img => imageObserver?.observe(img));
+    const lazyImages = document.querySelectorAll("img[data-src]");
+    lazyImages.forEach((img) => imageObserver?.observe(img));
 
     return () => {
       imageObserver?.disconnect();
@@ -43,10 +46,10 @@ export function useLazyLoadImages() {
 
 export function useLazyLoadComponents() {
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === "undefined") return;
 
     const componentObserver = createIntersectionObserver((entries) => {
-      entries.forEach(entry => {
+      entries.forEach((entry) => {
         if (entry.isIntersecting) {
           const element = entry.target as HTMLElement;
           const componentName = element.dataset.lazyComponent;
@@ -54,7 +57,7 @@ export function useLazyLoadComponents() {
           if (componentName) {
             // Aquí se podría implementar carga dinámica de componentes
             // Por ahora solo marcamos como cargado
-            element.classList.add('lazy-loaded');
+            element.classList.add("lazy-loaded");
             componentObserver?.unobserve(element);
           }
         }
@@ -62,8 +65,10 @@ export function useLazyLoadComponents() {
     });
 
     // Observar componentes lazy
-    const lazyComponents = document.querySelectorAll('[data-lazy-component]');
-    lazyComponents.forEach(component => componentObserver?.observe(component));
+    const lazyComponents = document.querySelectorAll("[data-lazy-component]");
+    lazyComponents.forEach((component) =>
+      componentObserver?.observe(component),
+    );
 
     return () => {
       componentObserver?.disconnect();
@@ -79,8 +84,8 @@ export function useLazyLoading() {
 
 // Función para marcar elementos como lazy
 export function markAsLazy(element: HTMLElement, dataSrc?: string) {
-  element.setAttribute('data-lazy', 'true');
+  element.setAttribute("data-lazy", "true");
   if (dataSrc) {
-    element.setAttribute('data-src', dataSrc);
+    element.setAttribute("data-src", dataSrc);
   }
 }

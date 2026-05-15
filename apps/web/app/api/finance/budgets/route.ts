@@ -10,55 +10,68 @@ import { budgets, tenants } from "@sass-store/database/schema";
 import { eq, and, sql, gte, lte, desc, asc, ilike, or } from "drizzle-orm";
 
 // Validate query parameters
-function validateBudgetQuery(searchParams: URLSearchParams): Result<{ 
-  status: string | null;
-  search: string | null;
-  limit: number;
-  offset: number;
-  sortBy: string;
-  sortOrder: string;
-  tenant: string;
-}, DomainError> {
+function validateBudgetQuery(searchParams: URLSearchParams): Result<
+  {
+    status: string | null;
+    search: string | null;
+    limit: number;
+    offset: number;
+    sortBy: string;
+    sortOrder: string;
+    tenant: string;
+  },
+  DomainError
+> {
   try {
     const tenant = searchParams.get("tenant");
     if (!tenant) {
-      return Err(ErrorFactories.validation(
-        "MISSING_TENANT",
-        "Tenant parameter is required"
-      ));
+      return Err(
+        ErrorFactories.validation(
+          "MISSING_TENANT",
+          "Tenant parameter is required",
+        ),
+      );
     }
 
     const limit = parseInt(searchParams.get("limit") || "50");
     if (isNaN(limit) || limit < 1 || limit > 100) {
-      return Err(ErrorFactories.validation(
-        "INVALID_LIMIT",
-        "Limit must be between 1 and 100"
-      ));
+      return Err(
+        ErrorFactories.validation(
+          "INVALID_LIMIT",
+          "Limit must be between 1 and 100",
+        ),
+      );
     }
 
     const offset = parseInt(searchParams.get("offset") || "0");
     if (isNaN(offset) || offset < 0) {
-      return Err(ErrorFactories.validation(
-        "INVALID_OFFSET",
-        "Offset must be a positive number"
-      ));
+      return Err(
+        ErrorFactories.validation(
+          "INVALID_OFFSET",
+          "Offset must be a positive number",
+        ),
+      );
     }
 
     const sortBy = searchParams.get("sortBy") || "createdAt";
     const validSortFields = ["createdAt", "name", "startDate", "totalLimit"];
     if (!validSortFields.includes(sortBy)) {
-      return Err(ErrorFactories.validation(
-        "INVALID_SORT_FIELD",
-        `Sort field must be one of: ${validSortFields.join(", ")}`
-      ));
+      return Err(
+        ErrorFactories.validation(
+          "INVALID_SORT_FIELD",
+          `Sort field must be one of: ${validSortFields.join(", ")}`,
+        ),
+      );
     }
 
     const sortOrder = searchParams.get("sortOrder") || "desc";
     if (sortOrder !== "asc" && sortOrder !== "desc") {
-      return Err(ErrorFactories.validation(
-        "INVALID_SORT_ORDER",
-        "Sort order must be 'asc' or 'desc'"
-      ));
+      return Err(
+        ErrorFactories.validation(
+          "INVALID_SORT_ORDER",
+          "Sort order must be 'asc' or 'desc'",
+        ),
+      );
     }
 
     return Ok({
@@ -71,40 +84,45 @@ function validateBudgetQuery(searchParams: URLSearchParams): Result<{
       tenant,
     });
   } catch (error) {
-    return Err(ErrorFactories.validation(
-      "VALIDATION_ERROR",
-      "Invalid query parameters",
-      undefined,
-      error instanceof Error ? error : new Error(String(error))
-    ));
+    return Err(
+      ErrorFactories.validation(
+        "VALIDATION_ERROR",
+        "Invalid query parameters",
+        undefined,
+        error instanceof Error ? error : new Error(String(error)),
+      ),
+    );
   }
 }
 
 export async function GET(request: NextRequest): Promise<Response> {
   try {
-    // Verificar autenticación
+    // Verificar autenticaciÃ³n
     const session = await auth();
     if (!session?.user) {
-      return NextResponse.json({ 
-        success: false, 
-        error: "Unauthorized" 
-      }, { status: 401 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Unauthorized",
+        },
+        { status: 401 },
+      );
     }
 
-    // Obtener parámetros de query
+    // Obtener parÃ¡metros de query
     const { searchParams } = new URL(request.url);
-    
+
     // Validar query parameters
     const validationResult = validateBudgetQuery(searchParams);
     if (isFailure(validationResult)) {
       const error = validationResult.error;
       return NextResponse.json(
-        { 
-          success: false, 
+        {
+          success: false,
           error: error.message,
-          code: error.type
+          code: error.type,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -132,7 +150,10 @@ export async function GET(request: NextRequest): Promise<Response> {
       .limit(1);
 
     if (!tenantResult.length) {
-      return NextResponse.json({ success: false, error: "Tenant not found" }, { status: 404 });
+      return NextResponse.json(
+        { success: false, error: "Tenant not found" },
+        { status: 404 },
+      );
     }
     const tenantId = tenantResult[0].id;
 
@@ -147,7 +168,7 @@ export async function GET(request: NextRequest): Promise<Response> {
       const searchTerm = `%${params.search}%`;
       const searchCondition = or(
         ilike(budgets.name, searchTerm),
-        ilike(budgets.notes, searchTerm)
+        ilike(budgets.notes, searchTerm),
       );
       if (searchCondition) {
         conditions.push(searchCondition);
@@ -158,11 +179,15 @@ export async function GET(request: NextRequest): Promise<Response> {
 
     // Build Sort
     let orderByClause;
-    const sortCol = params.sortBy === "name" ? budgets.name :
-                    params.sortBy === "startDate" ? budgets.startDate :
-                    params.sortBy === "totalLimit" ? budgets.totalLimit :
-                    budgets.createdAt;
-    
+    const sortCol =
+      params.sortBy === "name"
+        ? budgets.name
+        : params.sortBy === "startDate"
+          ? budgets.startDate
+          : params.sortBy === "totalLimit"
+            ? budgets.totalLimit
+            : budgets.createdAt;
+
     orderByClause = params.sortOrder === "asc" ? asc(sortCol) : desc(sortCol);
 
     // Query Data
@@ -181,7 +206,7 @@ export async function GET(request: NextRequest): Promise<Response> {
         alertThreshold: budgets.alertThreshold,
         notes: budgets.notes,
         createdAt: budgets.createdAt,
-        updatedAt: budgets.updatedAt
+        updatedAt: budgets.updatedAt,
       })
       .from(budgets)
       .where(whereClause)
@@ -194,7 +219,7 @@ export async function GET(request: NextRequest): Promise<Response> {
       .select({ count: sql<number>`count(*)` })
       .from(budgets)
       .where(whereClause);
-      
+
     const total = Number(countResult[0]?.count || 0);
 
     // Retornar presupuestos
@@ -208,16 +233,15 @@ export async function GET(request: NextRequest): Promise<Response> {
         hasMore: params.offset + params.limit < total,
       },
     });
-
   } catch (error) {
     console.error("Budgets API Error:", error);
-    
+
     try {
       // Log error to file for debugging
-      const fs = require('fs');
-      const path = require('path');
-      const logPath = path.join(process.cwd(), 'budgets-error.log');
-      const logContent = `[${new Date().toISOString()}] Error: ${String(error)}\nStack: ${error instanceof Error ? error.stack : 'No stack'}\n\n`;
+      const fs = require("fs");
+      const path = require("path");
+      const logPath = path.join(process.cwd(), "budgets-error.log");
+      const logContent = `[${new Date().toISOString()}] Error: ${String(error)}\nStack: ${error instanceof Error ? error.stack : "No stack"}\n\n`;
       fs.appendFileSync(logPath, logContent);
     } catch (e) {
       console.error("Failed to write error log:", e);
@@ -227,42 +251,54 @@ export async function GET(request: NextRequest): Promise<Response> {
       "BUDGETS_ENDPOINT_ERROR",
       "Unexpected error in budgets endpoint",
       undefined,
-      error instanceof Error ? error : new Error(String(error))
+      error instanceof Error ? error : new Error(String(error)),
     );
 
     return NextResponse.json(
-      { 
-        success: false, 
+      {
+        success: false,
         error: domainError.message,
         code: domainError.type,
-        details: String(error)
+        details: String(error),
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function POST(request: NextRequest): Promise<Response> {
+  let body: any;
   try {
-    // Verificar autenticación
+    // Verificar autenticaciÃ³n
     const session = await auth();
     if (!session?.user) {
-      return NextResponse.json({ 
-        success: false, 
-        error: "Unauthorized" 
-      }, { status: 401 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Unauthorized",
+        },
+        { status: 401 },
+      );
     }
 
-    const body = await request.json();
-    
+    body = await request.json();
+
     // Validar datos del presupuesto
-    if (!body.name || !body.periodType || !body.startDate || !body.endDate || !body.totalLimit || !body.tenantSlug) {
+    if (
+      !body.name ||
+      !body.periodType ||
+      !body.startDate ||
+      !body.endDate ||
+      !body.totalLimit ||
+      !body.tenantSlug
+    ) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: "Missing required fields: name, periodType, startDate, endDate, totalLimit, tenantSlug" 
+        {
+          success: false,
+          error:
+            "Missing required fields: name, periodType, startDate, endDate, totalLimit, tenantSlug",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -288,7 +324,10 @@ export async function POST(request: NextRequest): Promise<Response> {
       .limit(1);
 
     if (!tenantResult.length) {
-      return NextResponse.json({ success: false, error: "Tenant not found" }, { status: 404 });
+      return NextResponse.json(
+        { success: false, error: "Tenant not found" },
+        { status: 404 },
+      );
     }
     const tenantId = tenantResult[0].id;
 
@@ -297,16 +336,16 @@ export async function POST(request: NextRequest): Promise<Response> {
     const endDate = new Date(body.endDate);
     if (startDate >= endDate) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: "Start date must be before end date" 
+        {
+          success: false,
+          error: "Start date must be before end date",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     // Log the data we're about to insert
-    console.log("Creating budget with data:", {
+    console.warn("Creating budget with data:", {
       tenantId,
       name: body.name,
       periodType: body.periodType,
@@ -317,41 +356,44 @@ export async function POST(request: NextRequest): Promise<Response> {
       status: body.status || "active",
       rolloverEnabled: body.rolloverEnabled || false,
       alertThreshold: body.alertThreshold || 80,
-      notes: body.notes || null
+      notes: body.notes || null,
     });
 
     // Crear nuevo presupuesto
     try {
-      const newBudget = await db.insert(budgets).values({
-        tenantId: tenantId,
-        name: body.name,
-        periodType: body.periodType,
-        startDate: body.startDate,
-        endDate: body.endDate,
-        totalLimit: body.totalLimit,
-        currency: body.currency || "MXN",
-        status: body.status || "active",
-        rolloverEnabled: body.rolloverEnabled || false,
-        alertThreshold: body.alertThreshold || 80,
-        notes: body.notes || null
-      }).returning({
-        id: budgets.id,
-        tenantId: budgets.tenantId,
-        name: budgets.name,
-        periodType: budgets.periodType,
-        startDate: budgets.startDate,
-        endDate: budgets.endDate,
-        totalLimit: budgets.totalLimit,
-        currency: budgets.currency,
-        status: budgets.status,
-        rolloverEnabled: budgets.rolloverEnabled,
-        alertThreshold: budgets.alertThreshold,
-        notes: budgets.notes,
-        createdAt: budgets.createdAt,
-        updatedAt: budgets.updatedAt
-      });
+      const newBudget = await db
+        .insert(budgets)
+        .values({
+          tenantId: tenantId,
+          name: body.name,
+          periodType: body.periodType,
+          startDate: body.startDate,
+          endDate: body.endDate,
+          totalLimit: body.totalLimit,
+          currency: body.currency || "MXN",
+          status: body.status || "active",
+          rolloverEnabled: body.rolloverEnabled || false,
+          alertThreshold: body.alertThreshold || 80,
+          notes: body.notes || null,
+        })
+        .returning({
+          id: budgets.id,
+          tenantId: budgets.tenantId,
+          name: budgets.name,
+          periodType: budgets.periodType,
+          startDate: budgets.startDate,
+          endDate: budgets.endDate,
+          totalLimit: budgets.totalLimit,
+          currency: budgets.currency,
+          status: budgets.status,
+          rolloverEnabled: budgets.rolloverEnabled,
+          alertThreshold: budgets.alertThreshold,
+          notes: budgets.notes,
+          createdAt: budgets.createdAt,
+          updatedAt: budgets.updatedAt,
+        });
 
-      console.log("Budget created successfully:", newBudget[0]);
+      console.warn("Budget created successfully:", newBudget[0]);
 
       return NextResponse.json({
         success: true,
@@ -361,16 +403,15 @@ export async function POST(request: NextRequest): Promise<Response> {
       console.error("Database error when creating budget:", dbError);
       throw dbError; // Re-throw to be caught by the outer catch block
     }
-
   } catch (error) {
     console.error("Error in POST /api/finance/budgets:", error);
-    
+
     // Try to log error to file for debugging
     try {
-      const fs = require('fs');
-      const path = require('path');
-      const logPath = path.join(process.cwd(), 'budgets-error.log');
-      const logContent = `[${new Date().toISOString()}] POST Error: ${String(error)}\nStack: ${error instanceof Error ? error.stack : 'No stack'}\nBody: ${JSON.stringify(body, null, 2)}\n\n`;
+      const fs = require("fs");
+      const path = require("path");
+      const logPath = path.join(process.cwd(), "budgets-error.log");
+      const logContent = `[${new Date().toISOString()}] POST Error: ${String(error)}\nStack: ${error instanceof Error ? error.stack : "No stack"}\nBody: ${JSON.stringify(body, null, 2)}\n\n`;
       fs.appendFileSync(logPath, logContent);
     } catch (e) {
       console.error("Failed to write error log:", e);
@@ -380,7 +421,7 @@ export async function POST(request: NextRequest): Promise<Response> {
       "CREATE_BUDGET_ERROR",
       "Failed to create budget",
       undefined,
-      error instanceof Error ? error : new Error(String(error))
+      error instanceof Error ? error : new Error(String(error)),
     );
 
     return NextResponse.json(
@@ -388,9 +429,9 @@ export async function POST(request: NextRequest): Promise<Response> {
         success: false,
         error: domainError.message,
         code: domainError.type,
-        details: String(error)
+        details: String(error),
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 interface UIStore {
   // Sidebar state
@@ -20,12 +20,12 @@ interface UIStore {
   setCurrentPage: (page: string) => void;
 
   // Theme state
-  theme: 'light' | 'dark' | 'auto';
-  setTheme: (theme: 'light' | 'dark' | 'auto') => void;
+  theme: "light" | "dark" | "auto";
+  setTheme: (theme: "light" | "dark" | "auto") => void;
 
   // Language preference
-  language: 'es' | 'en';
-  setLanguage: (language: 'es' | 'en') => void;
+  language: "es" | "en";
+  setLanguage: (language: "es" | "en") => void;
 
   // Performance metrics
   performanceMetrics: {
@@ -33,7 +33,9 @@ interface UIStore {
     lastRenderTime: number;
     componentMountTime: number;
   };
-  updatePerformanceMetrics: (metrics: Partial<UIStore['performanceMetrics']>) => void;
+  updatePerformanceMetrics: (
+    metrics: Partial<UIStore["performanceMetrics"]>,
+  ) => void;
   incrementRenderCount: () => void;
 }
 
@@ -42,25 +44,26 @@ export const useUI = create<UIStore>()(
     (set, get) => ({
       // Sidebar
       sidebarOpen: false,
-      toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),
+      toggleSidebar: () =>
+        set((state) => ({ sidebarOpen: !state.sidebarOpen })),
       openSidebar: () => set({ sidebarOpen: true }),
       closeSidebar: () => set({ sidebarOpen: false }),
 
       // Search
-      searchQuery: '',
+      searchQuery: "",
       setSearchQuery: (query) => set({ searchQuery: query }),
-      resetSearch: () => set({ searchQuery: '' }),
+      resetSearch: () => set({ searchQuery: "" }),
 
       // Page
-      currentPage: 'home',
+      currentPage: "home",
       setCurrentPage: (page) => set({ currentPage: page }),
 
       // Theme
-      theme: 'auto',
+      theme: "auto",
       setTheme: (theme) => set({ theme }),
 
       // Language
-      language: 'es',
+      language: "es",
       setLanguage: (language) => set({ language }),
 
       // Performance
@@ -86,15 +89,15 @@ export const useUI = create<UIStore>()(
         })),
     }),
     {
-      name: 'sass-store-ui',
+      name: "sass-store-ui",
       // Only persist certain fields
       partialize: (state) => ({
         theme: state.theme,
         language: state.language,
         sidebarOpen: state.sidebarOpen,
       }),
-    }
-  )
+    },
+  ),
 );
 
 // Selectors for optimized access

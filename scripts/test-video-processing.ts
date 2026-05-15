@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { db } from "@sass-store/database";
 import { videoProcessingJobs } from "@sass-store/database/video-processing-schema";
 import { eq } from "drizzle-orm";
@@ -54,10 +55,10 @@ async function main() {
 
     console.log(`✅ Test job ${job.id} marked as completed`);
     console.log(
-      "📹 Generated video: https://storage.example.com/videos/test-tenant-123/test-video.mp4"
+      "📹 Generated video: https://storage.example.com/videos/test-tenant-123/test-video.mp4",
     );
     console.log(
-      "🖼️ Generated thumbnail: https://storage.example.com/thumbnails/test-tenant-123/test-video.jpg"
+      "🖼️ Generated thumbnail: https://storage.example.com/thumbnails/test-tenant-123/test-video.jpg",
     );
 
     // Verify the job status

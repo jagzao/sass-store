@@ -10,7 +10,7 @@ const deliriosSlides: DeliriosSlide[] = [
     ctaText: "Ver Menú",
     bgFrom: "#0b0b10",
     bgTo: "#2a0f3e",
-    accent: "#d4af37"
+    accent: "#d4af37",
   },
   {
     img: "/tenants/delirios/hero/plate2.png",
@@ -19,7 +19,7 @@ const deliriosSlides: DeliriosSlide[] = [
     ctaText: "Ordenar Ahora",
     bgFrom: "#0d0d12",
     bgTo: "#2f1145",
-    accent: "#d4af37"
+    accent: "#d4af37",
   },
   {
     img: "/tenants/delirios/hero/plate3.png",
@@ -28,7 +28,7 @@ const deliriosSlides: DeliriosSlide[] = [
     ctaText: "Explorar",
     bgFrom: "#0a0a0f",
     bgTo: "#28133a",
-    accent: "#d4af37"
+    accent: "#d4af37",
   },
   {
     img: "/tenants/delirios/hero/plate4.png",
@@ -37,7 +37,7 @@ const deliriosSlides: DeliriosSlide[] = [
     ctaText: "Descubrir",
     bgFrom: "#0c0c11",
     bgTo: "#2d1542",
-    accent: "#d4af37"
+    accent: "#d4af37",
   },
   {
     img: "/tenants/delirios/hero/plate5.png",
@@ -46,8 +46,8 @@ const deliriosSlides: DeliriosSlide[] = [
     ctaText: "Reservar",
     bgFrom: "#0b0b10",
     bgTo: "#2a0f3e",
-    accent: "#d4af37"
-  }
+    accent: "#d4af37",
+  },
 ];
 
 export default function HeroDeliriosWrapper() {
@@ -58,7 +58,7 @@ export default function HeroDeliriosWrapper() {
       autoplayMs={4500}
       onCta={(index) => {
         // Navigate to products or specific section
-        window.location.href = '/t/delirios/products';
+        window.location.href = "/t/delirios/products";
       }}
     />
   );

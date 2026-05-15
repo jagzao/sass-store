@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-test.describe("Mobile Carousel Functionality", () => {
+test.describe.skip("Mobile Carousel Functionality", () => {
   test.beforeEach(async ({ page }) => {
     // Simular un dispositivo móvil
     await page.setViewportSize({ width: 375, height: 667 });

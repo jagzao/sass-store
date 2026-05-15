@@ -1,42 +1,24 @@
 {
-  "project": "sass-store",
-  "schemaVersion": "1.0.0",
-  "updatedAt": "2026-03-06T18:30:00-06:00",
-  "session": {
-    "status": "ACTIVE",
-    "mode": "execution",
-    "currentTaskFile": ".agents/session/current_task.md",
-    "currentTaskStatus": "EN_PROGRESO",
-    "currentTaskTitle": "Implementacion de WhatsApp Cloud API"
-  },
-  "memoryProtocol": {
-    "mandatoryRead": [
-      ".agents/history/debug_logs.md",
-      ".agents/history/test_cases.md",
-      ".agents/memory/context_be.md",
-      ".agents/session/current_task.md"
-    ],
-    "updateOnStart": [".agents/session/current_task.md"],
-    "updateOnError": [".agents/history/debug_logs.md"],
-    "updateOnEnd": [".agents/session/current_task.md"]
-  },
-  "activeSkills": [
-    "feature-developer",
-    "debug-agent",
-    "test-generator",
-    "multitenant-guard"
+  "sessionId": "sess_{{timestamp}}",
+  "skill": "feature-developer",
+  "feature": "",
+  "status": "planning",
+  "phases": [
+    { "name": "plan", "startedAt": "", "endedAt": "", "durationMs": 0 },
+    { "name": "code", "startedAt": "", "endedAt": "", "durationMs": 0 },
+    { "name": "unit_tests", "startedAt": "", "endedAt": "", "durationMs": 0 },
+    { "name": "e2e_tests", "startedAt": "", "endedAt": "", "durationMs": 0 },
+    { "name": "fix", "startedAt": "", "endedAt": "", "durationMs": 0 },
+    { "name": "ship", "startedAt": "", "endedAt": "", "durationMs": 0 }
   ],
-  "openBlockers": [
-    {
-      "id": "WA-001",
-      "type": "credential",
-      "severity": "high",
-      "title": "WhatsApp token invalid or expired",
-      "nextAction": "Regenerate token in Meta Developer Portal and retry webhook/message tests"
-    }
-  ],
-  "riskFlags": {
-    "requiresSecretRedaction": true,
-    "requiresSessionSync": true
-  }
+  "metrics": {
+    "totalDurationMs": 0,
+    "filesCreated": [],
+    "filesModified": [],
+    "testsAdded": 0,
+    "testsPassing": 0,
+    "errorsEncountered": 0,
+    "retries": 0
+  },
+  "updatedAt": "{{timestamp}}"
 }

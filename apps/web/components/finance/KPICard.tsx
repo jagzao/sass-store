@@ -91,7 +91,7 @@ const KPICard = memo<KPICardProps>(
         )}
       </div>
     );
-  }
+  },
 );
 
 KPICard.displayName = "KPICard";

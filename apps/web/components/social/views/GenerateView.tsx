@@ -135,7 +135,7 @@ export default function GenerateView({ tenant }: GenerateViewProps) {
         body: JSON.stringify({
           tenant,
           objective: config.objective,
-          vibe: config.vibe,
+          vibe: (config as any).vibe,
           platforms: config.platforms,
           startDate: config.dateRange.start,
           endDate: config.dateRange.end,

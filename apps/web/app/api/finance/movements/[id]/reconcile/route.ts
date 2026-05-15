@@ -39,16 +39,15 @@ export async function PATCH(request: NextRequest, context: RouteParams) {
       );
     }
 
-    // Obtener tenant ID desde el slug
     const tenantResult = await db.execute(
       sql`SELECT id FROM tenants WHERE slug = ${tenantSlug}`,
     );
 
-    if (!tenantResult.rows || tenantResult.rows.length === 0) {
+    if (!tenantResult[0]) {
       return NextResponse.json({ error: "Tenant not found" }, { status: 404 });
     }
 
-    const tenantId = tenantResult.rows[0].id;
+    const tenantId = tenantResult[0].id;
 
     // Validar acceso al tenant
     try {
@@ -70,14 +69,14 @@ export async function PATCH(request: NextRequest, context: RouteParams) {
       `,
     );
 
-    if (!movementResult.rows || movementResult.rows.length === 0) {
+    if (!movementResult[0]) {
       return NextResponse.json(
         { error: "Movement not found" },
         { status: 404 },
       );
     }
 
-    const movement = movementResult.rows[0];
+    const movement = movementResult[0];
 
     // Si se está marcando como reconciliado, verificar que no lo esté ya
     if (reconciled && movement.reconciled) {
@@ -88,7 +87,7 @@ export async function PATCH(request: NextRequest, context: RouteParams) {
     }
 
     // Actualizar el movimiento
-    const updateResult = await db.execute(
+    await db.execute(
       sql`
         UPDATE financial_movements
         SET 
@@ -100,8 +99,6 @@ export async function PATCH(request: NextRequest, context: RouteParams) {
         RETURNING id, reconciled, reconciliation_id, updated_at
       `,
     );
-
-    const updatedMovement = updateResult.rows[0];
 
     // Si se proporcionaron notas, guardarlas en el log de reconciliación
     if (notes) {
@@ -129,10 +126,9 @@ export async function PATCH(request: NextRequest, context: RouteParams) {
       success: true,
       message: `Movement ${reconciled ? "reconciled" : "unreconciled"} successfully`,
       data: {
-        id: updatedMovement.id,
-        reconciled: updatedMovement.reconciled,
-        reconciliationId: updatedMovement.reconciliation_id,
-        updatedAt: updatedMovement.updated_at,
+        id,
+        reconciled,
+        reconciliationId: reconciliationId || null,
       },
     });
   } catch (error) {

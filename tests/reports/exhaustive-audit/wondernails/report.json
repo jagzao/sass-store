@@ -1,0 +1,8 @@
+[
+  {
+    "tenant": "wondernails",
+    "testName": "login válido",
+    "status": "pass",
+    "screenshotPath": "wondernails/screenshots/login_valido.png"
+  }
+]

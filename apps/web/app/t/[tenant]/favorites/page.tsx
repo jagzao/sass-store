@@ -123,7 +123,7 @@ export default async function FavoritesPage({ params }: PageProps) {
                           </p>
                           <div className="flex justify-between items-center mb-4">
                             <span className="text-xl font-bold text-indigo-600">
-                              ${product.price.toFixed(2)}
+                              ${Number(product.price).toFixed(2)}
                             </span>
                             <span className="text-xs text-gray-500 capitalize">
                               {product.category}

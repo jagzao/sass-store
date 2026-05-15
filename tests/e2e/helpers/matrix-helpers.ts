@@ -50,11 +50,15 @@ export async function navigateToFinanceMatrix(page: Page, tenantSlug: string) {
     await loginAsAdmin(page);
   }
 
-  throw new Error(`Unable to access /t/${tenantSlug}/finance after login retries`);
+  throw new Error(
+    `Unable to access /t/${tenantSlug}/finance after login retries`,
+  );
 }
 
 export async function waitForMatrixReady(page: Page) {
-  await expect(page.getByTestId("matrix-container")).toBeVisible({ timeout: 20000 });
+  await expect(page.getByTestId("matrix-container")).toBeVisible({
+    timeout: 20000,
+  });
   await expect(page.getByText("Cargando módulo financiero...")).toHaveCount(0, {
     timeout: 20000,
   });
@@ -145,15 +149,11 @@ export async function setMatrixFilters(
   }
 
   if (filters.endDate) {
-    await page
-      .getByTestId("date-range-picker-end")
-      .fill(filters.endDate);
+    await page.getByTestId("date-range-picker-end").fill(filters.endDate);
   }
 
   if (filters.startDate) {
-    await page
-      .getByTestId("date-range-picker-start")
-      .fill(filters.startDate);
+    await page.getByTestId("date-range-picker-start").fill(filters.startDate);
   }
 
   await waitForMatrixReady(page);
@@ -161,7 +161,11 @@ export async function setMatrixFilters(
   if (filters.startDate && filters.granularity === "month") {
     const expectedStartDate = filters.startDate;
     await expect(
-      page.locator(`[data-testid="matrix-header-cell"][data-start-date^="${expectedStartDate}"]`).first(),
+      page
+        .locator(
+          `[data-testid="matrix-header-cell"][data-start-date^="${expectedStartDate}"]`,
+        )
+        .first(),
     ).toBeVisible({ timeout: 15000 });
   }
 }
@@ -354,7 +358,9 @@ export async function openQuickEntry(
         await waitForMatrixReady(page);
       });
 
-    const visible = await popover.isVisible({ timeout: 2000 }).catch(() => false);
+    const visible = await popover
+      .isVisible({ timeout: 2000 })
+      .catch(() => false);
     if (visible) {
       return;
     }
@@ -425,7 +431,10 @@ export async function getCellStyleClass(
   return (await styleNode.getAttribute("class")) || "";
 }
 
-export async function getHeaderByBucketId(page: Page, bucketId: string): Promise<Locator> {
+export async function getHeaderByBucketId(
+  page: Page,
+  bucketId: string,
+): Promise<Locator> {
   return page.locator(
     `[data-testid="matrix-header-cell"][data-bucket-id="${bucketId}"]`,
   );

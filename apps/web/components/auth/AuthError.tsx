@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { Lock } from "lucide-react";
 
@@ -11,6 +12,15 @@ export function AuthError({ error: errorProp }: AuthErrorProps) {
   const searchParams = useSearchParams();
   const errorParam = searchParams.get("error") || errorProp;
   const currentTenant = searchParams.get("current_tenant");
+
+  const configurationDevHint = useMemo(() => {
+    const origin =
+      typeof window !== "undefined"
+        ? window.location.origin
+        : "http://localhost:3001";
+    const callback = `${origin}/api/auth/callback/google`;
+    return `Error de configuración OAuth (dev). Revisa: (1) en Google Cloud Console, URI autorizado ${callback} para este Client ID; (2) GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET en .env.local; (3) que NEXTAUTH_URL y AUTH_URL coincidan con ese mismo origen (p. ej. http://localhost:3001); (4) TLS local (proxy corporativo). El aviso de fuente perplexity.ai en consola es de una extensión del navegador.`;
+  }, []);
 
   if (!errorParam) {
     return null;
@@ -28,7 +38,9 @@ export function AuthError({ error: errorProp }: AuthErrorProps) {
     TenantMismatch:
       "Estás intentando acceder a un tenant diferente. Por favor, inicia sesión con el tenant correcto.",
     Configuration:
-      "Error de configuración. Por favor, contacta al administrador.",
+      process.env.NODE_ENV === "development"
+        ? configurationDevHint
+        : "Error de configuración. Por favor, contacta al administrador.",
     AccessDenied:
       "Acceso denegado. No tienes permisos para realizar esta acción.",
     Verification: "Error de verificación. El enlace podría haber expirado.",

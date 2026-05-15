@@ -12,7 +12,7 @@ export function BudgetManagerClient({ tenantId }: BudgetManagerClientProps) {
   const handleCreateBudget = async () => {
     try {
       // Simulate budget creation
-      console.log("Creating budget for tenant:", tenantId);
+      console.warn("Creating budget for tenant:", tenantId);
       alert("Presupuesto creado exitosamente (simulación)");
     } catch (error) {
       console.error("Error creating budget:", error);

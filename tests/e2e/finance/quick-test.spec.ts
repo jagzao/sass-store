@@ -59,7 +59,9 @@ test.describe("Financial Management - Quick Tests", () => {
     // Check if we see categories page or still on login
     if (bodyText?.includes("Categorías de Transacciones")) {
       console.log("✅ SUCCESS: Categories page loaded!");
-      await expect(page.getByText("Categorías de Transacciones")).toBeVisible();
+      await expect(
+        page.getByRole("heading", { name: "Categorías de Transacciones" }),
+      ).toBeVisible();
     } else if (
       bodyText?.includes("Inicia sesión") ||
       bodyText?.includes("login")
@@ -103,7 +105,9 @@ test.describe("Financial Management - Quick Tests", () => {
     const bodyText = await page.locator("body").textContent();
     if (bodyText?.includes("Presupuestos")) {
       console.log("✅ Budgets page loaded!");
-      await expect(page.getByText("Presupuestos")).toBeVisible();
+      await expect(
+        page.getByRole("heading", { name: "Presupuestos" }),
+      ).toBeVisible();
     } else {
       await page.screenshot({
         path: "test-results/budgets-failed.png",

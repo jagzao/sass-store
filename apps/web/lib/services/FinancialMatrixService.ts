@@ -5,17 +5,14 @@ import {
   tenants,
   transactionCategories,
 } from "@sass-store/database/schema";
+import { and, asc, eq, gte, inArray, isNull, lte, or } from "drizzle-orm";
 import {
-  and,
-  asc,
-  eq,
-  gte,
-  inArray,
-  isNull,
-  lte,
-  or,
-} from "drizzle-orm";
-import { Result, Ok, Err, fromPromise, isFailure } from "@sass-store/core/src/result";
+  Result,
+  Ok,
+  Err,
+  fromPromise,
+  isFailure,
+} from "@sass-store/core/src/result";
 import { DomainError, ErrorFactories } from "@sass-store/core/src/errors/types";
 import {
   DateBucket,
@@ -193,7 +190,9 @@ interface MovementRow {
 
 export interface FinancialMatrixRepository {
   getTenantById(tenantId: string): Promise<Result<TenantRow, DomainError>>;
-  getCategoryById(categoryId: string): Promise<Result<CategoryRow, DomainError>>;
+  getCategoryById(
+    categoryId: string,
+  ): Promise<Result<CategoryRow, DomainError>>;
   listCategories(tenantId: string): Promise<Result<CategoryRow[], DomainError>>;
   listPlanningCells(params: {
     tenantId: string;
@@ -306,7 +305,9 @@ const parseMonthBucketId = (
   return Ok({ year, month });
 };
 
-const buildMonthRange = (bucketId: string): Result<{ start: string; end: string }, DomainError> => {
+const buildMonthRange = (
+  bucketId: string,
+): Result<{ start: string; end: string }, DomainError> => {
   const parsed = parseMonthBucketId(bucketId);
   if (isFailure(parsed)) {
     return parsed;
@@ -320,9 +321,15 @@ const buildMonthRange = (bucketId: string): Result<{ start: string; end: string 
 };
 
 class DbFinancialMatrixRepository implements FinancialMatrixRepository {
-  async getTenantById(tenantId: string): Promise<Result<TenantRow, DomainError>> {
+  async getTenantById(
+    tenantId: string,
+  ): Promise<Result<TenantRow, DomainError>> {
     const tenantResult = await fromPromise(
-      db.select({ id: tenants.id, timezone: tenants.timezone }).from(tenants).where(eq(tenants.id, tenantId)).limit(1),
+      db
+        .select({ id: tenants.id, timezone: tenants.timezone })
+        .from(tenants)
+        .where(eq(tenants.id, tenantId))
+        .limit(1),
       (error) =>
         ErrorFactories.database(
           "get_tenant_by_id",
@@ -343,7 +350,9 @@ class DbFinancialMatrixRepository implements FinancialMatrixRepository {
     return Ok(tenantResult.data[0]);
   }
 
-  async getCategoryById(categoryId: string): Promise<Result<CategoryRow, DomainError>> {
+  async getCategoryById(
+    categoryId: string,
+  ): Promise<Result<CategoryRow, DomainError>> {
     const categoryResult = await fromPromise(
       db
         .select({
@@ -379,7 +388,9 @@ class DbFinancialMatrixRepository implements FinancialMatrixRepository {
     return Ok(categoryResult.data[0]);
   }
 
-  async listCategories(tenantId: string): Promise<Result<CategoryRow[], DomainError>> {
+  async listCategories(
+    tenantId: string,
+  ): Promise<Result<CategoryRow[], DomainError>> {
     return fromPromise(
       withTenantContext(db, tenantId, null, async (tx) =>
         tx
@@ -395,7 +406,10 @@ class DbFinancialMatrixRepository implements FinancialMatrixRepository {
           })
           .from(transactionCategories)
           .where(eq(transactionCategories.tenantId, tenantId))
-          .orderBy(asc(transactionCategories.sortOrder), asc(transactionCategories.name)),
+          .orderBy(
+            asc(transactionCategories.sortOrder),
+            asc(transactionCategories.name),
+          ),
       ),
       (error) =>
         ErrorFactories.database(
@@ -766,7 +780,9 @@ class DbFinancialMatrixRepository implements FinancialMatrixRepository {
     ];
 
     if (params.categoryIds && params.categoryIds.length > 0) {
-      filters.push(inArray(financialPlanningCells.categoryId, params.categoryIds));
+      filters.push(
+        inArray(financialPlanningCells.categoryId, params.categoryIds),
+      );
     }
 
     return fromPromise(
@@ -807,7 +823,9 @@ export class FinancialMatrixService {
     private readonly bucketService: DateBucketService = dateBucketService,
   ) {}
 
-  async getMatrixData(params: MatrixLoadParams): Promise<Result<MatrixData, DomainError>> {
+  async getMatrixData(
+    params: MatrixLoadParams,
+  ): Promise<Result<MatrixData, DomainError>> {
     const start = asDateOnly(params.startDate);
     const end = asDateOnly(params.endDate);
 
@@ -829,7 +847,9 @@ export class FinancialMatrixService {
       return bucketsResult;
     }
 
-    const categoriesResult = await this.repository.listCategories(params.tenantId);
+    const categoriesResult = await this.repository.listCategories(
+      params.tenantId,
+    );
     if (isFailure(categoriesResult)) {
       return categoriesResult;
     }
@@ -856,18 +876,22 @@ export class FinancialMatrixService {
     }
 
     const bucketIds = new Set(bucketsResult.data.map((bucket) => bucket.id));
-    const categories = categoriesResult.data.map<MatrixCategory>((category) => ({
-      id: category.id,
-      type: category.type === "income" ? "income" : "expense",
-      name: category.name,
-      color: category.color,
-      icon: category.icon,
-      parentId: category.parentId,
-      sortOrder: category.sortOrder ?? 0,
-      isGroup: false,
-    }));
+    const categories = categoriesResult.data.map<MatrixCategory>(
+      (category) => ({
+        id: category.id,
+        type: category.type === "income" ? "income" : "expense",
+        name: category.name,
+        color: category.color,
+        icon: category.icon,
+        parentId: category.parentId,
+        sortOrder: category.sortOrder ?? 0,
+        isGroup: false,
+      }),
+    );
 
-    const categoryTypeMap = new Map(categories.map((category) => [category.id, category.type]));
+    const categoryTypeMap = new Map(
+      categories.map((category) => [category.id, category.type]),
+    );
 
     const cellMap = new Map<string, MatrixCell>();
 
@@ -920,7 +944,8 @@ export class FinancialMatrixService {
       const key = `${movement.categoryId}::${bucketId}`;
       const existing = cellMap.get(key);
       if (existing) {
-        const nextReal = toNumber(existing.realAmount) + toNumber(movement.amount);
+        const nextReal =
+          toNumber(existing.realAmount) + toNumber(movement.amount);
         cellMap.set(key, {
           ...existing,
           realAmount: asMoney(nextReal),
@@ -948,7 +973,8 @@ export class FinancialMatrixService {
 
       const projected = toNumber(cell.projectedAmount);
       const real = toNumber(cell.realAmount);
-      const isOverBudget = categoryType === "expense" ? real > projected && projected > 0 : false;
+      const isOverBudget =
+        categoryType === "expense" ? real > projected && projected > 0 : false;
       cellMap.set(key, { ...cell, isOverBudget });
     }
 
@@ -1010,7 +1036,9 @@ export class FinancialMatrixService {
       return Err(ErrorFactories.invalidDateRange(rangeStart, rangeEnd));
     }
 
-    const categoryResult = await this.repository.getCategoryById(input.categoryId);
+    const categoryResult = await this.repository.getCategoryById(
+      input.categoryId,
+    );
     if (isFailure(categoryResult)) {
       return categoryResult;
     }
@@ -1127,8 +1155,12 @@ export class FinancialMatrixService {
     });
   }
 
-  async markAsPaid(input: MarkPaidInput): Promise<Result<MarkPaidOutput, DomainError>> {
-    const categoryResult = await this.repository.getCategoryById(input.categoryId);
+  async markAsPaid(
+    input: MarkPaidInput,
+  ): Promise<Result<MarkPaidOutput, DomainError>> {
+    const categoryResult = await this.repository.getCategoryById(
+      input.categoryId,
+    );
     if (isFailure(categoryResult)) {
       return categoryResult;
     }

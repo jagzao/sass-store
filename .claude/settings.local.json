@@ -2,7 +2,12 @@
   "permissions": {
     "allow": [
       "Bash(npm cache clean:*)",
-      "Bash(npm ci:*)"
+      "Bash(npm ci:*)",
+      "mcp__claude_ai_Supabase__list_projects",
+      "mcp__claude_ai_Supabase__apply_migration",
+      "PowerShell(Get-Process *)",
+      "PowerShell(npx playwright test tests/e2e/crawl/internal-link-smoke.spec.ts --project=chromium --grep \"link-crawl|plan-robusto\" --workers=1)",
+      "PowerShell(node scripts/start-e2e-server.js)"
     ],
     "deny": [],
     "ask": []

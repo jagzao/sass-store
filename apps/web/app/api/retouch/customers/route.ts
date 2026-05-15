@@ -21,11 +21,11 @@ export async function GET(request: NextRequest) {
       offset,
     );
 
-    if (result.isErr) {
+    if (!result.success) {
       return NextResponse.json({ error: result.error }, { status: 500 });
     }
 
-    return NextResponse.json({ success: true, data: result.value });
+    return NextResponse.json({ success: true, data: result.data });
   } catch (error) {
     console.error("Error in GET /api/retouch/customers:", error);
     return NextResponse.json(

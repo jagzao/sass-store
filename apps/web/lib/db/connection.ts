@@ -96,7 +96,7 @@ const createMockDb = () => {
 
 // Initialize PostgreSQL connection
 // TEMPORARY FIX: Override cached env var with correct hostname and username
-let connectionString = process.env.DATABASE_URL;
+const connectionString = process.env.DATABASE_URL;
 
 // Removed broken Supabase pooler connection override that corrupted DNS resolution
 
@@ -126,9 +126,12 @@ export async function checkDatabaseConnection(): Promise<boolean> {
   }
 
   try {
+    const checkLocalhost =
+      connectionString.includes("localhost") ||
+      connectionString.includes("127.0.0.1");
     const client = postgres(connectionString, {
       prepare: false,
-      ssl: "require",
+      ssl: checkLocalhost ? false : "require",
       max: 1,
       idle_timeout: 10,
       connect_timeout: 5,
@@ -156,14 +159,17 @@ function createDatabaseInstance() {
 
   try {
     // Extract hostname for debugging (only in development)
+    const url = new URL(connectionString.replace("postgresql://", "http://"));
     if (process.env.NODE_ENV === "development") {
-      const url = new URL(connectionString.replace("postgresql://", "http://"));
-      console.log("[DB] Connecting to host:", url.hostname);
+      console.warn("[DB] Connecting to host:", url.hostname);
     }
+
+    const isLocalhost =
+      url.hostname === "localhost" || url.hostname === "127.0.0.1";
 
     const client = postgres(connectionString, {
       prepare: false,
-      ssl: "require",
+      ssl: isLocalhost ? false : "require",
       max: connectionConfig.maxConnections,
       idle_timeout: connectionConfig.idleTimeout,
       connect_timeout: 30,
@@ -183,7 +189,7 @@ function createDatabaseInstance() {
 
 // FORCE INVALIDATE CACHE - hostname was corrected
 if (globalThis.__webDbConnectionString?.includes("pooler.supabase.com")) {
-  console.log("[DB] FORCE INVALIDATING - pooler connection detected in cache");
+  console.warn("[DB] FORCE INVALIDATING - pooler connection detected in cache");
   globalThis.__webDbInstance = undefined;
   globalThis.__webDbConnectionString = undefined;
 }
@@ -193,7 +199,7 @@ if (
   globalThis.__webDbConnectionString &&
   globalThis.__webDbConnectionString !== connectionString
 ) {
-  console.log("[DB] Connection string changed, invalidating web db cache");
+  console.warn("[DB] Connection string changed, invalidating web db cache");
   globalThis.__webDbInstance = undefined;
 }
 

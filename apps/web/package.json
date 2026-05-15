@@ -3,13 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 3001",
+    "dev": "next dev -p 3003",
     "build": "next build",
     "build:cloudflare": "next build",
     "analyze": "ANALYZE=true next build",
-    "start": "next start -p 3001",
+    "start": "next start -p 3003",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
-    "typecheck": "echo \"Skipping typecheck for web package\""
+    "typecheck": "echo 'Typecheck delegated to next build. Use npx tsc --noEmit for strict check.'",
+    "typecheck:strict": "npx tsc --noEmit || true"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.948.0",

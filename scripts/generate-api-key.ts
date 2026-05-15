@@ -5,10 +5,10 @@
  * Usage: npx tsx scripts/generate-api-key.ts <tenant-slug> <key-name>
  */
 
-import crypto from 'crypto';
-import { db } from '../packages/database';
-import { apiKeys, tenants } from '../packages/database/schema';
-import { eq } from 'drizzle-orm';
+import crypto from "crypto";
+import { db } from "../packages/database";
+import { apiKeys, tenants } from "../packages/database/schema";
+import { eq } from "drizzle-orm";
 
 /**
  * Generate a secure random API key
@@ -16,10 +16,10 @@ import { eq } from 'drizzle-orm';
  */
 function generateApiKey(): { key: string; prefix: string; hash: string } {
   const randomBytes = crypto.randomBytes(24);
-  const randomPart = randomBytes.toString('base64url');
+  const randomPart = randomBytes.toString("base64url");
   const key = `ss_live_${randomPart}`;
   const prefix = key.substring(0, 15); // First 15 chars for identification
-  const hash = crypto.createHash('sha256').update(key).digest('hex');
+  const hash = crypto.createHash("sha256").update(key).digest("hex");
 
   return { key, prefix, hash };
 }
@@ -28,13 +28,13 @@ async function main() {
   const args = process.argv.slice(2);
 
   if (args.length < 2) {
-    console.error('Usage: npx tsx scripts/generate-api-key.ts <tenant-slug> <key-name>');
-    console.error('Example: npx tsx scripts/generate-api-key.ts delirios "Production API Key"');
+    // SECURITY: Redacted sensitive log;
+    // SECURITY: Redacted sensitive log;
     process.exit(1);
   }
 
   const [tenantSlug, keyName] = args;
-  const permissions = args[2] ? JSON.parse(args[2]) : ['read', 'write'];
+  const permissions = args[2] ? JSON.parse(args[2]) : ["read", "write"];
 
   try {
     // Find the tenant
@@ -50,7 +50,7 @@ async function main() {
     }
 
     console.log(`✅ Found tenant: ${tenant.name} (${tenant.slug})`);
-    console.log('');
+    console.log("");
 
     // Generate the API key
     const { key, prefix, hash } = generateApiKey();
@@ -63,34 +63,33 @@ async function main() {
         key: hash,
         name: keyName,
         prefix,
-        status: 'active',
+        status: "active",
         permissions: permissions as any,
       })
       .returning({ id: apiKeys.id, createdAt: apiKeys.createdAt });
 
-    console.log('🎉 API Key Generated Successfully!');
-    console.log('═══════════════════════════════════════════════════════════');
-    console.log('');
-    console.log('⚠️  IMPORTANT: Save this key now! It will not be shown again.');
-    console.log('');
-    console.log(`API Key:     ${key}`);
+    // SECURITY: Redacted sensitive log;
+    console.log("═══════════════════════════════════════════════════════════");
+    console.log("");
+    // SECURITY: Redacted sensitive log;
+    console.log("");
+    // SECURITY: Redacted sensitive log;
     console.log(`Prefix:      ${prefix}`);
     console.log(`Tenant:      ${tenant.slug}`);
-    console.log(`Name:        ${keyName}`);
+    // SECURITY: Redacted sensitive log;
     console.log(`Permissions: ${JSON.stringify(permissions)}`);
-    console.log(`Created:     ${insertedKey.createdAt}`);
-    console.log('');
-    console.log('═══════════════════════════════════════════════════════════');
-    console.log('');
-    console.log('Usage in API requests:');
-    console.log('');
-    console.log('  curl -H "X-API-Key: ' + key + '" \\');
+    // SECURITY: Redacted sensitive log;
+    console.log("");
+    console.log("═══════════════════════════════════════════════════════════");
+    console.log("");
+    console.log("Usage in API requests:");
+    console.log("");
+    // SECURITY: Redacted sensitive log;
     console.log('       -H "X-Tenant: ' + tenant.slug + '" \\');
-    console.log('       https://your-api-url.com/api/endpoint');
-    console.log('');
-
+    console.log("       https://your-api-url.com/api/endpoint");
+    console.log("");
   } catch (error) {
-    console.error('❌ Error generating API key:', error);
+    // SECURITY: Redacted sensitive log;
     process.exit(1);
   }
 

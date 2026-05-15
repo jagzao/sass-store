@@ -21,7 +21,11 @@ export interface ReviewFormData {
   comment?: string;
 }
 
-export function ReviewForm({ productId, onSubmit, isLoading }: ReviewFormProps) {
+export function ReviewForm({
+  productId,
+  onSubmit,
+  isLoading,
+}: ReviewFormProps) {
   const [rating, setRating] = React.useState(0);
   const [hoverRating, setHoverRating] = React.useState(0);
   const [formData, setFormData] = React.useState<Partial<ReviewFormData>>({
@@ -59,9 +63,7 @@ export function ReviewForm({ productId, onSubmit, isLoading }: ReviewFormProps) 
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium mb-2">
-            Rating *
-          </label>
+          <label className="block text-sm font-medium mb-2">Rating *</label>
           <div className="flex gap-1">
             {Array.from({ length: 5 }).map((_, i) => (
               <button

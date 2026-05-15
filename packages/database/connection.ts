@@ -16,7 +16,7 @@ if (!connectionString || connectionString === "your-database-url-here") {
 // Singleton pattern to prevent connection pool exhaustion
 // CRITICAL: Supabase free tier has only 3-5 connection limit
 declare global {
-  var __db: ReturnType<typeof drizzle> | undefined;
+  var __db: Database | undefined;
 
   var __client: postgres.Sql | undefined;
 
@@ -35,12 +35,43 @@ if (
 }
 
 // Types
-export type Database = ReturnType<typeof drizzle>;
+export type Database = ReturnType<typeof drizzle<typeof schema>>;
 
 // Helper to determine if we're in a test environment
 const isTestEnv = process.env.NODE_ENV === "test";
 const isLocalhost =
   process.env.NODE_ENV === "development" || process.env.NODE_ENV === "test";
+
+/**
+ * Supabase, Neon, RDS, etc. require TLS even when NODE_ENV is development.
+ * Only skip TLS for real loopback hosts (or explicit sslmode=disable).
+ */
+function inferSslForConnectionString(urlStr: string): false | "require" {
+  const trimmed = urlStr.trim();
+  if (!trimmed) {
+    return "require";
+  }
+
+  try {
+    const parsed = new URL(trimmed.replace(/^postgres(ql)?:/i, "http:"));
+    const host = parsed.hostname.toLowerCase();
+    const sslmode = parsed.searchParams.get("sslmode")?.toLowerCase();
+    if (sslmode === "disable") {
+      return false;
+    }
+    if (
+      host === "localhost" ||
+      host === "127.0.0.1" ||
+      host === "::1" ||
+      host.endsWith(".local")
+    ) {
+      return false;
+    }
+    return "require";
+  } catch {
+    return "require";
+  }
+}
 
 // Helper function to safely get connection string
 function getConnectionString(): string {
@@ -82,14 +113,24 @@ function getClient() {
 
   console.log(`🔌 Initializing Lazy DB Connection...`);
 
+  const useSsl = inferSslForConnectionString(connectionString);
+
   _client = postgres(connectionString, {
     prepare: false,
-    ssl: isLocalhost ? false : "require", // Only use SSL for remote connections
+    ssl: useSsl,
     // Optimized for Serverless:
-    max: isTestEnv ? 15 : isLocalhost ? 10 : 1, // Strict limit for production
-    idle_timeout: 10, // Close idle connections faster
-    connect_timeout: 5, // Fail fast (5s) to avoid 10s wait
-    max_lifetime: 60 * 5, // 5 minutes max life
+    // E2E mode needs higher max to avoid pool exhaustion during warmup
+    max:
+      process.env.E2E_SEED_ENABLED === "true"
+        ? 10
+        : isTestEnv
+          ? 15
+          : isLocalhost
+            ? 10
+            : 1, // Strict limit for production serverless
+    idle_timeout: process.env.E2E_SEED_ENABLED === "true" ? 30 : 10, // Keep connections alive longer in E2E
+    connect_timeout: process.env.E2E_SEED_ENABLED === "true" ? 15 : 5, // Fail fast (5s) to avoid 10s wait
+    max_lifetime: process.env.E2E_SEED_ENABLED === "true" ? 60 * 30 : 60 * 5, // 30 min max life in E2E
     keep_alive: null, // Allow serverless freeze
     fetch_types: false, // Performance
     connection: {
@@ -128,8 +169,8 @@ function getDb() {
 
 export const db = getDb();
 
-// Store connection string globally
-globalThis.__connectionString = connectionString;
+// Store connection string globally (same source as getClient(), not module bootstrap default)
+globalThis.__connectionString = getConnectionString() || connectionString;
 
 // Connection pool configuration for optimal cost management
 export const connectionConfig = {
@@ -163,7 +204,7 @@ export function getDatabaseDebugInfo() {
     isSupabase,
     isPooler,
     maskedUrl,
-    ssl: isLocalhost ? false : "require",
+    ssl: inferSslForConnectionString(url),
     maxConnections: isTestEnv ? 15 : isLocalhost ? 10 : 1,
   };
 }

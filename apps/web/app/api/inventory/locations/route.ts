@@ -53,10 +53,11 @@ export async function GET(request: NextRequest) {
       Object.fromEntries(request.nextUrl.searchParams),
     );
 
-    const locationsResult = await getInventoryConfigArray<InventoryLocationEntity>(
-      tenantContext.data.tenantId,
-      "locations",
-    );
+    const locationsResult =
+      await getInventoryConfigArray<InventoryLocationEntity>(
+        tenantContext.data.tenantId,
+        "locations",
+      );
 
     if (!locationsResult.success) {
       return toInventoryErrorResponse(locationsResult.error);
@@ -102,10 +103,11 @@ export async function POST(request: NextRequest) {
 
     const payload = createLocationSchema.parse(await request.json());
 
-    const locationsResult = await getInventoryConfigArray<InventoryLocationEntity>(
-      tenantContext.data.tenantId,
-      "locations",
-    );
+    const locationsResult =
+      await getInventoryConfigArray<InventoryLocationEntity>(
+        tenantContext.data.tenantId,
+        "locations",
+      );
 
     if (!locationsResult.success) {
       return toInventoryErrorResponse(locationsResult.error);
@@ -113,7 +115,8 @@ export async function POST(request: NextRequest) {
 
     const duplicatedCode = locationsResult.data.some(
       (location) =>
-        location.code.toLowerCase().trim() === payload.code.toLowerCase().trim(),
+        location.code.toLowerCase().trim() ===
+        payload.code.toLowerCase().trim(),
     );
 
     if (duplicatedCode) {
@@ -170,4 +173,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-

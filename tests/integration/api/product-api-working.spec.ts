@@ -38,7 +38,8 @@ describe("Product API Integration - Working Version", () => {
       });
 
       invalidSKUs.forEach((sku) => {
-        const isInvalid = sku.length === 0 || sku !== sku.trim();
+        const isInvalid =
+          sku.length === 0 || sku !== sku.trim() || /\s/.test(sku);
         expect(isInvalid).toBe(true);
       });
     });

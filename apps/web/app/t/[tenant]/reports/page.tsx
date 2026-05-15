@@ -474,11 +474,11 @@ export default function ReportsPage() {
                             {sale.paymentMethod?.paymentMethod || "N/A"}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-green-600">
-                            {formatCurrency(parseFloat(sale.total))}
+                            {formatCurrency(parseFloat(sale.total ?? "0"))}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                             {format(
-                              new Date(sale.createdAt),
+                              new Date(sale.createdAt ?? new Date()),
                               "dd/MM/yyyy HH:mm",
                               { locale: es },
                             )}
@@ -604,18 +604,18 @@ export default function ReportsPage() {
                             {product.category}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            {formatCurrency(parseFloat(product.price))}
+                            {formatCurrency(parseFloat(product.price ?? "0"))}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-blue-600">
                             {product.totalSold || 0}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-green-600">
                             {formatCurrency(
-                              parseFloat(product.totalRevenue || 0),
+                              parseFloat((product as any).totalRevenue || 0),
                             )}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            {product.orderCount || 0}
+                            {(product as any).orderCount || 0}
                           </td>
                         </tr>
                       ))}

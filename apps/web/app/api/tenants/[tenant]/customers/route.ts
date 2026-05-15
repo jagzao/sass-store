@@ -48,7 +48,10 @@ export async function POST(
       .limit(1);
 
     if (!tenant) {
-      return NextResponse.json({ error: "Tenant not found" }, { status: 404, headers: NO_CACHE_HEADERS });
+      return NextResponse.json(
+        { error: "Tenant not found" },
+        { status: 404, headers: NO_CACHE_HEADERS },
+      );
     }
 
     // Parse and validate request body
@@ -69,13 +72,16 @@ export async function POST(
         status: data.status || "active",
         birthday: data.birthday ? new Date(data.birthday).toISOString() : null,
         medicalHistory: data.medicalHistory || null,
-      })
+      } as any)
       .returning();
 
     // Apply rate limiting headers
     const rateLimitResult = await applyRateLimit(request, "customers");
     if (rateLimitResult) {
-      const headers = { ...createRateLimitHeaders(rateLimitResult), ...NO_CACHE_HEADERS };
+      const headers = {
+        ...createRateLimitHeaders(rateLimitResult as any),
+        ...NO_CACHE_HEADERS,
+      };
       return NextResponse.json(
         { customer: newCustomer },
         {
@@ -85,7 +91,10 @@ export async function POST(
       );
     }
 
-    return NextResponse.json({ customer: newCustomer }, { status: 201, headers: NO_CACHE_HEADERS });
+    return NextResponse.json(
+      { customer: newCustomer },
+      { status: 201, headers: NO_CACHE_HEADERS },
+    );
   } catch (error) {
     console.error("Customers POST error:", error);
 
@@ -129,14 +138,22 @@ export async function GET(
       .limit(1);
 
     if (!tenant) {
-      return NextResponse.json({ error: "Tenant not found" }, { status: 404, headers: NO_CACHE_HEADERS });
+      return NextResponse.json(
+        { error: "Tenant not found" },
+        { status: 404, headers: NO_CACHE_HEADERS },
+      );
     }
 
     // Define calculated fields for reuse in selection and sorting
-    const totalSpentSql = sql<number>`COALESCE(SUM(${customerVisits.totalAmount}), 0)`.mapWith(Number);
-    const visitCountSql = sql<number>`COUNT(${customerVisits.id})`.mapWith(Number);
+    const totalSpentSql =
+      sql<number>`COALESCE(SUM(${customerVisits.totalAmount}), 0)`.mapWith(
+        Number,
+      );
+    const visitCountSql = sql<number>`COUNT(${customerVisits.id})`.mapWith(
+      Number,
+    );
     const lastVisitSql = sql<string>`MAX(${customerVisits.visitDate})`;
-    
+
     // Subquery for next appointment: earliest booking in the future that is not cancelled
     const nextAppointmentSql = sql<string>`(
       SELECT MIN(start_time)
@@ -149,7 +166,7 @@ export async function GET(
     // Define estimated next appointment for sorting (Last Visit + 15 days)
     // Adding interval to date/timestamp in SQL
     const estimatedNextAppointmentSql = sql<string>`(${lastVisitSql} + INTERVAL '15 days')`;
-    
+
     // Effective Next Appointment: Use real appointment if exists, otherwise use estimated
     const effectiveNextAppointmentSql = sql<string>`COALESCE(${nextAppointmentSql}, ${estimatedNextAppointmentSql})`;
 
@@ -163,7 +180,7 @@ export async function GET(
           ilike(customers.name, `%${search}%`),
           ilike(customers.phone, `%${search}%`),
           ilike(customers.email, `%${search}%`),
-        )!
+        )!,
       );
     }
 
@@ -173,7 +190,7 @@ export async function GET(
     }
 
     // Build the query with all WHERE conditions combined using AND
-    let query = db
+    const query = db
       .select({
         id: customers.id,
         name: customers.name,
@@ -217,8 +234,8 @@ export async function GET(
       case "lastVisit":
         // Sort by last visit, handling nulls (customers with no visits)
         // PostgreSQL: NULLS LAST / NULLS FIRST
-        // Drizzle might not support nullsLast() directly on sql chunks in all versions, 
-        // but typically desc puts nulls first by default in some DBs, last in others. 
+        // Drizzle might not support nullsLast() directly on sql chunks in all versions,
+        // but typically desc puts nulls first by default in some DBs, last in others.
         // We'll trust the default for now or refine if needed.
         orderByClause = direction(lastVisitSql);
         break;
@@ -249,7 +266,10 @@ export async function GET(
     // Apply rate limiting headers
     const rateLimitResult = await applyRateLimit(request, "customers");
     if (rateLimitResult) {
-      const headers = { ...createRateLimitHeaders(rateLimitResult), ...NO_CACHE_HEADERS };
+      const headers = {
+        ...createRateLimitHeaders(rateLimitResult as any),
+        ...NO_CACHE_HEADERS,
+      };
       return NextResponse.json(
         { customers: formattedCustomers },
         {
@@ -259,7 +279,10 @@ export async function GET(
       );
     }
 
-    return NextResponse.json({ customers: formattedCustomers }, { headers: NO_CACHE_HEADERS });
+    return NextResponse.json(
+      { customers: formattedCustomers },
+      { headers: NO_CACHE_HEADERS },
+    );
   } catch (error) {
     console.error("Customers GET error:", error);
     return NextResponse.json(

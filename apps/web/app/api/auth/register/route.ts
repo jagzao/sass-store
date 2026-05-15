@@ -11,11 +11,9 @@ const emailRegex =
 
 const registerSchema = z.object({
   name: z.string().min(2),
-  email: z
-    .string()
-    .regex(emailRegex, {
-      message: "El formato del correo electrónico es inválido",
-    }),
+  email: z.string().regex(emailRegex, {
+    message: "El formato del correo electrónico es inválido",
+  }),
   password: z.string().min(8),
   tenantSlug: z.string(),
   phone: z.string().optional(),

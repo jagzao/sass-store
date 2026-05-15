@@ -1,0 +1,585 @@
+[
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/",
+    "finalUrl": "http://localhost:3002/t/centro-tenistico",
+    "status": "ok",
+    "title": "Centro TenÃ­stico Villafuerte - Professional tennis training and court rental",
+    "consoleErrors": ["Failed to load Stripe.js"],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__.png",
+    "loadTimeMs": 983
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/services",
+    "finalUrl": "http://localhost:3002/t/centro-tenistico/services",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [
+      "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "Failed to load Stripe.js"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__services.png",
+    "loadTimeMs": 768
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/products",
+    "finalUrl": "http://localhost:3002/t/centro-tenistico/products",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": ["Failed to load Stripe.js"],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__products.png",
+    "loadTimeMs": 720
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/book",
+    "finalUrl": "http://localhost:3002/t/centro-tenistico/book",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": ["Failed to load Stripe.js"],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__book.png",
+    "loadTimeMs": 803
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/contact",
+    "finalUrl": "http://localhost:3002/t/centro-tenistico/contact",
+    "status": "ok",
+    "title": "Contacto - Centro TenÃ­stico Villafuerte",
+    "consoleErrors": ["Failed to load Stripe.js"],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__contact.png",
+    "loadTimeMs": 699
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/login",
+    "finalUrl": "http://localhost:3002/t/centro-tenistico/login",
+    "status": "ok",
+    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
+    "consoleErrors": ["Failed to load Stripe.js"],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__login.png",
+    "loadTimeMs": 751
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/register",
+    "finalUrl": "http://localhost:3002/t/centro-tenistico/register",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": ["Failed to load Stripe.js"],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__register.png",
+    "loadTimeMs": 722
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/forgot-password",
+    "finalUrl": "http://localhost:3002/t/centro-tenistico/forgot-password",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": ["Failed to load Stripe.js"],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__forgot_password.png",
+    "loadTimeMs": 776
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/admin",
+    "finalUrl": "http://localhost:3002/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
+    "consoleErrors": [
+      "n: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at o (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:1:1008)\n    at async g (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:1:2650)\n    at async h._getSession (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:2:1633)",
+      "Failed to load Stripe.js"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__admin.png",
+    "loadTimeMs": 932
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/admin/calendar",
+    "finalUrl": "http://localhost:3002/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
+    "consoleErrors": [
+      "n: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at o (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:1:1008)\n    at async g (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:1:2650)\n    at async h._getSession (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:2:1633)",
+      "Failed to load Stripe.js"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__admin_calendar.png",
+    "loadTimeMs": 894
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/admin/products",
+    "finalUrl": "http://localhost:3002/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
+    "consoleErrors": ["Failed to load Stripe.js"],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__admin_products.png",
+    "loadTimeMs": 780
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/admin/content",
+    "finalUrl": "http://localhost:3002/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
+    "consoleErrors": [
+      "n: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at o (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:1:1008)\n    at async g (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:1:2650)\n    at async h._getSession (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:2:1633)",
+      "Failed to load Stripe.js"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__admin_content.png",
+    "loadTimeMs": 944
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/admin/quotes",
+    "finalUrl": "http://localhost:3002/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
+    "consoleErrors": [
+      "n: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at o (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:1:1008)\n    at async g (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:1:2650)\n    at async h._getSession (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:2:1633)",
+      "Failed to load Stripe.js"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__admin_quotes.png",
+    "loadTimeMs": 790
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/admin_services",
+    "finalUrl": "http://localhost:3002/t/centro-tenistico/login",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
+    "consoleErrors": ["Failed to load Stripe.js"],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__admin_services.png",
+    "loadTimeMs": 1065
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/admin_bookings",
+    "finalUrl": "http://localhost:3002/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
+    "consoleErrors": [
+      "n: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at o (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:1:1008)\n    at async g (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:1:2650)\n    at async h._getSession (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:2:1633)",
+      "Failed to load Stripe.js"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__admin_bookings.png",
+    "loadTimeMs": 849
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/admin_tenants",
+    "finalUrl": "http://localhost:3002/t/centro-tenistico",
+    "status": "ok",
+    "title": "Centro TenÃ­stico Villafuerte - Professional tennis training and court rental",
+    "consoleErrors": ["Failed to load Stripe.js"],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__admin_tenants.png",
+    "loadTimeMs": 944
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/admin_products",
+    "finalUrl": "http://localhost:3002/t/centro-tenistico/login",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
+    "consoleErrors": ["Failed to load Stripe.js"],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__admin_products.png",
+    "loadTimeMs": 792
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/pos",
+    "finalUrl": "http://localhost:3002/t/centro-tenistico/login",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
+    "consoleErrors": ["Failed to load Stripe.js"],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__pos.png",
+    "loadTimeMs": 760
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/reports",
+    "finalUrl": "http://localhost:3002/t/centro-tenistico/login",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
+    "consoleErrors": ["Failed to load Stripe.js"],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__reports.png",
+    "loadTimeMs": 773
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/finance",
+    "finalUrl": "http://localhost:3002/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
+    "consoleErrors": ["Failed to load Stripe.js"],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__finance.png",
+    "loadTimeMs": 859
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/finance/movements",
+    "finalUrl": "http://localhost:3002/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
+    "consoleErrors": ["Failed to load Stripe.js"],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__finance_movements.png",
+    "loadTimeMs": 911
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/finance/budgets",
+    "finalUrl": "http://localhost:3002/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
+    "consoleErrors": ["Failed to load Stripe.js"],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__finance_budgets.png",
+    "loadTimeMs": 830
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/finance/categories",
+    "finalUrl": "http://localhost:3002/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
+    "consoleErrors": [
+      "n: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at o (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:1:1008)\n    at async g (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:1:2650)\n    at async h._getSession (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:2:1633)",
+      "Failed to load Stripe.js"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__finance_categories.png",
+    "loadTimeMs": 835
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/inventory",
+    "finalUrl": "http://localhost:3002/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
+    "consoleErrors": ["Failed to load Stripe.js"],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__inventory.png",
+    "loadTimeMs": 872
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/inventory/supplies",
+    "finalUrl": "http://localhost:3002/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
+    "consoleErrors": ["Failed to load Stripe.js"],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__inventory_supplies.png",
+    "loadTimeMs": 1407
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/clientes",
+    "finalUrl": "http://localhost:3002/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
+    "consoleErrors": ["Failed to load Stripe.js"],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__clientes.png",
+    "loadTimeMs": 866
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/clientes/nueva",
+    "finalUrl": "http://localhost:3002/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
+    "consoleErrors": ["Failed to load Stripe.js"],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__clientes_nueva.png",
+    "loadTimeMs": 993
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/clientes/test",
+    "finalUrl": "http://localhost:3002/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
+    "consoleErrors": ["Failed to load Stripe.js"],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__clientes_test.png",
+    "loadTimeMs": 856
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/cart",
+    "finalUrl": "http://localhost:3002/t/centro-tenistico/cart",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": ["Failed to load Stripe.js"],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__cart.png",
+    "loadTimeMs": 763
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/checkout",
+    "finalUrl": "http://localhost:3002/t/centro-tenistico/checkout",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [
+      "Loading the script 'https://js.stripe.com/basil/stripe.js' violates the following Content Security Policy directive: \"script-src 'self' https://sdk.mercadopago.com https://secure.mlstatic.com https://challenges.cloudflare.com 'unsafe-inline'\". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback. The action has been blocked.",
+      "Failed to load Stripe.js"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__checkout.png",
+    "loadTimeMs": 808
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/checkout/success",
+    "finalUrl": "http://localhost:3002/t/centro-tenistico/checkout/success",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [
+      "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__checkout_success.png",
+    "loadTimeMs": 15185
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/orders",
+    "finalUrl": "http://localhost:3002/t/centro-tenistico/orders",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__orders.png",
+    "loadTimeMs": 1044
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/profile",
+    "finalUrl": "http://localhost:3002/t/centro-tenistico/login",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
+    "consoleErrors": [],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__profile.png",
+    "loadTimeMs": 894
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/account",
+    "finalUrl": "http://localhost:3002/t/centro-tenistico/account",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [
+      "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__account.png",
+    "loadTimeMs": 15140
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/settings/calendar",
+    "finalUrl": "http://localhost:3002/t/centro-tenistico/settings/calendar",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__settings_calendar.png",
+    "loadTimeMs": 752
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/config",
+    "finalUrl": "http://localhost:3002/t/centro-tenistico/login",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
+    "consoleErrors": [],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__config.png",
+    "loadTimeMs": 792
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/favorites",
+    "finalUrl": "http://localhost:3002/t/centro-tenistico/favorites",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [
+      "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__favorites.png",
+    "loadTimeMs": 15206
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/social",
+    "finalUrl": "http://localhost:3002/t/centro-tenistico/social",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__social.png",
+    "loadTimeMs": 914
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/retouch",
+    "finalUrl": "http://localhost:3002/t/centro-tenistico/retouch",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__retouch.png",
+    "loadTimeMs": 813
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/reorder",
+    "finalUrl": "http://localhost:3002/t/centro-tenistico/reorder",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__reorder.png",
+    "loadTimeMs": 803
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/booking",
+    "finalUrl": "http://localhost:3002/t/centro-tenistico/services",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [
+      "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__booking.png",
+    "loadTimeMs": 939
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/booking/test-booking-123",
+    "finalUrl": "http://localhost:3002/t/centro-tenistico/booking/test-booking-123",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__booking_test_booking_123.png",
+    "loadTimeMs": 794
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/booking/nonexistent",
+    "finalUrl": "http://localhost:3002/t/centro-tenistico/booking/nonexistent",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__booking_nonexistent.png",
+    "loadTimeMs": 820
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/clientes/test-client-123",
+    "finalUrl": "http://localhost:3002/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
+    "consoleErrors": [
+      "n: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at o (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:1:1008)\n    at async g (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:1:2650)\n    at async h._getSession (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:2:1633)"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__clientes_test_client_123.png",
+    "loadTimeMs": 1258
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/clientes/nonexistent",
+    "finalUrl": "http://localhost:3002/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
+    "consoleErrors": [],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__clientes_nonexistent.png",
+    "loadTimeMs": 856
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/services/test-service-123/inventory",
+    "finalUrl": "http://localhost:3002/t/centro-tenistico/services/test-service-123/inventory",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__services_test_service_123_inventory.png",
+    "loadTimeMs": 664
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/services/nonexistent/inventory",
+    "finalUrl": "http://localhost:3002/t/centro-tenistico/services/nonexistent/inventory",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__services_nonexistent_inventory.png",
+    "loadTimeMs": 655
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/admin/quotes/test-quote-123",
+    "finalUrl": "http://localhost:3002/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
+    "consoleErrors": [],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__admin_quotes_test_quote_123.png",
+    "loadTimeMs": 924
+  },
+  {
+    "tenant": "centro-tenistico",
+    "url": "/t/centro-tenistico/admin/quotes/nonexistent",
+    "finalUrl": "http://localhost:3002/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
+    "consoleErrors": [],
+    "visibleErrors": [],
+    "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__admin_quotes_nonexistent.png",
+    "loadTimeMs": 787
+  }
+]

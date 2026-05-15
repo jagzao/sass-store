@@ -61,7 +61,11 @@ export const setInventoryConfigArray = async <T>(
         updatedAt: now,
       })
       .onConflictDoUpdate({
-        target: [tenantConfigs.tenantId, tenantConfigs.category, tenantConfigs.key],
+        target: [
+          tenantConfigs.tenantId,
+          tenantConfigs.category,
+          tenantConfigs.key,
+        ],
         set: {
           value: data,
           updatedAt: now,
@@ -82,4 +86,3 @@ export const setInventoryConfigArray = async <T>(
 
   return Ok(data);
 };
-

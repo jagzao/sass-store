@@ -32,10 +32,12 @@ export default async function AdminDashboardPage({ params }: PageProps) {
     customers: 23,
   };
 
-  const isLuxury = resolvedParams.tenant === 'wondernails';
+  const isLuxury = resolvedParams.tenant === "wondernails";
 
   return (
-    <div className={`min-h-screen ${isLuxury ? 'bg-[#121212] text-white' : 'bg-gray-50'}`}>
+    <div
+      className={`min-h-screen ${isLuxury ? "bg-[#121212] text-white" : "bg-gray-50"}`}
+    >
       {/* Top Navigation */}
       <TopNav
         tenantInfo={{
@@ -51,14 +53,20 @@ export default async function AdminDashboardPage({ params }: PageProps) {
           <div className="mb-8">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className={`text-3xl font-bold ${isLuxury ? 'text-[#D4AF37] font-serif' : 'text-gray-900'}`}>
+                <h1
+                  className={`text-3xl font-bold ${isLuxury ? "text-[#D4AF37] font-serif" : "text-gray-900"}`}
+                >
                   Panel de Administración
                 </h1>
-                <p className={`mt-2 ${isLuxury ? 'text-gray-400' : 'text-gray-600'}`}>
+                <p
+                  className={`mt-2 ${isLuxury ? "text-gray-400" : "text-gray-600"}`}
+                >
                   Gestiona tu negocio: {tenantData.name}
                 </p>
               </div>
-              <div className={`text-sm ${isLuxury ? 'text-gray-400' : 'text-gray-500'}`}>
+              <div
+                className={`text-sm ${isLuxury ? "text-gray-400" : "text-gray-500"}`}
+              >
                 Modo:{" "}
                 <span className="font-semibold capitalize">
                   {tenantData.mode}
@@ -69,52 +77,84 @@ export default async function AdminDashboardPage({ params }: PageProps) {
 
           {/* Quick Stats */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <div className={`${isLuxury ? 'bg-[#1a1a1a]/60 border border-[#D4AF37]/20 backdrop-blur-md' : 'bg-white shadow-md'} rounded-lg p-6`}>
+            <div
+              className={`${isLuxury ? "bg-[#1a1a1a]/60 border border-[#D4AF37]/20 backdrop-blur-md" : "bg-white shadow-md"} rounded-lg p-6`}
+            >
               <div className="flex items-center">
                 <div className="text-3xl mr-4">📦</div>
                 <div>
-                  <div className={`text-2xl font-bold ${isLuxury ? 'text-white' : 'text-gray-900'}`}>
+                  <div
+                    className={`text-2xl font-bold ${isLuxury ? "text-white" : "text-gray-900"}`}
+                  >
                     {stats.products}
                   </div>
-                  <div className={`text-sm ${isLuxury ? 'text-gray-400' : 'text-gray-600'}`}>Productos</div>
+                  <div
+                    className={`text-sm ${isLuxury ? "text-gray-400" : "text-gray-600"}`}
+                  >
+                    Productos
+                  </div>
                 </div>
               </div>
             </div>
 
             {tenantData.mode === "booking" && (
-              <div className={`${isLuxury ? 'bg-[#1a1a1a]/60 border border-[#D4AF37]/20 backdrop-blur-md' : 'bg-white shadow-md'} rounded-lg p-6`}>
+              <div
+                className={`${isLuxury ? "bg-[#1a1a1a]/60 border border-[#D4AF37]/20 backdrop-blur-md" : "bg-white shadow-md"} rounded-lg p-6`}
+              >
                 <div className="flex items-center">
                   <div className="text-3xl mr-4">📅</div>
                   <div>
-                    <div className={`text-2xl font-bold ${isLuxury ? 'text-white' : 'text-gray-900'}`}>
+                    <div
+                      className={`text-2xl font-bold ${isLuxury ? "text-white" : "text-gray-900"}`}
+                    >
                       {stats.services}
                     </div>
-                    <div className={`text-sm ${isLuxury ? 'text-gray-400' : 'text-gray-600'}`}>Servicios</div>
+                    <div
+                      className={`text-sm ${isLuxury ? "text-gray-400" : "text-gray-600"}`}
+                    >
+                      Servicios
+                    </div>
                   </div>
                 </div>
               </div>
             )}
 
-            <div className={`${isLuxury ? 'bg-[#1a1a1a]/60 border border-[#D4AF37]/20 backdrop-blur-md' : 'bg-white shadow-md'} rounded-lg p-6`}>
+            <div
+              className={`${isLuxury ? "bg-[#1a1a1a]/60 border border-[#D4AF37]/20 backdrop-blur-md" : "bg-white shadow-md"} rounded-lg p-6`}
+            >
               <div className="flex items-center">
                 <div className="text-3xl mr-4">💰</div>
                 <div>
-                  <div className={`text-2xl font-bold ${isLuxury ? 'text-[#D4AF37]' : 'text-green-600'}`}>
+                  <div
+                    className={`text-2xl font-bold ${isLuxury ? "text-[#D4AF37]" : "text-green-600"}`}
+                  >
                     ${stats.revenue}
                   </div>
-                  <div className={`text-sm ${isLuxury ? 'text-gray-400' : 'text-gray-600'}`}>Ingresos</div>
+                  <div
+                    className={`text-sm ${isLuxury ? "text-gray-400" : "text-gray-600"}`}
+                  >
+                    Ingresos
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div className={`${isLuxury ? 'bg-[#1a1a1a]/60 border border-[#D4AF37]/20 backdrop-blur-md' : 'bg-white shadow-md'} rounded-lg p-6`}>
+            <div
+              className={`${isLuxury ? "bg-[#1a1a1a]/60 border border-[#D4AF37]/20 backdrop-blur-md" : "bg-white shadow-md"} rounded-lg p-6`}
+            >
               <div className="flex items-center">
                 <div className="text-3xl mr-4">👥</div>
                 <div>
-                  <div className={`text-2xl font-bold ${isLuxury ? 'text-white' : 'text-blue-600'}`}>
+                  <div
+                    className={`text-2xl font-bold ${isLuxury ? "text-white" : "text-blue-600"}`}
+                  >
                     {stats.customers}
                   </div>
-                  <div className={`text-sm ${isLuxury ? 'text-gray-400' : 'text-gray-600'}`}>Clientes</div>
+                  <div
+                    className={`text-sm ${isLuxury ? "text-gray-400" : "text-gray-600"}`}
+                  >
+                    Clientes
+                  </div>
                 </div>
               </div>
             </div>
@@ -123,127 +163,169 @@ export default async function AdminDashboardPage({ params }: PageProps) {
           {/* Management Sections */}
           <div className="grid lg:grid-cols-2 xl:grid-cols-3 gap-8">
             {/* Product Management */}
-            <div className={`${isLuxury ? 'bg-[#1a1a1a]/60 border border-[#D4AF37]/20 backdrop-blur-md' : 'bg-white shadow-md'} rounded-lg p-6`}>
+            <div
+              className={`${isLuxury ? "bg-[#1a1a1a]/60 border border-[#D4AF37]/20 backdrop-blur-md" : "bg-white shadow-md"} rounded-lg p-6`}
+            >
               <div className="flex items-center justify-between mb-4">
-                <h2 className={`text-xl font-semibold ${isLuxury ? 'text-[#D4AF37] font-serif' : 'text-gray-900'}`}>
+                <h2
+                  className={`text-xl font-semibold ${isLuxury ? "text-[#D4AF37] font-serif" : "text-gray-900"}`}
+                >
                   Productos
                 </h2>
                 <a
                   href={`/t/${resolvedParams.tenant}/admin_products`}
-                  className={`${isLuxury ? 'text-[#D4AF37] hover:text-[#b3932d]' : 'text-indigo-600 hover:text-indigo-700'} text-sm font-medium`}
+                  className={`${isLuxury ? "text-[#D4AF37] hover:text-[#b3932d]" : "text-indigo-600 hover:text-indigo-700"} text-sm font-medium`}
                 >
                   Gestionar →
                 </a>
               </div>
 
               <div className="space-y-3">
-                <div className={`flex items-center justify-between p-3 border ${isLuxury ? 'border-[#D4AF37]/10 bg-[#121212]/50' : 'border-gray-200'} rounded-lg`}>
+                <div
+                  className={`flex items-center justify-between p-3 border ${isLuxury ? "border-[#D4AF37]/10 bg-[#121212]/50" : "border-gray-200"} rounded-lg`}
+                >
                   <div className="flex items-center">
                     <span className="text-2xl mr-3">📦</span>
                     <div>
                       <div className="font-medium">Crear Producto</div>
-                      <div className={`text-sm ${isLuxury ? 'text-gray-400' : 'text-gray-500'}`}>
+                      <div
+                        className={`text-sm ${isLuxury ? "text-gray-400" : "text-gray-500"}`}
+                      >
                         Añadir nuevo producto
                       </div>
                     </div>
                   </div>
-                  <button className={`${isLuxury ? 'text-[#D4AF37] hover:text-[#b3932d]' : 'text-indigo-600 hover:text-indigo-700'}`}>
+                  <button
+                    className={`${isLuxury ? "text-[#D4AF37] hover:text-[#b3932d]" : "text-indigo-600 hover:text-indigo-700"}`}
+                  >
                     +
                   </button>
                 </div>
 
-                <div className={`flex items-center justify-between p-3 border ${isLuxury ? 'border-[#D4AF37]/10 bg-[#121212]/50' : 'border-gray-200'} rounded-lg`}>
+                <div
+                  className={`flex items-center justify-between p-3 border ${isLuxury ? "border-[#D4AF37]/10 bg-[#121212]/50" : "border-gray-200"} rounded-lg`}
+                >
                   <div className="flex items-center">
                     <span className="text-2xl mr-3">📊</span>
                     <div>
                       <div className="font-medium">Inventario</div>
-                      <div className={`text-sm ${isLuxury ? 'text-gray-400' : 'text-gray-500'}`}>
+                      <div
+                        className={`text-sm ${isLuxury ? "text-gray-400" : "text-gray-500"}`}
+                      >
                         Gestionar stock
                       </div>
                     </div>
                   </div>
-                  <span className={`text-sm ${isLuxury ? 'text-gray-400' : 'text-gray-500'}`}>
+                  <span
+                    className={`text-sm ${isLuxury ? "text-gray-400" : "text-gray-500"}`}
+                  >
                     {stats.products} items
                   </span>
                 </div>
 
-                <div className={`flex items-center justify-between p-3 border ${isLuxury ? 'border-[#D4AF37]/10 bg-[#121212]/50' : 'border-gray-200'} rounded-lg`}>
+                <div
+                  className={`flex items-center justify-between p-3 border ${isLuxury ? "border-[#D4AF37]/10 bg-[#121212]/50" : "border-gray-200"} rounded-lg`}
+                >
                   <div className="flex items-center">
                     <span className="text-2xl mr-3">🏷️</span>
                     <div>
                       <div className="font-medium">Categorías</div>
-                      <div className={`text-sm ${isLuxury ? 'text-gray-400' : 'text-gray-500'}`}>
+                      <div
+                        className={`text-sm ${isLuxury ? "text-gray-400" : "text-gray-500"}`}
+                      >
                         Organizar productos
                       </div>
                     </div>
                   </div>
-                  <span className={`text-sm ${isLuxury ? 'text-gray-400' : 'text-gray-500'}`}>3 categorías</span>
+                  <span
+                    className={`text-sm ${isLuxury ? "text-gray-400" : "text-gray-500"}`}
+                  >
+                    3 categorías
+                  </span>
                 </div>
               </div>
             </div>
 
             {/* Service Management */}
             {tenantData.mode === "booking" && (
-              <div className={`${isLuxury ? 'bg-[#1a1a1a]/60 border border-[#D4AF37]/20 backdrop-blur-md' : 'bg-white shadow-md'} rounded-lg p-6`}>
+              <div
+                className={`${isLuxury ? "bg-[#1a1a1a]/60 border border-[#D4AF37]/20 backdrop-blur-md" : "bg-white shadow-md"} rounded-lg p-6`}
+              >
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className={`text-xl font-semibold ${isLuxury ? 'text-[#D4AF37] font-serif' : 'text-gray-900'}`}>
+                  <h2
+                    className={`text-xl font-semibold ${isLuxury ? "text-[#D4AF37] font-serif" : "text-gray-900"}`}
+                  >
                     Servicios
                   </h2>
                   <a
                     href={`/t/${resolvedParams.tenant}/admin_services`}
-                    className={`${isLuxury ? 'text-[#D4AF37] hover:text-[#b3932d]' : 'text-indigo-600 hover:text-indigo-700'} text-sm font-medium`}
+                    className={`${isLuxury ? "text-[#D4AF37] hover:text-[#b3932d]" : "text-indigo-600 hover:text-indigo-700"} text-sm font-medium`}
                   >
                     Gestionar →
                   </a>
                 </div>
 
                 <div className="space-y-3">
-                  <div className={`flex items-center justify-between p-3 border ${isLuxury ? 'border-[#D4AF37]/10 bg-[#121212]/50' : 'border-gray-200'} rounded-lg`}>
+                  <div
+                    className={`flex items-center justify-between p-3 border ${isLuxury ? "border-[#D4AF37]/10 bg-[#121212]/50" : "border-gray-200"} rounded-lg`}
+                  >
                     <div className="flex items-center">
                       <span className="text-2xl mr-3">✨</span>
                       <div>
                         <div className="font-medium">Crear Servicio</div>
-                        <div className={`text-sm ${isLuxury ? 'text-gray-400' : 'text-gray-500'}`}>
+                        <div
+                          className={`text-sm ${isLuxury ? "text-gray-400" : "text-gray-500"}`}
+                        >
                           Nuevo servicio
                         </div>
                       </div>
                     </div>
-                    <button className={`${isLuxury ? 'text-[#D4AF37] hover:text-[#b3932d]' : 'text-indigo-600 hover:text-indigo-700'}`}>
+                    <button
+                      className={`${isLuxury ? "text-[#D4AF37] hover:text-[#b3932d]" : "text-indigo-600 hover:text-indigo-700"}`}
+                    >
                       +
                     </button>
                   </div>
 
-                  <div className={`flex items-center justify-between p-3 border ${isLuxury ? 'border-[#D4AF37]/10 bg-[#121212]/50' : 'border-gray-200'} rounded-lg`}>
+                  <div
+                    className={`flex items-center justify-between p-3 border ${isLuxury ? "border-[#D4AF37]/10 bg-[#121212]/50" : "border-gray-200"} rounded-lg`}
+                  >
                     <div className="flex items-center">
                       <span className="text-2xl mr-3">📅</span>
                       <div>
                         <div className="font-medium">Horarios</div>
-                        <div className={`text-sm ${isLuxury ? 'text-gray-400' : 'text-gray-500'}`}>
+                        <div
+                          className={`text-sm ${isLuxury ? "text-gray-400" : "text-gray-500"}`}
+                        >
                           Disponibilidad
                         </div>
                       </div>
                     </div>
                     <a
                       href={`/t/${resolvedParams.tenant}/admin/calendar`}
-                      className={`${isLuxury ? 'text-[#D4AF37]' : 'text-indigo-600'} text-sm`}
+                      className={`${isLuxury ? "text-[#D4AF37]" : "text-indigo-600"} text-sm`}
                     >
                       Ver
                     </a>
                   </div>
 
-                  <div className={`flex items-center justify-between p-3 border ${isLuxury ? 'border-[#D4AF37]/10 bg-[#121212]/50' : 'border-gray-200'} rounded-lg`}>
+                  <div
+                    className={`flex items-center justify-between p-3 border ${isLuxury ? "border-[#D4AF37]/10 bg-[#121212]/50" : "border-gray-200"} rounded-lg`}
+                  >
                     <div className="flex items-center">
                       <span className="text-2xl mr-3">👥</span>
                       <div>
                         <div className="font-medium">Personal</div>
-                        <div className={`text-sm ${isLuxury ? 'text-gray-400' : 'text-gray-500'}`}>
+                        <div
+                          className={`text-sm ${isLuxury ? "text-gray-400" : "text-gray-500"}`}
+                        >
                           Gestionar staff
                         </div>
                       </div>
                     </div>
                     <a
                       href={`/t/${resolvedParams.tenant}/admin/staff`}
-                      className={`${isLuxury ? 'text-[#D4AF37]' : 'text-indigo-600'} text-sm`}
+                      className={`${isLuxury ? "text-[#D4AF37]" : "text-indigo-600"} text-sm`}
                     >
                       Ver
                     </a>
@@ -253,64 +335,84 @@ export default async function AdminDashboardPage({ params }: PageProps) {
             )}
 
             {/* Content Management */}
-            <div className={`${isLuxury ? 'bg-[#1a1a1a]/60 border border-[#D4AF37]/20 backdrop-blur-md' : 'bg-white shadow-md'} rounded-lg p-6`}>
+            <div
+              className={`${isLuxury ? "bg-[#1a1a1a]/60 border border-[#D4AF37]/20 backdrop-blur-md" : "bg-white shadow-md"} rounded-lg p-6`}
+            >
               <div className="flex items-center justify-between mb-4">
-                <h2 className={`text-xl font-semibold ${isLuxury ? 'text-[#D4AF37] font-serif' : 'text-gray-900'}`}>
+                <h2
+                  className={`text-xl font-semibold ${isLuxury ? "text-[#D4AF37] font-serif" : "text-gray-900"}`}
+                >
                   Contenido
                 </h2>
                 <a
                   href={`/t/${resolvedParams.tenant}/admin/content`}
-                  className={`${isLuxury ? 'text-[#D4AF37] hover:text-[#b3932d]' : 'text-indigo-600 hover:text-indigo-700'} text-sm font-medium`}
+                  className={`${isLuxury ? "text-[#D4AF37] hover:text-[#b3932d]" : "text-indigo-600 hover:text-indigo-700"} text-sm font-medium`}
                 >
                   Gestionar →
                 </a>
               </div>
 
               <div className="space-y-3">
-                <div className={`flex items-center justify-between p-3 border ${isLuxury ? 'border-[#D4AF37]/10 bg-[#121212]/50' : 'border-gray-200'} rounded-lg`}>
+                <div
+                  className={`flex items-center justify-between p-3 border ${isLuxury ? "border-[#D4AF37]/10 bg-[#121212]/50" : "border-gray-200"} rounded-lg`}
+                >
                   <div className="flex items-center">
                     <span className="text-2xl mr-3">🎨</span>
                     <div>
                       <div className="font-medium">Look & Feel</div>
-                      <div className={`text-sm ${isLuxury ? 'text-gray-400' : 'text-gray-500'}`}>
+                      <div
+                        className={`text-sm ${isLuxury ? "text-gray-400" : "text-gray-500"}`}
+                      >
                         Personalizar diseño
                       </div>
                     </div>
                   </div>
-                  <button className={`${isLuxury ? 'text-[#D4AF37] hover:text-[#b3932d]' : 'text-indigo-600 hover:text-indigo-700'} text-sm`}>
+                  <button
+                    className={`${isLuxury ? "text-[#D4AF37] hover:text-[#b3932d]" : "text-indigo-600 hover:text-indigo-700"} text-sm`}
+                  >
                     Editar
                   </button>
                 </div>
 
-                <div className={`flex items-center justify-between p-3 border ${isLuxury ? 'border-[#D4AF37]/10 bg-[#121212]/50' : 'border-gray-200'} rounded-lg`}>
+                <div
+                  className={`flex items-center justify-between p-3 border ${isLuxury ? "border-[#D4AF37]/10 bg-[#121212]/50" : "border-gray-200"} rounded-lg`}
+                >
                   <div className="flex items-center">
                     <span className="text-2xl mr-3">📸</span>
                     <div>
                       <div className="font-medium">Galería</div>
-                      <div className={`text-sm ${isLuxury ? 'text-gray-400' : 'text-gray-500'}`}>
+                      <div
+                        className={`text-sm ${isLuxury ? "text-gray-400" : "text-gray-500"}`}
+                      >
                         Imágenes y media
                       </div>
                     </div>
                   </div>
                   <a
                     href={`/t/${resolvedParams.tenant}/admin/gallery`}
-                    className={`${isLuxury ? 'text-[#D4AF37]' : 'text-indigo-600'} text-sm`}
+                    className={`${isLuxury ? "text-[#D4AF37]" : "text-indigo-600"} text-sm`}
                   >
                     Ver
                   </a>
                 </div>
 
-                <div className={`flex items-center justify-between p-3 border ${isLuxury ? 'border-[#D4AF37]/10 bg-[#121212]/50' : 'border-gray-200'} rounded-lg`}>
+                <div
+                  className={`flex items-center justify-between p-3 border ${isLuxury ? "border-[#D4AF37]/10 bg-[#121212]/50" : "border-gray-200"} rounded-lg`}
+                >
                   <div className="flex items-center">
                     <span className="text-2xl mr-3">📝</span>
                     <div>
                       <div className="font-medium">Información</div>
-                      <div className={`text-sm ${isLuxury ? 'text-gray-400' : 'text-gray-500'}`}>
+                      <div
+                        className={`text-sm ${isLuxury ? "text-gray-400" : "text-gray-500"}`}
+                      >
                         Contacto y horarios
                       </div>
                     </div>
                   </div>
-                  <button className={`${isLuxury ? 'text-[#D4AF37] hover:text-[#b3932d]' : 'text-indigo-600 hover:text-indigo-700'} text-sm`}>
+                  <button
+                    className={`${isLuxury ? "text-[#D4AF37] hover:text-[#b3932d]" : "text-indigo-600 hover:text-indigo-700"} text-sm`}
+                  >
                     Editar
                   </button>
                 </div>
@@ -318,59 +420,85 @@ export default async function AdminDashboardPage({ params }: PageProps) {
             </div>
 
             {/* Orders & Bookings */}
-            <div className={`${isLuxury ? 'bg-[#1a1a1a]/60 border border-[#D4AF37]/20 backdrop-blur-md' : 'bg-white shadow-md'} rounded-lg p-6`}>
+            <div
+              className={`${isLuxury ? "bg-[#1a1a1a]/60 border border-[#D4AF37]/20 backdrop-blur-md" : "bg-white shadow-md"} rounded-lg p-6`}
+            >
               <div className="flex items-center justify-between mb-4">
-                <h2 className={`text-xl font-semibold ${isLuxury ? 'text-[#D4AF37] font-serif' : 'text-gray-900'}`}>Ventas</h2>
+                <h2
+                  className={`text-xl font-semibold ${isLuxury ? "text-[#D4AF37] font-serif" : "text-gray-900"}`}
+                >
+                  Ventas
+                </h2>
                 <a
                   href={`/t/${resolvedParams.tenant}/admin/orders`}
-                  className={`${isLuxury ? 'text-[#D4AF37] hover:text-[#b3932d]' : 'text-indigo-600 hover:text-indigo-700'} text-sm font-medium`}
+                  className={`${isLuxury ? "text-[#D4AF37] hover:text-[#b3932d]" : "text-indigo-600 hover:text-indigo-700"} text-sm font-medium`}
                 >
                   Ver todas →
                 </a>
               </div>
 
               <div className="space-y-3">
-                <div className={`flex items-center justify-between p-3 border ${isLuxury ? 'border-[#D4AF37]/10 bg-[#121212]/50' : 'border-gray-200'} rounded-lg`}>
+                <div
+                  className={`flex items-center justify-between p-3 border ${isLuxury ? "border-[#D4AF37]/10 bg-[#121212]/50" : "border-gray-200"} rounded-lg`}
+                >
                   <div className="flex items-center">
                     <span className="text-2xl mr-3">📦</span>
                     <div>
                       <div className="font-medium">Pedidos</div>
-                      <div className={`text-sm ${isLuxury ? 'text-gray-400' : 'text-gray-500'}`}>
+                      <div
+                        className={`text-sm ${isLuxury ? "text-gray-400" : "text-gray-500"}`}
+                      >
                         Gestionar pedidos
                       </div>
                     </div>
                   </div>
-                  <span className={`text-sm font-semibold ${isLuxury ? 'text-[#D4AF37]' : 'text-blue-600'}`}>
+                  <span
+                    className={`text-sm font-semibold ${isLuxury ? "text-[#D4AF37]" : "text-blue-600"}`}
+                  >
                     {stats.orders}
                   </span>
                 </div>
 
                 {tenantData.mode === "booking" && (
-                  <div className={`flex items-center justify-between p-3 border ${isLuxury ? 'border-[#D4AF37]/10 bg-[#121212]/50' : 'border-gray-200'} rounded-lg`}>
+                  <div
+                    className={`flex items-center justify-between p-3 border ${isLuxury ? "border-[#D4AF37]/10 bg-[#121212]/50" : "border-gray-200"} rounded-lg`}
+                  >
                     <div className="flex items-center">
                       <span className="text-2xl mr-3">📅</span>
                       <div>
                         <div className="font-medium">Citas</div>
-                        <div className={`text-sm ${isLuxury ? 'text-gray-400' : 'text-gray-500'}`}>
+                        <div
+                          className={`text-sm ${isLuxury ? "text-gray-400" : "text-gray-500"}`}
+                        >
                           Reservas programadas
                         </div>
                       </div>
                     </div>
-                    <span className={`text-sm font-semibold ${isLuxury ? 'text-[#D4AF37]' : 'text-green-600'}`}>
+                    <span
+                      className={`text-sm font-semibold ${isLuxury ? "text-[#D4AF37]" : "text-green-600"}`}
+                    >
                       {stats.bookings}
                     </span>
                   </div>
                 )}
 
-                <div className={`flex items-center justify-between p-3 border ${isLuxury ? 'border-[#D4AF37]/10 bg-[#121212]/50' : 'border-gray-200'} rounded-lg`}>
+                <div
+                  className={`flex items-center justify-between p-3 border ${isLuxury ? "border-[#D4AF37]/10 bg-[#121212]/50" : "border-gray-200"} rounded-lg`}
+                >
                   <div className="flex items-center">
                     <span className="text-2xl mr-3">💰</span>
                     <div>
                       <div className="font-medium">Ingresos</div>
-                      <div className={`text-sm ${isLuxury ? 'text-gray-400' : 'text-gray-500'}`}>Este mes</div>
+                      <div
+                        className={`text-sm ${isLuxury ? "text-gray-400" : "text-gray-500"}`}
+                      >
+                        Este mes
+                      </div>
                     </div>
                   </div>
-                  <span className={`text-sm font-semibold ${isLuxury ? 'text-[#D4AF37]' : 'text-green-600'}`}>
+                  <span
+                    className={`text-sm font-semibold ${isLuxury ? "text-[#D4AF37]" : "text-green-600"}`}
+                  >
                     ${stats.revenue}
                   </span>
                 </div>
@@ -378,26 +506,34 @@ export default async function AdminDashboardPage({ params }: PageProps) {
             </div>
 
             {/* Analytics */}
-            <div className={`${isLuxury ? 'bg-[#1a1a1a]/60 border border-[#D4AF37]/20 backdrop-blur-md' : 'bg-white shadow-md'} rounded-lg p-6`}>
+            <div
+              className={`${isLuxury ? "bg-[#1a1a1a]/60 border border-[#D4AF37]/20 backdrop-blur-md" : "bg-white shadow-md"} rounded-lg p-6`}
+            >
               <div className="flex items-center justify-between mb-4">
-                <h2 className={`text-xl font-semibold ${isLuxury ? 'text-[#D4AF37] font-serif' : 'text-gray-900'}`}>
+                <h2
+                  className={`text-xl font-semibold ${isLuxury ? "text-[#D4AF37] font-serif" : "text-gray-900"}`}
+                >
                   Analytics
                 </h2>
                 <a
                   href={`/t/${resolvedParams.tenant}/admin/analytics`}
-                  className={`${isLuxury ? 'text-[#D4AF37] hover:text-[#b3932d]' : 'text-indigo-600 hover:text-indigo-700'} text-sm font-medium`}
+                  className={`${isLuxury ? "text-[#D4AF37] hover:text-[#b3932d]" : "text-indigo-600 hover:text-indigo-700"} text-sm font-medium`}
                 >
                   Ver más →
                 </a>
               </div>
 
               <div className="space-y-3">
-                <div className={`flex items-center justify-between p-3 border ${isLuxury ? 'border-[#D4AF37]/10 bg-[#121212]/50' : 'border-gray-200'} rounded-lg`}>
+                <div
+                  className={`flex items-center justify-between p-3 border ${isLuxury ? "border-[#D4AF37]/10 bg-[#121212]/50" : "border-gray-200"} rounded-lg`}
+                >
                   <div className="flex items-center">
                     <span className="text-2xl mr-3">👥</span>
                     <div>
                       <div className="font-medium">Clientes</div>
-                      <div className={`text-sm ${isLuxury ? 'text-gray-400' : 'text-gray-500'}`}>
+                      <div
+                        className={`text-sm ${isLuxury ? "text-gray-400" : "text-gray-500"}`}
+                      >
                         Total registrados
                       </div>
                     </div>
@@ -407,30 +543,44 @@ export default async function AdminDashboardPage({ params }: PageProps) {
                   </span>
                 </div>
 
-                <div className={`flex items-center justify-between p-3 border ${isLuxury ? 'border-[#D4AF37]/10 bg-[#121212]/50' : 'border-gray-200'} rounded-lg`}>
+                <div
+                  className={`flex items-center justify-between p-3 border ${isLuxury ? "border-[#D4AF37]/10 bg-[#121212]/50" : "border-gray-200"} rounded-lg`}
+                >
                   <div className="flex items-center">
                     <span className="text-2xl mr-3">📈</span>
                     <div>
                       <div className="font-medium">Crecimiento</div>
-                      <div className={`text-sm ${isLuxury ? 'text-gray-400' : 'text-gray-500'}`}>Este mes</div>
+                      <div
+                        className={`text-sm ${isLuxury ? "text-gray-400" : "text-gray-500"}`}
+                      >
+                        Este mes
+                      </div>
                     </div>
                   </div>
-                  <span className={`text-sm font-semibold ${isLuxury ? 'text-[#D4AF37]' : 'text-green-600'}`}>
+                  <span
+                    className={`text-sm font-semibold ${isLuxury ? "text-[#D4AF37]" : "text-green-600"}`}
+                  >
                     +15%
                   </span>
                 </div>
 
-                <div className={`flex items-center justify-between p-3 border ${isLuxury ? 'border-[#D4AF37]/10 bg-[#121212]/50' : 'border-gray-200'} rounded-lg`}>
+                <div
+                  className={`flex items-center justify-between p-3 border ${isLuxury ? "border-[#D4AF37]/10 bg-[#121212]/50" : "border-gray-200"} rounded-lg`}
+                >
                   <div className="flex items-center">
                     <span className="text-2xl mr-3">⭐</span>
                     <div>
                       <div className="font-medium">Satisfacción</div>
-                      <div className={`text-sm ${isLuxury ? 'text-gray-400' : 'text-gray-500'}`}>
+                      <div
+                        className={`text-sm ${isLuxury ? "text-gray-400" : "text-gray-500"}`}
+                      >
                         Calificación promedio
                       </div>
                     </div>
                   </div>
-                  <span className={`text-sm font-semibold ${isLuxury ? 'text-[#D4AF37]' : 'text-stone-600'}`}>
+                  <span
+                    className={`text-sm font-semibold ${isLuxury ? "text-[#D4AF37]" : "text-stone-600"}`}
+                  >
                     4.8/5
                   </span>
                 </div>
@@ -438,59 +588,83 @@ export default async function AdminDashboardPage({ params }: PageProps) {
             </div>
 
             {/* Settings */}
-            <div className={`${isLuxury ? 'bg-[#1a1a1a]/60 border border-[#D4AF37]/20 backdrop-blur-md' : 'bg-white shadow-md'} rounded-lg p-6`}>
+            <div
+              className={`${isLuxury ? "bg-[#1a1a1a]/60 border border-[#D4AF37]/20 backdrop-blur-md" : "bg-white shadow-md"} rounded-lg p-6`}
+            >
               <div className="flex items-center justify-between mb-4">
-                <h2 className={`text-xl font-semibold ${isLuxury ? 'text-[#D4AF37] font-serif' : 'text-gray-900'}`}>
+                <h2
+                  className={`text-xl font-semibold ${isLuxury ? "text-[#D4AF37] font-serif" : "text-gray-900"}`}
+                >
                   Configuración
                 </h2>
                 <a
                   href={`/t/${resolvedParams.tenant}/admin/settings`}
-                  className={`${isLuxury ? 'text-[#D4AF37] hover:text-[#b3932d]' : 'text-indigo-600 hover:text-indigo-700'} text-sm font-medium`}
+                  className={`${isLuxury ? "text-[#D4AF37] hover:text-[#b3932d]" : "text-indigo-600 hover:text-indigo-700"} text-sm font-medium`}
                 >
                   Configurar →
                 </a>
               </div>
 
               <div className="space-y-3">
-                <div className={`flex items-center justify-between p-3 border ${isLuxury ? 'border-[#D4AF37]/10 bg-[#121212]/50' : 'border-gray-200'} rounded-lg`}>
+                <div
+                  className={`flex items-center justify-between p-3 border ${isLuxury ? "border-[#D4AF37]/10 bg-[#121212]/50" : "border-gray-200"} rounded-lg`}
+                >
                   <div className="flex items-center">
                     <span className="text-2xl mr-3">⚙️</span>
                     <div>
                       <div className="font-medium">General</div>
-                      <div className={`text-sm ${isLuxury ? 'text-gray-400' : 'text-gray-500'}`}>
+                      <div
+                        className={`text-sm ${isLuxury ? "text-gray-400" : "text-gray-500"}`}
+                      >
                         Configuración básica
                       </div>
                     </div>
                   </div>
-                  <button className={`${isLuxury ? 'text-[#D4AF37] hover:text-[#b3932d]' : 'text-indigo-600 hover:text-indigo-700'} text-sm`}>
+                  <button
+                    className={`${isLuxury ? "text-[#D4AF37] hover:text-[#b3932d]" : "text-indigo-600 hover:text-indigo-700"} text-sm`}
+                  >
                     Editar
                   </button>
                 </div>
 
-                <div className={`flex items-center justify-between p-3 border ${isLuxury ? 'border-[#D4AF37]/10 bg-[#121212]/50' : 'border-gray-200'} rounded-lg`}>
+                <div
+                  className={`flex items-center justify-between p-3 border ${isLuxury ? "border-[#D4AF37]/10 bg-[#121212]/50" : "border-gray-200"} rounded-lg`}
+                >
                   <div className="flex items-center">
                     <span className="text-2xl mr-3">💳</span>
                     <div>
                       <div className="font-medium">Pagos</div>
-                      <div className={`text-sm ${isLuxury ? 'text-gray-400' : 'text-gray-500'}`}>
+                      <div
+                        className={`text-sm ${isLuxury ? "text-gray-400" : "text-gray-500"}`}
+                      >
                         Métodos de pago
                       </div>
                     </div>
                   </div>
-                  <button className={`${isLuxury ? 'text-[#D4AF37] hover:text-[#b3932d]' : 'text-indigo-600 hover:text-indigo-700'} text-sm`}>
+                  <button
+                    className={`${isLuxury ? "text-[#D4AF37] hover:text-[#b3932d]" : "text-indigo-600 hover:text-indigo-700"} text-sm`}
+                  >
                     Configurar
                   </button>
                 </div>
 
-                <div className={`flex items-center justify-between p-3 border ${isLuxury ? 'border-[#D4AF37]/10 bg-[#121212]/50' : 'border-gray-200'} rounded-lg`}>
+                <div
+                  className={`flex items-center justify-between p-3 border ${isLuxury ? "border-[#D4AF37]/10 bg-[#121212]/50" : "border-gray-200"} rounded-lg`}
+                >
                   <div className="flex items-center">
                     <span className="text-2xl mr-3">📧</span>
                     <div>
                       <div className="font-medium">Notificaciones</div>
-                      <div className={`text-sm ${isLuxury ? 'text-gray-400' : 'text-gray-500'}`}>Email y SMS</div>
+                      <div
+                        className={`text-sm ${isLuxury ? "text-gray-400" : "text-gray-500"}`}
+                      >
+                        Email y SMS
+                      </div>
                     </div>
                   </div>
-                  <button className={`${isLuxury ? 'text-[#D4AF37] hover:text-[#b3932d]' : 'text-indigo-600 hover:text-indigo-700'} text-sm`}>
+                  <button
+                    className={`${isLuxury ? "text-[#D4AF37] hover:text-[#b3932d]" : "text-indigo-600 hover:text-indigo-700"} text-sm`}
+                  >
                     Configurar
                   </button>
                 </div>
@@ -499,36 +673,48 @@ export default async function AdminDashboardPage({ params }: PageProps) {
           </div>
 
           {/* Quick Actions Bar */}
-          <div className={`mt-8 ${isLuxury ? 'bg-[#1a1a1a]/60 border border-[#D4AF37]/20 backdrop-blur-md' : 'bg-white shadow-md'} rounded-lg p-6`}>
-            <h3 className={`text-lg font-semibold ${isLuxury ? 'text-[#D4AF37] font-serif' : 'text-gray-900'} mb-4`}>
+          <div
+            className={`mt-8 ${isLuxury ? "bg-[#1a1a1a]/60 border border-[#D4AF37]/20 backdrop-blur-md" : "bg-white shadow-md"} rounded-lg p-6`}
+          >
+            <h3
+              className={`text-lg font-semibold ${isLuxury ? "text-[#D4AF37] font-serif" : "text-gray-900"} mb-4`}
+            >
               Acciones Rápidas
             </h3>
             <div className="flex flex-wrap gap-4">
-              <button className={`flex items-center px-4 py-2 ${isLuxury ? 'bg-[#D4AF37] text-[#121212] hover:bg-[#b3932d]' : 'bg-indigo-600 text-white hover:bg-indigo-700'} rounded-lg transition-colors`}>
+              <button
+                className={`flex items-center px-4 py-2 ${isLuxury ? "bg-[#D4AF37] text-[#121212] hover:bg-[#b3932d]" : "bg-indigo-600 text-white hover:bg-indigo-700"} rounded-lg transition-colors`}
+              >
                 <span className="mr-2">📦</span>
                 Crear Producto
               </button>
 
               {tenantData.mode === "booking" && (
-                <button className={`flex items-center px-4 py-2 ${isLuxury ? 'bg-[#D4AF37] text-[#121212] hover:bg-[#b3932d]' : 'bg-green-600 text-white hover:bg-green-700'} rounded-lg transition-colors`}>
+                <button
+                  className={`flex items-center px-4 py-2 ${isLuxury ? "bg-[#D4AF37] text-[#121212] hover:bg-[#b3932d]" : "bg-green-600 text-white hover:bg-green-700"} rounded-lg transition-colors`}
+                >
                   <span className="mr-2">📅</span>
                   Crear Servicio
                 </button>
               )}
 
-              <button className={`flex items-center px-4 py-2 ${isLuxury ? 'bg-[#1a1a1a] border border-[#D4AF37] text-[#D4AF37] hover:bg-[#2a2a2a]' : 'bg-purple-600 text-white hover:bg-purple-700'} rounded-lg transition-colors`}>
+              <button
+                className={`flex items-center px-4 py-2 ${isLuxury ? "bg-[#1a1a1a] border border-[#D4AF37] text-[#D4AF37] hover:bg-[#2a2a2a]" : "bg-purple-600 text-white hover:bg-purple-700"} rounded-lg transition-colors`}
+              >
                 <span className="mr-2">🎨</span>
                 Personalizar Diseño
               </button>
 
-              <button className={`flex items-center px-4 py-2 ${isLuxury ? 'bg-[#1a1a1a] border border-[#D4AF37] text-[#D4AF37] hover:bg-[#2a2a2a]' : 'bg-orange-600 text-white hover:bg-orange-700'} rounded-lg transition-colors`}>
+              <button
+                className={`flex items-center px-4 py-2 ${isLuxury ? "bg-[#1a1a1a] border border-[#D4AF37] text-[#D4AF37] hover:bg-[#2a2a2a]" : "bg-orange-600 text-white hover:bg-orange-700"} rounded-lg transition-colors`}
+              >
                 <span className="mr-2">📸</span>
                 Subir Imagen
               </button>
 
               <a
                 href={`/t/${resolvedParams.tenant}`}
-                className={`flex items-center px-4 py-2 border ${isLuxury ? 'border-[#D4AF37] text-[#D4AF37] hover:bg-[#2a2a2a]' : 'border-gray-300 text-gray-700 hover:bg-gray-50'} rounded-lg transition-colors`}
+                className={`flex items-center px-4 py-2 border ${isLuxury ? "border-[#D4AF37] text-[#D4AF37] hover:bg-[#2a2a2a]" : "border-gray-300 text-gray-700 hover:bg-gray-50"} rounded-lg transition-colors`}
               >
                 <span className="mr-2">👁️</span>
                 Ver Mi Tienda

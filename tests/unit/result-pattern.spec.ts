@@ -162,15 +162,13 @@ describe("Result Pattern Implementation", () => {
         throw new Error("Async failure");
       };
 
-      const result = await fromPromise(
-        asyncOperation(),
-        (error) =>
-          ErrorFactories.database(
-            "async_operation",
-            (error as Error).message,
-            undefined,
-            error as Error,
-          ),
+      const result = await fromPromise(asyncOperation(), (error) =>
+        ErrorFactories.database(
+          "async_operation",
+          (error as Error).message,
+          undefined,
+          error as Error,
+        ),
       );
 
       expect(isFailure(result)).toBe(true);
@@ -178,8 +176,7 @@ describe("Result Pattern Implementation", () => {
         expect(result.error).toEqual(
           expect.objectContaining({
             type: "DatabaseError",
-            message:
-              "Database error during async_operation: Async failure",
+            message: "Database error during async_operation: Async failure",
           }),
         );
       }

@@ -26,7 +26,7 @@ describe("Service CRUD Operations", () => {
       const serviceData = {
         name: "Premium Manicure",
         description: "Full service manicure",
-        price: 50.00,
+        price: 50.0,
         duration: 60,
         active: true,
       };
@@ -52,7 +52,7 @@ describe("Service CRUD Operations", () => {
 
     it("should fail validation if required fields are missing", async () => {
       const db = getTestDb();
-      
+
       // Attempting to insert without required fields like 'name' should fail
       // However, TypeScript usually catches this. In a runtime raw query or loose types it might fail.
       // We'll test the DB constraint if possible, but mainly we verify happy path here.
@@ -81,7 +81,7 @@ describe("Service CRUD Operations", () => {
 
     it("should list all services for a specific tenant", async () => {
       const db = getTestDb();
-      
+
       // Create 3 services
       await createTestService(testTenantId, { name: "Service 1", price: "10" });
       await createTestService(testTenantId, { name: "Service 2", price: "20" });
@@ -110,13 +110,13 @@ describe("Service CRUD Operations", () => {
         .set({
           name: "New Name",
           price: "45.00", // Price increase
-          duration: 45,   // Duration increase
+          duration: 45, // Duration increase
         })
         .where(eq(services.id, created.id))
         .returning();
 
       expect(updated.name).toBe("New Name");
-      expect(Number(updated.price)).toBe(45.00);
+      expect(Number(updated.price)).toBe(45.0);
       expect(Number(updated.duration)).toBe(45);
     });
 
@@ -176,7 +176,7 @@ describe("Service CRUD Operations", () => {
   describe("Service Isolation", () => {
     it("should not allow one tenant to access another tenant's services", async () => {
       const db = getTestDb();
-      
+
       // Tenant 1 Service
       const service1 = await createTestService(testTenantId, {
         name: "Tenant 1 Service",
@@ -190,7 +190,7 @@ describe("Service CRUD Operations", () => {
 
       // Attempt to query Tenant 1's service using Tenant 2's ID filter (should return nothing)
       // Or simply verify that querying for Tenant 2 returns only Tenant 2 things.
-      
+
       await createTestService(tenant2.id, {
         name: "Tenant 2 Service",
       });
@@ -203,18 +203,15 @@ describe("Service CRUD Operations", () => {
 
       expect(tenant2Services).toHaveLength(1);
       expect(tenant2Services[0].name).toBe("Tenant 2 Service");
-      
+
       // Ensure specific query for Service 1 with Tenant 2 context fails (if we were using an API wrapper)
       // Logic: direct DB query with mismatching IDs
-      
+
       const mixedQuery = await db
         .select()
         .from(services)
         .where(
-          and(
-            eq(services.id, service1.id),
-            eq(services.tenantId, tenant2.id)
-          )
+          and(eq(services.id, service1.id), eq(services.tenantId, tenant2.id)),
         );
 
       expect(mixedQuery).toHaveLength(0);

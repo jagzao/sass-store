@@ -8,7 +8,7 @@ import React, {
 } from "react";
 import { useRouter } from "next/navigation";
 import { gsap } from "gsap";
-import { Flip } from "gsap/Flip";
+import { Flip } from "gsap/dist/Flip";
 import { useCart } from "@/lib/cart/cart-store";
 import { CarouselItem } from "./CarouselItem";
 import { CarouselNavigation } from "./CarouselNavigation";
@@ -210,7 +210,8 @@ export default function WondernailsCarouselFinal({
           videoUrl: s.videoUrl,
           title: "WONDERNAILS PRO",
           topic: s.name,
-          description: s.shortDescription || s.description || "Servicio Premium",
+          description:
+            s.shortDescription || s.description || "Servicio Premium",
           badge: "Destacado",
           bgColor: "rgba(180, 140, 200, 0.15)",
           type: "service",

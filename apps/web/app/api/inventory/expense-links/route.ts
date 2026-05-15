@@ -39,7 +39,8 @@ export async function GET(request: NextRequest) {
 
     let result;
     if (productId) {
-      result = await inventoryExpenseLinkService.getExpenseLinksByProduct(productId);
+      result =
+        await inventoryExpenseLinkService.getExpenseLinksByProduct(productId);
     } else {
       result = await inventoryExpenseLinkService.getExpenseLinksByTenant(
         tenantContext.data.tenantId,

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {
   pgTable,
   text,
@@ -1089,6 +1090,8 @@ export const users = pgTable("users", {
   image: text("image"),
   password: text("password"), // For credentials-based auth
   phone: varchar("phone", { length: 20 }),
+  birthdate: date("birthdate"),
+  gender: varchar("gender", { length: 20 }),
   resetToken: text("reset_token"),
   resetTokenExpiry: timestamp("reset_token_expiry", { mode: "date" }),
   createdAt: timestamp("created_at").defaultNow(),
@@ -1316,7 +1319,9 @@ export const financialPlanningCells = pgTable(
     projectedAmount: decimal("projected_amount", {
       precision: 12,
       scale: 2,
-    }).notNull().default("0"),
+    })
+      .notNull()
+      .default("0"),
     realAmount: decimal("real_amount", { precision: 12, scale: 2 })
       .notNull()
       .default("0"),
@@ -1334,8 +1339,15 @@ export const financialPlanningCells = pgTable(
     entityIdx: index("financial_planning_cells_entity_idx").on(table.entityId),
     tenantCategoryRangeIdx: index(
       "financial_planning_cells_tenant_category_range_idx",
-    ).on(table.tenantId, table.categoryId, table.bucketStartDate, table.bucketEndDate),
-    tenantEntityRangeIdx: index("financial_planning_cells_tenant_entity_range_idx").on(
+    ).on(
+      table.tenantId,
+      table.categoryId,
+      table.bucketStartDate,
+      table.bucketEndDate,
+    ),
+    tenantEntityRangeIdx: index(
+      "financial_planning_cells_tenant_entity_range_idx",
+    ).on(
       table.tenantId,
       table.entityId,
       table.bucketStartDate,
@@ -1343,7 +1355,12 @@ export const financialPlanningCells = pgTable(
     ),
     tenantBucketTypeRangeIdx: index(
       "financial_planning_cells_tenant_bucket_type_range_idx",
-    ).on(table.tenantId, table.bucketType, table.bucketStartDate, table.bucketEndDate),
+    ).on(
+      table.tenantId,
+      table.bucketType,
+      table.bucketStartDate,
+      table.bucketEndDate,
+    ),
     uniqueCellIdx: uniqueIndex("financial_planning_cells_unique_idx").on(
       table.tenantId,
       table.categoryId,
@@ -1385,11 +1402,9 @@ export const financialMovements = pgTable(
       table.tenantId,
       table.movementDate,
     ),
-    tenantCategoryDateIdx: index("financial_movements_tenant_category_date_idx").on(
-      table.tenantId,
-      table.categoryId,
-      table.movementDate,
-    ),
+    tenantCategoryDateIdx: index(
+      "financial_movements_tenant_category_date_idx",
+    ).on(table.tenantId, table.categoryId, table.movementDate),
     tenantScheduledDateIdx: index(
       "financial_movements_tenant_scheduled_date_idx",
     ).on(table.tenantId, table.fechaProgramada),
@@ -2773,7 +2788,9 @@ export const inventoryMovements = pgTable(
     tenantIdx: index("inventory_movements_tenant_idx").on(table.tenantId),
     productIdx: index("inventory_movements_product_idx").on(table.productId),
     typeIdx: index("inventory_movements_type_idx").on(table.movementType),
-    createdAtIdx: index("inventory_movements_created_at_idx").on(table.createdAt),
+    createdAtIdx: index("inventory_movements_created_at_idx").on(
+      table.createdAt,
+    ),
   }),
 );
 
@@ -2809,7 +2826,9 @@ export const inventoryTransfers = pgTable(
     tenantIdx: index("inventory_transfers_tenant_idx").on(table.tenantId),
     productIdx: index("inventory_transfers_product_idx").on(table.productId),
     statusIdx: index("inventory_transfers_status_idx").on(table.status),
-    createdAtIdx: index("inventory_transfers_created_at_idx").on(table.createdAt),
+    createdAtIdx: index("inventory_transfers_created_at_idx").on(
+      table.createdAt,
+    ),
   }),
 );
 
@@ -2822,7 +2841,9 @@ export const inventoryLocations = pgTable(
       .references(() => tenants.id)
       .notNull(),
     name: varchar("name", { length: 100 }).notNull(),
-    locationType: varchar("location_type", { length: 20 }).notNull().default("storage"), // 'storage' | 'retail' | 'warehouse' | 'shelf'
+    locationType: varchar("location_type", { length: 20 })
+      .notNull()
+      .default("storage"), // 'storage' | 'retail' | 'warehouse' | 'shelf'
     address: text("address"),
     isActive: boolean("is_active").notNull().default(true),
     metadata: jsonb("metadata").default("{}"),
@@ -2892,43 +2913,49 @@ export const inventoryLocationsRelations = relations(
 
 // WhatsApp Messages Table
 export const whatsappMessages = pgTable(
-  'whatsapp_messages',
+  "whatsapp_messages",
   {
-    id: uuid('id').primaryKey().defaultRandom(),
-    tenantId: uuid('tenant_id').references(() => tenants.id),
-    mensajeId: varchar('mensaje_id', { length: 100 }).unique().notNull(),
-    numero: varchar('numero', { length: 20 }).notNull(),
-    contenido: text('contenido'),
-    tipo: varchar('tipo', { length: 20 }).notNull().default('text'),
-    direccion: varchar('direccion', { length: 10 }).notNull(), // 'inbound' | 'outbound'
-    estado: varchar('estado', { length: 20 }).notNull().default('received'), // 'received' | 'sent' | 'delivered' | 'read' | 'failed'
-    tipoInteraccion: varchar('tipo_interaccion', { length: 50 }),
-    metadata: jsonb('metadata'),
-    customerId: uuid('customer_id').references(() => customers.id),
-    relatedEntityType: varchar('related_entity_type', { length: 50 }), // 'order' | 'booking' | 'quote' | 'customer'
-    relatedEntityId: uuid('related_entity_id'),
-    createdAt: timestamp('created_at').defaultNow(),
-    updatedAt: timestamp('updated_at').defaultNow(),
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id").references(() => tenants.id),
+    mensajeId: varchar("mensaje_id", { length: 100 }).unique().notNull(),
+    numero: varchar("numero", { length: 20 }).notNull(),
+    contenido: text("contenido"),
+    tipo: varchar("tipo", { length: 20 }).notNull().default("text"),
+    direccion: varchar("direccion", { length: 10 }).notNull(), // 'inbound' | 'outbound'
+    estado: varchar("estado", { length: 20 }).notNull().default("received"), // 'received' | 'sent' | 'delivered' | 'read' | 'failed'
+    tipoInteraccion: varchar("tipo_interaccion", { length: 50 }),
+    metadata: jsonb("metadata"),
+    customerId: uuid("customer_id").references(() => customers.id),
+    relatedEntityType: varchar("related_entity_type", { length: 50 }), // 'order' | 'booking' | 'quote' | 'customer'
+    relatedEntityId: uuid("related_entity_id"),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
   },
   (table) => ({
-    tenantIdx: index('whatsapp_msg_tenant_idx').on(table.tenantId),
-    numeroIdx: index('whatsapp_msg_numero_idx').on(table.numero),
-    direccionIdx: index('whatsapp_msg_direccion_idx').on(table.direccion),
-    estadoIdx: index('whatsapp_msg_estado_idx').on(table.estado),
-    customerIdx: index('whatsapp_msg_customer_idx').on(table.customerId),
-    relatedEntityIdx: index('whatsapp_msg_related_idx').on(table.relatedEntityType, table.relatedEntityId),
-    createdAtIdx: index('whatsapp_msg_created_idx').on(table.createdAt),
+    tenantIdx: index("whatsapp_msg_tenant_idx").on(table.tenantId),
+    numeroIdx: index("whatsapp_msg_numero_idx").on(table.numero),
+    direccionIdx: index("whatsapp_msg_direccion_idx").on(table.direccion),
+    estadoIdx: index("whatsapp_msg_estado_idx").on(table.estado),
+    customerIdx: index("whatsapp_msg_customer_idx").on(table.customerId),
+    relatedEntityIdx: index("whatsapp_msg_related_idx").on(
+      table.relatedEntityType,
+      table.relatedEntityId,
+    ),
+    createdAtIdx: index("whatsapp_msg_created_idx").on(table.createdAt),
   }),
 );
 
 // Relations
-export const whatsappMessagesRelations = relations(whatsappMessages, ({ one }) => ({
-  tenant: one(tenants, {
-    fields: [whatsappMessages.tenantId],
-    references: [tenants.id],
+export const whatsappMessagesRelations = relations(
+  whatsappMessages,
+  ({ one }) => ({
+    tenant: one(tenants, {
+      fields: [whatsappMessages.tenantId],
+      references: [tenants.id],
+    }),
+    customer: one(customers, {
+      fields: [whatsappMessages.customerId],
+      references: [customers.id],
+    }),
   }),
-  customer: one(customers, {
-    fields: [whatsappMessages.customerId],
-    references: [customers.id],
-  }),
-}));
+);

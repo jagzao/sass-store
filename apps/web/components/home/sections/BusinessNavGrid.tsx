@@ -25,6 +25,12 @@ interface NavGridItemData {
 
 const NAV_ITEMS: NavGridItemData[] = [
   {
+    emoji: "📅",
+    label: "Calendario de citas",
+    href: "/admin/calendar",
+    description: "Vista semanal de todas las reservas",
+  },
+  {
     emoji: "👥",
     label: "Clientas",
     href: "/clientes",
@@ -75,9 +81,7 @@ export default function BusinessNavGrid({ tenantSlug }: BusinessNavGridProps) {
       </div>
 
       {/* Grid */}
-      <div
-        className="grid grid-cols-2 md:grid-cols-3 gap-3 lg:gap-4"
-      >
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 lg:gap-4">
         {NAV_ITEMS.map((item) => {
           const fullPath = item.external
             ? item.href

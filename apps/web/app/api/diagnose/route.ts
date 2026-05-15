@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { NextResponse } from "next/server";
 import { checkDatabaseConnection, db } from "@sass-store/database/connection";
 import { tenants } from "@sass-store/database/schema";

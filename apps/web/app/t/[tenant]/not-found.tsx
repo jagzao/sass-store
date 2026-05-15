@@ -39,8 +39,8 @@ export default function NotFound() {
 
           <div className="mt-8 text-center">
             <p className="text-sm text-gray-500">
-              Available tenants: wondernails, vigistudio, centro-tenistico,
-              vainilla-vargas, delirios, nom-nom, zo-system
+              Available tenants: wondernails, centro-tenistico, delirios,
+              manada-juma, zo-system
             </p>
           </div>
         </div>

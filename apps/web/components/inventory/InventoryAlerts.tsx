@@ -27,7 +27,7 @@ export function InventoryAlerts({
     reopenAlert,
     removeAlert,
     getAlertStats,
-  } = useInventoryAlerts();
+  } = useInventoryAlerts() as any;
 
   const [showResolved, setShowResolved] = useState(false);
   const [alertType, setAlertType] = useState<string>("");
@@ -266,25 +266,25 @@ export function InventoryAlerts({
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {alerts.map((alert) => (
+            {alerts.map((alert: any) => (
               <tr key={alert.id} className="hover:bg-gray-50">
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm font-medium text-gray-900">
-                    {alert.productName}
+                    {(alert as any).productName}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span
-                    className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getAlertTypeClass(alert.type)}`}
+                    className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getAlertTypeClass((alert as any).type)}`}
                   >
-                    {getAlertTypeText(alert.type)}
+                    {getAlertTypeText((alert as any).type)}
                   </span>
                 </td>
                 <td className="px-6 py-4">
                   <div className="text-sm text-gray-500">{alert.message}</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  {alert.resolved ? (
+                  {(alert as any).resolved ? (
                     <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
                       Resuelta
                     </span>
@@ -299,7 +299,7 @@ export function InventoryAlerts({
                 </td>
                 {showActions && (
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    {alert.resolved ? (
+                    {(alert as any).resolved ? (
                       <button
                         onClick={() => handleReopenAlert(alert)}
                         className="text-stone-600 hover:text-stone-900 mr-3"
@@ -379,7 +379,7 @@ export function InventoryAlerts({
                 {Array.from(
                   { length: Math.min(5, pagination.totalPages) },
                   (_, i) => {
-                    let page;
+                    let page: number;
                     if (pagination.totalPages <= 5) {
                       page = i + 1;
                     } else if (pagination.page <= 3) {

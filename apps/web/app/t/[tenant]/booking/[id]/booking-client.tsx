@@ -26,7 +26,7 @@ export function BookingClient({ tenantData, serviceId }: BookingClientProps) {
   const [selectedDate, setSelectedDate] = useState<string>(() => {
     // Set today's date as the default
     const today = new Date();
-    return today.toISOString().split('T')[0];
+    return today.toISOString().split("T")[0];
   });
   const [selectedTime, setSelectedTime] = useState<string>("");
   const [customerInfo, setCustomerInfo] = useState({
@@ -65,37 +65,53 @@ export function BookingClient({ tenantData, serviceId }: BookingClientProps) {
   };
 
   // Filter time slots based on current time if selected date is today
-  const isToday = selectedDate === new Date().toISOString().split('T')[0];
-  const currentTime = isToday ? new Date().getHours() + ':' + String(new Date().getMinutes()).padStart(2, '0') : '00:00';
-  
-  const allTimeSlots = ["09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00"];
-  
-  const timeSlots = isToday 
-    ? allTimeSlots.filter(time => time > currentTime)
+  const isToday = selectedDate === new Date().toISOString().split("T")[0];
+  const currentTime = isToday
+    ? new Date().getHours() +
+      ":" +
+      String(new Date().getMinutes()).padStart(2, "0")
+    : "00:00";
+
+  const allTimeSlots = [
+    "09:00",
+    "10:00",
+    "11:00",
+    "12:00",
+    "13:00",
+    "14:00",
+    "15:00",
+    "16:00",
+    "17:00",
+    "18:00",
+    "19:00",
+  ];
+
+  const timeSlots = isToday
+    ? allTimeSlots.filter((time) => time > currentTime)
     : allTimeSlots;
 
   const formatPhoneNumber = (value: string) => {
     // Remove all non-digit characters except the + at the beginning
     const cleaned = value.replace(/[^\d+]/g, "");
-    
+
     // If user is still typing +52, allow it
-    if (cleaned === '+' || cleaned === '+5' || cleaned === '+52') {
+    if (cleaned === "+" || cleaned === "+5" || cleaned === "+52") {
       return cleaned;
     }
 
     // Remove the +52 prefix to work with the 10 digits
     let digits = cleaned;
-    if (cleaned.startsWith('+52')) {
+    if (cleaned.startsWith("+52")) {
       digits = cleaned.substring(3);
-    } else if (cleaned.startsWith('52')) {
+    } else if (cleaned.startsWith("52")) {
       digits = cleaned.substring(2);
-    } else if (cleaned.startsWith('5') && cleaned.length === 1) {
+    } else if (cleaned.startsWith("5") && cleaned.length === 1) {
       return "+5";
     }
-    
+
     // Limit to 10 digits max for Mexican numbers
     digits = digits.substring(0, 10);
-    
+
     // Apply Mexican phone format: +52 XXX XXX XXXX
     if (digits.length > 0) {
       const match = digits.match(/^(\d{0,3})(\d{0,3})(\d{0,4})$/);
@@ -106,7 +122,7 @@ export function BookingClient({ tenantData, serviceId }: BookingClientProps) {
         return formatted.trim();
       }
     }
-    
+
     return "+52 ";
   };
 
@@ -126,7 +142,7 @@ export function BookingClient({ tenantData, serviceId }: BookingClientProps) {
     const file = e.target.files?.[0];
     if (file) {
       // Validate file type
-      if (!file.type.startsWith('image/')) {
+      if (!file.type.startsWith("image/")) {
         alert("Por favor sube una imagen válida (JPG, PNG, etc.)");
         return;
       }
@@ -157,7 +173,9 @@ export function BookingClient({ tenantData, serviceId }: BookingClientProps) {
     }
 
     if (!paymentProof) {
-      alert(`Por favor sube el comprobante de pago del depósito de $${safeDeposit} MXN`);
+      alert(
+        `Por favor sube el comprobante de pago del depósito de $${safeDeposit} MXN`,
+      );
       return;
     }
 
@@ -232,7 +250,9 @@ Te enviaremos una confirmación por SMS.`);
                 </span>
               </div>
               <div className="flex justify-between border-t pt-2">
-                <span className="text-gray-600 font-medium">Depósito Requerido:</span>
+                <span className="text-gray-600 font-medium">
+                  Depósito Requerido:
+                </span>
                 <span className="font-bold text-blue-600">
                   ${safeDeposit} MXN
                 </span>
@@ -256,13 +276,22 @@ Te enviaremos una confirmación por SMS.`);
                 Transferencia/depósito a la cuenta:
               </p>
               <div className="mt-2 p-2 bg-white rounded border border-blue-300 text-sm">
-                <p><strong>Banco:</strong> BBVA</p>
-                <p><strong>Cuenta:</strong> 1234 5678 9012 3456</p>
-                <p><strong>CLABE:</strong> 012 180 0123 4567 8901 23</p>
-                <p><strong>Titular:</strong> Wonder Nails Studio</p>
+                <p>
+                  <strong>Banco:</strong> BBVA
+                </p>
+                <p>
+                  <strong>Cuenta:</strong> 1234 5678 9012 3456
+                </p>
+                <p>
+                  <strong>CLABE:</strong> 012 180 0123 4567 8901 23
+                </p>
+                <p>
+                  <strong>Titular:</strong> Wonder Nails Studio
+                </p>
               </div>
               <p className="text-xs text-blue-600 mt-2">
-                Después de realizar el depósito, sube tu comprobante de pago en el formulario.
+                Después de realizar el depósito, sube tu comprobante de pago en
+                el formulario.
               </p>
             </div>
 
@@ -371,15 +400,28 @@ Te enviaremos una confirmación por SMS.`);
                     onChange={handlePhoneChange}
                     onKeyDown={(e) => {
                       // Allow backspace, delete, tab, escape, enter, and arrow keys
-                      if (['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                      if (
+                        [
+                          "Backspace",
+                          "Delete",
+                          "Tab",
+                          "Escape",
+                          "Enter",
+                          "ArrowLeft",
+                          "ArrowRight",
+                        ].includes(e.key)
+                      ) {
                         return;
                       }
                       // Allow Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
-                      if ((e.ctrlKey || e.metaKey) && ['a', 'c', 'v', 'x'].includes(e.key.toLowerCase())) {
+                      if (
+                        (e.ctrlKey || e.metaKey) &&
+                        ["a", "c", "v", "x"].includes(e.key.toLowerCase())
+                      ) {
                         return;
                       }
                       // Prevent all other non-digit characters except + at the beginning
-                      if (!/[\d+]/.test(e.key) && e.key !== 'Unidentified') {
+                      if (!/[\d+]/.test(e.key) && e.key !== "Unidentified") {
                         e.preventDefault();
                       }
                     }}
@@ -457,13 +499,28 @@ Te enviaremos una confirmación por SMS.`);
                           </div>
                         ) : (
                           <>
-                            <svg className="w-10 h-10 mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                            <svg
+                              className="w-10 h-10 mb-3 text-gray-400"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                              />
                             </svg>
                             <p className="mb-2 text-sm text-gray-500">
-                              <span className="font-semibold">Click para subir</span> o arrastra la imagen
+                              <span className="font-semibold">
+                                Click para subir
+                              </span>{" "}
+                              o arrastra la imagen
                             </p>
-                            <p className="text-xs text-gray-500">PNG, JPG (MAX. 5MB)</p>
+                            <p className="text-xs text-gray-500">
+                              PNG, JPG (MAX. 5MB)
+                            </p>
                           </>
                         )}
                       </div>
@@ -518,7 +575,11 @@ Te enviaremos una confirmación por SMS.`);
               </h4>
               <p className="text-sm text-stone-700">
                 Puedes cancelar o reprogramar tu cita hasta 4 horas antes sin
-                costo adicional. <strong>El depósito de ${safeDeposit} MXN es reembolsable</strong> si cancelas con al menos 4 horas de anticipación.
+                costo adicional.{" "}
+                <strong>
+                  El depósito de ${safeDeposit} MXN es reembolsable
+                </strong>{" "}
+                si cancelas con al menos 4 horas de anticipación.
               </p>
             </div>
 
@@ -529,7 +590,9 @@ Te enviaremos una confirmación por SMS.`);
                 Sobre tu Depósito
               </h4>
               <p className="text-sm text-green-700">
-                El depósito de <strong>${safeDeposit} MXN</strong> se aplicará al costo total del servicio. Pagarás el restante (<strong>${remainingBalance} MXN</strong>) el día de tu cita.
+                El depósito de <strong>${safeDeposit} MXN</strong> se aplicará
+                al costo total del servicio. Pagarás el restante (
+                <strong>${remainingBalance} MXN</strong>) el día de tu cita.
               </p>
             </div>
           </div>

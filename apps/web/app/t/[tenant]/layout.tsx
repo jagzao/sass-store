@@ -6,6 +6,7 @@ import { CircuitSpotlight } from "@/components/ui/CircuitSpotlight";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { TenantStyles } from "@/components/tenant/TenantStyles";
 import { LiveRegionProvider } from "@/components/a11y/LiveRegion";
+import { GoogleAuthBinder } from "@/components/auth/GoogleAuthBinder";
 
 // Force dynamic rendering for all tenant pages
 export const dynamic = "force-dynamic";
@@ -23,9 +24,9 @@ export default async function TenantLayout({
   params,
 }: TenantLayoutProps) {
   const resolvedParams = await params;
-  console.log("[TenantLayout] Resolved params:", resolvedParams);
+  console.warn("[TenantLayout] Resolved params:", resolvedParams);
   const { tenant: tenantSlug } = resolvedParams;
-  console.log("[TenantLayout] Extracted tenantSlug:", tenantSlug);
+  console.warn("[TenantLayout] Extracted tenantSlug:", tenantSlug);
 
   // Get tenant data directly from database (server-side only, no HTTP calls)
   const tenantRaw = await getTenantBySlug(tenantSlug);
@@ -43,37 +44,39 @@ export default async function TenantLayout({
     notFound();
   }
 
-  console.log(`[TenantLayout] Successfully loaded tenant: ${tenantData.name}`);
+  console.warn(`[TenantLayout] Successfully loaded tenant: ${tenantData.name}`);
 
   const isWondernails = tenantSlug === "wondernails";
   const isZoSystem = tenantSlug === "zo-system";
+  const isCentroTenistico = tenantSlug === "centro-tenistico";
+  const isDark =
+    (isZoSystem || tenantData.branding.theme === "dark") && !isCentroTenistico;
 
   return (
     <>
-      <TenantStyles isWondernails={isWondernails} isZoSystem={isZoSystem} />
+      <TenantStyles
+        isWondernails={isWondernails}
+        isZoSystem={isZoSystem}
+        primaryColor={tenantData.branding?.primaryColor}
+      />
       <div
         className={`min-h-screen ${
           isWondernails
             ? "bg-[#F8F9FA] text-[#333333]"
-            : isZoSystem || tenantData.branding.theme === "dark"
+            : isDark
               ? "bg-[#0D0D0D] text-white font-[family-name:var(--font-montserrat)] relative"
               : "bg-[#F8F9FA] text-gray-900"
         }`}
       >
         <LiveRegionProvider>
-          {(isZoSystem || tenantData.branding.theme === "dark") && (
-            <CircuitSpotlight />
-          )}
+          {isDark && <CircuitSpotlight />}
           <TenantHeader
             tenantData={tenantData}
             variant={
-              isWondernails
-                ? "transparent"
-                : tenantData.branding.theme === "dark"
-                  ? "dark"
-                  : "default"
+              isWondernails ? "transparent" : isDark ? "dark" : "default"
             }
           />
+          <GoogleAuthBinder tenantSlug={tenantSlug} />
           <main>
             <ErrorBoundary>{children}</ErrorBoundary>
           </main>

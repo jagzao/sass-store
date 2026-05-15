@@ -1,13 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { transactionCategoryService } from "@/lib/services/TransactionCategoryService";
 import { isSuccess } from "@sass-store/core/src/result";
+import { getHttpStatusCode } from "@sass-store/core/src/errors/types";
+import { db, eq } from "@sass-store/database";
+import { tenants } from "@sass-store/database/schema";
 import { z } from "zod";
-
-// Validation schemas
-const QuerySchema = z.object({
-  tenant: z.string().min(1, "Tenant parameter is required"),
-  type: z.enum(["income", "expense"]).optional(),
-});
 
 const CreateCategorySchema = z.object({
   type: z.enum(["income", "expense"]),
@@ -23,6 +20,38 @@ const CreateCategorySchema = z.object({
   budgetAlertThreshold: z.number().min(0).max(100).optional(),
   sortOrder: z.number().int().optional(),
 });
+
+async function resolveTenantId(
+  rawTenant: string,
+): Promise<
+  | { ok: true; tenantId: string }
+  | { ok: false; status: number; body: Record<string, unknown> }
+> {
+  const uuidCheck = z.string().uuid().safeParse(rawTenant);
+  if (uuidCheck.success) {
+    return { ok: true, tenantId: uuidCheck.data };
+  }
+
+  const rows = await db
+    .select({ id: tenants.id })
+    .from(tenants)
+    .where(eq(tenants.slug, rawTenant))
+    .limit(1);
+
+  const tenantId = rows[0]?.id;
+  if (!tenantId) {
+    return {
+      ok: false,
+      status: 404,
+      body: {
+        success: false,
+        error: { message: `Tenant not found for slug ${rawTenant}` },
+      },
+    };
+  }
+
+  return { ok: true, tenantId };
+}
 
 /**
  * GET /api/categories - Get transaction categories
@@ -40,9 +69,19 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    const resolved = await resolveTenantId(tenant);
+    if (!resolved.ok) {
+      return NextResponse.json(resolved.body, { status: resolved.status });
+    }
+
     const result = type
-      ? await transactionCategoryService.getCategoriesByType(tenant, type)
-      : await transactionCategoryService.getCategoriesByTenant(tenant);
+      ? await transactionCategoryService.getCategoriesByType(
+          resolved.tenantId,
+          type,
+        )
+      : await transactionCategoryService.getCategoriesByTenant(
+          resolved.tenantId,
+        );
 
     if (!isSuccess(result)) {
       return NextResponse.json(
@@ -50,7 +89,7 @@ export async function GET(request: NextRequest) {
           success: false,
           error: { message: result.error.message, type: result.error.type },
         },
-        { status: result.error.type === "NotFoundError" ? 404 : 500 },
+        { status: getHttpStatusCode(result.error) },
       );
     }
 
@@ -83,6 +122,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const resolved = await resolveTenantId(tenant);
+    if (!resolved.ok) {
+      return NextResponse.json(resolved.body, { status: resolved.status });
+    }
+
     // Validate body
     const validation = CreateCategorySchema.safeParse(body);
     if (!validation.success) {
@@ -100,25 +144,16 @@ export async function POST(request: NextRequest) {
 
     const result = await transactionCategoryService.createCategory({
       ...validation.data,
-      tenantId: tenant,
+      tenantId: resolved.tenantId,
     });
 
     if (!isSuccess(result)) {
-      const statusCode =
-        result.error.type === "ValidationError"
-          ? 400
-          : result.error.type === "NotFoundError"
-            ? 404
-            : result.error.type === "BusinessRuleError"
-              ? 409
-              : 500;
-
       return NextResponse.json(
         {
           success: false,
           error: { message: result.error.message, type: result.error.type },
         },
-        { status: statusCode },
+        { status: getHttpStatusCode(result.error) },
       );
     }
 

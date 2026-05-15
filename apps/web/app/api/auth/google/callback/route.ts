@@ -49,12 +49,7 @@ export async function GET(request: NextRequest) {
     const clientSecret = process.env.GOOGLE_CALENDAR_CLIENT_SECRET;
     const redirectUri = process.env.GOOGLE_CALENDAR_REDIRECT_URI;
 
-    console.log("OAuth Callback Debug:", {
-      hasClientId: !!clientId,
-      hasClientSecret: !!clientSecret,
-      redirectUri,
-      tenantSlug: state,
-    });
+    // SECURITY: Redacted sensitive log;
 
     if (!clientId || !clientSecret || !redirectUri) {
       console.error("Missing Google Calendar environment variables");
@@ -90,9 +85,9 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Tenant not found" }, { status: 404 });
     }
 
-    console.log(`Found tenant: ${tenant.id} (${tenant.name})`);
+    console.warn(`Found tenant: ${tenant.id} (${tenant.name})`);
     if (requestedCalendarId) {
-      console.log(`Requested calendar ID: ${requestedCalendarId}`);
+      console.warn(`Requested calendar ID: ${requestedCalendarId}`);
     }
 
     // Initialize OAuth2 client
@@ -103,13 +98,9 @@ export async function GET(request: NextRequest) {
     );
 
     // Exchange authorization code for tokens
-    console.log("Exchanging code for tokens...");
+    // SECURITY: Redacted sensitive log;
     const { tokens } = await oauth2Client.getToken(code);
-    console.log("Tokens received:", {
-      hasAccessToken: !!tokens.access_token,
-      hasRefreshToken: !!tokens.refresh_token,
-      expiryDate: tokens.expiry_date,
-    });
+    // SECURITY: Redacted sensitive log;
 
     // Determine which calendar ID to use
     oauth2Client.setCredentials(tokens);
@@ -149,10 +140,10 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    console.log(`Selected Calendar ID: ${calendarId}`);
+    console.warn(`Selected Calendar ID: ${calendarId}`);
 
     // Update tenant with tokens and calendar ID
-    console.log("Updating database...");
+    console.warn("Updating database...");
     const updateResult = await db
       .update(tenants)
       .set({
@@ -163,7 +154,7 @@ export async function GET(request: NextRequest) {
       .where(eq(tenants.id, tenant.id))
       .returning();
 
-    console.log(
+    console.warn(
       "Database update result:",
       updateResult.length > 0 ? "Success" : "Failed",
     );

@@ -45,7 +45,10 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
 
   const supplier = findSupplierById(suppliersResult.data, id);
   if (!supplier) {
-    return NextResponse.json({ error: "Proveedor no encontrado" }, { status: 404 });
+    return NextResponse.json(
+      { error: "Proveedor no encontrado" },
+      { status: 404 },
+    );
   }
 
   return NextResponse.json(supplier);
@@ -72,7 +75,10 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
     const existing = findSupplierById(suppliersResult.data, id);
     if (!existing) {
-      return NextResponse.json({ error: "Proveedor no encontrado" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Proveedor no encontrado" },
+        { status: 404 },
+      );
     }
 
     const updated = SupplierSchema.parse({
@@ -130,7 +136,10 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
 
   const exists = suppliersResult.data.some((supplier) => supplier.id === id);
   if (!exists) {
-    return NextResponse.json({ error: "Proveedor no encontrado" }, { status: 404 });
+    return NextResponse.json(
+      { error: "Proveedor no encontrado" },
+      { status: 404 },
+    );
   }
 
   const updatedSuppliers = suppliersResult.data.filter(
@@ -149,4 +158,3 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
 
   return NextResponse.json({ success: true });
 }
-

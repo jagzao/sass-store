@@ -116,25 +116,11 @@
   .ReactModal__Content,
   .dialog-panel,
   [data-headlessui-state="open"] {
-    background-color: #F8F9FA !important;
-    background: #F8F9FA !important;
+    background-color: #f8f9fa !important;
+    background: #f8f9fa !important;
     color: #333333 !important;
-    border: 1px solid #e5e5e5 !important;
+    border: 1px solid #e5e7eb !important;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
-  }
-
-  /* Force Header/Navbar Transparency */
-  header,
-  nav,
-  .navbar-container {
-    background-color: transparent !important;
-    background: transparent !important;
-  }
-
-  /* If header has a direct child that is colored, kill it */
-  header > div,
-  nav > div {
-    background-color: transparent !important;
   }
 
   /* Ensure input fields in modals are visible */
@@ -329,33 +315,18 @@
 .modal-content,
 .ReactModal__Content,
 .dialog-panel {
-  background: #F8F9FA !important;
-  background-color: #F8F9FA !important;
+  background: #f8f9fa !important;
+  background-color: #f8f9fa !important;
   color: #333333 !important;
-  border: 1px solid #c5a059 !important; /* Gold Border */
+  border: 1px solid #e5e7eb !important;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
 }
 
-/* 3. MAP PLACEHOLDER GLOBAL FIX */
+/* MAP PLACEHOLDER GLOBAL FIX */
 .map-placeholder,
 .google-map-container {
   background-color: #f0f0f0 !important;
   border: 1px solid #e0e0e0 !important;
-}
-
-/* 2. SANITIZE THE NAVBAR (The "Cream" Killer) */
-/* Force Header Transparency globally */
-header,
-nav,
-.navbar-container {
-  background-color: transparent !important;
-  background: transparent !important;
-}
-
-/* If the header has a direct child that is colored, kill it too */
-header > div,
-nav > div {
-  background-color: transparent !important;
 }
 
 /* 3. VERIFY INPUT FIELDS IN MODAL */
@@ -392,11 +363,11 @@ nav > div {
 
 :root {
   /* Ethereal Lilac Luxury Design Tokens */
-  --lilac-spotlight: #E6E6FA;
+  --lilac-spotlight: #e6e6fa;
   --lilac-spotlight-soft: rgba(230, 230, 250, 0.3);
   --lilac-spotlight-subtle: rgba(230, 230, 250, 0.1);
-  --gold-accent: #C5A059;
-  --gold-accent-hover: #D4B76A;
+  --gold-accent: #c5a059;
+  --gold-accent-hover: #d4b76a;
   --gold-accent-light: rgba(197, 160, 89, 0.2);
   --glass-bg: rgba(255, 255, 255, 0.7);
   --glass-bg-strong: rgba(255, 255, 255, 0.9);
@@ -413,7 +384,7 @@ nav > div {
 .hometenant-dashboard .bg-yellow-50,
 .hometenant-dashboard .bg-yellow-100,
 .hometenant-dashboard .bg-yellow-200 {
-  background-color: #FFFFFF !important;
+  background-color: #ffffff !important;
 }
 
 /* Yellow to Lilac replacement */
@@ -473,8 +444,8 @@ nav > div {
 .hometenant-dashboard [role="dialog"],
 .hometenant-dashboard .modal,
 .hometenant-dashboard .modal-content {
-  background: #FFFFFF !important;
-  background-color: #FFFFFF !important;
+  background: #ffffff !important;
+  background-color: #ffffff !important;
   border: 1px solid var(--gold-accent-light) !important;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15) !important;
 }
@@ -483,7 +454,7 @@ nav > div {
 .hometenant-dashboard [role="dialog"] input,
 .hometenant-dashboard [role="dialog"] select,
 .hometenant-dashboard [role="dialog"] textarea {
-  background-color: #FAFAFA !important;
+  background-color: #fafafa !important;
   border: 1px solid var(--gold-accent-light) !important;
 }
 

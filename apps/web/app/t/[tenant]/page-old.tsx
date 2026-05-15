@@ -72,10 +72,10 @@ export default async function TenantPage({ params }: PageProps) {
 
     // Filter featured items
     const featuredServices = tenantData.services.filter(
-      (service: any) => service.featured
+      (service: any) => service.featured,
     );
     const featuredProducts = tenantData.products.filter(
-      (product: any) => product.featured
+      (product: any) => product.featured,
     );
 
     // Parse branding and contact from JSONB

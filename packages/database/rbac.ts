@@ -150,7 +150,7 @@ const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
  */
 export async function getUserRole(
   userId: string,
-  tenantId?: string
+  tenantId?: string,
 ): Promise<Role | null> {
   try {
     // Super admin check (global role) - Note: SUPER_ADMIN not in DB enum
@@ -162,8 +162,8 @@ export async function getUserRole(
       .where(
         and(
           eq(userRoles.userId, userId),
-          eq(userRoles.role, DatabaseRole.ADMIN)
-        )
+          eq(userRoles.role, DatabaseRole.ADMIN),
+        ),
       )
       .limit(1);
 
@@ -177,7 +177,7 @@ export async function getUserRole(
         .select({ role: userRoles.role })
         .from(userRoles)
         .where(
-          and(eq(userRoles.userId, userId), eq(userRoles.tenantId, tenantId))
+          and(eq(userRoles.userId, userId), eq(userRoles.tenantId, tenantId)),
         )
         .limit(1);
 
@@ -197,7 +197,7 @@ export async function getUserRole(
 export async function hasPermission(
   userId: string,
   permission: Permission,
-  tenantId?: string
+  tenantId?: string,
 ): Promise<boolean> {
   try {
     const userRole = await getUserRole(userId, tenantId);
@@ -226,7 +226,7 @@ export async function hasPermission(
 export async function canAssignRole(
   assignerId: string,
   targetRole: Role,
-  tenantId?: string
+  tenantId?: string,
 ): Promise<boolean> {
   try {
     const assignerRole = await getUserRole(assignerId, tenantId);
@@ -359,7 +359,7 @@ export async function assignUserRole(params: {
  */
 export async function getUserPermissions(
   userId: string,
-  tenantId?: string
+  tenantId?: string,
 ): Promise<Permission[]> {
   try {
     const userRole = await getUserRole(userId, tenantId);
@@ -429,7 +429,7 @@ export function requireRole(minimumRole: Role) {
 
     if (!userRole || compareRoles(userRole, minimumRole) < 0) {
       throw new PermissionDeniedError(
-        `Insufficient role level. Required: ${minimumRole}, Got: ${userRole}`
+        `Insufficient role level. Required: ${minimumRole}, Got: ${userRole}`,
       );
     }
 
@@ -486,7 +486,7 @@ export function isValidRoleTransition(fromRole: Role, toRole: Role): boolean {
  */
 export async function getAssignableRoles(
   assignerId: string,
-  tenantId?: string
+  tenantId?: string,
 ): Promise<Role[]> {
   try {
     const assignerRole = await getUserRole(assignerId, tenantId);

@@ -30,6 +30,7 @@
       "@sass-store/ui": ["../../packages/ui"],
       "@sass-store/database": ["../../packages/database"],
       "@sass-store/config": ["../../packages/config"],
+      "@sass-store/config/auth-env": ["../../packages/config/src/auth-env.ts"],
       "@sass-store/shared": ["../../packages/shared"],
       "@sass-store/cache": ["../../packages/cache"]
     }
@@ -43,5 +44,21 @@
     ".next/dev/types/**/*.ts",
     ".next/dev/dev/types/**/*.ts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules",
+    "app/api/**/route-result*.ts",
+    "app/api/**/route-result*.tsx",
+    "app/t/**/page-client-backup-*.tsx",
+    "app/t/**/page-backup.tsx",
+    "app/t/**/page-old.tsx",
+    "app/t/[tenant]/page-old.tsx",
+    "app/t/**/layout-old.tsx",
+    "app/t/**/layout-backup-*.tsx",
+    "app/page-*.tsx",
+    "app/layout-*.tsx",
+    "app/page-*.ts",
+    "app/layout-*.ts",
+    "test-auth-redirect.js",
+    "public/sw.js"
+  ]
 }

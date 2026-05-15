@@ -39,9 +39,9 @@ export default function HeroDeliriosDemo() {
         slides={mockSlides}
         initialIndex={1}
         autoplayMs={4500}
-        onCta={(index) => console.log(`CTA clicked for slide ${index}`)}
-        onNext={(index) => console.log(`Next: ${index}`)}
-        onPrev={(index) => console.log(`Prev: ${index}`)}
+        onCta={(index) => console.warn(`CTA clicked for slide ${index}`)}
+        onNext={(index) => console.warn(`Next: ${index}`)}
+        onPrev={(index) => console.warn(`Prev: ${index}`)}
       />
     </div>
   );

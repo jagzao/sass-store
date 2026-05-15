@@ -4,10 +4,10 @@ import { db } from "@sass-store/database";
 import { InventoryService } from "@/lib/inventory/inventory-service";
 
 interface RouteParams {
-  params: {
+  params: Promise<{
     serviceId: string;
     productId: string;
-  };
+  }>;
 }
 
 /**
@@ -31,7 +31,7 @@ export async function DELETE(request: NextRequest, context: RouteParams) {
     }
 
     // Obtener serviceId y productId de los params
-    const { serviceId, productId } = context.params;
+    const { serviceId, productId } = await context.params;
 
     // Eliminar producto de servicio
     const result = await InventoryService.removeProductFromService(

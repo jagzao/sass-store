@@ -80,7 +80,7 @@ export default function TokenManagementModal({
       setSelectedPlatform(null);
       fetchConnections();
     } catch (error) {
-      console.error("Error saving token:", error);
+      // SECURITY: Redacted sensitive log;
       alert("Error al guardar el token");
     } finally {
       setIsLoading(false);

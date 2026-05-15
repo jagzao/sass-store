@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, type Page } from "@playwright/test";
 import {
   loginAsAdmin,
   navigateToAdminServices,
@@ -6,6 +6,12 @@ import {
   generateTestName,
   createService,
 } from "../helpers/test-helpers";
+
+const escapeRegExp = (value: string) =>
+  value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+const serviceRow = (page: Page, serviceName: string) =>
+  page.getByRole("row", { name: new RegExp(escapeRegExp(serviceName)) });
 
 test.describe.serial("Service CRUD Operations", () => {
   test("should create a new service successfully", async ({ page }) => {
@@ -21,18 +27,21 @@ test.describe.serial("Service CRUD Operations", () => {
       name: serviceName,
       description: "E2E test service",
       price: "50.00",
-      duration: "45",
+      duration: "1.5",
       featured: true,
     });
 
     // Verify service appears in list
-    await expect(page.getByText(serviceName)).toBeVisible({ timeout: 10000 });
-    await expect(page.getByText("45 min")).toBeVisible();
-    await expect(page.getByText("$50.00")).toBeVisible();
+    const createdRow = serviceRow(page, serviceName);
+    await expect(createdRow).toBeVisible({ timeout: 10000 });
+    await expect(createdRow.getByText("1.5 h")).toBeVisible();
+    await expect(createdRow.getByText("$50.00")).toBeVisible();
 
     // Cleanup: Delete the test service
     setupDialogHandler(page, "accept");
-    await page.getByRole("button", { name: "Eliminar" }).first().click();
+    await serviceRow(page, serviceName)
+      .getByRole("button", { name: "Eliminar" })
+      .click();
     await expect(page.getByText(serviceName)).not.toBeVisible({
       timeout: 5000,
     });
@@ -48,11 +57,13 @@ test.describe.serial("Service CRUD Operations", () => {
     await createService(page, {
       name: serviceName,
       price: "50.00",
-      duration: "45",
+      duration: "1.5",
     });
 
     // Edit the service
-    await page.getByRole("button", { name: "Editar" }).first().click();
+    await serviceRow(page, serviceName)
+      .getByRole("button", { name: "Editar" })
+      .click();
     await expect(page.getByText("Editar Servicio")).toBeVisible();
 
     // Update fields
@@ -66,18 +77,24 @@ test.describe.serial("Service CRUD Operations", () => {
     await page.locator("input[placeholder='0.00']").fill("99.00");
 
     // Verify empty image handling (bug fix validation)
-    await expect(page.getByText("Click para subir imagen")).toBeVisible();
+    await expect(
+      page.getByText("Click para subir imagen").first(),
+    ).toBeVisible();
 
     // Submit update
+    page.once("dialog", (dialog) => dialog.accept());
     await page.getByRole("button", { name: "Actualizar Servicio" }).click();
 
     // Verify updates
-    await expect(page.getByText(updatedName)).toBeVisible({ timeout: 10000 });
-    await expect(page.getByText("$99.00")).toBeVisible();
+    const updatedRow = serviceRow(page, updatedName);
+    await expect(updatedRow).toBeVisible({ timeout: 10000 });
+    await expect(updatedRow.getByText("$99.00")).toBeVisible();
 
     // Cleanup
     setupDialogHandler(page, "accept");
-    await page.getByRole("button", { name: "Eliminar" }).first().click();
+    await serviceRow(page, updatedName)
+      .getByRole("button", { name: "Eliminar" })
+      .click();
     await expect(page.getByText(updatedName)).not.toBeVisible({
       timeout: 5000,
     });
@@ -93,7 +110,7 @@ test.describe.serial("Service CRUD Operations", () => {
     await createService(page, {
       name: serviceName,
       price: "25.00",
-      duration: "30",
+      duration: "0.5",
     });
 
     // Verify service exists
@@ -101,7 +118,9 @@ test.describe.serial("Service CRUD Operations", () => {
 
     // Delete service
     setupDialogHandler(page, "accept");
-    await page.getByRole("button", { name: "Eliminar" }).first().click();
+    await serviceRow(page, serviceName)
+      .getByRole("button", { name: "Eliminar" })
+      .click();
 
     // Verify deletion
     await expect(page.getByText(serviceName)).not.toBeVisible({
@@ -109,7 +128,7 @@ test.describe.serial("Service CRUD Operations", () => {
     });
   });
 
-  test("should validate form persistence (draft feature)", async ({ page }) => {
+  test("should clear draft when closing the create form", async ({ page }) => {
     // Login and navigate
     await loginAsAdmin(page);
     await navigateToAdminServices(page);
@@ -131,15 +150,8 @@ test.describe.serial("Service CRUD Operations", () => {
     // Re-open modal
     await page.getByRole("button", { name: "+ Nuevo Servicio" }).click();
 
-    // Verify draft was restored
+    // Verify draft was cleared
     const nameInput = page.locator("input[placeholder='Ej: Manicure Premium']");
-    await expect(nameInput).toHaveValue(draftName);
-
-    // Verify draft indicator is shown
-    await expect(page.getByText("Borrador guardado")).toBeVisible();
-
-    // Clean up draft
-    await page.getByText("Limpiar").click();
     await expect(nameInput).toHaveValue("");
 
     // Close modal

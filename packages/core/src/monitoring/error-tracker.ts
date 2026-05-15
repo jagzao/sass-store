@@ -3,7 +3,7 @@
  * Provides centralized error logging and monitoring
  */
 
-import { ILogger, Logger } from './logger';
+import { ILogger, Logger } from "./logger";
 
 export interface ErrorContext {
   user?: {
@@ -27,7 +27,7 @@ export interface ErrorReport {
   stack?: string;
   type: string;
   context: ErrorContext;
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  severity: "low" | "medium" | "high" | "critical";
 }
 
 export class ErrorTracker {
@@ -37,7 +37,7 @@ export class ErrorTracker {
   private maxReports = 1000; // Keep last 1000 reports in memory
 
   private constructor() {
-    this.logger = new Logger('error-tracker');
+    this.logger = new Logger("error-tracker");
   }
 
   public static getInstance(): ErrorTracker {
@@ -50,16 +50,17 @@ export class ErrorTracker {
   public async captureError(
     error: Error | string,
     context: ErrorContext = {},
-    severity: 'low' | 'medium' | 'high' | 'critical' = 'medium'
+    severity: "low" | "medium" | "high" | "critical" = "medium",
   ): Promise<string> {
     const report: ErrorReport = {
-      id: `err_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      id: `err_${Date.now()}_${crypto.randomUUID().replace(/-/g, "").substring(0, 9)}`,
       timestamp: new Date(),
-      message: typeof error === 'string' ? error : error.message || 'Unknown error',
-      stack: typeof error !== 'string' ? error.stack : undefined,
-      type: typeof error === 'string' ? 'string_error' : error.constructor.name,
+      message:
+        typeof error === "string" ? error : error.message || "Unknown error",
+      stack: typeof error !== "string" ? error.stack : undefined,
+      type: typeof error === "string" ? "string_error" : error.constructor.name,
       context,
-      severity
+      severity,
     };
 
     // Store in memory
@@ -72,7 +73,7 @@ export class ErrorTracker {
     this.logger.error(`[${report.severity.toUpperCase()}] ${report.message}`, {
       errorId: report.id,
       stack: report.stack,
-      context: report.context
+      context: report.context,
     });
 
     // In a real implementation, this would send to an external service like Sentry
@@ -87,22 +88,25 @@ export class ErrorTracker {
     // For now, we'll just simulate this behavior
 
     // Example: Send to external service
-    if (process.env.NODE_ENV === 'production' && process.env.ERROR_REPORTING_ENDPOINT) {
+    if (
+      process.env.NODE_ENV === "production" &&
+      process.env.ERROR_REPORTING_ENDPOINT
+    ) {
       try {
         await fetch(process.env.ERROR_REPORTING_ENDPOINT, {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${process.env.ERROR_REPORTING_TOKEN}`,
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.ERROR_REPORTING_TOKEN}`,
           },
           body: JSON.stringify({
             ...report,
-            timestamp: report.timestamp.toISOString()
-          })
+            timestamp: report.timestamp.toISOString(),
+          }),
         });
       } catch (sendError) {
         // Don't let error reporting fail the main app
-        this.logger.warn('Failed to send error to external service', sendError);
+        this.logger.warn("Failed to send error to external service", sendError);
       }
     }
   }
@@ -114,11 +118,11 @@ export class ErrorTracker {
   }
 
   public getErrorById(id: string): ErrorReport | undefined {
-    return this.reports.find(report => report.id === id);
+    return this.reports.find((report) => report.id === id);
   }
 
   public getErrorCountBySeverity(severity: string): number {
-    return this.reports.filter(report => report.severity === severity).length;
+    return this.reports.filter((report) => report.severity === severity).length;
   }
 
   public clearReports(): void {
@@ -130,7 +134,7 @@ export class ErrorTracker {
 export const captureError = async (
   error: Error | string,
   context: ErrorContext = {},
-  severity: 'low' | 'medium' | 'high' | 'critical' = 'medium'
+  severity: "low" | "medium" | "high" | "critical" = "medium",
 ): Promise<string> => {
   const tracker = ErrorTracker.getInstance();
   return await tracker.captureError(error, context, severity);

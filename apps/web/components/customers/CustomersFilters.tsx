@@ -39,35 +39,35 @@ export default function CustomersFilters({
   // Add debouncing for search
   useEffect(() => {
     const timer = setTimeout(() => {
-       const newParams = new URLSearchParams();
-       
-       if (search) newParams.set("search", search);
-       if (status && status !== "all") newParams.set("status", status);
-       
-       // Preserve sort/order from props (OR rely on hook if props are unstable, but props are passed from server which is fine if we check equality)
-       // Actually, let's use the hook for the current state of sort/order to be safer against prop reference changes
-       // restarting the effect.
-       
-       const currentSort = searchParamsHook.get("sort");
-       const currentOrder = searchParamsHook.get("order");
+      const newParams = new URLSearchParams();
 
-       if (currentSort) {
-         newParams.set("sort", currentSort);
-       }
-       if (currentOrder) {
-         newParams.set("order", currentOrder);
-       }
+      if (search) newParams.set("search", search);
+      if (status && status !== "all") newParams.set("status", status);
 
-       const queryString = newParams.toString();
-       const currentQueryString = searchParamsHook.toString();
+      // Preserve sort/order from props (OR rely on hook if props are unstable, but props are passed from server which is fine if we check equality)
+      // Actually, let's use the hook for the current state of sort/order to be safer against prop reference changes
+      // restarting the effect.
 
-       // Only push if the query string has effectively changed
-       // We need to be careful about parameter order, but URLSearchParams usually sorts or we can just compare values?
-       // Simplest is to check if newParams is different from current.
-       
-       if (queryString !== currentQueryString) {
-          router.push(`${pathname}?${queryString}`);
-       }
+      const currentSort = searchParamsHook.get("sort");
+      const currentOrder = searchParamsHook.get("order");
+
+      if (currentSort) {
+        newParams.set("sort", currentSort);
+      }
+      if (currentOrder) {
+        newParams.set("order", currentOrder);
+      }
+
+      const queryString = newParams.toString();
+      const currentQueryString = searchParamsHook.toString();
+
+      // Only push if the query string has effectively changed
+      // We need to be careful about parameter order, but URLSearchParams usually sorts or we can just compare values?
+      // Simplest is to check if newParams is different from current.
+
+      if (queryString !== currentQueryString) {
+        router.push(`${pathname}?${queryString}`);
+      }
     }, 300); // 300ms delay
 
     return () => clearTimeout(timer);
@@ -79,7 +79,7 @@ export default function CustomersFilters({
 
   const handleStatusChange = (option: SelectOption | string | null) => {
     // We expect SelectOption for single select, but the type allows string
-    if (typeof option === 'string') return; 
+    if (typeof option === "string") return;
     setStatus(option?.value || "all");
   };
 

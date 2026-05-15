@@ -12,7 +12,12 @@ import type { InferSelectModel } from "drizzle-orm";
 export type Payment = InferSelectModel<typeof payments> & {
   // Extended fields for route compatibility
   userId?: string;
-  paymentMethod?: "credit_card" | "debit_card" | "paypal" | "stripe" | "bank_transfer";
+  paymentMethod?:
+    | "credit_card"
+    | "debit_card"
+    | "paypal"
+    | "stripe"
+    | "bank_transfer";
   provider?: "stripe" | "paypal" | "square" | "adhoc";
   description?: string;
 };
@@ -23,7 +28,12 @@ export interface CreatePaymentData {
   tenantId?: string;
   amount: number;
   currency?: string;
-  paymentMethod?: "credit_card" | "debit_card" | "paypal" | "stripe" | "bank_transfer";
+  paymentMethod?:
+    | "credit_card"
+    | "debit_card"
+    | "paypal"
+    | "stripe"
+    | "bank_transfer";
   provider?: "stripe" | "paypal" | "square" | "adhoc";
   stripePaymentIntentId?: string;
   status?: "pending" | "processing" | "completed" | "failed" | "refunded";
@@ -60,16 +70,22 @@ const CreatePaymentSchema = z.object({
   tenantId: z.string().uuid().optional(),
   amount: z.number().positive(),
   currency: z.string().length(3).default("MXN"),
-  paymentMethod: z.enum(["credit_card", "debit_card", "paypal", "stripe", "bank_transfer"]).optional(),
+  paymentMethod: z
+    .enum(["credit_card", "debit_card", "paypal", "stripe", "bank_transfer"])
+    .optional(),
   provider: z.enum(["stripe", "paypal", "square", "adhoc"]).optional(),
   stripePaymentIntentId: z.string().optional(),
-  status: z.enum(["pending", "processing", "completed", "failed", "refunded"]).optional(),
+  status: z
+    .enum(["pending", "processing", "completed", "failed", "refunded"])
+    .optional(),
   description: z.string().optional(),
   metadata: z.record(z.any()).optional(),
 });
 
 const UpdatePaymentSchema = z.object({
-  status: z.enum(["pending", "processing", "completed", "failed", "refunded"]).optional(),
+  status: z
+    .enum(["pending", "processing", "completed", "failed", "refunded"])
+    .optional(),
   stripePaymentIntentId: z.string().optional(),
   providerTransactionId: z.string().optional(),
   description: z.string().optional(),
@@ -96,7 +112,7 @@ export class PaymentService {
 
     // Verify order exists and get tenant
     let tenantId = data.tenantId;
-    
+
     if (data.orderId) {
       const orderCheck = await db
         .select()
@@ -186,7 +202,7 @@ export class PaymentService {
     }
 
     // Extract extended fields from metadata
-    const metadata = result[0].metadata as Record<string, unknown> || {};
+    const metadata = (result[0].metadata as Record<string, unknown>) || {};
     const payment: Payment = {
       ...result[0],
       userId: metadata.userId as string | undefined,
@@ -221,7 +237,7 @@ export class PaymentService {
 
     // Map to include extended fields
     const mappedPayments: Payment[] = results.map((p) => {
-      const metadata = p.metadata as Record<string, unknown> || {};
+      const metadata = (p.metadata as Record<string, unknown>) || {};
       return {
         ...p,
         userId: metadata.userId as string | undefined,
@@ -258,7 +274,7 @@ export class PaymentService {
 
     // Map to include extended fields
     const mappedPayments: Payment[] = results.map((p) => {
-      const metadata = p.metadata as Record<string, unknown> || {};
+      const metadata = (p.metadata as Record<string, unknown>) || {};
       return {
         ...p,
         userId: metadata.userId as string | undefined,
@@ -295,7 +311,7 @@ export class PaymentService {
 
     // Map to include extended fields
     const mappedPayments: Payment[] = results.map((p) => {
-      const metadata = p.metadata as Record<string, unknown> || {};
+      const metadata = (p.metadata as Record<string, unknown>) || {};
       return {
         ...p,
         userId: metadata.userId as string | undefined,
@@ -354,7 +370,7 @@ export class PaymentService {
         );
       }
 
-      const metadata = result[0].metadata as Record<string, unknown> || {};
+      const metadata = (result[0].metadata as Record<string, unknown>) || {};
       return Ok({
         ...result[0],
         userId: metadata.userId as string | undefined,
@@ -424,7 +440,7 @@ export class PaymentService {
       );
     }
 
-    const metadata = result[0].metadata as Record<string, unknown> || {};
+    const metadata = (result[0].metadata as Record<string, unknown>) || {};
     return Ok({
       ...result[0],
       userId: metadata.userId as string | undefined,
@@ -466,7 +482,8 @@ export class PaymentService {
     const processorResult = await this.refundWithProvider(payment);
 
     if (processorResult.success) {
-      const existingMetadata = (payment.metadata as Record<string, unknown>) || {};
+      const existingMetadata =
+        (payment.metadata as Record<string, unknown>) || {};
       const updateData = {
         status: "refunded" as const,
         metadata: {
@@ -497,7 +514,7 @@ export class PaymentService {
         );
       }
 
-      const metadata = result[0].metadata as Record<string, unknown> || {};
+      const metadata = (result[0].metadata as Record<string, unknown>) || {};
       return Ok({
         ...result[0],
         userId: metadata.userId as string | undefined,
@@ -525,7 +542,7 @@ export class PaymentService {
 
     // Map to include extended fields
     const mappedPayments: Payment[] = results.map((p) => {
-      const metadata = p.metadata as Record<string, unknown> || {};
+      const metadata = (p.metadata as Record<string, unknown>) || {};
       return {
         ...p,
         userId: metadata.userId as string | undefined,
@@ -578,12 +595,14 @@ export class PaymentService {
     }
 
     const existingPayment = existingPayments[0];
-    const existingMetadata = (existingPayment.metadata as Record<string, unknown>) || {};
-    
+    const existingMetadata =
+      (existingPayment.metadata as Record<string, unknown>) || {};
+
     // Update metadata with new fields
     const updateData: Record<string, unknown> = {
       status: data.status ?? existingPayment.status,
-      stripePaymentIntentId: data.stripePaymentIntentId ?? existingPayment.stripePaymentIntentId,
+      stripePaymentIntentId:
+        data.stripePaymentIntentId ?? existingPayment.stripePaymentIntentId,
       updatedAt: new Date(),
     };
 
@@ -618,7 +637,7 @@ export class PaymentService {
       );
     }
 
-    const metadata = result[0].metadata as Record<string, unknown> || {};
+    const metadata = (result[0].metadata as Record<string, unknown>) || {};
     return Ok({
       ...result[0],
       userId: metadata.userId as string | undefined,

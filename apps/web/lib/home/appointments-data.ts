@@ -39,7 +39,7 @@ export interface AppointmentsFilter {
  */
 export async function getUnconfirmedAppointments(
   tenantSlug: string,
-  filter: AppointmentsFilter = {}
+  filter: AppointmentsFilter = {},
 ): Promise<Result<UnconfirmedAppointment[], DomainError>> {
   const { status = "pending", limit = 10, fromDate } = filter;
 
@@ -61,7 +61,7 @@ export async function getUnconfirmedAppointments(
         headers: {
           "Content-Type": "application/json",
         },
-      }
+      },
     );
 
     if (!response.ok) {
@@ -73,8 +73,8 @@ export async function getUnconfirmedAppointments(
           "get_appointments",
           `Failed to fetch appointments: ${response.statusText}`,
           undefined,
-          new Error(`HTTP ${response.status}: ${response.statusText}`)
-        )
+          new Error(`HTTP ${response.status}: ${response.statusText}`),
+        ),
       );
     }
 
@@ -84,7 +84,8 @@ export async function getUnconfirmedAppointments(
     const appointments: UnconfirmedAppointment[] = (data.bookings || []).map(
       (booking: any) => ({
         id: booking.id,
-        customerName: booking.customerName || booking.customer?.name || "Cliente",
+        customerName:
+          booking.customerName || booking.customer?.name || "Cliente",
         customerPhone: booking.customerPhone || booking.customer?.phone,
         customerEmail: booking.customerEmail || booking.customer?.email,
         serviceName: booking.service?.name || "Servicio",
@@ -93,7 +94,7 @@ export async function getUnconfirmedAppointments(
         status: booking.status,
         totalPrice: Number(booking.totalPrice) || 0,
         notes: booking.notes,
-      })
+      }),
     );
 
     return Ok(appointments);
@@ -103,11 +104,10 @@ export async function getUnconfirmedAppointments(
         "get_appointments",
         "Failed to fetch appointments",
         undefined,
-        error instanceof Error ? error : new Error(String(error))
-      )
+        error instanceof Error ? error : new Error(String(error)),
+      ),
     );
   }
 }
-
 
 export default getUnconfirmedAppointments;

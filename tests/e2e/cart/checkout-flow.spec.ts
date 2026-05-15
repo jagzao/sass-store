@@ -5,26 +5,32 @@ import { TEST_CREDENTIALS } from "../helpers/test-helpers";
  * Cart-to-Checkout/Payment Integration E2E Tests
  * Tests the complete flow from cart management to payment processing
  * Includes happy path and failure scenarios
- * 
+ *
  * NOTE: Cart API works without auth (in-memory storage).
  * Payment API requires Bearer token authentication.
  */
 
 // Helper function to check if status is one of expected values
-function expectStatusOneOf(status: number, expected: number[], context?: string) {
+function expectStatusOneOf(
+  status: number,
+  expected: number[],
+  context?: string,
+) {
   if (!expected.includes(status)) {
-    const contextMsg = context ? ` (${context})` : '';
-    throw new Error(`Expected status to be one of [${expected.join(', ')}], but got ${status}${contextMsg}`);
+    const contextMsg = context ? ` (${context})` : "";
+    throw new Error(
+      `Expected status to be one of [${expected.join(", ")}], but got ${status}${contextMsg}`,
+    );
   }
 }
 
 test.describe("Cart to Checkout Integration", () => {
   const { tenantSlug } = TEST_CREDENTIALS;
-  
+
   // Generate unique test identifiers
   const testId = `${Date.now()}_${Math.floor(Math.random() * 10000)}`;
   const testUserId = `cart_user_${testId}`;
-  
+
   // Test product data
   const testProduct = {
     id: `product_${testId}`,
@@ -34,12 +40,11 @@ test.describe("Cart to Checkout Integration", () => {
   };
 
   test.describe("Cart Management (No Auth Required)", () => {
-    
     test("should get empty cart for new user", async ({ request }) => {
       const response = await request.get(`/api/users/${testUserId}/cart`);
-      
+
       expect(response.status()).toBe(200);
-      
+
       const cart = await response.json();
       expect(cart).toHaveProperty("items");
       expect(cart).toHaveProperty("total");
@@ -57,7 +62,7 @@ test.describe("Cart to Checkout Integration", () => {
         ],
         total: testProduct.price * testProduct.quantity,
       };
-      
+
       const response = await request.put(`/api/users/${testUserId}/cart`, {
         headers: {
           "Content-Type": "application/json",
@@ -66,7 +71,7 @@ test.describe("Cart to Checkout Integration", () => {
       });
 
       expect(response.status()).toBe(200);
-      
+
       const data = await response.json();
       expect(data.success).toBe(true);
       expect(data.cart.items).toHaveLength(1);
@@ -82,12 +87,12 @@ test.describe("Cart to Checkout Integration", () => {
           total: testProduct.price * testProduct.quantity,
         },
       });
-      
+
       // Then retrieve
       const response = await request.get(`/api/users/${testUserId}/cart`);
-      
+
       expect(response.status()).toBe(200);
-      
+
       const cart = await response.json();
       expect(cart.items.length).toBeGreaterThanOrEqual(1);
     });
@@ -104,14 +109,14 @@ test.describe("Cart to Checkout Integration", () => {
         ],
         total: testProduct.price * 5,
       };
-      
+
       const response = await request.put(`/api/users/${testUserId}/cart`, {
         headers: { "Content-Type": "application/json" },
         data: updatedCartData,
       });
 
       expect(response.status()).toBe(200);
-      
+
       const data = await response.json();
       expect(data.success).toBe(true);
       expect(data.cart.items[0].quantity).toBe(5);
@@ -127,7 +132,7 @@ test.describe("Cart to Checkout Integration", () => {
       });
 
       expect(response.status()).toBe(200);
-      
+
       const data = await response.json();
       expect(data.success).toBe(true);
       expect(data.cart.items).toHaveLength(0);
@@ -136,8 +141,9 @@ test.describe("Cart to Checkout Integration", () => {
   });
 
   test.describe("Happy Path: Cart to Payment Flow", () => {
-    
-    test("should complete cart operations and attempt payment", async ({ request }) => {
+    test("should complete cart operations and attempt payment", async ({
+      request,
+    }) => {
       // Step 1: Add items to cart
       const cartResponse = await request.put(`/api/users/${testUserId}/cart`, {
         headers: { "Content-Type": "application/json" },
@@ -146,23 +152,25 @@ test.describe("Cart to Checkout Integration", () => {
             {
               productId: `prod_checkout_${testId}`,
               name: "Checkout Test Product",
-              price: 150.00,
+              price: 150.0,
               quantity: 1,
             },
           ],
-          total: 150.00,
+          total: 150.0,
         },
       });
-      
+
       expect(cartResponse.status()).toBe(200);
       const cartData = await cartResponse.json();
       expect(cartData.success).toBe(true);
 
       // Step 2: Verify cart contents
-      const getCartResponse = await request.get(`/api/users/${testUserId}/cart`);
+      const getCartResponse = await request.get(
+        `/api/users/${testUserId}/cart`,
+      );
       expect(getCartResponse.status()).toBe(200);
       const cart = await getCartResponse.json();
-      expect(cart.total).toBe(150.00);
+      expect(cart.total).toBe(150.0);
 
       // Step 3: Attempt payment (will fail due to auth, but flow is tested)
       const paymentResponse = await request.post(`/api/payments`, {
@@ -183,20 +191,28 @@ test.describe("Cart to Checkout Integration", () => {
       });
 
       // Payment requires auth - this is expected security behavior
-      expectStatusOneOf(paymentResponse.status(), [200, 201, 401, 403], "payment after cart");
-      
+      expectStatusOneOf(
+        paymentResponse.status(),
+        [200, 201, 401, 403],
+        "payment after cart",
+      );
+
       // Step 4: Clear cart after payment attempt
-      const clearCartResponse = await request.put(`/api/users/${testUserId}/cart`, {
-        headers: { "Content-Type": "application/json" },
-        data: { items: [], total: 0 },
-      });
+      const clearCartResponse = await request.put(
+        `/api/users/${testUserId}/cart`,
+        {
+          headers: { "Content-Type": "application/json" },
+          data: { items: [], total: 0 },
+        },
+      );
       expect(clearCartResponse.status()).toBe(200);
     });
   });
 
   test.describe("Failure Scenarios", () => {
-    
-    test("should handle payment failure and preserve cart", async ({ request }) => {
+    test("should handle payment failure and preserve cart", async ({
+      request,
+    }) => {
       // Set up cart with items
       await request.put(`/api/users/${testUserId}/cart`, {
         headers: { "Content-Type": "application/json" },
@@ -205,11 +221,11 @@ test.describe("Cart to Checkout Integration", () => {
             {
               productId: `prod_fail_${testId}`,
               name: "Failure Test Product",
-              price: 200.00,
+              price: 200.0,
               quantity: 1,
             },
           ],
-          total: 200.00,
+          total: 200.0,
         },
       });
 
@@ -226,8 +242,12 @@ test.describe("Cart to Checkout Integration", () => {
       });
 
       // Payment fails due to auth
-      expectStatusOneOf(paymentResponse.status(), [401, 403], "payment failure");
-      
+      expectStatusOneOf(
+        paymentResponse.status(),
+        [401, 403],
+        "payment failure",
+      );
+
       // Cart should still be accessible
       const cartResponse = await request.get(`/api/users/${testUserId}/cart`);
       expect(cartResponse.status()).toBe(200);
@@ -241,14 +261,28 @@ test.describe("Cart to Checkout Integration", () => {
         request.put(`/api/users/${testUserId}/cart`, {
           headers: { "Content-Type": "application/json" },
           data: {
-            items: [{ productId: "concurrent_1", name: "Product 1", price: 50, quantity: 1 }],
+            items: [
+              {
+                productId: "concurrent_1",
+                name: "Product 1",
+                price: 50,
+                quantity: 1,
+              },
+            ],
             total: 50,
           },
         }),
         request.put(`/api/users/${testUserId}/cart`, {
           headers: { "Content-Type": "application/json" },
           data: {
-            items: [{ productId: "concurrent_2", name: "Product 2", price: 75, quantity: 1 }],
+            items: [
+              {
+                productId: "concurrent_2",
+                name: "Product 2",
+                price: 75,
+                quantity: 1,
+              },
+            ],
             total: 75,
           },
         }),
@@ -257,7 +291,7 @@ test.describe("Cart to Checkout Integration", () => {
       // Both should succeed (last write wins)
       expect(response1.status()).toBe(200);
       expect(response2.status()).toBe(200);
-      
+
       // Final cart should have one of the values
       const cartResponse = await request.get(`/api/users/${testUserId}/cart`);
       const cart = await cartResponse.json();
@@ -266,7 +300,6 @@ test.describe("Cart to Checkout Integration", () => {
   });
 
   test.describe("Cart Data Validation", () => {
-    
     test("should handle invalid cart data gracefully", async ({ request }) => {
       const response = await request.put(`/api/users/${testUserId}/cart`, {
         headers: { "Content-Type": "application/json" },
@@ -277,7 +310,11 @@ test.describe("Cart to Checkout Integration", () => {
       });
 
       // Should handle gracefully (might not validate strictly)
-      expectStatusOneOf(response.status(), [200, 400, 500], "invalid cart data");
+      expectStatusOneOf(
+        response.status(),
+        [200, 400, 500],
+        "invalid cart data",
+      );
     });
 
     test("should handle large cart", async ({ request }) => {
@@ -288,7 +325,7 @@ test.describe("Cart to Checkout Integration", () => {
         price: 10 + i,
         quantity: 1,
       }));
-      
+
       const total = manyItems.reduce((sum, item) => sum + item.price, 0);
 
       const response = await request.put(`/api/users/${testUserId}/cart`, {
@@ -300,7 +337,7 @@ test.describe("Cart to Checkout Integration", () => {
       });
 
       expect(response.status()).toBe(200);
-      
+
       const data = await response.json();
       expect(data.cart.items.length).toBe(100);
     });

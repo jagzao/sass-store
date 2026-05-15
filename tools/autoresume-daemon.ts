@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// @ts-nocheck
 /**
  * Auto-Resume Daemon
  * Watchdog continuo que revisa y reanuda sesiones automáticamente

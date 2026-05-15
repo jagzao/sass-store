@@ -7,12 +7,7 @@
 
 // Cart store (already existed)
 export { useCart } from "@/lib/cart/cart-store";
-export type {
-  CartItem,
-  CartStore,
-  CouponCode,
-  DeletedItem,
-} from "@/lib/cart/cart-store";
+export type { CartItem, CouponCode, DeletedItem } from "@/lib/cart/cart-store";
 
 // UI store
 export {

@@ -22,14 +22,14 @@ export default async function CustomersPage({
   params,
   searchParams,
 }: PageProps) {
-  console.log("[CustomersPage] Received params:", params);
+  console.warn("[CustomersPage] Received params:", params);
   const resolvedParams = await params;
-  console.log("[CustomersPage] Resolved params:", resolvedParams);
+  console.warn("[CustomersPage] Resolved params:", resolvedParams);
   const { tenant: tenantSlug } = resolvedParams;
-  console.log("[CustomersPage] Extracted tenantSlug:", tenantSlug);
+  console.warn("[CustomersPage] Extracted tenantSlug:", tenantSlug);
 
   const resolvedSearchParams = await searchParams;
-  console.log("[CustomersPage] Resolved searchParams:", resolvedSearchParams);
+  console.warn("[CustomersPage] Resolved searchParams:", resolvedSearchParams);
 
   // Get tenant data directly from database (server-side only, no HTTP calls)
   const tenantData = await getTenantBySlug(tenantSlug);
@@ -39,7 +39,9 @@ export default async function CustomersPage({
     notFound();
   }
 
-  console.log(`[CustomersPage] Successfully loaded tenant: ${tenantData.name}`);
+  console.warn(
+    `[CustomersPage] Successfully loaded tenant: ${tenantData.name}`,
+  );
 
   return (
     <AdminLayoutProvider tenantSlug={tenantSlug}>
@@ -50,10 +52,10 @@ export default async function CustomersPage({
             <main className="container mx-auto px-4 py-8">
               <div className="mb-8">
                 <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                  Gestión de Clientas
+                  GestiÃ³n de Clientas
                 </h1>
                 <p className="text-gray-600">
-                  Administra expedientes, historial de visitas y próximas citas
+                  Administra expedientes, historial de visitas y prÃ³ximas citas
                 </p>
               </div>
 
@@ -124,6 +126,6 @@ export async function generateMetadata({ params }: PageProps) {
 
   return {
     title: `Clientas - ${tenant.name}`,
-    description: `Gestión de clientas y expedientes para ${tenant.name}`,
+    description: `GestiÃ³n de clientas y expedientes para ${tenant.name}`,
   };
 }

@@ -9,12 +9,7 @@ import {
 } from "vitest";
 import { NextRequest } from "next/server";
 import { db } from "@sass-store/database";
-import {
-  tenants,
-  products,
-  serviceQuotes,
-  services,
-} from "@sass-store/database/schema";
+import { tenants, quotes, services } from "@sass-store/database/schema";
 import { eq, sql } from "drizzle-orm";
 // Direct handler imports
 import {
@@ -68,7 +63,7 @@ beforeAll(async () => {
 
 afterAll(async () => {
   // Cleanup
-  await db.delete(serviceQuotes).where(eq(serviceQuotes.tenantId, tenantId));
+  await db.delete(quotes).where(eq(quotes.tenantId, tenantId));
   await db.delete(services).where(eq(services.tenantId, tenantId));
   await db.delete(tenants).where(eq(tenants.id, tenantId));
 });
@@ -83,6 +78,18 @@ describe("Quotes API Integration", () => {
       customerEmail: "john@example.com",
       notes: "Test quote",
       validityDays: 15,
+      totalAmount: 500,
+      items: [
+        {
+          type: "service",
+          itemId: serviceId,
+          name: "Test Service",
+          description: "Base service for quotes",
+          unitPrice: 500,
+          quantity: 1,
+          subtotal: 500,
+        },
+      ],
     };
 
     const req = new NextRequest("http://localhost", {
@@ -118,7 +125,7 @@ describe("Quotes API Integration", () => {
 
     expect(res.status).toBe(200);
     expect(data.id).toBe(quoteId);
-    expect(data.service).toBeDefined();
+    expect(data.items).toHaveLength(1);
   });
 
   it("should update quote status", async () => {

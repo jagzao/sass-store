@@ -7,7 +7,10 @@ import MovementsTable from "@/components/finance/MovementsTable";
 import FilterPanel from "@/components/finance/FilterPanel";
 import KPICard from "@/components/finance/KPICard";
 import { useFinance } from "@/lib/hooks/use-finance";
-import { MovementsTableSkeleton, FilterPanelSkeleton } from "@/components/finance/FinanceSkeletons";
+import {
+  MovementsTableSkeleton,
+  FilterPanelSkeleton,
+} from "@/components/finance/FinanceSkeletons";
 
 export default function FinanceMovementsPage() {
   const { data: session, status } = useSession();
@@ -15,9 +18,9 @@ export default function FinanceMovementsPage() {
   const params = useParams();
   const searchParams = useSearchParams();
   const tenantSlug = params.tenant as string;
-  
-  const movementType = searchParams.get('type') || 'all';
-  
+
+  const movementType = searchParams.get("type") || "all";
+
   const [currentTenant, setCurrentTenant] = useState<any>(null);
 
   const {
@@ -55,7 +58,7 @@ export default function FinanceMovementsPage() {
 
   useEffect(() => {
     // Update filters when movement type changes
-    if (movementType && movementType !== 'all') {
+    if (movementType && movementType !== "all") {
       updateMovementFilters({ type: movementType });
     }
   }, [movementType, updateMovementFilters]);
@@ -77,12 +80,12 @@ export default function FinanceMovementsPage() {
 
   const getTitle = () => {
     switch (movementType) {
-      case 'income':
-        return 'Registrar Ingreso';
-      case 'expense':
-        return 'Registrar Gasto';
+      case "income":
+        return "Registrar Ingreso";
+      case "expense":
+        return "Registrar Gasto";
       default:
-        return 'Todos los Movimientos';
+        return "Todos los Movimientos";
     }
   };
 
@@ -123,7 +126,12 @@ export default function FinanceMovementsPage() {
             <KPICard
               title="Ingresos"
               value={movements
-                .filter(m => m.type === 'SETTLEMENT' || m.type === 'CARD_PURCHASE' || m.type === 'income')
+                .filter(
+                  (m) =>
+                    (m.type as string) === "SETTLEMENT" ||
+                    (m.type as string) === "CARD_PURCHASE" ||
+                    (m.type as string) === "income",
+                )
                 .reduce((sum, m) => sum + m.amount, 0)}
               icon="💰"
               format="currency"
@@ -132,7 +140,13 @@ export default function FinanceMovementsPage() {
             <KPICard
               title="Gastos"
               value={movements
-                .filter(m => m.type === 'REFUND' || m.type === 'CHARGEBACK' || m.type === 'FEE' || m.type === 'expense')
+                .filter(
+                  (m) =>
+                    (m.type as string) === "REFUND" ||
+                    (m.type as string) === "CHARGEBACK" ||
+                    (m.type as string) === "FEE" ||
+                    (m.type as string) === "expense",
+                )
                 .reduce((sum, m) => sum + m.amount, 0)}
               icon="💸"
               format="currency"
@@ -168,7 +182,7 @@ export default function FinanceMovementsPage() {
               loading={loading}
               onMovementClick={(movement) => {
                 // TODO: Implement movement details modal
-                console.log('Movement clicked:', movement);
+                console.warn("Movement clicked:", movement);
               }}
             />
           )}

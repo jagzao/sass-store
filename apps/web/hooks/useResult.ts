@@ -46,16 +46,16 @@ export function useResult<T, E extends DomainError>({
   onError,
   cacheKey,
   cacheTime = 5 * 60 * 1000, // 5 minutes
-}: UseResultOptions<T, E>): UseResultReturn<T, E> {
+}: UseResultOptions<T, E>): UseResultReturn<T> {
   const [data, setData] = useState<T | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<E | null>(null);
   const [retryCount, setRetryCount] = useState(0);
-  
+
   // Use refs for callbacks to avoid exhaustive-deps issues while maintaining stable references
   const onSuccessRef = useRef(onSuccess);
   const onErrorRef = useRef(onError);
-  
+
   // Update refs when callbacks change
   useEffect(() => {
     onSuccessRef.current = onSuccess;
@@ -146,13 +146,7 @@ export function useResult<T, E extends DomainError>({
         }
       }
     },
-    [
-      autoRetry,
-      maxRetries,
-      retryDelay,
-      cacheKey,
-      saveCache,
-    ],
+    [autoRetry, maxRetries, retryDelay, cacheKey, saveCache],
   );
 
   // Execute result processing
@@ -219,8 +213,8 @@ export function useAsyncResult<T, E extends DomainError>(
   asyncOperation: () => Promise<Result<T, E>>,
   options: {
     autoExecute?: boolean;
-    onSuccess?: (data: T) => void;
-    onError?: (error: E) => void;
+    onSuccess?: (data: any) => void;
+    onError?: (error: unknown) => void;
     dependencies?: any[];
   } = {},
 ) {
@@ -244,10 +238,8 @@ export function useAsyncResult<T, E extends DomainError>(
         undefined,
         err instanceof Error ? err : undefined,
       );
-      const errorResult: Result<T, DomainError> = Err(error);
+      const errorResult: any = Err(error);
       setResult(errorResult);
-
-      if (onError) onError(error);
 
       if (onError) onError(error);
     }
@@ -260,7 +252,11 @@ export function useAsyncResult<T, E extends DomainError>(
   }, [execute, autoExecute, dependencies]);
 
   return {
-    ...useResult(result!, { onSuccess, onError }),
+    ...useResult({
+      result: result!,
+      onSuccess: onSuccess as any,
+      onError: onError as any,
+    }),
     execute,
   };
 }

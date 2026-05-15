@@ -1,4 +1,4 @@
-import { useState, useCallback, ChangeEvent } from 'react';
+import { useState, useCallback, ChangeEvent } from "react";
 
 export interface FormFieldError {
   [fieldName: string]: string;
@@ -16,7 +16,11 @@ export interface UseFormStateReturn<T> {
   touched: Set<string>;
   isSubmitting: boolean;
   isDirty: boolean;
-  handleChange: (field: keyof T) => (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
+  handleChange: (
+    field: keyof T,
+  ) => (
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
+  ) => void;
   handleBlur: (field: keyof T) => () => void;
   setFieldValue: (field: keyof T, value: T[keyof T]) => void;
   setFieldError: (field: keyof T, error: string) => void;
@@ -40,26 +44,32 @@ export function useFormState<T extends Record<string, unknown>>({
   const isDirty = JSON.stringify(values) !== JSON.stringify(initialValues);
 
   const handleChange = useCallback(
-    (field: keyof T) => (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-      const value = e.target.type === 'checkbox'
-        ? (e.target as HTMLInputElement).checked
-        : e.target.value;
+    (field: keyof T) =>
+      (
+        e: ChangeEvent<
+          HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+        >,
+      ) => {
+        const value =
+          e.target.type === "checkbox"
+            ? (e.target as HTMLInputElement).checked
+            : e.target.value;
 
-      setValuesState((prev) => ({
-        ...prev,
-        [field]: value,
-      }));
+        setValuesState((prev) => ({
+          ...prev,
+          [field]: value,
+        }));
 
-      // Clear error for this field when user starts typing
-      if (errors[field as string]) {
-        setErrors((prev) => {
-          const newErrors = { ...prev };
-          delete newErrors[field as string];
-          return newErrors;
-        });
-      }
-    },
-    [errors]
+        // Clear error for this field when user starts typing
+        if (errors[field as string]) {
+          setErrors((prev) => {
+            const newErrors = { ...prev };
+            delete newErrors[field as string];
+            return newErrors;
+          });
+        }
+      },
+    [errors],
   );
 
   const handleBlur = useCallback(
@@ -77,7 +87,7 @@ export function useFormState<T extends Record<string, unknown>>({
         }
       }
     },
-    [validate, values]
+    [validate, values],
   );
 
   const setFieldValue = useCallback((field: keyof T, value: T[keyof T]) => {
@@ -130,7 +140,7 @@ export function useFormState<T extends Record<string, unknown>>({
         await onSubmit(values);
       } catch (error) {
         // Handle submission error
-        console.error('Form submission error:', error);
+        console.error("Form submission error:", error);
         if (error instanceof Error) {
           setErrors({ _form: error.message });
         }
@@ -138,7 +148,7 @@ export function useFormState<T extends Record<string, unknown>>({
         setIsSubmitting(false);
       }
     },
-    [values, validate, onSubmit]
+    [values, validate, onSubmit],
   );
 
   const resetForm = useCallback(() => {

@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
 
 // Interfaz para las opciones de prefetch
 interface PrefetchOptions {
@@ -24,32 +24,35 @@ const dataCache = new Map<string, CacheEntry>();
  * @param options - Opciones de cache
  * @returns Datos prefetcheados
  */
-export function usePrefetch<T = any>(url: string, options: PrefetchOptions = {}): T | null {
+export function usePrefetch<T = any>(
+  url: string,
+  options: PrefetchOptions = {},
+): T | null {
   const { ttl = 5 * 60 * 1000, staleWhileRevalidate = 30 * 1000 } = options; // 5 min default TTL
   const urlRef = useRef(url);
   const ttlRef = useRef(ttl);
   const staleWhileRevalidateRef = useRef(staleWhileRevalidate);
-  
+
   // Update refs when options change
   useEffect(() => {
     ttlRef.current = ttl;
     staleWhileRevalidateRef.current = staleWhileRevalidate;
   }, [ttl, staleWhileRevalidate]);
-  
+
   useEffect(() => {
     const fetchAndCache = async () => {
       // Verificar si hay datos cacheados válidos
       const cached = dataCache.get(urlRef.current);
       const now = Date.now();
-      
+
       if (cached) {
         const age = now - cached.timestamp;
-        
+
         // Si los datos aún son frescos, no necesitamos actualizar
         if (age < ttlRef.current) {
           return;
         }
-        
+
         // Si los datos están fuera de TTL pero aún dentro del stale window,
         // continuar con la actualización en segundo plano
         if (age < ttlRef.current + staleWhileRevalidateRef.current) {
@@ -61,7 +64,7 @@ export function usePrefetch<T = any>(url: string, options: PrefetchOptions = {})
               dataCache.set(urlRef.current, {
                 data,
                 timestamp: now,
-                isValid: true
+                isValid: true,
               });
             }
           } catch (error) {
@@ -70,7 +73,7 @@ export function usePrefetch<T = any>(url: string, options: PrefetchOptions = {})
           return;
         }
       }
-      
+
       // Fetch de datos nuevos
       try {
         const response = await fetch(urlRef.current);
@@ -79,7 +82,7 @@ export function usePrefetch<T = any>(url: string, options: PrefetchOptions = {})
           dataCache.set(urlRef.current, {
             data,
             timestamp: now,
-            isValid: true
+            isValid: true,
           });
         }
       } catch (error) {
@@ -88,8 +91,11 @@ export function usePrefetch<T = any>(url: string, options: PrefetchOptions = {})
     };
 
     // Solo hacer prefetch si no hay datos cacheados o si han expirado
-    if (!dataCache.has(urlRef.current) ||
-        Date.now() - (dataCache.get(urlRef.current)?.timestamp || 0) > ttlRef.current) {
+    if (
+      !dataCache.has(urlRef.current) ||
+      Date.now() - (dataCache.get(urlRef.current)?.timestamp || 0) >
+        ttlRef.current
+    ) {
       fetchAndCache();
     }
   }, [url]);
@@ -123,7 +129,7 @@ export async function prefetchUrls(urls: string[]) {
           dataCache.set(url, {
             data,
             timestamp: Date.now(),
-            isValid: true
+            isValid: true,
           });
           return data;
         }
@@ -131,6 +137,6 @@ export async function prefetchUrls(urls: string[]) {
         console.error(`Error prefetching ${url}:`, error);
         return null;
       }
-    })
+    }),
   );
 }

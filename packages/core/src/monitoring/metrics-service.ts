@@ -9,7 +9,7 @@ export interface Metric {
   value: number;
   timestamp: Date;
   tags: Record<string, string>;
-  type: 'counter' | 'gauge' | 'histogram' | 'timer';
+  type: "counter" | "gauge" | "histogram" | "timer";
 }
 
 export interface MetricsReport {
@@ -48,17 +48,21 @@ export class MetricsService {
     // In a real implementation we would collect system metrics
     // like CPU, memory, etc.
     // For now, we'll just add a heartbeat metric
-    this.increment('system.heartbeat', 1, { service: 'web' });
+    this.increment("system.heartbeat", 1, { service: "web" });
   }
 
-  public increment(name: string, value = 1, tags: Record<string, string> = {}): void {
+  public increment(
+    name: string,
+    value = 1,
+    tags: Record<string, string> = {},
+  ): void {
     const metric: Metric = {
-      id: `metric_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      id: `metric_${Date.now()}_${crypto.randomUUID().replace(/-/g, "").substring(0, 9)}`,
       name,
       value,
       timestamp: new Date(),
       tags,
-      type: 'counter'
+      type: "counter",
     };
 
     this.metrics.push(metric);
@@ -67,18 +71,28 @@ export class MetricsService {
     }
   }
 
-  public setGauge(name: string, value: number, tags: Record<string, string> = {}): void {
+  public setGauge(
+    name: string,
+    value: number,
+    tags: Record<string, string> = {},
+  ): void {
     // Remove existing gauge value if it exists
-    this.metrics = this.metrics.filter(m => !(m.name === name && m.type === 'gauge' && 
-      JSON.stringify(m.tags) === JSON.stringify(tags)));
+    this.metrics = this.metrics.filter(
+      (m) =>
+        !(
+          m.name === name &&
+          m.type === "gauge" &&
+          JSON.stringify(m.tags) === JSON.stringify(tags)
+        ),
+    );
 
     const metric: Metric = {
-      id: `gauge_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      id: `gauge_${Date.now()}_${crypto.randomUUID().replace(/-/g, "").substring(0, 9)}`,
       name,
       value,
       timestamp: new Date(),
       tags,
-      type: 'gauge'
+      type: "gauge",
     };
 
     this.metrics.push(metric);
@@ -87,14 +101,18 @@ export class MetricsService {
     }
   }
 
-  public recordHistogram(name: string, value: number, tags: Record<string, string> = {}): void {
+  public recordHistogram(
+    name: string,
+    value: number,
+    tags: Record<string, string> = {},
+  ): void {
     const metric: Metric = {
-      id: `hist_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      id: `hist_${Date.now()}_${crypto.randomUUID().replace(/-/g, "").substring(0, 9)}`,
       name,
       value,
       timestamp: new Date(),
       tags,
-      type: 'histogram'
+      type: "histogram",
     };
 
     this.metrics.push(metric);
@@ -103,22 +121,28 @@ export class MetricsService {
     }
   }
 
-  public startTimer(name: string, tags: Record<string, string> = {}): () => number {
+  public startTimer(
+    name: string,
+    tags: Record<string, string> = {},
+  ): () => number {
     const startTime = Date.now();
-    
+
     return () => {
       const duration = Date.now() - startTime;
-      this.recordHistogram(`${name}.duration`, duration, { ...tags, unit: 'ms' });
+      this.recordHistogram(`${name}.duration`, duration, {
+        ...tags,
+        unit: "ms",
+      });
       return duration;
     };
   }
 
   public async reportMetrics(tenantId?: string): Promise<void> {
     const report: MetricsReport = {
-      id: `report_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      id: `report_${Date.now()}_${crypto.randomUUID().replace(/-/g, "").substring(0, 9)}`,
       timestamp: new Date(),
       metrics: [...this.metrics],
-      tenantId
+      tenantId,
     };
 
     this.reports.push(report);
@@ -127,45 +151,52 @@ export class MetricsService {
     }
 
     // Send to external service in production
-    if (process.env.NODE_ENV === 'production' && process.env.METRICS_ENDPOINT) {
+    if (process.env.NODE_ENV === "production" && process.env.METRICS_ENDPOINT) {
       try {
         await fetch(process.env.METRICS_ENDPOINT, {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${process.env.METRICS_TOKEN}`,
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.METRICS_TOKEN}`,
           },
           body: JSON.stringify({
             ...report,
             timestamp: report.timestamp.toISOString(),
-            metrics: report.metrics.map(m => ({
+            metrics: report.metrics.map((m) => ({
               ...m,
-              timestamp: m.timestamp.toISOString()
-            }))
-          })
+              timestamp: m.timestamp.toISOString(),
+            })),
+          }),
         });
       } catch (error) {
-        console.error('Failed to send metrics to external service', error);
+        console.error("Failed to send metrics to external service", error);
       }
     }
   }
 
-  public getMetric(name: string, tags?: Record<string, string>, limit = 100): Metric[] {
-    let filtered = this.metrics.filter(m => m.name === name);
-    
+  public getMetric(
+    name: string,
+    tags?: Record<string, string>,
+    limit = 100,
+  ): Metric[] {
+    let filtered = this.metrics.filter((m) => m.name === name);
+
     if (tags) {
-      filtered = filtered.filter(m => 
-        Object.keys(tags).every(key => m.tags[key] === tags[key])
+      filtered = filtered.filter((m) =>
+        Object.keys(tags).every((key) => m.tags[key] === tags[key]),
       );
     }
-    
+
     return filtered
       .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
       .slice(0, limit);
   }
 
-  public getGaugeValue(name: string, tags?: Record<string, string>): number | null {
-    const gauges = this.getMetric(name, tags).filter(m => m.type === 'gauge');
+  public getGaugeValue(
+    name: string,
+    tags?: Record<string, string>,
+  ): number | null {
+    const gauges = this.getMetric(name, tags).filter((m) => m.type === "gauge");
     if (gauges.length === 0) return null;
     return gauges[0].value;
   }
@@ -174,20 +205,30 @@ export class MetricsService {
     // Return aggregated metrics for monitoring dashboard
     const now = new Date();
     const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000); // 1 hour ago
-    
-    const recentMetrics = this.metrics.filter(m => m.timestamp >= oneHourAgo);
-    
+
+    const recentMetrics = this.metrics.filter((m) => m.timestamp >= oneHourAgo);
+
     // Calculate some key metrics
     const metrics = {
-      totalRequests: recentMetrics.filter(m => m.name === 'request.count').reduce((sum, m) => sum + m.value, 0),
-      errorCount: recentMetrics.filter(m => m.name === 'request.error').reduce((sum, m) => sum + m.value, 0),
-      avgResponseTime: this.calculateAverage(recentMetrics.filter(m => m.name === 'request.duration')),
-      activeUsers: this.getGaugeValue('user.active'),
-      dbConnections: this.getGaugeValue('db.connections'),
-      cacheHits: recentMetrics.filter(m => m.name === 'cache.hit').reduce((sum, m) => sum + m.value, 0),
-      cacheMisses: recentMetrics.filter(m => m.name === 'cache.miss').reduce((sum, m) => sum + m.value, 0),
+      totalRequests: recentMetrics
+        .filter((m) => m.name === "request.count")
+        .reduce((sum, m) => sum + m.value, 0),
+      errorCount: recentMetrics
+        .filter((m) => m.name === "request.error")
+        .reduce((sum, m) => sum + m.value, 0),
+      avgResponseTime: this.calculateAverage(
+        recentMetrics.filter((m) => m.name === "request.duration"),
+      ),
+      activeUsers: this.getGaugeValue("user.active"),
+      dbConnections: this.getGaugeValue("db.connections"),
+      cacheHits: recentMetrics
+        .filter((m) => m.name === "cache.hit")
+        .reduce((sum, m) => sum + m.value, 0),
+      cacheMisses: recentMetrics
+        .filter((m) => m.name === "cache.miss")
+        .reduce((sum, m) => sum + m.value, 0),
     };
-    
+
     return metrics;
   }
 
@@ -204,22 +245,37 @@ export class MetricsService {
 }
 
 // Helper functions for easier metric tracking
-export const incrementMetric = (name: string, value = 1, tags: Record<string, string> = {}): void => {
+export const incrementMetric = (
+  name: string,
+  value = 1,
+  tags: Record<string, string> = {},
+): void => {
   const metricsService = MetricsService.getInstance();
   metricsService.increment(name, value, tags);
 };
 
-export const setGauge = (name: string, value: number, tags: Record<string, string> = {}): void => {
+export const setGauge = (
+  name: string,
+  value: number,
+  tags: Record<string, string> = {},
+): void => {
   const metricsService = MetricsService.getInstance();
   metricsService.setGauge(name, value, tags);
 };
 
-export const recordHistogram = (name: string, value: number, tags: Record<string, string> = {}): void => {
+export const recordHistogram = (
+  name: string,
+  value: number,
+  tags: Record<string, string> = {},
+): void => {
   const metricsService = MetricsService.getInstance();
   metricsService.recordHistogram(name, value, tags);
 };
 
-export const startTimer = (name: string, tags: Record<string, string> = {}): () => number => {
+export const startTimer = (
+  name: string,
+  tags: Record<string, string> = {},
+): (() => number) => {
   const metricsService = MetricsService.getInstance();
   return metricsService.startTimer(name, tags);
 };

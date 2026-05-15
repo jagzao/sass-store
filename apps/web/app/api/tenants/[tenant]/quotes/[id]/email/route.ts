@@ -57,11 +57,10 @@ export async function POST(
           unitPrice: Number(item.unitPrice),
           subtotal: Number(item.subtotal),
         })),
-        tenantName: quote.tenant.name,
+        tenantName: (quote.tenant as any).name,
         // Using branding if available, or defaults
-        tenantColor:
-          (quote.tenant.branding as any)?.primaryColor || "#4F46E5",
-        tenantLogo: (quote.tenant.branding as any)?.logoUrl,
+        tenantColor: (quote.tenant as any)?.branding?.primaryColor || "#4F46E5",
+        tenantLogo: (quote.tenant as any)?.branding?.logoUrl,
       });
 
       return NextResponse.json({ success: true });

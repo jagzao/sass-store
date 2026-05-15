@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { create } from 'zustand';
+import { create } from "zustand";
 
 interface AnalyticsStore {
   // Session tracking
@@ -57,8 +57,8 @@ export const useAnalytics = create<AnalyticsStore>()((set, get) => ({
       lastActivityTime: Date.now(),
     }));
 
-    if (process.env.NODE_ENV === 'development') {
-      console.log('[Analytics] Page view tracked');
+    if (process.env.NODE_ENV === "development") {
+      console.warn("[Analytics] Page view tracked");
     }
 
     // TODO: Send to analytics service
@@ -95,8 +95,8 @@ export const useAnalytics = create<AnalyticsStore>()((set, get) => ({
       lastActivityTime: Date.now(),
     }));
 
-    if (process.env.NODE_ENV === 'development') {
-      console.log('[Analytics] Search tracked:', query);
+    if (process.env.NODE_ENV === "development") {
+      console.warn("[Analytics] Search tracked:", query);
     }
 
     // TODO: Send to analytics service
@@ -129,8 +129,8 @@ export const useAnalytics = create<AnalyticsStore>()((set, get) => ({
   setPageLoadTime: (time) => {
     set({ pageLoadTime: time });
 
-    if (process.env.NODE_ENV === 'development') {
-      console.log('[Analytics] Page load time:', time, 'ms');
+    if (process.env.NODE_ENV === "development") {
+      console.warn("[Analytics] Page load time:", time, "ms");
     }
 
     // TODO: Send to performance monitoring
@@ -190,17 +190,17 @@ export const useAnalytics = create<AnalyticsStore>()((set, get) => ({
 }));
 
 // Auto-track page visibility changes
-if (typeof window !== 'undefined') {
-  document.addEventListener('visibilitychange', () => {
+if (typeof window !== "undefined") {
+  document.addEventListener("visibilitychange", () => {
     if (document.hidden) {
       // User left the page
-      if (process.env.NODE_ENV === 'development') {
-        console.log('[Analytics] User left page');
+      if (process.env.NODE_ENV === "development") {
+        console.warn("[Analytics] User left page");
       }
     } else {
       // User returned to the page
-      if (process.env.NODE_ENV === 'development') {
-        console.log('[Analytics] User returned to page');
+      if (process.env.NODE_ENV === "development") {
+        console.warn("[Analytics] User returned to page");
       }
     }
   });
@@ -210,4 +210,5 @@ if (typeof window !== 'undefined') {
 export const selectPageViews = (state: AnalyticsStore) => state.pageViews;
 export const selectSessionDuration = (state: AnalyticsStore) =>
   Math.floor((Date.now() - state.sessionStart) / 1000);
-export const selectUserInteractions = (state: AnalyticsStore) => state.userInteractions;
+export const selectUserInteractions = (state: AnalyticsStore) =>
+  state.userInteractions;

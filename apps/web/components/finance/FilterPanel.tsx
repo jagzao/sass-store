@@ -126,8 +126,11 @@ const FilterPanel = ({
               ...movementTypes,
             ]}
             value={filters.type || ""}
-            onChange={(option: SelectOption | null) =>
-              handleFilterChange("type", option?.value)
+            onChange={(option: string | SelectOption | null) =>
+              handleFilterChange(
+                "type",
+                typeof option === "string" ? option : option?.value,
+              )
             }
             placeholder="Seleccionar tipo"
             isSearchable={true}
@@ -145,8 +148,11 @@ const FilterPanel = ({
               ...statusOptions,
             ]}
             value={filters.status || ""}
-            onChange={(option: SelectOption | null) =>
-              handleFilterChange("status", option?.value)
+            onChange={(option: string | SelectOption | null) =>
+              handleFilterChange(
+                "status",
+                typeof option === "string" ? option : option?.value,
+              )
             }
             placeholder="Seleccionar estado"
             isSearchable={false}
@@ -164,8 +170,11 @@ const FilterPanel = ({
               ...paymentMethods,
             ]}
             value={filters.paymentMethod || ""}
-            onChange={(option: SelectOption | null) =>
-              handleFilterChange("paymentMethod", option?.value)
+            onChange={(option: string | SelectOption | null) =>
+              handleFilterChange(
+                "paymentMethod",
+                typeof option === "string" ? option : option?.value,
+              )
             }
             placeholder="Seleccionar método"
             isSearchable={true}

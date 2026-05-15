@@ -6,20 +6,21 @@ import {
   toInventoryErrorResponse,
 } from "../../_lib/tenant-context";
 
+interface RouteParams {
+  params: Promise<{ id: string }>;
+}
+
 /**
  * GET /api/inventory/expense-links/[id] - Get specific expense link
  */
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } },
-) {
+export async function GET(request: NextRequest, context: RouteParams) {
   try {
     const tenantContext = await resolveInventoryTenantContext();
     if (!tenantContext.success) {
       return toInventoryErrorResponse(tenantContext.error);
     }
 
-    const { id } = params;
+    const { id } = await context.params;
 
     const result = await inventoryExpenseLinkService.getExpenseLink(id);
 
@@ -60,17 +61,14 @@ export async function GET(
 /**
  * PUT /api/inventory/expense-links/[id] - Cancel expense link
  */
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: { id: string } },
-) {
+export async function PUT(request: NextRequest, context: RouteParams) {
   try {
     const tenantContext = await resolveInventoryTenantContext();
     if (!tenantContext.success) {
       return toInventoryErrorResponse(tenantContext.error);
     }
 
-    const { id } = params;
+    const { id } = await context.params;
     const body = await request.json();
     const { reason } = body;
 
@@ -80,7 +78,10 @@ export async function PUT(
       return NextResponse.json(
         {
           success: false,
-          error: { message: existingResult.error.message, type: existingResult.error.type },
+          error: {
+            message: existingResult.error.message,
+            type: existingResult.error.type,
+          },
         },
         { status: existingResult.error.type === "NotFoundError" ? 404 : 500 },
       );
@@ -96,7 +97,10 @@ export async function PUT(
       );
     }
 
-    const result = await inventoryExpenseLinkService.cancelExpenseLink(id, reason);
+    const result = await inventoryExpenseLinkService.cancelExpenseLink(
+      id,
+      reason,
+    );
 
     if (!isSuccess(result)) {
       const statusCode =
@@ -133,17 +137,14 @@ export async function PUT(
 /**
  * DELETE /api/inventory/expense-links/[id] - Delete expense link
  */
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } },
-) {
+export async function DELETE(request: NextRequest, context: RouteParams) {
   try {
     const tenantContext = await resolveInventoryTenantContext();
     if (!tenantContext.success) {
       return toInventoryErrorResponse(tenantContext.error);
     }
 
-    const { id } = params;
+    const { id } = await context.params;
 
     // First verify ownership
     const existingResult = await inventoryExpenseLinkService.getExpenseLink(id);
@@ -151,7 +152,10 @@ export async function DELETE(
       return NextResponse.json(
         {
           success: false,
-          error: { message: existingResult.error.message, type: existingResult.error.type },
+          error: {
+            message: existingResult.error.message,
+            type: existingResult.error.type,
+          },
         },
         { status: existingResult.error.type === "NotFoundError" ? 404 : 500 },
       );

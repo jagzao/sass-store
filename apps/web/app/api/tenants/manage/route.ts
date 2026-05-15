@@ -140,7 +140,10 @@ export async function PUT(request: NextRequest) {
     const brandingUpdate = theme
       ? {
           branding: {
-            ...(((existingTenant as any).branding || {}) as Record<string, unknown>),
+            ...(((existingTenant as any).branding || {}) as Record<
+              string,
+              unknown
+            >),
             ...theme,
             // Legacy aliases for compatibility
             ...(theme.logoUrl !== undefined ? { logo: theme.logoUrl } : {}),

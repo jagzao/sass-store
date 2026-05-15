@@ -12,7 +12,7 @@ export interface ILogger {
 
 export interface LogEntry {
   timestamp: Date;
-  level: 'debug' | 'info' | 'warn' | 'error';
+  level: "debug" | "info" | "warn" | "error";
   message: string;
   meta?: any;
   loggerName: string;
@@ -32,13 +32,17 @@ export class Logger implements ILogger {
     return Logger.loggers.get(name)!;
   }
 
-  private addLog(level: 'debug' | 'info' | 'warn' | 'error', message: string, meta?: any): void {
+  private addLog(
+    level: "debug" | "info" | "warn" | "error",
+    message: string,
+    meta?: any,
+  ): void {
     const entry: LogEntry = {
       timestamp: new Date(),
       level,
       message,
       meta,
-      loggerName: this.loggerName
+      loggerName: this.loggerName,
     };
 
     this.logEntries.push(entry);
@@ -47,7 +51,7 @@ export class Logger implements ILogger {
     }
 
     // Also output to console in development
-    if (process.env.NODE_ENV !== 'production') {
+    if (process.env.NODE_ENV !== "production") {
       const logMessage = `[${entry.level.toUpperCase()}] ${this.loggerName}: ${message}`;
       const args: any[] = [logMessage];
       if (meta) {
@@ -55,16 +59,16 @@ export class Logger implements ILogger {
       }
 
       switch (level) {
-        case 'debug':
+        case "debug":
           console.debug(...args);
           break;
-        case 'info':
+        case "info":
           console.info(...args);
           break;
-        case 'warn':
+        case "warn":
           console.warn(...args);
           break;
-        case 'error':
+        case "error":
           console.error(...args);
           break;
       }
@@ -77,46 +81,46 @@ export class Logger implements ILogger {
   private async sendToExternalService(entry: LogEntry): Promise<void> {
     // In a production environment, you would send this to an external service
     // like Datadog, LogRocket, etc.
-    if (process.env.NODE_ENV === 'production' && process.env.LOGGING_ENDPOINT) {
+    if (process.env.NODE_ENV === "production" && process.env.LOGGING_ENDPOINT) {
       try {
         await fetch(process.env.LOGGING_ENDPOINT, {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${process.env.LOGGING_TOKEN}`,
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.LOGGING_TOKEN}`,
           },
           body: JSON.stringify({
             ...entry,
-            timestamp: entry.timestamp.toISOString()
-          })
+            timestamp: entry.timestamp.toISOString(),
+          }),
         });
       } catch (sendError) {
         // Don't let logging fail the main app
-        console.error('Failed to send log to external service', sendError);
+        console.error("Failed to send log to external service", sendError);
       }
     }
   }
 
   debug(message: string, meta?: any): void {
-    this.addLog('debug', message, meta);
+    this.addLog("debug", message, meta);
   }
 
   info(message: string, meta?: any): void {
-    this.addLog('info', message, meta);
+    this.addLog("info", message, meta);
   }
 
   warn(message: string, meta?: any): void {
-    this.addLog('warn', message, meta);
+    this.addLog("warn", message, meta);
   }
 
   error(message: string, meta?: any): void {
-    this.addLog('error', message, meta);
+    this.addLog("error", message, meta);
   }
 
   getLogs(level?: string, limit = 50): LogEntry[] {
     let logs = this.logEntries;
     if (level) {
-      logs = logs.filter(log => log.level === level);
+      logs = logs.filter((log) => log.level === level);
     }
     return logs
       .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())

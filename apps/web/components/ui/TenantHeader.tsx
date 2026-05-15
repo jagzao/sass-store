@@ -32,6 +32,8 @@ export default function TenantHeader({
   // If the user is on an admin dashboard route, we completely hide this generic public header
   // so that the DashboardLayoutWrapper's header and sidebar can take over correctly without overlapping logos.
   // ALWAYS place early returns AFTER all hooks.
+  // Rutas donde otro layout (dashboard) lleva su propia cabecera.
+  // No incluir `/contact`: la página pública es `/t/{slug}/contact` y debe mostrar este header.
   const adminRoutes = [
     "/finance",
     "/social",
@@ -39,7 +41,6 @@ export default function TenantHeader({
     "/inventory",
     "/bookings",
     "/settings",
-    "/contact",
     "/admin",
     "/admin_bookings",
   ];
@@ -48,7 +49,8 @@ export default function TenantHeader({
   // because this screen relies on the same top branding/nav context.
   const isAdminCalendarRoute = pathname?.includes("/admin/calendar");
   const isDashboardRoute =
-    !isAdminCalendarRoute && adminRoutes.some((route) => pathname?.includes(route));
+    !isAdminCalendarRoute &&
+    adminRoutes.some((route) => pathname?.includes(route));
 
   if (isDashboardRoute) {
     return null;
@@ -77,12 +79,17 @@ export default function TenantHeader({
     return "bg-white/95 backdrop-blur-sm border-b border-gray-200";
   };
 
+  // When transparent and not scrolled, the header should not capture pointer events
+  const isPointerTransparent = isTransparent && !isScrolled;
+
   return (
     <header
-      className={`sticky top-0 z-50 transition-all duration-300 w-full ${getHeaderStyles()}`}
+      className={`sticky top-0 z-50 transition-all duration-300 w-full ${getHeaderStyles()} ${isPointerTransparent ? "pointer-events-none" : "pointer-events-auto"}`}
       style={{ position: "sticky", top: 0 }}
     >
-      <div className="container mx-auto px-4 flex items-center justify-between">
+      <div
+        className={`container mx-auto px-4 flex items-center justify-between ${isPointerTransparent ? "pointer-events-auto" : ""}`}
+      >
         <TenantLogo
           tenantSlug={tenantData.slug}
           tenantName={tenantData.name}

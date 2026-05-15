@@ -5,7 +5,7 @@
  */
 
 // Using globals instead of imports since globals: true in Vitest config
-import { vi } from 'vitest';
+import { vi } from "vitest";
 import { NextRequest } from "next/server";
 
 // Mock the database module

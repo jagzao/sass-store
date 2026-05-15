@@ -33,7 +33,7 @@ export function ReviewList({
       setLoading(true);
       try {
         const response = await fetch(
-          `/api/v1/reviews?productId=${productId}&status=approved`
+          `/api/v1/reviews?productId=${productId}&status=approved`,
         );
         const data = await response.json();
         setLocalReviews(data.reviews || []);

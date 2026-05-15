@@ -6,7 +6,7 @@
 
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useToast } from "@/components/ui/use-toast";
 
 // Import Result pattern utilities
@@ -217,6 +217,7 @@ export function useInventoryAlerts(
     isLoading,
     error,
     refresh: loadInventoryAlerts,
-    acknowledge: acknowledgeAlert,
+    acknowledge: (alertId: string, data: AcknowledgeAlertData) =>
+      acknowledgeAlert(alertId, data).then(() => {}),
   };
 }

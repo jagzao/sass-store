@@ -6,10 +6,7 @@ import {
   fromPromise,
   isFailure,
 } from "@sass-store/core/src/result";
-import {
-  DomainError,
-  ErrorFactories,
-} from "@sass-store/core/src/errors/types";
+import { DomainError, ErrorFactories } from "@sass-store/core/src/errors/types";
 
 export type MatrixGranularity = "week" | "fortnight" | "month" | "year";
 
@@ -128,7 +125,10 @@ const asDomainError = (
   }
 
   if (statusCode === 403) {
-    return ErrorFactories.authorization(error?.message || fallbackMessage, operation);
+    return ErrorFactories.authorization(
+      error?.message || fallbackMessage,
+      operation,
+    );
   }
 
   if (statusCode === 404) {
@@ -146,13 +146,15 @@ const parseApiEnvelope = async <T>(
   response: Response,
   operation: string,
 ): Promise<Result<T, DomainError>> => {
-  const jsonResult = await fromPromise(response.json() as Promise<ApiEnvelope<T>>, (error) =>
-    ErrorFactories.network(
-      `Invalid API JSON payload on ${operation}`,
-      operation,
-      response.status,
-      error as Error,
-    ),
+  const jsonResult = await fromPromise(
+    response.json() as Promise<ApiEnvelope<T>>,
+    (error) =>
+      ErrorFactories.network(
+        `Invalid API JSON payload on ${operation}`,
+        operation,
+        response.status,
+        error as Error,
+      ),
   );
 
   if (isFailure(jsonResult)) {
@@ -291,13 +293,15 @@ export const fetchTenantBySlug = async (
 
   const response = responseResult.data;
 
-  const jsonResult = await fromPromise(response.json() as Promise<Record<string, unknown>>, (error) =>
-    ErrorFactories.network(
-      "Invalid tenant payload",
-      "load_tenant",
-      response.status,
-      error as Error,
-    ),
+  const jsonResult = await fromPromise(
+    response.json() as Promise<Record<string, unknown>>,
+    (error) =>
+      ErrorFactories.network(
+        "Invalid tenant payload",
+        "load_tenant",
+        response.status,
+        error as Error,
+      ),
   );
 
   if (isFailure(jsonResult)) {

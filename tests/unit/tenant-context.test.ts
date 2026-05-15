@@ -1,5 +1,5 @@
 // Using globals instead of imports since globals: true in Vitest config
-import { vi } from 'vitest';
+import { vi } from "vitest";
 import { NextRequest, NextResponse } from "next/server";
 import { withTenantContext } from "@/lib/db/tenant-context";
 import { db } from "@sass-store/database";

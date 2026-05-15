@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import { registerServiceWorker } from '@/lib/sw-register';
-import { initWebVitals } from '@/lib/web-vitals';
-import { startMemoryLeakDetection } from '@/lib/memory-management';
+import { useEffect } from "react";
+import { registerServiceWorker } from "@/lib/sw-register";
+import { initWebVitals } from "@/lib/web-vitals";
+import { startMemoryLeakDetection } from "@/lib/memory-management";
 
 /**
  * Client-side initialization component

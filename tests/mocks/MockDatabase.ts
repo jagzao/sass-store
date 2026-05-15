@@ -56,7 +56,10 @@ function createMockCollection<T extends { id?: string }>(
       return updated;
     },
 
-    async updateAtomic(id: string, transform: (current: T) => T): Promise<T | null> {
+    async updateAtomic(
+      id: string,
+      transform: (current: T) => T,
+    ): Promise<T | null> {
       const existing = this.data.get(id);
       if (!existing) return null;
 

@@ -270,6 +270,7 @@ export default function AdminServicesPage() {
             </div>
             <div className="flex gap-2">
               <button
+                data-testid="menu-designer-btn"
                 onClick={() => setShowMenuDesigner(true)}
                 className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors font-medium flex items-center gap-2"
               >
@@ -452,7 +453,7 @@ export default function AdminServicesPage() {
                   </tbody>
                 </table>
               </div>
-              
+
               {/* Pagination Controls */}
               {totalPages > 1 && (
                 <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
@@ -469,7 +470,9 @@ export default function AdminServicesPage() {
                       )}
                     </span>{" "}
                     de{" "}
-                    <span className="font-medium">{filteredServices.length}</span>{" "}
+                    <span className="font-medium">
+                      {filteredServices.length}
+                    </span>{" "}
                     resultados
                   </div>
                   <div className="flex gap-2">

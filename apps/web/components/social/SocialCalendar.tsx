@@ -127,7 +127,7 @@ export default function SocialCalendar() {
 
   const handleSavePost = () => {
     // TODO: Implement save to backend
-    console.log("Saving post:", {
+    console.warn("Saving post:", {
       date: selectedDate,
       ...newPost,
     });

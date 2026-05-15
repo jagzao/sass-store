@@ -29,7 +29,8 @@ import { db, eq, users } from "@sass-store/database";
 const STRONG_PASSWORD = "SecurePass123!@#";
 
 // Helper to generate unique email for each test
-const uniqueEmail = (prefix: string) => `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2)}@test.com`;
+const uniqueEmail = (prefix: string) =>
+  `${prefix}-${Date.now()}-${crypto.randomUUID().replace(/-/g, "").substring(0, 9)}@test.com`;
 
 // Helper to cleanup test user
 async function cleanupUser(email: string) {
@@ -51,7 +52,9 @@ describe("Auth Security - Password Strength Validation", () => {
       const result = StrongPasswordSchema.safeParse("Short1!");
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.errors[0].message).toContain("at least 12 characters");
+        expect(result.error.errors[0].message).toContain(
+          "at least 12 characters",
+        );
       }
     });
 
@@ -59,7 +62,9 @@ describe("Auth Security - Password Strength Validation", () => {
       const result = StrongPasswordSchema.safeParse("alllowercase123!@#");
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.errors.some(e => e.message.includes("uppercase"))).toBe(true);
+        expect(
+          result.error.errors.some((e) => e.message.includes("uppercase")),
+        ).toBe(true);
       }
     });
 
@@ -67,7 +72,9 @@ describe("Auth Security - Password Strength Validation", () => {
       const result = StrongPasswordSchema.safeParse("ALLUPPERCASE123!@#");
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.errors.some(e => e.message.includes("lowercase"))).toBe(true);
+        expect(
+          result.error.errors.some((e) => e.message.includes("lowercase")),
+        ).toBe(true);
       }
     });
 
@@ -75,7 +82,9 @@ describe("Auth Security - Password Strength Validation", () => {
       const result = StrongPasswordSchema.safeParse("NoNumbersHere!@#$");
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.errors.some(e => e.message.includes("number"))).toBe(true);
+        expect(
+          result.error.errors.some((e) => e.message.includes("number")),
+        ).toBe(true);
       }
     });
 
@@ -83,7 +92,11 @@ describe("Auth Security - Password Strength Validation", () => {
       const result = StrongPasswordSchema.safeParse("NoSpecialChars123");
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.errors.some(e => e.message.includes("special character"))).toBe(true);
+        expect(
+          result.error.errors.some((e) =>
+            e.message.includes("special character"),
+          ),
+        ).toBe(true);
       }
     });
 
@@ -92,7 +105,9 @@ describe("Auth Security - Password Strength Validation", () => {
       const result = StrongPasswordSchema.safeParse(longPassword);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.errors[0].message).toContain("at most 128 characters");
+        expect(result.error.errors[0].message).toContain(
+          "at most 128 characters",
+        );
       }
     });
   });
@@ -135,7 +150,7 @@ describe("Auth Security - UserService Registration", () => {
     it("should create user with strong password", async () => {
       const email = uniqueEmail("secure");
       testEmails.push(email);
-      
+
       const userData: CreateUserData = {
         email,
         firstName: "Secure",
@@ -156,7 +171,7 @@ describe("Auth Security - UserService Registration", () => {
     it("should reject weak password during registration", async () => {
       const email = uniqueEmail("weakpass");
       testEmails.push(email);
-      
+
       const userData: CreateUserData = {
         email,
         firstName: "Weak",
@@ -176,7 +191,7 @@ describe("Auth Security - UserService Registration", () => {
     it("should reject password with only11 characters (boundary test)", async () => {
       const email = uniqueEmail("eleven");
       testEmails.push(email);
-      
+
       const userData: CreateUserData = {
         email,
         firstName: "Eleven",
@@ -194,7 +209,7 @@ describe("Auth Security - UserService Registration", () => {
     it("should accept password with exactly 12 characters (boundary test)", async () => {
       const email = uniqueEmail("twelve");
       testEmails.push(email);
-      
+
       const userData: CreateUserData = {
         email,
         firstName: "Twelve",
@@ -211,7 +226,7 @@ describe("Auth Security - UserService Registration", () => {
     it("should properly hash the password", async () => {
       const email = uniqueEmail("hashed");
       testEmails.push(email);
-      
+
       const userData: CreateUserData = {
         email,
         firstName: "Hashed",
@@ -238,7 +253,7 @@ describe("Auth Security - UserService Authentication", () => {
   beforeEach(async () => {
     userService = new UserService();
     testEmail = uniqueEmail("auth-test");
-    
+
     // Create a user with known strong password
     const createResult = await userService.createUser({
       email: testEmail,
@@ -247,9 +262,11 @@ describe("Auth Security - UserService Authentication", () => {
       password: STRONG_PASSWORD,
       role: "customer",
     });
-    
+
     if (isFailure(createResult)) {
-      throw new Error(`Failed to create test user: ${createResult.error.message}`);
+      throw new Error(
+        `Failed to create test user: ${createResult.error.message}`,
+      );
     }
     testUser = createResult.data;
   });
@@ -321,7 +338,7 @@ describe("Auth Security - UserService Authentication", () => {
 
     it("should reject user without password hash", async () => {
       const noPassEmail = uniqueEmail("nopass");
-      
+
       // Create user without password
       const noPassResult = await userService.createUser({
         email: noPassEmail,
@@ -342,7 +359,7 @@ describe("Auth Security - UserService Authentication", () => {
 
       expectFailure(result);
       expect(result.error.type).toBe("AuthenticationError");
-      
+
       // Cleanup
       await cleanupUser(noPassEmail);
     });
@@ -351,7 +368,7 @@ describe("Auth Security - UserService Authentication", () => {
       // TODO: This test is skipped because the current UserService.deactivateUser
       // doesn't persist isActive to the database. When that feature is implemented,
       // this test should be enabled.
-      
+
       // Deactivate the user
       const deactivateResult = await userService.deactivateUser(testUser.id);
       expectSuccess(deactivateResult);
@@ -386,10 +403,10 @@ describe("Auth Security - UserService Authentication", () => {
       // to prevent user enumeration attacks
       expectFailure(nonExistentResult);
       expectFailure(wrongPassResult);
-      
+
       expect(nonExistentResult.error.type).toBe("AuthenticationError");
       expect(wrongPassResult.error.type).toBe("AuthenticationError");
-      
+
       expect(nonExistentResult.error.reason).toBe("invalid_credentials");
       expect(wrongPassResult.error.reason).toBe("invalid_credentials");
     });
@@ -415,7 +432,7 @@ describe("Auth Security - Password Hashing", () => {
     const email1 = uniqueEmail("user1");
     const email2 = uniqueEmail("user2");
     testEmails.push(email1, email2);
-    
+
     // Create two users with the same password
     const user1Result = await userService.createUser({
       email: email1,
@@ -437,7 +454,7 @@ describe("Auth Security - Password Hashing", () => {
     // Hashes should be different due to salt
     // Note: password field in DB is called 'password', not 'passwordHash'
     expect(user1Result.data.password).not.toBe(user2Result.data.password);
-    
+
     // But both should authenticate with the same password
     const auth1 = await userService.authenticateUser({
       email: email1,
@@ -471,7 +488,7 @@ describe("Auth Security - Integration: Register -> Login Flow", () => {
   it("should complete full registration and login flow", async () => {
     const email = uniqueEmail("flow-test");
     testEmails.push(email);
-    
+
     // Step 1: Register with strong password
     const registerResult = await userService.createUser({
       email,
@@ -507,7 +524,7 @@ describe("Auth Security - Integration: Register -> Login Flow", () => {
   it("should prevent registration with weak password", async () => {
     const email = uniqueEmail("weak-flow");
     testEmails.push(email);
-    
+
     // Attempt to register with weak password
     const weakRegisterResult = await userService.createUser({
       email,

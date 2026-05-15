@@ -1,16 +1,19 @@
-'use client';
+"use client";
 
-import { useEffect, useRef } from 'react';
-import { useCart } from '@/lib/cart/cart-store';
-import gsap from 'gsap';
-import Link from 'next/link';
+import { useEffect, useRef } from "react";
+import { useCart } from "@/lib/cart/cart-store";
+import gsap from "gsap";
+import Link from "next/link";
 
 interface CartBadgeProps {
   tenantSlug: string;
   primaryColor?: string;
 }
 
-export default function CartBadge({ tenantSlug, primaryColor = '#3B82F6' }: CartBadgeProps) {
+export default function CartBadge({
+  tenantSlug,
+  primaryColor = "#3B82F6",
+}: CartBadgeProps) {
   const items = useCart((state) => state.items);
   const _deduplicateItems = useCart((state) => state._deduplicateItems);
   const badgeRef = useRef<HTMLSpanElement>(null);
@@ -18,22 +21,27 @@ export default function CartBadge({ tenantSlug, primaryColor = '#3B82F6' }: Cart
 
   // Filter items for current tenant, deduplicate, and calculate total
   const totalItems = _deduplicateItems(
-    items.filter((item) => item.variant?.tenant === tenantSlug)
+    items.filter((item) => item.variant?.tenant === tenantSlug),
   ).reduce((total, item) => total + item.quantity, 0);
 
   useEffect(() => {
     // Micro-bounce animation when count changes
-    if (badgeRef.current && totalItems !== prevCountRef.current && totalItems > 0) {
-      gsap.timeline()
+    if (
+      badgeRef.current &&
+      totalItems !== prevCountRef.current &&
+      totalItems > 0
+    ) {
+      gsap
+        .timeline()
         .to(badgeRef.current, {
           scale: 1.15,
           duration: 0.15,
-          ease: 'power2.out'
+          ease: "power2.out",
         })
         .to(badgeRef.current, {
           scale: 1,
           duration: 0.15,
-          ease: 'elastic.out(1, 0.3)'
+          ease: "elastic.out(1, 0.3)",
         });
     }
     prevCountRef.current = totalItems;
@@ -45,7 +53,7 @@ export default function CartBadge({ tenantSlug, primaryColor = '#3B82F6' }: Cart
     <Link
       href={`/t/${tenantSlug}/cart`}
       className="relative inline-block"
-      aria-label={`Carrito con ${totalItems} ${totalItems === 1 ? 'artículo' : 'artículos'}`}
+      aria-label={`Carrito con ${totalItems} ${totalItems === 1 ? "artículo" : "artículos"}`}
     >
       <span className="text-3xl" role="img" aria-hidden="true">
         🛒
@@ -56,7 +64,7 @@ export default function CartBadge({ tenantSlug, primaryColor = '#3B82F6' }: Cart
         style={{ backgroundColor: primaryColor }}
         aria-live="polite"
       >
-        {totalItems > 99 ? '99+' : totalItems}
+        {totalItems > 99 ? "99+" : totalItems}
       </span>
     </Link>
   );

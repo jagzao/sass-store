@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { db } from "../packages/database/connection";
 import {
   products,

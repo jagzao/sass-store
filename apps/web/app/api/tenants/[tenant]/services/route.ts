@@ -51,7 +51,7 @@ export async function POST(
         price: formattedPrice,
         imageUrl: serviceData.imageUrl || null,
         videoUrl: serviceData.videoUrl || null,
-        duration: serviceData.duration,
+        duration: String(serviceData.duration),
         featured: serviceData.featured,
         active: serviceData.active,
         metadata: serviceData.metadata || null,

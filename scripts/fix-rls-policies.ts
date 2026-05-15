@@ -4,23 +4,31 @@
  * and force RLS for table owners
  */
 
-import * as dotenv from 'dotenv';
-import * as path from 'path';
+import * as dotenv from "dotenv";
+import * as path from "path";
 
-dotenv.config({ path: path.join(__dirname, '..', '.env.local') });
+dotenv.config({ path: path.join(__dirname, "..", ".env.local") });
 
-import { db } from '../packages/database';
-import { sql } from 'drizzle-orm';
+import { db } from "../packages/database";
+import { sql } from "drizzle-orm";
 
 async function fixRLSPolicies() {
-  console.log('🔧 Fixing RLS Policies\n');
-  console.log('════════════════════════════════════════════════════════\n');
+  console.log("🔧 Fixing RLS Policies\n");
+  console.log("════════════════════════════════════════════════════════\n");
 
   try {
     // 1. Drop old policies with IS NULL bypass
-    console.log('📝 Step 1: Dropping old policies with IS NULL bypass...\n');
+    console.log("📝 Step 1: Dropping old policies with IS NULL bypass...\n");
 
-    const tables = ['products', 'services', 'staff', 'bookings', 'orders', 'payments', 'product_reviews'];
+    const tables = [
+      "products",
+      "services",
+      "staff",
+      "bookings",
+      "orders",
+      "payments",
+      "product_reviews",
+    ];
 
     for (const table of tables) {
       // Get all policies for this table
@@ -40,7 +48,9 @@ async function fixRLSPolicies() {
         // Drop old policies (they have IS NULL bypass)
         if (policyName.startsWith(`${table}_`)) {
           console.log(`  ❌ Dropping old policy: ${policyName}`);
-          await db.execute(sql.raw(`DROP POLICY IF EXISTS ${policyName} ON ${table}`));
+          await db.execute(
+            sql.raw(`DROP POLICY IF EXISTS ${policyName} ON ${table}`),
+          );
         } else {
           console.log(`  ✅ Keeping policy: ${policyName}`);
         }
@@ -48,17 +58,19 @@ async function fixRLSPolicies() {
     }
 
     // 2. Force RLS for table owners
-    console.log('\n\n📝 Step 2: Forcing RLS for table owners...\n');
+    console.log("\n\n📝 Step 2: Forcing RLS for table owners...\n");
 
     for (const table of tables) {
       console.log(`  Forcing RLS on: ${table}`);
-      await db.execute(sql.raw(`ALTER TABLE ${table} FORCE ROW LEVEL SECURITY`));
+      await db.execute(
+        sql.raw(`ALTER TABLE ${table} FORCE ROW LEVEL SECURITY`),
+      );
     }
 
-    console.log('\n\n✅ RLS Policies Fixed!\n');
+    console.log("\n\n✅ RLS Policies Fixed!\n");
 
     // 3. Verify
-    console.log('📝 Step 3: Verifying...\n');
+    console.log("📝 Step 3: Verifying...\n");
 
     for (const table of tables) {
       const policies: any = await db.execute(sql`
@@ -71,18 +83,17 @@ async function fixRLSPolicies() {
       policies.forEach((p: any) => console.log(`    - ${p.policyname}`));
     }
 
-    console.log('\n════════════════════════════════════════════════════════\n');
-    console.log('🎉 RLS Fix Complete!\n');
-
+    console.log("\n════════════════════════════════════════════════════════\n");
+    console.log("🎉 RLS Fix Complete!\n");
   } catch (error) {
-    console.error('\n❌ Error fixing RLS:', error);
+    console.error("\n❌ Error fixing RLS:", error);
     throw error;
   }
 }
 
 fixRLSPolicies()
   .then(() => process.exit(0))
-  .catch(err => {
-    console.error('Fatal error:', err);
+  .catch((err) => {
+    console.error("Fatal error:", err);
     process.exit(1);
   });

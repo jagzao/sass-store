@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { db, tenants } from "@sass-store/database";
 import { ilike } from "drizzle-orm";
 

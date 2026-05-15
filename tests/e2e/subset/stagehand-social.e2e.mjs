@@ -1,6 +1,6 @@
 import { Stagehand } from "@browserbasehq/stagehand";
 
-const BASE_URL = process.env.BASE_URL || "http://localhost:3001";
+const BASE_URL = process.env.BASE_URL || "";
 const API_KEY = process.env.ZAI_API_KEY;
 const MODEL_NAME = "glm-4.5";
 const BASE_URL_OPENAI = "https://open.bigmodel.cn/api/paas/v4";

@@ -4,8 +4,8 @@
  * Arrow buttons for navigating between carousel items
  */
 
-import React from 'react';
-import styles from './HeroWondernailsGSAP.module.css';
+import React from "react";
+import styles from "./HeroWondernailsGSAP.module.css";
 
 export interface CarouselNavigationProps {
   onPrev: () => void;

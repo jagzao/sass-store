@@ -16,7 +16,8 @@ const JWT_EXPIRY_HOURS = 24;
 const MIN_SECRET_LENGTH = 32;
 
 function getTestSecret(): Uint8Array {
-  const secret = process.env.JWT_SECRET || "dev-jwt-secret-do-not-use-in-production-min32ch";
+  const secret =
+    process.env.JWT_SECRET || "dev-jwt-secret-do-not-use-in-production-min32ch";
   return new TextEncoder().encode(secret);
 }
 

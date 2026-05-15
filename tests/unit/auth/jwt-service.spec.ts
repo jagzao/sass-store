@@ -10,12 +10,7 @@
  * 6. Integration test: issue -> verify flow
  */
 
-import {
-  Ok,
-  Err,
-  isSuccess,
-  isFailure,
-} from "@sass-store/core/src/result";
+import { Ok, Err, isSuccess, isFailure } from "@sass-store/core/src/result";
 import { ErrorFactories } from "@sass-store/core/src/errors/types";
 import { SignJWT, jwtVerify } from "jose";
 
@@ -52,10 +47,12 @@ const UUID_USER_PAYLOAD = {
 // Constants duplicated from auth-middleware for testing
 const JWT_EXPIRY_HOURS = 24;
 const MIN_SECRET_LENGTH = 32;
-const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const UUID_REGEX =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 function getTestSecret(): Uint8Array {
-  const secret = process.env.JWT_SECRET || "dev-jwt-secret-do-not-use-in-production-min32ch";
+  const secret =
+    process.env.JWT_SECRET || "dev-jwt-secret-do-not-use-in-production-min32ch";
   return new TextEncoder().encode(secret);
 }
 
@@ -65,7 +62,12 @@ function getTestSecret(): Uint8Array {
 class TestJWTService {
   private static algorithm = "HS256" as const;
 
-  static async generateToken(payload: { userId: string; email: string; role: string; tenantId?: string }): Promise<string> {
+  static async generateToken(payload: {
+    userId: string;
+    email: string;
+    role: string;
+    tenantId?: string;
+  }): Promise<string> {
     const secret = getTestSecret();
     const now = Math.floor(Date.now() / 1000);
     const fullPayload = {
@@ -92,16 +94,18 @@ describe("JWT Service - SEC-003: Cryptographic Signing", () => {
   describe("generateToken()", () => {
     it("should generate valid JWT with correct format (3 parts)", async () => {
       const token = await TestJWTService.generateToken(TEST_USER_PAYLOAD);
-      
+
       // JWT format: header.payload.signature
       expect(token.split(".")).toHaveLength(3);
     });
 
     it("should generate token with HS256 algorithm", async () => {
       const token = await TestJWTService.generateToken(TEST_USER_PAYLOAD);
-      
+
       // Decode header to verify algorithm
-      const header = JSON.parse(Buffer.from(token.split(".")[0], "base64url").toString());
+      const header = JSON.parse(
+        Buffer.from(token.split(".")[0], "base64url").toString(),
+      );
       expect(header.alg).toBe("HS256");
       // Note: jose library may not set typ by default, which is fine
     });
@@ -121,9 +125,9 @@ describe("JWT Service - SEC-003: Cryptographic Signing", () => {
     it("should set correct expiration time (24 hours)", async () => {
       const token = await TestJWTService.generateToken(TEST_USER_PAYLOAD);
       const payload = await TestJWTService.verifyToken(token);
-      
+
       const expectedExp = payload.iat + 24 * 60 * 60; // 24 hours in seconds
-      
+
       // Allow 1 second tolerance for test execution
       expect(payload.exp).toBeGreaterThanOrEqual(expectedExp - 1);
       expect(payload.exp).toBeLessThanOrEqual(expectedExp + 1);
@@ -132,14 +136,14 @@ describe("JWT Service - SEC-003: Cryptographic Signing", () => {
     it("should accept UUID format userId", async () => {
       const token = await TestJWTService.generateToken(UUID_USER_PAYLOAD);
       const payload = await TestJWTService.verifyToken(token);
-      
+
       expect(payload.userId).toBe(UUID_USER_PAYLOAD.userId);
     });
 
     it("should accept user_ prefix format userId", async () => {
       const token = await TestJWTService.generateToken(TEST_USER_PAYLOAD);
       const payload = await TestJWTService.verifyToken(token);
-      
+
       expect(payload.userId).toBe(TEST_USER_PAYLOAD.userId);
     });
   });
@@ -148,14 +152,14 @@ describe("JWT Service - SEC-003: Cryptographic Signing", () => {
     it("should verify valid token successfully", async () => {
       const token = await TestJWTService.generateToken(TEST_USER_PAYLOAD);
       const payload = await TestJWTService.verifyToken(token);
-      
+
       expect(payload.userId).toBe(TEST_USER_PAYLOAD.userId);
     });
 
     it("should reject token with altered signature", async () => {
       const token = await TestJWTService.generateToken(TEST_USER_PAYLOAD);
       const parts = token.split(".");
-      
+
       // Tamper with signature (last part)
       const tamperedSignature = parts[2].slice(0, -5) + "xxxxx";
       const tamperedToken = `${parts[0]}.${parts[1]}.${tamperedSignature}`;
@@ -166,12 +170,14 @@ describe("JWT Service - SEC-003: Cryptographic Signing", () => {
     it("should reject token with altered payload", async () => {
       const token = await TestJWTService.generateToken(TEST_USER_PAYLOAD);
       const parts = token.split(".");
-      
+
       // Decode payload, modify it, and re-encode
       const payload = JSON.parse(Buffer.from(parts[1], "base64url").toString());
       payload.role = "admin"; // Try to escalate privileges
-      
-      const alteredPayload = Buffer.from(JSON.stringify(payload)).toString("base64url");
+
+      const alteredPayload = Buffer.from(JSON.stringify(payload)).toString(
+        "base64url",
+      );
       const tamperedToken = `${parts[0]}.${alteredPayload}.${parts[2]}`;
 
       await expect(TestJWTService.verifyToken(tamperedToken)).rejects.toThrow();
@@ -179,7 +185,7 @@ describe("JWT Service - SEC-003: Cryptographic Signing", () => {
 
     it("should reject expired token", async () => {
       const secret = getTestSecret();
-      
+
       const expiredPayload = {
         ...TEST_USER_PAYLOAD,
         iat: Math.floor(Date.now() / 1000) - 48 * 60 * 60, // 48 hours ago
@@ -196,11 +202,14 @@ describe("JWT Service - SEC-003: Cryptographic Signing", () => {
     it("should reject malformed token (not 3 parts)", async () => {
       const malformedToken = "invalid.token";
 
-      await expect(TestJWTService.verifyToken(malformedToken)).rejects.toThrow();
+      await expect(
+        TestJWTService.verifyToken(malformedToken),
+      ).rejects.toThrow();
     });
 
     it("should reject token with invalid JSON payload", async () => {
-      const invalidToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.invalid-json.signature";
+      const invalidToken =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.invalid-json.signature";
 
       await expect(TestJWTService.verifyToken(invalidToken)).rejects.toThrow();
     });
@@ -228,7 +237,9 @@ describe("JWT Service - Payload Validation", () => {
 
     it("should reject empty userId", () => {
       const userId = "";
-      const isValid = userId.length > 0 && (UUID_REGEX.test(userId) || userId.startsWith("user_"));
+      const isValid =
+        userId.length > 0 &&
+        (UUID_REGEX.test(userId) || userId.startsWith("user_"));
       expect(isValid).toBe(false);
     });
   });
@@ -243,7 +254,7 @@ describe("JWT Service - Integration: Issue -> Verify Flow", () => {
 
     // Step 2: Verify token
     const payload = await TestJWTService.verifyToken(token);
-    
+
     expect(payload.userId).toBe(TEST_USER_PAYLOAD.userId);
     expect(payload.email).toBe(TEST_USER_PAYLOAD.email);
     expect(payload.role).toBe(TEST_USER_PAYLOAD.role);
@@ -258,25 +269,25 @@ describe("JWT Service - Integration: Issue -> Verify Flow", () => {
 
   it("should generate unique tokens for each call (different iat)", async () => {
     const token1 = await TestJWTService.generateToken(TEST_USER_PAYLOAD);
-    
+
     // Wait a bit to ensure different iat
-    await new Promise(resolve => setTimeout(resolve, 1100));
-    
+    await new Promise((resolve) => setTimeout(resolve, 1100));
+
     const token2 = await TestJWTService.generateToken(TEST_USER_PAYLOAD);
 
     // Tokens should be different (different iat)
     expect(token1).not.toBe(token2);
-    
+
     const payload1 = await TestJWTService.verifyToken(token1);
     const payload2 = await TestJWTService.verifyToken(token2);
-    
+
     expect(payload2.iat).toBeGreaterThan(payload1.iat);
   });
 
   it("should handle admin user token correctly", async () => {
     const token = await TestJWTService.generateToken(TEST_ADMIN_PAYLOAD);
     const payload = await TestJWTService.verifyToken(token);
-    
+
     expect(payload.role).toBe("admin");
   });
 });
@@ -284,15 +295,19 @@ describe("JWT Service - Integration: Issue -> Verify Flow", () => {
 describe("JWT Service - Security Edge Cases", () => {
   it("should reject 'none' algorithm attack", async () => {
     // Create a token with 'none' algorithm (classic JWT attack)
-    const header = Buffer.from(JSON.stringify({ alg: "none", typ: "JWT" })).toString("base64url");
-    const payload = Buffer.from(JSON.stringify({
-      userId: "user_admin",
-      email: "attacker@example.com",
-      role: "admin",
-      iat: Math.floor(Date.now() / 1000),
-      exp: Math.floor(Date.now() / 1000) + 24 * 60 * 60,
-    })).toString("base64url");
-    
+    const header = Buffer.from(
+      JSON.stringify({ alg: "none", typ: "JWT" }),
+    ).toString("base64url");
+    const payload = Buffer.from(
+      JSON.stringify({
+        userId: "user_admin",
+        email: "attacker@example.com",
+        role: "admin",
+        iat: Math.floor(Date.now() / 1000),
+        exp: Math.floor(Date.now() / 1000) + 24 * 60 * 60,
+      }),
+    ).toString("base64url");
+
     const noneToken = `${header}.${payload}.`;
 
     await expect(TestJWTService.verifyToken(noneToken)).rejects.toThrow();
@@ -300,15 +315,19 @@ describe("JWT Service - Security Edge Cases", () => {
 
   it("should reject algorithm confusion attack (RS256 -> HS256)", async () => {
     // This test verifies that we only accept HS256 tokens
-    const header = Buffer.from(JSON.stringify({ alg: "RS256", typ: "JWT" })).toString("base64url");
-    const payload = Buffer.from(JSON.stringify({
-      userId: "user_test",
-      email: "test@example.com",
-      role: "admin",
-      iat: Math.floor(Date.now() / 1000),
-      exp: Math.floor(Date.now() / 1000) + 24 * 60 * 60,
-    })).toString("base64url");
-    
+    const header = Buffer.from(
+      JSON.stringify({ alg: "RS256", typ: "JWT" }),
+    ).toString("base64url");
+    const payload = Buffer.from(
+      JSON.stringify({
+        userId: "user_test",
+        email: "test@example.com",
+        role: "admin",
+        iat: Math.floor(Date.now() / 1000),
+        exp: Math.floor(Date.now() / 1000) + 24 * 60 * 60,
+      }),
+    ).toString("base64url");
+
     // Fake signature
     const fakeSignature = Buffer.from("fakesignature").toString("base64url");
     const confusedToken = `${header}.${payload}.${fakeSignature}`;
@@ -318,7 +337,7 @@ describe("JWT Service - Security Edge Cases", () => {
 
   it("should handle extremely long tokens gracefully", async () => {
     const token = await TestJWTService.generateToken(TEST_USER_PAYLOAD);
-    
+
     // Append garbage to make it extremely long
     const longToken = token + "x".repeat(10000);
 
@@ -327,7 +346,7 @@ describe("JWT Service - Security Edge Cases", () => {
 
   it("should handle token with null bytes", async () => {
     const token = await TestJWTService.generateToken(TEST_USER_PAYLOAD);
-    
+
     // Inject null byte
     const nullToken = token.replace(".", "\x00.");
 
@@ -336,7 +355,7 @@ describe("JWT Service - Security Edge Cases", () => {
 
   it("should not expose sensitive information in error messages", async () => {
     const token = await TestJWTService.generateToken(TEST_USER_PAYLOAD);
-    
+
     const tamperedToken = token.slice(0, -5) + "xxxxx";
 
     try {
@@ -359,7 +378,9 @@ describe("JWT Service - Secret Management", () => {
   });
 
   it("should use dev secret in development", () => {
-    const secret = process.env.JWT_SECRET || "dev-jwt-secret-do-not-use-in-production-min32ch";
+    const secret =
+      process.env.JWT_SECRET ||
+      "dev-jwt-secret-do-not-use-in-production-min32ch";
     expect(secret.length).toBeGreaterThanOrEqual(MIN_SECRET_LENGTH);
   });
 });

@@ -144,7 +144,10 @@ const createRepositoryMock = (
 
 describe("FinancialMatrixService", () => {
   it("aggregates matrix data and sets over-budget for expense category", async () => {
-    const service = new FinancialMatrixService(createRepositoryMock(), new DateBucketService());
+    const service = new FinancialMatrixService(
+      createRepositoryMock(),
+      new DateBucketService(),
+    );
 
     const result = await service.getMatrixData({
       tenantId: "tenant-a",
@@ -224,4 +227,3 @@ describe("FinancialMatrixService", () => {
     expect(errorResult.error.type).toBe("TenantError");
   });
 });
-

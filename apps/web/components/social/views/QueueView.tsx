@@ -333,10 +333,11 @@ export default function QueueView({
             <SearchableSelectSingle
               options={statusOptions}
               value={filters.status}
-              onChange={(option: SelectOption | null) => {
+              onChange={(option: string | SelectOption | null) => {
                 setFilters((prev) => ({
                   ...prev,
-                  status: option?.value || "",
+                  status:
+                    typeof option === "string" ? option : option?.value || "",
                 }));
               }}
               placeholder="Seleccionar estado"
@@ -352,10 +353,11 @@ export default function QueueView({
             <SearchableSelectSingle
               options={platformOptions}
               value={filters.platform}
-              onChange={(option: SelectOption | null) => {
+              onChange={(option: string | SelectOption | null) => {
                 setFilters((prev) => ({
                   ...prev,
-                  platform: option?.value || "",
+                  platform:
+                    typeof option === "string" ? option : option?.value || "",
                 }));
               }}
               placeholder="Seleccionar plataforma"

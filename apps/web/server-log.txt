@@ -1,0 +1,1373 @@
+▲ Next.js 16.1.1
+- Local:         http://localhost:3002
+- Network:       http://192.168.50.225:3002
+
+✓ Starting...
+✓ Ready in 719ms
+[DB] Using DATABASE_URL
+🔌 Initializing Lazy DB Connection...
+[DB] Using DATABASE_URL
+Initializing monitoring services...
+Monitoring services initialized successfully
+[Rate Limit] Redis not configured, using in-memory fallback
+Initializing monitoring services...
+Monitoring services initialized successfully
+[Rate Limit] Redis not configured, using in-memory fallback
+[DB] Using DATABASE_URL
+🔌 Initializing Lazy DB Connection...
+[DB] Using DATABASE_URL
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[getTenantBySlug] Looking for tenant: wondernails
+[getTenantBySlug] Looking for tenant: wondernails
+[getTenantBySlug] Looking for tenant: wondernails
+[getTenantBySlug] Found tenant: Wonder Nails Studio (bda30f0c-81d8-4eed-9500-c22ed2a3f2c2)
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+[getTenantBySlug] Found tenant: Wonder Nails Studio (bda30f0c-81d8-4eed-9500-c22ed2a3f2c2)
+[getTenantBySlug] Found tenant: Wonder Nails Studio (bda30f0c-81d8-4eed-9500-c22ed2a3f2c2)
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+[TenantService] Fetching tenant from database: wondernails
+[TenantService] Found tenant in database: Wonder Nails Studio
+[TenantService] Fetching complete tenant data for: wondernails
+[TenantService] Found tenant in database: Wonder Nails Studio
+[TenantService] Loaded 3 services, 3 products, 1 staff
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+[TenantLayout] Resolved params: { tenant: 'centro-tenistico' }
+[TenantLayout] Extracted tenantSlug: centro-tenistico
+[getTenantBySlug] Looking for tenant: centro-tenistico
+[fetchWithCache] SERVER - Internal API: http://127.0.0.1:3002/api/v1/public/services?tenant=centro-tenistico&limit=6
+[getTenantBySlug] Looking for tenant: centro-tenistico
+[getTenantBySlug] Found tenant: Centro TenÃ­stico Villafuerte (0a83bf38-cd89-4d22-9627-468bae308b0b)
+[TenantLayout] Successfully loaded tenant: Centro TenÃ­stico Villafuerte
+[getTenantBySlug] Found tenant: Centro TenÃ­stico Villafuerte (0a83bf38-cd89-4d22-9627-468bae308b0b)
+[TenantResolution] Unknown host '127.0.0.1:3002' using fallback tenant 'zo-system'
+Tenant URL 'nom-nom' might be new or custom domain. Passing to app layer.
+[TenantLayout] Resolved params: { tenant: 'nom-nom' }
+[TenantLayout] Extracted tenantSlug: nom-nom
+[getTenantBySlug] Looking for tenant: nom-nom
+[getTenantBySlug] Looking for tenant: nom-nom
+[getTenantBySlug] Looking for tenant: nom-nom
+[getTenantBySlug] Found tenant: nom-nom (54af38ed-1e6e-45db-bfb6-84c008700269)
+[TenantLayout] Successfully loaded tenant: nom-nom
+[getTenantBySlug] Found tenant: nom-nom (54af38ed-1e6e-45db-bfb6-84c008700269)
+[getTenantBySlug] Found tenant: nom-nom (54af38ed-1e6e-45db-bfb6-84c008700269)
+[TenantResolution] Unknown host '127.0.0.1:3002' using fallback tenant 'zo-system'
+Tenant URL 'nom-nom' might be new or custom domain. Passing to app layer.
+[TenantResolution] Unknown host '127.0.0.1:3002' using fallback tenant 'zo-system'
+Tenant URL 'nom-nom' might be new or custom domain. Passing to app layer.
+High unknown host rate: 6.12% (3/49)
+[TenantResolution] Unknown host '127.0.0.1:3002' using fallback tenant 'zo-system'
+Tenant URL 'nom-nom' might be new or custom domain. Passing to app layer.
+High unknown host rate: 8.00% (4/50)
+[TenantResolution] Unknown host '127.0.0.1:3002' using fallback tenant 'zo-system'
+Tenant URL 'nom-nom' might be new or custom domain. Passing to app layer.
+High unknown host rate: 9.80% (5/51)
+[TenantResolution] Unknown host '127.0.0.1:3002' using fallback tenant 'zo-system'
+Tenant URL 'nom-nom' might be new or custom domain. Passing to app layer.
+High unknown host rate: 11.54% (6/52)
+[TenantResolution] Unknown host '127.0.0.1:3002' using fallback tenant 'zo-system'
+Tenant URL 'nom-nom' might be new or custom domain. Passing to app layer.
+High unknown host rate: 13.21% (7/53)
+High unknown host rate: 12.96% (7/54)
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+High unknown host rate: 12.73% (7/55)
+High unknown host rate: 12.50% (7/56)
+High unknown host rate: 12.28% (7/57)
+High unknown host rate: 12.07% (7/58)
+High unknown host rate: 11.86% (7/59)
+High unknown host rate: 11.67% (7/60)
+High unknown host rate: 11.48% (7/61)
+High unknown host rate: 11.29% (7/62)
+High unknown host rate: 11.11% (7/63)
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+High unknown host rate: 10.94% (7/64)
+High unknown host rate: 10.77% (7/65)
+High unknown host rate: 10.61% (7/66)
+High unknown host rate: 10.45% (7/67)
+High unknown host rate: 10.29% (7/68)
+High unknown host rate: 10.14% (7/69)
+High unknown host rate: 10.00% (7/70)
+High unknown host rate: 9.86% (7/71)
+High unknown host rate: 9.72% (7/72)
+High unknown host rate: 9.59% (7/73)
+High unknown host rate: 9.46% (7/74)
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+High unknown host rate: 9.33% (7/75)
+High unknown host rate: 9.21% (7/76)
+High unknown host rate: 9.09% (7/77)
+High unknown host rate: 8.97% (7/78)
+[TenantResolution] Unknown host 'localhost:3002' using fallback tenant 'zo-system'
+High unknown host rate: 10.13% (8/79)
+High unknown host rate: 10.00% (8/80)
+High unknown host rate: 9.88% (8/81)
+High unknown host rate: 9.76% (8/82)
+High unknown host rate: 9.64% (8/83)
+High unknown host rate: 9.52% (8/84)
+High unknown host rate: 9.41% (8/85)
+[NextAuth] Authorizing credentials for: jagzao@gmail.com
+[NextAuth] Authorizing credentials for: jagzao@gmail.com
+[NextAuth] Tenant found: bda30f0c-81d8-4eed-9500-c22ed2a3f2c2
+[NextAuth] RLS context set
+[NextAuth] Tenant found: bda30f0c-81d8-4eed-9500-c22ed2a3f2c2
+[NextAuth] Role assignment found: true
+[NextAuth] RLS context set
+User signed in: e2e-test-user-001 
+[NextAuth] Role assignment found: true
+User signed in: e2e-test-user-001 
+High unknown host rate: 9.30% (8/86)
+High unknown host rate: 9.20% (8/87)
+[TenantResolution] Unknown host 'localhost:3002' using fallback tenant 'zo-system'
+High unknown host rate: 10.23% (9/88)
+High unknown host rate: 10.11% (9/89)
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+High unknown host rate: 10.00% (9/90)
+High unknown host rate: 9.89% (9/91)
+High unknown host rate: 9.78% (9/92)
+High unknown host rate: 9.68% (9/93)
+High unknown host rate: 9.57% (9/94)
+High unknown host rate: 9.47% (9/95)
+High unknown host rate: 9.38% (9/96)
+High unknown host rate: 9.28% (9/97)
+High unknown host rate: 9.18% (9/98)
+High unknown host rate: 9.09% (9/99)
+[NextAuth] Authorizing credentials for: invalid@test.com
+[NextAuth] User not found: invalid@test.com
+[31m[auth][error][0m CredentialsSignin: Read more at https://errors.authjs.dev#credentialssignin
+    at iM (C:\Dev\Zo\sass-store\apps\web\.next\server\chunks\packages_config_src_auth_ts_3484038c._.js:404:41044)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async iY (C:\Dev\Zo\sass-store\apps\web\.next\server\chunks\packages_config_src_auth_ts_3484038c._.js:404:50469)
+    at async i0 (C:\Dev\Zo\sass-store\apps\web\.next\server\chunks\packages_config_src_auth_ts_3484038c._.js:404:54719)
+    at async m (C:\Dev\Zo\sass-store\apps\web\.next\server\chunks\[root-of-the-server]__d89e3e18._.js:1:1958)
+    at async rU.do (C:\Dev\Zo\sass-store\node_modules\next\dist\compiled\next-server\app-route-turbo.runtime.prod.js:5:20169)
+    at async rU.handle (C:\Dev\Zo\sass-store\node_modules\next\dist\compiled\next-server\app-route-turbo.runtime.prod.js:5:24949)
+    at async u (C:\Dev\Zo\sass-store\apps\web\.next\server\chunks\[root-of-the-server]__d89e3e18._.js:1:5064)
+    at async rU.handleResponse (C:\Dev\Zo\sass-store\node_modules\next\dist\compiled\next-server\app-route-turbo.runtime.prod.js:1:101467)
+    at async l (C:\Dev\Zo\sass-store\apps\web\.next\server\chunks\[root-of-the-server]__d89e3e18._.js:1:6105)
+High unknown host rate: 9.00% (9/100)
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+High unknown host rate: 8.91% (9/101)
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+High unknown host rate: 8.82% (9/102)
+High unknown host rate: 8.74% (9/103)
+High unknown host rate: 8.65% (9/104)
+High unknown host rate: 8.57% (9/105)
+High unknown host rate: 8.49% (9/106)
+High unknown host rate: 8.41% (9/107)
+High unknown host rate: 8.33% (9/108)
+High unknown host rate: 8.26% (9/109)
+High unknown host rate: 8.18% (9/110)
+High unknown host rate: 8.11% (9/111)
+High unknown host rate: 8.04% (9/112)
+High unknown host rate: 7.96% (9/113)
+High unknown host rate: 7.89% (9/114)
+High unknown host rate: 7.83% (9/115)
+[TenantResolution] Unknown host 'localhost:3002' using fallback tenant 'zo-system'
+High unknown host rate: 8.62% (10/116)
+[TenantResolution] Unknown host 'localhost:3002' using fallback tenant 'zo-system'
+High unknown host rate: 9.40% (11/117)
+High unknown host rate: 9.32% (11/118)
+High unknown host rate: 9.24% (11/119)
+High unknown host rate: 9.17% (11/120)
+High unknown host rate: 9.09% (11/121)
+[TenantResolution] Unknown host 'localhost:3002' using fallback tenant 'zo-system'
+High unknown host rate: 9.84% (12/122)
+[TenantResolution] Unknown host 'localhost:3002' using fallback tenant 'zo-system'
+High unknown host rate: 10.57% (13/123)
+High unknown host rate: 10.48% (13/124)
+High unknown host rate: 10.40% (13/125)
+[NextAuth] Authorizing credentials for: jagzao@gmail.com
+[NextAuth] Tenant found: bda30f0c-81d8-4eed-9500-c22ed2a3f2c2
+[NextAuth] RLS context set
+[NextAuth] Role assignment found: true
+User signed in: e2e-test-user-001 
+High unknown host rate: 10.32% (13/126)
+[TenantResolution] Unknown host 'localhost:3002' using fallback tenant 'zo-system'
+High unknown host rate: 11.02% (14/127)
+High unknown host rate: 10.94% (14/128)
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+High unknown host rate: 10.85% (14/129)
+High unknown host rate: 10.77% (14/130)
+High unknown host rate: 10.69% (14/131)
+High unknown host rate: 10.61% (14/132)
+High unknown host rate: 10.53% (14/133)
+High unknown host rate: 10.45% (14/134)
+High unknown host rate: 10.37% (14/135)
+High unknown host rate: 10.29% (14/136)
+High unknown host rate: 10.22% (14/137)
+High unknown host rate: 10.14% (14/138)
+[NextAuth] Authorizing credentials for: jagzao@gmail.com
+[NextAuth] Tenant found: bda30f0c-81d8-4eed-9500-c22ed2a3f2c2
+[NextAuth] RLS context set
+[NextAuth] Role assignment found: true
+User signed in: e2e-test-user-001 
+High unknown host rate: 10.07% (14/139)
+High unknown host rate: 10.00% (14/140)
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+High unknown host rate: 9.93% (14/141)
+High unknown host rate: 9.86% (14/142)
+High unknown host rate: 9.79% (14/143)
+High unknown host rate: 9.72% (14/144)
+High unknown host rate: 9.66% (14/145)
+High unknown host rate: 9.59% (14/146)
+High unknown host rate: 9.52% (14/147)
+High unknown host rate: 9.46% (14/148)
+High unknown host rate: 9.40% (14/149)
+High unknown host rate: 9.33% (14/150)
+High unknown host rate: 9.27% (14/151)
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+[TenantResolution] Unknown host 'localhost:3002' using fallback tenant 'zo-system'
+High unknown host rate: 9.87% (15/152)
+[NextAuth] Authorizing credentials for: jagzao@gmail.com
+High unknown host rate: 9.80% (15/153)
+High unknown host rate: 9.74% (15/154)
+High unknown host rate: 9.68% (15/155)
+High unknown host rate: 9.62% (15/156)
+[NextAuth] Tenant found: bda30f0c-81d8-4eed-9500-c22ed2a3f2c2
+[NextAuth] RLS context set
+[NextAuth] Role assignment found: true
+High unknown host rate: 9.55% (15/157)
+High unknown host rate: 9.49% (15/158)
+High unknown host rate: 9.43% (15/159)
+High unknown host rate: 9.38% (15/160)
+User signed in: e2e-test-user-001 
+High unknown host rate: 9.32% (15/161)
+High unknown host rate: 9.26% (15/162)
+[NextAuth] Authorizing credentials for: jagzao@gmail.com
+[NextAuth] Tenant found: bda30f0c-81d8-4eed-9500-c22ed2a3f2c2
+[NextAuth] RLS context set
+[NextAuth] Role assignment found: true
+User signed in: e2e-test-user-001 
+High unknown host rate: 9.20% (15/163)
+High unknown host rate: 9.15% (15/164)
+[TenantResolution] Unknown host 'localhost:3002' using fallback tenant 'zo-system'
+High unknown host rate: 9.70% (16/165)
+High unknown host rate: 9.64% (16/166)
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+[TenantService] Fetching tenant from database: wondernails
+[TenantService] Found tenant in database: Wonder Nails Studio
+[TenantService] Using in-memory cache for: wondernails
+[TenantResolution] Unknown host '127.0.0.1:3002' using fallback tenant 'zo-system'
+High unknown host rate: 10.18% (17/167)
+High unknown host rate: 10.12% (17/168)
+High unknown host rate: 10.06% (17/169)
+High unknown host rate: 10.00% (17/170)
+High unknown host rate: 9.94% (17/171)
+[TenantResolution] Unknown host '127.0.0.1:3002' using fallback tenant 'zo-system'
+High unknown host rate: 10.47% (18/172)
+[TenantResolution] Unknown host '127.0.0.1:3002' using fallback tenant 'zo-system'
+High unknown host rate: 10.98% (19/173)
+High unknown host rate: 10.92% (19/174)
+High unknown host rate: 10.86% (19/175)
+High unknown host rate: 10.80% (19/176)
+High unknown host rate: 10.73% (19/177)
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+High unknown host rate: 10.67% (19/178)
+High unknown host rate: 10.61% (19/179)
+High unknown host rate: 10.56% (19/180)
+High unknown host rate: 10.50% (19/181)
+High unknown host rate: 10.44% (19/182)
+High unknown host rate: 10.38% (19/183)
+High unknown host rate: 10.33% (19/184)
+High unknown host rate: 10.27% (19/185)
+High unknown host rate: 10.22% (19/186)
+High unknown host rate: 10.16% (19/187)
+[NextAuth] Authorizing credentials for: jagzao@gmail.com
+[NextAuth] Tenant found: bda30f0c-81d8-4eed-9500-c22ed2a3f2c2
+[NextAuth] RLS context set
+[NextAuth] Role assignment found: true
+User signed in: e2e-test-user-001 
+High unknown host rate: 10.11% (19/188)
+High unknown host rate: 10.05% (19/189)
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+[TenantResolution] Unknown host '127.0.0.1:3002' using fallback tenant 'zo-system'
+High unknown host rate: 10.53% (20/190)
+[TenantResolution] Unknown host '127.0.0.1:3002' using fallback tenant 'zo-system'
+High unknown host rate: 10.99% (21/191)
+[TenantResolution] Unknown host '127.0.0.1:3002' using fallback tenant 'zo-system'
+High unknown host rate: 11.46% (22/192)
+High unknown host rate: 11.40% (22/193)
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+High unknown host rate: 11.34% (22/194)
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+[TenantResolution] Unknown host 'localhost:3002' using fallback tenant 'zo-system'
+High unknown host rate: 11.79% (23/195)
+High unknown host rate: 11.73% (23/196)
+High unknown host rate: 11.68% (23/197)
+High unknown host rate: 11.62% (23/198)
+High unknown host rate: 11.56% (23/199)
+High unknown host rate: 11.50% (23/200)
+High unknown host rate: 11.44% (23/201)
+High unknown host rate: 11.39% (23/202)
+High unknown host rate: 11.33% (23/203)
+High unknown host rate: 11.27% (23/204)
+High unknown host rate: 11.22% (23/205)
+[NextAuth] Authorizing credentials for: jagzao@gmail.com
+High unknown host rate: 11.17% (23/206)
+High unknown host rate: 11.11% (23/207)
+High unknown host rate: 11.06% (23/208)
+High unknown host rate: 11.00% (23/209)
+[TenantResolution] Unknown host '127.0.0.1:3002' using fallback tenant 'zo-system'
+High unknown host rate: 11.43% (24/210)
+High unknown host rate: 11.37% (24/211)
+High unknown host rate: 11.32% (24/212)
+High unknown host rate: 11.27% (24/213)
+High unknown host rate: 11.21% (24/214)
+[TenantResolution] Unknown host '127.0.0.1:3002' using fallback tenant 'zo-system'
+High unknown host rate: 11.63% (25/215)
+[TenantResolution] Unknown host '127.0.0.1:3002' using fallback tenant 'zo-system'
+High unknown host rate: 12.04% (26/216)
+[NextAuth] Tenant found: bda30f0c-81d8-4eed-9500-c22ed2a3f2c2
+High unknown host rate: 11.98% (26/217)
+[NextAuth] RLS context set
+[NextAuth] Role assignment found: true
+High unknown host rate: 11.93% (26/218)
+User signed in: e2e-test-user-001 
+High unknown host rate: 11.87% (26/219)
+[TenantResolution] Unknown host 'localhost:3002' using fallback tenant 'zo-system'
+High unknown host rate: 12.27% (27/220)
+[NextAuth] Authorizing credentials for: jagzao@gmail.com
+[NextAuth] Tenant found: bda30f0c-81d8-4eed-9500-c22ed2a3f2c2
+[NextAuth] RLS context set
+[NextAuth] Role assignment found: true
+User signed in: e2e-test-user-001 
+High unknown host rate: 12.22% (27/221)
+High unknown host rate: 12.16% (27/222)
+[CustomersPage] Received params: Promise {
+  { tenant: 'wondernails' },
+  [Symbol(async_id_symbol)]: 233755,
+  [Symbol(trigger_async_id_symbol)]: 233754,
+  [Symbol(kResourceStore)]: undefined,
+  [Symbol(kResourceStore)]: undefined,
+  [Symbol(kResourceStore)]: undefined,
+  [Symbol(kResourceStore)]: undefined,
+  [Symbol(kResourceStore)]: undefined,
+  [Symbol(kResourceStore)]: {
+    isStaticGeneration: false,
+    page: '/t/[tenant]/clientes/page',
+    route: '/t/[tenant]/clientes',
+    incrementalCache: IncrementalCache {
+      locks: Map(0) {},
+      hasCustomCacheHandler: false,
+      dev: false,
+      disableForTestmode: false,
+      minimalMode: false,
+      requestHeaders: [Object],
+      allowedRevalidateHeaderKeys: undefined,
+      prerenderManifest: [Object],
+      cacheControls: [SharedCacheControls],
+      fetchCacheKeyPrefix: '',
+      cacheHandler: [FileSystemCache]
+    },
+    cacheLifeProfiles: {
+      default: [Object],
+      seconds: [Object],
+      minutes: [Object],
+      hours: [Object],
+      days: [Object],
+      weeks: [Object],
+      max: [Object]
+    },
+    isBuildTimePrerendering: undefined,
+    hasReadableErrorStacks: undefined,
+    fetchCache: undefined,
+    isOnDemandRevalidate: false,
+    isDraftMode: false,
+    isPrefetchRequest: false,
+    buildId: 'GgtNJ1mFtGzosXT9mozZq',
+    reactLoadableManifest: {},
+    assetPrefix: '',
+    nonce: undefined,
+    afterContext: tS {
+      workUnitStores: Set(0) {},
+      waitUntil: [Function (anonymous)],
+      onClose: [Function: onClose],
+      onTaskError: [Function: onAfterTaskError],
+      callbackQueue: [s]
+    },
+    cacheComponentsEnabled: false,
+    dev: false,
+    previouslyRevalidatedTags: [],
+    refreshTagsByCacheKind: Map(2) { 'default' => [Object], 'remote' => [Object] },
+    runInCleanSnapshot: [Function: bound] { asyncResource: [Getter/Setter] },
+    shouldTrackFetchMetrics: false,
+    reactServerErrorsByDigest: Map(0) {},
+    fetchMetrics: [],
+    forceDynamic: true
+  },
+  [Symbol(kResourceStore)]: undefined,
+  [Symbol(kResourceStore)]: undefined,
+  [Symbol(kResourceStore)]: {
+    type: 'request',
+    phase: 'render',
+    implicitTags: { tags: [Array], expirationsByCacheKind: [Map] },
+    url: { pathname: '/t/wondernails/clientes', search: '' },
+    rootParams: {},
+    headers: [Getter],
+    cookies: [Getter/Setter],
+    mutableCookies: [Getter],
+    userspaceMutableCookies: [Getter],
+    draftMode: [Getter],
+    renderResumeDataCache: null,
+    isHmrRefresh: false,
+    serverComponentsHmrCache: undefined,
+    devFallbackParams: null
+  }
+}
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[CustomersPage] Resolved params: { tenant: 'wondernails' }
+[CustomersPage] Extracted tenantSlug: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+[CustomersPage] Resolved searchParams: {}
+[CustomersPage] Successfully loaded tenant: Wonder Nails Studio
+High unknown host rate: 12.11% (27/223)
+High unknown host rate: 12.05% (27/224)
+High unknown host rate: 12.00% (27/225)
+High unknown host rate: 11.95% (27/226)
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+High unknown host rate: 11.89% (27/227)
+High unknown host rate: 11.84% (27/228)
+High unknown host rate: 11.79% (27/229)
+High unknown host rate: 11.74% (27/230)
+High unknown host rate: 11.69% (27/231)
+High unknown host rate: 11.64% (27/232)
+High unknown host rate: 11.59% (27/233)
+High unknown host rate: 11.54% (27/234)
+High unknown host rate: 11.49% (27/235)
+High unknown host rate: 11.44% (27/236)
+[NextAuth] Authorizing credentials for: jagzao@gmail.com
+[NextAuth] Tenant found: bda30f0c-81d8-4eed-9500-c22ed2a3f2c2
+[NextAuth] RLS context set
+[NextAuth] Role assignment found: true
+User signed in: e2e-test-user-001 
+High unknown host rate: 11.39% (27/237)
+High unknown host rate: 11.34% (27/238)
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+High unknown host rate: 11.30% (27/239)
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+High unknown host rate: 11.25% (27/240)
+High unknown host rate: 11.20% (27/241)
+High unknown host rate: 11.16% (27/242)
+High unknown host rate: 11.11% (27/243)
+[TenantResolution] Unknown host '127.0.0.1:3002' using fallback tenant 'zo-system'
+High unknown host rate: 11.48% (28/244)
+[TenantResolution] Unknown host 'localhost:3002' using fallback tenant 'zo-system'
+High unknown host rate: 11.84% (29/245)
+High unknown host rate: 11.79% (29/246)
+High unknown host rate: 11.74% (29/247)
+High unknown host rate: 11.69% (29/248)
+High unknown host rate: 11.65% (29/249)
+High unknown host rate: 11.60% (29/250)
+High unknown host rate: 11.55% (29/251)
+High unknown host rate: 11.51% (29/252)
+High unknown host rate: 11.46% (29/253)
+High unknown host rate: 11.42% (29/254)
+High unknown host rate: 11.37% (29/255)
+[NextAuth] Authorizing credentials for: jagzao@gmail.com
+High unknown host rate: 11.33% (29/256)
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+[NextAuth] Tenant found: bda30f0c-81d8-4eed-9500-c22ed2a3f2c2
+[NextAuth] RLS context set
+[NextAuth] Role assignment found: true
+User signed in: e2e-test-user-001 
+High unknown host rate: 11.28% (29/257)
+[TenantResolution] Unknown host 'localhost:3002' using fallback tenant 'zo-system'
+High unknown host rate: 11.63% (30/258)
+High unknown host rate: 11.58% (30/259)
+High unknown host rate: 11.54% (30/260)
+High unknown host rate: 11.49% (30/261)
+High unknown host rate: 11.45% (30/262)
+High unknown host rate: 11.41% (30/263)
+High unknown host rate: 11.36% (30/264)
+High unknown host rate: 11.32% (30/265)
+High unknown host rate: 11.28% (30/266)
+High unknown host rate: 11.24% (30/267)
+High unknown host rate: 11.19% (30/268)
+[NextAuth] Authorizing credentials for: jagzao@gmail.com
+[NextAuth] Tenant found: bda30f0c-81d8-4eed-9500-c22ed2a3f2c2
+[NextAuth] RLS context set
+[NextAuth] Role assignment found: true
+User signed in: e2e-test-user-001 
+High unknown host rate: 11.15% (30/269)
+High unknown host rate: 11.11% (30/270)
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+[TenantResolution] Unknown host '127.0.0.1:3002' using fallback tenant 'zo-system'
+High unknown host rate: 11.44% (31/271)
+[TenantResolution] Unknown host '127.0.0.1:3002' using fallback tenant 'zo-system'
+High unknown host rate: 11.76% (32/272)
+[TenantResolution] Unknown host '127.0.0.1:3002' using fallback tenant 'zo-system'
+High unknown host rate: 12.09% (33/273)
+High unknown host rate: 12.04% (33/274)
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+High unknown host rate: 12.00% (33/275)
+High unknown host rate: 11.96% (33/276)
+High unknown host rate: 11.91% (33/277)
+High unknown host rate: 11.87% (33/278)
+High unknown host rate: 11.83% (33/279)
+High unknown host rate: 11.79% (33/280)
+High unknown host rate: 11.74% (33/281)
+High unknown host rate: 11.70% (33/282)
+High unknown host rate: 11.66% (33/283)
+High unknown host rate: 11.62% (33/284)
+[NextAuth] Authorizing credentials for: jagzao@gmail.com
+[NextAuth] Tenant found: bda30f0c-81d8-4eed-9500-c22ed2a3f2c2
+High unknown host rate: 11.58% (33/285)
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+[NextAuth] RLS context set
+[NextAuth] Role assignment found: true
+User signed in: e2e-test-user-001 
+High unknown host rate: 11.54% (33/286)
+High unknown host rate: 11.50% (33/287)
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[TenantService] Using in-memory cache for: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+High unknown host rate: 11.46% (33/288)
+High unknown host rate: 11.42% (33/289)
+[TenantResolution] Unknown host 'localhost:3002' using fallback tenant 'zo-system'
+High unknown host rate: 11.72% (34/290)
+High unknown host rate: 11.68% (34/291)
+High unknown host rate: 11.64% (34/292)
+[TenantResolution] Unknown host 'localhost:3002' using fallback tenant 'zo-system'
+High unknown host rate: 11.95% (35/293)
+High unknown host rate: 11.90% (35/294)
+High unknown host rate: 11.86% (35/295)
+High unknown host rate: 11.82% (35/296)
+High unknown host rate: 11.78% (35/297)
+[TenantResolution] Unknown host 'localhost:3002' using fallback tenant 'zo-system'
+High unknown host rate: 12.08% (36/298)
+[TenantResolution] Unknown host 'localhost:3002' using fallback tenant 'zo-system'
+High unknown host rate: 12.37% (37/299)
+High unknown host rate: 12.33% (37/300)
+High unknown host rate: 12.29% (37/301)
+High unknown host rate: 12.25% (37/302)
+High unknown host rate: 12.21% (37/303)
+High unknown host rate: 12.17% (37/304)
+High unknown host rate: 12.13% (37/305)
+High unknown host rate: 12.09% (37/306)
+High unknown host rate: 12.05% (37/307)
+High unknown host rate: 12.01% (37/308)
+[TenantResolution] Unknown host '127.0.0.1:3002' using fallback tenant 'zo-system'
+High unknown host rate: 12.30% (38/309)
+High unknown host rate: 12.26% (38/310)
+High unknown host rate: 12.22% (38/311)
+[TenantResolution] Unknown host '127.0.0.1:3002' using fallback tenant 'zo-system'
+High unknown host rate: 12.50% (39/312)
+[TenantResolution] Unknown host '127.0.0.1:3002' using fallback tenant 'zo-system'
+High unknown host rate: 12.78% (40/313)
+High unknown host rate: 12.74% (40/314)
+High unknown host rate: 12.70% (40/315)
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+High unknown host rate: 12.66% (40/316)
+High unknown host rate: 12.62% (40/317)
+High unknown host rate: 12.58% (40/318)
+High unknown host rate: 12.54% (40/319)
+High unknown host rate: 12.50% (40/320)
+High unknown host rate: 12.46% (40/321)
+High unknown host rate: 12.42% (40/322)
+High unknown host rate: 12.38% (40/323)
+High unknown host rate: 12.35% (40/324)
+High unknown host rate: 12.31% (40/325)
+[NextAuth] Authorizing credentials for: jagzao@gmail.com
+[NextAuth] Tenant found: bda30f0c-81d8-4eed-9500-c22ed2a3f2c2
+[NextAuth] RLS context set
+[NextAuth] Role assignment found: true
+User signed in: e2e-test-user-001 
+High unknown host rate: 12.27% (40/326)
+High unknown host rate: 12.23% (40/327)
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[TenantService] Using in-memory cache for: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+High unknown host rate: 12.20% (40/328)
+High unknown host rate: 12.16% (40/329)
+High unknown host rate: 12.12% (40/330)
+High unknown host rate: 12.08% (40/331)
+[TenantResolution] Unknown host '127.0.0.1:3002' using fallback tenant 'zo-system'
+High unknown host rate: 12.35% (41/332)
+High unknown host rate: 12.31% (41/333)
+High unknown host rate: 12.28% (41/334)
+High unknown host rate: 12.24% (41/335)
+High unknown host rate: 12.20% (41/336)
+[TenantResolution] Unknown host '127.0.0.1:3002' using fallback tenant 'zo-system'
+High unknown host rate: 12.46% (42/337)
+[TenantResolution] Unknown host '127.0.0.1:3002' using fallback tenant 'zo-system'
+High unknown host rate: 12.72% (43/338)
+High unknown host rate: 12.68% (43/339)
+High unknown host rate: 12.65% (43/340)
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+High unknown host rate: 12.61% (43/341)
+High unknown host rate: 12.57% (43/342)
+High unknown host rate: 12.54% (43/343)
+High unknown host rate: 12.50% (43/344)
+High unknown host rate: 12.46% (43/345)
+High unknown host rate: 12.43% (43/346)
+High unknown host rate: 12.39% (43/347)
+High unknown host rate: 12.36% (43/348)
+High unknown host rate: 12.32% (43/349)
+High unknown host rate: 12.29% (43/350)
+[NextAuth] Authorizing credentials for: jagzao@gmail.com
+[NextAuth] Tenant found: bda30f0c-81d8-4eed-9500-c22ed2a3f2c2
+[NextAuth] RLS context set
+[NextAuth] Role assignment found: true
+User signed in: e2e-test-user-001 
+High unknown host rate: 12.25% (43/351)
+High unknown host rate: 12.22% (43/352)
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+[TenantService] Fetching tenant from database: wondernails
+[TenantService] Found tenant in database: Wonder Nails Studio
+[TenantService] Using in-memory cache for: wondernails
+High unknown host rate: 12.18% (43/353)
+High unknown host rate: 12.15% (43/354)
+High unknown host rate: 12.11% (43/355)
+High unknown host rate: 12.08% (43/356)
+[TenantResolution] Unknown host '127.0.0.1:3002' using fallback tenant 'zo-system'
+High unknown host rate: 12.32% (44/357)
+High unknown host rate: 12.29% (44/358)
+High unknown host rate: 12.26% (44/359)
+High unknown host rate: 12.22% (44/360)
+High unknown host rate: 12.19% (44/361)
+[TenantResolution] Unknown host '127.0.0.1:3002' using fallback tenant 'zo-system'
+High unknown host rate: 12.43% (45/362)
+[TenantResolution] Unknown host '127.0.0.1:3002' using fallback tenant 'zo-system'
+High unknown host rate: 12.67% (46/363)
+High unknown host rate: 12.64% (46/364)
+High unknown host rate: 12.60% (46/365)
+High unknown host rate: 12.57% (46/366)
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+High unknown host rate: 12.53% (46/367)
+High unknown host rate: 12.50% (46/368)
+High unknown host rate: 12.47% (46/369)
+High unknown host rate: 12.43% (46/370)
+High unknown host rate: 12.40% (46/371)
+High unknown host rate: 12.37% (46/372)
+High unknown host rate: 12.33% (46/373)
+High unknown host rate: 12.30% (46/374)
+High unknown host rate: 12.27% (46/375)
+High unknown host rate: 12.23% (46/376)
+[NextAuth] Authorizing credentials for: jagzao@gmail.com
+[NextAuth] Tenant found: bda30f0c-81d8-4eed-9500-c22ed2a3f2c2
+[NextAuth] RLS context set
+[NextAuth] Role assignment found: true
+User signed in: e2e-test-user-001 
+High unknown host rate: 12.20% (46/377)
+High unknown host rate: 12.17% (46/378)
+[CustomersPage] Received params: Promise {
+  { tenant: 'wondernails' },
+  [Symbol(async_id_symbol)]: 397594,
+  [Symbol(trigger_async_id_symbol)]: 397593,
+  [Symbol(kResourceStore)]: undefined,
+  [Symbol(kResourceStore)]: undefined,
+  [Symbol(kResourceStore)]: undefined,
+  [Symbol(kResourceStore)]: undefined,
+  [Symbol(kResourceStore)]: undefined,
+  [Symbol(kResourceStore)]: {
+    isStaticGeneration: false,
+    page: '/t/[tenant]/clientes/page',
+    route: '/t/[tenant]/clientes',
+    incrementalCache: IncrementalCache {
+      locks: Map(0) {},
+      hasCustomCacheHandler: false,
+      dev: false,
+      disableForTestmode: false,
+      minimalMode: false,
+      requestHeaders: [Object],
+      allowedRevalidateHeaderKeys: undefined,
+      prerenderManifest: [Object],
+      cacheControls: [SharedCacheControls],
+      fetchCacheKeyPrefix: '',
+      cacheHandler: [FileSystemCache]
+    },
+    cacheLifeProfiles: {
+      default: [Object],
+      seconds: [Object],
+      minutes: [Object],
+      hours: [Object],
+      days: [Object],
+      weeks: [Object],
+      max: [Object]
+    },
+    isBuildTimePrerendering: undefined,
+    hasReadableErrorStacks: undefined,
+    fetchCache: undefined,
+    isOnDemandRevalidate: false,
+    isDraftMode: false,
+    isPrefetchRequest: false,
+    buildId: 'GgtNJ1mFtGzosXT9mozZq',
+    reactLoadableManifest: {},
+    assetPrefix: '',
+    nonce: undefined,
+    afterContext: tS {
+      workUnitStores: Set(0) {},
+      waitUntil: [Function (anonymous)],
+      onClose: [Function: onClose],
+      onTaskError: [Function: onAfterTaskError],
+      callbackQueue: [s]
+    },
+    cacheComponentsEnabled: false,
+    dev: false,
+    previouslyRevalidatedTags: [],
+    refreshTagsByCacheKind: Map(2) { 'default' => [Object], 'remote' => [Object] },
+    runInCleanSnapshot: [Function: bound] { asyncResource: [Getter/Setter] },
+    shouldTrackFetchMetrics: false,
+    reactServerErrorsByDigest: Map(0) {},
+    fetchMetrics: [],
+    forceDynamic: true
+  },
+  [Symbol(kResourceStore)]: undefined,
+  [Symbol(kResourceStore)]: undefined,
+  [Symbol(kResourceStore)]: {
+    type: 'request',
+    phase: 'render',
+    implicitTags: { tags: [Array], expirationsByCacheKind: [Map] },
+    url: { pathname: '/t/wondernails/clientes', search: '' },
+    rootParams: {},
+    headers: [Getter],
+    cookies: [Getter/Setter],
+    mutableCookies: [Getter],
+    userspaceMutableCookies: [Getter],
+    draftMode: [Getter],
+    renderResumeDataCache: null,
+    isHmrRefresh: false,
+    serverComponentsHmrCache: undefined,
+    devFallbackParams: null
+  }
+}
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[CustomersPage] Resolved params: { tenant: 'wondernails' }
+[CustomersPage] Extracted tenantSlug: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+[CustomersPage] Resolved searchParams: {}
+[CustomersPage] Successfully loaded tenant: Wonder Nails Studio
+High unknown host rate: 12.14% (46/379)
+High unknown host rate: 12.11% (46/380)
+High unknown host rate: 12.07% (46/381)
+High unknown host rate: 12.04% (46/382)
+[fetchWithCache] SERVER - Internal API: http://127.0.0.1:3002/api/tenants/wondernails
+High unknown host rate: 12.01% (46/383)
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+High unknown host rate: 11.98% (46/384)
+High unknown host rate: 11.95% (46/385)
+High unknown host rate: 11.92% (46/386)
+High unknown host rate: 11.89% (46/387)
+High unknown host rate: 11.86% (46/388)
+High unknown host rate: 11.83% (46/389)
+High unknown host rate: 11.79% (46/390)
+High unknown host rate: 11.76% (46/391)
+High unknown host rate: 11.73% (46/392)
+High unknown host rate: 11.70% (46/393)
+[NextAuth] Authorizing credentials for: jagzao@gmail.com
+[NextAuth] Tenant found: bda30f0c-81d8-4eed-9500-c22ed2a3f2c2
+[NextAuth] RLS context set
+[NextAuth] Role assignment found: true
+User signed in: e2e-test-user-001 
+High unknown host rate: 11.68% (46/394)
+High unknown host rate: 11.65% (46/395)
+[CustomersPage] Received params: Promise {
+  { tenant: 'wondernails' },
+  [Symbol(async_id_symbol)]: 421243,
+  [Symbol(trigger_async_id_symbol)]: 421242,
+  [Symbol(kResourceStore)]: undefined,
+  [Symbol(kResourceStore)]: undefined,
+  [Symbol(kResourceStore)]: undefined,
+  [Symbol(kResourceStore)]: undefined,
+  [Symbol(kResourceStore)]: undefined,
+  [Symbol(kResourceStore)]: {
+    isStaticGeneration: false,
+    page: '/t/[tenant]/clientes/page',
+    route: '/t/[tenant]/clientes',
+    incrementalCache: IncrementalCache {
+      locks: Map(0) {},
+      hasCustomCacheHandler: false,
+      dev: false,
+      disableForTestmode: false,
+      minimalMode: false,
+      requestHeaders: [Object],
+      allowedRevalidateHeaderKeys: undefined,
+      prerenderManifest: [Object],
+      cacheControls: [SharedCacheControls],
+      fetchCacheKeyPrefix: '',
+      cacheHandler: [FileSystemCache]
+    },
+    cacheLifeProfiles: {
+      default: [Object],
+      seconds: [Object],
+      minutes: [Object],
+      hours: [Object],
+      days: [Object],
+      weeks: [Object],
+      max: [Object]
+    },
+    isBuildTimePrerendering: undefined,
+    hasReadableErrorStacks: undefined,
+    fetchCache: undefined,
+    isOnDemandRevalidate: false,
+    isDraftMode: false,
+    isPrefetchRequest: false,
+    buildId: 'GgtNJ1mFtGzosXT9mozZq',
+    reactLoadableManifest: {},
+    assetPrefix: '',
+    nonce: undefined,
+    afterContext: tS {
+      workUnitStores: Set(0) {},
+      waitUntil: [Function (anonymous)],
+      onClose: [Function: onClose],
+      onTaskError: [Function: onAfterTaskError],
+      callbackQueue: [s]
+    },
+    cacheComponentsEnabled: false,
+    dev: false,
+    previouslyRevalidatedTags: [],
+    refreshTagsByCacheKind: Map(2) { 'default' => [Object], 'remote' => [Object] },
+    runInCleanSnapshot: [Function: bound] { asyncResource: [Getter/Setter] },
+    shouldTrackFetchMetrics: false,
+    reactServerErrorsByDigest: Map(0) {},
+    fetchMetrics: [],
+    forceDynamic: true
+  },
+  [Symbol(kResourceStore)]: undefined,
+  [Symbol(kResourceStore)]: undefined,
+  [Symbol(kResourceStore)]: {
+    type: 'request',
+    phase: 'render',
+    implicitTags: { tags: [Array], expirationsByCacheKind: [Map] },
+    url: { pathname: '/t/wondernails/clientes', search: '' },
+    rootParams: {},
+    headers: [Getter],
+    cookies: [Getter/Setter],
+    mutableCookies: [Getter],
+    userspaceMutableCookies: [Getter],
+    draftMode: [Getter],
+    renderResumeDataCache: null,
+    isHmrRefresh: false,
+    serverComponentsHmrCache: undefined,
+    devFallbackParams: null
+  }
+}
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[CustomersPage] Resolved params: { tenant: 'wondernails' }
+[CustomersPage] Extracted tenantSlug: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+[CustomersPage] Resolved searchParams: {}
+[CustomersPage] Successfully loaded tenant: Wonder Nails Studio
+High unknown host rate: 11.62% (46/396)
+High unknown host rate: 11.59% (46/397)
+High unknown host rate: 11.56% (46/398)
+High unknown host rate: 11.53% (46/399)
+[fetchWithCache] SERVER - Internal API: http://127.0.0.1:3002/api/tenants/wondernails
+High unknown host rate: 11.50% (46/400)
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+High unknown host rate: 11.47% (46/401)
+High unknown host rate: 11.44% (46/402)
+High unknown host rate: 11.41% (46/403)
+High unknown host rate: 11.39% (46/404)
+High unknown host rate: 11.36% (46/405)
+High unknown host rate: 11.33% (46/406)
+High unknown host rate: 11.30% (46/407)
+High unknown host rate: 11.27% (46/408)
+High unknown host rate: 11.25% (46/409)
+High unknown host rate: 11.22% (46/410)
+[NextAuth] Authorizing credentials for: jagzao@gmail.com
+[NextAuth] Tenant found: bda30f0c-81d8-4eed-9500-c22ed2a3f2c2
+[NextAuth] RLS context set
+[NextAuth] Role assignment found: true
+User signed in: e2e-test-user-001 
+High unknown host rate: 11.19% (46/411)
+High unknown host rate: 11.17% (46/412)
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+High unknown host rate: 11.14% (46/413)
+High unknown host rate: 11.11% (46/414)
+High unknown host rate: 11.08% (46/415)
+High unknown host rate: 11.06% (46/416)
+[TenantResolution] Unknown host '127.0.0.1:3002' using fallback tenant 'zo-system'
+High unknown host rate: 11.27% (47/417)
+High unknown host rate: 11.24% (47/418)
+High unknown host rate: 11.22% (47/419)
+High unknown host rate: 11.19% (47/420)
+[TenantResolution] Unknown host '127.0.0.1:3002' using fallback tenant 'zo-system'
+High unknown host rate: 11.40% (48/421)
+[TenantResolution] Unknown host '127.0.0.1:3002' using fallback tenant 'zo-system'
+High unknown host rate: 11.61% (49/422)
+High unknown host rate: 11.58% (49/423)
+High unknown host rate: 11.56% (49/424)
+[2026-05-15T05:16:32.994Z] [INFO] [TenantContext] Using tenant slug: wondernails
+[2026-05-15T05:16:32.995Z] [INFO] [TenantContext] Tenant found: wondernails (bda30f0c-81d8-4eed-9500-c22ed2a3f2c2)
+[2026-05-15T05:16:32.997Z] [INFO] [TenantContext] Tenant context set successfully for wondernails
+[2026-05-15T05:16:32.999Z] [INFO] [TenantContext] Request completed in 20ms for tenant wondernails
+High unknown host rate: 11.53% (49/425)
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+High unknown host rate: 11.50% (49/426)
+High unknown host rate: 11.48% (49/427)
+High unknown host rate: 11.45% (49/428)
+High unknown host rate: 11.42% (49/429)
+High unknown host rate: 11.40% (49/430)
+High unknown host rate: 11.37% (49/431)
+High unknown host rate: 11.34% (49/432)
+High unknown host rate: 11.32% (49/433)
+High unknown host rate: 11.29% (49/434)
+High unknown host rate: 11.26% (49/435)
+[NextAuth] Authorizing credentials for: jagzao@gmail.com
+[NextAuth] Tenant found: bda30f0c-81d8-4eed-9500-c22ed2a3f2c2
+[NextAuth] RLS context set
+[NextAuth] Role assignment found: true
+User signed in: e2e-test-user-001 
+High unknown host rate: 11.24% (49/436)
+High unknown host rate: 11.21% (49/437)
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+High unknown host rate: 11.19% (49/438)
+High unknown host rate: 11.16% (49/439)
+High unknown host rate: 11.14% (49/440)
+High unknown host rate: 11.11% (49/441)
+High unknown host rate: 11.09% (49/442)
+High unknown host rate: 11.06% (49/443)
+High unknown host rate: 11.04% (49/444)
+High unknown host rate: 11.01% (49/445)
+High unknown host rate: 10.99% (49/446)
+[TenantResolution] Unknown host '127.0.0.1:3002' using fallback tenant 'zo-system'
+High unknown host rate: 11.19% (50/447)
+[TenantResolution] Unknown host '127.0.0.1:3002' using fallback tenant 'zo-system'
+High unknown host rate: 11.38% (51/448)
+[TenantResolution] Unknown host '127.0.0.1:3002' using fallback tenant 'zo-system'
+High unknown host rate: 11.58% (52/449)
+High unknown host rate: 11.56% (52/450)
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+High unknown host rate: 11.53% (52/451)
+High unknown host rate: 11.50% (52/452)
+High unknown host rate: 11.48% (52/453)
+High unknown host rate: 11.45% (52/454)
+High unknown host rate: 11.43% (52/455)
+High unknown host rate: 11.40% (52/456)
+High unknown host rate: 11.38% (52/457)
+High unknown host rate: 11.35% (52/458)
+High unknown host rate: 11.33% (52/459)
+High unknown host rate: 11.30% (52/460)
+High unknown host rate: 11.28% (52/461)
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+High unknown host rate: 11.26% (52/462)
+High unknown host rate: 11.23% (52/463)
+High unknown host rate: 11.21% (52/464)
+High unknown host rate: 11.18% (52/465)
+High unknown host rate: 11.16% (52/466)
+High unknown host rate: 11.13% (52/467)
+High unknown host rate: 11.11% (52/468)
+High unknown host rate: 11.09% (52/469)
+High unknown host rate: 11.06% (52/470)
+High unknown host rate: 11.04% (52/471)
+High unknown host rate: 11.02% (52/472)
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[TenantService] Using in-memory cache for: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+High unknown host rate: 10.99% (52/473)
+High unknown host rate: 10.97% (52/474)
+High unknown host rate: 10.95% (52/475)
+High unknown host rate: 10.92% (52/476)
+High unknown host rate: 10.90% (52/477)
+High unknown host rate: 10.88% (52/478)
+High unknown host rate: 10.86% (52/479)
+High unknown host rate: 10.83% (52/480)
+High unknown host rate: 10.81% (52/481)
+High unknown host rate: 10.79% (52/482)
+High unknown host rate: 10.77% (52/483)
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+High unknown host rate: 10.74% (52/484)
+High unknown host rate: 10.72% (52/485)
+High unknown host rate: 10.70% (52/486)
+High unknown host rate: 10.68% (52/487)
+High unknown host rate: 10.66% (52/488)
+High unknown host rate: 10.63% (52/489)
+High unknown host rate: 10.61% (52/490)
+High unknown host rate: 10.59% (52/491)
+High unknown host rate: 10.57% (52/492)
+High unknown host rate: 10.55% (52/493)
+[NextAuth] Authorizing credentials for: jagzao@gmail.com
+[NextAuth] Tenant found: bda30f0c-81d8-4eed-9500-c22ed2a3f2c2
+[NextAuth] RLS context set
+[NextAuth] Role assignment found: true
+User signed in: e2e-test-user-001 
+High unknown host rate: 10.53% (52/494)
+High unknown host rate: 10.51% (52/495)
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+High unknown host rate: 10.48% (52/496)
+High unknown host rate: 10.46% (52/497)
+High unknown host rate: 10.44% (52/498)
+High unknown host rate: 10.42% (52/499)
+High unknown host rate: 10.40% (52/500)
+High unknown host rate: 10.38% (52/501)
+High unknown host rate: 10.36% (52/502)
+High unknown host rate: 10.34% (52/503)
+High unknown host rate: 10.32% (52/504)
+High unknown host rate: 10.30% (52/505)
+[NextAuth] Authorizing credentials for: invalid@test.com
+[NextAuth] User not found: invalid@test.com
+[31m[auth][error][0m CredentialsSignin: Read more at https://errors.authjs.dev#credentialssignin
+    at iM (C:\Dev\Zo\sass-store\apps\web\.next\server\chunks\packages_config_src_auth_ts_3484038c._.js:404:41044)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async iY (C:\Dev\Zo\sass-store\apps\web\.next\server\chunks\packages_config_src_auth_ts_3484038c._.js:404:50469)
+    at async i0 (C:\Dev\Zo\sass-store\apps\web\.next\server\chunks\packages_config_src_auth_ts_3484038c._.js:404:54719)
+    at async m (C:\Dev\Zo\sass-store\apps\web\.next\server\chunks\[root-of-the-server]__d89e3e18._.js:1:1958)
+    at async rU.do (C:\Dev\Zo\sass-store\node_modules\next\dist\compiled\next-server\app-route-turbo.runtime.prod.js:5:20169)
+    at async rU.handle (C:\Dev\Zo\sass-store\node_modules\next\dist\compiled\next-server\app-route-turbo.runtime.prod.js:5:24949)
+    at async u (C:\Dev\Zo\sass-store\apps\web\.next\server\chunks\[root-of-the-server]__d89e3e18._.js:1:5064)
+    at async rU.handleResponse (C:\Dev\Zo\sass-store\node_modules\next\dist\compiled\next-server\app-route-turbo.runtime.prod.js:1:101467)
+    at async l (C:\Dev\Zo\sass-store\apps\web\.next\server\chunks\[root-of-the-server]__d89e3e18._.js:1:6105)
+High unknown host rate: 10.28% (52/506)
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+High unknown host rate: 10.26% (52/507)
+High unknown host rate: 10.24% (52/508)
+High unknown host rate: 10.22% (52/509)
+High unknown host rate: 10.20% (52/510)
+High unknown host rate: 10.18% (52/511)
+High unknown host rate: 10.16% (52/512)
+High unknown host rate: 10.14% (52/513)
+High unknown host rate: 10.12% (52/514)
+High unknown host rate: 10.10% (52/515)
+High unknown host rate: 10.08% (52/516)
+High unknown host rate: 10.06% (52/517)
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+High unknown host rate: 10.04% (52/518)
+High unknown host rate: 10.02% (52/519)
+High unknown host rate: 10.00% (52/520)
+High unknown host rate: 9.98% (52/521)
+High unknown host rate: 9.96% (52/522)
+High unknown host rate: 9.94% (52/523)
+High unknown host rate: 9.92% (52/524)
+High unknown host rate: 9.90% (52/525)
+High unknown host rate: 9.89% (52/526)
+High unknown host rate: 9.87% (52/527)
+[NextAuth] Authorizing credentials for: jagzao@gmail.com
+[NextAuth] Tenant found: bda30f0c-81d8-4eed-9500-c22ed2a3f2c2
+[NextAuth] RLS context set
+[NextAuth] Role assignment found: true
+User signed in: e2e-test-user-001 
+High unknown host rate: 9.85% (52/528)
+High unknown host rate: 9.83% (52/529)
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+[TenantService] Fetching tenant from database: wondernails
+[TenantService] Found tenant in database: Wonder Nails Studio
+[TenantService] Using in-memory cache for: wondernails
+[TenantResolution] Unknown host '127.0.0.1:3002' using fallback tenant 'zo-system'
+High unknown host rate: 10.00% (53/530)
+[TenantResolution] Unknown host '127.0.0.1:3002' using fallback tenant 'zo-system'
+High unknown host rate: 10.17% (54/531)
+[TenantResolution] Unknown host '127.0.0.1:3002' using fallback tenant 'zo-system'
+High unknown host rate: 10.34% (55/532)
+High unknown host rate: 10.32% (55/533)
+High unknown host rate: 10.30% (55/534)
+High unknown host rate: 10.28% (55/535)
+High unknown host rate: 10.26% (55/536)
+High unknown host rate: 10.24% (55/537)
+High unknown host rate: 10.22% (55/538)
+High unknown host rate: 10.20% (55/539)
+High unknown host rate: 10.19% (55/540)
+High unknown host rate: 10.17% (55/541)
+High unknown host rate: 10.15% (55/542)
+High unknown host rate: 10.13% (55/543)
+High unknown host rate: 10.11% (55/544)
+High unknown host rate: 10.09% (55/545)
+High unknown host rate: 10.07% (55/546)
+High unknown host rate: 10.05% (55/547)
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+High unknown host rate: 10.04% (55/548)
+High unknown host rate: 10.02% (55/549)
+High unknown host rate: 10.00% (55/550)
+High unknown host rate: 9.98% (55/551)
+High unknown host rate: 9.96% (55/552)
+High unknown host rate: 9.95% (55/553)
+High unknown host rate: 9.93% (55/554)
+High unknown host rate: 9.91% (55/555)
+High unknown host rate: 9.89% (55/556)
+High unknown host rate: 9.87% (55/557)
+[NextAuth] Authorizing credentials for: jagzao@gmail.com
+[NextAuth] Tenant found: bda30f0c-81d8-4eed-9500-c22ed2a3f2c2
+[NextAuth] RLS context set
+[NextAuth] Role assignment found: true
+User signed in: e2e-test-user-001 
+High unknown host rate: 9.86% (55/558)
+High unknown host rate: 9.84% (55/559)
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+[TenantService] Fetching tenant from database: wondernails
+[TenantService] Found tenant in database: Wonder Nails Studio
+[TenantService] Using in-memory cache for: wondernails
+High unknown host rate: 9.82% (55/560)
+High unknown host rate: 9.80% (55/561)
+High unknown host rate: 9.79% (55/562)
+High unknown host rate: 9.77% (55/563)
+High unknown host rate: 9.75% (55/564)
+High unknown host rate: 9.73% (55/565)
+High unknown host rate: 9.72% (55/566)
+High unknown host rate: 9.70% (55/567)
+[TenantResolution] Unknown host '127.0.0.1:3002' using fallback tenant 'zo-system'
+High unknown host rate: 9.86% (56/568)
+High unknown host rate: 9.84% (56/569)
+High unknown host rate: 9.82% (56/570)
+[TenantResolution] Unknown host '127.0.0.1:3002' using fallback tenant 'zo-system'
+High unknown host rate: 9.98% (57/571)
+[TenantResolution] Unknown host '127.0.0.1:3002' using fallback tenant 'zo-system'
+High unknown host rate: 10.14% (58/572)
+High unknown host rate: 10.12% (58/573)
+High unknown host rate: 10.10% (58/574)
+High unknown host rate: 10.09% (58/575)
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+High unknown host rate: 10.07% (58/576)
+High unknown host rate: 10.05% (58/577)
+High unknown host rate: 10.03% (58/578)
+High unknown host rate: 10.02% (58/579)
+High unknown host rate: 10.00% (58/580)
+High unknown host rate: 9.98% (58/581)
+High unknown host rate: 9.97% (58/582)
+High unknown host rate: 9.95% (58/583)
+High unknown host rate: 9.93% (58/584)
+High unknown host rate: 9.91% (58/585)
+[NextAuth] Authorizing credentials for: jagzao@gmail.com
+[NextAuth] Tenant found: bda30f0c-81d8-4eed-9500-c22ed2a3f2c2
+[NextAuth] RLS context set
+[NextAuth] Role assignment found: true
+User signed in: e2e-test-user-001 
+High unknown host rate: 9.90% (58/586)
+High unknown host rate: 9.88% (58/587)
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+High unknown host rate: 9.86% (58/588)
+High unknown host rate: 9.85% (58/589)
+High unknown host rate: 9.83% (58/590)
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+High unknown host rate: 9.81% (58/591)
+High unknown host rate: 9.80% (58/592)
+High unknown host rate: 9.78% (58/593)
+High unknown host rate: 9.76% (58/594)
+High unknown host rate: 9.75% (58/595)
+High unknown host rate: 9.73% (58/596)
+High unknown host rate: 9.72% (58/597)
+High unknown host rate: 9.70% (58/598)
+High unknown host rate: 9.68% (58/599)
+High unknown host rate: 9.67% (58/600)
+[NextAuth] Authorizing credentials for: jagzao@gmail.com
+[NextAuth] Tenant found: bda30f0c-81d8-4eed-9500-c22ed2a3f2c2
+[NextAuth] RLS context set
+[NextAuth] Role assignment found: true
+User signed in: e2e-test-user-001 
+High unknown host rate: 9.65% (58/601)
+High unknown host rate: 9.63% (58/602)
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+High unknown host rate: 9.62% (58/603)
+High unknown host rate: 9.60% (58/604)
+High unknown host rate: 9.59% (58/605)
+High unknown host rate: 9.57% (58/606)
+[TenantResolution] Unknown host '127.0.0.1:3002' using fallback tenant 'zo-system'
+High unknown host rate: 9.72% (59/607)
+High unknown host rate: 9.70% (59/608)
+High unknown host rate: 9.69% (59/609)
+High unknown host rate: 9.67% (59/610)
+High unknown host rate: 9.66% (59/611)
+[TenantResolution] Unknown host '127.0.0.1:3002' using fallback tenant 'zo-system'
+High unknown host rate: 9.80% (60/612)
+[TenantResolution] Unknown host '127.0.0.1:3002' using fallback tenant 'zo-system'
+High unknown host rate: 9.95% (61/613)
+High unknown host rate: 9.93% (61/614)
+[2026-05-15T05:16:48.367Z] [INFO] [TenantContext] Using tenant slug: wondernails
+[2026-05-15T05:16:48.369Z] [INFO] [TenantContext] Tenant found: wondernails (bda30f0c-81d8-4eed-9500-c22ed2a3f2c2)
+[2026-05-15T05:16:48.370Z] [INFO] [TenantContext] Tenant context set successfully for wondernails
+[2026-05-15T05:16:48.373Z] [INFO] [TenantContext] Request completed in 51ms for tenant wondernails
+High unknown host rate: 9.92% (61/615)
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+High unknown host rate: 9.90% (61/616)
+High unknown host rate: 9.89% (61/617)
+High unknown host rate: 9.87% (61/618)
+High unknown host rate: 9.85% (61/619)
+High unknown host rate: 9.84% (61/620)
+High unknown host rate: 9.82% (61/621)
+High unknown host rate: 9.81% (61/622)
+High unknown host rate: 9.79% (61/623)
+High unknown host rate: 9.78% (61/624)
+High unknown host rate: 9.76% (61/625)
+[NextAuth] Authorizing credentials for: jagzao@gmail.com
+[NextAuth] Tenant found: bda30f0c-81d8-4eed-9500-c22ed2a3f2c2
+[NextAuth] RLS context set
+[NextAuth] Role assignment found: true
+User signed in: e2e-test-user-001 
+High unknown host rate: 9.74% (61/626)
+High unknown host rate: 9.73% (61/627)
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+High unknown host rate: 9.71% (61/628)
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+High unknown host rate: 9.70% (61/629)
+High unknown host rate: 9.68% (61/630)
+High unknown host rate: 9.67% (61/631)
+High unknown host rate: 9.65% (61/632)
+High unknown host rate: 9.64% (61/633)
+High unknown host rate: 9.62% (61/634)
+High unknown host rate: 9.61% (61/635)
+High unknown host rate: 9.59% (61/636)
+High unknown host rate: 9.58% (61/637)
+High unknown host rate: 9.56% (61/638)
+[NextAuth] Authorizing credentials for: jagzao@gmail.com
+[NextAuth] Tenant found: bda30f0c-81d8-4eed-9500-c22ed2a3f2c2
+[NextAuth] RLS context set
+[NextAuth] Role assignment found: true
+User signed in: e2e-test-user-001 
+High unknown host rate: 9.55% (61/639)
+High unknown host rate: 9.53% (61/640)
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+[TenantService] Fetching tenant from database: wondernails
+[TenantService] Found tenant in database: Wonder Nails Studio
+[TenantService] Using in-memory cache for: wondernails
+[TenantResolution] Unknown host '127.0.0.1:3002' using fallback tenant 'zo-system'
+High unknown host rate: 9.67% (62/641)
+[TenantResolution] Unknown host '127.0.0.1:3002' using fallback tenant 'zo-system'
+High unknown host rate: 9.81% (63/642)
+[TenantResolution] Unknown host '127.0.0.1:3002' using fallback tenant 'zo-system'
+High unknown host rate: 9.95% (64/643)
+High unknown host rate: 9.94% (64/644)
+High unknown host rate: 9.92% (64/645)
+High unknown host rate: 9.91% (64/646)
+High unknown host rate: 9.89% (64/647)
+High unknown host rate: 9.88% (64/648)
+High unknown host rate: 9.86% (64/649)
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+[TenantService] Fetching tenant from database: wondernails
+High unknown host rate: 9.85% (64/650)
+[TenantService] Found tenant in database: Wonder Nails Studio
+[TenantService] Using in-memory cache for: wondernails
+High unknown host rate: 9.83% (64/651)
+High unknown host rate: 9.82% (64/652)
+High unknown host rate: 9.80% (64/653)
+High unknown host rate: 9.79% (64/654)
+High unknown host rate: 9.77% (64/655)
+High unknown host rate: 9.76% (64/656)
+High unknown host rate: 9.74% (64/657)
+High unknown host rate: 9.73% (64/658)
+High unknown host rate: 9.71% (64/659)
+High unknown host rate: 9.70% (64/660)
+High unknown host rate: 9.68% (64/661)
+[TenantResolution] Unknown host '127.0.0.1:3002' using fallback tenant 'zo-system'
+High unknown host rate: 9.82% (65/662)
+High unknown host rate: 9.80% (65/663)
+[TenantResolution] Unknown host '127.0.0.1:3002' using fallback tenant 'zo-system'
+High unknown host rate: 9.94% (66/664)
+[TenantResolution] Unknown host '127.0.0.1:3002' using fallback tenant 'zo-system'
+High unknown host rate: 10.08% (67/665)
+High unknown host rate: 10.06% (67/666)
+[TenantResolution] Unknown host '127.0.0.1:3002' using fallback tenant 'zo-system'
+High unknown host rate: 10.19% (68/667)
+[TenantResolution] Unknown host '127.0.0.1:3002' using fallback tenant 'zo-system'
+High unknown host rate: 10.33% (69/668)
+[TenantResolution] Unknown host '127.0.0.1:3002' using fallback tenant 'zo-system'
+High unknown host rate: 10.46% (70/669)
+High unknown host rate: 10.45% (70/670)
+[TenantLayout] Resolved params: { tenant: 'wondernails' }
+[TenantLayout] Extracted tenantSlug: wondernails
+[getTenantBySlug] Looking for tenant: wondernails
+[getTenantBySlug] Looking for tenant: wondernails
+[getTenantBySlug] Looking for tenant: wondernails
+[getTenantBySlug] Found tenant: Wonder Nails Studio (bda30f0c-81d8-4eed-9500-c22ed2a3f2c2)
+[TenantLayout] Successfully loaded tenant: Wonder Nails Studio
+[getTenantBySlug] Found tenant: Wonder Nails Studio (bda30f0c-81d8-4eed-9500-c22ed2a3f2c2)
+[getTenantBySlug] Found tenant: Wonder Nails Studio (bda30f0c-81d8-4eed-9500-c22ed2a3f2c2)
+High unknown host rate: 10.43% (70/671)
+High unknown host rate: 10.42% (70/672)
+High unknown host rate: 10.40% (70/673)
+High unknown host rate: 10.39% (70/674)
+High unknown host rate: 10.37% (70/675)
+High unknown host rate: 10.36% (70/676)

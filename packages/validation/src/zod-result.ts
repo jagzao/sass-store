@@ -203,12 +203,13 @@ export const withZodValidation = <T>(
     const validation = await parseRequestBody(request, schema);
 
     if (!validation.success) {
+      const err = validation as { success: false; error: ValidationError };
       return Response.json(
         {
           success: false,
           error: {
-            message: validation.error.message,
-            details: validation.error.details,
+            message: err.error.message,
+            details: err.error.details,
           },
         },
         { status: 400 },
@@ -253,9 +254,11 @@ export const MatrixUpsertCellSchema = z
     bucketId: z.string().min(1).optional(),
     bucketStartDate: z.coerce.date(),
     bucketEndDate: z.coerce.date(),
-    projectedAmount: z.union([z.string(), z.number()]).transform((value) =>
-      typeof value === "number" ? value.toFixed(2) : value,
-    ),
+    projectedAmount: z
+      .union([z.string(), z.number()])
+      .transform((value) =>
+        typeof value === "number" ? value.toFixed(2) : value,
+      ),
     entityId: z.string().uuid().optional(),
     notes: z.string().max(1000).optional(),
   })
@@ -267,9 +270,11 @@ export const MatrixUpsertCellSchema = z
 export const MatrixMarkPaidSchema = z.object({
   tenantId: z.string().uuid(),
   categoryId: z.string().uuid(),
-  amount: z.union([z.string(), z.number()]).transform((value) =>
-    typeof value === "number" ? value.toFixed(2) : value,
-  ),
+  amount: z
+    .union([z.string(), z.number()])
+    .transform((value) =>
+      typeof value === "number" ? value.toFixed(2) : value,
+    ),
   fechaProgramada: z.coerce.date(),
   fechaPago: z.coerce.date().optional(),
   entityId: z.string().uuid().optional(),

@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { Button } from '@sass-store/ui';
-import { useTenant } from '@/lib/tenant/tenant-provider';
+import { Button } from "@sass-store/ui";
+import { useTenant } from "@/lib/tenant/tenant-provider";
 
 export function Hero() {
   return (
@@ -16,18 +16,10 @@ export function Hero() {
             Book your appointment or shop our exclusive collection.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button
-              variant="tenant"
-              size="lg"
-              className="text-lg px-8"
-            >
+            <Button variant="tenant" size="lg" className="text-lg px-8">
               Book Appointment
             </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              className="text-lg px-8"
-            >
+            <Button variant="outline" size="lg" className="text-lg px-8">
               Shop Products
             </Button>
           </div>

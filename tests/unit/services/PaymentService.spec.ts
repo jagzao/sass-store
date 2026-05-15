@@ -3,7 +3,7 @@
  *
  * Comprehensive tests for payment processing and management using Result Pattern.
  * Tests all major payment operations with proper error handling.
- * 
+ *
  * Updated for monolith migration - tests mock service that mirrors the DB-backed implementation.
  */
 
@@ -32,7 +32,12 @@ interface Payment {
   updatedAt: Date;
   // Extended fields
   userId?: string;
-  paymentMethod?: "credit_card" | "debit_card" | "paypal" | "stripe" | "bank_transfer";
+  paymentMethod?:
+    | "credit_card"
+    | "debit_card"
+    | "paypal"
+    | "stripe"
+    | "bank_transfer";
   provider?: "stripe" | "paypal" | "square" | "adhoc";
   description?: string;
 }
@@ -43,7 +48,12 @@ interface CreatePaymentData {
   tenantId?: string;
   amount: number;
   currency?: string;
-  paymentMethod?: "credit_card" | "debit_card" | "paypal" | "stripe" | "bank_transfer";
+  paymentMethod?:
+    | "credit_card"
+    | "debit_card"
+    | "paypal"
+    | "stripe"
+    | "bank_transfer";
   provider?: "stripe" | "paypal" | "square" | "adhoc";
   stripePaymentIntentId?: string;
   status?: "pending" | "processing" | "completed" | "failed" | "refunded";
@@ -502,7 +512,9 @@ describe("PaymentService - Result Pattern Implementation", () => {
         },
       };
 
-      const result = await paymentService.createPayment(paymentDataWithMetadata);
+      const result = await paymentService.createPayment(
+        paymentDataWithMetadata,
+      );
 
       expectSuccess(result);
       expect(result.data.metadata.customer_ip).toBe("192.168.1.1");
@@ -580,11 +592,14 @@ describe("PaymentService - Result Pattern Implementation", () => {
 
       expectSuccess(result);
       expect(result.data.length).toBe(2);
-      expect(result.data.every((p: Payment) => p.orderId === orderId)).toBe(true);
+      expect(result.data.every((p: Payment) => p.orderId === orderId)).toBe(
+        true,
+      );
     });
 
     it("should return empty array for order with no payments", async () => {
-      const result = await paymentService.getPaymentsByOrderId("order-no-payments");
+      const result =
+        await paymentService.getPaymentsByOrderId("order-no-payments");
 
       expectSuccess(result);
       expect(result.data).toEqual([]);
@@ -621,7 +636,8 @@ describe("PaymentService - Result Pattern Implementation", () => {
     });
 
     it("should return empty array for user with no payments", async () => {
-      const result = await paymentService.getPaymentsByUserId("user-no-payments");
+      const result =
+        await paymentService.getPaymentsByUserId("user-no-payments");
 
       expectSuccess(result);
       expect(result.data).toEqual([]);
@@ -685,7 +701,9 @@ describe("PaymentService - Result Pattern Implementation", () => {
         amount: 15000.0,
       });
 
-      const result = await paymentService.processPayment(highAmountResult.data.id);
+      const result = await paymentService.processPayment(
+        highAmountResult.data.id,
+      );
 
       expectFailure(result);
       expect(result.error.type).toBe("PaymentError");
@@ -760,11 +778,16 @@ describe("PaymentService - Result Pattern Implementation", () => {
         reason: "Customer requested refund",
       };
 
-      const result = await paymentService.refundPayment(testPayment.id, refundData);
+      const result = await paymentService.refundPayment(
+        testPayment.id,
+        refundData,
+      );
 
       expectSuccess(result);
       expect(result.data.status).toBe("refunded");
-      expect(result.data.metadata?.refund?.reason).toBe("Customer requested refund");
+      expect(result.data.metadata?.refund?.reason).toBe(
+        "Customer requested refund",
+      );
       expect(result.data.metadata?.refund?.transactionId).toBeDefined();
     });
 
@@ -774,7 +797,10 @@ describe("PaymentService - Result Pattern Implementation", () => {
         reason: "Partial refund",
       };
 
-      const result = await paymentService.refundPayment(testPayment.id, refundData);
+      const result = await paymentService.refundPayment(
+        testPayment.id,
+        refundData,
+      );
 
       expectSuccess(result);
       expect(result.data.status).toBe("refunded");
@@ -787,7 +813,10 @@ describe("PaymentService - Result Pattern Implementation", () => {
         reason: "Excessive refund",
       };
 
-      const result = await paymentService.refundPayment(testPayment.id, refundData);
+      const result = await paymentService.refundPayment(
+        testPayment.id,
+        refundData,
+      );
 
       expectFailure(result);
       expect(result.error.type).toBe("BusinessRuleError");
@@ -821,7 +850,10 @@ describe("PaymentService - Result Pattern Implementation", () => {
         reason: "Negative refund",
       };
 
-      const result = await paymentService.refundPayment(testPayment.id, refundData);
+      const result = await paymentService.refundPayment(
+        testPayment.id,
+        refundData,
+      );
 
       expectFailure(result);
       expect(result.error.type).toBe("ValidationError");
@@ -845,7 +877,9 @@ describe("PaymentService - Result Pattern Implementation", () => {
       });
 
       expectSuccess(result);
-      expect(result.data.metadata?.description).toBe("Updated payment description");
+      expect(result.data.metadata?.description).toBe(
+        "Updated payment description",
+      );
     });
 
     it("should update payment metadata", async () => {
@@ -916,20 +950,27 @@ describe("PaymentService - Result Pattern Implementation", () => {
       expect(createResult.data.status).toBe("pending");
 
       // 2. Process payment
-      const processResult = await paymentService.processPayment(createResult.data.id);
+      const processResult = await paymentService.processPayment(
+        createResult.data.id,
+      );
       expectSuccess(processResult);
       expect(processResult.data.status).toBe("processing");
 
       // 3. Complete payment
-      const completeResult = await paymentService.completePayment(createResult.data.id);
+      const completeResult = await paymentService.completePayment(
+        createResult.data.id,
+      );
       expectSuccess(completeResult);
       expect(completeResult.data.status).toBe("completed");
       expect(completeResult.data.paidAt).toBeInstanceOf(Date);
 
       // 4. Refund payment
-      const refundResult = await paymentService.refundPayment(createResult.data.id, {
-        reason: "Customer request",
-      });
+      const refundResult = await paymentService.refundPayment(
+        createResult.data.id,
+        {
+          reason: "Customer request",
+        },
+      );
       expectSuccess(refundResult);
       expect(refundResult.data.status).toBe("refunded");
     });
@@ -938,7 +979,7 @@ describe("PaymentService - Result Pattern Implementation", () => {
   describe("Tenant Scoping", () => {
     it("should store tenant ID with payment", async () => {
       const tenantId = crypto.randomUUID();
-      
+
       const result = await paymentService.createPayment({
         orderId: "order-tenant-scope",
         amount: 100.0,

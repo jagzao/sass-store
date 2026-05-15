@@ -33,10 +33,11 @@ export default function HomeTenantHeader({
   const { data: session } = useSession();
   const user = session?.user as any;
 
-  const isWondernails = tenantSlug === "wondernails" || tenantSlug === "zo-system";
-  
-  const headerClasses = isWondernails 
-    ? "bg-[#0D0D0D]/90 backdrop-blur-md border-b border-white/10 text-white" 
+  const isWondernails =
+    tenantSlug === "wondernails" || tenantSlug === "zo-system";
+
+  const headerClasses = isWondernails
+    ? "bg-[#0D0D0D]/90 backdrop-blur-md border-b border-white/10 text-white"
     : "bg-white/95 backdrop-blur-sm border-b border-[#C5A059]/20 text-gray-800";
 
   return (

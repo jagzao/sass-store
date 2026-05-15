@@ -99,9 +99,7 @@ export async function teardownTestDatabase() {
 export async function cleanupTestData() {
   // 🚨 SAFETY CHECK: cleanup is enabled for explicit test DB URLs or Vitest runtime.
   if (!shouldRunCleanup()) {
-    console.warn(
-      "⚠️  SKIPPING cleanup - test database cleanup not enabled",
-    );
+    console.warn("⚠️  SKIPPING cleanup - test database cleanup not enabled");
     return;
   }
 

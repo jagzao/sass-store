@@ -384,8 +384,58 @@ Tenant, Rol, Ruta exacta, Pasos, Resultado esperado vs. real, Evidencias (captur
 - Media pipeline estable (subida/variantes/dedup)
 - SEO/A11y/Perf cumplen presupuestos
 - Sin P0/P1 abiertos
+- Si aplica **plan robusto** (ver §13–§15): crawler/link smoke, matriz negativa y dimensiones adicionales ejecutados o documentados como deuda explícita con ID de story
 
-## 13) Anexos
+## 12.1) Trigger “plan robusto”
+
+Cuando el dueño o el proceso pida un plan de QA **robusto** (no solo happy path), el alcance mínimo adicional es la suma de §13 (crawler), §14 (negativos) y §15 (dimensiones adicionales) para los tenants y módulos tocados.
+
+## 13) Crawler y smoke de grafo de rutas
+
+### Objetivo
+
+Detectar **enlaces rotos**, **rutas que rompen el cliente** (error boundary, consola), y **regresiones de navegación** sin depender solo de tests escritos a mano.
+
+### Enfoque
+
+1. **Lista seed** por tenant: Home `/t/{slug}`, PLP/servicios, PDP ejemplo, contacto, login, 1–2 rutas admin si hay credencial.
+2. **Cola BFS/DFS acotada**: desde cada seed, extraer `a[href]` mismo origen, normalizar, deduplicar; **límite** (p. ej. 50–200 URLs por tenant por run) para coste controlado.
+3. **Aserciones por URL**: status HTTP esperado (200 o redirect válido), sin `document` sin contenido principal, captura de **console errors** (fallar el paso si hay error no allowlist).
+4. **Herramientas**: Playwright — en el repo: `tests/e2e/crawl/internal-link-smoke.spec.ts` (grep `plan-robusto` \| `link-crawl`). Variables opcionales: `CRAWL_TENANTS` (lista separada por comas), `CRAWL_MAX_PAGES`, `CRAWL_SEED_MODE=full`, `CRAWL_STRICT_CONSOLE=1` (desactiva tolerancia a `Failed to fetch` / fetch lenient), `CRAWL_SKIP_PATH_REGEX` (pipe `|` de regex). Alternativa: link checker HTTP + smoke Playwright en rutas dinámicas; documentar en `testing-usuario.md`.
+
+### Entregable
+
+- Tabla: URL | tenant | resultado | notas
+- Lista de **allowlist** temporal (p. ej. third-party script) con fecha y motivo
+
+## 14) Negative testing (matriz mínima)
+
+| Categoría           | Ejemplos                                                                  | Dónde probar               |
+| ------------------- | ------------------------------------------------------------------------- | -------------------------- |
+| Autenticación       | credencial errónea, usuario bloqueado, logout y acceso directo a `/admin` | E2E + integración          |
+| Autorización / rol  | staff intenta acción solo admin                                           | E2E + API                  |
+| Multitenant         | ID recurso de tenant B con sesión tenant A; header/cookie cruzada         | integración + E2E          |
+| Validación          | campos vacíos, límites numéricos, strings largos, tipos incorrectos       | unit + integración         |
+| Recurso inexistente | UUID inválido, borrado previo                                             | integración + E2E          |
+| Rate limit / quota  | 429, mensaje de upgrade, modo freeze                                      | integración / E2E con mock |
+| Red / resiliencia   | `route.abort`, offline breve, doble click submit                          | E2E selectivo              |
+| Estado de negocio   | doble reserva mismo slot, cancelar dos veces                              | integración                |
+| Sesión              | token expirado a mitad de flujo                                           | E2E                        |
+
+Cada User Story de plataforma o “app completa” debe enlazar filas concretas de esta matriz en `testing-usuario.md`.
+
+## 15) Dimensiones adicionales del plan robusto
+
+- **API contract negativo**: status y cuerpo (`ProblemDetails`) coherentes; sin filtrado de internals.
+- **Idempotencia**: reintentos de POST con clave idempotente o deduplicación documentada.
+- **A11y**: recorrido teclado en un flujo admin y uno storefront; foco visible; contraste en CTAs críticos.
+- **Viewport**: al menos `mobile` (ancho típico) en checkout/reserva y menú admin.
+- **Performance smoke**: LCP/INP en 1–2 URLs por tenant en staging (Lighthouse CI o presupuesto existente §9).
+- **Datos límite**: vacío, un solo ítem, paginación última página.
+- **i18n futuro**: si hay copy dinámico, comprobar que no hay keys crudas visibles.
+- **CI**: fallo de crawler o negativo crítico bloquea merge igual que E2E críticos (configurar grep/tag por story).
+
+## 16) Anexos
 
 ### Política de Datos de Prueba
 
@@ -407,3 +457,6 @@ Tenant, Rol, Ruta exacta, Pasos, Resultado esperado vs. real, Evidencias (captur
 - ☐ Quotas: avisos y 429 amable en límites
 - ☐ Accesibilidad: focus/contraste/roles
 - ☐ Logs y auditoría escritos
+- ☐ Plan robusto: crawler/link smoke (§13) en tenants del alcance
+- ☐ Plan robusto: al menos 3 filas de matriz negativa (§14) cubiertas en specs o manual documentado
+- ☐ Plan robusto: API negativa o integración equivalente en rutas tocadas

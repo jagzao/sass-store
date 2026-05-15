@@ -18,7 +18,7 @@ import { DomainError, ErrorFactories } from "@sass-store/core/src/errors/types";
 /**
  * Middleware to validate tenant context for authenticated users
  * This ensures that users can only access tenants they have permissions for
- * 
+ *
  * SECURITY: This function enforces strict tenant isolation
  * - Validates tenant from session against request tenant
  * - Prevents tenant header spoofing
@@ -54,10 +54,7 @@ export async function validateTenantAccess(request: NextRequest) {
     // Invalidate session and redirect to login
     // This ensures strict tenant isolation
     return NextResponse.redirect(
-      new URL(
-        `/t/${tenantSlug}/login?error=tenant_mismatch`,
-        request.url,
-      ),
+      new URL(`/t/${tenantSlug}/login?error=tenant_mismatch`, request.url),
     );
   }
 
@@ -136,12 +133,10 @@ export async function validateTenantAccess(request: NextRequest) {
 /**
  * Helper function to get the current tenant context with validation
  * This can be used in server components and API routes
- * 
+ *
  * SECURITY: Returns typed Result instead of throwing errors
  */
-export async function getValidatedTenantContext(
-  request: NextRequest,
-): Promise<
+export async function getValidatedTenantContext(request: NextRequest): Promise<
   Result<
     {
       tenant: { id: string; slug: string };
@@ -175,9 +170,7 @@ export async function getValidatedTenantContext(
       .limit(1);
 
     if (!tenant) {
-      return Err(
-        ErrorFactories.notFound("Tenant", tenantSlug),
-      );
+      return Err(ErrorFactories.notFound("Tenant", tenantSlug));
     }
 
     // SECURITY: Verify session tenant matches request tenant
@@ -244,7 +237,7 @@ export async function getValidatedTenantContext(
 /**
  * Validate tenant access for API routes with JWT authentication
  * This is used by API routes that use Bearer token authentication
- * 
+ *
  * @param request - The incoming request
  * @param targetTenantId - Optional target tenant ID from request body/params
  * @returns Result with tenant context or error
@@ -287,10 +280,7 @@ export async function validateApiTenantAccess(
   const sessionTenant = createTenantContextFromJWT(payload);
   if (!sessionTenant) {
     return Err(
-      ErrorFactories.authentication(
-        "invalid_token",
-        "Invalid token payload",
-      ),
+      ErrorFactories.authentication("invalid_token", "Invalid token payload"),
     );
   }
 
@@ -381,9 +371,11 @@ export async function validateApiTenantAccess(
  */
 export function isTenantAwareRequest(request: NextRequest): boolean {
   const pathname = request.nextUrl.pathname;
-  return pathname.startsWith("/t/") || 
-         request.headers.has("x-tenant") ||
-         request.headers.has("x-tenant-id");
+  return (
+    pathname.startsWith("/t/") ||
+    request.headers.has("x-tenant") ||
+    request.headers.has("x-tenant-id")
+  );
 }
 
 /**

@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * E2E test that demonstrates NEED=HUMAN workflow
  * Tests the case where data-testid is missing on critical elements

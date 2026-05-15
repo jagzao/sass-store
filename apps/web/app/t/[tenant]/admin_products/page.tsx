@@ -48,12 +48,7 @@ export default function AdminProductsPage() {
   }
   */
 
-  useEffect(() => {
-    loadTenantData();
-    loadProducts();
-  }, [tenantSlug]);
-
-  const loadTenantData = async () => {
+  const loadTenantData = useCallback(async () => {
     try {
       const response = await fetch(`/api/tenants/${tenantSlug}`);
       if (response.ok) {
@@ -63,13 +58,12 @@ export default function AdminProductsPage() {
     } catch (error) {
       console.error("Error loading tenant:", error);
     }
-  };
+  }, [tenantSlug]);
 
-  const loadProducts = async () => {
+  const loadProducts = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      // Session-based auth - API routes will verify session server-side
       const response = await fetch(`/api/v1/products?limit=100`);
       if (response.ok) {
         const data = await response.json();
@@ -85,7 +79,7 @@ export default function AdminProductsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -159,7 +153,7 @@ export default function AdminProductsPage() {
     }
   };
 
-  const resetForm = () => {
+  const resetForm = useCallback(() => {
     setFormData({
       sku: "",
       name: "",
@@ -169,7 +163,7 @@ export default function AdminProductsPage() {
       featured: false,
       active: true,
     });
-  };
+  }, []);
 
   const closeModal = () => {
     setShowCreateModal(false);
@@ -286,7 +280,7 @@ export default function AdminProductsPage() {
                     {products.length === 0 && (
                       <tr>
                         <td
-                          colSpan={6}
+                          colSpan={7}
                           className="px-6 py-12 text-center text-gray-500"
                         >
                           No hay productos registrados aún. Crea tu primer

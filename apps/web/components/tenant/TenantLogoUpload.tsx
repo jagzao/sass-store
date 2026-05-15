@@ -1,6 +1,12 @@
 "use client";
 
-import { useState, useRef, type ChangeEvent, useCallback, useEffect } from "react";
+import {
+  useState,
+  useRef,
+  type ChangeEvent,
+  useCallback,
+  useEffect,
+} from "react";
 import { createPortal } from "react-dom";
 import {
   Upload,
@@ -196,76 +202,77 @@ export default function TenantLogoUpload({
     }
   };
 
-  const cropModal = isCropping && imageSrc ? (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 text-left">
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh] animate-in fade-in zoom-in-95 duration-200">
-        <div className="p-4 border-b border-gray-100 flex justify-between items-center">
-          <h4 className="text-lg font-bold text-gray-800 flex items-center gap-2">
-            <CropIcon className="w-5 h-5 text-blue-600" />
-            Ajustar Logo
-          </h4>
-          <button
-            type="button"
-            onClick={handleCropCancel}
-            className="text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-100 transition-colors"
-          >
-            <X className="w-6 h-6" />
-          </button>
-        </div>
-
-        <div className="relative w-full h-[400px] bg-gray-900">
-          <Cropper
-            image={imageSrc}
-            crop={crop}
-            zoom={zoom}
-            aspect={aspect}
-            onCropChange={setCrop}
-            onCropComplete={onCropComplete}
-            onZoomChange={setZoom}
-            onMediaLoaded={onMediaLoaded}
-            objectFit="contain"
-          />
-        </div>
-
-        <div className="p-6 space-y-4">
-          <div className="flex items-center gap-4">
-            <ZoomIn className="w-5 h-5 text-gray-500" />
-            <input
-              type="range"
-              value={zoom}
-              min={1}
-              max={3}
-              step={0.1}
-              aria-labelledby="Zoom"
-              onChange={(e) => setZoom(Number(e.target.value))}
-              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
-            />
-            <span className="text-sm text-gray-500 w-8 text-right">
-              {zoom.toFixed(1)}x
-            </span>
-          </div>
-
-          <div className="flex justify-end gap-3 pt-2">
+  const cropModal =
+    isCropping && imageSrc ? (
+      <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 text-left">
+        <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh] animate-in fade-in zoom-in-95 duration-200">
+          <div className="p-4 border-b border-gray-100 flex justify-between items-center">
+            <h4 className="text-lg font-bold text-gray-800 flex items-center gap-2">
+              <CropIcon className="w-5 h-5 text-blue-600" />
+              Ajustar Logo
+            </h4>
             <button
               type="button"
               onClick={handleCropCancel}
-              className="px-4 py-2 text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 font-medium transition-colors"
+              className="text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-100 transition-colors"
             >
-              Cancelar
+              <X className="w-6 h-6" />
             </button>
-            <button
-              type="button"
-              onClick={handleCropSave}
-              disabled={uploading}
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-bold shadow-lg transition-all"
-            >
-              {uploading ? "Procesando..." : "Guardar Logo"}
-            </button>
+          </div>
+
+          <div className="relative w-full h-[400px] bg-gray-900">
+            <Cropper
+              image={imageSrc}
+              crop={crop}
+              zoom={zoom}
+              aspect={aspect}
+              onCropChange={setCrop}
+              onCropComplete={onCropComplete}
+              onZoomChange={setZoom}
+              onMediaLoaded={onMediaLoaded}
+              objectFit="contain"
+            />
+          </div>
+
+          <div className="p-6 space-y-4">
+            <div className="flex items-center gap-4">
+              <ZoomIn className="w-5 h-5 text-gray-500" />
+              <input
+                type="range"
+                value={zoom}
+                min={1}
+                max={3}
+                step={0.1}
+                aria-labelledby="Zoom"
+                onChange={(e) => setZoom(Number(e.target.value))}
+                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+              />
+              <span className="text-sm text-gray-500 w-8 text-right">
+                {zoom.toFixed(1)}x
+              </span>
+            </div>
+
+            <div className="flex justify-end gap-3 pt-2">
+              <button
+                type="button"
+                onClick={handleCropCancel}
+                className="px-4 py-2 text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 font-medium transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={handleCropSave}
+                disabled={uploading}
+                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-bold shadow-lg transition-all"
+              >
+                {uploading ? "Procesando..." : "Guardar Logo"}
+              </button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  ) : null;
+    ) : null;
 
   return (
     <div className="space-y-4">
@@ -292,7 +299,9 @@ export default function TenantLogoUpload({
             <div className="relative group inline-block">
               <div
                 className={`bg-gray-50 p-4 rounded-lg border border-gray-100 ${
-                  aspectRatio === 1 ? "w-32 h-32 flex items-center justify-center" : ""
+                  aspectRatio === 1
+                    ? "w-32 h-32 flex items-center justify-center"
+                    : ""
                 }`}
               >
                 <img

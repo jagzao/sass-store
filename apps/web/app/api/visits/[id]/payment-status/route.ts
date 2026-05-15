@@ -52,7 +52,7 @@ export async function GET(
         eq(advanceApplications.advanceId, customerAdvances.id),
       )
       .where(eq(advanceApplications.visitId, visitId))
-      .orderBy(advanceApplications.createdAt, "desc");
+      .orderBy(advanceApplications.createdAt as any, "desc" as any);
 
     // Calculate total advance applied
     const totalAdvanceApplied = applications.reduce(
@@ -81,8 +81,8 @@ export async function GET(
       await db
         .update(customerVisits)
         .set({
-          advanceApplied: totalAdvanceApplied,
-          remainingAmount,
+          advanceApplied: totalAdvanceApplied as any,
+          remainingAmount: remainingAmount as any,
           paymentStatus,
         })
         .where(eq(customerVisits.id, visitId));

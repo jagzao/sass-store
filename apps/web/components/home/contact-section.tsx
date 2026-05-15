@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useTenant } from '@/lib/tenant/tenant-provider';
+import { useTenant } from "@/lib/tenant/tenant-provider";
 
 export function ContactSection() {
   const { tenant } = useTenant();
@@ -29,14 +29,15 @@ export function ContactSection() {
 
               <div>
                 <h4 className="font-medium">Email</h4>
-                <p className="text-muted-foreground">
-                  {tenant.contact.email}
-                </p>
+                <p className="text-muted-foreground">{tenant.contact.email}</p>
               </div>
 
               <div>
                 <h4 className="font-medium">Address</h4>
-                <p data-testid="tenant-address" className="text-muted-foreground">
+                <p
+                  data-testid="tenant-address"
+                  className="text-muted-foreground"
+                >
                   {tenant.contact.address}
                 </p>
               </div>
@@ -60,7 +61,8 @@ export function ContactSection() {
                 Interactive map would be displayed here
               </p>
               <p className="text-xs text-muted-foreground mt-2">
-                Lat: {tenant.location.latitude}, Lng: {tenant.location.longitude}
+                Lat: {tenant.location.latitude}, Lng:{" "}
+                {tenant.location.longitude}
               </p>
             </div>
           </div>

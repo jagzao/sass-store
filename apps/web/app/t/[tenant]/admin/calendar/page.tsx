@@ -7,7 +7,11 @@ import { bookings, services } from "@sass-store/database/schema";
 import { eq, and } from "drizzle-orm";
 import CalendarTimeline from "./CalendarTimeline";
 import { AdminLayoutProvider } from "@/components/home/AdminLayoutProvider";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Settings, Plus } from "lucide-react";
 
 interface PageProps {
@@ -83,11 +87,7 @@ export default async function CalendarAdminPage({ params }: PageProps) {
     })
     .from(bookings)
     .innerJoin(services, eq(bookings.serviceId, services.id))
-    .where(
-      and(
-        eq(bookings.tenantId, tenantData.id)
-      )
-    );
+    .where(and(eq(bookings.tenantId, tenantData.id)));
 
   const mappedBookings = dbBookings.map((b) => {
     const dt = new Date(b.startTime);
@@ -97,14 +97,12 @@ export default async function CalendarAdminPage({ params }: PageProps) {
       customerName: b.customerName,
       date: formatDate(dt),
       time: formatTime(dt),
-      duration: b.duration,
+      duration: Number(b.duration),
       status: b.status,
       phone: b.customerPhone || "Sin teléfono",
       totalPrice: Number(b.totalPrice),
     };
   });
-
-
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -134,83 +132,117 @@ export default async function CalendarAdminPage({ params }: PageProps) {
 
   return (
     <AdminLayoutProvider tenantSlug={resolvedParams.tenant}>
-    <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-7xl mx-auto">
-          {/* Page Header */}
-          <div className="mb-8">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="flex items-center space-x-3">
-                  <a
-                    href={`/t/${resolvedParams.tenant}/admin`}
-                    className="text-indigo-600 hover:text-indigo-700"
-                  >
-                    ← Panel Admin
-                  </a>
-                  <span className="text-gray-600">/</span>
-                  <h1 className="text-3xl font-bold text-gray-900">
-                    Gestión de Calendario
-                  </h1>
+      <div className="min-h-screen bg-gray-50">
+        <div className="container mx-auto px-4 py-8">
+          <div className="max-w-7xl mx-auto">
+            {/* Page Header */}
+            <div className="mb-8">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="flex items-center space-x-3">
+                    <a
+                      href={`/t/${resolvedParams.tenant}/admin`}
+                      className="text-indigo-600 hover:text-indigo-700"
+                    >
+                      ← Panel Admin
+                    </a>
+                    <span className="text-gray-600">/</span>
+                    <h1 className="text-3xl font-bold text-gray-900">
+                      Gestión de Calendario
+                    </h1>
+                  </div>
+                  <p className="text-gray-600 mt-2">
+                    Administra citas, horarios y disponibilidad
+                  </p>
                 </div>
-                <p className="text-gray-600 mt-2">
-                  Administra citas, horarios y disponibilidad
-                </p>
+                <div className="flex space-x-3">
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <button className="flex items-center px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-gray-700 border-b-2">
+                        <Settings className="w-4 h-4 mr-2" />
+                        Configuración
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent
+                      align="end"
+                      className="w-[400px] p-0"
+                      sideOffset={8}
+                    >
+                      <CalendarSettings />
+                    </PopoverContent>
+                  </Popover>
+
+                  <button
+                    disabled
+                    title="Crear cita manualmente — próximamente"
+                    className="flex items-center px-4 py-2 bg-[#C5A059]/40 text-white/60 rounded-lg cursor-not-allowed shadow-sm font-medium"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Nueva Cita
+                  </button>
+                </div>
               </div>
-              <div className="flex space-x-3">
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <button className="flex items-center px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-gray-700 border-b-2">
-                      <Settings className="w-4 h-4 mr-2" />
-                      Configuración
-                    </button>
-                  </PopoverTrigger>
-                  <PopoverContent align="end" className="w-[400px] p-0" sideOffset={8}>
-                    <CalendarSettings />
-                  </PopoverContent>
-                </Popover>
+            </div>
 
-                <button className="flex items-center px-4 py-2 bg-[#C5A059] text-white rounded-lg hover:bg-[#b08e4f] transition-colors shadow-sm font-medium">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Nueva Cita
-                </button>
+            {/* Stats Summary */}
+            <div className="grid md:grid-cols-4 gap-6 mb-8">
+              <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+                <div className="text-2xl font-bold text-blue-600">
+                  {
+                    mappedBookings.filter(
+                      (b) => b.date === formatDate(new Date()),
+                    ).length
+                  }
+                </div>
+                <div className="text-sm text-gray-600 font-medium tracking-wide uppercase mt-1">
+                  Citas Hoy
+                </div>
+              </div>
+              <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+                <div className="text-2xl font-bold text-green-600">
+                  {
+                    mappedBookings.filter((b) => b.status === "confirmed")
+                      .length
+                  }
+                </div>
+                <div className="text-sm text-gray-600 font-medium tracking-wide uppercase mt-1">
+                  Confirmadas
+                </div>
+              </div>
+              <div className="bg-[#C5A059]/10 rounded-lg shadow-sm border border-[#C5A059]/20 p-6">
+                <div className="text-2xl font-bold text-[#C5A059]">
+                  {mappedBookings.filter((b) => b.status === "pending").length}
+                </div>
+                <div className="text-sm text-[#C5A059] font-medium tracking-wide uppercase mt-1">
+                  Pendientes
+                </div>
+              </div>
+              <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+                <div className="text-2xl font-bold text-red-600">
+                  {
+                    mappedBookings.filter((b) => b.status === "cancelled")
+                      .length
+                  }
+                </div>
+                <div className="text-sm text-gray-600 font-medium tracking-wide uppercase mt-1">
+                  Canceladas
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Stats Summary */}
-          <div className="grid md:grid-cols-4 gap-6 mb-8">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
-              <div className="text-2xl font-bold text-blue-600">{mappedBookings.filter(b => b.date === formatDate(new Date())).length}</div>
-              <div className="text-sm text-gray-600 font-medium tracking-wide uppercase mt-1">Citas Hoy</div>
-            </div>
-            <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
-              <div className="text-2xl font-bold text-green-600">{mappedBookings.filter(b => b.status === "confirmed").length}</div>
-              <div className="text-sm text-gray-600 font-medium tracking-wide uppercase mt-1">Confirmadas</div>
-            </div>
-            <div className="bg-[#C5A059]/10 rounded-lg shadow-sm border border-[#C5A059]/20 p-6">
-              <div className="text-2xl font-bold text-[#C5A059]">{mappedBookings.filter(b => b.status === "pending").length}</div>
-              <div className="text-sm text-[#C5A059] font-medium tracking-wide uppercase mt-1">Pendientes</div>
-            </div>
-            <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
-              <div className="text-2xl font-bold text-red-600">{mappedBookings.filter(b => b.status === "cancelled").length}</div>
-              <div className="text-sm text-gray-600 font-medium tracking-wide uppercase mt-1">Canceladas</div>
-            </div>
-          </div>
-
-          <div className="w-full">
-            {/* Calendar View Custom Grid (Cinema-Style) */}
-            <div className="lg:col-span-4 max-w-full">
-              <CalendarTimeline 
-                initialBookings={mappedBookings}
-                currentDate={today}
-                tenantSlug={resolvedParams.tenant}
-              />
+            <div className="w-full">
+              {/* Calendar View Custom Grid (Cinema-Style) */}
+              <div className="lg:col-span-4 max-w-full">
+                <CalendarTimeline
+                  initialBookings={mappedBookings}
+                  currentDate={today}
+                  tenantSlug={resolvedParams.tenant}
+                />
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
     </AdminLayoutProvider>
   );
 }

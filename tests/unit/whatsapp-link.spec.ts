@@ -45,7 +45,7 @@ describe("WhatsApp Link Generation", () => {
 
     it("should generate basic WhatsApp link", () => {
       const link = generateWhatsAppLink(baseParams);
-      
+
       expect(link).toMatch(/^https:\/\/wa\.me\/521234567890\?text=/);
       expect(link).toContain(encodeURIComponent("María"));
       expect(link).toContain(encodeURIComponent("García"));
@@ -55,7 +55,7 @@ describe("WhatsApp Link Generation", () => {
     it("should include service name when provided", () => {
       const params = { ...baseParams, serviceName: "Manicure" };
       const link = generateWhatsAppLink(params);
-      
+
       expect(link).toContain("Manicure");
     });
 
@@ -63,7 +63,7 @@ describe("WhatsApp Link Generation", () => {
       const date = new Date("2024-03-15T10:00:00");
       const params = { ...baseParams, appointmentDate: date };
       const link = generateWhatsAppLink(params);
-      
+
       expect(link).toContain("2024");
       expect(link).toContain("marzo");
     });
@@ -72,7 +72,7 @@ describe("WhatsApp Link Generation", () => {
       const customMessage = "Hola, ¿podrías confirmar tu cita?";
       const params = { ...baseParams, customMessage };
       const link = generateWhatsAppLink(params);
-      
+
       expect(link).toContain(encodeURIComponent(customMessage));
       expect(link).not.toContain("te escribimos de"); // Not using default template
     });
@@ -80,7 +80,7 @@ describe("WhatsApp Link Generation", () => {
     it("should handle special characters in message", () => {
       const params = { ...baseParams, serviceName: "Manicure & Pedicure" };
       const link = generateWhatsAppLink(params);
-      
+
       expect(link).toContain("Manicure");
       expect(link).toContain("Pedicure");
     });
@@ -91,9 +91,9 @@ describe("WhatsApp Link Generation", () => {
       const link = generateQuickConfirmationLink(
         "521234567890",
         "María García",
-        "Wondernails"
+        "Wondernails",
       );
-      
+
       expect(link).toMatch(/^https:\/\/wa\.me\/521234567890\?text=/);
       expect(link).toContain(encodeURIComponent("María"));
       expect(link).toContain(encodeURIComponent("García"));
@@ -105,9 +105,9 @@ describe("WhatsApp Link Generation", () => {
       const link = generateQuickConfirmationLink(
         "52-1234-567890",
         "María García",
-        "Wondernails"
+        "Wondernails",
       );
-      
+
       expect(link).toContain("521234567890"); // Should be sanitized
     });
   });
@@ -120,9 +120,9 @@ describe("WhatsApp Link Generation", () => {
         tenantName: "Wondernails & Beauty",
         serviceName: "Manicure & Pedicure",
       };
-      
+
       const link = generateWhatsAppLink(params);
-      
+
       // Should contain encoded characters
       expect(link).toContain("%C3%AD"); // í
       expect(link).toContain("%C3%AD"); // í
@@ -135,7 +135,7 @@ describe("WhatsApp Link Generation", () => {
         customerName: "María García",
         tenantName: "Wondernails",
       });
-      
+
       expect(link).toContain("%20"); // Space should be encoded
     });
   });
@@ -147,7 +147,7 @@ describe("WhatsApp Link Generation", () => {
         customerName: "",
         tenantName: "Wondernails",
       };
-      
+
       const link = generateWhatsAppLink(params);
       expect(link).toContain("Hola");
     });
@@ -158,7 +158,7 @@ describe("WhatsApp Link Generation", () => {
         customerName: "María",
         tenantName: "Wondernails & Co.",
       };
-      
+
       const link = generateWhatsAppLink(params);
       expect(link).toContain("Wondernails");
       expect(link).toContain("%26"); // Encoded &

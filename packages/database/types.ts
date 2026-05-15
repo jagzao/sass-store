@@ -1,4 +1,4 @@
-import { InferSelectModel, InferInsertModel } from 'drizzle-orm';
+import { InferSelectModel, InferInsertModel } from "drizzle-orm";
 import {
   tenants,
   products,
@@ -9,8 +9,8 @@ import {
   tenantQuotas,
   auditLogs,
   productReviews,
-  users
-} from './schema';
+  users,
+} from "./schema";
 
 // Select types (for data coming from DB)
 export type Tenant = InferSelectModel<typeof tenants>;
@@ -38,11 +38,16 @@ export type User = InferSelectModel<typeof users>;
 export type UserInsert = InferInsertModel<typeof users>;
 
 // Utility types
-export type TenantMode = 'catalog' | 'booking';
-export type TenantStatus = 'active' | 'inactive' | 'suspended';
-export type BookingStatus = 'pending' | 'confirmed' | 'completed' | 'cancelled';
-export type MediaAssetType = 'product' | 'staff' | 'service' | 'branding' | 'gallery';
-export type ReviewStatus = 'pending' | 'approved' | 'rejected';
+export type TenantMode = "catalog" | "booking";
+export type TenantStatus = "active" | "inactive" | "suspended";
+export type BookingStatus = "pending" | "confirmed" | "completed" | "cancelled";
+export type MediaAssetType =
+  | "product"
+  | "staff"
+  | "service"
+  | "branding"
+  | "gallery";
+export type ReviewStatus = "pending" | "approved" | "rejected";
 
 // Extended User types for NextAuth
 export interface ExtendedUser extends User {

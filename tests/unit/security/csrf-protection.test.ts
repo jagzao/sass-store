@@ -25,7 +25,9 @@ const CSRF_EXEMPT_PATHS = [
 function generateCsrfToken(): string {
   const array = new Uint8Array(32);
   crypto.getRandomValues(array);
-  return Array.from(array, (byte) => byte.toString(16).padStart(2, "0")).join("");
+  return Array.from(array, (byte) => byte.toString(16).padStart(2, "0")).join(
+    "",
+  );
 }
 
 async function hashCsrfToken(token: string): Promise<string> {
@@ -36,7 +38,10 @@ async function hashCsrfToken(token: string): Promise<string> {
   return hashArray.map((byte) => byte.toString(16).padStart(2, "0")).join("");
 }
 
-async function validateCsrfToken(token: string, hash: string): Promise<boolean> {
+async function validateCsrfToken(
+  token: string,
+  hash: string,
+): Promise<boolean> {
   if (!token || !hash) {
     return false;
   }

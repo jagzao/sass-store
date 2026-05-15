@@ -25,12 +25,12 @@ export function InventoryManagement({
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
   const [showForm, setShowForm] = useState(false);
 
-  // Manejar selección de item en la lista
+  // Manejar selecciÃ³n de item en la lista
   const handleSelectItem = (item: InventoryItem) => {
     setSelectedItem(item);
   };
 
-  // Manejar edición de item
+  // Manejar ediciÃ³n de item
   const handleEditItem = (item: InventoryItem) => {
     setSelectedItem(item);
     setShowForm(true);
@@ -42,27 +42,27 @@ export function InventoryManagement({
     setSelectedItem(null);
   };
 
-  // Manejar éxito en el formulario
+  // Manejar Ã©xito en el formulario
   const handleFormSuccess = () => {
     setShowForm(false);
     setSelectedItem(null);
-    // Aquí podrías recargar los datos si es necesario
+    // AquÃ­ podrÃ­as recargar los datos si es necesario
   };
 
-  // Pestañas de navegación
+  // PestaÃ±as de navegaciÃ³n
   const tabs = [
-    { id: "inventory" as TabType, label: "Inventario", icon: "📦" },
-    { id: "alerts" as TabType, label: "Alertas", icon: "🔔" },
+    { id: "inventory" as TabType, label: "Inventario", icon: "ðŸ“¦" },
+    { id: "alerts" as TabType, label: "Alertas", icon: "ðŸ””" },
     ...(serviceId
       ? [
           {
             id: "service-products" as TabType,
             label: "Productos del Servicio",
-            icon: "🔗",
+            icon: "ðŸ”—",
           },
         ]
       : []),
-    { id: "transactions" as TabType, label: "Transacciones", icon: "📊" },
+    { id: "transactions" as TabType, label: "Transacciones", icon: "ðŸ“Š" },
   ];
 
   return (
@@ -70,7 +70,7 @@ export function InventoryManagement({
       {/* Encabezado */}
       <div className="bg-white shadow-sm rounded-lg p-6">
         <h1 className="text-2xl font-bold text-gray-900">
-          Gestión de Inventario
+          GestiÃ³n de Inventario
         </h1>
         <p className="mt-2 text-gray-600">
           Administra tu inventario, alertas, productos y transacciones desde un
@@ -78,7 +78,7 @@ export function InventoryManagement({
         </p>
       </div>
 
-      {/* Pestañas de navegación */}
+      {/* PestaÃ±as de navegaciÃ³n */}
       <div className="bg-white shadow-sm rounded-lg">
         <div className="border-b border-gray-200">
           <nav className="flex -mb-px">
@@ -100,9 +100,9 @@ export function InventoryManagement({
         </div>
       </div>
 
-      {/* Contenido de las pestañas */}
+      {/* Contenido de las pestaÃ±as */}
       <div className="bg-white shadow-sm rounded-lg p-6">
-        {/* Pestaña de Inventario */}
+        {/* PestaÃ±a de Inventario */}
         {activeTab === "inventory" && (
           <div className="space-y-6">
             <div className="flex justify-between items-center">
@@ -132,7 +132,7 @@ export function InventoryManagement({
           </div>
         )}
 
-        {/* Pestaña de Alertas */}
+        {/* PestaÃ±a de Alertas */}
         {activeTab === "alerts" && (
           <div className="space-y-6">
             <h2 className="text-xl font-semibold text-gray-900">
@@ -140,16 +140,16 @@ export function InventoryManagement({
             </h2>
             <InventoryAlerts
               onResolve={(alert: InventoryAlert) => {
-                console.log("Alerta resuelta:", alert);
+                console.warn("Alerta resuelta:", alert);
               }}
               onDelete={(alert: InventoryAlert) => {
-                console.log("Alerta eliminada:", alert);
+                console.warn("Alerta eliminada:", alert);
               }}
             />
           </div>
         )}
 
-        {/* Pestaña de Productos del Servicio */}
+        {/* PestaÃ±a de Productos del Servicio */}
         {activeTab === "service-products" && serviceId && (
           <div className="space-y-6">
             <h2 className="text-xl font-semibold text-gray-900">
@@ -158,16 +158,16 @@ export function InventoryManagement({
             <ServiceProducts
               serviceId={serviceId}
               onAdd={(product: ServiceProduct) => {
-                console.log("Producto agregado al servicio:", product);
+                console.warn("Producto agregado al servicio:", product);
               }}
               onRemove={(product: ServiceProduct) => {
-                console.log("Producto eliminado del servicio:", product);
+                console.warn("Producto eliminado del servicio:", product);
               }}
             />
           </div>
         )}
 
-        {/* Pestaña de Transacciones */}
+        {/* PestaÃ±a de Transacciones */}
         {activeTab === "transactions" && (
           <div className="space-y-6">
             <h2 className="text-xl font-semibold text-gray-900">
@@ -175,20 +175,20 @@ export function InventoryManagement({
             </h2>
             <InventoryTransactions
               onExport={() => {
-                console.log("Transacciones exportadas");
+                console.warn("Transacciones exportadas");
               }}
             />
           </div>
         )}
       </div>
 
-      {/* Panel de información del item seleccionado */}
+      {/* Panel de informaciÃ³n del item seleccionado */}
       {selectedItem && !showForm && (
         <div className="bg-white shadow-sm rounded-lg p-6">
           <div className="flex justify-between items-start">
             <div>
               <h3 className="text-lg font-medium text-gray-900">
-                Información del Producto
+                InformaciÃ³n del Producto
               </h3>
               <div className="mt-2 grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -237,7 +237,7 @@ export function InventoryManagement({
               onClick={() => setSelectedItem(null)}
               className="text-gray-400 hover:text-gray-600"
             >
-              ✕
+              âœ•
             </button>
           </div>
         </div>

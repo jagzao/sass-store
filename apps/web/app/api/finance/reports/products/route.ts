@@ -33,11 +33,12 @@ export async function GET(request: NextRequest) {
       sql`SELECT id FROM tenants WHERE slug = ${tenantSlug}`,
     );
 
-    if (!tenantResult.rows || tenantResult.rows.length === 0) {
+    const tenantRows = tenantResult as unknown as any[];
+    if (!tenantRows || tenantRows.length === 0) {
       return NextResponse.json({ error: "Tenant not found" }, { status: 404 });
     }
 
-    const tenantId = tenantResult.rows[0].id;
+    const tenantId = tenantRows[0].id;
 
     // Validar acceso al tenant
     try {
@@ -111,7 +112,7 @@ export async function GET(request: NextRequest) {
       `,
     );
 
-    const products = productsResult.rows.map((row: any) => ({
+    const products = (productsResult as unknown as any[]).map((row: any) => ({
       id: row.id,
       name: row.name,
       price: parseFloat(row.price),
@@ -148,11 +149,13 @@ export async function GET(request: NextRequest) {
       `,
     );
 
-    const categories = categoriesResult.rows.map((row: any) => ({
-      category: row.category,
-      productCount: parseInt(row.productcount),
-      totalRevenue: parseFloat(row.totalrevenue),
-    }));
+    const categories = (categoriesResult as unknown as any[]).map(
+      (row: any) => ({
+        category: row.category,
+        productCount: parseInt(row.productcount),
+        totalRevenue: parseFloat(row.totalrevenue),
+      }),
+    );
 
     // Retornar reporte de productos
     return NextResponse.json({

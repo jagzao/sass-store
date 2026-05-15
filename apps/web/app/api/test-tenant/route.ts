@@ -14,21 +14,21 @@ export async function GET() {
     "http://127.0.0.1:4000";
   const expectedUrl = `${apiUrl}/api/tenants/${tenantSlug}`;
 
-  console.log(`[test-tenant] API_URL: ${process.env.API_URL}`);
-  console.log(
+  console.warn(`[test-tenant] API_URL: ${process.env.API_URL}`);
+  console.warn(
     `[test-tenant] NEXT_PUBLIC_API_URL: ${process.env.NEXT_PUBLIC_API_URL}`,
   );
-  console.log(`[test-tenant] Expected URL: ${expectedUrl}`);
+  console.warn(`[test-tenant] Expected URL: ${expectedUrl}`);
 
   // Try using fetchStatic (same as layout)
   try {
-    console.log(`[test-tenant] Calling fetchStatic...`);
+    console.warn(`[test-tenant] Calling fetchStatic...`);
     const tenantData = await fetchStatic<TenantData>(
       `/api/tenants/${tenantSlug}`,
       ["tenant", tenantSlug],
     );
 
-    console.log(`[test-tenant] Success! Got tenant: ${tenantData?.name}`);
+    console.warn(`[test-tenant] Success! Got tenant: ${tenantData?.name}`);
 
     return NextResponse.json({
       success: true,

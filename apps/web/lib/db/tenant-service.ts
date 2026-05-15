@@ -78,7 +78,7 @@ export class TenantService {
   // Get tenant by slug with complete data
   static async getTenantBySlug(slug: string) {
     try {
-      console.log(`[TenantService] Fetching tenant from database: ${slug}`);
+      console.warn(`[TenantService] Fetching tenant from database: ${slug}`);
 
       // Query the actual database
       const tenant = await db
@@ -89,21 +89,26 @@ export class TenantService {
 
       if (tenant && tenant.length > 0) {
         const tenantData = tenant[0];
-        console.log(
+        console.warn(
           `[TenantService] Found tenant in database: ${tenantData.name}`,
         );
 
-        const isYellow = (color: string) => 
-          color?.toLowerCase() === 'yellow' || 
-          color?.toLowerCase() === '#ffff00' || 
-          color?.toLowerCase() === 'rgb(255, 255, 0)';
+        const isYellow = (color: string) =>
+          color?.toLowerCase() === "yellow" ||
+          color?.toLowerCase() === "#ffff00" ||
+          color?.toLowerCase() === "rgb(255, 255, 0)";
 
-        const safeBranding = { ...tenantData.branding } as any;
+        const safeBranding: any = { ...(tenantData.branding || {}) };
         if (safeBranding) {
-          if (isYellow(safeBranding.primaryColor)) safeBranding.primaryColor = '#C5A059'; // Gold
-          if (isYellow(safeBranding.secondaryColor)) safeBranding.secondaryColor = '#F5F5DC'; // Blanco Hueso
-          if (isYellow(safeBranding.backgroundColor) || safeBranding.backgroundColor?.toLowerCase() === '#ffffff') {
-             safeBranding.backgroundColor = '#F8F9FA'; // Blanco Hueso
+          if (isYellow(safeBranding.primaryColor))
+            safeBranding.primaryColor = "#C5A059"; // Gold
+          if (isYellow(safeBranding.secondaryColor))
+            safeBranding.secondaryColor = "#F5F5DC"; // Blanco Hueso
+          if (
+            isYellow(safeBranding.backgroundColor) ||
+            safeBranding.backgroundColor?.toLowerCase() === "#ffffff"
+          ) {
+            safeBranding.backgroundColor = "#F8F9FA"; // Blanco Hueso
           }
         }
 
@@ -130,7 +135,7 @@ export class TenantService {
   // Get tenant services (booking-mode tenants)
   static async getTenantServices(tenantId: string) {
     try {
-      console.log(
+      console.warn(
         `[TenantService] Fetching services from database for tenant: ${tenantId}`,
       );
 
@@ -148,7 +153,7 @@ export class TenantService {
       );
 
       if (Array.isArray(tenantServices)) {
-        console.log(
+        console.warn(
           `[TenantService] Found ${tenantServices.length} services for tenant: ${tenantId}`,
         );
 
@@ -180,7 +185,7 @@ export class TenantService {
   // Get tenant products (catalog-mode tenants)
   static async getTenantProducts(tenantId: string) {
     try {
-      console.log(
+      console.warn(
         `[TenantService] Fetching products from database for tenant: ${tenantId}`,
       );
 
@@ -212,7 +217,7 @@ export class TenantService {
       );
 
       if (Array.isArray(tenantProducts)) {
-        console.log(
+        console.warn(
           `[TenantService] Found ${tenantProducts.length} products for tenant: ${tenantId}`,
         );
 
@@ -238,7 +243,7 @@ export class TenantService {
   // Get tenant staff (for booking tenants)
   static async getTenantStaff(tenantId: string) {
     try {
-      console.log(
+      console.warn(
         `[TenantService] Fetching staff from database for tenant: ${tenantId}`,
       );
 
@@ -256,7 +261,7 @@ export class TenantService {
       );
 
       if (Array.isArray(tenantStaff)) {
-        console.log(
+        console.warn(
           `[TenantService] Found ${tenantStaff.length} staff members for tenant: ${tenantId}`,
         );
 
@@ -287,7 +292,7 @@ export class TenantService {
     // Check in-memory cache first (fastest)
     const memCached = TenantCache.get(memoryCacheKey);
     if (memCached) {
-      console.log(`[TenantService] Using in-memory cache for: ${slug}`);
+      console.warn(`[TenantService] Using in-memory cache for: ${slug}`);
       return memCached;
     }
 
@@ -296,7 +301,7 @@ export class TenantService {
       redisCacheKey,
       async () => {
         try {
-          console.log(
+          console.warn(
             `[TenantService] Fetching complete tenant data for: ${slug}`,
           );
 
@@ -308,14 +313,14 @@ export class TenantService {
             .limit(1);
 
           if (!tenant || tenant.length === 0) {
-            console.log(
+            console.warn(
               `[TenantService] Tenant not found in database: ${slug}`,
             );
             return null;
           }
 
           const tenantData = tenant[0];
-          console.log(
+          console.warn(
             `[TenantService] Found tenant in database: ${tenantData.name}`,
           );
 
@@ -356,22 +361,27 @@ export class TenantService {
               ]);
             });
 
-          console.log(
+          console.warn(
             `[TenantService] Loaded ${tenantServices.length} services, ${tenantProducts.length} products, ${tenantStaff.length} staff`,
           );
 
           // FIX: Global Interceptor for fluorescent yellow colors causing UI bugs.
-          const isYellow = (color: string) => 
-            color?.toLowerCase() === 'yellow' || 
-            color?.toLowerCase() === '#ffff00' || 
-            color?.toLowerCase() === 'rgb(255, 255, 0)';
+          const isYellow = (color: string) =>
+            color?.toLowerCase() === "yellow" ||
+            color?.toLowerCase() === "#ffff00" ||
+            color?.toLowerCase() === "rgb(255, 255, 0)";
 
-          const safeBranding = { ...tenantData.branding } as any;
+          const safeBranding: any = { ...(tenantData.branding || {}) };
           if (safeBranding) {
-            if (isYellow(safeBranding.primaryColor)) safeBranding.primaryColor = '#C5A059'; // Gold
-            if (isYellow(safeBranding.secondaryColor)) safeBranding.secondaryColor = '#F5F5DC'; // Blanco Hueso
-            if (isYellow(safeBranding.backgroundColor) || safeBranding.backgroundColor?.toLowerCase() === '#ffffff') {
-               safeBranding.backgroundColor = '#F8F9FA'; // Blanco Hueso
+            if (isYellow(safeBranding.primaryColor))
+              safeBranding.primaryColor = "#C5A059"; // Gold
+            if (isYellow(safeBranding.secondaryColor))
+              safeBranding.secondaryColor = "#F5F5DC"; // Blanco Hueso
+            if (
+              isYellow(safeBranding.backgroundColor) ||
+              safeBranding.backgroundColor?.toLowerCase() === "#ffffff"
+            ) {
+              safeBranding.backgroundColor = "#F8F9FA"; // Blanco Hueso
             }
           }
 

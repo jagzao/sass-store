@@ -6,7 +6,7 @@ import {
 } from "../../_lib/tenant-context";
 
 interface RouteParams {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 /**
@@ -19,7 +19,7 @@ export async function GET(request: NextRequest, context: RouteParams) {
       return toInventoryErrorResponse(tenantContext.error);
     }
 
-    const transactionId = context.params.id;
+    const transactionId = (await context.params).id;
 
     // Get inventory transaction by ID
     const result = await InventoryService.getInventoryTransactionById(

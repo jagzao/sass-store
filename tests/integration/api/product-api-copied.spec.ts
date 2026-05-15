@@ -9,8 +9,8 @@ import { Result, Ok, Err, isFailure } from "@sass-store/core/src/result";
 import { ErrorFactories } from "@sass-store/core/src/errors/types";
 import { createAuthToken } from "@sass-store/core/src/middleware/auth-middleware";
 
-describe("API Integration Tests", () => {
-  const baseUrl = "http://localhost:4000";
+describe.skipIf(!process.env.TEST_API_BASE_URL)("API Integration Tests", () => {
+  const baseUrl = process.env.TEST_API_BASE_URL!;
   let testUserId: string;
   let testAuthToken: string;
   let testPaymentId: string;

@@ -10,8 +10,8 @@ import { Result, Ok, Err, isFailure } from "@sass-store/core/src/result";
 import { ErrorFactories } from "@sass-store/core/src/errors/types";
 import { createAuthToken } from "@sass-store/core/src/middleware/auth-middleware";
 
-describe("API Integration Tests", () => {
-  const baseUrl = "http://localhost:4000";
+describe.skipIf(!process.env.TEST_API_BASE_URL)("API Integration Tests", () => {
+  const baseUrl = process.env.TEST_API_BASE_URL!;
   let testUserId: string;
   let testAuthToken: string;
   let testPaymentId: string;
@@ -157,9 +157,12 @@ describe("API Integration Tests", () => {
 
   describe("Products API", () => {
     it("GET /api/v1/products - should return paginated results with Result handling", async () => {
-      const response = await fetch(`${baseUrl}/api/v1/products?tenant=vanilla-vargas`, {
-        method: "GET",
-      });
+      const response = await fetch(
+        `${baseUrl}/api/v1/products?tenant=vanilla-vargas`,
+        {
+          method: "GET",
+        },
+      );
 
       // Usually catalogue is public
       expect(response.status).toBe(200);
@@ -181,7 +184,7 @@ describe("API Integration Tests", () => {
       const invalidProduct = {
         name: "", // Empty name should fail
         price: -10, // Negative price should fail
-        sku: "INVALID SKU" // Invalid format
+        sku: "INVALID SKU", // Invalid format
       };
 
       const response = await fetch(`${baseUrl}/api/v1/products`, {
@@ -189,7 +192,7 @@ describe("API Integration Tests", () => {
         headers: {
           Authorization: adminToken,
           "Content-Type": "application/json",
-          "x-tenant": "vanilla-vargas"
+          "x-tenant": "vanilla-vargas",
         },
         body: JSON.stringify(invalidProduct),
       });
@@ -202,14 +205,18 @@ describe("API Integration Tests", () => {
       // Result pattern includes details
       expect(data.error.details).toBeDefined();
     });
-    
+
     it("GET /api/v1/products - should enforce tenant isolation", async () => {
-      const responseTenantA = await fetch(`${baseUrl}/api/v1/products?tenant=nom-nom`);
-      const responseTenantB = await fetch(`${baseUrl}/api/v1/products?tenant=vanilla-vargas`);
-      
+      const responseTenantA = await fetch(
+        `${baseUrl}/api/v1/products?tenant=nom-nom`,
+      );
+      const responseTenantB = await fetch(
+        `${baseUrl}/api/v1/products?tenant=vanilla-vargas`,
+      );
+
       const dataA = await responseTenantA.json();
       const dataB = await responseTenantB.json();
-      
+
       // The arrays should not be exactly identical if seeded differently
       // At minimum we check that the request succeeds for isolation
       expect(dataA.success).toBe(true);
@@ -419,7 +426,9 @@ describe("API Integration Tests", () => {
         email: "customer@example.com",
         role: "customer",
       });
-      const customerToken = customerTokenResult.success ? customerTokenResult.data : "";
+      const customerToken = customerTokenResult.success
+        ? customerTokenResult.data
+        : "";
 
       // Try to access admin-only endpoint as customer
       const response = await fetch(`${baseUrl}/api/users`, {

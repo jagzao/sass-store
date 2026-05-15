@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { NextResponse } from "next/server";
 import { db } from "@sass-store/database";
 
@@ -5,7 +6,7 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    console.log("[DIAGNOSTIC] Testing Drizzle Query API...");
+    console.warn("[DIAGNOSTIC] Testing Drizzle Query API...");
 
     // Check if db.query exists
     if (!db.query) {

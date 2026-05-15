@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 // Test script to verify authentication redirect functionality
 // This script simulates the user flow to ensure the login redirect works correctly
 

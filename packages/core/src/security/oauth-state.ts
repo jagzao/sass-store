@@ -65,7 +65,7 @@ export async function validateOAuthState(
       .limit(1);
 
     if (!stateRecord) {
-      console.warn("[OAuth] Invalid, expired, or already used state token");
+      // SECURITY: Redacted sensitive log;
       return null;
     }
 
@@ -77,7 +77,7 @@ export async function validateOAuthState(
 
     return stateRecord.tenantId;
   } catch (error) {
-    console.error("[OAuth] Error validating state token:", error);
+    // SECURITY: Redacted sensitive log;
     return null;
   }
 }
@@ -92,8 +92,8 @@ export async function cleanupExpiredOAuthStates(): Promise<void> {
       .delete(oauthStateTokens)
       .where(lt(oauthStateTokens.expiresAt, new Date()));
 
-    console.log("[OAuth] Cleaned up expired state tokens");
+    // SECURITY: Redacted sensitive log;
   } catch (error) {
-    console.error("[OAuth] Error cleaning up state tokens:", error);
+    // SECURITY: Redacted sensitive log;
   }
 }

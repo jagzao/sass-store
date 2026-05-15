@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { db } from "@sass-store/database";
 import { tenants } from "@sass-store/database/schema";
 import { desc, sql } from "drizzle-orm";

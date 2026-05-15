@@ -10,7 +10,7 @@ export const isValidFileSize = (file: File): boolean => {
 
 export const generateUniqueFilename = (originalName: string): string => {
   const timestamp = Date.now();
-  const randomString = Math.random().toString(36).slice(2, 8);
+  const randomString = crypto.randomUUID().replace(/-/g, "").substring(0, 9);
   const extension = originalName.split(".").pop();
   return `${timestamp}-${randomString}.${extension}`;
 };

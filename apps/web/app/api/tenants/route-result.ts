@@ -181,7 +181,7 @@ const createTenant = async (
 
       // 2. Create admin user if provided
       if (tenantData.adminUser) {
-        const userId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        const userId = `user_${Date.now()}_${crypto.randomUUID().replace(/-/g, "").substring(0, 9)}`;
         const hashedPassword = `hashed_${tenantData.adminUser.password}_${Date.now()}`;
 
         await tx.insert(users).values({

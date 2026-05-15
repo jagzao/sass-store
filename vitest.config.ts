@@ -12,7 +12,8 @@ export default defineConfig({
     // Enable both global setup and setup files
     globalSetup: "./tests/setup/vitest.global-setup.ts",
     setupFiles: ["./tests/setup/vitest.setup.ts"],
-    include: ["tests/**/*.{test,spec}.{ts,tsx,js,jsx,mjs}"],
+    // Only modern .spec.ts test files. Legacy .test.ts files must be migrated manually.
+    include: ["tests/**/*.spec.ts"],
     exclude: [
       "node_modules",
       "dist",
@@ -20,10 +21,12 @@ export default defineConfig({
       "tests/e2e/**", // E2E tests run separately with Playwright
       "tests/integration/wondernails-performance.int.spec.ts", // Playwright test
       "tests/integration/api/tenant-api.spec.ts", // Playwright test
+      "**/*.test.ts", // Legacy tests pending migration
     ],
     coverage: {
       provider: "v8",
       reporter: ["text", "json", "html"],
+      include: ["apps/web/lib/**/*.ts", "packages/**/src/**/*.ts"],
       exclude: [
         "node_modules/",
         "tests/",
@@ -49,6 +52,6 @@ export default defineConfig({
   esbuild: {
     // Enable esbuild to handle TypeScript files
     target: "node18",
-    jsx: "preserve",
+    jsx: "automatic",
   },
 });

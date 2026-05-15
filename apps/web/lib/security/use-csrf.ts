@@ -31,7 +31,7 @@ export function useCsrf() {
         }
       })
       .catch((err) => {
-        console.error("[CSRF] Failed to fetch CSRF token:", err);
+        // SECURITY: Redacted sensitive log;
       });
   }, []);
 
@@ -40,7 +40,7 @@ export function useCsrf() {
    */
   const getCsrfHeaders = () => {
     if (!csrfToken) {
-      console.warn("[CSRF] CSRF token not available");
+      // SECURITY: Redacted sensitive log;
       return {};
     }
 
@@ -52,7 +52,7 @@ export function useCsrf() {
   /**
    * Make a fetch request with CSRF token automatically included
    */
-   
+
   const csrfFetch = async (url: string, options: RequestInit = {}) => {
     const headers = new Headers(options.headers);
 

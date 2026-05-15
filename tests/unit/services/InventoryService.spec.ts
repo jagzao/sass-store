@@ -7,6 +7,7 @@
 
 // Vitest functions are globally available (globals: true in vitest.config.ts)
 
+import { vi, describe, it, expect, beforeEach, afterEach } from "vitest";
 import { createTestContext, createTestProduct } from "../../setup/TestContext";
 
 import {
@@ -17,531 +18,337 @@ import {
   withTimeout,
 } from "../../setup/TestUtilities";
 
-// Mock Inventory Service for testing
-class MockInventoryService {
-  constructor(private db: any) {}
+const { enqueueResult, sharedQueue } = vi.hoisted(() => {
+  const sharedQueue: any[] = [];
 
-  async getProduct(productId: string, tenantId: string) {
-    const product = await this.db.products.findById(productId);
-
-    if (!product) {
-      return {
-        success: false,
-        error: {
-          type: "NotFoundError",
-          resource: "Product",
-          resourceId: productId,
-        },
-      };
-    }
-
-    if (product.tenantId !== tenantId) {
-      return {
-        success: false,
-        error: {
-          type: "AuthorizationError",
-          message: "Product not accessible from this tenant",
-        },
-      };
-    }
-
-    return {
-      success: true,
-      data: product,
+  const createChainable = (): any => {
+    const c: any = {};
+    c.from = vi.fn().mockReturnValue(c);
+    c.where = vi.fn().mockReturnValue(c);
+    c.limit = vi.fn().mockReturnValue(c);
+    c.leftJoin = vi.fn().mockReturnValue(c);
+    c.orderBy = vi.fn().mockReturnValue(c);
+    c.offset = vi.fn().mockReturnValue(c);
+    c.values = vi.fn().mockReturnValue(c);
+    c.returning = vi.fn().mockReturnValue(c);
+    c.set = vi.fn().mockReturnValue(c);
+    c.then = (resolve: any, reject: any) => {
+      const next = sharedQueue.shift();
+      return Promise.resolve(next).then(resolve, reject);
     };
-  }
+    return c;
+  };
 
-  async validateStock(items: any[], tenantId: string) {
-    if (!items || items.length === 0) {
-      return {
-        success: false,
-        error: {
-          type: "ValidationError",
-          message: "Items cannot be empty",
-        },
-      };
-    }
+  return {
+    enqueueResult: (...items: any[]) => {
+      sharedQueue.push(...items);
+    },
+    sharedQueue,
+  };
+});
 
-    const validationResults = [];
-    const stockByProductId = new Map();
+vi.mock("drizzle-orm", () => ({
+  and: (...args: any[]) => args,
+  or: (...args: any[]) => args,
+  eq: (a: any, b: any) => ({ a, b }),
+  not: (v: any) => v,
+  desc: (v: any) => v,
+  asc: (v: any) => v,
+  lt: (a: any, b: any) => ({ a, b }),
+  gte: (a: any, b: any) => ({ a, b }),
+  ilike: (a: any, b: any) => ({ a, b }),
+  inArray: (a: any, b: any) => ({ a, b }),
+  sql: (strings: any, ...values: any[]) => strings,
+}));
 
-    for (const item of items) {
-      const product = await this.db.products.findById(item.productId);
-
-      if (!product) {
-        validationResults.push({
-          productId: item.productId,
-          error: "Product not found",
-        });
-        continue;
-      }
-
-      if (product.tenantId !== tenantId) {
-        validationResults.push({
-          productId: item.productId,
-          error: "Product not accessible from this tenant",
-        });
-        continue;
-      }
-
-      stockByProductId.set(item.productId, product.stock);
-
-      if (product.stock < item.quantity) {
-        validationResults.push({
-          productId: item.productId,
-          requested: item.quantity,
-          available: product.stock,
-          sufficient: false,
-        });
-      }
-    }
-
-    if (validationResults.length > 0) {
-      return {
-        success: false,
-        error: {
-          type: "ValidationError",
-          message: "Stock validation failed",
-          details: validationResults,
-        },
-      };
-    }
-
-    return {
-      success: true,
-      data: {
-        available: true,
-        items: items.map((item) => ({
-          productId: item.productId,
-          requested: item.quantity,
-          available: stockByProductId.get(item.productId) ?? 0,
-          sufficient: true,
-        })),
-      },
+vi.mock("@sass-store/database", () => {
+  const createChainable = (): any => {
+    const c: any = {};
+    c.from = vi.fn().mockReturnValue(c);
+    c.where = vi.fn().mockReturnValue(c);
+    c.limit = vi.fn().mockReturnValue(c);
+    c.leftJoin = vi.fn().mockReturnValue(c);
+    c.orderBy = vi.fn().mockReturnValue(c);
+    c.offset = vi.fn().mockReturnValue(c);
+    c.values = vi.fn().mockReturnValue(c);
+    c.returning = vi.fn().mockReturnValue(c);
+    c.set = vi.fn().mockReturnValue(c);
+    c.then = (resolve: any, reject: any) => {
+      const next = sharedQueue.shift();
+      return Promise.resolve(next).then(resolve, reject);
     };
-  }
+    return c;
+  };
 
-  async updateStock(
-    productId: string,
-    tenantId: string,
-    quantityChange: number,
-  ) {
-    const product = await this.db.products.findById(productId);
-
-    if (!product) {
-      return {
-        success: false,
-        error: {
-          type: "NotFoundError",
-          resource: "Product",
-          resourceId: productId,
-        },
-      };
-    }
-
-    if (product.tenantId !== tenantId) {
-      return {
-        success: false,
-        error: {
-          type: "AuthorizationError",
-          message: "Product not accessible from this tenant",
-        },
-      };
-    }
-
-    // Check if stock would go negative before atomic update
-    if (product.stock + quantityChange < 0) {
-      return {
-        success: false,
-        error: {
-          type: "BusinessRuleError",
-          message: "Insufficient stock",
-          currentStock: product.stock,
-          requestedChange: quantityChange,
-        },
-      };
-    }
-
-    // Use atomic update for concurrent operations
-    const updatedProduct = await this.db.products.updateAtomic(
-      productId,
-      (current) => ({
-        ...current,
-        stock: current.stock + quantityChange,
+  return {
+    db: {
+      select: vi.fn().mockImplementation(() => createChainable()),
+      insert: vi.fn().mockImplementation(() => createChainable()),
+      transaction: vi.fn((fn) => {
+        const tx = {
+          select: vi.fn().mockImplementation(() => createChainable()),
+          insert: vi.fn().mockImplementation(() => createChainable()),
+          update: vi.fn().mockImplementation(() => createChainable()),
+        };
+        return fn(tx);
       }),
-    );
+    },
+    inventoryAlerts: {
+      tenantId: "tenantId",
+      productId: "productId",
+      alertType: "alertType",
+      status: "status",
+      notes: "notes",
+      metadata: "metadata",
+      createdAt: "createdAt",
+      resolvedAt: "resolvedAt",
+      id: "id",
+      severity: "severity",
+    },
+    inventoryTransactions: {
+      tenantId: "tenantId",
+      productId: "productId",
+      type: "type",
+      quantity: "quantity",
+      previousQuantity: "previousQuantity",
+      newQuantity: "newQuantity",
+      referenceType: "referenceType",
+      referenceId: "referenceId",
+      notes: "notes",
+      metadata: "metadata",
+      createdAt: "createdAt",
+      id: "id",
+    },
+    productInventory: {
+      tenantId: "tenantId",
+      productId: "productId",
+      quantity: "quantity",
+      reorderLevel: "reorderLevel",
+      id: "id",
+    },
+    products: {
+      name: "name",
+      id: "id",
+      sku: "sku",
+      category: "category",
+      price: "price",
+      imageUrl: "imageUrl",
+      active: "active",
+    },
+    serviceProducts: {
+      tenantId: "tenantId",
+      serviceId: "serviceId",
+      productId: "productId",
+      id: "id",
+    },
+    services: {
+      name: "name",
+      id: "id",
+    },
+  };
+});
 
-    return {
-      success: true,
-      data: updatedProduct,
-    };
-  }
+import { InventoryService } from "../../../apps/web/lib/inventory/inventory-service";
 
-  async getProductBySku(sku: string, tenantId: string) {
-    const products = await this.db.products.findMany(
-      (p) => p.sku === sku && p.tenantId === tenantId,
-    );
-
-    if (products.length === 0) {
-      return {
-        success: false,
-        error: {
-          type: "NotFoundError",
-          resource: "Product",
-          resourceId: sku,
-        },
-      };
-    }
-
-    return {
-      success: true,
-      data: products[0],
-    };
-  }
-}
-
-describe("Inventory Service - Result Pattern Implementation", () => {
-  let context: any;
-  let inventoryService: MockInventoryService;
+describe("InventoryService - New Static Methods", () => {
+  const validTenantId = "12345678-1234-1234-1234-123456789012";
+  const validProductId = "87654321-4321-4321-4321-210987654321";
 
   beforeEach(() => {
-    context = createTestContext();
-    inventoryService = new MockInventoryService(context.db);
+    vi.clearAllMocks();
+    sharedQueue.length = 0;
   });
 
-  afterEach(() => {
-    context?.db?.clear?.();
-  });
-
-  describe("Product Lookup", () => {
-    it("should return success result when product found", async () => {
-      // Arrange
-      const product = createTestProduct(context.tenant.id);
-      await context.db.products.insert(product);
-
-      // Act
-      const result = await inventoryService.getProduct(
-        product.id,
-        context.tenant.id,
+  describe("getInventoryAlertConfigs", () => {
+    it("should return alerts with pagination on success", async () => {
+      enqueueResult(
+        [
+          {
+            id: "alert-1",
+            tenantId: validTenantId,
+            productId: validProductId,
+            alertType: "low_stock",
+            status: "active",
+            notes: null,
+            metadata: { message: "Low stock" },
+            createdAt: new Date(),
+            resolvedAt: null,
+            productName: "Test Product",
+          },
+        ],
+        [{ count: "1" }],
       );
 
-      // Assert
-      expectSuccess(result);
-      expect(result.data.id).toBe(product.id);
-      expect(result.data.name).toBe(product.name);
-    });
-
-    it("should return NotFoundError when product missing", async () => {
-      // Act
-      const result = await inventoryService.getProduct(
-        "non-existent",
-        context.tenant.id,
-      );
-
-      // Assert
-      expectFailure(result);
-      expect(result.error.type).toBe("NotFoundError");
-      expect(result.error.resource).toBe("Product");
-      expect(result.error.resourceId).toBe("non-existent");
-    });
-
-    it("should return AuthorizationError when product from different tenant", async () => {
-      // Arrange - Create product in same database but different tenant
-      const otherTenantId = `other-tenant-${Date.now()}`;
-      const product = createTestProduct(otherTenantId);
-      await context.db.products.insert(product);
-
-      // Act
-      const result = await inventoryService.getProduct(
-        product.id,
-        context.tenant.id,
-      );
-
-      // Assert
-      expectFailure(result);
-      expect(result.error.type).toBe("AuthorizationError");
-      expect(result.error.message).toContain("not accessible from this tenant");
-    });
-  });
-
-  describe("Stock Validation", () => {
-    it("should validate sufficient stock correctly", async () => {
-      // Arrange
-      const product = createTestProduct(context.tenant.id);
-      product.stock = 100;
-      await context.db.products.insert(product);
-
-      const items = [
-        { productId: product.id, quantity: 50 },
-        { productId: product.id, quantity: 25 },
-      ];
-
-      // Act
-      const result = await inventoryService.validateStock(
-        items,
-        context.tenant.id,
-      );
-
-      // Assert
-      expectSuccess(result);
-      expect(result.data.available).toBe(true);
-      expect(result.data.items).toHaveLength(2);
-      expect(result.data.items[0].sufficient).toBe(true);
-    });
-
-    it("should return ValidationError for empty items", async () => {
-      // Act
-      const result = await inventoryService.validateStock(
-        [],
-        context.tenant.id,
-      );
-
-      // Assert
-      expectValidationError(result);
-      expect(result.error.message).toContain("cannot be empty");
-    });
-
-    it("should return ValidationError for insufficient stock", async () => {
-      // Arrange
-      const product = createTestProduct(context.tenant.id);
-      product.stock = 10;
-      await context.db.products.insert(product);
-
-      const items = [{ productId: product.id, quantity: 50 }];
-
-      // Act
-      const result = await inventoryService.validateStock(
-        items,
-        context.tenant.id,
-      );
-
-      // Assert
-      expectValidationError(result);
-      expect(result.error.details).toHaveLength(1);
-      expect(result.error.details[0].requested).toBe(50);
-      expect(result.error.details[0].available).toBe(10);
-      expect(result.error.details[0].sufficient).toBe(false);
-    });
-  });
-
-  describe("Stock Updates", () => {
-    it("should successfully increase stock", async () => {
-      // Arrange
-      const product = createTestProduct(context.tenant.id);
-      product.stock = 50;
-      await context.db.products.insert(product);
-
-      // Act
-      const result = await inventoryService.updateStock(
-        product.id,
-        context.tenant.id,
-        25,
-      );
-
-      // Assert
-      expectSuccess(result);
-      expect(result.data.stock).toBe(75);
-      expect(result.data.updatedAt).toBeInstanceOf(Date);
-    });
-
-    it("should successfully decrease stock", async () => {
-      // Arrange
-      const product = createTestProduct(context.tenant.id);
-      product.stock = 100;
-      await context.db.products.insert(product);
-
-      // Act
-      const result = await inventoryService.updateStock(
-        product.id,
-        context.tenant.id,
-        -25,
-      );
-
-      // Assert
-      expectSuccess(result);
-      expect(result.data.stock).toBe(75);
-    });
-
-    it("should return BusinessRuleError when stock becomes negative", async () => {
-      // Arrange
-      const product = createTestProduct(context.tenant.id);
-      product.stock = 10;
-      await context.db.products.insert(product);
-
-      // Act
-      const result = await inventoryService.updateStock(
-        product.id,
-        context.tenant.id,
-        -25,
-      );
-
-      // Assert
-      expectFailure(result);
-      expect(result.error.type).toBe("BusinessRuleError");
-      expect(result.error.message).toContain("Insufficient stock");
-      expect(result.error.currentStock).toBe(10);
-      expect(result.error.requestedChange).toBe(-25);
-    });
-  });
-
-  describe("SKU Lookup", () => {
-    it("should find product by SKU", async () => {
-      // Arrange
-      const product = createTestProduct(context.tenant.id);
-      await context.db.products.insert(product);
-
-      // Act
-      const result = await inventoryService.getProductBySku(
-        product.sku,
-        context.tenant.id,
-      );
-
-      // Assert
-      expectSuccess(result);
-      expect(result.data.sku).toBe(product.sku);
-    });
-
-    it("should return NotFoundError for non-existent SKU", async () => {
-      // Act
-      const result = await inventoryService.getProductBySku(
-        "NON-EXISTENT-SKU",
-        context.tenant.id,
-      );
-
-      // Assert
-      expectNotFoundError(result, "Product");
-      expect(result.error.resourceId).toBe("NON-EXISTENT-SKU");
-    });
-  });
-
-  describe("Performance and Edge Cases", () => {
-    it("should handle large stock validation efficiently", async () => {
-      // Arrange
-      const products = Array.from({ length: 100 }, (_, i) =>
-        createTestProduct(context.tenant.id),
-      );
-
-      products.forEach((p) => (p.stock = 1000));
-      for (const product of products) {
-        await context.db.products.insert(product);
-      }
-
-      const items = products.map((p) => ({ productId: p.id, quantity: 10 }));
-
-      // Act & Assert
-      const result = await withTimeout(
-        inventoryService.validateStock(items, context.tenant.id),
-        1000, // 1 second max
-      );
-
-      expectSuccess(result);
-      expect(result.data.items).toHaveLength(100);
-    });
-
-    it("should handle concurrent operations correctly", async () => {
-      // Arrange
-      const product = createTestProduct(context.tenant.id);
-      product.stock = 100;
-      await context.db.products.insert(product);
-
-      // Act - Simulate concurrent stock updates
-      const promises = Array.from({ length: 10 }, () =>
-        inventoryService.updateStock(product.id, context.tenant.id, -1),
-      );
-
-      const results = await Promise.all(promises);
-
-      // Assert - All operations should succeed
-      results.forEach((result) => {
-        expectSuccess(result);
+      const result = await InventoryService.getInventoryAlertConfigs({
+        tenantId: validTenantId,
       });
 
-      // Final stock should be 90 (100 - 10)
-      const finalProduct = await context.db.products.findById(product.id);
-      expect(finalProduct.stock).toBe(90);
+      expect(result.success).toBe(true);
+      expect(result.data.data).toHaveLength(1);
+      expect(result.data.data[0].type).toBe("low_stock");
+    });
+
+    it("should return error for invalid tenantId", async () => {
+      const result = await InventoryService.getInventoryAlertConfigs({
+        tenantId: "invalid",
+      });
+
+      expect(result.success).toBe(false);
     });
   });
 
-  describe("Tenant Isolation", () => {
-    it("should enforce tenant isolation in all operations", async () => {
-      // Arrange - Create product in same database but different tenant
-      const otherTenantId = `other-tenant-${Date.now()}`;
-      const product = createTestProduct(otherTenantId);
-      await context.db.products.insert(product);
-
-      // Act & Assert - All operations should fail
-      const lookupResult = await inventoryService.getProduct(
-        product.id,
-        context.tenant.id,
+  describe("createInventoryAlertConfig", () => {
+    it("should create an alert and return the created alert", async () => {
+      const alertUuid = "a1111111-1111-1111-1111-111111111111";
+      enqueueResult(
+        [{ id: alertUuid }],
+        [
+          {
+            id: alertUuid,
+            tenantId: validTenantId,
+            productId: validProductId,
+            alertType: "out_of_stock",
+            status: "active",
+            notes: null,
+            metadata: { message: "Out of stock alert" },
+            createdAt: new Date(),
+            resolvedAt: null,
+            productName: "Test Product",
+          },
+        ],
       );
-      expectFailure(lookupResult);
-      expect(lookupResult.error.type).toBe("AuthorizationError");
 
-      const stockResult = await inventoryService.validateStock(
-        [{ productId: product.id, quantity: 1 }],
-        context.tenant.id,
-      );
-      expectValidationError(stockResult);
+      const result = await InventoryService.createInventoryAlertConfig({
+        tenantId: validTenantId,
+        productId: validProductId,
+        type: "out_of_stock",
+        message: "Out of stock alert",
+      });
 
-      const updateResult = await inventoryService.updateStock(
-        product.id,
-        context.tenant.id,
-        -1,
-      );
-      expectFailure(updateResult);
-      expect(updateResult.error.type).toBe("AuthorizationError");
+      expect(result.success).toBe(true);
+      expect(result.data.type).toBe("out_of_stock");
+    });
+
+    it("should return error for invalid data", async () => {
+      const result = await InventoryService.createInventoryAlertConfig({
+        tenantId: "invalid",
+        productId: "invalid",
+        type: "low_stock",
+        message: "",
+      });
+
+      expect(result.success).toBe(false);
     });
   });
 
-  describe("Integration Scenarios", () => {
-    it("should handle complete order processing workflow", async () => {
-      // Arrange - Create products
-      const products = [
-        createTestProduct(context.tenant.id),
-        createTestProduct(context.tenant.id),
-        createTestProduct(context.tenant.id),
-      ];
+  describe("getInventoryMovementById", () => {
+    it("should return movement when found", async () => {
+      enqueueResult([
+        {
+          id: "movement-1",
+          tenantId: validTenantId,
+          productId: validProductId,
+          productName: "Test Product",
+          type: "addition",
+          quantity: "10",
+          previousQuantity: "5",
+          newQuantity: "15",
+          referenceType: "movement",
+          referenceId: null,
+          notes: "Stock in",
+          metadata: { reason: "Restock" },
+          createdAt: new Date(),
+        },
+      ]);
 
-      products[0].stock = 10;
-      products[1].stock = 5;
-      products[2].stock = 2;
-
-      for (const product of products) {
-        await context.db.products.insert(product);
-      }
-
-      const orderItems = products.map((p) => ({
-        productId: p.id,
-        quantity: 1,
-      }));
-
-      // Act - Validate stock
-      const validationResult = await inventoryService.validateStock(
-        orderItems,
-        context.tenant.id,
+      const result = await InventoryService.getInventoryMovementById(
+        validTenantId,
+        "movement-1",
       );
 
-      // Assert validation succeeds
-      expectSuccess(validationResult);
+      expect(result.success).toBe(true);
+      expect(result.data.id).toBe("movement-1");
+      expect(result.data.type).toBe("in");
+      expect(result.data.quantity).toBe(10);
+    });
 
-      // Act - Process stock deduction
-      for (const item of orderItems) {
-        const updateResult = await inventoryService.updateStock(
-          item.productId,
-          context.tenant.id,
-          -item.quantity,
-        );
-        expectSuccess(updateResult);
-      }
+    it("should return not found when movement does not exist", async () => {
+      enqueueResult([]);
 
-      // Verify final stock levels
-      const finalProducts = await Promise.all(
-        orderItems.map((item) => context.db.products.findById(item.productId)),
+      const result = await InventoryService.getInventoryMovementById(
+        validTenantId,
+        "non-existent",
       );
 
-      expect(finalProducts[0].stock).toBe(9);
-      expect(finalProducts[1].stock).toBe(4);
-      expect(finalProducts[2].stock).toBe(1);
+      expect(result.success).toBe(false);
+      expect(result.error.type).toBe("NotFoundError");
+    });
+
+    it("should return error for invalid tenantId", async () => {
+      enqueueResult([]);
+
+      const result = await InventoryService.getInventoryMovementById(
+        "invalid",
+        "movement-1",
+      );
+
+      expect(result.success).toBe(false);
+    });
+  });
+
+  describe("getInventoryTransactionById", () => {
+    it("should return transaction when found", async () => {
+      enqueueResult([
+        {
+          id: "tx-1",
+          tenantId: validTenantId,
+          productId: validProductId,
+          productName: "Test Product",
+          type: "deduction",
+          quantity: "5",
+          previousQuantity: "10",
+          newQuantity: "5",
+          referenceType: "service_completion",
+          referenceId: "service-1",
+          notes: "Used in service",
+          createdAt: new Date(),
+        },
+      ]);
+
+      const result = await InventoryService.getInventoryTransactionById(
+        validTenantId,
+        "tx-1",
+      );
+
+      expect(result.success).toBe(true);
+      expect(result.data.id).toBe("tx-1");
+      expect(result.data.type).toBe("deduction");
+      expect(result.data.quantity).toBe(5);
+      expect(result.data.previousQuantity).toBe(10);
+      expect(result.data.newQuantity).toBe(5);
+    });
+
+    it("should return not found when transaction does not exist", async () => {
+      enqueueResult([]);
+
+      const result = await InventoryService.getInventoryTransactionById(
+        validTenantId,
+        "non-existent",
+      );
+
+      expect(result.success).toBe(false);
+      expect(result.error.type).toBe("NotFoundError");
+    });
+
+    it("should return error for invalid transactionId", async () => {
+      enqueueResult([]);
+
+      const result = await InventoryService.getInventoryTransactionById(
+        validTenantId,
+        "invalid",
+      );
+
+      expect(result.success).toBe(false);
     });
   });
 });

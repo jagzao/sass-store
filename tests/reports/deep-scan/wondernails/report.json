@@ -1,0 +1,575 @@
+[
+  {
+    "tenant": "wondernails",
+    "url": "/t/wondernails/",
+    "finalUrl": "http://localhost:3002/t/wondernails",
+    "status": "ok",
+    "title": "Wonder Nails Studio - Premium nail art and manicure services",
+    "consoleErrors": ["Failed to load Stripe.js"],
+    "visibleErrors": [],
+    "screenshotPath": "wondernails/screenshots/wondernails__.png",
+    "loadTimeMs": 1855
+  },
+  {
+    "tenant": "wondernails",
+    "url": "/t/wondernails/services",
+    "finalUrl": "http://localhost:3002/t/wondernails/services",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [
+      "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "Failed to load Stripe.js"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "wondernails/screenshots/wondernails__services.png",
+    "loadTimeMs": 948
+  },
+  {
+    "tenant": "wondernails",
+    "url": "/t/wondernails/products",
+    "finalUrl": "http://localhost:3002/t/wondernails/products",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": ["Failed to load Stripe.js"],
+    "visibleErrors": [],
+    "screenshotPath": "wondernails/screenshots/wondernails__products.png",
+    "loadTimeMs": 1024
+  },
+  {
+    "tenant": "wondernails",
+    "url": "/t/wondernails/book",
+    "finalUrl": "http://localhost:3002/t/wondernails/book",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": ["Failed to load Stripe.js"],
+    "visibleErrors": [],
+    "screenshotPath": "wondernails/screenshots/wondernails__book.png",
+    "loadTimeMs": 938
+  },
+  {
+    "tenant": "wondernails",
+    "url": "/t/wondernails/contact",
+    "finalUrl": "http://localhost:3002/t/wondernails/contact",
+    "status": "ok",
+    "title": "Contacto - Wonder Nails Studio",
+    "consoleErrors": ["Failed to load Stripe.js"],
+    "visibleErrors": [],
+    "screenshotPath": "wondernails/screenshots/wondernails__contact.png",
+    "loadTimeMs": 801
+  },
+  {
+    "tenant": "wondernails",
+    "url": "/t/wondernails/login",
+    "finalUrl": "http://localhost:3002/t/wondernails/login",
+    "status": "ok",
+    "title": "Iniciar Sesión - Wonder Nails Studio",
+    "consoleErrors": ["Failed to load Stripe.js"],
+    "visibleErrors": [],
+    "screenshotPath": "wondernails/screenshots/wondernails__login.png",
+    "loadTimeMs": 860
+  },
+  {
+    "tenant": "wondernails",
+    "url": "/t/wondernails/register",
+    "finalUrl": "http://localhost:3002/t/wondernails/register",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": ["Failed to load Stripe.js"],
+    "visibleErrors": [],
+    "screenshotPath": "wondernails/screenshots/wondernails__register.png",
+    "loadTimeMs": 878
+  },
+  {
+    "tenant": "wondernails",
+    "url": "/t/wondernails/forgot-password",
+    "finalUrl": "http://localhost:3002/t/wondernails/forgot-password",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": ["Failed to load Stripe.js"],
+    "visibleErrors": [],
+    "screenshotPath": "wondernails/screenshots/wondernails__forgot_password.png",
+    "loadTimeMs": 768
+  },
+  {
+    "tenant": "wondernails",
+    "url": "/t/wondernails/admin",
+    "finalUrl": "http://localhost:3002/t/wondernails/login?callbackUrl=/t/wondernails/admin",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Wonder Nails Studio",
+    "consoleErrors": [
+      "n: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at o (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:1:1008)\n    at async g (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:1:2650)\n    at async h._getSession (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:2:1633)",
+      "Failed to load Stripe.js"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "wondernails/screenshots/wondernails__admin.png",
+    "loadTimeMs": 908
+  },
+  {
+    "tenant": "wondernails",
+    "url": "/t/wondernails/admin/calendar",
+    "finalUrl": "http://localhost:3002/t/wondernails/login?callbackUrl=/t/wondernails/admin",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Wonder Nails Studio",
+    "consoleErrors": ["Failed to load Stripe.js"],
+    "visibleErrors": [],
+    "screenshotPath": "wondernails/screenshots/wondernails__admin_calendar.png",
+    "loadTimeMs": 905
+  },
+  {
+    "tenant": "wondernails",
+    "url": "/t/wondernails/admin/products",
+    "finalUrl": "http://localhost:3002/t/wondernails/login?callbackUrl=/t/wondernails/admin",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Wonder Nails Studio",
+    "consoleErrors": ["Failed to load Stripe.js"],
+    "visibleErrors": [],
+    "screenshotPath": "wondernails/screenshots/wondernails__admin_products.png",
+    "loadTimeMs": 820
+  },
+  {
+    "tenant": "wondernails",
+    "url": "/t/wondernails/admin/content",
+    "finalUrl": "http://localhost:3002/t/wondernails/login?callbackUrl=/t/wondernails/admin",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Wonder Nails Studio",
+    "consoleErrors": ["Failed to load Stripe.js"],
+    "visibleErrors": [],
+    "screenshotPath": "wondernails/screenshots/wondernails__admin_content.png",
+    "loadTimeMs": 806
+  },
+  {
+    "tenant": "wondernails",
+    "url": "/t/wondernails/admin/quotes",
+    "finalUrl": "http://localhost:3002/t/wondernails/login?callbackUrl=/t/wondernails/admin",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Wonder Nails Studio",
+    "consoleErrors": ["Failed to load Stripe.js"],
+    "visibleErrors": [],
+    "screenshotPath": "wondernails/screenshots/wondernails__admin_quotes.png",
+    "loadTimeMs": 832
+  },
+  {
+    "tenant": "wondernails",
+    "url": "/t/wondernails/admin_services",
+    "finalUrl": "http://localhost:3002/t/wondernails/login",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Wonder Nails Studio",
+    "consoleErrors": ["Failed to load Stripe.js"],
+    "visibleErrors": [],
+    "screenshotPath": "wondernails/screenshots/wondernails__admin_services.png",
+    "loadTimeMs": 1010
+  },
+  {
+    "tenant": "wondernails",
+    "url": "/t/wondernails/admin_bookings",
+    "finalUrl": "http://localhost:3002/t/wondernails/login?callbackUrl=/t/wondernails/admin",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Wonder Nails Studio",
+    "consoleErrors": ["Failed to load Stripe.js"],
+    "visibleErrors": [],
+    "screenshotPath": "wondernails/screenshots/wondernails__admin_bookings.png",
+    "loadTimeMs": 814
+  },
+  {
+    "tenant": "wondernails",
+    "url": "/t/wondernails/admin_tenants",
+    "finalUrl": "http://localhost:3002/t/wondernails",
+    "status": "ok",
+    "title": "Wonder Nails Studio - Premium nail art and manicure services",
+    "consoleErrors": ["Failed to load Stripe.js"],
+    "visibleErrors": [],
+    "screenshotPath": "wondernails/screenshots/wondernails__admin_tenants.png",
+    "loadTimeMs": 1733
+  },
+  {
+    "tenant": "wondernails",
+    "url": "/t/wondernails/admin_products",
+    "finalUrl": "http://localhost:3002/t/wondernails/login",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Wonder Nails Studio",
+    "consoleErrors": ["Failed to load Stripe.js"],
+    "visibleErrors": [],
+    "screenshotPath": "wondernails/screenshots/wondernails__admin_products.png",
+    "loadTimeMs": 858
+  },
+  {
+    "tenant": "wondernails",
+    "url": "/t/wondernails/pos",
+    "finalUrl": "http://localhost:3002/t/wondernails/login",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Wonder Nails Studio",
+    "consoleErrors": ["Failed to load Stripe.js"],
+    "visibleErrors": [],
+    "screenshotPath": "wondernails/screenshots/wondernails__pos.png",
+    "loadTimeMs": 819
+  },
+  {
+    "tenant": "wondernails",
+    "url": "/t/wondernails/reports",
+    "finalUrl": "http://localhost:3002/t/wondernails/login",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Wonder Nails Studio",
+    "consoleErrors": ["Failed to load Stripe.js"],
+    "visibleErrors": [],
+    "screenshotPath": "wondernails/screenshots/wondernails__reports.png",
+    "loadTimeMs": 899
+  },
+  {
+    "tenant": "wondernails",
+    "url": "/t/wondernails/finance",
+    "finalUrl": "http://localhost:3002/t/wondernails/login?callbackUrl=/t/wondernails/admin",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Wonder Nails Studio",
+    "consoleErrors": [
+      "n: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at o (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:1:1008)\n    at async g (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:1:2650)\n    at async h._getSession (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:2:1633)",
+      "Failed to load Stripe.js"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "wondernails/screenshots/wondernails__finance.png",
+    "loadTimeMs": 827
+  },
+  {
+    "tenant": "wondernails",
+    "url": "/t/wondernails/finance/movements",
+    "finalUrl": "http://localhost:3002/t/wondernails/login?callbackUrl=/t/wondernails/admin",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Wonder Nails Studio",
+    "consoleErrors": ["Failed to load Stripe.js"],
+    "visibleErrors": [],
+    "screenshotPath": "wondernails/screenshots/wondernails__finance_movements.png",
+    "loadTimeMs": 835
+  },
+  {
+    "tenant": "wondernails",
+    "url": "/t/wondernails/finance/budgets",
+    "finalUrl": "http://localhost:3002/t/wondernails/login?callbackUrl=/t/wondernails/admin",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Wonder Nails Studio",
+    "consoleErrors": ["Failed to load Stripe.js"],
+    "visibleErrors": [],
+    "screenshotPath": "wondernails/screenshots/wondernails__finance_budgets.png",
+    "loadTimeMs": 902
+  },
+  {
+    "tenant": "wondernails",
+    "url": "/t/wondernails/finance/categories",
+    "finalUrl": "http://localhost:3002/t/wondernails/login?callbackUrl=/t/wondernails/admin",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Wonder Nails Studio",
+    "consoleErrors": ["Failed to load Stripe.js"],
+    "visibleErrors": [],
+    "screenshotPath": "wondernails/screenshots/wondernails__finance_categories.png",
+    "loadTimeMs": 870
+  },
+  {
+    "tenant": "wondernails",
+    "url": "/t/wondernails/inventory",
+    "finalUrl": "http://localhost:3002/t/wondernails/login?callbackUrl=/t/wondernails/admin",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Wonder Nails Studio",
+    "consoleErrors": ["Failed to load Stripe.js"],
+    "visibleErrors": [],
+    "screenshotPath": "wondernails/screenshots/wondernails__inventory.png",
+    "loadTimeMs": 854
+  },
+  {
+    "tenant": "wondernails",
+    "url": "/t/wondernails/inventory/supplies",
+    "finalUrl": "http://localhost:3002/t/wondernails/login?callbackUrl=/t/wondernails/admin",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Wonder Nails Studio",
+    "consoleErrors": ["Failed to load Stripe.js"],
+    "visibleErrors": [],
+    "screenshotPath": "wondernails/screenshots/wondernails__inventory_supplies.png",
+    "loadTimeMs": 833
+  },
+  {
+    "tenant": "wondernails",
+    "url": "/t/wondernails/clientes",
+    "finalUrl": "http://localhost:3002/t/wondernails/login?callbackUrl=/t/wondernails/admin",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Wonder Nails Studio",
+    "consoleErrors": ["Failed to load Stripe.js"],
+    "visibleErrors": [],
+    "screenshotPath": "wondernails/screenshots/wondernails__clientes.png",
+    "loadTimeMs": 869
+  },
+  {
+    "tenant": "wondernails",
+    "url": "/t/wondernails/clientes/nueva",
+    "finalUrl": "http://localhost:3002/t/wondernails/login?callbackUrl=/t/wondernails/admin",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Wonder Nails Studio",
+    "consoleErrors": ["Failed to load Stripe.js"],
+    "visibleErrors": [],
+    "screenshotPath": "wondernails/screenshots/wondernails__clientes_nueva.png",
+    "loadTimeMs": 808
+  },
+  {
+    "tenant": "wondernails",
+    "url": "/t/wondernails/clientes/test",
+    "finalUrl": "http://localhost:3002/t/wondernails/login?callbackUrl=/t/wondernails/admin",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Wonder Nails Studio",
+    "consoleErrors": ["Failed to load Stripe.js"],
+    "visibleErrors": [],
+    "screenshotPath": "wondernails/screenshots/wondernails__clientes_test.png",
+    "loadTimeMs": 774
+  },
+  {
+    "tenant": "wondernails",
+    "url": "/t/wondernails/cart",
+    "finalUrl": "http://localhost:3002/t/wondernails/cart",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": ["Failed to load Stripe.js"],
+    "visibleErrors": [],
+    "screenshotPath": "wondernails/screenshots/wondernails__cart.png",
+    "loadTimeMs": 796
+  },
+  {
+    "tenant": "wondernails",
+    "url": "/t/wondernails/checkout",
+    "finalUrl": "http://localhost:3002/t/wondernails/checkout",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [
+      "Loading the script 'https://js.stripe.com/basil/stripe.js' violates the following Content Security Policy directive: \"script-src 'self' https://sdk.mercadopago.com https://secure.mlstatic.com https://challenges.cloudflare.com 'unsafe-inline'\". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback. The action has been blocked.",
+      "Failed to load Stripe.js"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "wondernails/screenshots/wondernails__checkout.png",
+    "loadTimeMs": 785
+  },
+  {
+    "tenant": "wondernails",
+    "url": "/t/wondernails/checkout/success",
+    "finalUrl": "http://localhost:3002/t/wondernails/checkout/success",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [
+      "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "wondernails/screenshots/wondernails__checkout_success.png",
+    "loadTimeMs": 15157
+  },
+  {
+    "tenant": "wondernails",
+    "url": "/t/wondernails/orders",
+    "finalUrl": "http://localhost:3002/t/wondernails/orders",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [],
+    "visibleErrors": [],
+    "screenshotPath": "wondernails/screenshots/wondernails__orders.png",
+    "loadTimeMs": 948
+  },
+  {
+    "tenant": "wondernails",
+    "url": "/t/wondernails/profile",
+    "finalUrl": "http://localhost:3002/t/wondernails/login",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Wonder Nails Studio",
+    "consoleErrors": [],
+    "visibleErrors": [],
+    "screenshotPath": "wondernails/screenshots/wondernails__profile.png",
+    "loadTimeMs": 790
+  },
+  {
+    "tenant": "wondernails",
+    "url": "/t/wondernails/account",
+    "finalUrl": "http://localhost:3002/t/wondernails/account",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [
+      "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "wondernails/screenshots/wondernails__account.png",
+    "loadTimeMs": 15159
+  },
+  {
+    "tenant": "wondernails",
+    "url": "/t/wondernails/settings/calendar",
+    "finalUrl": "http://localhost:3002/t/wondernails/settings/calendar",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [],
+    "visibleErrors": [],
+    "screenshotPath": "wondernails/screenshots/wondernails__settings_calendar.png",
+    "loadTimeMs": 981
+  },
+  {
+    "tenant": "wondernails",
+    "url": "/t/wondernails/config",
+    "finalUrl": "http://localhost:3002/t/wondernails/login",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Wonder Nails Studio",
+    "consoleErrors": [],
+    "visibleErrors": [],
+    "screenshotPath": "wondernails/screenshots/wondernails__config.png",
+    "loadTimeMs": 926
+  },
+  {
+    "tenant": "wondernails",
+    "url": "/t/wondernails/favorites",
+    "finalUrl": "http://localhost:3002/t/wondernails/favorites",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [
+      "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "wondernails/screenshots/wondernails__favorites.png",
+    "loadTimeMs": 15292
+  },
+  {
+    "tenant": "wondernails",
+    "url": "/t/wondernails/social",
+    "finalUrl": "http://localhost:3002/t/wondernails/social",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [],
+    "visibleErrors": [],
+    "screenshotPath": "wondernails/screenshots/wondernails__social.png",
+    "loadTimeMs": 1048
+  },
+  {
+    "tenant": "wondernails",
+    "url": "/t/wondernails/retouch",
+    "finalUrl": "http://localhost:3002/t/wondernails/retouch",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [],
+    "visibleErrors": [],
+    "screenshotPath": "wondernails/screenshots/wondernails__retouch.png",
+    "loadTimeMs": 952
+  },
+  {
+    "tenant": "wondernails",
+    "url": "/t/wondernails/reorder",
+    "finalUrl": "http://localhost:3002/t/wondernails/reorder",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [],
+    "visibleErrors": [],
+    "screenshotPath": "wondernails/screenshots/wondernails__reorder.png",
+    "loadTimeMs": 779
+  },
+  {
+    "tenant": "wondernails",
+    "url": "/t/wondernails/booking",
+    "finalUrl": "http://localhost:3002/t/wondernails/services",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [
+      "n: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at o (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:1:1008)\n    at async g (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:1:2650)\n    at async h._getSession (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:2:1633)",
+      "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    ],
+    "visibleErrors": [],
+    "screenshotPath": "wondernails/screenshots/wondernails__booking.png",
+    "loadTimeMs": 953
+  },
+  {
+    "tenant": "wondernails",
+    "url": "/t/wondernails/booking/test-booking-123",
+    "finalUrl": "http://localhost:3002/t/wondernails/booking/test-booking-123",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [],
+    "visibleErrors": [],
+    "screenshotPath": "wondernails/screenshots/wondernails__booking_test_booking_123.png",
+    "loadTimeMs": 794
+  },
+  {
+    "tenant": "wondernails",
+    "url": "/t/wondernails/booking/nonexistent",
+    "finalUrl": "http://localhost:3002/t/wondernails/booking/nonexistent",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [],
+    "visibleErrors": [],
+    "screenshotPath": "wondernails/screenshots/wondernails__booking_nonexistent.png",
+    "loadTimeMs": 740
+  },
+  {
+    "tenant": "wondernails",
+    "url": "/t/wondernails/clientes/test-client-123",
+    "finalUrl": "http://localhost:3002/t/wondernails/login?callbackUrl=/t/wondernails/admin",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Wonder Nails Studio",
+    "consoleErrors": [],
+    "visibleErrors": [],
+    "screenshotPath": "wondernails/screenshots/wondernails__clientes_test_client_123.png",
+    "loadTimeMs": 818
+  },
+  {
+    "tenant": "wondernails",
+    "url": "/t/wondernails/clientes/nonexistent",
+    "finalUrl": "http://localhost:3002/t/wondernails/login?callbackUrl=/t/wondernails/admin",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Wonder Nails Studio",
+    "consoleErrors": [],
+    "visibleErrors": [],
+    "screenshotPath": "wondernails/screenshots/wondernails__clientes_nonexistent.png",
+    "loadTimeMs": 796
+  },
+  {
+    "tenant": "wondernails",
+    "url": "/t/wondernails/services/test-service-123/inventory",
+    "finalUrl": "http://localhost:3002/t/wondernails/services/test-service-123/inventory",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [],
+    "visibleErrors": [],
+    "screenshotPath": "wondernails/screenshots/wondernails__services_test_service_123_inventory.png",
+    "loadTimeMs": 661
+  },
+  {
+    "tenant": "wondernails",
+    "url": "/t/wondernails/services/nonexistent/inventory",
+    "finalUrl": "http://localhost:3002/t/wondernails/services/nonexistent/inventory",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [],
+    "visibleErrors": [],
+    "screenshotPath": "wondernails/screenshots/wondernails__services_nonexistent_inventory.png",
+    "loadTimeMs": 618
+  },
+  {
+    "tenant": "wondernails",
+    "url": "/t/wondernails/admin/quotes/test-quote-123",
+    "finalUrl": "http://localhost:3002/t/wondernails/login?callbackUrl=/t/wondernails/admin",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Wonder Nails Studio",
+    "consoleErrors": [],
+    "visibleErrors": [],
+    "screenshotPath": "wondernails/screenshots/wondernails__admin_quotes_test_quote_123.png",
+    "loadTimeMs": 771
+  },
+  {
+    "tenant": "wondernails",
+    "url": "/t/wondernails/admin/quotes/nonexistent",
+    "finalUrl": "http://localhost:3002/t/wondernails/login?callbackUrl=/t/wondernails/admin",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Wonder Nails Studio",
+    "consoleErrors": [],
+    "visibleErrors": [],
+    "screenshotPath": "wondernails/screenshots/wondernails__admin_quotes_nonexistent.png",
+    "loadTimeMs": 771
+  }
+]

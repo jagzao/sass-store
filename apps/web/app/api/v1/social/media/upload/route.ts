@@ -493,7 +493,9 @@ export const POST = withResultHandler(
     }
 
     const buffer = Buffer.from(bufferResult.data);
-    const contentHash = createHash("sha256").update(buffer).digest("hex");
+    const contentHash = createHash("sha256")
+      .update(buffer as any)
+      .digest("hex");
 
     const existingMediaResult = await findExistingMedia(contentHash);
     if (!existingMediaResult.success) {

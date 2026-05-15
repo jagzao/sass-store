@@ -5,7 +5,8 @@
   "types": "./index.ts",
   "exports": {
     ".": "./index.ts",
-    "./auth": "./src/auth.ts"
+    "./auth": "./src/auth.ts",
+    "./auth-env": "./src/auth-env.ts"
   },
   "license": "MIT",
   "scripts": {

@@ -1,7 +1,11 @@
-import React from 'react';
-import { expect, test, describe } from 'vitest';
-import { render, screen } from '@testing-library/react';
-import CalendarTimeline, { TimelineBooking } from '../../apps/web/app/t/[tenant]/admin/calendar/CalendarTimeline';
+// @vitest-environment jsdom
+
+import React from "react";
+import { expect, test, describe } from "vitest";
+import { render, screen } from "@testing-library/react";
+import CalendarTimeline, {
+  TimelineBooking,
+} from "../../apps/web/app/t/[tenant]/admin/calendar/CalendarTimeline";
 
 const mockBookings: TimelineBooking[] = [
   {
@@ -14,32 +18,30 @@ const mockBookings: TimelineBooking[] = [
     status: "confirmed",
     phone: "1234567890",
     totalPrice: 50.0,
-    resourceId: "cabina-1"
-  }
+    resourceId: "cabina-1",
+  },
 ];
 
-describe('CalendarTimeline Unit Tests', () => {
+describe("CalendarTimeline Unit Tests", () => {
+  test("renders without crashing", () => {
+    const { container } = render(
+      <CalendarTimeline
+        initialBookings={mockBookings}
+        currentDate={new Date()}
+        tenantSlug="test-tenant"
+      />,
+    );
+    expect(container).toBeTruthy();
+  });
 
-    test('renders without crashing', () => {
-        const { container } = render(
-            <CalendarTimeline 
-                initialBookings={mockBookings} 
-                currentDate={new Date()} 
-                tenantSlug="test-tenant" 
-            />
-        );
-        expect(container).toBeTruthy();
-    });
-
-    test('renders the booking customer name', () => {
-        render(
-            <CalendarTimeline 
-                initialBookings={mockBookings} 
-                currentDate={new Date()} 
-                tenantSlug="test-tenant" 
-            />
-        );
-        expect(screen.getByText('Jane Doe')).toBeInTheDocument();
-    });
-
+  test("renders the booking customer name", () => {
+    render(
+      <CalendarTimeline
+        initialBookings={mockBookings}
+        currentDate={new Date()}
+        tenantSlug="test-tenant"
+      />,
+    );
+    expect(screen.getByText("Jane Doe")).toBeInTheDocument();
+  });
 });

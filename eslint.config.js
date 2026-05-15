@@ -29,9 +29,9 @@ export default [
       "react-hooks": reactHooks,
     },
     rules: {
-      // Console statements - error in production, warn in development
-      "no-console":
-        process.env.NODE_ENV === "production" ? "error" : "warn",
+      // Console statements - only console.log/info/debug/etc are warned
+      // console.warn and console.error are allowed for production diagnostics
+      "no-console": ["warn", { allow: ["warn", "error"] }],
       "no-unused-vars": "off",
       "no-debugger":
         process.env.NODE_ENV === "production" ? "error" : "warn",

@@ -1,8 +1,14 @@
-'use client';
+"use client";
 
-import { memo, useMemo } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@sass-store/ui';
-import { useTenant } from '@/lib/tenant/tenant-provider';
+import { memo, useMemo } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@sass-store/ui";
+import { useTenant } from "@/lib/tenant/tenant-provider";
 
 // Memoized service card component to prevent unnecessary re-renders
 interface ServiceCardProps {
@@ -39,20 +45,24 @@ const ServiceCard = memo<ServiceCardProps>(({ service }) => {
   );
 });
 
-ServiceCard.displayName = 'ServiceCard';
+ServiceCard.displayName = "ServiceCard";
 
 export function FeaturedServices() {
   const { tenant } = useTenant();
 
   // Memoize featured services filtering
   const featuredServices = useMemo(() => {
-    if (tenant.mode !== 'booking' || !tenant.services) {
+    if (tenant.mode !== "booking" || !tenant.services) {
       return [];
     }
-    return tenant.services.filter(service => service.featured);
+    return tenant.services.filter((service) => service.featured);
   }, [tenant.mode, tenant.services]);
 
-  if (tenant.mode !== 'booking' || !tenant.services || featuredServices.length === 0) {
+  if (
+    tenant.mode !== "booking" ||
+    !tenant.services ||
+    featuredServices.length === 0
+  ) {
     return null;
   }
 
@@ -60,7 +70,9 @@ export function FeaturedServices() {
     <section className="py-16 bg-background">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold tracking-tight mb-4">Featured Services</h2>
+          <h2 className="text-3xl font-bold tracking-tight mb-4">
+            Featured Services
+          </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
             Book our most popular services with just 2 clicks
           </p>

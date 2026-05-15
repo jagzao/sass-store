@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    console.log(
+    console.warn(
       "[DIAGNOSTIC] Iniciando prueba de conexión a la base de datos...",
     );
 

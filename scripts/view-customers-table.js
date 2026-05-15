@@ -94,4 +94,6 @@ ORDER BY ordinal_position;
 */
 
 console.log("Script para ver la tabla de clientes en Supabase");
-console.log("Copia y pega cualquiera de las consultas comentadas en el editor SQL de Supabase");
+console.log(
+  "Copia y pega cualquiera de las consultas comentadas en el editor SQL de Supabase",
+);

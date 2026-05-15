@@ -308,12 +308,12 @@ export class InventoryService {
           ilike(products.name, `%${search}%`),
           ilike(products.sku, `%${search}%`),
           ilike(products.category, `%${search}%`),
-        ),
+        ) as any,
       );
     }
 
     if (category) {
-      whereConditions.push(eq(products.category, category));
+      whereConditions.push(eq(products.category, category) as any);
     }
 
     if (lowStockOnly) {
@@ -321,7 +321,7 @@ export class InventoryService {
         or(
           lt(productInventory.quantity, productInventory.reorderLevel),
           eq(productInventory.quantity, "0"),
-        ),
+        ) as any,
       );
     }
 
@@ -447,6 +447,8 @@ export class InventoryService {
           updatedAt: productInventory.updatedAt,
           productName: products.name,
           productSku: products.sku,
+          productImage: products.imageUrl,
+          productCategory: products.category,
           productPrice: products.price,
           productActive: products.active,
         })
@@ -1120,7 +1122,7 @@ export class InventoryService {
     const total = Number(totalResult.data[0]?.count ?? 0);
 
     return Ok({
-      data: alertsResult.data.map(mapAlertRow),
+      data: (alertsResult.data as any[]).map(mapAlertRow),
       pagination: {
         page,
         limit,
@@ -1227,7 +1229,7 @@ export class InventoryService {
       return Err(ErrorFactories.notFound("InventoryAlert", alertId));
     }
 
-    return Ok(mapAlertRow(alertResult.data[0]));
+    return Ok(mapAlertRow(alertResult.data[0] as any));
   }
 
   static async updateInventoryAlert(
@@ -1870,7 +1872,10 @@ export class InventoryService {
       productId: movement.productId,
       quantity: toNumber(movement.quantity),
       type: movement.type === "addition" ? "in" : "out",
-      reason: movement.metadata?.reason ?? movement.notes ?? "",
+      reason:
+        (movement.metadata as Record<string, any>)?.reason ??
+        movement.notes ??
+        "",
       notes: movement.notes ?? undefined,
       referenceId: movement.referenceId ?? undefined,
       referenceType: movement.referenceType ?? undefined,
@@ -2068,7 +2073,9 @@ export class InventoryService {
 
     const filteredTransfers = transfersResult.data.filter((row) => {
       if (!status) return true;
-      return (row.metadata?.status ?? "pending") === status;
+      return (
+        ((row.metadata as Record<string, any>)?.status ?? "pending") === status
+      );
     });
 
     const totalResult = await fromPromise(
@@ -2091,7 +2098,7 @@ export class InventoryService {
 
     const total = Number(totalResult.data[0]?.count ?? 0);
     const mapped = filteredTransfers.map((transfer) => {
-      const metadata = transfer.metadata ?? {};
+      const metadata = (transfer.metadata ?? {}) as Record<string, any>;
       const quantityValue = Number(metadata.transferQuantity ?? 0);
       return {
         id: transfer.id,
@@ -2244,7 +2251,7 @@ export class InventoryService {
     }
 
     const transfer = transferResult.data[0];
-    const metadata = transfer.metadata ?? {};
+    const metadata = (transfer.metadata ?? {}) as Record<string, any>;
     const quantityValue = Number(metadata.transferQuantity ?? 0);
 
     return Ok({
@@ -2309,8 +2316,9 @@ export class InventoryService {
       return Err(ErrorFactories.notFound("InventoryTransfer", transferId));
     }
 
-    const existingMetadata = existingResult.data[0].metadata ?? {};
-    const updatedMetadata = {
+    const existingMetadata: Record<string, any> = (existingResult.data[0]
+      .metadata ?? {}) as Record<string, any>;
+    const updatedMetadata: Record<string, any> = {
       ...existingMetadata,
       ...(data.metadata ?? {}),
       status: data.status ?? existingMetadata.status ?? "pending",
@@ -2394,5 +2402,132 @@ export class InventoryService {
     }
 
     return Ok(deleteResult.data[0]);
+  }
+
+  static async getInventoryAlertConfigs(params: {
+    tenantId: string;
+    page?: number;
+    limit?: number;
+    status?: string;
+    type?: string;
+  }): Promise<Result<any, DomainError>> {
+    return this.getInventoryAlerts(params);
+  }
+
+  static async createInventoryAlertConfig(data: {
+    tenantId: string;
+    productId: string;
+    type: "low_stock" | "out_of_stock" | "reorder_point";
+    message: string;
+    resolved?: boolean;
+  }): Promise<Result<any, DomainError>> {
+    return this.createInventoryAlert(data);
+  }
+
+  static async getInventoryMovementById(
+    tenantId: string,
+    movementId: string,
+  ): Promise<Result<any, DomainError>> {
+    return fromPromise(
+      db
+        .select({
+          id: inventoryTransactions.id,
+          tenantId: inventoryTransactions.tenantId,
+          productId: inventoryTransactions.productId,
+          productName: products.name,
+          type: inventoryTransactions.type,
+          quantity: inventoryTransactions.quantity,
+          previousQuantity: inventoryTransactions.previousQuantity,
+          newQuantity: inventoryTransactions.newQuantity,
+          referenceType: inventoryTransactions.referenceType,
+          referenceId: inventoryTransactions.referenceId,
+          notes: inventoryTransactions.notes,
+          metadata: inventoryTransactions.metadata,
+          createdAt: inventoryTransactions.createdAt,
+        })
+        .from(inventoryTransactions)
+        .leftJoin(products, eq(inventoryTransactions.productId, products.id))
+        .where(
+          and(
+            eq(inventoryTransactions.tenantId, tenantId),
+            eq(inventoryTransactions.id, movementId),
+            not(eq(inventoryTransactions.referenceType, "transfer")),
+          ),
+        )
+        .limit(1),
+      (error) =>
+        ErrorFactories.database(
+          "get_inventory_movement",
+          "Failed to load inventory movement",
+          undefined,
+          error as Error,
+        ),
+    ).then((result) => {
+      if (!result.success) return result;
+      if (!result.data[0])
+        return Err(ErrorFactories.notFound("InventoryMovement", movementId));
+      const row = result.data[0] as any;
+      return Ok({
+        id: row.id,
+        tenantId: row.tenantId,
+        productId: row.productId,
+        productName: row.productName ?? "",
+        quantity: toNumber(row.quantity),
+        type: row.type === "addition" ? "in" : "out",
+        reason:
+          (row.metadata as Record<string, any>)?.reason ?? row.notes ?? "",
+        notes: row.notes ?? undefined,
+        referenceId: row.referenceId ?? undefined,
+        referenceType: row.referenceType ?? undefined,
+        createdAt: row.createdAt ?? new Date(),
+        metadata: row.metadata ?? {},
+      });
+    });
+  }
+
+  static async getInventoryTransactionById(
+    tenantId: string,
+    transactionId: string,
+  ): Promise<Result<any, DomainError>> {
+    return fromPromise(
+      db
+        .select({
+          id: inventoryTransactions.id,
+          tenantId: inventoryTransactions.tenantId,
+          productId: inventoryTransactions.productId,
+          productName: products.name,
+          type: inventoryTransactions.type,
+          quantity: inventoryTransactions.quantity,
+          previousQuantity: inventoryTransactions.previousQuantity,
+          newQuantity: inventoryTransactions.newQuantity,
+          referenceType: inventoryTransactions.referenceType,
+          referenceId: inventoryTransactions.referenceId,
+          notes: inventoryTransactions.notes,
+          createdAt: inventoryTransactions.createdAt,
+        })
+        .from(inventoryTransactions)
+        .leftJoin(products, eq(inventoryTransactions.productId, products.id))
+        .where(
+          and(
+            eq(inventoryTransactions.tenantId, tenantId),
+            eq(inventoryTransactions.id, transactionId),
+          ),
+        )
+        .limit(1),
+      (error) =>
+        ErrorFactories.database(
+          "get_inventory_transaction",
+          "Failed to load inventory transaction",
+          undefined,
+          error as Error,
+        ),
+    ).then((result) => {
+      if (!result.success) return result;
+      if (!result.data[0])
+        return Err(
+          ErrorFactories.notFound("InventoryTransaction", transactionId),
+        );
+      return Ok(mapTransactionRow(result.data[0] as any));
+    });
   }
 }

@@ -7,7 +7,7 @@ import {
 } from "../../_lib/tenant-context";
 
 interface RouteParams {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 // Validation schema for update
@@ -32,7 +32,7 @@ export async function GET(request: NextRequest, context: RouteParams) {
       return toInventoryErrorResponse(tenantContext.error);
     }
 
-    const transferId = context.params.id;
+    const transferId = (await context.params).id;
 
     // Get inventory transfer by ID
     const result = await InventoryService.getInventoryTransferById(
@@ -65,7 +65,7 @@ export async function PUT(request: NextRequest, context: RouteParams) {
       return toInventoryErrorResponse(tenantContext.error);
     }
 
-    const transferId = context.params.id;
+    const transferId = (await context.params).id;
 
     // Parse and validate body
     const body = await request.json();
@@ -110,7 +110,7 @@ export async function DELETE(request: NextRequest, context: RouteParams) {
       return toInventoryErrorResponse(tenantContext.error);
     }
 
-    const transferId = context.params.id;
+    const transferId = (await context.params).id;
 
     // Delete inventory transfer
     const result = await InventoryService.deleteInventoryTransfer(

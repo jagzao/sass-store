@@ -174,7 +174,10 @@ export function HeroCarousel({
       <div
         className={`${currentSlideData.background} h-full flex items-center justify-center text-white relative px-4`}
       >
-        <motion.div className="text-center z-10 w-full max-w-4xl" variants={heroItemVariants}>
+        <motion.div
+          className="text-center z-10 w-full max-w-4xl"
+          variants={heroItemVariants}
+        >
           <motion.h2
             className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 px-2 leading-tight"
             variants={heroItemVariants}

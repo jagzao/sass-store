@@ -47,7 +47,7 @@ export class PerformanceMonitor {
 
   // Start tracking an operation
   startTracking(operationName: string): string {
-    const trackingId = `${operationName}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const trackingId = `${operationName}_${Date.now()}_${crypto.randomUUID().replace(/-/g, "").substring(0, 9)}`;
 
     const metrics: PerformanceMetrics = {
       operationName,

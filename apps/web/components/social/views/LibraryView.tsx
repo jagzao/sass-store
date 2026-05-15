@@ -129,14 +129,14 @@ export default function LibraryView({
       ]);
     } finally {
       setIsLoading(false);
-   }
- }, [tenant]);
+    }
+  }, [tenant]);
 
- useEffect(() => {
-   fetchLibraryContent();
- }, [fetchLibraryContent]);
+  useEffect(() => {
+    fetchLibraryContent();
+  }, [fetchLibraryContent]);
 
- const handleFormatToggle = (formatId: string) => {
+  const handleFormatToggle = (formatId: string) => {
     setSelectedFormats((prev) =>
       prev.includes(formatId)
         ? prev.filter((id) => id !== formatId)

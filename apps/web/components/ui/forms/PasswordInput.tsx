@@ -27,7 +27,9 @@ const PasswordInput = memo(
   }: PasswordInputProps) => {
     const [showPassword, setShowPassword] = useState(false);
     const inputId =
-      id || props.name || `password-${Math.random().toString(36).substr(2, 9)}`;
+      id ||
+      props.name ||
+      `password-${crypto.randomUUID().replace(/-/g, "").substring(0, 9)}`;
 
     const baseInputClassName =
       "w-full px-3 py-2 pr-10 border rounded-md focus:outline-none focus:ring-2 transition-colors !text-gray-900";

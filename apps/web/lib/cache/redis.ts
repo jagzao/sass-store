@@ -1,21 +1,34 @@
-import { Redis } from '@upstash/redis';
+import { Redis } from "@upstash/redis";
 
 // Initialize Redis client (singleton pattern)
 let redisClient: Redis | null = null;
 
+/** Alineado con `.env.vercel.template` y `packages/cache` (REST). Legacy: UPSTASH_REDIS_URL + TOKEN. */
+function getUpstashRestCredentials(): { url: string; token: string } | null {
+  const url =
+    process.env.UPSTASH_REDIS_REST_URL?.trim() ||
+    process.env.UPSTASH_REDIS_URL?.trim() ||
+    "";
+  const token =
+    process.env.UPSTASH_REDIS_REST_TOKEN?.trim() ||
+    process.env.UPSTASH_REDIS_TOKEN?.trim() ||
+    "";
+  if (!url || !token) {
+    return null;
+  }
+  return { url, token };
+}
+
 function getRedisClient(): Redis | null {
-  // Skip Redis if not configured
-  if (!process.env.UPSTASH_REDIS_URL || !process.env.UPSTASH_REDIS_TOKEN) {
-    if (process.env.NODE_ENV === 'development') {
-      console.warn('[Redis] UPSTASH_REDIS_URL or UPSTASH_REDIS_TOKEN not configured, caching disabled');
-    }
+  const creds = getUpstashRestCredentials();
+  if (!creds) {
     return null;
   }
 
   if (!redisClient) {
     redisClient = new Redis({
-      url: process.env.UPSTASH_REDIS_URL,
-      token: process.env.UPSTASH_REDIS_TOKEN,
+      url: creds.url,
+      token: creds.token,
     });
   }
 
@@ -36,13 +49,13 @@ export async function getCached<T>(key: string): Promise<T | null> {
   try {
     const cached = await redis.get(key);
     if (cached) {
-      console.log(`[Redis] Cache HIT: ${key}`);
+      // SECURITY: Redacted sensitive log;
       return cached as T;
     }
-    console.log(`[Redis] Cache MISS: ${key}`);
+    // SECURITY: Redacted sensitive log;
     return null;
   } catch (error) {
-    console.error(`[Redis] Error getting cache for ${key}:`, error);
+    // SECURITY: Redacted sensitive log;
     return null; // Fail gracefully
   }
 }
@@ -56,7 +69,7 @@ export async function getCached<T>(key: string): Promise<T | null> {
 export async function setCache<T>(
   key: string,
   value: T,
-  ttlSeconds: number = 300
+  ttlSeconds: number = 300,
 ): Promise<void> {
   const redis = getRedisClient();
   if (!redis) {
@@ -65,9 +78,9 @@ export async function setCache<T>(
 
   try {
     await redis.set(key, JSON.stringify(value), { ex: ttlSeconds });
-    console.log(`[Redis] Cache SET: ${key} (TTL: ${ttlSeconds}s)`);
+    // SECURITY: Redacted sensitive log`);
   } catch (error) {
-    console.error(`[Redis] Error setting cache for ${key}:`, error);
+    // SECURITY: Redacted sensitive log;
     // Fail gracefully - don't throw
   }
 }
@@ -84,9 +97,9 @@ export async function deleteCache(key: string): Promise<void> {
 
   try {
     await redis.del(key);
-    console.log(`[Redis] Cache DELETE: ${key}`);
+    // SECURITY: Redacted sensitive log;
   } catch (error) {
-    console.error(`[Redis] Error deleting cache for ${key}:`, error);
+    // SECURITY: Redacted sensitive log;
   }
 }
 
@@ -102,7 +115,7 @@ export async function deleteCachePattern(pattern: string): Promise<void> {
 
   try {
     // Note: Upstash Redis doesn't support SCAN, so we track keys manually
-    console.log(`[Redis] Cache DELETE pattern: ${pattern}`);
+    console.warn(`[Redis] Cache DELETE pattern: ${pattern}`);
     // This is a limitation - you'd need to track keys separately for pattern deletion
   } catch (error) {
     console.error(`[Redis] Error deleting cache pattern ${pattern}:`, error);
@@ -118,7 +131,7 @@ export async function deleteCachePattern(pattern: string): Promise<void> {
 export async function getOrSetCache<T>(
   key: string,
   fetcher: () => Promise<T>,
-  ttlSeconds: number = 300
+  ttlSeconds: number = 300,
 ): Promise<T> {
   // Try to get from cache first
   const cached = await getCached<T>(key);
@@ -127,7 +140,7 @@ export async function getOrSetCache<T>(
   }
 
   // Cache miss - fetch data
-  console.log(`[Redis] Fetching data for: ${key}`);
+  // SECURITY: Redacted sensitive log;
   const data = await fetcher();
 
   // Store in cache

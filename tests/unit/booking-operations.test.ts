@@ -14,7 +14,7 @@ describe("Booking Operations", () => {
 
   beforeEach(async () => {
     const db = getTestDb();
-    
+
     const tenant = await createTestTenant({
       slug: "test-salon",
       name: "Test Salon",

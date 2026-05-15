@@ -128,8 +128,12 @@ export function TopNav({ tenantInfo }: TopNavProps) {
                 <SearchableSelectSingle
                   options={categoryOptions}
                   value={selectedCategory}
-                  onChange={(option: SelectOption | null) =>
-                    setSelectedCategory(option?.value || "all")
+                  onChange={(option: string | SelectOption | null) =>
+                    setSelectedCategory(
+                      typeof option === "string"
+                        ? option
+                        : option?.value || "all",
+                    )
                   }
                   placeholder="Categoría"
                   className="h-full"

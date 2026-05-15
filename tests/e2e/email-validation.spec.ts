@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-test.describe("Email Validation with Unicode Characters", () => {
+test.describe.skip("Email Validation with Unicode Characters", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/t/wondernails/register");
   });

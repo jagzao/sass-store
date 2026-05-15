@@ -34,7 +34,12 @@ interface CalendarTimelineProps {
   initialBookings: TimelineBooking[];
   currentDate: Date;
   tenantSlug: string;
-  onBookingMoved?: (bookingId: string, newDate: string, newTime: string, newResourceId: string) => void;
+  onBookingMoved?: (
+    bookingId: string,
+    newDate: string,
+    newTime: string,
+    newResourceId: string,
+  ) => void;
 }
 
 const RESOURCES = [
@@ -90,7 +95,7 @@ function DraggableAppointment({ booking }: { booking: TimelineBooking }) {
       {...listeners}
       {...attributes}
       className={`absolute left-1 right-1 z-10 rounded-md border shadow-sm p-2 cursor-grab active:cursor-grabbing transition-opacity overflow-hidden ${getStatusColor(
-        booking.status
+        booking.status,
       )} ${isDragging ? "opacity-50 ring-2 ring-[#C5A059] shadow-lg" : "opacity-100"}`}
       style={{
         height,
@@ -98,22 +103,38 @@ function DraggableAppointment({ booking }: { booking: TimelineBooking }) {
       }}
     >
       {/* Accent left border */}
-      <div className={`absolute left-0 top-0 bottom-0 w-1 ${getAccentColor(booking.status)}`} />
-      
+      <div
+        className={`absolute left-0 top-0 bottom-0 w-1 ${getAccentColor(booking.status)}`}
+      />
+
       <div className="pl-1 h-full flex flex-col">
         <div className="flex items-center justify-between gap-1">
-          <span className="font-semibold text-xs truncate">{booking.customerName}</span>
+          <span className="font-semibold text-xs truncate">
+            {booking.customerName}
+          </span>
           <span className="text-[10px] font-medium text-gray-500 bg-white/50 px-1 rounded truncate">
             {booking.time}
           </span>
         </div>
-        <span className="text-[10px] truncate text-gray-500">{booking.serviceName}</span>
+        <span className="text-[10px] truncate text-gray-500">
+          {booking.serviceName}
+        </span>
       </div>
     </div>
   );
 }
 
-function TimeSlot({ id, time, resourceId, children }: { id: string; time: string; resourceId: string; children?: React.ReactNode }) {
+function TimeSlot({
+  id,
+  time,
+  resourceId,
+  children,
+}: {
+  id: string;
+  time: string;
+  resourceId: string;
+  children?: React.ReactNode;
+}) {
   const { isOver, setNodeRef } = useDroppable({
     id,
     data: { time, resourceId },
@@ -138,9 +159,13 @@ export default function CalendarTimeline({
   onBookingMoved,
 }: CalendarTimelineProps) {
   const [bookings, setBookings] = useState<TimelineBooking[]>(() =>
-    initialBookings.map((b) => ({ ...b, resourceId: b.resourceId || "principal" }))
+    initialBookings.map((b) => ({
+      ...b,
+      resourceId: b.resourceId || "principal",
+    })),
   );
-  const [activeDragBooking, setActiveDragBooking] = useState<TimelineBooking | null>(null);
+  const [activeDragBooking, setActiveDragBooking] =
+    useState<TimelineBooking | null>(null);
 
   // Generate grid metrics
   const timeSlots: string[] = useMemo(() => {
@@ -162,7 +187,7 @@ export default function CalendarTimeline({
       activationConstraint: {
         distance: 8,
       },
-    })
+    }),
   );
 
   const handleDragStart = (event: any) => {
@@ -188,7 +213,10 @@ export default function CalendarTimeline({
     if (!activeBooking) return;
 
     // Check if the slot actually changed
-    if (activeBooking.time === dropData.time && activeBooking.resourceId === dropData.resourceId) {
+    if (
+      activeBooking.time === dropData.time &&
+      activeBooking.resourceId === dropData.resourceId
+    ) {
       return;
     }
 
@@ -197,8 +225,8 @@ export default function CalendarTimeline({
       prev.map((b) =>
         b.id === bookingId
           ? { ...b, time: dropData.time, resourceId: dropData.resourceId }
-          : b
-      )
+          : b,
+      ),
     );
 
     // Trigger WhatsApp notification & save
@@ -208,11 +236,16 @@ export default function CalendarTimeline({
       {
         loading: "Moviendo cita y notificando por WhatsApp...",
         success: () => {
-          onBookingMoved?.(bookingId, activeBooking.date, dropData.time, dropData.resourceId);
+          onBookingMoved?.(
+            bookingId,
+            activeBooking.date,
+            dropData.time,
+            dropData.resourceId,
+          );
           return `Cita de ${activeBooking.customerName} movida a las ${dropData.time}`;
         },
         error: "Error al mover la cita",
-      }
+      },
     );
   };
 
@@ -248,21 +281,33 @@ export default function CalendarTimeline({
           {/* Time Axis (Left) */}
           <div className="w-20 flex-shrink-0 border-r border-gray-100 bg-gray-50/30 sticky left-0 z-20">
             <div className="h-12 border-b border-gray-100 bg-white sticky top-0 z-30 flex items-center justify-center">
-              <span className="text-[10px] font-medium text-gray-400 uppercase tracking-wider">Hora</span>
+              <span className="text-[10px] font-medium text-gray-400 uppercase tracking-wider">
+                Hora
+              </span>
             </div>
             {timeSlots.map((time) => (
-              <div key={`axis-${time}`} className="h-[60px] border-b border-gray-100 px-2 flex justify-end">
-                <span className="text-xs font-medium text-gray-500 mt-2">{time}</span>
+              <div
+                key={`axis-${time}`}
+                className="h-[60px] border-b border-gray-100 px-2 flex justify-end"
+              >
+                <span className="text-xs font-medium text-gray-500 mt-2">
+                  {time}
+                </span>
               </div>
             ))}
           </div>
 
           {/* Resources Columns */}
           {RESOURCES.map((resource) => (
-            <div key={resource.id} className="flex-1 min-w-[250px] border-r border-gray-100 relative">
+            <div
+              key={resource.id}
+              className="flex-1 min-w-[250px] border-r border-gray-100 relative"
+            >
               {/* Resource Header */}
               <div className="h-12 border-b border-gray-100 bg-white sticky top-0 z-10 flex flex-col items-center justify-center">
-                <span className="text-sm font-medium text-gray-900">{resource.name}</span>
+                <span className="text-sm font-medium text-gray-900">
+                  {resource.name}
+                </span>
               </div>
 
               {/* Time Slots for Resource */}
@@ -270,13 +315,21 @@ export default function CalendarTimeline({
                 {timeSlots.map((time) => {
                   const slotId = `${resource.id}-${time}`;
                   const slotBookings = dayBookings.filter(
-                    (b) => b.resourceId === resource.id && b.time === time
+                    (b) => b.resourceId === resource.id && b.time === time,
                   );
 
                   return (
-                    <TimeSlot key={slotId} id={slotId} time={time} resourceId={resource.id}>
+                    <TimeSlot
+                      key={slotId}
+                      id={slotId}
+                      time={time}
+                      resourceId={resource.id}
+                    >
                       {slotBookings.map((booking) => (
-                        <DraggableAppointment key={booking.id} booking={booking} />
+                        <DraggableAppointment
+                          key={booking.id}
+                          booking={booking}
+                        />
                       ))}
                     </TimeSlot>
                   );
@@ -290,7 +343,9 @@ export default function CalendarTimeline({
             {activeDragBooking ? (
               <div className="opacity-80 scale-105 shadow-xl ring-2 ring-[#C5A059] cursor-grabbing rounded-md p-2 bg-white border border-[#C5A059]/40 w-[240px]">
                 <div className="flex items-center justify-between gap-1 mb-1">
-                  <span className="font-semibold text-xs truncate">{activeDragBooking.customerName}</span>
+                  <span className="font-semibold text-xs truncate">
+                    {activeDragBooking.customerName}
+                  </span>
                   <span className="text-[10px] font-medium text-gray-500 bg-gray-100 px-1 rounded">
                     {activeDragBooking.time}
                   </span>

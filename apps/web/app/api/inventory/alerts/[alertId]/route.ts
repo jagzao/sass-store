@@ -7,9 +7,7 @@ import {
 } from "../../_lib/tenant-context";
 
 interface RouteParams {
-  params: {
-    alertId: string;
-  };
+  params: Promise<{ alertId: string }>;
 }
 
 const bodySchema = z.object({
@@ -28,7 +26,7 @@ export async function GET(request: NextRequest, context: RouteParams) {
     }
 
     // Obtener alertId de los params
-    const { alertId } = context.params;
+    const { alertId } = await context.params;
 
     // Obtener alerta
     const alert = await InventoryService.getInventoryAlertById(
@@ -62,7 +60,7 @@ export async function PUT(request: NextRequest, context: RouteParams) {
     }
 
     // Obtener alertId de los params
-    const { alertId } = context.params;
+    const { alertId } = await context.params;
 
     // Parsear y validar body
     const body = await request.json();
@@ -111,7 +109,7 @@ export async function DELETE(request: NextRequest, context: RouteParams) {
     }
 
     // Obtener alertId de los params
-    const { alertId } = context.params;
+    const { alertId } = await context.params;
 
     // Eliminar alerta
     const result = await InventoryService.deleteInventoryAlert(

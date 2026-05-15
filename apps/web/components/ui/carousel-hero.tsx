@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import React, { useMemo } from 'react';
-import { useCarousel } from '@/lib/hooks/use-carousel';
+import React, { useMemo } from "react";
+import { useCarousel } from "@/lib/hooks/use-carousel";
 
 interface CarouselHeroProps {
   tenantData: {
@@ -26,20 +26,21 @@ export function CarouselHero({ tenantData }: CarouselHeroProps) {
   const slides = useMemo(() => {
     const modes = {
       booking: {
-        icon: '📅',
-        title: 'Reserva tu Cita',
-        description: 'Agenda fácilmente tus servicios favoritos',
-        cta: 'Reservar Ahora'
+        icon: "📅",
+        title: "Reserva tu Cita",
+        description: "Agenda fácilmente tus servicios favoritos",
+        cta: "Reservar Ahora",
       },
       catalog: {
-        icon: '🛍️',
-        title: 'Explora Nuestros Productos',
-        description: 'Descubre toda nuestra selección premium',
-        cta: 'Ver Catálogo'
-      }
+        icon: "🛍️",
+        title: "Explora Nuestros Productos",
+        description: "Descubre toda nuestra selección premium",
+        cta: "Ver Catálogo",
+      },
     };
 
-    const modeData = modes[tenantData.mode as keyof typeof modes] || modes.catalog;
+    const modeData =
+      modes[tenantData.mode as keyof typeof modes] || modes.catalog;
 
     return [
       {
@@ -48,33 +49,40 @@ export function CarouselHero({ tenantData }: CarouselHeroProps) {
         subtitle: modeData.title,
         description: tenantData.description || modeData.description,
         image: modeData.icon,
-        cta: modeData.cta
+        cta: modeData.cta,
       },
       {
         id: 2,
         title: tenantData.name,
-        subtitle: 'Contacto Directo',
+        subtitle: "Contacto Directo",
         description: `Llámanos al ${tenantData.contact.phone} o visítanos en ${tenantData.contact.address}`,
-        image: '📞',
-        cta: 'Contactar'
+        image: "📞",
+        cta: "Contactar",
       },
       {
         id: 3,
         title: tenantData.name,
-        subtitle: 'Calidad Premium',
-        description: 'Comprometidos con la excelencia en cada servicio que ofrecemos',
-        image: '⭐',
-        cta: 'Conocer Más'
-      }
+        subtitle: "Calidad Premium",
+        description:
+          "Comprometidos con la excelencia en cada servicio que ofrecemos",
+        image: "⭐",
+        cta: "Conocer Más",
+      },
     ];
-  }, [tenantData.name, tenantData.mode, tenantData.description, tenantData.contact.phone, tenantData.contact.address]);
+  }, [
+    tenantData.name,
+    tenantData.mode,
+    tenantData.description,
+    tenantData.contact.phone,
+    tenantData.contact.address,
+  ]);
 
   // Use shared carousel logic
   const carousel = useCarousel({
     itemCount: slides.length,
     autoPlayInterval: 5000,
     initialIndex: 0,
-    loop: true
+    loop: true,
   });
 
   return (
@@ -85,7 +93,12 @@ export function CarouselHero({ tenantData }: CarouselHeroProps) {
           width: 100%;
           height: 100vh;
           overflow: hidden;
-          background: linear-gradient(135deg, ${tenantData.branding.primaryColor}22, ${tenantData.branding.secondaryColor || tenantData.branding.primaryColor}11);
+          background: linear-gradient(
+            135deg,
+            ${tenantData.branding.primaryColor}22,
+            ${tenantData.branding.secondaryColor ||
+            tenantData.branding.primaryColor}11
+          );
         }
 
         .slide-container {
@@ -153,7 +166,8 @@ export function CarouselHero({ tenantData }: CarouselHeroProps) {
         }
 
         .slide-cta:hover {
-          background: ${tenantData.branding.secondaryColor || tenantData.branding.primaryColor};
+          background: ${tenantData.branding.secondaryColor ||
+          tenantData.branding.primaryColor};
           transform: translateY(-2px);
           box-shadow: 0 4px 12px ${tenantData.branding.primaryColor}40;
         }
@@ -261,16 +275,18 @@ export function CarouselHero({ tenantData }: CarouselHeroProps) {
                   {slide.cta}
                 </a>
               </div>
-              <div className="image-content">
-                {slide.image}
-              </div>
+              <div className="image-content">{slide.image}</div>
             </div>
           </div>
         ))}
       </div>
 
       <div className="controls">
-        <button className="arrow-btn" onClick={carousel.handlePrev} aria-label="Slide anterior">
+        <button
+          className="arrow-btn"
+          onClick={carousel.handlePrev}
+          aria-label="Slide anterior"
+        >
           ←
         </button>
 
@@ -278,14 +294,18 @@ export function CarouselHero({ tenantData }: CarouselHeroProps) {
           {slides.map((_, index) => (
             <button
               key={index}
-              className={`indicator ${index === carousel.active ? 'active' : ''}`}
+              className={`indicator ${index === carousel.active ? "active" : ""}`}
               onClick={() => carousel.goToSlide(index)}
               aria-label={`Ir a slide ${index + 1}`}
             />
           ))}
         </div>
 
-        <button className="arrow-btn" onClick={carousel.handleNext} aria-label="Slide siguiente">
+        <button
+          className="arrow-btn"
+          onClick={carousel.handleNext}
+          aria-label="Slide siguiente"
+        >
           →
         </button>
       </div>

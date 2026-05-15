@@ -39,7 +39,7 @@ interface HistorialMedicoProps {
 }
 
 const DEDOS = ["pulgar", "indice", "medio", "anular", "menique"] as const;
-type Dedo = typeof DEDOS[number];
+type Dedo = (typeof DEDOS)[number];
 const DEDO_LABELS: Record<Dedo, string> = {
   pulgar: "Pulgar",
   indice: "Índice",
@@ -48,7 +48,7 @@ const DEDO_LABELS: Record<Dedo, string> = {
   menique: "Meñique",
 };
 const TECNICAS = ["tips", "gel", "dualform"] as const;
-type Tecnica = typeof TECNICAS[number];
+type Tecnica = (typeof TECNICAS)[number];
 const TECNICA_LABELS: Record<Tecnica, string> = {
   tips: "Tips",
   gel: "Gel",
@@ -90,7 +90,11 @@ function BlockHeader({
         {title}
       </h3>
       <span className="ml-auto text-[#8B5CF6]">
-        {collapsed ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
+        {collapsed ? (
+          <ChevronDown className="h-4 w-4" />
+        ) : (
+          <ChevronUp className="h-4 w-4" />
+        )}
       </span>
     </div>
   );
@@ -98,16 +102,18 @@ function BlockHeader({
 
 // ─── Main Component (forwardRef) ────────────────────────────────────────────
 const HistorialMedico = forwardRef<HistorialMedicoHandle, HistorialMedicoProps>(
-  function HistorialMedico({ initialData = {}, onSave }, ref) {
+  ({ initialData = {}, onSave }, ref) => {
     const [draft, setDraft] = useState<HistorialMedicoData>(initialData);
 
     // Sync when initialData changes (e.g. customer reloads)
     useEffect(() => {
       setDraft(initialData);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [JSON.stringify(initialData)]);
 
-    const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>({
+    const [collapsedSections, setCollapsedSections] = useState<
+      Record<string, boolean>
+    >({
       preferencias: false,
       sanitario: false,
       medidas: true,
@@ -175,7 +181,12 @@ const HistorialMedico = forwardRef<HistorialMedicoHandle, HistorialMedicoProps>(
                   <input
                     type="text"
                     value={draft.musicaFavorita || ""}
-                    onChange={(e) => setDraft((p) => ({ ...p, musicaFavorita: e.target.value }))}
+                    onChange={(e) =>
+                      setDraft((p) => ({
+                        ...p,
+                        musicaFavorita: e.target.value,
+                      }))
+                    }
                     placeholder="Ej: Reggaeton, Pop..."
                     className="w-full text-sm px-3 py-2 border border-[#DDD6FE] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B5CF6]/40 bg-white"
                   />
@@ -187,7 +198,9 @@ const HistorialMedico = forwardRef<HistorialMedicoHandle, HistorialMedicoProps>(
                   <input
                     type="text"
                     value={draft.snackFavorito || ""}
-                    onChange={(e) => setDraft((p) => ({ ...p, snackFavorito: e.target.value }))}
+                    onChange={(e) =>
+                      setDraft((p) => ({ ...p, snackFavorito: e.target.value }))
+                    }
                     placeholder="Ej: Papas, Gomitas..."
                     className="w-full text-sm px-3 py-2 border border-[#DDD6FE] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B5CF6]/40 bg-white"
                   />
@@ -207,30 +220,40 @@ const HistorialMedico = forwardRef<HistorialMedicoHandle, HistorialMedicoProps>(
             {!collapsedSections.sanitario && (
               <div className="space-y-4">
                 <div>
-                  <p className="text-xs text-red-600 font-medium mb-2">Enfermedades / Condiciones</p>
+                  <p className="text-xs text-red-600 font-medium mb-2">
+                    Enfermedades / Condiciones
+                  </p>
                   <div className="flex flex-wrap gap-3">
-                    {(["diabetes", "psoriasis", "dermatitis"] as const).map((enf) => (
-                      <label
-                        key={enf}
-                        className={`flex items-center gap-2 cursor-pointer select-none rounded-lg px-3 py-2 border transition-colors ${
-                          draft.enfermedades?.[enf]
-                            ? "bg-red-50 border-red-300 text-red-700"
-                            : "bg-white border-gray-200 text-gray-600"
-                        }`}
-                      >
-                        <input
-                          type="checkbox"
-                          checked={!!draft.enfermedades?.[enf]}
-                          onChange={(e) => setEnfermedad(enf, e.target.checked)}
-                          className="accent-red-500 h-4 w-4"
-                        />
-                        <span className="text-sm">{enf.charAt(0).toUpperCase() + enf.slice(1)}</span>
-                      </label>
-                    ))}
+                    {(["diabetes", "psoriasis", "dermatitis"] as const).map(
+                      (enf) => (
+                        <label
+                          key={enf}
+                          className={`flex items-center gap-2 cursor-pointer select-none rounded-lg px-3 py-2 border transition-colors ${
+                            draft.enfermedades?.[enf]
+                              ? "bg-red-50 border-red-300 text-red-700"
+                              : "bg-white border-gray-200 text-gray-600"
+                          }`}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={!!draft.enfermedades?.[enf]}
+                            onChange={(e) =>
+                              setEnfermedad(enf, e.target.checked)
+                            }
+                            className="accent-red-500 h-4 w-4"
+                          />
+                          <span className="text-sm">
+                            {enf.charAt(0).toUpperCase() + enf.slice(1)}
+                          </span>
+                        </label>
+                      ),
+                    )}
                   </div>
                 </div>
                 <div>
-                  <label className="block text-xs text-red-600 font-medium mb-1">Otras condiciones</label>
+                  <label className="block text-xs text-red-600 font-medium mb-1">
+                    Otras condiciones
+                  </label>
                   <input
                     type="text"
                     value={draft.enfermedades?.otras || ""}
@@ -245,7 +268,12 @@ const HistorialMedico = forwardRef<HistorialMedicoHandle, HistorialMedicoProps>(
                   </label>
                   <textarea
                     value={draft.contraindicaciones || ""}
-                    onChange={(e) => setDraft((p) => ({ ...p, contraindicaciones: e.target.value }))}
+                    onChange={(e) =>
+                      setDraft((p) => ({
+                        ...p,
+                        contraindicaciones: e.target.value,
+                      }))
+                    }
                     rows={2}
                     placeholder="Alergias a productos, reacciones previas..."
                     className="w-full text-sm px-3 py-2 border border-red-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-300 bg-white resize-none"
@@ -268,9 +296,14 @@ const HistorialMedico = forwardRef<HistorialMedicoHandle, HistorialMedicoProps>(
                 <table className="w-full text-sm">
                   <thead>
                     <tr>
-                      <th className="text-left py-2 pr-3 text-xs font-semibold text-green-700 w-24">Dedo</th>
+                      <th className="text-left py-2 pr-3 text-xs font-semibold text-green-700 w-24">
+                        Dedo
+                      </th>
                       {TECNICAS.map((t) => (
-                        <th key={t} className="text-center py-2 px-2 text-xs font-semibold text-green-700">
+                        <th
+                          key={t}
+                          className="text-center py-2 px-2 text-xs font-semibold text-green-700"
+                        >
                           {TECNICA_LABELS[t]}
                         </th>
                       ))}
@@ -279,13 +312,17 @@ const HistorialMedico = forwardRef<HistorialMedicoHandle, HistorialMedicoProps>(
                   <tbody className="divide-y divide-green-100">
                     {DEDOS.map((dedo) => (
                       <tr key={dedo} className="hover:bg-green-50/50">
-                        <td className="py-2 pr-3 font-medium text-gray-700 text-xs">{DEDO_LABELS[dedo]}</td>
+                        <td className="py-2 pr-3 font-medium text-gray-700 text-xs">
+                          {DEDO_LABELS[dedo]}
+                        </td>
                         {TECNICAS.map((tecnica) => (
                           <td key={tecnica} className="py-2 px-2 text-center">
                             <input
                               type="text"
                               value={draft.medidas?.[dedo]?.[tecnica] || ""}
-                              onChange={(e) => setMedida(dedo, tecnica, e.target.value)}
+                              onChange={(e) =>
+                                setMedida(dedo, tecnica, e.target.value)
+                              }
                               placeholder="—"
                               className="w-16 text-center text-sm px-1 py-1 border border-green-200 rounded focus:outline-none focus:ring-1 focus:ring-green-400 bg-white"
                             />
@@ -310,7 +347,9 @@ const HistorialMedico = forwardRef<HistorialMedicoHandle, HistorialMedicoProps>(
             {!collapsedSections.estilo && (
               <div className="space-y-4">
                 <div>
-                  <p className="text-xs text-amber-700 font-medium mb-2">Forma de uña</p>
+                  <p className="text-xs text-amber-700 font-medium mb-2">
+                    Forma de uña
+                  </p>
                   <div className="flex flex-wrap gap-2">
                     {FORMAS_UNA.map((forma) => (
                       <button
@@ -319,7 +358,8 @@ const HistorialMedico = forwardRef<HistorialMedicoHandle, HistorialMedicoProps>(
                         onClick={() =>
                           setDraft((p) => ({
                             ...p,
-                            formaUna: p.formaUna === forma.value ? "" : forma.value,
+                            formaUna:
+                              p.formaUna === forma.value ? "" : forma.value,
                           }))
                         }
                         className={`flex items-center gap-1.5 px-3 py-2 rounded-lg border text-sm font-medium transition-all ${
@@ -335,7 +375,9 @@ const HistorialMedico = forwardRef<HistorialMedicoHandle, HistorialMedicoProps>(
                   </div>
                 </div>
                 <div>
-                  <p className="text-xs text-amber-700 font-medium mb-2">Largo deseado</p>
+                  <p className="text-xs text-amber-700 font-medium mb-2">
+                    Largo deseado
+                  </p>
                   <div className="flex gap-2">
                     {LARGOS_UNA.map((largo) => (
                       <button
@@ -344,7 +386,8 @@ const HistorialMedico = forwardRef<HistorialMedicoHandle, HistorialMedicoProps>(
                         onClick={() =>
                           setDraft((p) => ({
                             ...p,
-                            largoDeseado: p.largoDeseado === largo.value ? "" : largo.value,
+                            largoDeseado:
+                              p.largoDeseado === largo.value ? "" : largo.value,
                           }))
                         }
                         className={`px-4 py-2 rounded-lg border text-sm font-medium transition-all ${
@@ -373,7 +416,9 @@ const HistorialMedico = forwardRef<HistorialMedicoHandle, HistorialMedicoProps>(
             {!collapsedSections.notas && (
               <textarea
                 value={draft.notasGenerales || ""}
-                onChange={(e) => setDraft((p) => ({ ...p, notasGenerales: e.target.value }))}
+                onChange={(e) =>
+                  setDraft((p) => ({ ...p, notasGenerales: e.target.value }))
+                }
                 rows={3}
                 placeholder="Notas sobre preferencias, observaciones especiales..."
                 className="w-full text-sm px-3 py-2 border border-[#DDD6FE] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B5CF6]/40 bg-white resize-none"

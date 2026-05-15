@@ -1,7 +1,7 @@
 // Utilidades para preload estratégico de recursos críticos
 
 export function preloadCriticalResources(tenantSlug: string) {
-  if (typeof window === 'undefined') return;
+  if (typeof window === "undefined") return;
 
   // Preload APIs críticas
   const criticalAPIs = [
@@ -10,34 +10,34 @@ export function preloadCriticalResources(tenantSlug: string) {
     // Product preload will be handled through the API client
   ];
 
-  criticalAPIs.forEach(href => {
-    const link = document.createElement('link');
-    link.rel = 'preload';
+  criticalAPIs.forEach((href) => {
+    const link = document.createElement("link");
+    link.rel = "preload";
     link.href = href;
-    link.as = 'fetch';
-    link.crossOrigin = 'anonymous';
+    link.as = "fetch";
+    link.crossOrigin = "anonymous";
     document.head.appendChild(link);
   });
 
   // Preload componentes críticos
   const criticalComponents = [
-    '/_next/static/chunks/pages/t/[tenant]/page.js',
-    '/_next/static/chunks/components/ui/TenantHeroCarousel.js',
+    "/_next/static/chunks/pages/t/[tenant]/page.js",
+    "/_next/static/chunks/components/ui/TenantHeroCarousel.js",
   ];
 
-  criticalComponents.forEach(href => {
-    const link = document.createElement('link');
-    link.rel = 'preload';
+  criticalComponents.forEach((href) => {
+    const link = document.createElement("link");
+    link.rel = "preload";
     link.href = href;
-    link.as = 'script';
+    link.as = "script";
     document.head.appendChild(link);
   });
 }
 
 export function preloadImages(imageUrls: string[]) {
-  if (typeof window === 'undefined') return;
+  if (typeof window === "undefined") return;
 
-  imageUrls.forEach(url => {
+  imageUrls.forEach((url) => {
     const img = new Image();
     img.src = url;
   });

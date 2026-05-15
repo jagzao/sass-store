@@ -8,8 +8,8 @@
 // Test the cache header constants directly (no Next.js dependency)
 const NO_CACHE_HEADERS = {
   "Cache-Control": "private, no-store, max-age=0, must-revalidate",
-  "Pragma": "no-cache",
-  "Expires": "0",
+  Pragma: "no-cache",
+  Expires: "0",
 } as const;
 
 // Sensitive path patterns - matches both exact paths and paths with trailing segments

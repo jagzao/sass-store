@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef } from "react";
 
 export interface UseCarouselOptions {
   /**
@@ -113,9 +113,8 @@ export function useCarousel({
   autoPlayInterval = 5000,
   initialIndex = 0,
   loop = true,
-  onChange
+  onChange,
 }: UseCarouselOptions): UseCarouselReturn {
-
   const [active, setActive] = useState(initialIndex);
   const [isMounted, setIsMounted] = useState(false);
   const autoPlayRef = useRef<NodeJS.Timeout | null>(null);
@@ -141,7 +140,7 @@ export function useCarousel({
     clearAutoPlay();
 
     autoPlayRef.current = setInterval(() => {
-      setActive(prev => {
+      setActive((prev) => {
         const nextIndex = prev + 1;
         if (loop) {
           return nextIndex >= itemCount ? 0 : nextIndex;
@@ -152,16 +151,19 @@ export function useCarousel({
   }, [autoPlayInterval, itemCount, loop, clearAutoPlay]);
 
   // Navigate to specific slide
-  const goToSlide = useCallback((index: number) => {
-    const clampedIndex = Math.max(0, Math.min(index, itemCount - 1));
-    setActive(clampedIndex);
-    onChange?.(clampedIndex);
-    resetAutoPlay();
-  }, [itemCount, onChange, resetAutoPlay]);
+  const goToSlide = useCallback(
+    (index: number) => {
+      const clampedIndex = Math.max(0, Math.min(index, itemCount - 1));
+      setActive(clampedIndex);
+      onChange?.(clampedIndex);
+      resetAutoPlay();
+    },
+    [itemCount, onChange, resetAutoPlay],
+  );
 
   // Navigate to next slide
   const handleNext = useCallback(() => {
-    setActive(prev => {
+    setActive((prev) => {
       let nextIndex;
       if (loop) {
         nextIndex = prev + 1 >= itemCount ? 0 : prev + 1;
@@ -176,7 +178,7 @@ export function useCarousel({
 
   // Navigate to previous slide
   const handlePrev = useCallback(() => {
-    setActive(prev => {
+    setActive((prev) => {
       let prevIndex;
       if (loop) {
         prevIndex = prev - 1 < 0 ? itemCount - 1 : prev - 1;
@@ -225,6 +227,6 @@ export function useCarousel({
     isLast,
     pause,
     resume,
-    resetAutoPlay
+    resetAutoPlay,
   };
 }

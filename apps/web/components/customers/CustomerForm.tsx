@@ -49,7 +49,7 @@ export default function CustomerForm({
   const [status, setStatus] = useState<"active" | "inactive" | "blocked">(
     initialData?.status || "active",
   );
-  
+
   // New Fields: Birthday and Medical History
   const [birthday, setBirthday] = useState(
     initialData?.birthday ? initialData.birthday.split("T")[0] : "",
@@ -72,18 +72,18 @@ export default function CustomerForm({
       setConditionsTag("");
     }
   };
-  
+
   const handleRemoveCondition = (conditionToRemove: string) => {
     setConditions(conditions.filter((c) => c !== conditionToRemove));
   };
-  
+
   const handleAddAllergy = () => {
     if (allergiesTag.trim() && !allergies.includes(allergiesTag.trim())) {
       setAllergies([...allergies, allergiesTag.trim()]);
       setAllergiesTag("");
     }
   };
-  
+
   const handleRemoveAllergy = (allergyToRemove: string) => {
     setAllergies(allergies.filter((a) => a !== allergyToRemove));
   };
@@ -329,8 +329,10 @@ export default function CustomerForm({
 
         {/* SECTION: MEDICAL HISTORY */}
         <div className="pt-6 mt-6 border-t border-gray-200">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">⚕️ Historial Médico</h3>
-          
+          <h3 className="text-lg font-medium text-gray-900 mb-4">
+            ⚕️ Historial Médico
+          </h3>
+
           <div className="space-y-5">
             {/* Conditions */}
             <div>

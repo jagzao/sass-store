@@ -34,7 +34,7 @@ export class AdvancedRateLimiter {
    */
   async checkLimit(
     request: NextRequest,
-    identifier: string = "global"
+    identifier: string = "global",
   ): Promise<{
     allowed: boolean;
     remaining: number;
@@ -53,7 +53,7 @@ export class AdvancedRateLimiter {
         "blacklisted_ip_access",
         ["blacklisted_ip"],
         ip,
-        request.headers.get("user-agent") || "unknown"
+        request.headers.get("user-agent") || "unknown",
       );
 
       return {
@@ -119,7 +119,7 @@ export class AdvancedRateLimiter {
           requestsInWindow: entry.count,
           windowMs: this.config.windowMs,
           blockDuration,
-        }
+        },
       );
 
       return {
@@ -241,6 +241,6 @@ if (typeof globalThis !== "undefined") {
       apiRateLimiter.cleanup();
       configRateLimiter.cleanup();
     },
-    5 * 60 * 1000
+    5 * 60 * 1000,
   );
 }

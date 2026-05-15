@@ -87,7 +87,7 @@ export default function POSPage() {
   const addToCart = (product: Product) => {
     setCart((prevCart) => {
       const existingItem = prevCart.find(
-        (item) => item.product.id === product.id
+        (item) => item.product.id === product.id,
       );
       if (existingItem) {
         return prevCart.map((item) =>
@@ -97,7 +97,7 @@ export default function POSPage() {
                 quantity: item.quantity + 1,
                 totalPrice: (item.quantity + 1) * item.unitPrice,
               }
-            : item
+            : item,
         );
       } else {
         return [
@@ -127,14 +127,14 @@ export default function POSPage() {
               quantity,
               totalPrice: quantity * item.unitPrice,
             }
-          : item
-      )
+          : item,
+      ),
     );
   };
 
   const removeFromCart = (productId: string) => {
     setCart((prevCart) =>
-      prevCart.filter((item) => item.product.id !== productId)
+      prevCart.filter((item) => item.product.id !== productId),
     );
   };
 
@@ -148,11 +148,11 @@ export default function POSPage() {
     setLoading(true);
     try {
       // Get or generate a terminal ID for this browser/device
-      let terminalId = localStorage.getItem('posTerminalId');
+      let terminalId = localStorage.getItem("posTerminalId");
       if (!terminalId) {
         // Generate a unique terminal ID for this device
-        terminalId = `pos-web-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-        localStorage.setItem('posTerminalId', terminalId);
+        terminalId = `pos-web-${Date.now()}-${crypto.randomUUID().replace(/-/g, "").substring(0, 9)}`;
+        localStorage.setItem("posTerminalId", terminalId);
       }
 
       const saleData = {
@@ -187,7 +187,7 @@ export default function POSPage() {
       setPaymentMethod("cash");
 
       alert(
-        `Venta procesada exitosamente!\nTotal: $${getTotal().toFixed(2)}\nOrden: ${result.data.order.orderNumber}`
+        `Venta procesada exitosamente!\nTotal: $${getTotal().toFixed(2)}\nOrden: ${result.data.order.orderNumber}`,
       );
     } catch (error) {
       console.error("Error processing sale:", error);
@@ -287,7 +287,7 @@ export default function POSPage() {
                         SKU: {product.sku}
                       </p>
                       <p className="text-lg font-bold text-green-600">
-                        ${product.price.toFixed(2)}
+                        ${Number(product.price).toFixed(2)}
                       </p>
                       <button className="mt-2 w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors">
                         Agregar

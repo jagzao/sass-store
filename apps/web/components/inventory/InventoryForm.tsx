@@ -392,9 +392,5 @@ export function InventoryForm({
     return <div className="p-1">{formContent}</div>;
   }
 
-  return (
-    <div className="bg-white shadow-sm rounded-lg p-6">
-      {formContent}
-    </div>
-  );
+  return <div className="bg-white shadow-sm rounded-lg p-6">{formContent}</div>;
 }

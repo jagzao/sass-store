@@ -1,17 +1,24 @@
-'use client';
+"use client";
 
-import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  ReactNode,
+} from "react";
 
 interface Toast {
   id: string;
   message: string;
-  type: 'success' | 'error' | 'info' | 'warning';
+  type: "success" | "error" | "info" | "warning";
   duration?: number;
 }
 
 interface ToastContextValue {
   toasts: Toast[];
-  showToast: (message: string, type?: Toast['type'], duration?: number) => void;
+  showToast: (message: string, type?: Toast["type"], duration?: number) => void;
   removeToast: (id: string) => void;
 }
 
@@ -24,7 +31,7 @@ export function useToast() {
     return {
       toasts: [],
       showToast: () => {},
-      removeToast: () => {}
+      removeToast: () => {},
     };
   }
   return context;
@@ -43,40 +50,43 @@ export function ToastProvider({ children }: ToastProviderProps) {
   }, []);
 
   const removeToast = useCallback((id: string) => {
-    setToasts(prev => prev.filter(toast => toast.id !== id));
+    setToasts((prev) => prev.filter((toast) => toast.id !== id));
   }, []);
 
-  const showToast = useCallback((message: string, type: Toast['type'] = 'info', duration = 5000) => {
-    const id = crypto.randomUUID().replace(/-/g, '').substring(0, 9);
-    const toast: Toast = { id, message, type, duration };
+  const showToast = useCallback(
+    (message: string, type: Toast["type"] = "info", duration = 5000) => {
+      const id = crypto.randomUUID().replace(/-/g, "").substring(0, 9);
+      const toast: Toast = { id, message, type, duration };
 
-    setToasts(prev => [...prev, toast]);
+      setToasts((prev) => [...prev, toast]);
 
-    if (duration > 0) {
-      setTimeout(() => {
-        removeToast(id);
-      }, duration);
-    }
-  }, [removeToast]);
+      if (duration > 0) {
+        setTimeout(() => {
+          removeToast(id);
+        }, duration);
+      }
+    },
+    [removeToast],
+  );
 
   // Listen to global cart events only after mounting
   useEffect(() => {
-    if (!mounted || typeof window === 'undefined') return;
+    if (!mounted || typeof window === "undefined") return;
 
     const handleCartUpdate = (event: any) => {
-      showToast(`✅ ${event.detail.item} agregado al carrito`, 'success');
+      showToast(`✅ ${event.detail.item} agregado al carrito`, "success");
     };
 
     const handleCartError = (event: any) => {
-      showToast(`❌ ${event.detail.message}`, 'error');
+      showToast(`❌ ${event.detail.message}`, "error");
     };
 
-    window.addEventListener('cart-updated', handleCartUpdate);
-    window.addEventListener('cart-error', handleCartError);
+    window.addEventListener("cart-updated", handleCartUpdate);
+    window.addEventListener("cart-error", handleCartError);
 
     return () => {
-      window.removeEventListener('cart-updated', handleCartUpdate);
-      window.removeEventListener('cart-error', handleCartError);
+      window.removeEventListener("cart-updated", handleCartUpdate);
+      window.removeEventListener("cart-error", handleCartError);
     };
   }, [showToast, mounted]);
 
@@ -98,7 +108,7 @@ function ToastContainer({ toasts, removeToast }: ToastContainerProps) {
 
   return (
     <div className="fixed top-4 right-4 z-50 space-y-2">
-      {toasts.map(toast => (
+      {toasts.map((toast) => (
         <ToastItem
           key={toast.id}
           toast={toast}
@@ -127,13 +137,14 @@ function ToastItem({ toast, onRemove }: ToastItemProps) {
   };
 
   const getToastStyles = () => {
-    const baseStyles = "flex items-center p-4 rounded-lg shadow-lg min-w-[300px] max-w-[400px] transition-all duration-300 transform";
+    const baseStyles =
+      "flex items-center p-4 rounded-lg shadow-lg min-w-[300px] max-w-[400px] transition-all duration-300 transform";
 
     const typeStyles = {
       success: "bg-green-50 border-l-4 border-green-400 text-green-800",
       error: "bg-red-50 border-l-4 border-red-400 text-red-800",
       warning: "bg-stone-50 border-l-4 border-stone-400 text-stone-800",
-      info: "bg-blue-50 border-l-4 border-blue-400 text-blue-800"
+      info: "bg-blue-50 border-l-4 border-blue-400 text-blue-800",
     };
 
     const animationStyles = isVisible
@@ -145,11 +156,16 @@ function ToastItem({ toast, onRemove }: ToastItemProps) {
 
   const getIcon = () => {
     switch (toast.type) {
-      case 'success': return '✅';
-      case 'error': return '❌';
-      case 'warning': return '⚠️';
-      case 'info': return 'ℹ️';
-      default: return '📢';
+      case "success":
+        return "✅";
+      case "error":
+        return "❌";
+      case "warning":
+        return "⚠️";
+      case "info":
+        return "ℹ️";
+      default:
+        return "📢";
     }
   };
 

@@ -1,14 +1,20 @@
 "use client";
 
-import React, { useEffect, useRef, useState, useLayoutEffect, useCallback } from "react";
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  useLayoutEffect,
+  useCallback,
+} from "react";
 import { useCircleText } from "./useCircleText";
 import styles from "./HeroDelirios.module.css";
 
 // GSAP SSR-safe imports
 type GSAPType = typeof import("gsap").gsap;
-let gsap: GSAPType | null = null;
+let gsap: GSAPType = null!;
 
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   const GS = require("gsap");
   gsap = GS.gsap;
 }
@@ -40,7 +46,7 @@ export default function HeroDelirios({
   className = "",
   onPrev,
   onNext,
-  onCta
+  onCta,
 }: HeroDeliriosProps) {
   const [active, setActive] = useState(initialIndex);
   const rootRef = useRef<HTMLElement>(null);
@@ -49,8 +55,8 @@ export default function HeroDelirios({
   const titleRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef<HTMLElement>(null);
   const itemRefs = useRef<(HTMLElement | null)[]>([]);
-  const autoplayTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const ctxRef = useRef<ReturnType<typeof gsap.context> | null>(null);
+  const autoplayTimerRef = useRef<any>(null);
+  const ctxRef = useRef<any>(null);
   const isPausedRef = useRef(false);
   const veil1Ref = useRef<HTMLDivElement>(null);
   const veil2Ref = useRef<HTMLDivElement>(null);
@@ -65,7 +71,8 @@ export default function HeroDelirios({
   // Calculate carousel horizontal slide (desplazamiento real)
   const calculateTransform = useCallback(() => {
     if (!listRef.current || !itemRefs.current[active]) return 0;
-    const itemWidth = itemRefs.current[active]?.getBoundingClientRect().width || 0;
+    const itemWidth =
+      itemRefs.current[active]?.getBoundingClientRect().width || 0;
     const offset = active * itemWidth * 0.5; // 0.5 para mayor overlap
     return -offset;
   }, [active]);
@@ -94,12 +101,13 @@ export default function HeroDelirios({
     if (!gsap || isPausedRef.current || !autoplayMs) return;
 
     if (autoplayTimerRef.current) {
-      autoplayTimerRef.current.kill();
+      clearTimeout(autoplayTimerRef.current);
     }
 
     // Progress bar animation
     if (progressRef.current) {
-      gsap.fromTo(progressRef.current,
+      gsap.fromTo(
+        progressRef.current,
         { scaleX: 0 },
         {
           scaleX: 1,
@@ -109,8 +117,8 @@ export default function HeroDelirios({
             if (!isPausedRef.current && active < slideCount - 1) {
               goNext();
             }
-          }
-        }
+          },
+        },
       );
     }
   }, [autoplayMs, active, slideCount, goNext]);
@@ -118,7 +126,7 @@ export default function HeroDelirios({
   const pauseAutoplay = useCallback(() => {
     isPausedRef.current = true;
     if (gsap && autoplayTimerRef.current) {
-      autoplayTimerRef.current.kill();
+      clearTimeout(autoplayTimerRef.current);
       gsap.killTweensOf(progressRef.current);
     }
   }, []);
@@ -139,7 +147,7 @@ export default function HeroDelirios({
 
       // Set initial states - all hidden
       gsap.set(rootRef.current, {
-        background: `radial-gradient(circle at center, ${bgFrom}, ${bgFrom})`
+        background: `radial-gradient(circle at center, ${bgFrom}, ${bgFrom})`,
       });
 
       // Configurar todos los items visibles desde el inicio - todos del mismo tamaño
@@ -147,7 +155,7 @@ export default function HeroDelirios({
         opacity: 1,
         scale: 1.0, // Mismo tamaño que el activo
         y: 0,
-        rotateZ: 0
+        rotateZ: 0,
       });
 
       // Item activo nítido
@@ -156,13 +164,17 @@ export default function HeroDelirios({
         scale: 1,
         y: 0,
         rotateZ: 0,
-        filter: "blur(0px)"
+        filter: "blur(0px)",
       });
 
       // Asegura que el <img> esté sobre los velos (refuerza en runtime)
       itemRefs.current.forEach((item, i) => {
-        const img = item?.querySelector(`.${styles.heroImg}`) as HTMLElement | null;
-        const veil = item?.querySelector(`.${styles.heroVeil}`) as HTMLElement | null;
+        const img = item?.querySelector(
+          `.${styles.heroImg}`,
+        ) as HTMLElement | null;
+        const veil = item?.querySelector(
+          `.${styles.heroVeil}`,
+        ) as HTMLElement | null;
         if (img) {
           gsap.set(img, { zIndex: 10, opacity: 1 });
           // Establecer scale inicial según posición
@@ -180,14 +192,20 @@ export default function HeroDelirios({
           gsap.set(item, {
             filter: "blur(6px) brightness(0.85)",
             scale: 1.0, // Mismo tamaño que el activo
-            opacity: 0.6
+            opacity: 0.6,
           });
         }
       });
 
       gsap.set([veil1Ref.current, veil2Ref.current], { opacity: 0, y: 50 });
-      gsap.set([ornament1Ref.current, ornament2Ref.current], { opacity: 0, scale: 0.5 });
-      gsap.set([eyebrowRef.current, titleRef.current, ctaRef.current], { opacity: 0, y: 30 });
+      gsap.set([ornament1Ref.current, ornament2Ref.current], {
+        opacity: 0,
+        scale: 0.5,
+      });
+      gsap.set([eyebrowRef.current, titleRef.current, ctaRef.current], {
+        opacity: 0,
+        y: 30,
+      });
 
       if (titleRef.current) {
         gsap.set(titleRef.current.children, { opacity: 0, y: 30 });
@@ -199,82 +217,120 @@ export default function HeroDelirios({
       const tl = gsap.timeline();
 
       // F0-F1 (0-900ms): Background fade + veils enter
-      tl.to(rootRef.current, {
-        background: `radial-gradient(circle at center, ${bgTo}, ${bgFrom})`,
-        duration: 0.9,
-        ease: "power1.inOut"
-      }, 0);
+      tl.to(
+        rootRef.current,
+        {
+          background: `radial-gradient(circle at center, ${bgTo}, ${bgFrom})`,
+          duration: 0.9,
+          ease: "power1.inOut",
+        },
+        0,
+      );
 
-      tl.to([veil1Ref.current, veil2Ref.current], {
-        opacity: 1,
-        y: 0,
-        duration: 0.9,
-        stagger: 0.15,
-        ease: "power2.out"
-      }, 0.2);
+      tl.to(
+        [veil1Ref.current, veil2Ref.current],
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.9,
+          stagger: 0.15,
+          ease: "power2.out",
+        },
+        0.2,
+      );
 
       // F2 (900-1600ms): Ornaments scale + glow + main image
-      tl.to([ornament1Ref.current, ornament2Ref.current], {
-        opacity: 1,
-        scale: 1,
-        duration: 0.7,
-        stagger: 0.1,
-        ease: "elastic.out(1, 0.6)"
-      }, 0.9);
+      tl.to(
+        [ornament1Ref.current, ornament2Ref.current],
+        {
+          opacity: 1,
+          scale: 1,
+          duration: 0.7,
+          stagger: 0.1,
+          ease: "elastic.out(1, 0.6)",
+        },
+        0.9,
+      );
 
       // Animar el contenedor del item activo
-      tl.to(itemRefs.current[active], {
-        opacity: 1,
-        scale: 1,
-        duration: 0.7,
-        ease: "power2.out"
-      }, 1.0);
+      tl.to(
+        itemRefs.current[active],
+        {
+          opacity: 1,
+          scale: 1,
+          duration: 0.7,
+          ease: "power2.out",
+        },
+        1.0,
+      );
 
       // Asegurar que la imagen dentro también tenga el scale correcto
-      const activeImg = itemRefs.current[active]?.querySelector(`.${styles.heroImg}`);
+      const activeImg = itemRefs.current[active]?.querySelector(
+        `.${styles.heroImg}`,
+      );
       if (activeImg) {
-        tl.to(activeImg, {
-          scale: 1.0,
-          duration: 0.7,
-          ease: "power2.out"
-        }, 1.0);
+        tl.to(
+          activeImg,
+          {
+            scale: 1.0,
+            duration: 0.7,
+            ease: "power2.out",
+          },
+          1.0,
+        );
       }
 
       // Circle fade in early
-      tl.to(circleRef.current, {
-        opacity: 1,
-        scale: 1,
-        duration: 0.8,
-        ease: "power2.out"
-      }, 0.5);
+      tl.to(
+        circleRef.current,
+        {
+          opacity: 1,
+          scale: 1,
+          duration: 0.8,
+          ease: "power2.out",
+        },
+        0.5,
+      );
 
       // F3 (1600-2400ms): Title + subtitle fade in (eyebrow + title words)
       if (eyebrowRef.current) {
-        tl.to(eyebrowRef.current, {
-          opacity: 1,
-          y: 0,
-          duration: 0.5,
-          ease: "power3.out"
-        }, 1.6);
+        tl.to(
+          eyebrowRef.current,
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.5,
+            ease: "power3.out",
+          },
+          1.6,
+        );
       }
 
       if (titleRef.current?.children) {
-        tl.to(titleRef.current.children, {
-          y: 0,
-          opacity: 1,
-          stagger: 0.08,
-          duration: 0.6,
-          ease: "power3.out"
-        }, 1.7);
+        tl.to(
+          titleRef.current.children,
+          {
+            y: 0,
+            opacity: 1,
+            stagger: 0.08,
+            duration: 0.6,
+            ease: "power3.out",
+          },
+          1.7,
+        );
       }
 
       // F4 (2400-3000ms): CTA appears
-      tl.to(ctaRef.current, {
-        opacity: 1,
-        y: 0,
-        duration: 0.6,
-        ease: "back.out(1.4)"
-      }, 2.4);
+      tl.to(
+        ctaRef.current,
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          ease: "back.out(1.4)",
+        },
+        2.4,
+      );
 
       // Start continuous breathing loops
       // Veils - slow parallax drift (3.4s cycle)
@@ -286,7 +342,7 @@ export default function HeroDelirios({
           duration: 3.4,
           ease: "sine.inOut",
           repeat: -1,
-          yoyo: true
+          yoyo: true,
         });
       }
 
@@ -298,7 +354,7 @@ export default function HeroDelirios({
           duration: 3.6,
           ease: "sine.inOut",
           repeat: -1,
-          yoyo: true
+          yoyo: true,
         });
       }
 
@@ -310,7 +366,7 @@ export default function HeroDelirios({
           duration: 3.2,
           ease: "sine.inOut",
           repeat: -1,
-          yoyo: true
+          yoyo: true,
         });
       }
 
@@ -321,7 +377,7 @@ export default function HeroDelirios({
           duration: 3.4,
           ease: "sine.inOut",
           repeat: -1,
-          yoyo: true
+          yoyo: true,
         });
       }
 
@@ -333,8 +389,8 @@ export default function HeroDelirios({
             rotation: 360,
             transformOrigin: "50% 50%",
             duration: 16,
-            ease: 'none',
-            repeat: -1
+            ease: "none",
+            repeat: -1,
           });
         }
       }
@@ -349,11 +405,10 @@ export default function HeroDelirios({
             duration: 3.4,
             ease: "sine.inOut",
             repeat: -1,
-            yoyo: true
+            yoyo: true,
           });
         }
       });
-
     }, rootRef);
 
     ctxRef.current = ctx;
@@ -363,8 +418,8 @@ export default function HeroDelirios({
         ctxRef.current.revert();
       }
       // Limpiar también cualquier animación pendiente
-      if (typeof window !== 'undefined' && gsap) {
-        gsap.killTweensOf('*');
+      if (typeof window !== "undefined" && gsap) {
+        gsap.killTweensOf("*");
       }
     };
   }, [active, slides]);
@@ -381,7 +436,7 @@ export default function HeroDelirios({
     gsap.to(rootRef.current, {
       background: `radial-gradient(circle at center, ${bgTo}, ${bgFrom})`,
       duration: 0.8,
-      ease: "power1.out"
+      ease: "power1.out",
     });
 
     // List translation - Desplazamiento horizontal del carrusel
@@ -389,7 +444,7 @@ export default function HeroDelirios({
     gsap.to(listRef.current, {
       x: translateX,
       duration: 1.2,
-      ease: "power2.inOut"
+      ease: "power2.inOut",
     });
 
     // Update item states - Todas las imágenes visibles durante el desplazamiento
@@ -404,7 +459,7 @@ export default function HeroDelirios({
           scale: 1,
           opacity: 1,
           duration: 1.2,
-          ease: "power2.inOut"
+          ease: "power2.inOut",
         });
 
         if (img) {
@@ -412,7 +467,7 @@ export default function HeroDelirios({
             opacity: 1,
             scale: 1.0, // Escala normal para imagen activa
             duration: 1.2,
-            ease: "power2.inOut"
+            ease: "power2.inOut",
           });
         }
       } else if (Math.abs(i - active) === 1) {
@@ -422,7 +477,7 @@ export default function HeroDelirios({
           scale: 1.0, // Mismo tamaño que el activo
           opacity: 0.85, // Muy visibles
           duration: 1.2,
-          ease: "power2.inOut"
+          ease: "power2.inOut",
         });
 
         if (img) {
@@ -430,7 +485,7 @@ export default function HeroDelirios({
             opacity: 1,
             scale: 1.0,
             duration: 1.2,
-            ease: "power2.inOut"
+            ease: "power2.inOut",
           });
         }
       } else {
@@ -440,7 +495,7 @@ export default function HeroDelirios({
           scale: 1.0, // Mismo tamaño que el activo
           opacity: 0.7, // Bastante visibles
           duration: 1.2,
-          ease: "power2.inOut"
+          ease: "power2.inOut",
         });
 
         if (img) {
@@ -448,7 +503,7 @@ export default function HeroDelirios({
             opacity: 0.9,
             scale: 1.0,
             duration: 1.2,
-            ease: "power2.inOut"
+            ease: "power2.inOut",
           });
         }
       }
@@ -459,16 +514,17 @@ export default function HeroDelirios({
       const svg = circleRef.current.querySelector(`.${styles.circleSvg}`);
       if (svg) {
         gsap.to(svg, {
-          rotation: '+=45',
+          rotation: "+=45",
           duration: 0.6,
-          ease: "power2.out"
+          ease: "power2.out",
         });
       }
     }
 
     // Content refresh (entrada del H1 después del swap de imagen, sin coincidencia)
     if (titleRef.current?.children) {
-      gsap.fromTo(titleRef.current.children,
+      gsap.fromTo(
+        titleRef.current.children,
         { y: 28, opacity: 0 },
         {
           y: 0,
@@ -476,14 +532,13 @@ export default function HeroDelirios({
           stagger: 0.05,
           duration: 0.6,
           delay: 0.6, // Sincronía: swap termina a 1.2s, H1 empieza a 1.8s
-          ease: "power3.out"
-        }
+          ease: "power3.out",
+        },
       );
     }
 
     // Restart autoplay
     startAutoplay();
-
   }, [active, slides, calculateTransform, startAutoplay]);
 
   // Keyboard navigation
@@ -499,7 +554,9 @@ export default function HeroDelirios({
 
   // Fuerza medición tras carga de imágenes
   useEffect(() => {
-    const imgs = Array.from(document.querySelectorAll(`.${styles.heroImg}`)) as HTMLImageElement[];
+    const imgs = Array.from(
+      document.querySelectorAll(`.${styles.heroImg}`),
+    ) as HTMLImageElement[];
     const ro = new ResizeObserver(() => {
       if (!listRef.current) return;
       const tx = calculateTransform();
@@ -508,18 +565,24 @@ export default function HeroDelirios({
       }
     });
 
-    imgs.forEach(img => {
+    imgs.forEach((img) => {
       if (!img.complete) {
-        img.addEventListener('load', () => {
-          if (listRef.current && gsap) {
-            gsap.set(listRef.current, { x: calculateTransform() });
-          }
-        }, { once: true });
+        img.addEventListener(
+          "load",
+          () => {
+            if (listRef.current && gsap) {
+              gsap.set(listRef.current, { x: calculateTransform() });
+            }
+          },
+          { once: true },
+        );
       }
       ro.observe(img);
     });
 
-    return () => { ro.disconnect(); };
+    return () => {
+      ro.disconnect();
+    };
   }, [calculateTransform]);
 
   // Handle resize
@@ -544,7 +607,7 @@ export default function HeroDelirios({
       gsap.to(circle, {
         scale: 1.04,
         duration: 0.4,
-        ease: "power2.out"
+        ease: "power2.out",
       });
     };
 
@@ -552,7 +615,7 @@ export default function HeroDelirios({
       gsap.to(circle, {
         scale: 1,
         duration: 0.3,
-        ease: "power2.out"
+        ease: "power2.out",
       });
     };
 
@@ -583,18 +646,32 @@ export default function HeroDelirios({
         <div className={styles.veil2} ref={veil2Ref} aria-hidden="true" />
 
         {/* z-20: Soft ornaments with low opacity */}
-        <div className={styles.ornament1} ref={ornament1Ref} aria-hidden="true" />
-        <div className={styles.ornament2} ref={ornament2Ref} aria-hidden="true" />
+        <div
+          className={styles.ornament1}
+          ref={ornament1Ref}
+          aria-hidden="true"
+        />
+        <div
+          className={styles.ornament2}
+          ref={ornament2Ref}
+          aria-hidden="true"
+        />
 
         {/* Item List */}
         <div className={styles.list} ref={listRef}>
           {slides.map((slide, i) => (
             <figure
               key={i}
-              ref={el => { itemRefs.current[i] = el; }}
-              className={`${styles.item} ${i === active ? styles.active : ''}`}
+              ref={(el) => {
+                itemRefs.current[i] = el;
+              }}
+              className={`${styles.item} ${i === active ? styles.active : ""}`}
             >
-              <img src={slide.img} alt={slide.title} className={styles.heroImg} />
+              <img
+                src={slide.img}
+                alt={slide.title}
+                className={styles.heroImg}
+              />
               {/* Velo translúcido elegante */}
               <div className={styles.heroVeil} aria-hidden="true" />
             </figure>
@@ -626,7 +703,7 @@ export default function HeroDelirios({
             {/* Texto pegado al círculo */}
             <text className={styles.circleText}>
               <textPath href="#circlePath" startOffset="0%">
-                {circleTextChars.map(c => c.char).join('')}
+                {circleTextChars.map((c) => c.char).join("")}
               </textPath>
             </text>
           </svg>
@@ -635,10 +712,12 @@ export default function HeroDelirios({
         {/* z-30: Typography (primary anchor) */}
         <div className={styles.content}>
           {currentSlide.eyebrow && (
-            <div className={styles.eyebrow} ref={eyebrowRef}>{currentSlide.eyebrow}</div>
+            <div className={styles.eyebrow} ref={eyebrowRef}>
+              {currentSlide.eyebrow}
+            </div>
           )}
           <h1 className={styles.title} ref={titleRef}>
-            {currentSlide.title.split(' ').map((word, i) => (
+            {currentSlide.title.split(" ").map((word, i) => (
               <span key={i}>{word} </span>
             ))}
           </h1>
@@ -647,15 +726,19 @@ export default function HeroDelirios({
             ref={ctaRef}
             className={styles.cta}
             onClick={handleCta}
-            style={{ '--accent': currentSlide.accent || '#d4af37' } as React.CSSProperties}
+            style={
+              {
+                "--accent": currentSlide.accent || "#d4af37",
+              } as React.CSSProperties
+            }
           >
-            {currentSlide.ctaText || 'See More'}
+            {currentSlide.ctaText || "See More"}
           </button>
         </div>
 
         {/* Navigation Buttons */}
         <button
-          className={`${styles.prev} ${active === 0 ? styles.disabled : ''}`}
+          className={`${styles.prev} ${active === 0 ? styles.disabled : ""}`}
           aria-label="Previous"
           onClick={goPrev}
           disabled={active === 0}
@@ -663,7 +746,7 @@ export default function HeroDelirios({
           ‹
         </button>
         <button
-          className={`${styles.next} ${active === slideCount - 1 ? styles.disabled : ''}`}
+          className={`${styles.next} ${active === slideCount - 1 ? styles.disabled : ""}`}
           aria-label="Next"
           onClick={goNext}
           disabled={active === slideCount - 1}
