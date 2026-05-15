@@ -54,13 +54,16 @@ export default function TenantNavigation({
       return links;
     }
 
-    const links: NavLink[] = [
-      { name: "Productos", href: `/t/${tenantSlug}/products` },
-    ];
+    const links: NavLink[] = [];
+
+    if (mode === "booking") {
+      links.push({ name: "Reservar", href: `/t/${tenantSlug}/book` });
+    }
+
+    links.push({ name: "Productos", href: `/t/${tenantSlug}/products` });
 
     if (mode === "booking") {
       links.push({ name: "Servicios", href: `/t/${tenantSlug}/services` });
-      links.push({ name: "Reservar", href: `/t/${tenantSlug}/book` });
     }
 
     links.push({ name: "Contacto", href: `/t/${tenantSlug}/contact` });

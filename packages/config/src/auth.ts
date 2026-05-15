@@ -47,6 +47,7 @@ function normalizeRole(role: string | null | undefined): RbacRole {
 
 const { handlers, auth, signIn, signOut } = (NextAuth as any)({
   secret: process.env.NEXTAUTH_SECRET,
+  trustHost: true,
   providers: [
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID!,
