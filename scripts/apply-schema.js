@@ -1,26 +1,28 @@
-const { drizzle } = require('drizzle-orm/postgres-js');
-const postgres = require('postgres');
-const { migrate } = require('drizzle-orm/postgres-js/migrator');
+const { drizzle } = require("drizzle-orm/postgres-js");
+const postgres = require("postgres");
+const { migrate } = require("drizzle-orm/postgres-js/migrator");
 
 // Schema import
-const { 
-  tenants, 
-  users, 
-  accounts, 
-  sessions, 
+const {
+  tenants,
+  users,
+  accounts,
+  sessions,
   verificationTokens,
   // Add other tables as needed
-} = require('./packages/database/schema');
+} = require("./packages/database/schema");
 
 // Get database URL from environment
-const databaseUrl = process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/sass_store';
+const databaseUrl =
+  process.env.DATABASE_URL ||
+  "postgresql://postgres:postgres@localhost:5432/sass_store";
 
 // Connect to database
 const client = postgres(databaseUrl, { max: 1 });
 const db = drizzle(client);
 
 async function main() {
-  console.log('Starting database sync...');
+  console.log("Starting database sync...");
 
   try {
     // Apply schema to database
@@ -64,10 +66,10 @@ async function main() {
       -- Create other tables as needed
       -- (We'll add the reset_token and reset_token_expiry columns directly here)
     `);
-    
-    console.log('Database schema applied successfully!');
+
+    console.log("Database schema applied successfully!");
     // SECURITY: Redacted sensitive log;
-    
+
     // Verify the columns exist
     const result = await db.execute(`
       SELECT column_name, data_type
@@ -75,14 +77,14 @@ async function main() {
       WHERE table_name = 'users'
       AND column_name IN ('reset_token', 'reset_token_expiry')
     `);
-    
-    console.log('Verification result:', result.rows);
-    
+
+    console.log("Verification result:", result.rows);
+
     // Close connection
     await client.end();
-    console.log('Database connection closed');
+    console.log("Database connection closed");
   } catch (error) {
-    console.error('Error applying schema:', error);
+    console.error("Error applying schema:", error);
     process.exit(1);
   }
 }

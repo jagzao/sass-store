@@ -102,7 +102,7 @@ function BlockHeader({
 
 // ─── Main Component (forwardRef) ────────────────────────────────────────────
 const HistorialMedico = forwardRef<HistorialMedicoHandle, HistorialMedicoProps>(
-  function HistorialMedico({ initialData = {}, onSave }, ref) {
+  ({ initialData = {}, onSave }, ref) => {
     const [draft, setDraft] = useState<HistorialMedicoData>(initialData);
 
     // Sync when initialData changes (e.g. customer reloads)

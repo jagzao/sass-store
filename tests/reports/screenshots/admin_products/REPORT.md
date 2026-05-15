@@ -1,38 +1,41 @@
 # Admin Products — Test Report
 
-**Fecha última prueba:** 2026-05-12
+**Fecha última prueba:** 2026-05-15
 **URL:** http://localhost:3003/t/wondernails/admin/products
-**URL Final:** http://localhost:3003/t/wondernails/admin/products
-**Status:** ✅ OK
-**Título página:** Sass Store
-**Errores consola:** 0
+**URL Final:** http://localhost:3003/t/wondernails/login?callbackUrl=/t/wondernails/admin
+**Status:** 🔀 REDIRECT
+**Título página:** Iniciar Sesión - Wonder Nails Studio
+**Errores consola:** 1
 
 ## 🔍 Funcionalidades detectadas
 
 ### 🖱️ Botones
 
-- Hola, Usuario
-  Cuenta y listas
+- Iniciar Sesión
+- Continuar con Google
 
 ### 🔗 Links
 
-- Wonder Nails Studio
-- Devoluciones
-  y Pedidos
-- Carrito
-- 🔥 Ofertas del día
-- 📞 Atención al cliente
-- ℹ️ Acerca de nosotros
+- Productos
+- Servicios
+- Reservar
+- Contacto
 - Iniciar Sesión
+- ¿Olvidaste tu contraseña?
+- ¿Olvidaste tu contraseña?
+- Regístrate aquí
+- ← Volver a la tienda
 
 ### 📝 Inputs / Formularios
 
-- text
-- Buscar productos, servicios, horarios…
+- tu@email.com
+- ••••••••
+- remember-me
 
 ### 📌 Headings
 
-_Ningún heading visible._
+- Wonder Nails Studio
+- Inicia sesión en tu cuenta
 
 ## 📋 Checklist de validación (para LLM / QA)
 
@@ -46,6 +49,11 @@ _Ningún heading visible._
 ## 🖼️ Evidencia
 
 ![Screenshot](admin_products.png)
+
+## ⚠️ Errores de consola
+
+- `ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror
+  at fetchData (http://localhost:3`
 
 ---
 

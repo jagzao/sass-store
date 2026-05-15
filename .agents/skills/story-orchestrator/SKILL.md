@@ -10,6 +10,8 @@ description: >-
 
 **Protocolo canónico:** leer y seguir **`.agents/protocols/story-orchestrator.md`** y **`AGENTS.md` § 3** (fases secuenciales, bloque de preguntas inicial, bucle Dev↔QA, notificación pre–visto bueno).
 
+**Si la validación post-implementación falla:** aplicar **`.agents/protocols/e2e-validation.md` §3.0** — diagnosticar, comunicar el plan de fix, reproducir el bug con Playwright CLI headed antes de corregir, y re-validar headed + headless tras el fix.
+
 **Lectura previa típica:**
 
 - `docs/stories/BACKLOG.md`, `docs/stories/active/`

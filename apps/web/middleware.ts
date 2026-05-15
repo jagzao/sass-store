@@ -19,10 +19,9 @@ import { verifyAuthToken } from "@sass-store/core/src/middleware/auth-middleware
 // Known tenant slugs from seed data
 const KNOWN_TENANTS = [
   "wondernails",
-  "vigistudio",
   "centro-tenistico",
   "delirios",
-  "nom-nom",
+  "manada-juma",
   "zo-system",
 ];
 
@@ -388,11 +387,9 @@ function buildTenantResponse(slug: string): FullResolvedTenant {
   // Simplified mapping - in production this would come from DB
   const tenantModes: Record<string, "catalog" | "booking"> = {
     wondernails: "booking",
-    vigistudio: "booking",
     "centro-tenistico": "booking",
-    "vainilla-vargas": "catalog",
     delirios: "catalog",
-    "nom-nom": "catalog",
+    "manada-juma": "booking",
     "zo-system": "catalog",
   };
 

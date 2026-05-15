@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { gotoTenantLogin, gotoTenantRegister } from "../utils/wait-for-login";
 
 const TENANT = "wondernails";
 
@@ -6,8 +7,7 @@ test.describe("Google Auth & Registration Flows", () => {
   test("login page — Google button has SVG icon and correct text", async ({
     page,
   }) => {
-    await page.goto(`/t/${TENANT}/login`);
-    await page.waitForLoadState("networkidle");
+    await gotoTenantLogin(page, TENANT);
 
     // Google button should exist with SVG (not emoji)
     const googleBtn = page
@@ -25,8 +25,7 @@ test.describe("Google Auth & Registration Flows", () => {
   });
 
   test("login page — link to register page exists", async ({ page }) => {
-    await page.goto(`/t/${TENANT}/login`);
-    await page.waitForLoadState("networkidle");
+    await gotoTenantLogin(page, TENANT);
 
     const registerLink = page.locator(`a[href*='/register']`);
     await expect(registerLink).toBeVisible({ timeout: 15000 });
@@ -35,8 +34,7 @@ test.describe("Google Auth & Registration Flows", () => {
   test("register page — loads correctly with form and Google button", async ({
     page,
   }) => {
-    await page.goto(`/t/${TENANT}/register`);
-    await page.waitForLoadState("networkidle");
+    await gotoTenantRegister(page, TENANT);
 
     // Form fields
     await expect(page.locator("#name")).toBeVisible({ timeout: 15000 });
@@ -56,8 +54,7 @@ test.describe("Google Auth & Registration Flows", () => {
   });
 
   test("register page — shows link back to login", async ({ page }) => {
-    await page.goto(`/t/${TENANT}/register`);
-    await page.waitForLoadState("networkidle");
+    await gotoTenantRegister(page, TENANT);
 
     const loginLink = page.locator(`a[href*='/login']`);
     await expect(loginLink.first()).toBeVisible({ timeout: 15000 });
@@ -91,8 +88,10 @@ test.describe("Google Auth & Registration Flows", () => {
     page,
   }) => {
     // Navigate directly (unauthenticated will redirect, but check the URL behavior)
-    await page.goto(`/t/${TENANT}/profile?welcome=1`);
-    await page.waitForLoadState("networkidle");
+    await page.goto(`/t/${TENANT}/profile?welcome=1`, {
+      waitUntil: "domcontentloaded",
+    });
+    await page.waitForURL(/\/(login|profile)/, { timeout: 60_000 });
 
     // Either shows welcome banner (if somehow accessible) or redirects to login
     const url = page.url();

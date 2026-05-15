@@ -1,72 +1,5 @@
 [
   {
-    "url": "/",
-    "finalUrl": "http://localhost:3003/",
-    "status": "ok",
-    "title": "Sass Store",
-    "errorText": "",
-    "consoleErrors": 0,
-    "screenshotPath": "screenshots/home/home.png",
-    "elements": {
-      "buttons": [
-        "Hola, Usuario\nCuenta y listas",
-        "Ver todo tu historial →",
-        "Comprar ahora",
-        "Agregar al carrito",
-        "Comprar ahora",
-        "Agregar al carrito",
-        "Ver todo guardado →",
-        "Continuar",
-        "Ver detalles",
-        "Continuar",
-        "Ver detalles",
-        "Ver todas tus reservas →",
-        "Reservar hoy 15:00",
-        "Ver más horarios",
-        "Reservar hoy 10:30",
-        "Ver más horarios",
-        "Ver todas las ofertas →",
-        "Reservar ahora",
-        "Comprar ahora"
-      ],
-      "links": [
-        "Saltar al contenido principal",
-        "SaaS Store",
-        "Devoluciones\ny Pedidos",
-        "Carrito",
-        "📍 Todos los tenants",
-        "🏠 Explorar todos los tenants",
-        "🔥 Ofertas del día",
-        "📞 Atención al cliente",
-        "Ver directorio completo →",
-        "💅\nWonder Nails\nManicure",
-        "✂️\nVigi Studio\nCabello",
-        "🎾\nCentro Tenístico\nTenis",
-        "🍽️\nDelirios\nComida saludable",
-        "🌮\nnom-nom\nTacos",
-        "💻\nZo System\nSoftware",
-        "Belleza",
-        "Deportes",
-        "Comida",
-        "Productos",
-        "Centro de ayuda"
-      ],
-      "inputs": ["text", "Buscar productos, servicios, horarios…"],
-      "headings": [
-        "Bienvenido a SaaS Store",
-        "Comprar de nuevo",
-        "SaaS Starter Kit",
-        "API Design Package",
-        "Retoma tu compra",
-        "Custom Mobile App",
-        "Deployment Setup",
-        "Reservar otra vez",
-        "Tech Consultation",
-        "Code Review"
-      ]
-    }
-  },
-  {
     "url": "/t/wondernails",
     "finalUrl": "http://localhost:3003/t/wondernails",
     "status": "ok",
@@ -210,11 +143,17 @@
     "screenshotPath": "screenshots/book/book.png",
     "elements": {
       "buttons": [
-        "TUE\n\n12th\n\nLibre",
-        "WED\n\n13th\n\nLibre",
-        "THU\n\n14th\n\nLibre",
         "FRI\n\n15th\n\nLibre",
         "SAT\n\n16th\n\nLibre",
+        "SUN\n\n17th\n\nLibre",
+        "MON\n\n18th\n\nLibre",
+        "TUE\n\n19th\n\nLibre",
+        "9:00 a.m.",
+        "10:00 a.m.",
+        "11:00 a.m.",
+        "12:00 p.m.",
+        "1:00 p.m.",
+        "2:00 p.m.",
         "3:00 p.m.",
         "4:00 p.m.",
         "5:00 p.m.",
@@ -348,107 +287,77 @@
   },
   {
     "url": "/t/wondernails/admin",
-    "finalUrl": "http://localhost:3003/t/wondernails/admin",
-    "status": "ok",
-    "title": "Sass Store",
+    "finalUrl": "http://localhost:3003/t/wondernails/login?callbackUrl=/t/wondernails/admin",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Wonder Nails Studio",
     "errorText": "",
     "consoleErrors": 0,
     "screenshotPath": "screenshots/admin_dashboard/admin_dashboard.png",
     "elements": {
-      "buttons": [
-        "Hola, Usuario\nCuenta y listas",
-        "+",
-        "+",
-        "Editar",
-        "Editar",
-        "Editar",
-        "Configurar",
-        "Configurar",
-        "📦\nCrear Producto",
-        "📅\nCrear Servicio",
-        "🎨\nPersonalizar Diseño",
-        "📸\nSubir Imagen"
-      ],
-      "links": [
-        "Wonder Nails Studio",
-        "Devoluciones\ny Pedidos",
-        "Carrito",
-        "🔥 Ofertas del día",
-        "📞 Atención al cliente",
-        "ℹ️ Acerca de nosotros",
-        "Gestionar →",
-        "Gestionar →",
-        "Ver",
-        "Ver",
-        "Gestionar →",
-        "Ver",
-        "Ver todas →",
-        "Ver más →",
-        "Configurar →",
-        "👁️\nVer Mi Tienda"
-      ],
-      "inputs": ["text", "Buscar productos, servicios, horarios…"],
-      "headings": [
-        "Panel de Administración",
-        "Productos",
-        "Servicios",
-        "Contenido",
-        "Ventas",
-        "Analytics",
-        "Configuración",
-        "Acciones Rápidas"
-      ]
-    }
-  },
-  {
-    "url": "/t/wondernails/admin/calendar",
-    "finalUrl": "http://localhost:3003/t/wondernails/admin/calendar",
-    "status": "ok",
-    "title": "Sass Store",
-    "errorText": "",
-    "consoleErrors": 0,
-    "screenshotPath": "screenshots/admin_calendar/admin_calendar.png",
-    "elements": {
-      "buttons": ["Configuración", "Nueva Cita"],
+      "buttons": ["Iniciar Sesión", "Continuar con Google"],
       "links": [
         "Productos",
         "Servicios",
         "Reservar",
         "Contacto",
         "Iniciar Sesión",
-        "Calendario\n0",
-        "← Panel Admin",
-        "🏠Inicio",
-        "📋Citas",
-        "📅Agenda",
-        "👥Clientas",
-        "☰Más"
+        "¿Olvidaste tu contraseña?",
+        "¿Olvidaste tu contraseña?",
+        "Regístrate aquí",
+        "← Volver a la tienda"
       ],
-      "inputs": [],
-      "headings": ["Gestión de Calendario", "martes, 12 de mayo"]
+      "inputs": ["tu@email.com", "••••••••", "remember-me"],
+      "headings": ["Wonder Nails Studio", "Inicia sesión en tu cuenta"]
+    }
+  },
+  {
+    "url": "/t/wondernails/admin/calendar",
+    "finalUrl": "http://localhost:3003/t/wondernails/login?callbackUrl=/t/wondernails/admin",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Wonder Nails Studio",
+    "errorText": "",
+    "consoleErrors": 1,
+    "screenshotPath": "screenshots/admin_calendar/admin_calendar.png",
+    "elements": {
+      "buttons": ["Iniciar Sesión", "Continuar con Google"],
+      "links": [
+        "Productos",
+        "Servicios",
+        "Reservar",
+        "Contacto",
+        "Iniciar Sesión",
+        "¿Olvidaste tu contraseña?",
+        "¿Olvidaste tu contraseña?",
+        "Regístrate aquí",
+        "← Volver a la tienda"
+      ],
+      "inputs": ["tu@email.com", "••••••••", "remember-me"],
+      "headings": ["Wonder Nails Studio", "Inicia sesión en tu cuenta"]
     }
   },
   {
     "url": "/t/wondernails/admin/products",
-    "finalUrl": "http://localhost:3003/t/wondernails/admin/products",
-    "status": "ok",
-    "title": "Sass Store",
+    "finalUrl": "http://localhost:3003/t/wondernails/login?callbackUrl=/t/wondernails/admin",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Wonder Nails Studio",
     "errorText": "",
-    "consoleErrors": 0,
+    "consoleErrors": 1,
     "screenshotPath": "screenshots/admin_products/admin_products.png",
     "elements": {
-      "buttons": ["Hola, Usuario\nCuenta y listas"],
+      "buttons": ["Iniciar Sesión", "Continuar con Google"],
       "links": [
-        "Wonder Nails Studio",
-        "Devoluciones\ny Pedidos",
-        "Carrito",
-        "🔥 Ofertas del día",
-        "📞 Atención al cliente",
-        "ℹ️ Acerca de nosotros",
-        "Iniciar Sesión"
+        "Productos",
+        "Servicios",
+        "Reservar",
+        "Contacto",
+        "Iniciar Sesión",
+        "¿Olvidaste tu contraseña?",
+        "¿Olvidaste tu contraseña?",
+        "Regístrate aquí",
+        "← Volver a la tienda"
       ],
-      "inputs": ["text", "Buscar productos, servicios, horarios…"],
-      "headings": []
+      "inputs": ["tu@email.com", "••••••••", "remember-me"],
+      "headings": ["Wonder Nails Studio", "Inicia sesión en tu cuenta"]
     }
   },
   {
@@ -478,11 +387,11 @@
   },
   {
     "url": "/t/wondernails/admin_bookings",
-    "finalUrl": "http://localhost:3003/t/wondernails/login",
+    "finalUrl": "http://localhost:3003/t/wondernails/login?callbackUrl=/t/wondernails/admin",
     "status": "redirect",
     "title": "Iniciar Sesión - Wonder Nails Studio",
     "errorText": "",
-    "consoleErrors": 0,
+    "consoleErrors": 1,
     "screenshotPath": "screenshots/admin_bookings/admin_bookings.png",
     "elements": {
       "buttons": ["Iniciar Sesión", "Continuar con Google"],
@@ -503,11 +412,11 @@
   },
   {
     "url": "/t/wondernails/admin/quotes",
-    "finalUrl": "http://localhost:3003/t/wondernails/login",
+    "finalUrl": "http://localhost:3003/t/wondernails/login?callbackUrl=/t/wondernails/admin",
     "status": "redirect",
     "title": "Iniciar Sesión - Wonder Nails Studio",
     "errorText": "",
-    "consoleErrors": 0,
+    "consoleErrors": 1,
     "screenshotPath": "screenshots/admin_quotes/admin_quotes.png",
     "elements": {
       "buttons": ["Iniciar Sesión", "Continuar con Google"],
@@ -628,11 +537,11 @@
   },
   {
     "url": "/t/wondernails/finance",
-    "finalUrl": "http://localhost:3003/t/wondernails/login",
+    "finalUrl": "http://localhost:3003/t/wondernails/login?callbackUrl=/t/wondernails/admin",
     "status": "redirect",
     "title": "Iniciar Sesión - Wonder Nails Studio",
     "errorText": "",
-    "consoleErrors": 0,
+    "consoleErrors": 1,
     "screenshotPath": "screenshots/finance/finance.png",
     "elements": {
       "buttons": ["Iniciar Sesión", "Continuar con Google"],
@@ -653,7 +562,7 @@
   },
   {
     "url": "/t/wondernails/finance/movements",
-    "finalUrl": "http://localhost:3003/t/wondernails/login",
+    "finalUrl": "http://localhost:3003/t/wondernails/login?callbackUrl=/t/wondernails/admin",
     "status": "redirect",
     "title": "Iniciar Sesión - Wonder Nails Studio",
     "errorText": "",
@@ -678,89 +587,111 @@
   },
   {
     "url": "/t/wondernails/finance/budgets",
-    "finalUrl": "http://localhost:3003/t/wondernails/finance/budgets",
-    "status": "ok",
-    "title": "Presupuestos - Gestion Financiera",
+    "finalUrl": "http://localhost:3003/t/wondernails/login?callbackUrl=/t/wondernails/admin",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Wonder Nails Studio",
     "errorText": "",
-    "consoleErrors": 0,
+    "consoleErrors": 1,
     "screenshotPath": "screenshots/finance_budgets/finance_budgets.png",
     "elements": {
-      "buttons": [],
-      "links": [],
-      "inputs": [],
-      "headings": []
+      "buttons": ["Iniciar Sesión", "Continuar con Google"],
+      "links": [
+        "Productos",
+        "Servicios",
+        "Reservar",
+        "Contacto",
+        "Iniciar Sesión",
+        "¿Olvidaste tu contraseña?",
+        "¿Olvidaste tu contraseña?",
+        "Regístrate aquí",
+        "← Volver a la tienda"
+      ],
+      "inputs": ["tu@email.com", "••••••••", "remember-me"],
+      "headings": ["Wonder Nails Studio", "Inicia sesión en tu cuenta"]
     }
   },
   {
     "url": "/t/wondernails/finance/categories",
-    "finalUrl": "http://localhost:3003/t/wondernails/finance/categories",
-    "status": "ok",
-    "title": "Categorías - Gestión Financiera",
-    "errorText": "",
-    "consoleErrors": 0,
-    "screenshotPath": "screenshots/finance_categories/finance_categories.png",
-    "elements": {
-      "buttons": [],
-      "links": [],
-      "inputs": [],
-      "headings": []
-    }
-  },
-  {
-    "url": "/t/wondernails/inventory",
-    "finalUrl": "http://localhost:3003/t/wondernails/inventory",
-    "status": "ok",
-    "title": "Sass Store",
-    "errorText": "",
-    "consoleErrors": 9,
-    "screenshotPath": "screenshots/inventory/inventory.png",
-    "elements": {
-      "buttons": [
-        "Inventario",
-        "Proveedores",
-        "Movimientos",
-        "Transferencias",
-        "Ubicaciones",
-        "Alertas",
-        "Configuración",
-        "Anterior",
-        "Siguiente",
-        "0\n1\nIssue"
-      ],
-      "links": [
-        "Calendario\n0",
-        "🏠Inicio",
-        "📋Citas",
-        "📅Agenda",
-        "👥Clientas",
-        "☰Más"
-      ],
-      "inputs": ["Buscar por nombre, SKU o categoría..."],
-      "headings": ["Sistema de Inventario"]
-    }
-  },
-  {
-    "url": "/t/wondernails/inventory/supplies",
-    "finalUrl": "http://localhost:3003/t/wondernails/inventory/supplies",
-    "status": "ok",
-    "title": "Gastos de Insumos - Inventario",
-    "errorText": "",
-    "consoleErrors": 0,
-    "screenshotPath": "screenshots/inventory_supplies/inventory_supplies.png",
-    "elements": {
-      "buttons": [],
-      "links": [],
-      "inputs": [],
-      "headings": []
-    }
-  },
-  {
-    "url": "/t/wondernails/clientes",
-    "finalUrl": "http://localhost:3003/t/wondernails/login",
+    "finalUrl": "http://localhost:3003/t/wondernails/login?callbackUrl=/t/wondernails/admin",
     "status": "redirect",
     "title": "Iniciar Sesión - Wonder Nails Studio",
     "errorText": "",
     "consoleErrors": 0,
+    "screenshotPath": "screenshots/finance_categories/finance_categories.png",
+    "elements": {
+      "buttons": ["Iniciar Sesión", "Continuar con Google"],
+      "links": [
+        "Productos",
+        "Servicios",
+        "Reservar",
+        "Contacto",
+        "Iniciar Sesión",
+        "¿Olvidaste tu contraseña?",
+        "¿Olvidaste tu contraseña?",
+        "Regístrate aquí",
+        "← Volver a la tienda"
+      ],
+      "inputs": ["tu@email.com", "••••••••", "remember-me"],
+      "headings": ["Wonder Nails Studio", "Inicia sesión en tu cuenta"]
+    }
+  },
+  {
+    "url": "/t/wondernails/inventory",
+    "finalUrl": "http://localhost:3003/t/wondernails/login?callbackUrl=/t/wondernails/admin",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Wonder Nails Studio",
+    "errorText": "",
+    "consoleErrors": 1,
+    "screenshotPath": "screenshots/inventory/inventory.png",
+    "elements": {
+      "buttons": ["Iniciar Sesión", "Continuar con Google"],
+      "links": [
+        "Productos",
+        "Servicios",
+        "Reservar",
+        "Contacto",
+        "Iniciar Sesión",
+        "¿Olvidaste tu contraseña?",
+        "¿Olvidaste tu contraseña?",
+        "Regístrate aquí",
+        "← Volver a la tienda"
+      ],
+      "inputs": ["tu@email.com", "••••••••", "remember-me"],
+      "headings": ["Wonder Nails Studio", "Inicia sesión en tu cuenta"]
+    }
+  },
+  {
+    "url": "/t/wondernails/inventory/supplies",
+    "finalUrl": "http://localhost:3003/t/wondernails/login?callbackUrl=/t/wondernails/admin",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Wonder Nails Studio",
+    "errorText": "",
+    "consoleErrors": 1,
+    "screenshotPath": "screenshots/inventory_supplies/inventory_supplies.png",
+    "elements": {
+      "buttons": ["Iniciar Sesión", "Continuar con Google"],
+      "links": [
+        "Productos",
+        "Servicios",
+        "Reservar",
+        "Contacto",
+        "Iniciar Sesión",
+        "¿Olvidaste tu contraseña?",
+        "¿Olvidaste tu contraseña?",
+        "Regístrate aquí",
+        "← Volver a la tienda"
+      ],
+      "inputs": ["tu@email.com", "••••••••", "remember-me"],
+      "headings": ["Wonder Nails Studio", "Inicia sesión en tu cuenta"]
+    }
+  },
+  {
+    "url": "/t/wondernails/clientes",
+    "finalUrl": "http://localhost:3003/t/wondernails/login?callbackUrl=/t/wondernails/admin",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Wonder Nails Studio",
+    "errorText": "",
+    "consoleErrors": 1,
     "screenshotPath": "screenshots/clientes/clientes.png",
     "elements": {
       "buttons": ["Iniciar Sesión", "Continuar con Google"],
@@ -781,29 +712,27 @@
   },
   {
     "url": "/t/wondernails/clientes/nueva",
-    "finalUrl": "http://localhost:3003/t/wondernails/clientes/nueva",
-    "status": "ok",
-    "title": "Nueva Clienta - Wonder Nails Studio",
+    "finalUrl": "http://localhost:3003/t/wondernails/login?callbackUrl=/t/wondernails/admin",
+    "status": "redirect",
+    "title": "Iniciar Sesión - Wonder Nails Studio",
     "errorText": "",
-    "consoleErrors": 0,
+    "consoleErrors": 1,
     "screenshotPath": "screenshots/nuevo_cliente/nuevo_cliente.png",
     "elements": {
-      "buttons": ["Agregar", "Agregar", "Agregar", "Cancelar", "Crear Clienta"],
-      "links": ["Inicio", "Clientas"],
-      "inputs": [
-        "Ej: María García López",
-        "Ej: 555-1234",
-        "Ej: maria@example.com",
-        "date",
-        "Ej: Calle Principal 123, Colonia Centro, Ciudad",
-        "text",
-        "Ej: Alérgica a acetona",
-        "Notas sobre preferencias especiales...",
-        "Ej: Diabetes Tipo 2",
-        "Ej: Acrilato, Polvo",
-        "Registra si el paciente está tomando algún medicamento o tratamiento médico relevant..."
+      "buttons": ["Iniciar Sesión", "Continuar con Google"],
+      "links": [
+        "Productos",
+        "Servicios",
+        "Reservar",
+        "Contacto",
+        "Iniciar Sesión",
+        "¿Olvidaste tu contraseña?",
+        "¿Olvidaste tu contraseña?",
+        "Regístrate aquí",
+        "← Volver a la tienda"
       ],
-      "headings": ["Agregar Nueva Clienta", "⚕️ Historial Médico"]
+      "inputs": ["tu@email.com", "••••••••", "remember-me"],
+      "headings": ["Wonder Nails Studio", "Inicia sesión en tu cuenta"]
     }
   },
   {
@@ -1064,7 +993,7 @@
         "4"
       ],
       "links": [
-        "Calendario\n0",
+        "Calendario\n8",
         "🏠Inicio",
         "📋Citas",
         "📅Agenda",

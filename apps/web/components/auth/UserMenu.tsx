@@ -3,6 +3,7 @@
 import { useSession, signOut } from "next-auth/react";
 import { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
+import { CTV_CLAY_ORANGE } from "@/lib/design/centro-tenistico-brand";
 
 export default function UserMenu({
   tenantSlug,
@@ -81,7 +82,14 @@ export default function UserMenu({
             ? "px-4 py-2 rounded border border-[#D4AF37] text-[#D4AF37] bg-transparent hover:bg-[#D4AF37] hover:text-black transition-colors font-medium"
             : isDark
               ? "bg-[#FF8000] text-black hover:bg-[#FF5500] hover:shadow-[0_0_15px_rgba(255,128,0,0.4)] px-4 py-2 rounded transition-all font-bold"
-              : "bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+              : currentTenantSlug === "centro-tenistico"
+                ? "px-5 py-2 rounded-lg text-white text-sm font-medium tracking-wide border border-white/15 shadow-none transition-all duration-300 hover:brightness-110 hover:shadow-md"
+                : "bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        }
+        style={
+          !isTransparent && !isDark && currentTenantSlug === "centro-tenistico"
+            ? { backgroundColor: CTV_CLAY_ORANGE }
+            : undefined
         }
       >
         Iniciar Sesión

@@ -1,29 +1,41 @@
 # Finance Categories — Test Report
 
-**Fecha última prueba:** 2026-05-12
+**Fecha última prueba:** 2026-05-15
 **URL:** http://localhost:3003/t/wondernails/finance/categories
-**URL Final:** http://localhost:3003/t/wondernails/finance/categories
-**Status:** ✅ OK
-**Título página:** Categorías - Gestión Financiera
+**URL Final:** http://localhost:3003/t/wondernails/login?callbackUrl=/t/wondernails/admin
+**Status:** 🔀 REDIRECT
+**Título página:** Iniciar Sesión - Wonder Nails Studio
 **Errores consola:** 0
 
 ## 🔍 Funcionalidades detectadas
 
 ### 🖱️ Botones
 
-_Ningún botón visible._
+- Iniciar Sesión
+- Continuar con Google
 
 ### 🔗 Links
 
-_Ningún link visible._
+- Productos
+- Servicios
+- Reservar
+- Contacto
+- Iniciar Sesión
+- ¿Olvidaste tu contraseña?
+- ¿Olvidaste tu contraseña?
+- Regístrate aquí
+- ← Volver a la tienda
 
 ### 📝 Inputs / Formularios
 
-_Ningún input visible._
+- tu@email.com
+- ••••••••
+- remember-me
 
 ### 📌 Headings
 
-_Ningún heading visible._
+- Wonder Nails Studio
+- Inicia sesión en tu cuenta
 
 ## 📋 Checklist de validación (para LLM / QA)
 

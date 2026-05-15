@@ -1,13 +1,14 @@
 import { Suspense } from "react";
 import { fetchRevalidating } from "@/lib/api/fetch-with-cache";
 import type { Service } from "@/types/tenant";
+import { CTV_CLAY_ORANGE } from "@/lib/design/centro-tenistico-brand";
 import HeroCentroTenistico from "./hero/HeroCentroTenistico";
 
 interface Props {
   tenantSlug: string;
 }
 
-const PRIMARY = "#059669";
+const PRIMARY = CTV_CLAY_ORANGE;
 
 export default async function CentroTenisticoLanding({ tenantSlug }: Props) {
   return (

@@ -1,70 +1,41 @@
 # Admin Dashboard — Test Report
 
-**Fecha última prueba:** 2026-05-12
+**Fecha última prueba:** 2026-05-15
 **URL:** http://localhost:3003/t/wondernails/admin
-**URL Final:** http://localhost:3003/t/wondernails/admin
-**Status:** ✅ OK
-**Título página:** Sass Store
+**URL Final:** http://localhost:3003/t/wondernails/login?callbackUrl=/t/wondernails/admin
+**Status:** 🔀 REDIRECT
+**Título página:** Iniciar Sesión - Wonder Nails Studio
 **Errores consola:** 0
 
 ## 🔍 Funcionalidades detectadas
 
 ### 🖱️ Botones
 
-- Hola, Usuario
-  Cuenta y listas
-- -
-- -
-- Editar
-- Editar
-- Editar
-- Configurar
-- Configurar
-- 📦
-  Crear Producto
-- 📅
-  Crear Servicio
-- 🎨
-  Personalizar Diseño
-- 📸
-  Subir Imagen
+- Iniciar Sesión
+- Continuar con Google
 
 ### 🔗 Links
 
-- Wonder Nails Studio
-- Devoluciones
-  y Pedidos
-- Carrito
-- 🔥 Ofertas del día
-- 📞 Atención al cliente
-- ℹ️ Acerca de nosotros
-- Gestionar →
-- Gestionar →
-- Ver
-- Ver
-- Gestionar →
-- Ver
-- Ver todas →
-- Ver más →
-- Configurar →
-- 👁️
-  Ver Mi Tienda
+- Productos
+- Servicios
+- Reservar
+- Contacto
+- Iniciar Sesión
+- ¿Olvidaste tu contraseña?
+- ¿Olvidaste tu contraseña?
+- Regístrate aquí
+- ← Volver a la tienda
 
 ### 📝 Inputs / Formularios
 
-- text
-- Buscar productos, servicios, horarios…
+- tu@email.com
+- ••••••••
+- remember-me
 
 ### 📌 Headings
 
-- Panel de Administración
-- Productos
-- Servicios
-- Contenido
-- Ventas
-- Analytics
-- Configuración
-- Acciones Rápidas
+- Wonder Nails Studio
+- Inicia sesión en tu cuenta
 
 ## 📋 Checklist de validación (para LLM / QA)
 

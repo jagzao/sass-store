@@ -5,9 +5,12 @@ import {
   tenants,
   services,
   customers,
+  userRoles,
+  users,
 } from "@sass-store/database/schema";
-import { eq, and, desc, gte, lte } from "drizzle-orm";
+import { eq, and, desc, gte, lte, inArray } from "drizzle-orm";
 import { z } from "zod";
+import { Resend } from "resend";
 
 /**
  * Bookings API Endpoint
@@ -28,6 +31,78 @@ const createBookingSchema = z.object({
   totalPrice: z.number().positive(),
   status: z.enum(["pending", "confirmed", "completed", "cancelled"]).optional(),
 });
+
+const resendClient = process.env.RESEND_API_KEY
+  ? new Resend(process.env.RESEND_API_KEY)
+  : null;
+
+async function notifyTenantAdminsAboutBooking(input: {
+  tenantId: string;
+  tenantName: string;
+  customerName: string;
+  customerPhone?: string;
+  customerEmail?: string;
+  startTime: Date;
+  endTime: Date;
+}) {
+  if (!resendClient) {
+    return;
+  }
+
+  const adminUsers = await db
+    .select({
+      email: users.email,
+      name: users.name,
+    })
+    .from(userRoles)
+    .innerJoin(users, eq(userRoles.userId, users.id))
+    .where(
+      and(
+        eq(userRoles.tenantId, input.tenantId),
+        inArray(userRoles.role, ["Admin", "Gerente"]),
+      ),
+    );
+
+  const emails = adminUsers
+    .map((user) => user.email)
+    .filter((email): email is string => Boolean(email));
+
+  if (!emails.length) {
+    return;
+  }
+
+  const from = process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
+  const dateText = input.startTime.toLocaleDateString("es-MX");
+  const startText = input.startTime.toLocaleTimeString("es-MX", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+  const endText = input.endTime.toLocaleTimeString("es-MX", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  await Promise.allSettled(
+    emails.map((to) =>
+      resendClient.emails.send({
+        from,
+        to,
+        subject: `Nueva cita agendada - ${input.tenantName}`,
+        html: `
+          <h2>Nueva cita agendada</h2>
+          <p>Se registro una nueva cita en <strong>${input.tenantName}</strong>.</p>
+          <ul>
+            <li><strong>Cliente:</strong> ${input.customerName}</li>
+            <li><strong>Telefono:</strong> ${input.customerPhone || "No proporcionado"}</li>
+            <li><strong>Email:</strong> ${input.customerEmail || "No proporcionado"}</li>
+            <li><strong>Fecha:</strong> ${dateText}</li>
+            <li><strong>Horario:</strong> ${startText} - ${endText}</li>
+          </ul>
+        `,
+      }),
+    ),
+  );
+}
 
 /**
  * GET /api/tenants/[tenant]/bookings
@@ -50,7 +125,7 @@ export async function GET(
 
     // Find tenant
     const [tenant] = await db
-      .select({ id: tenants.id })
+      .select({ id: tenants.id, name: tenants.name })
       .from(tenants)
       .where(eq(tenants.slug, tenantSlug))
       .limit(1);
@@ -123,7 +198,7 @@ export async function POST(
 
     // Find tenant
     const [tenant] = await db
-      .select({ id: tenants.id })
+      .select({ id: tenants.id, name: tenants.name })
       .from(tenants)
       .where(eq(tenants.slug, tenantSlug))
       .limit(1);
@@ -191,6 +266,20 @@ export async function POST(
         totalPrice: data.totalPrice.toString(),
       })
       .returning();
+
+    try {
+      await notifyTenantAdminsAboutBooking({
+        tenantId: tenant.id,
+        tenantName: tenant.name,
+        customerName: data.customerName,
+        customerPhone: data.customerPhone,
+        customerEmail: data.customerEmail,
+        startTime: new Date(data.startTime),
+        endTime: new Date(data.endTime),
+      });
+    } catch (notificationError) {
+      console.error("Bookings admin notification error:", notificationError);
+    }
 
     return NextResponse.json({ data: newBooking }, { status: 201 });
   } catch (error) {

@@ -1,11 +1,11 @@
 # Finance — Test Report
 
-**Fecha última prueba:** 2026-05-12
+**Fecha última prueba:** 2026-05-15
 **URL:** http://localhost:3003/t/wondernails/finance
-**URL Final:** http://localhost:3003/t/wondernails/login
+**URL Final:** http://localhost:3003/t/wondernails/login?callbackUrl=/t/wondernails/admin
 **Status:** 🔀 REDIRECT
 **Título página:** Iniciar Sesión - Wonder Nails Studio
-**Errores consola:** 0
+**Errores consola:** 1
 
 ## 🔍 Funcionalidades detectadas
 
@@ -49,6 +49,11 @@
 ## 🖼️ Evidencia
 
 ![Screenshot](finance.png)
+
+## ⚠️ Errores de consola
+
+- `ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror
+  at fetchData (http://localhost:3`
 
 ---
 

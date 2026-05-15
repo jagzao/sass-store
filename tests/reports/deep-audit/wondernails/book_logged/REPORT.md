@@ -9,7 +9,7 @@
 
 ## 🔍 Funcionalidades detectadas
 
-### 🖱️ Botones (11)
+### 🖱️ Botones (10)
 
 - QHola, QA
 - Wed13thLibre
@@ -17,7 +17,6 @@
 - Fri15thLibre
 - Sat16thLibre
 - Sun17thLibre
-- 4:00 p.m.
 - 5:00 p.m.
 - 6:00 p.m.
 - 7:00 p.m.

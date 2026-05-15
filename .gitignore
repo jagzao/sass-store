@@ -91,6 +91,10 @@ playwright-report/
 test_output*.txt
 *.png
 
+# Evidence artifacts (logs, API proofs, screenshots) — keep folder, ignore contents
+tests/evidence/**/*
+!tests/evidence/.gitkeep
+
 # Agents alerts (temporary)
 agents/alerts/
 
@@ -100,4 +104,23 @@ tests/e2e/services/
 # Build logs
 build-log.txt
 build-log2.txt
+next-build-out*.txt
+
+# Agent / skill artifacts
+skills-lock.json
+start-e2e-*.cmd
+.kilocode/
+.junie/
+.kiro/
+.qwen/
+.trae/
+.windsurf/
+.claude/skills/
+
+# Debug temp files
+*.err
+*.out
+apps/*.err
+apps/*.out
+
 

@@ -1,5 +1,6 @@
 // Cliente API para categorías de transacciones
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "";
+import { getApiUrl } from "./client-config";
+const API_BASE = getApiUrl();
 
 export interface Category {
   id: string;

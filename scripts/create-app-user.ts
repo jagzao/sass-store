@@ -4,37 +4,37 @@
  * Creates a non-superuser for the application that respects RLS policies
  */
 
-import { Pool } from 'pg';
-import * as path from 'path';
-import * as dotenv from 'dotenv';
-import * as crypto from 'crypto';
+import { Pool } from "pg";
+import * as path from "path";
+import * as dotenv from "dotenv";
+import * as crypto from "crypto";
 
 // Load environment variables from .env.local
-dotenv.config({ path: path.join(__dirname, '..', '.env.local') });
+dotenv.config({ path: path.join(__dirname, "..", ".env.local") });
 
 async function createAppUser() {
-
   // Use superuser connection for creating users
-  const connectionString = process.env.DATABASE_URL_SUPERUSER || process.env.DATABASE_URL;
+  const connectionString =
+    process.env.DATABASE_URL_SUPERUSER || process.env.DATABASE_URL;
 
   if (!connectionString) {
-    console.error('❌ Error: DATABASE_URL_SUPERUSER or DATABASE_URL not set');
+    console.error("❌ Error: DATABASE_URL_SUPERUSER or DATABASE_URL not set");
     process.exit(1);
   }
 
   // Generate a secure password (hex to avoid URL encoding issues)
-  const password = crypto.randomBytes(32).toString('hex');
-  const username = 'sass_store_app';
+  const password = crypto.randomBytes(32).toString("hex");
+  const username = "sass_store_app";
 
   const pool = new Pool({ connectionString });
 
   try {
-    await pool.query('SELECT NOW()');
+    await pool.query("SELECT NOW()");
 
     // Check if user already exists
     const userCheck = await pool.query(
       `SELECT 1 FROM pg_user WHERE usename = $1`,
-      [username]
+      [username],
     );
 
     if (userCheck.rows.length > 0) {
@@ -82,20 +82,19 @@ async function createAppUser() {
       ORDER BY tablename
     `);
 
-    rlsCheck.rows.forEach(row => {
-      const status = row.rowsecurity ? '✅ ENFORCED' : '⚠️  NOT ENFORCED';
+    rlsCheck.rows.forEach((row) => {
+      const status = row.rowsecurity ? "✅ ENFORCED" : "⚠️  NOT ENFORCED";
     });
 
     const url = new URL(connectionString);
     const newConnectionString = `postgresql://${username}:${password}@${url.host}${url.pathname}`;
-
   } catch (error) {
-    console.error('\n❌ Error creating application user:', error);
+    console.error("\n❌ Error creating application user:", error);
 
     if (error instanceof Error) {
-      console.error('\nError Details:', error.message);
+      console.error("\nError Details:", error.message);
 
-      if (error.message.includes('permission denied')) {
+      if (error.message.includes("permission denied")) {
       }
     }
 
@@ -106,7 +105,7 @@ async function createAppUser() {
 }
 
 // Run
-createAppUser().catch(error => {
-  console.error('Fatal error:', error);
+createAppUser().catch((error) => {
+  console.error("Fatal error:", error);
   process.exit(1);
 });

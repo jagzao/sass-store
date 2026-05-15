@@ -1,45 +1,41 @@
 # Nuevo Cliente — Test Report
 
-**Fecha última prueba:** 2026-05-12
+**Fecha última prueba:** 2026-05-15
 **URL:** http://localhost:3003/t/wondernails/clientes/nueva
-**URL Final:** http://localhost:3003/t/wondernails/clientes/nueva
-**Status:** ✅ OK
-**Título página:** Nueva Clienta - Wonder Nails Studio
-**Errores consola:** 0
+**URL Final:** http://localhost:3003/t/wondernails/login?callbackUrl=/t/wondernails/admin
+**Status:** 🔀 REDIRECT
+**Título página:** Iniciar Sesión - Wonder Nails Studio
+**Errores consola:** 1
 
 ## 🔍 Funcionalidades detectadas
 
 ### 🖱️ Botones
 
-- Agregar
-- Agregar
-- Agregar
-- Cancelar
-- Crear Clienta
+- Iniciar Sesión
+- Continuar con Google
 
 ### 🔗 Links
 
-- Inicio
-- Clientas
+- Productos
+- Servicios
+- Reservar
+- Contacto
+- Iniciar Sesión
+- ¿Olvidaste tu contraseña?
+- ¿Olvidaste tu contraseña?
+- Regístrate aquí
+- ← Volver a la tienda
 
 ### 📝 Inputs / Formularios
 
-- Ej: María García López
-- Ej: 555-1234
-- Ej: maria@example.com
-- date
-- Ej: Calle Principal 123, Colonia Centro, Ciudad
-- text
-- Ej: Alérgica a acetona
-- Notas sobre preferencias especiales...
-- Ej: Diabetes Tipo 2
-- Ej: Acrilato, Polvo
-- Registra si el paciente está tomando algún medicamento o tratamiento médico relevant...
+- tu@email.com
+- ••••••••
+- remember-me
 
 ### 📌 Headings
 
-- Agregar Nueva Clienta
-- ⚕️ Historial Médico
+- Wonder Nails Studio
+- Inicia sesión en tu cuenta
 
 ## 📋 Checklist de validación (para LLM / QA)
 
@@ -53,6 +49,11 @@
 ## 🖼️ Evidencia
 
 ![Screenshot](nuevo_cliente.png)
+
+## ⚠️ Errores de consola
+
+- `ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror
+  at fetchData (http://localhost:3`
 
 ---
 

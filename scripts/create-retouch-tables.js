@@ -126,7 +126,7 @@ async function createTables() {
     `;
 
     console.log("✅ Tablas creadas exitosamente:");
-    result.forEach(row => {
+    result.forEach((row) => {
       console.log(`  - ${row.table_name}`);
     });
 

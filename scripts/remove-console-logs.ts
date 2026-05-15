@@ -1,7 +1,7 @@
 // @ts-nocheck
 /**
- * Script to remove or replace console.log statements with proper logging
- * This ensures production code doesn't have console.log statements
+ * Script DEPRECATED — se eliminara tras STRY-019.
+ * Usar lint rules para prevenir console.log en produccion.
  */
 
 import * as fs from "fs";
@@ -112,10 +112,12 @@ async function removeConsoleLogs(dryRun: boolean = true): Promise<void> {
       fs.writeFileSync(fullPath, newContent, "utf-8");
     }
 
-    console.log(
-      `\n\n🔧 Removed console statements from ` +
-        `${Object.keys(byFile).length} files`,
+    // SECURITY: Redacted sensitive log
+    const totalRemoved = Object.values(byFile).reduce(
+      (sum, matches) => sum + matches.length,
+      0,
     );
+    // SECURITY: Redacted sensitive log.length} files`);
   }
 }
 

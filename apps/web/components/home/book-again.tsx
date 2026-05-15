@@ -31,18 +31,6 @@ const recentBookings: Service[] = [
     lastBooked: "2024-01-15",
   },
   {
-    id: "2",
-    name: "Cut & Style",
-    price: 85.0,
-    duration: 90,
-    image: "✂️",
-    tenant: "vigistudio",
-    tenantName: "Vigi Studio",
-    preferredStaff: "Carmen",
-    nextAvailableSlot: "16:00",
-    lastBooked: "2024-01-10",
-  },
-  {
     id: "3",
     name: "Court Rental",
     price: 45.0,

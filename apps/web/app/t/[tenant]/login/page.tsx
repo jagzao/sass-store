@@ -1,9 +1,12 @@
 import { notFound } from "next/navigation";
 import { getTenantBySlug } from "@/lib/server/get-tenant";
 import { Metadata } from "next";
+import { Suspense } from "react";
+import { isGoogleOAuthConfigured } from "@sass-store/config/auth-env";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { AuthError } from "@/components/auth/AuthError";
 import { GoogleLoginButton } from "@/components/auth/GoogleLoginButton";
+import { StripAuthErrorQuery } from "@/components/auth/StripAuthErrorQuery";
 
 interface PageProps {
   params: Promise<{
@@ -53,6 +56,7 @@ export default async function LoginPage({ params, searchParams }: PageProps) {
     primaryColor?: string;
   };
   const primaryColor = branding.primaryColor ?? "#6366f1";
+  const showGoogleLogin = isGoogleOAuthConfigured();
 
   return (
     <div className="min-h-screen bg-[#F8F9FA] flex flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -77,8 +81,11 @@ export default async function LoginPage({ params, searchParams }: PageProps) {
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          {/* Error display */}
-          <AuthError error={resolvedSearchParams.error as string} />
+          {/* Error display + strip stale ?error= after OAuth redirect */}
+          <Suspense fallback={null}>
+            <StripAuthErrorQuery />
+            <AuthError error={resolvedSearchParams.error as string} />
+          </Suspense>
 
           {/* Login Form */}
           <LoginForm
@@ -97,24 +104,32 @@ export default async function LoginPage({ params, searchParams }: PageProps) {
             </a>
           </div>
 
-          {/* Divider */}
-          <div className="mt-6">
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300" />
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">
-                  O continúa con
-                </span>
-              </div>
-            </div>
+          {showGoogleLogin ? (
+            <>
+              {/* Divider */}
+              <div className="mt-6">
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-gray-300" />
+                  </div>
+                  <div className="relative flex justify-center text-sm">
+                    <span className="px-2 bg-white text-gray-500">
+                      O continúa con
+                    </span>
+                  </div>
+                </div>
 
-            {/* Social Login */}
-            <div className="mt-6">
-              <GoogleLoginButton tenantSlug={resolvedParams.tenant} />
-            </div>
-          </div>
+                <div className="mt-6">
+                  <GoogleLoginButton tenantSlug={resolvedParams.tenant} />
+                </div>
+              </div>
+            </>
+          ) : (
+            <p className="mt-6 text-center text-xs text-gray-500">
+              El inicio de sesión con Google no está configurado en este entorno
+              (faltan credenciales válidas en el servidor).
+            </p>
+          )}
 
           {/* Sign up link */}
           <div className="mt-6 text-center">

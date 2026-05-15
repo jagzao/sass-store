@@ -1,102 +1,265 @@
-# CLAUDE.md — Instrucciones para Claude Code
+# CLAUDE.md
 
-## Inbox móvil / remoto
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-Si el usuario trabaja desde el **celular**: las peticiones pueden ir en **`docs/stories/inbox/QUEUE.md`** (commit por GitHub). Al iniciar tarea o cuando diga **“procesá inbox”**, leer ese archivo, ejecutar según tipo (`US`, `cambio`, `continuar-plan`, …) y dejar **Respuesta agente** en la cola. Protocolo: `.agents/protocols/mobile-remote-async.md`.
+## Project Overview
 
-## Regla Obligatoria: Validación E2E al terminar implementaciones
+This is a multitenant SaaS platform for beauty salons built with a sophisticated autonomous development workflow system. The project uses a monorepo structure with Next.js for the frontend/backend and implements a Result Pattern for error handling.
 
-**Proceso obligatorio en 4 pasos — no reportar como terminado sin completarlos todos.**
+## Core Architecture & Development Workflow
 
-### Workflow con plan / story en curso (tras codificar)
+### Autonomous Development System
 
-En cuanto hay **codificación** aplicada al plan (`plan.md`) o a la US activa, **antes** de pedir visto bueno al dueño el agente debe correr **Playwright CLI** como haría una persona: **headed** primero (inspección visual y flujos de `testing-usuario.md`), iterar fixes, materializar en `tests/e2e/`, y cerrar en **headless**. No es opcional ni sustituible por “solo unit tests”. Detalle: `AGENTS.md` (transición tras codificación + Fase 4).
+The project implements a Swarm Architecture & Memory Protocol that enables AI agents to work autonomously:
 
-### Orquestación `Implementa …` (autonomía)
+- **Memory System** (`.agents/memory/`) - Persistent context storage
+- **Session Management** (`.agents/session/`) - Current task tracking
+- **History Tracking** (`.agents/history/`) - Error logs and test cases
+- **Skills Framework** (`.agents/skills/`) - Specialized agent capabilities
+- **Protocols** (`.agents/protocols/`) - Standardized procedures
 
-Ejecutar **fases en orden** (Fase 0 → PM → Architect → Dev → QA) **sin pedir “¿continúo?”** al usuario. Al **inicio**, un solo bloque con **todas** las preguntas abiertas **o** cero preguntas + asunciones en `plan.md`. Si QA falla, **bucle Dev→QA** automático hasta verde (tope en `.agents/protocols/story-orchestrator.md`). Con todo verde, **notificar** al usuario que queda pendiente reviewer/visto bueno. Revisión técnica de PR/diff: skill **`pr-reviewer`** (`.agents/skills/pr-reviewer/SKILL.md`). Protocolo: `.agents/protocols/story-orchestrator.md`.
+### Key Directives from AGENTS.md
 
-### Paso 1 — Playwright CLI headed (**agente**, como lo haría una persona)
+1. **Result Pattern Mandatory**: All new code must use Result<T, E> pattern instead of try/catch
+2. **Explicit Error Types**: All errors must be typed DomainError variants
+3. **Composable Operations**: Chain Results with map, flatMap, and combinators
+4. **Type-safe Validation**: Use Zod schemas with Result integration
 
-El **agente** corre Playwright con browser visible para cazar errores de UI/UX y corregirlos. **No** es tarea del dueño reemplazar este paso; el dueño solo da **visto bueno** al final sobre lo ya verde (ver `AGENTS.md` § 1.4).
+### Required Imports for Result Pattern
 
-```bash
-# Feature específico, headed
-npm run test:e2e:subset -- --headed --grep "nombre del feature o tenant"
-
-# Tenant específico, headed
-npm run test:e2e:subset -- --headed --grep "centro-tenistico|nombre-tenant"
-
-# Validación visual completa
-npm run test:e2e -- --headed
+```typescript
+import { Result, Ok, Err, match } from "@sass-store/core/src/result";
+import { DomainError, ErrorFactories } from "@sass-store/core/src/errors/types";
+import {
+  validateWithZod,
+  CommonSchemas,
+} from "@sass-store/validation/src/zod-result";
 ```
 
-### Paso 2 — Fix & iterate si hay errores
+## Essential Commands
 
-Si se detecta cualquier error o comportamiento no deseado durante la validación visual:
-
-1. Corregir el código
-2. Volver a correr el paso 1
-3. Repetir hasta que el flujo se vea y funcione correctamente
-
-**No avanzar al paso 3 si hay algo roto o incorrecto visualmente.**
-
-### Paso 3 — Crear o actualizar tests E2E
-
-Con la app validada y funcionando:
-
-- Crear tests en `tests/e2e/` que cubran el flujo validado (`.spec.ts`)
-- Actualizar tests existentes si el comportamiento cambió
-- Cubrir: happy path + validaciones + casos de error
-
-### Paso 4 — Ejecutar los tests (deben pasar)
+### Development
 
 ```bash
-# Headless — deben pasar limpios
-npm run test:e2e:subset -- --grep "nombre del feature o tenant"
+npm run dev                    # Start development server (port 3001)
+npm run build                  # Build the application
+npm run lint                   # Run ESLint
+npm run typecheck              # Run TypeScript type checking
 ```
 
-Si algún test falla → corregir test o código → re-ejecutar → debe pasar limpio.
+### Testing
 
----
+```bash
+npm run test:unit              # Run unit tests
+npm run test:integration       # Run integration tests
+npm run test:security          # Run security tests
+npm run test:e2e               # Run all E2E tests
+npm run test:e2e:subset -- --grep "feature"  # Run specific E2E tests
+npm run test:coverage          # Run tests with coverage report
+npm run validate               # Run complete validation (lint + build + tests)
+```
 
-**Aplica a:**
+### Database
 
-- Nuevos componentes o páginas (landing, hero, sections)
-- Cambios en estilos globales (globals.css, TenantStyles)
-- Cambios en rutas o layouts de tenant
-- Cambios en autenticación, lógica de negocio o flujos de usuario
-- Cualquier fix de UI o diseño
+```bash
+npm run db:generate            # Generate database migrations
+npm run db:push                # Apply migrations to database
+npm run db:seed                # Seed database with test data
+npm run rls:apply              # Apply Row Level Security policies
+npm run rls:test               # Test RLS policies
+```
 
-**🚨 No reportar implementación como "lista" hasta que los 4 pasos estén completos.**
+### Autonomous Agent Commands
 
----
+```bash
+npm run agent:build            # Lint + typecheck + build
+npm run agent:test             # Run unit and E2E tests
+npm run agent:e2e              # Build and run E2E tests
+npm run agent:ship             # Complete validation pipeline
+npm run swarm:start "feature"  # Start swarm orchestrator for a feature
+```
 
-## User Stories, sprint y reuniones
+### Security & Maintenance
 
-- Toda entrega y plan de cambios va **ligada a una User Story** (`docs/stories/…`) y a la carpeta operativa `.agents/sprint/{STRY-XXX-slug}/` con `plan.md`, `implementacion.md`, `testing-usuario.md` (detalle en `AGENTS.md` § User Stories).
-- Si el usuario pide **analizar una reunión u observaciones**, preguntar si deben incorporarse a la **story en curso** y actualizar esos artefactos; no cerrar el análisis sin esa decisión explícita.
-- **DoD:** una US solo es `done` y solo entonces **push/publicar** después de: implementación completa, test + fix + **retest UT** verde, **Playwright CLI** (headed + headless) del flujo E2E completo de la US ejecutado por el **agente**, cumplimiento de **`AGENTS.md` § 1.3**, y **tu visto bueno** (no segunda ronda de QA: tú apruebas lo **ya** probado y corregido). Ver `AGENTS.md` § 1.2, § 1.3 y § 1.4.
+```bash
+npm run security:autofix       # Automatically fix security issues
+npm run security:check-deps    # Check for vulnerable dependencies
+npm run security:update-deps   # Update dependencies to fix vulnerabilities
+```
 
-## Stack Principal
+## Project Structure
 
-Ver `AGENTS.md` para reglas de arquitectura, Result Pattern (MANDATORIO), y estructura del monorepo.
+```
+├── apps/
+│   └── web/                   # Next.js application (UI + API routes)
+├── packages/                  # Shared libraries and components
+├── tests/                     # Test suites
+│   ├── unit/                  # Unit tests
+│   ├── integration/           # Integration tests
+│   └── e2e/                   # End-to-end tests
+├── migrations/                # Database migrations
+├── scripts/                   # Automation scripts
+├── docs/                      # Documentation
+├── .agents/                   # Autonomous agent system
+│   ├── memory/                # Context and rules
+│   ├── session/               # Current task tracking
+│   ├── history/               # Error logs and test cases
+│   ├── skills/                # Agent capabilities
+│   └── protocols/             # Standardized procedures
+└── tools/                     # Development tools
+```
 
-## Tests
+## Development Guidelines
 
-- Unit: `npm run test:unit`
-- E2E: `npm run test:e2e`
-- E2E subset: `npm run test:e2e:subset -- --grep "X"`
-- Usuario de testing estándar (admin): `jagzao@gmail.com/admin`
-- Coverage targets: rutas críticas >80%, lógica de negocio >70%
+### Code Quality Standards
 
-### Plan robusto (trigger: “plan robusto”, “testing robusto”, “QA exhaustivo”)
+- Strict TypeScript with noImplicitAny
+- ESLint with Prettier formatting
+- 2-space indentation
+- Trailing commas enforced
+- Component files use PascalCase
+- Hooks start with `use`
+- Constants use UPPER_SNAKE_CASE
 
-Además de E2E headed/headless estándar, incluir **crawler/smoke de enlaces internos**, **negative testing** (auth, tenant, validación, rate limit, red), **API negativa**, regresión **por tenant**, smoke **seguridad**, **resiliencia** (reload/back), **a11y/teclado + viewport móvil**, y **observabilidad** según entorno. Detalle y matriz: `AGENTS.md` (sección Plan robusto de testing) y `docs/TESTING_MASTER_PLAN.md`.
+### Testing Requirements
 
-## Tenants
+- Maintain >=80% coverage for critical paths
+- Test both success and failure paths for Result patterns
+- Use data builders instead of hardcoded test data
+- Update `QA_LEADER_IMPLEMENTATION_SUMMARY.md` after significant changes
 
-Cada tenant debe tener su propio look & feel con landing propia en:
-`apps/web/components/tenant/[slug]/`
+### Result Pattern Implementation
 
-Registrar en `apps/web/app/t/[tenant]/page.tsx`.
+```typescript
+// ✅ CORRECT: Result Pattern
+export const getProduct = (
+  id: string,
+): Promise<Result<Product, DomainError>> => {
+  return fromPromise(db.products.findUnique({ where: { id } }), (error) =>
+    ErrorFactories.database(
+      "find_product",
+      `Failed to find product ${id}`,
+      undefined,
+      error,
+    ),
+  );
+};
+
+// ❌ FORBIDDEN: Old try/catch
+export async function GET(request: NextRequest) {
+  try {
+    const product = await getProduct(id);
+    return NextResponse.json({ success: true, data: product });
+  } catch (error) {
+    return NextResponse.json({ success: false, error: error.message });
+  }
+}
+```
+
+## Autonomous Agent Workflow
+
+### MANDATORY: Full-Site Validation & Auto-Correct-Deploy Pipeline
+
+**This is NON-NEGOTIABLE for every agent, every task, every US, every fix.**  
+No task is complete until this pipeline finishes with zero errors.
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│          PIPELINE OBLIGATORIO DE TODO AGENTE AUTÓNOMO               │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│  1. LEVANTAR → npm run dev (si el servidor no está activo)          │
+│     Esperar health check en http://localhost:3001/api/health         │
+│                                                                      │
+│  2. VALIDAR SITIO COMPLETO como persona real con Playwright CLI      │
+│     → Recorrer TODA la app: web pública + admin + todas las rutas   │
+│     → No solo el feature trabajado: TODO el sitio                   │
+│     → Modo headed --slow-mo 300 para inspección visual              │
+│                                                                      │
+│  3. CORREGIR AUTOMÁTICAMENTE cada error encontrado                  │
+│     → No reportar y esperar: corregir de inmediato                  │
+│     → Aplicar árbol de diagnóstico del protocolo e2e-validation.md  │
+│                                                                      │
+│  4. REINICIAR y RE-VALIDAR exhaustivamente tras cada corrección     │
+│     → Volver al paso 2 hasta que el sitio completo pase sin errores │
+│     → Máx 5 ciclos; si persiste → bloqueo documentado              │
+│                                                                      │
+│  5. CONFIRMAR en headless (gate CI)                                 │
+│     → npm run test:e2e                                              │
+│     → 0 tests fallidos, 0 skipped sin justificación                 │
+│                                                                      │
+│  6. APAGAR servicios limpiamente                                    │
+│     → Detener el proceso dev server levantado por el agente         │
+│                                                                      │
+│  7. DEPLOY de todo lo corregido                                     │
+│     → npm run build (debe ser exitoso)                              │
+│     → git add + commit (Conventional Commits)                       │
+│     → push a la rama activa                                         │
+│     → Abrir / actualizar PR si aplica                               │
+│                                                                      │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+**Cobertura mínima del paso 2 (sitio completo):**
+
+| Área                | Rutas clave a validar                       |
+| ------------------- | ------------------------------------------- |
+| Landing / zo-system | `/`, `/t/zo-system/`                        |
+| Admin global        | `/admin/tenants`, `/admin/social-planner`   |
+| Tenant admin        | `/t/[tenant]/admin/` — al menos wondernails |
+| Finance             | `/t/[tenant]/finance/`                      |
+| Inventory           | `/t/[tenant]/inventory/`                    |
+| Bookings            | `/t/[tenant]/book/`                         |
+| Auth                | Login, registro, callback OAuth             |
+
+Si una ruta muestra error, pantalla blanca, 4xx/5xx, o comportamiento roto → **corregir antes de continuar**.
+
+### Required E2E Validation Process (feature-level)
+
+After implementing features, always complete these 4 steps:
+
+1. **Playwright CLI headed** - Agent runs visual validation
+
+   ```bash
+   npm run test:e2e:subset -- --headed --grep "feature-name"
+   ```
+
+2. **Fix & iterate** - Correct any visual or functional issues
+
+3. **Create/update E2E tests** - Ensure test coverage in `tests/e2e/`
+
+4. **Headless execution** - Validate all tests pass
+   ```bash
+   npm run test:e2e:subset -- --grep "feature-name"
+   ```
+
+### Agent Roles & Documentation
+
+Each role has dedicated implementation summaries that must be updated after changes:
+
+- **QA Leader**: `QA_LEADER_IMPLEMENTATION_SUMMARY.md`
+- **Architect**: `ARCHITECT_IMPLEMENTATION_SUMMARY.md`
+- **Dev Leader**: `DEV_LEADER_IMPLEMENTATION_SUMMARY.md`
+- **Product Manager**: `PM_IMPLEMENTATION_SUMMARY.md`
+
+## Security Practices
+
+- Enforce tenant isolation with RLS filters
+- Sanitize all rendered HTML
+- Keep secrets out of git
+- Run `npm run security:autofix` before releases
+- Never store credentials in fixtures or docs
+
+## Performance Guidelines
+
+- Use combinators efficiently for Result chain operations
+- Implement caching for expensive operations with `ResultCache`
+- Use `asyncFlatMap()` for async operations
+- Monitor performance with `withPerformanceTracking`
+
+## Commit & PR Guidelines
+
+- Follow Conventional Commits format
+- PRs must pass `npm run build`, `npm run lint`, and targeted test suites
+- Never push directly to `main` branch
+- Result Pattern compliance is mandatory for all PRs

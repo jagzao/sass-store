@@ -2,6 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import {
+  CTV_CLAY_ORANGE,
+  CTV_CLAY_ORANGE_SOFT,
+} from "@/lib/design/centro-tenistico-brand";
 
 const SLIDES = [
   {
@@ -17,7 +21,7 @@ const SLIDES = [
     ctaSecondary: "Ver disponibilidad",
     stat: "8 canchas",
     statLabel: "siempre disponibles",
-    accent: "#059669",
+    accent: CTV_CLAY_ORANGE,
   },
   {
     id: "lessons",
@@ -47,7 +51,7 @@ const SLIDES = [
     ctaSecondary: "Ver horarios",
     stat: "20+ alumnos",
     statLabel: "esta semana",
-    accent: "#065F46",
+    accent: "#9A6B3B",
   },
 ];
 

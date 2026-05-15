@@ -18,7 +18,7 @@ async function main() {
         videoProcessingJobs,
         videoProcessingAssets,
       },
-      { migrationsFolder: "./migrations" }
+      { migrationsFolder: "./migrations" },
     );
 
     console.log("✅ Video processing migration completed successfully");

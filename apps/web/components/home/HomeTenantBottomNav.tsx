@@ -25,7 +25,8 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { label: "Inicio", href: "", emoji: "🏠" },
-  { label: "Citas", href: "/admin_bookings", emoji: "📅" },
+  { label: "Citas", href: "/admin_bookings", emoji: "📋" },
+  { label: "Agenda", href: "/admin/calendar", emoji: "📅" },
   { label: "Clientas", href: "/clientes", emoji: "👥" },
   { label: "Más", href: "/admin", emoji: "☰" },
 ];
@@ -53,7 +54,7 @@ export default function HomeTenantBottomNav({
       data-testid="bottom-nav"
       className={`fixed bottom-0 left-0 right-0 h-16 z-40 
                   bg-white/90 backdrop-blur-md border-t border-[#C5A059]/20
-                  flex items-center justify-around px-2 ${className}`}
+                  flex items-center justify-around gap-0.5 px-1 ${className}`}
     >
       {NAV_ITEMS.map((item) => {
         const active = isActive(item.href);
@@ -63,7 +64,7 @@ export default function HomeTenantBottomNav({
           <Link
             key={item.href || "home"}
             href={fullPath}
-            className={`flex flex-col items-center justify-center py-1 px-3 min-w-[64px]
+            className={`flex flex-col items-center justify-center py-1 px-1.5 min-w-0 flex-1 max-w-[20%]
                        transition-all duration-200 rounded-lg
               ${
                 active

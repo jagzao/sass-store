@@ -60,7 +60,7 @@ interface CustomerFileHeaderProps {
 const CustomerFileHeader = forwardRef<
   CustomerFileHeaderHandle,
   CustomerFileHeaderProps
->(function CustomerFileHeader({ tenantSlug, customerId }, ref) {
+>(({ tenantSlug, customerId }, ref) => {
   const historialRef = useRef<HistorialMedicoHandle>(null);
 
   useImperativeHandle(ref, () => ({

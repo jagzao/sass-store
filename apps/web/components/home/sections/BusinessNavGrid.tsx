@@ -25,6 +25,12 @@ interface NavGridItemData {
 
 const NAV_ITEMS: NavGridItemData[] = [
   {
+    emoji: "📅",
+    label: "Calendario de citas",
+    href: "/admin/calendar",
+    description: "Vista semanal de todas las reservas",
+  },
+  {
     emoji: "👥",
     label: "Clientas",
     href: "/clientes",

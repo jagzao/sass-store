@@ -1,6 +1,6 @@
 # Social — Test Report
 
-**Fecha última prueba:** 2026-05-12
+**Fecha última prueba:** 2026-05-15
 **URL:** http://localhost:3003/t/wondernails/social
 **URL Final:** http://localhost:3003/t/wondernails/social
 **Status:** ✅ OK
@@ -41,7 +41,7 @@
 ### 🔗 Links
 
 - Calendario
-  0
+  8
 - 🏠Inicio
 - 📋Citas
 - 📅Agenda

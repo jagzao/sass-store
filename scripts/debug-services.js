@@ -97,4 +97,6 @@ WHERE s.tenant_id = 'tenant-id' AND s.active = true;
 */
 
 console.log("Script para depurar problemas con la carga de servicios");
-console.log("Copia y pega cualquiera de las consultas comentadas en el editor SQL de Supabase");
+console.log(
+  "Copia y pega cualquiera de las consultas comentadas en el editor SQL de Supabase",
+);

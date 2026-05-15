@@ -96,7 +96,7 @@ const createMockDb = () => {
 
 // Initialize PostgreSQL connection
 // TEMPORARY FIX: Override cached env var with correct hostname and username
-let connectionString = process.env.DATABASE_URL;
+const connectionString = process.env.DATABASE_URL;
 
 // Removed broken Supabase pooler connection override that corrupted DNS resolution
 
@@ -126,9 +126,12 @@ export async function checkDatabaseConnection(): Promise<boolean> {
   }
 
   try {
+    const checkLocalhost =
+      connectionString.includes("localhost") ||
+      connectionString.includes("127.0.0.1");
     const client = postgres(connectionString, {
       prepare: false,
-      ssl: "require",
+      ssl: checkLocalhost ? false : "require",
       max: 1,
       idle_timeout: 10,
       connect_timeout: 5,
@@ -156,14 +159,17 @@ function createDatabaseInstance() {
 
   try {
     // Extract hostname for debugging (only in development)
+    const url = new URL(connectionString.replace("postgresql://", "http://"));
     if (process.env.NODE_ENV === "development") {
-      const url = new URL(connectionString.replace("postgresql://", "http://"));
       console.warn("[DB] Connecting to host:", url.hostname);
     }
 
+    const isLocalhost =
+      url.hostname === "localhost" || url.hostname === "127.0.0.1";
+
     const client = postgres(connectionString, {
       prepare: false,
-      ssl: "require",
+      ssl: isLocalhost ? false : "require",
       max: connectionConfig.maxConnections,
       idle_timeout: connectionConfig.idleTimeout,
       connect_timeout: 30,

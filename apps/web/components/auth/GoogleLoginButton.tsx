@@ -7,10 +7,16 @@ interface GoogleLoginButtonProps {
 }
 
 export function GoogleLoginButton({ tenantSlug }: GoogleLoginButtonProps) {
+  const handleGoogleSignIn = () => {
+    // Preserve tenant context for potential OAuth error redirects.
+    document.cookie = `auth_tenant_slug=${encodeURIComponent(tenantSlug)}; path=/; max-age=600; samesite=lax`;
+    signIn("google", { callbackUrl: `/t/${tenantSlug}` });
+  };
+
   return (
     <button
       type="submit"
-      onClick={() => signIn("google", { callbackUrl: `/t/${tenantSlug}` })}
+      onClick={handleGoogleSignIn}
       className="w-full inline-flex justify-center items-center gap-3 py-2.5 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
     >
       <svg

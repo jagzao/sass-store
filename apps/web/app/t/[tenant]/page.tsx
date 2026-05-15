@@ -5,9 +5,11 @@ import ProductCard from "@/components/products/ProductCard";
 import ServiceCard from "@/components/services/ServiceCard";
 import { LiveRegionProvider } from "@/components/a11y/LiveRegion";
 import { getTenantBySlug } from "@/lib/server/get-tenant";
-import { fetchRevalidating } from "@/lib/api/fetch-with-cache";
 import type { TenantData, Product, Service } from "@/types/tenant";
 import HomeRouterWrapper from "@/components/home/HomeRouterWrapper";
+import { db } from "@sass-store/database";
+import { products, services, tenants } from "@sass-store/database/schema";
+import { eq, and } from "drizzle-orm";
 
 // Force dynamic rendering
 export const dynamic = "force-dynamic";
@@ -41,14 +43,6 @@ export default async function TenantPageServer({ params }: PageProps) {
       await import("@/components/tenant/zo-system/ZoLandingPage")
     ).default;
     return <ZoLandingPage tenantSlug={tenantSlug} />;
-  }
-
-  // Custom Design for Nom Nom Taco Truck
-  if (tenantSlug === "nom-nom") {
-    const NomNomLanding = (
-      await import("@/components/tenant/nom-nom/NomNomLanding")
-    ).default;
-    return <NomNomLanding tenantSlug={tenantSlug} />;
   }
 
   // Custom Design for Centro Tenístico
@@ -134,17 +128,52 @@ async function ProductsSection({
   primaryColor: string;
   variant?: "default" | "luxury" | "tech";
 }) {
-  // Fetch products (cached for 5 minutes)
-  const productsResponse = await fetchRevalidating<{ data: Product[] }>(
-    `/api/v1/public/products?tenant=${tenantSlug}&limit=12`,
-    ["products", tenantSlug],
-  );
+  // Direct DB query to avoid self-deadlock (do NOT fetch same server)
+  const tenantResult = await db
+    .select({ id: tenants.id })
+    .from(tenants)
+    .where(eq(tenants.slug, tenantSlug))
+    .limit(1);
 
-  const products = productsResponse?.data || [];
-
-  if (products.length === 0) {
+  if (!tenantResult || tenantResult.length === 0) {
     return null;
   }
+
+  const tenantId = tenantResult[0].id;
+
+  const rows = await db
+    .select({
+      id: products.id,
+      tenantId: products.tenantId,
+      sku: products.sku,
+      name: products.name,
+      description: products.description,
+      price: products.price,
+      category: products.category,
+      featured: products.featured,
+      metadata: products.metadata,
+      imageUrl: products.imageUrl,
+    })
+    .from(products)
+    .where(and(eq(products.tenantId, tenantId), eq(products.active, true)))
+    .limit(12);
+
+  if (rows.length === 0) {
+    return null;
+  }
+
+  const mapped = rows.map((product) => ({
+    id: product.id,
+    tenantId: product.tenantId,
+    sku: product.sku || "",
+    name: product.name,
+    description: product.description || "",
+    price: parseFloat(product.price),
+    imageUrl: product.imageUrl ?? undefined,
+    category: product.category || "",
+    featured: product.featured ?? undefined,
+    metadata: product.metadata || {},
+  }));
 
   return (
     <section className="container mx-auto px-4 py-12">
@@ -156,15 +185,15 @@ async function ProductsSection({
           : "Nuestros Productos"}
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {products.map((product) => (
+        {mapped.map((product) => (
           <ProductCard
             key={product.id}
             id={product.id}
             name={product.name}
             description={product.description || ""}
             price={Number(product.price)}
-            image={product.imageUrl || product.metadata?.image}
-            category={product.category || product.metadata?.category}
+            image={product.imageUrl || (product.metadata as any)?.image}
+            category={product.category || (product.metadata as any)?.category}
             primaryColor={primaryColor}
             tenantSlug={tenantSlug}
             metadata={product.metadata as any}
@@ -189,17 +218,57 @@ async function ServicesSection({
   primaryColor: string;
   variant?: "default" | "luxury" | "tech";
 }) {
-  // Fetch services (cached for 5 minutes)
-  const servicesResponse = await fetchRevalidating<{ data: Service[] }>(
-    `/api/v1/public/services?tenant=${tenantSlug}&featured=true&limit=8`,
-    ["services", tenantSlug],
-  );
+  // Direct DB query to avoid self-deadlock (do NOT fetch same server)
+  const tenantResult = await db
+    .select({ id: tenants.id })
+    .from(tenants)
+    .where(eq(tenants.slug, tenantSlug))
+    .limit(1);
 
-  const services = servicesResponse?.data || [];
-
-  if (services.length === 0) {
+  if (!tenantResult || tenantResult.length === 0) {
     return null;
   }
+
+  const tenantId = tenantResult[0].id;
+
+  const rows = await db
+    .select({
+      id: services.id,
+      tenantId: services.tenantId,
+      name: services.name,
+      description: services.description,
+      price: services.price,
+      duration: services.duration,
+      featured: services.featured,
+      imageUrl: services.imageUrl,
+      metadata: services.metadata,
+    })
+    .from(services)
+    .where(
+      and(
+        eq(services.tenantId, tenantId),
+        eq(services.active, true),
+        eq(services.featured, true),
+      ),
+    )
+    .limit(8);
+
+  if (rows.length === 0) {
+    return null;
+  }
+
+  const mapped = rows.map((service) => ({
+    id: service.id,
+    tenantId: service.tenantId,
+    name: service.name,
+    description: service.description || "",
+    price: parseFloat(service.price),
+    duration: parseFloat(service.duration as unknown as string), // decimal() returns string from Drizzle
+    imageUrl: service.imageUrl ?? undefined,
+    category: "",
+    featured: service.featured ?? undefined,
+    metadata: service.metadata || {},
+  }));
 
   return (
     <section
@@ -211,7 +280,7 @@ async function ServicesSection({
         Servicios Destacados
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {services.map((service) => (
+        {mapped.map((service) => (
           <ServiceCard
             key={service.id}
             {...service}

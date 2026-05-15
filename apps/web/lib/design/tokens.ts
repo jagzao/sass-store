@@ -122,21 +122,15 @@ const tenantTokenOverrides: Record<string, Partial<DesignTokens>> = {
     surface: "#FFFFFF",
   },
   "centro-tenistico": {
-    brand: "#059669", // Green
-    accent: "#E11D48", // Rose for CTAs
-    bg: "#F0FDF4", // Green tint
+    brand: "#B85C38", // Naranja arcilla (cancha clay)
+    accent: "#9A6B3B", // Bronce secundario
+    bg: "#F0FDF4", // Menta / crema (mismo que hero + book)
     surface: "#FFFFFF",
   },
-  "vainilla-vargas": {
-    brand: "#F59E0B", // Amber
-    accent: "#DC2626", // Red for CTAs
-    bg: "#FFFBEB", // Amber tint
-    surface: "#FFFFFF",
-  },
-  "nom-nom": {
-    brand: "#10B981", // Emerald
-    accent: "#DC2626", // Red for CTAs
-    bg: "#ECFDF5", // Emerald tint
+  "manada-juma": {
+    brand: "#7C3AED", // Violeta profundo
+    accent: "#F59E0B", // Ámbar
+    bg: "#F5F3FF", // Lavanda suave
     surface: "#FFFFFF",
   },
   delirios: {

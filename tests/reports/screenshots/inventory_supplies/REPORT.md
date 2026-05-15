@@ -1,29 +1,41 @@
 # Inventory Supplies — Test Report
 
-**Fecha última prueba:** 2026-05-12
+**Fecha última prueba:** 2026-05-15
 **URL:** http://localhost:3003/t/wondernails/inventory/supplies
-**URL Final:** http://localhost:3003/t/wondernails/inventory/supplies
-**Status:** ✅ OK
-**Título página:** Gastos de Insumos - Inventario
-**Errores consola:** 0
+**URL Final:** http://localhost:3003/t/wondernails/login?callbackUrl=/t/wondernails/admin
+**Status:** 🔀 REDIRECT
+**Título página:** Iniciar Sesión - Wonder Nails Studio
+**Errores consola:** 1
 
 ## 🔍 Funcionalidades detectadas
 
 ### 🖱️ Botones
 
-_Ningún botón visible._
+- Iniciar Sesión
+- Continuar con Google
 
 ### 🔗 Links
 
-_Ningún link visible._
+- Productos
+- Servicios
+- Reservar
+- Contacto
+- Iniciar Sesión
+- ¿Olvidaste tu contraseña?
+- ¿Olvidaste tu contraseña?
+- Regístrate aquí
+- ← Volver a la tienda
 
 ### 📝 Inputs / Formularios
 
-_Ningún input visible._
+- tu@email.com
+- ••••••••
+- remember-me
 
 ### 📌 Headings
 
-_Ningún heading visible._
+- Wonder Nails Studio
+- Inicia sesión en tu cuenta
 
 ## 📋 Checklist de validación (para LLM / QA)
 
@@ -37,6 +49,11 @@ _Ningún heading visible._
 ## 🖼️ Evidencia
 
 ![Screenshot](inventory_supplies.png)
+
+## ⚠️ Errores de consola
+
+- `ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror
+  at fetchData (http://localhost:3`
 
 ---
 

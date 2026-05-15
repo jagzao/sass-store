@@ -77,18 +77,6 @@ const trendingItems: TrendingItem[] = [
     salesCount: 45,
   },
   {
-    id: "5",
-    name: "Signature Blowout",
-    price: 45.0,
-    image: "💨",
-    tenant: "vigistudio",
-    tenantName: "Vigi Studio",
-    category: "beauty",
-    type: "service",
-    trending: "hot",
-    salesCount: 67,
-  },
-  {
     id: "6",
     name: "Tech Consultation",
     price: 150.0,

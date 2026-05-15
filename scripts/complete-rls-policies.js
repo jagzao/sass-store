@@ -1,13 +1,21 @@
-const { Pool } = require('pg');
-require('dotenv').config({ path: '.env.local' });
+const { Pool } = require("pg");
+require("dotenv").config({ path: ".env.local" });
 
 async function completeRLS() {
   const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
   try {
-    console.log('🔐 Completing RLS Policies for All Operations...\n');
+    console.log("🔐 Completing RLS Policies for All Operations...\n");
 
-    const tables = ['products', 'services', 'staff', 'bookings', 'orders', 'order_items', 'payments'];
+    const tables = [
+      "products",
+      "services",
+      "staff",
+      "bookings",
+      "orders",
+      "order_items",
+      "payments",
+    ];
 
     for (const table of tables) {
       console.log(`\n📋 ${table}:`);
@@ -21,7 +29,7 @@ async function completeRLS() {
         `);
         console.log(`  ✅ SELECT policy created`);
       } catch (err) {
-        if (err.message.includes('already exists')) {
+        if (err.message.includes("already exists")) {
           console.log(`  ✓  SELECT policy exists`);
         } else {
           console.log(`  ⚠️  SELECT: ${err.message}`);
@@ -37,7 +45,7 @@ async function completeRLS() {
         `);
         console.log(`  ✅ INSERT policy created`);
       } catch (err) {
-        if (err.message.includes('already exists')) {
+        if (err.message.includes("already exists")) {
           console.log(`  ✓  INSERT policy exists`);
         } else {
           console.log(`  ⚠️  INSERT: ${err.message}`);
@@ -54,7 +62,7 @@ async function completeRLS() {
         `);
         console.log(`  ✅ UPDATE policy created`);
       } catch (err) {
-        if (err.message.includes('already exists')) {
+        if (err.message.includes("already exists")) {
           console.log(`  ✓  UPDATE policy exists`);
         } else {
           console.log(`  ⚠️  UPDATE: ${err.message}`);
@@ -70,7 +78,7 @@ async function completeRLS() {
         `);
         console.log(`  ✅ DELETE policy created`);
       } catch (err) {
-        if (err.message.includes('already exists')) {
+        if (err.message.includes("already exists")) {
           console.log(`  ✓  DELETE policy exists`);
         } else {
           console.log(`  ⚠️  DELETE: ${err.message}`);
@@ -79,7 +87,7 @@ async function completeRLS() {
     }
 
     // List all policies
-    console.log('\n\n📊 All RLS Policies:\n');
+    console.log("\n\n📊 All RLS Policies:\n");
     const policies = await pool.query(`
       SELECT tablename, policyname
       FROM pg_policies
@@ -87,7 +95,7 @@ async function completeRLS() {
       ORDER BY tablename, policyname;
     `);
 
-    let currentTable = '';
+    let currentTable = "";
     for (const policy of policies.rows) {
       if (policy.tablename !== currentTable) {
         console.log(`\n  ${policy.tablename}:`);
@@ -96,10 +104,9 @@ async function completeRLS() {
       console.log(`    - ${policy.policyname}`);
     }
 
-    console.log('\n\n✅ RLS Policies Complete!\n');
-
+    console.log("\n\n✅ RLS Policies Complete!\n");
   } catch (error) {
-    console.error('\n❌ Error:', error.message);
+    console.error("\n❌ Error:", error.message);
     process.exit(1);
   } finally {
     await pool.end();

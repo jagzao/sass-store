@@ -6,6 +6,45 @@ import * as path from "path";
 dotenv.config({ path: path.resolve(__dirname, ".env.test") });
 
 const isCI = !!process.env.CI;
+const workerCount = process.env.PW_WORKERS
+  ? Number.parseInt(process.env.PW_WORKERS, 10)
+  : 1;
+
+/**
+ * Usar servidor ya levantado (p. ej. `npm run dev` en 3001): no arranca el webServer en 3002.
+ * Ejemplo: `BASE_URL=http://localhost:3001 E2E_REUSE_SERVER=1 npx playwright test tests/e2e/auth/`
+ */
+const useExternalDevServer =
+  process.env.E2E_REUSE_SERVER === "1" &&
+  Boolean(process.env.BASE_URL?.trim()) &&
+  !isCI;
+
+const webServer = useExternalDevServer
+  ? undefined
+  : {
+      command: "node scripts/start-e2e-server.js",
+      port: 3002,
+
+      // Always start a fresh server locally so stale builds / wrong NODE_ENV
+      // on port 3002 cannot poison E2E. Opt-in reuse with E2E_REUSE_SERVER=1.
+      reuseExistingServer: process.env.E2E_REUSE_SERVER === "1",
+
+      // Timeout: Give enough time for Next.js to build and start
+      timeout: 300000, // 5 minutes build + start
+
+      // Environment variables for test mode
+      env: {
+        NODE_ENV: "production",
+        PORT: "3002",
+        AUTH_SECRET: "super-secret-test-key-for-nextauth-e2e",
+        NEXTAUTH_SECRET: "super-secret-test-key-for-nextauth-e2e",
+        NEXTAUTH_URL: "http://localhost:3002",
+        AUTH_URL: "http://localhost:3002",
+        GOOGLE_CLIENT_ID: "mock_client_id_for_testing",
+        GOOGLE_CLIENT_SECRET: "mock_client_secret_for_testing",
+        E2E_SEED_ENABLED: "true",
+      },
+    };
 
 export default defineConfig({
   testDir: "./tests/e2e",
@@ -17,12 +56,14 @@ export default defineConfig({
   retries: isCI ? 2 : 0,
 
   // Performance: Use 50% of available CPUs (better than 100% or just 1)
-  workers: isCI ? 1 : "50%",
+  // Default to serial-ish execution locally to avoid starving the Next.js server
+  // during heavy crawls + UI smoke in parallel (fixes flaky timeouts on /login).
+  workers: Number.isFinite(workerCount) && workerCount > 0 ? workerCount : 1,
 
-  // Timeout configuration (smart defaults)
-  timeout: 60000, // 60s per test
+  // Timeout configuration (Next `next start` E2E puede tardar en cold build)
+  timeout: 120_000, // 120s per test
   expect: {
-    timeout: 10000, // 10s for assertions
+    timeout: 15_000, // assertions que esperan UI post-compilación
   },
 
   // Reporter: list in dev (better UX), html in CI
@@ -42,8 +83,8 @@ export default defineConfig({
     video: "retain-on-failure",
 
     // Performance: Reasonable timeout for actions
-    actionTimeout: 10000, // 10s for clicks, fills, etc.
-    navigationTimeout: 30000, // 30s for page loads
+    actionTimeout: 15_000,
+    navigationTimeout: 90_000, // alinear con tests/e2e/utils/wait-for-login.ts (cold start)
   },
 
   projects: [
@@ -82,27 +123,5 @@ export default defineConfig({
     // },
   ],
 
-  webServer: {
-    command: "node scripts/start-e2e-server.js",
-    port: 3002,
-
-    // Performance: Reuse existing server if possible
-    reuseExistingServer: !process.env.CI,
-
-    // Timeout: Give enough time for Next.js to build and start
-    timeout: 300000, // 5 minutes build + start
-
-    // Environment variables for test mode
-    env: {
-      NODE_ENV: "production",
-      PORT: "3002",
-      AUTH_SECRET: "super-secret-test-key-for-nextauth-e2e",
-      NEXTAUTH_SECRET: "super-secret-test-key-for-nextauth-e2e",
-      NEXTAUTH_URL: "http://localhost:3002",
-      AUTH_URL: "http://localhost:3002",
-      GOOGLE_CLIENT_ID: "mock_client_id_for_testing",
-      GOOGLE_CLIENT_SECRET: "mock_client_secret_for_testing",
-      E2E_SEED_ENABLED: "true",
-    },
-  },
+  ...(webServer ? { webServer } : {}),
 });

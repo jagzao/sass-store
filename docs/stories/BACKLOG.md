@@ -12,6 +12,7 @@
 | STRY-001     | POS robusto con E2E completo                | P0        | **done**   | S1        | Dev → [`completed/STRY-001-pos-robusto-e2e.md`](completed/STRY-001-pos-robusto-e2e.md)                                   |
 | **STRY-018** | **Recuperación E2E y CI Gate**              | **P0**    | **active** | **S1**    | **QA → Dev → QA**                                                                                                        |
 | **STRY-019** | **Higiene de secretos y observabilidad**    | **P0**    | **active** | **S1/S2** | **Security → Dev**                                                                                                       |
+| **STRY-020** | **Go-Live hardening y salida a producción** | **P0**    | **active** | **S2**    | **PM → Architect → Dev → QA → DevOps**                                                                                   |
 | STRY-017     | Plataforma: rendimiento + seguridad (épica) | P0        | analysis   | S1        | Architect → Dev → [`active/STRY-017-platform-performance-security.md`](active/STRY-017-platform-performance-security.md) |
 | STRY-002     | Retouch System — E2E + validación           | P0        | backlog    | S1        | Dev                                                                                                                      |
 | STRY-003     | Inventory auto-deduction en POS             | P0        | backlog    | S1        | Dev                                                                                                                      |
@@ -38,6 +39,7 @@ No se recomienda deploy a producción hasta que las siguientes US estén en `don
 1. **STRY-018** → E2E ≥88% passed + CI gate required (bloquea merge en rojo)
 2. **STRY-019** → Secrets rotados + build strict + error tracking (bloquea por seguridad)
 3. **STRY-017** → Performance + seguridad estructural (puede solaparse)
+4. **STRY-020** → Build TLS/fonts resuelto + subset E2E funcional + smoke multitenant + rollback ready
 
 Entonces: **release candidate** → staging QA → producción.
 
@@ -79,4 +81,4 @@ Entonces: **release candidate** → staging QA → producción.
 
 ---
 
-_Actualizado: 2026-05-03 — Añadidas STRY-018 (E2E recovery) y STRY-019 (secrets + observability)._
+_Actualizado: 2026-05-07 — STRY-020 elevada a Go-Live hardening para salida a producción._

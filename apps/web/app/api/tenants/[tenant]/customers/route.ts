@@ -190,7 +190,7 @@ export async function GET(
     }
 
     // Build the query with all WHERE conditions combined using AND
-    let query = db
+    const query = db
       .select({
         id: customers.id,
         name: customers.name,

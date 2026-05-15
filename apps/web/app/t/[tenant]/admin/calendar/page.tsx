@@ -172,7 +172,11 @@ export default async function CalendarAdminPage({ params }: PageProps) {
                     </PopoverContent>
                   </Popover>
 
-                  <button className="flex items-center px-4 py-2 bg-[#C5A059] text-white rounded-lg hover:bg-[#b08e4f] transition-colors shadow-sm font-medium">
+                  <button
+                    disabled
+                    title="Crear cita manualmente — próximamente"
+                    className="flex items-center px-4 py-2 bg-[#C5A059]/40 text-white/60 rounded-lg cursor-not-allowed shadow-sm font-medium"
+                  >
                     <Plus className="w-4 h-4 mr-2" />
                     Nueva Cita
                   </button>

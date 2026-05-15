@@ -1,6 +1,6 @@
 # Book — Test Report
 
-**Fecha última prueba:** 2026-05-12
+**Fecha última prueba:** 2026-05-15
 **URL:** http://localhost:3003/t/wondernails/book
 **URL Final:** http://localhost:3003/t/wondernails/book
 **Status:** ✅ OK
@@ -10,24 +10,6 @@
 ## 🔍 Funcionalidades detectadas
 
 ### 🖱️ Botones
-
-- TUE
-
-12th
-
-Libre
-
-- WED
-
-13th
-
-Libre
-
-- THU
-
-14th
-
-Libre
 
 - FRI
 
@@ -41,6 +23,30 @@ Libre
 
 Libre
 
+- SUN
+
+17th
+
+Libre
+
+- MON
+
+18th
+
+Libre
+
+- TUE
+
+19th
+
+Libre
+
+- 9:00 a.m.
+- 10:00 a.m.
+- 11:00 a.m.
+- 12:00 p.m.
+- 1:00 p.m.
+- 2:00 p.m.
 - 3:00 p.m.
 - 4:00 p.m.
 - 5:00 p.m.

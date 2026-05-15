@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { FormInput, PasswordInput } from "@/components/ui/forms";
 
 interface LoginFormProps {
@@ -17,24 +17,6 @@ export function LoginForm({ tenantSlug, primaryColor }: LoginFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
-  const searchParams = useSearchParams();
-
-  // Check for error parameters in URL
-  useEffect(() => {
-    const errorParam = searchParams.get("error");
-    if (errorParam) {
-      const errorMessages: { [key: string]: string } = {
-        CredentialsSignin:
-          "Credenciales no válidas. Verifica que tu correo y contraseña sean correctos y que tengas acceso a este tenant.",
-        SessionRequired:
-          "Se requiere inicio de sesión para acceder a esta página.",
-        Default:
-          "Ocurrió un error iniciar sesión. Por favor, intenta nuevamente.",
-      };
-
-      setError(errorMessages[errorParam] || errorMessages.Default);
-    }
-  }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -64,8 +46,8 @@ export function LoginForm({ tenantSlug, primaryColor }: LoginFormProps) {
       if (result?.ok) {
         // Store current tenant in localStorage for session persistence
         localStorage.setItem("currentTenant", tenantSlug);
-        // Redirect to tenant page on success
-        router.push(`/t/${tenantSlug}`);
+        // Full page reload so SessionProvider picks up the new JWT cookie
+        window.location.href = `/t/${tenantSlug}`;
       }
     } catch (err) {
       setError("Ocurrió un error inesperado. Intenta de nuevo.");

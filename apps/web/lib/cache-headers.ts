@@ -48,11 +48,34 @@ export const PUBLIC_CACHE_HEADERS = {
  * ```
  */
 export function withNoCache<T extends NextResponse>(response: T): T {
-  // Clone headers to avoid mutation
-  Object.entries(NO_CACHE_HEADERS).forEach(([key, value]) => {
-    response.headers.set(key, value);
-  });
-  return response;
+  try {
+    // Fast path for mutable responses.
+    Object.entries(NO_CACHE_HEADERS).forEach(([key, value]) => {
+      response.headers.set(key, value);
+    });
+    return response;
+  } catch {
+    // Auth.js may return immutable headers (e.g. callback error responses).
+    // Rebuild a response with cloned headers so we can safely append no-cache.
+    // IMPORTANT: new Headers(response.headers) may drop Set-Cookie in some runtimes.
+    // Explicitly re-add all Set-Cookie values to preserve the session cookie.
+    const headers = new Headers(response.headers);
+    Object.entries(NO_CACHE_HEADERS).forEach(([key, value]) => {
+      headers.set(key, value);
+    });
+    // Preserve all Set-Cookie headers explicitly (getSetCookie is Node 18+)
+    if (typeof (response.headers as any).getSetCookie === "function") {
+      const setCookies = (response.headers as any).getSetCookie() as string[];
+      headers.delete("set-cookie");
+      setCookies.forEach((c: string) => headers.append("set-cookie", c));
+    }
+
+    return new NextResponse(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers,
+    }) as T;
+  }
 }
 
 /**

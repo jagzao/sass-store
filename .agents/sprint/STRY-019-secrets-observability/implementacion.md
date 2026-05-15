@@ -314,6 +314,14 @@ NEXT_PUBLIC_SENTRY_DSN=  # dejar vacío hasta que el dueño cree proyecto en sen
 
 ## Evidencia de validación (pipeline obligatorio)
 
+| Paso            | Comando          | Resultado esperado | Resultado actual                          |
+| --------------- | ---------------- | ------------------ | ----------------------------------------- |
+| Scripts limpios | tsc --noEmit     | 0 errores          | **0 errores** ✅                          |
+| Build strict    | npm run build    | Sin errores        | **Exitoso (2m11s)** ✅                    |
+| Lint            | npm run lint     | 0 errors           | **0 errores, 31 warnings** ✅             |
+| Sentry smoke    | Build con Sentry | Compila OK         | **Exitoso** ✅ (inactivo sin DSN)         |
+| Vercel timeouts | vercel.json      | Rutas con timeout  | **5s health, 60s upload, 30s default** ✅ |
+
 | Paso            | Comando                               | Resultado esperado     | Resultado actual |
 | --------------- | ------------------------------------- | ---------------------- | ---------------- |
 | Scripts limpios | `tsc --noEmit`                        | 0 errores              | (rellenar)       |

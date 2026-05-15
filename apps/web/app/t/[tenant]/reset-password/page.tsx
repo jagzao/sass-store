@@ -1,13 +1,17 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import Link from "next/link";
 
 export default function ResetPasswordPage() {
   const params = useParams();
   const searchParams = useSearchParams();
-  const [tenantSlug, setTenantSlug] = useState<string>("");
+  const tenantSlug = useMemo(() => {
+    const raw = params?.tenant;
+    if (Array.isArray(raw)) return String(raw[0] ?? "");
+    return String(raw ?? "");
+  }, [params]);
   const token = searchParams?.get("token");
   const [tenantData, setTenantData] = useState<any>(null);
 
@@ -17,23 +21,6 @@ export default function ResetPasswordPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
-
-  useEffect(() => {
-    // Unwrap the params Promise
-    const unwrapParams = async () => {
-      try {
-        const resolvedParams = await params;
-        const resolvedTenant = resolvedParams?.tenant as string;
-        if (resolvedTenant) {
-          setTenantSlug(resolvedTenant);
-        }
-      } catch (error) {
-        console.error("Error unwrapping params:", error);
-      }
-    };
-
-    unwrapParams();
-  }, [params]);
 
   useEffect(() => {
     if (!tenantSlug) return;

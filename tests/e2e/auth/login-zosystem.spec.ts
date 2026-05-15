@@ -20,7 +20,7 @@ test.describe("Zo System Login Debug", () => {
       content.includes("The page you are looking for does not exist");
     expect(is404, "Page content should not indicate 404").toBe(false);
 
-    // Verify login form is visible
-    await expect(page.getByTestId("email-input")).toBeVisible();
+    // Verify login form is visible (layout may duplicate inputs; target first)
+    await expect(page.getByTestId("email-input").first()).toBeVisible();
   });
 });

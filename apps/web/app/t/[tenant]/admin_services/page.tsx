@@ -270,6 +270,7 @@ export default function AdminServicesPage() {
             </div>
             <div className="flex gap-2">
               <button
+                data-testid="menu-designer-btn"
                 onClick={() => setShowMenuDesigner(true)}
                 className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors font-medium flex items-center gap-2"
               >

@@ -101,14 +101,8 @@ export async function fetchWithCache<T = unknown>(
       url.startsWith("/api/v1/public") ||
       url.startsWith("/api/users")
     ) {
-      // IMPORTANT: For internal API routes, Next.js needs absolute URLs
-      // Priority: Use explicit production URL over VERCEL_URL (which can be preview URL with auth)
-      const baseUrl =
-        process.env.NEXTAUTH_URL ||
-        process.env.NEXT_PUBLIC_SITE_URL ||
-        (process.env.VERCEL_URL
-          ? `https://${process.env.VERCEL_URL}`
-          : "http://localhost:3000");
+      const port = process.env.PORT?.trim() || "3001";
+      const baseUrl = `http://127.0.0.1:${port}`;
 
       fullUrl = `${baseUrl}${url}`;
       // eslint-disable-next-line no-console
@@ -142,7 +136,6 @@ export async function fetchWithCache<T = unknown>(
 
     return response.json();
   } catch (error) {
-    // eslint-disable-next-line no-console
     console.error(`[fetchWithCache] Error fetching ${fullUrl}:`, error);
     throw error;
   }

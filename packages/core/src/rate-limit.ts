@@ -407,10 +407,12 @@ export async function checkRateLimit(
   limiterType: RateLimiterType = "general",
   customKey?: string,
 ): Promise<Result<RateLimitResult, DomainError>> {
-  // Skip rate limiting ONLY in development with explicit flag (for testing)
+  // Skip rate limiting in development or when running E2E tests against test DB
+  const isTestDb = (process.env.DATABASE_URL || "").includes("sass_store_test");
   if (
-    process.env.NODE_ENV === "development" &&
-    process.env.DISABLE_RATE_LIMIT === "true"
+    (process.env.NODE_ENV === "development" &&
+      process.env.DISABLE_RATE_LIMIT === "true") ||
+    isTestDb
   ) {
     const config = RATE_LIMIT_CONFIGS[limiterType];
     return Ok({

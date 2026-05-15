@@ -9,14 +9,13 @@
 
 ## 🔍 Funcionalidades detectadas
 
-### 🖱️ Botones (10)
+### 🖱️ Botones (9)
 
 - Wed13thLibre
 - Thu14thLibre
 - Fri15thLibre
 - Sat16thLibre
 - Sun17thLibre
-- 4:00 p.m.
 - 5:00 p.m.
 - 6:00 p.m.
 - 7:00 p.m.

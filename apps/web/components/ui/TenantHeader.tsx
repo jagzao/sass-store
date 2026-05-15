@@ -79,12 +79,17 @@ export default function TenantHeader({
     return "bg-white/95 backdrop-blur-sm border-b border-gray-200";
   };
 
+  // When transparent and not scrolled, the header should not capture pointer events
+  const isPointerTransparent = isTransparent && !isScrolled;
+
   return (
     <header
-      className={`sticky top-0 z-50 transition-all duration-300 w-full ${getHeaderStyles()}`}
+      className={`sticky top-0 z-50 transition-all duration-300 w-full ${getHeaderStyles()} ${isPointerTransparent ? "pointer-events-none" : "pointer-events-auto"}`}
       style={{ position: "sticky", top: 0 }}
     >
-      <div className="container mx-auto px-4 flex items-center justify-between">
+      <div
+        className={`container mx-auto px-4 flex items-center justify-between ${isPointerTransparent ? "pointer-events-auto" : ""}`}
+      >
         <TenantLogo
           tenantSlug={tenantData.slug}
           tenantName={tenantData.name}

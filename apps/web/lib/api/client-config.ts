@@ -4,13 +4,22 @@
  */
 
 export function getApiUrl(): string {
-  // In production, use the API URL from environment variable
   if (typeof window !== "undefined") {
-    // Client-side: use NEXT_PUBLIC_API_URL or empty string for relative URLs
+    const isLocalhost =
+      window.location.hostname === "localhost" ||
+      window.location.hostname === "127.0.0.1";
+    if (isLocalhost) return "";
     return process.env.NEXT_PUBLIC_API_URL || "";
   }
 
-  // Server-side fallback (shouldn't be used, but just in case)
+  // Server-side: check if DATABASE_URL or other env suggests local dev
+  const isLocalServer =
+    (process.env.DATABASE_URL || "").includes("localhost") ||
+    (process.env.DATABASE_URL || "").includes("127.0.0.1") ||
+    (process.env.NEXTAUTH_URL || "").includes("localhost") ||
+    (process.env.NEXTAUTH_URL || "").includes("127.0.0.1");
+  if (isLocalServer) return "";
+
   return process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || "";
 }
 

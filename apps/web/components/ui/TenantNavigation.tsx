@@ -73,6 +73,10 @@ export default function TenantNavigation({
   };
 
   const navLinksList = buildLinks();
+  const isCentroTenistico = tenantSlug === "centro-tenistico";
+  const ctvNavTypography = isCentroTenistico
+    ? "font-light text-[13px] tracking-[0.06em]"
+    : "text-sm font-medium tracking-wide";
 
   const getNavStyles = () => {
     if (isDark) {
@@ -146,7 +150,7 @@ export default function TenantNavigation({
                 href={link.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`text-sm font-medium tracking-wide transition-colors duration-200 ${getLinkStyles(
+                className={`${ctvNavTypography} transition-colors duration-200 ${getLinkStyles(
                   isActive,
                 )}`}
               >
@@ -156,7 +160,7 @@ export default function TenantNavigation({
               <Link
                 key={link.href}
                 href={link.href}
-                className={`text-sm font-medium tracking-wide transition-colors duration-200 ${getLinkStyles(
+                className={`${ctvNavTypography} transition-colors duration-200 ${getLinkStyles(
                   isActive,
                 )}`}
                 style={
@@ -226,9 +230,11 @@ export default function TenantNavigation({
                     href={link.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`py-3 px-4 rounded-lg text-base font-medium transition-all ${getMobileLinkStyles(
-                      isActive,
-                    )}`}
+                    className={`py-3 px-4 rounded-lg ${
+                      isCentroTenistico
+                        ? "text-[15px] font-light tracking-wide"
+                        : "text-base font-medium"
+                    } transition-all ${getMobileLinkStyles(isActive)}`}
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     {link.name}
@@ -237,9 +243,11 @@ export default function TenantNavigation({
                   <Link
                     key={link.href}
                     href={link.href}
-                    className={`py-3 px-4 rounded-lg text-base font-medium transition-all ${getMobileLinkStyles(
-                      isActive,
-                    )}`}
+                    className={`py-3 px-4 rounded-lg ${
+                      isCentroTenistico
+                        ? "text-[15px] font-light tracking-wide"
+                        : "text-base font-medium"
+                    } transition-all ${getMobileLinkStyles(isActive)}`}
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     {link.name}

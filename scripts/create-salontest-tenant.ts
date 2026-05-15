@@ -52,18 +52,21 @@ async function createSalonTest() {
     });
 
     if (existingUser) {
-        console.log("User already exists:", existingUser.id);
-        userId = existingUser.id;
+      console.log("User already exists:", existingUser.id);
+      userId = existingUser.id;
     } else {
-        console.log("Creating new user...");
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const [newUser] = await tx.insert(users).values({
-            id: crypto.randomUUID(),
-            email,
-            name: "Admin Salon Test",
-            password: hashedPassword,
-        }).returning();
-        userId = newUser.id;
+      console.log("Creating new user...");
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const [newUser] = await tx
+        .insert(users)
+        .values({
+          id: crypto.randomUUID(),
+          email,
+          name: "Admin Salon Test",
+          password: hashedPassword,
+        })
+        .returning();
+      userId = newUser.id;
     }
 
     // 3. Assign Role

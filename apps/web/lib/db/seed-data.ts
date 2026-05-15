@@ -1,5 +1,6 @@
 import { db } from "./connection";
 import { tenants, services, products, staff } from "./schema";
+import { users, userRoles } from "@sass-store/database/schema";
 import { eq } from "drizzle-orm";
 
 // Seed data that replaces the TENANTS_DATA mock
@@ -72,40 +73,39 @@ export async function seedTenantData() {
         },
       },
       {
-        slug: "vigistudio",
-        name: "Vigi Studio",
-        description: "Modern hair salon and beauty treatments",
+        slug: "manada-juma",
+        name: "Manada Juma",
+        description: "Servicios de bienestar y aventura al aire libre",
         mode: "booking",
         status: "active",
         branding: {
           primaryColor: "#7C3AED",
-          secondaryColor: "#1F2937",
+          secondaryColor: "#F59E0B",
         },
         contact: {
-          phone: "+1-555-0202",
-          email: "appointments@vigistudio.local",
-          address:
-            "Cda. 1-a Rtno. 21-3, San Lorenzo, 56140 Texcoco de Mora, 56140 MÃ©xico, MÃ©x.",
-          website: "https://vigistudio.local",
+          phone: "+52 55 5555 0001",
+          email: "hola@manadajuma.local",
+          address: "CDMX, México",
+          website: "https://manadajuma.local",
           hours: {
-            monday: "Closed",
+            monday: "9:00-18:00",
             tuesday: "9:00-18:00",
             wednesday: "9:00-18:00",
-            thursday: "9:00-20:00",
-            friday: "9:00-20:00",
-            saturday: "8:00-17:00",
-            sunday: "10:00-16:00",
+            thursday: "9:00-18:00",
+            friday: "9:00-18:00",
+            saturday: "9:00-14:00",
+            sunday: "Closed",
           },
         },
         location: {
-          lat: 34.0736,
-          lng: -118.4004,
-          timezone: "America/Los_Angeles",
+          lat: 19.4326,
+          lng: -99.1332,
+          timezone: "America/Mexico_City",
         },
         quotas: {
-          maxServices: 50,
+          maxServices: 30,
           maxProducts: 50,
-          maxStaff: 15,
+          maxStaff: 10,
         },
       },
       {
@@ -115,7 +115,7 @@ export async function seedTenantData() {
         mode: "booking",
         status: "active",
         branding: {
-          primaryColor: "#059669",
+          primaryColor: "#B85C38",
           secondaryColor: "#1F2937",
         },
         contact: {
@@ -148,8 +148,8 @@ export async function seedTenantData() {
         slug: "delirios",
         name: "Delirios",
         description:
-          "Restaurante gourmet con cocina fusiÃ³n y experiencias culinarias Ãºnicas",
-        mode: "booking",
+          "Restaurante gourmet con cocina fusión y experiencias culinarias únicas",
+        mode: "catalog",
         status: "active",
         branding: {
           primaryColor: "#8B4513",
@@ -179,42 +179,6 @@ export async function seedTenantData() {
           maxServices: 40,
           maxProducts: 60,
           maxStaff: 20,
-        },
-      },
-      {
-        slug: "nom-nom",
-        name: "nom-nom",
-        description: "Authentic Mexican street tacos and catering",
-        mode: "catalog",
-        status: "active",
-        branding: {
-          primaryColor: "#10B981",
-          secondaryColor: "#1F2937",
-        },
-        contact: {
-          phone: "+1-555-0205",
-          email: "pedidos@nom-nom.local",
-          address: "987 Food Truck Plaza, East LA, CA 90063",
-          website: "https://nom-nom.local",
-          hours: {
-            monday: "11:00-21:00",
-            tuesday: "11:00-21:00",
-            wednesday: "11:00-21:00",
-            thursday: "11:00-22:00",
-            friday: "11:00-23:00",
-            saturday: "10:00-23:00",
-            sunday: "10:00-20:00",
-          },
-        },
-        location: {
-          lat: 34.0224,
-          lng: -118.1804,
-          timezone: "America/Los_Angeles",
-        },
-        quotas: {
-          maxServices: 10,
-          maxProducts: 50,
-          maxStaff: 8,
         },
       },
       {
@@ -430,18 +394,20 @@ export async function seedTenantData() {
     ];
 
     await Promise.all(
-      serviceData.map(async (service) => {
-        const [existing] = await db
-          .select()
-          .from(services)
-          .where(eq(services.name, service.name))
-          .limit(1);
+      serviceData
+        .filter((s) => s.tenantId != null) // Skip services for removed tenants
+        .map(async (service) => {
+          const [existing] = await db
+            .select()
+            .from(services)
+            .where(eq(services.name, service.name))
+            .limit(1);
 
-        if (!existing) {
-          await db.insert(services).values(service);
-          console.warn(`âœ… Created service: ${service.name}`);
-        }
-      }),
+          if (!existing) {
+            await db.insert(services).values(service);
+            console.warn(`✅ Created service: ${service.name}`);
+          }
+        }),
     );
 
     // 3. Seed Products
@@ -549,18 +515,20 @@ export async function seedTenantData() {
     ];
 
     await Promise.all(
-      productData.map(async (product) => {
-        const [existing] = await db
-          .select()
-          .from(products)
-          .where(eq(products.sku, product.sku))
-          .limit(1);
+      productData
+        .filter((p) => p.tenantId != null) // Skip products for removed tenants
+        .map(async (product) => {
+          const [existing] = await db
+            .select()
+            .from(products)
+            .where(eq(products.sku, product.sku))
+            .limit(1);
 
-        if (!existing) {
-          await db.insert(products).values(product);
-          console.warn(`âœ… Created product: ${product.name}`);
-        }
-      }),
+          if (!existing) {
+            await db.insert(products).values(product);
+            console.warn(`✅ Created product: ${product.name}`);
+          }
+        }),
     );
 
     // 4. Seed Staff
@@ -590,6 +558,48 @@ export async function seedTenantData() {
         }
       }),
     );
+
+    // 5. Seed Admin User Roles — jagzao@gmail.com as Admin in all active tenants
+    const adminEmail = "jagzao@gmail.com";
+    const [adminUser] = await db
+      .select({ id: users.id })
+      .from(users)
+      .where(eq(users.email, adminEmail))
+      .limit(1);
+
+    if (adminUser) {
+      const activeSlugs = [
+        "wondernails",
+        "centro-tenistico",
+        "delirios",
+        "manada-juma",
+        "zo-system",
+      ];
+      await Promise.all(
+        activeSlugs.map(async (slug) => {
+          const tenantId = tenantMap[slug];
+          if (!tenantId) return;
+
+          await db
+            .insert(userRoles)
+            .values({
+              userId: adminUser.id,
+              tenantId,
+              role: "Admin",
+              updatedAt: new Date(),
+            })
+            .onConflictDoUpdate({
+              target: [userRoles.userId, userRoles.tenantId],
+              set: { role: "Admin", updatedAt: new Date() },
+            });
+          console.warn(`✅ Admin role set: ${adminEmail} → ${slug}`);
+        }),
+      );
+    } else {
+      console.warn(
+        `⚠️  User ${adminEmail} not found — skipping user_roles seed`,
+      );
+    }
 
     console.warn("ðŸŽ‰ Database seed completed successfully!");
     return { success: true, tenantCount: insertedTenants.length };

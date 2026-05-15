@@ -1,8 +1,8 @@
 # Finance Movements — Test Report
 
-**Fecha última prueba:** 2026-05-12
+**Fecha última prueba:** 2026-05-15
 **URL:** http://localhost:3003/t/wondernails/finance/movements
-**URL Final:** http://localhost:3003/t/wondernails/login
+**URL Final:** http://localhost:3003/t/wondernails/login?callbackUrl=/t/wondernails/admin
 **Status:** 🔀 REDIRECT
 **Título página:** Iniciar Sesión - Wonder Nails Studio
 **Errores consola:** 1
@@ -52,7 +52,8 @@
 
 ## ⚠️ Errores de consola
 
-- `Failed to load resource: the server responded with a status of 401 (Unauthorized)`
+- `ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror
+  at fetchData (http://localhost:3`
 
 ---
 

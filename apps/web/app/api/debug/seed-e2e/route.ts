@@ -7,6 +7,7 @@ import {
   userRoles,
   transactionCategories,
   budgets,
+  customers,
 } from "@sass-store/database/schema";
 import { and, eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
@@ -33,7 +34,12 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  if (process.env.NODE_ENV === "production" && !process.env.E2E_SEED_ENABLED) {
+  const isTestDb = (process.env.DATABASE_URL || "").includes("sass_store_test");
+  if (
+    process.env.NODE_ENV === "production" &&
+    !process.env.E2E_SEED_ENABLED &&
+    !isTestDb
+  ) {
     return NextResponse.json({ error: "E2E seed disabled" }, { status: 403 });
   }
 
@@ -92,20 +98,16 @@ export async function POST(request: NextRequest) {
       .where(eq(users.email, TEST_USER.email));
   }
 
-  // 2. Assign admin role for tenant
-  const [existingRole] = await db
-    .select()
-    .from(userRoles)
-    .where(and(eq(userRoles.userId, userId), eq(userRoles.tenantId, tenant.id)))
-    .limit(1);
-
-  if (!existingRole) {
-    await db.insert(userRoles).values({
-      userId,
-      tenantId: tenant.id,
-      role: "Admin",
-    });
-  }
+  // 2. Assign admin role — delete any existing record then re-insert
+  // (avoids RLS filtering issues and duplicate row problems)
+  await db
+    .delete(userRoles)
+    .where(
+      and(eq(userRoles.userId, userId), eq(userRoles.tenantId, tenant.id)),
+    );
+  await db
+    .insert(userRoles)
+    .values({ userId, tenantId: tenant.id, role: "Admin" });
 
   // 3. Seed product if none exists
   const existingProduct = await db
@@ -189,6 +191,23 @@ export async function POST(request: NextRequest) {
     });
   }
 
+  // 5. Seed at least one customer for tenant isolation tests
+  const existingCustomers = await db
+    .select()
+    .from(customers)
+    .where(eq(customers.tenantId, tenant.id))
+    .limit(1);
+
+  if (existingCustomers.length === 0) {
+    await db.insert(customers).values({
+      tenantId: tenant.id,
+      name: "Cliente E2E Test",
+      phone: "5551234567",
+      email: "e2e-customer@test.com",
+      status: "active",
+    });
+  }
+
   return NextResponse.json({
     message: "E2E seed completed",
     tenant: tenantSlug,
@@ -196,5 +215,6 @@ export async function POST(request: NextRequest) {
     productSeeded: existingProduct.length === 0,
     financeSeeded: existingCats.length === 0,
     budgetSeeded: existingBudgets.length === 0,
+    customerSeeded: existingCustomers.length === 0,
   });
 }

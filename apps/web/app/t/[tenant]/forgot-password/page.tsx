@@ -1,26 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 
 export default function ForgotPasswordPage() {
   const params = useParams();
-  // In client components, we need to handle the params Promise properly
-  const [tenantSlug, setTenantSlug] = useState<string>("");
-
-  useEffect(() => {
-    // Since params is a Promise, we need to unwrap it
-    const unwrapParams = async () => {
-      try {
-        const resolvedParams = await params;
-        setTenantSlug(resolvedParams.tenant as string);
-      } catch (error) {
-        console.error("Error resolving params:", error);
-      }
-    };
-
-    unwrapParams();
+  const tenantSlug = useMemo(() => {
+    const raw = params?.tenant;
+    if (Array.isArray(raw)) return String(raw[0] ?? "");
+    return String(raw ?? "");
   }, [params]);
   const [tenantData, setTenantData] = useState<any>(null);
 
@@ -30,6 +19,8 @@ export default function ForgotPasswordPage() {
   const [success, setSuccess] = useState(false);
 
   useEffect(() => {
+    if (!tenantSlug) return;
+
     const fetchTenant = async () => {
       try {
         const res = await fetch(`/api/tenants/${tenantSlug}`);

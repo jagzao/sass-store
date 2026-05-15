@@ -1,46 +1,41 @@
 # Inventory — Test Report
 
-**Fecha última prueba:** 2026-05-12
+**Fecha última prueba:** 2026-05-15
 **URL:** http://localhost:3003/t/wondernails/inventory
-**URL Final:** http://localhost:3003/t/wondernails/inventory
-**Status:** ✅ OK
-**Título página:** Sass Store
-**Errores consola:** 9
+**URL Final:** http://localhost:3003/t/wondernails/login?callbackUrl=/t/wondernails/admin
+**Status:** 🔀 REDIRECT
+**Título página:** Iniciar Sesión - Wonder Nails Studio
+**Errores consola:** 1
 
 ## 🔍 Funcionalidades detectadas
 
 ### 🖱️ Botones
 
-- Inventario
-- Proveedores
-- Movimientos
-- Transferencias
-- Ubicaciones
-- Alertas
-- Configuración
-- Anterior
-- Siguiente
-- 0
-  1
-  Issue
+- Iniciar Sesión
+- Continuar con Google
 
 ### 🔗 Links
 
-- Calendario
-  0
-- 🏠Inicio
-- 📋Citas
-- 📅Agenda
-- 👥Clientas
-- ☰Más
+- Productos
+- Servicios
+- Reservar
+- Contacto
+- Iniciar Sesión
+- ¿Olvidaste tu contraseña?
+- ¿Olvidaste tu contraseña?
+- Regístrate aquí
+- ← Volver a la tienda
 
 ### 📝 Inputs / Formularios
 
-- Buscar por nombre, SKU o categoría...
+- tu@email.com
+- ••••••••
+- remember-me
 
 ### 📌 Headings
 
-- Sistema de Inventario
+- Wonder Nails Studio
+- Inicia sesión en tu cuenta
 
 ## 📋 Checklist de validación (para LLM / QA)
 
@@ -57,14 +52,8 @@
 
 ## ⚠️ Errores de consola
 
-- `Failed to load resource: the server responded with a status of 401 (Unauthorized)`
-- `Inventory error: Error: No autorizado
-  at useInventory.useCallback[apiRequest] (http://localhost:3003/_next/static/ch`
-- `Error loading inventory: Error: No autorizado
-  at useInventory.useCallback[apiRequest] (http://localhost:3003/_next/s`
-- `Failed to load resource: the server responded with a status of 401 (Unauthorized)`
-- `Inventory error: Error: No autorizado
-  at useInventory.useCallback[apiRequest] (http://localhost:3003/_next/static/ch`
+- `ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror
+  at fetchData (http://localhost:3`
 
 ---
 

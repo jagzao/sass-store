@@ -1,6 +1,6 @@
 # Tenant Home — Test Report
 
-**Fecha última prueba:** 2026-05-12
+**Fecha última prueba:** 2026-05-15
 **URL:** http://localhost:3003/t/wondernails
 **URL Final:** http://localhost:3003/t/wondernails
 **Status:** ✅ OK

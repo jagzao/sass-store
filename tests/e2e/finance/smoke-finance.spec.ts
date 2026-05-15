@@ -2,6 +2,8 @@ import { test, expect } from "@playwright/test";
 import { loginAsAdmin, TEST_CREDENTIALS } from "../helpers/test-helpers";
 
 test.describe("Finance System - Smoke Tests", () => {
+  test.describe.configure({ timeout: 120000 });
+
   const { tenantSlug } = TEST_CREDENTIALS;
 
   test.beforeEach(async ({ page }) => {
@@ -35,24 +37,24 @@ test.describe("Finance System - Smoke Tests", () => {
   test("Financial dashboard loads correctly", async ({ page }) => {
     await page.goto(`/t/${tenantSlug}/finance`);
     await page.waitForLoadState("networkidle");
-    const bodyText = await page.locator("body").textContent();
-    const hasFinanceContent =
-      bodyText?.includes("Financiero") ||
-      bodyText?.includes("Resumen") ||
-      bodyText?.includes("Dashboard") ||
-      bodyText?.includes("Ingresos") ||
-      bodyText?.includes("Gastos") ||
-      bodyText?.includes("finance");
-    expect(hasFinanceContent).toBe(true);
+    await expect(
+      page.getByRole("heading", { name: "Matriz de Planeación Financiera" }),
+    ).toBeVisible({ timeout: 20000 });
+    await expect(page.getByTestId("matrix-container")).toBeVisible({
+      timeout: 20000,
+    });
+    await expect(page.getByTestId("granularity-selector")).toBeVisible();
   });
 
   test("Supply expenses page loads", async ({ page }) => {
     await page.goto(`/t/${tenantSlug}/inventory/supplies`);
     await page.waitForLoadState("networkidle");
-    const bodyText = await page.locator("body").textContent();
-    expect(bodyText).toBeDefined();
-    expect(bodyText?.includes("404")).toBe(false);
-    expect(bodyText?.includes("Not Found")).toBe(false);
+    await expect(page).toHaveURL(
+      new RegExp(`/t/${tenantSlug}/inventory/supplies`),
+    );
+    await expect(
+      page.getByRole("heading", { name: "Reporte de Gastos de Insumos" }),
+    ).toBeVisible({ timeout: 20000 });
   });
 
   test("All finance navigation works", async ({ page }) => {

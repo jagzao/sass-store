@@ -20,6 +20,7 @@ const DEFAULT_SKIP_PATH_REGEXES: RegExp[] = [
   /\/projects$/,
   /** No dedicated route yet; some landings still link here — skip until route exists */
   /\/menu$/,
+  /\/booking(\/|$)/,
 ];
 
 const SKIP_PATH_REGEXES: RegExp[] = process.env.CRAWL_SKIP_PATH_REGEX

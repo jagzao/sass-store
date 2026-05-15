@@ -24,7 +24,7 @@ export class InMemoryRetouchService {
     );
 
     const baseDate = new Date(lastVisitDate);
-    let nextDate = new Date(baseDate);
+    const nextDate = new Date(baseDate);
 
     // Mapeo de frecuencia
     switch (frequencyType) {

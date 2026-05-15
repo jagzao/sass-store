@@ -80,13 +80,14 @@ npm run typecheck
 npm run test:unit -- --grep "[feature]"
 ```
 
-When a test fails:
+When a test fails (especially after implementation or post-analysis validation):
 
 1. Capture the failing command and error.
-2. Identify the root cause.
-3. Patch the smallest relevant code path.
-4. Re-run the failing command.
-5. Record new recurring failures in `.agents/history/debug_logs.md` when useful.
+2. Identify the root cause and state what is wrong plus the intended fix (see `e2e-validation.md` §3.0.1).
+3. Reproduce the failure with Playwright CLI in headed mode (`--trace on`, screenshots) before changing business code.
+4. Patch the smallest relevant code path.
+5. Re-validate with Playwright CLI: headed subset, then headless subset, then the failing unit command if applicable (`e2e-validation.md` §3.0.4).
+6. Record new recurring failures in `.agents/history/debug_logs.md` when useful.
 
 Stop after five unsuccessful attempts on the same failure and report the blocker clearly.
 

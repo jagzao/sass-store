@@ -159,6 +159,12 @@ const nextConfig = {
   // Monorepo support - tell Next.js where the root is
   outputFileTracingRoot: path.join(__dirname, '../../'),
 
+  // Use OS trust store for Turbopack network fetches (e.g. next/font/google)
+  // This avoids TLS handshake failures in restricted Windows environments.
+  experimental: {
+    turbopackUseSystemTlsCerts: true,
+  },
+
   // TypeScript — build strict (no ignoreBuildErrors)
   typescript: {
     // ignoreBuildErrors eliminado en STRY-019 — build ahora es estricto

@@ -60,7 +60,7 @@ async function testMonitoring() {
     `);
 
     console.log(
-      `🏢 Tenants with products: ${tenantResult.rows[0].tenant_count}`
+      `🏢 Tenants with products: ${tenantResult.rows[0].tenant_count}`,
     );
 
     // Test 4: Performance Metrics
@@ -80,7 +80,7 @@ async function testMonitoring() {
     console.log("⚡ Table Access Patterns:");
     perfResult.rows.forEach((row) => {
       console.log(
-        `   ${row.tablename.padEnd(15)} seq:${row.sequential_scans} idx:${row.index_scans}`
+        `   ${row.tablename.padEnd(15)} seq:${row.sequential_scans} idx:${row.index_scans}`,
       );
     });
 

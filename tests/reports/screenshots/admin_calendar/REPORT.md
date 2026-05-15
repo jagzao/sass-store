@@ -1,18 +1,18 @@
 # Admin Calendar — Test Report
 
-**Fecha última prueba:** 2026-05-12
+**Fecha última prueba:** 2026-05-15
 **URL:** http://localhost:3003/t/wondernails/admin/calendar
-**URL Final:** http://localhost:3003/t/wondernails/admin/calendar
-**Status:** ✅ OK
-**Título página:** Sass Store
-**Errores consola:** 0
+**URL Final:** http://localhost:3003/t/wondernails/login?callbackUrl=/t/wondernails/admin
+**Status:** 🔀 REDIRECT
+**Título página:** Iniciar Sesión - Wonder Nails Studio
+**Errores consola:** 1
 
 ## 🔍 Funcionalidades detectadas
 
 ### 🖱️ Botones
 
-- Configuración
-- Nueva Cita
+- Iniciar Sesión
+- Continuar con Google
 
 ### 🔗 Links
 
@@ -21,23 +21,21 @@
 - Reservar
 - Contacto
 - Iniciar Sesión
-- Calendario
-  0
-- ← Panel Admin
-- 🏠Inicio
-- 📋Citas
-- 📅Agenda
-- 👥Clientas
-- ☰Más
+- ¿Olvidaste tu contraseña?
+- ¿Olvidaste tu contraseña?
+- Regístrate aquí
+- ← Volver a la tienda
 
 ### 📝 Inputs / Formularios
 
-_Ningún input visible._
+- tu@email.com
+- ••••••••
+- remember-me
 
 ### 📌 Headings
 
-- Gestión de Calendario
-- martes, 12 de mayo
+- Wonder Nails Studio
+- Inicia sesión en tu cuenta
 
 ## 📋 Checklist de validación (para LLM / QA)
 
@@ -51,6 +49,11 @@ _Ningún input visible._
 ## 🖼️ Evidencia
 
 ![Screenshot](admin_calendar.png)
+
+## ⚠️ Errores de consola
+
+- `ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror
+  at fetchData (http://localhost:3`
 
 ---
 

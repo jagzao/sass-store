@@ -1,6 +1,6 @@
 # Admin Services — Test Report
 
-**Fecha última prueba:** 2026-05-12
+**Fecha última prueba:** 2026-05-15
 **URL:** http://localhost:3003/t/wondernails/admin_services
 **URL Final:** http://localhost:3003/t/wondernails/login
 **Status:** 🔀 REDIRECT

@@ -9,37 +9,112 @@ import { tenants } from "@sass-store/database/schema";
 import { eq } from "drizzle-orm";
 import type { Tenant } from "@/types/tenant";
 
+// In-memory short-lived cache to prevent DB pool exhaustion during warmup
+const _cache = new Map<string, { tenant: Tenant | null; ts: number }>();
+const CACHE_TTL_MS = 60_000;
+
+function getCached(slug: string): Tenant | null | undefined {
+  const entry = _cache.get(slug);
+  if (!entry) return undefined;
+  if (Date.now() - entry.ts > CACHE_TTL_MS) {
+    _cache.delete(slug);
+    return undefined;
+  }
+  return entry.tenant;
+}
+
+function setCached(slug: string, tenant: Tenant | null) {
+  _cache.set(slug, { tenant, ts: Date.now() });
+}
+
+function isTransientDbError(err: unknown): boolean {
+  const codeSet = new Set([
+    "ECONNRESET",
+    "ETIMEDOUT",
+    "ECONNREFUSED",
+    "EPIPE",
+    "ENOTFOUND",
+  ]);
+  const seen = new Set<unknown>();
+  let current: unknown = err;
+  for (let depth = 0; depth < 8 && current != null; depth++) {
+    if (seen.has(current)) break;
+    seen.add(current);
+    if (typeof current === "object" && current !== null) {
+      const o = current as {
+        code?: unknown;
+        message?: unknown;
+        cause?: unknown;
+      };
+      if (o.code && codeSet.has(String(o.code))) return true;
+      const msg = typeof o.message === "string" ? o.message : String(current);
+      for (const c of codeSet) {
+        if (msg.includes(c)) return true;
+      }
+      if (/connection.*(reset|terminated|closed)/i.test(msg)) return true;
+      current = o.cause;
+      continue;
+    }
+    break;
+  }
+  const fallback = err instanceof Error ? err.message : String(err);
+  return /ECONNRESET|ETIMEDOUT|ECONNREFUSED|EPIPE|connection.*(reset|terminated|closed)/i.test(
+    fallback,
+  );
+}
+
+async function withTransientRetry<T>(
+  label: string,
+  fn: () => Promise<T>,
+  attempts = 8,
+): Promise<T> {
+  let last: unknown;
+  for (let i = 0; i < attempts; i++) {
+    try {
+      return await fn();
+    } catch (e) {
+      last = e;
+      const retry = isTransientDbError(e) && i < attempts - 1;
+      if (retry) {
+        const delay = Math.min(12_000, 350 * 2 ** i);
+        console.warn(
+          `[getTenantBySlug] ${label} transient DB error (attempt ${i + 1}/${attempts}), retry in ${delay}ms:`,
+          e instanceof Error ? e.message : e,
+        );
+        await new Promise((r) => setTimeout(r, delay));
+        continue;
+      }
+      throw e;
+    }
+  }
+  throw last;
+}
+
 /**
  * Get tenant by slug - Server-side only
  * @param slug - Tenant slug
  * @returns Tenant data or null if not found
  */
 export async function getTenantBySlug(slug: string): Promise<Tenant | null> {
+  const cached = getCached(slug);
+  if (cached !== undefined) return cached;
+
   try {
-    // Add more detailed logging for debugging
     console.warn(`[getTenantBySlug] Looking for tenant: ${slug}`);
 
-    // Check database connection first
-    try {
-      await db.select().from(tenants).limit(1);
-      console.warn(`[getTenantBySlug] Database connection successful`);
-    } catch (dbError) {
-      console.error(`[getTenantBySlug] Database connection error:`, dbError);
-      throw new Error(
-        `Database connection failed: ${dbError instanceof Error ? dbError.message : "Unknown error"}`,
-      );
-    }
-
-    const tenant = await db.query.tenants.findFirst({
-      where: eq(tenants.slug, slug),
-    });
+    const tenant = await withTransientRetry("findFirst", () =>
+      db.query.tenants.findFirst({
+        where: eq(tenants.slug, slug),
+      }),
+    );
 
     if (!tenant) {
       console.warn(`[getTenantBySlug] Tenant not found: ${slug}`);
 
-      // Log available tenants for debugging
       try {
-        const allTenants = await db.select().from(tenants).limit(5);
+        const allTenants = await withTransientRetry("list sample", () =>
+          db.select().from(tenants).limit(5),
+        );
         console.warn(
           `[getTenantBySlug] Available tenants:`,
           allTenants.map((t) => ({ id: t.id, name: t.name, slug: t.slug })),
@@ -51,6 +126,7 @@ export async function getTenantBySlug(slug: string): Promise<Tenant | null> {
         );
       }
 
+      setCached(slug, null);
       return null;
     }
 
@@ -82,6 +158,7 @@ export async function getTenantBySlug(slug: string): Promise<Tenant | null> {
       }
     }
 
+    setCached(slug, tenant as Tenant);
     return tenant as Tenant;
   } catch (error) {
     console.error(`[getTenantBySlug] Error fetching tenant ${slug}:`, error);

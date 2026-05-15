@@ -287,7 +287,7 @@ export default function POSPage() {
                         SKU: {product.sku}
                       </p>
                       <p className="text-lg font-bold text-green-600">
-                        ${product.price.toFixed(2)}
+                        ${Number(product.price).toFixed(2)}
                       </p>
                       <button className="mt-2 w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors">
                         Agregar

@@ -6,13 +6,13 @@
  */
 
 const BUDGET_THRESHOLDS = {
-  ECO_MODE: 50,      // 50% of budget
-  WARNING: 80,       // 80% of budget
-  FREEZE_MODE: 90,   // 90% of budget
-  KILL_SWITCH: 100   // 100% of budget
+  ECO_MODE: 50, // 50% of budget
+  WARNING: 80, // 80% of budget
+  FREEZE_MODE: 90, // 90% of budget
+  KILL_SWITCH: 100, // 100% of budget
 };
 
-const MONTHLY_BUDGET = 5.00; // $5 USD
+const MONTHLY_BUDGET = 5.0; // $5 USD
 
 async function gatherUsageMetrics() {
   const usage = {
@@ -20,10 +20,11 @@ async function gatherUsageMetrics() {
     neonDb: await getNeonUsage(),
     cloudflareR2: await getR2Usage(),
     upstashRedis: await getUpstashUsage(),
-    totalCost: 0
+    totalCost: 0,
   };
 
-  usage.totalCost = usage.cloudRun + usage.neonDb + usage.cloudflareR2 + usage.upstashRedis;
+  usage.totalCost =
+    usage.cloudRun + usage.neonDb + usage.cloudflareR2 + usage.upstashRedis;
 
   return usage;
 }
@@ -35,7 +36,7 @@ async function getCloudRunUsage() {
   const cpuTime = await getCpuTime();
 
   // Cloud Run pricing: $0.40 per million requests + $0.0000024 per vCPU-second
-  const requestCost = (requestCount / 1000000) * 0.40;
+  const requestCost = (requestCount / 1000000) * 0.4;
   const cpuCost = cpuTime * 0.0000024;
 
   return requestCost + cpuCost;
@@ -47,7 +48,7 @@ async function getNeonUsage() {
   const storageGB = await getDbStorageUsage();
   const computeHours = await getDbComputeUsage();
 
-  const storageCost = Math.max(0, (storageGB - 0.5) * 0.10); // $0.10/GB after free tier
+  const storageCost = Math.max(0, (storageGB - 0.5) * 0.1); // $0.10/GB after free tier
   const computeCost = Math.max(0, (computeHours - 5) * 0.16); // $0.16/hour after free tier
 
   return storageCost + computeCost;
@@ -72,63 +73,77 @@ async function getUpstashUsage() {
   const dailyCommands = await getRedisCommands();
   const excessCommands = Math.max(0, dailyCommands - 10000);
 
-  return (excessCommands / 100000) * 0.20; // $0.20 per 100k commands
+  return (excessCommands / 100000) * 0.2; // $0.20 per 100k commands
 }
 
 async function checkBudgetThresholds(usage) {
   const percentage = (usage.totalCost / MONTHLY_BUDGET) * 100;
 
-  console.log(`Current usage: $${usage.totalCost.toFixed(4)} (${percentage.toFixed(1)}% of budget)`);
+  console.log(
+    `Current usage: $${usage.totalCost.toFixed(4)} (${percentage.toFixed(1)}% of budget)`,
+  );
 
   if (percentage >= BUDGET_THRESHOLDS.KILL_SWITCH) {
     await activateKillSwitch();
-    await sendAlert('CRITICAL', 'Kill switch activated - service scaled to zero', usage);
+    await sendAlert(
+      "CRITICAL",
+      "Kill switch activated - service scaled to zero",
+      usage,
+    );
   } else if (percentage >= BUDGET_THRESHOLDS.FREEZE_MODE) {
     await activateFreezeMode();
-    await sendAlert('WARNING', 'Freeze mode activated - read-only mode', usage);
+    await sendAlert("WARNING", "Freeze mode activated - read-only mode", usage);
   } else if (percentage >= BUDGET_THRESHOLDS.WARNING) {
-    await sendAlert('WARNING', `${percentage.toFixed(1)}% of budget consumed`, usage);
+    await sendAlert(
+      "WARNING",
+      `${percentage.toFixed(1)}% of budget consumed`,
+      usage,
+    );
   } else if (percentage >= BUDGET_THRESHOLDS.ECO_MODE) {
     await activateEcoMode();
-    await sendAlert('INFO', 'Eco mode activated - reduced quality settings', usage);
+    await sendAlert(
+      "INFO",
+      "Eco mode activated - reduced quality settings",
+      usage,
+    );
   }
 
   return percentage;
 }
 
 async function activateEcoMode() {
-  console.log('🟡 Activating eco mode...');
+  console.log("🟡 Activating eco mode...");
 
   // Set feature flags
-  await setFeatureFlag('eco_mode', true);
-  await setFeatureFlag('image_quality', 'low');
-  await setFeatureFlag('cache_aggressive', true);
+  await setFeatureFlag("eco_mode", true);
+  await setFeatureFlag("image_quality", "low");
+  await setFeatureFlag("cache_aggressive", true);
 
   // Scale down non-essential services
-  await scaleService('api', { minInstances: 0, maxInstances: 1 });
+  await scaleService("api", { minInstances: 0, maxInstances: 1 });
 }
 
 async function activateFreezeMode() {
-  console.log('🟠 Activating freeze mode...');
+  console.log("🟠 Activating freeze mode...");
 
   // Set feature flags
-  await setFeatureFlag('freeze_mode', true);
-  await setFeatureFlag('read_only', true);
-  await setFeatureFlag('uploads_disabled', true);
+  await setFeatureFlag("freeze_mode", true);
+  await setFeatureFlag("read_only", true);
+  await setFeatureFlag("uploads_disabled", true);
 
   // Scale down to minimum
-  await scaleService('api', { minInstances: 0, maxInstances: 1 });
+  await scaleService("api", { minInstances: 0, maxInstances: 1 });
 }
 
 async function activateKillSwitch() {
-  console.log('🔴 Activating kill switch...');
+  console.log("🔴 Activating kill switch...");
 
   // Set feature flags
-  await setFeatureFlag('kill_switch', true);
-  await setFeatureFlag('maintenance_mode', true);
+  await setFeatureFlag("kill_switch", true);
+  await setFeatureFlag("maintenance_mode", true);
 
   // Scale to zero
-  await scaleService('api', { minInstances: 0, maxInstances: 0 });
+  await scaleService("api", { minInstances: 0, maxInstances: 0 });
 }
 
 async function sendAlert(level, message, usage) {
@@ -137,7 +152,7 @@ async function sendAlert(level, message, usage) {
     message,
     usage,
     timestamp: new Date().toISOString(),
-    budget: MONTHLY_BUDGET
+    budget: MONTHLY_BUDGET,
   };
 
   console.log(`📢 ALERT [${level}]: ${message}`);
@@ -146,74 +161,93 @@ async function sendAlert(level, message, usage) {
   await Promise.all([
     sendSlackAlert(alert),
     sendEmailAlert(alert),
-    logAlert(alert)
+    logAlert(alert),
   ]);
 }
 
 async function sendSlackAlert(alert) {
   if (!process.env.SLACK_WEBHOOK_URL) return;
 
-  const color = {
-    'CRITICAL': '#ff0000',
-    'WARNING': '#ffaa00',
-    'INFO': '#00aa00'
-  }[alert.level] || '#cccccc';
+  const color =
+    {
+      CRITICAL: "#ff0000",
+      WARNING: "#ffaa00",
+      INFO: "#00aa00",
+    }[alert.level] || "#cccccc";
 
   const payload = {
-    attachments: [{
-      color,
-      title: `Sass Store Cost Alert - ${alert.level}`,
-      text: alert.message,
-      fields: [
-        {
-          title: 'Current Cost',
-          value: `$${alert.usage.totalCost.toFixed(4)}`,
-          short: true
-        },
-        {
-          title: 'Budget Used',
-          value: `${((alert.usage.totalCost / alert.budget) * 100).toFixed(1)}%`,
-          short: true
-        }
-      ],
-      timestamp: alert.timestamp
-    }]
+    attachments: [
+      {
+        color,
+        title: `Sass Store Cost Alert - ${alert.level}`,
+        text: alert.message,
+        fields: [
+          {
+            title: "Current Cost",
+            value: `$${alert.usage.totalCost.toFixed(4)}`,
+            short: true,
+          },
+          {
+            title: "Budget Used",
+            value: `${((alert.usage.totalCost / alert.budget) * 100).toFixed(1)}%`,
+            short: true,
+          },
+        ],
+        timestamp: alert.timestamp,
+      },
+    ],
   };
 
   try {
     const response = await fetch(process.env.SLACK_WEBHOOK_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
     });
 
     if (!response.ok) {
       throw new Error(`Slack alert failed: ${response.statusText}`);
     }
   } catch (error) {
-    console.error('Failed to send Slack alert:', error);
+    console.error("Failed to send Slack alert:", error);
   }
 }
 
 async function sendEmailAlert(alert) {
   // Email alert implementation would go here
-  console.log('📧 Email alert would be sent');
+  console.log("📧 Email alert would be sent");
 }
 
 async function logAlert(alert) {
   // Log to centralized logging service
-  console.log('📝 Alert logged:', JSON.stringify(alert, null, 2));
+  console.log("📝 Alert logged:", JSON.stringify(alert, null, 2));
 }
 
 // Mock functions for demonstration
-async function getRequestCount() { return Math.floor(Math.random() * 100000); }
-async function getCpuTime() { return Math.random() * 3600; }
-async function getDbStorageUsage() { return Math.random() * 2; }
-async function getDbComputeUsage() { return Math.random() * 10; }
-async function getR2StorageUsage() { return Math.random() * 5; }
-async function getR2Operations() { return Math.floor(Math.random() * 50000); }
-async function getR2EgressUsage() { return Math.random() * 10; }
-async function getRedisCommands() { return Math.floor(Math.random() * 15000); }
+async function getRequestCount() {
+  return Math.floor(Math.random() * 100000);
+}
+async function getCpuTime() {
+  return Math.random() * 3600;
+}
+async function getDbStorageUsage() {
+  return Math.random() * 2;
+}
+async function getDbComputeUsage() {
+  return Math.random() * 10;
+}
+async function getR2StorageUsage() {
+  return Math.random() * 5;
+}
+async function getR2Operations() {
+  return Math.floor(Math.random() * 50000);
+}
+async function getR2EgressUsage() {
+  return Math.random() * 10;
+}
+async function getRedisCommands() {
+  return Math.floor(Math.random() * 15000);
+}
 
 async function setFeatureFlag(flag, value) {
   console.log(`🚩 Setting feature flag: ${flag} = ${value}`);
@@ -228,37 +262,42 @@ async function scaleService(service, config) {
 // Main execution
 async function main() {
   try {
-    console.log('🔍 Starting cost monitoring check...');
+    console.log("🔍 Starting cost monitoring check...");
 
     const usage = await gatherUsageMetrics();
     const budgetPercentage = await checkBudgetThresholds(usage);
 
-    console.log('✅ Cost monitoring check completed');
+    console.log("✅ Cost monitoring check completed");
 
     // Return usage for Cloudflare Worker or exit for Node.js
-    if (typeof Response !== 'undefined') {
-      return new Response(JSON.stringify({
-        usage,
-        budgetPercentage,
-        status: 'ok'
-      }), {
-        headers: { 'Content-Type': 'application/json' }
-      });
+    if (typeof Response !== "undefined") {
+      return new Response(
+        JSON.stringify({
+          usage,
+          budgetPercentage,
+          status: "ok",
+        }),
+        {
+          headers: { "Content-Type": "application/json" },
+        },
+      );
     } else {
       process.exit(0);
     }
-
   } catch (error) {
-    console.error('❌ Cost monitoring failed:', error);
+    console.error("❌ Cost monitoring failed:", error);
 
-    if (typeof Response !== 'undefined') {
-      return new Response(JSON.stringify({
-        error: error.message,
-        status: 'error'
-      }), {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' }
-      });
+    if (typeof Response !== "undefined") {
+      return new Response(
+        JSON.stringify({
+          error: error.message,
+          status: "error",
+        }),
+        {
+          status: 500,
+          headers: { "Content-Type": "application/json" },
+        },
+      );
     } else {
       process.exit(1);
     }
@@ -266,8 +305,8 @@ async function main() {
 }
 
 // Export for Cloudflare Workers or run directly
-if (typeof addEventListener !== 'undefined') {
-  addEventListener('scheduled', event => {
+if (typeof addEventListener !== "undefined") {
+  addEventListener("scheduled", (event) => {
     event.waitUntil(main());
   });
 } else {

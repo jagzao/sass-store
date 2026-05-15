@@ -22,7 +22,7 @@ const client = postgres(connectionString, {
 async function createTestService() {
   try {
     const tenantId = "c5f09699-c10e-4b3e-90b4-d65375a74516"; // Zo System tenant ID
-    
+
     // Crear servicio de prueba
     const result = await client`
       INSERT INTO services (id, tenant_id, name, description, price, duration, featured, active, metadata, created_at, updated_at)
@@ -41,10 +41,10 @@ async function createTestService() {
       )
       RETURNING id
     `;
-    
+
     console.log("✅ Servicio de prueba creado exitosamente");
     console.log("📋 ID del servicio:", result[0].id);
-    
+
     return result[0].id;
   } catch (error) {
     console.error("❌ Error al crear servicio de prueba:", error);

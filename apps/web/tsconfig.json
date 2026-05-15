@@ -30,6 +30,7 @@
       "@sass-store/ui": ["../../packages/ui"],
       "@sass-store/database": ["../../packages/database"],
       "@sass-store/config": ["../../packages/config"],
+      "@sass-store/config/auth-env": ["../../packages/config/src/auth-env.ts"],
       "@sass-store/shared": ["../../packages/shared"],
       "@sass-store/cache": ["../../packages/cache"]
     }

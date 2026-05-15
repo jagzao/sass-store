@@ -1,6 +1,6 @@
 # Protocolo E2E — Validación como Persona (Playwright CLI)
 
-> Versión: 1.1  
+> Versión: 1.3  
 > Estado: VIGENTE  
 > Self-contained: cualquier LLM puede seguir este protocolo sin contexto adicional.  
 > Referenciado por: `story-orchestrator.md` Fase 4, `CLAUDE.md` § Validación E2E.
@@ -226,9 +226,83 @@ npx playwright test --headed --grep "STRY-XXX" --trace on
 
 ---
 
-## 3. Árbol de diagnóstico y corrección de bugs
+## 3. Diagnóstico, reproducción y plan de corrección (OBLIGATORIO antes del fix)
 
-Cuando se detecta un fallo, seguir este árbol **antes** de editar código.  
+**Aplica cuando termina la implementación** (o el análisis que la originó) y la validación E2E / revisión de AC detecta un fallo.  
+**No editar código de negocio** hasta completar diagnóstico + reproducción en Playwright CLI + plan documentado.
+
+### 3.0 Secuencia fija
+
+```
+1. DIAGNOSTICAR   → síntoma, esperado vs actual, capa probable, hipótesis
+2. COMUNICAR      → informar al dueño qué está mal y cómo se corregirá (sin pedir permiso para el fix)
+3. REPRODUCIR     → Playwright CLI headed (--trace on, screenshots) siguiendo testing-usuario.md / AC
+4. DOCUMENTAR     → implementacion.md + tests/evidence/[STRY-XXX]/MANUAL_REPRODUCTION_STEPS.md
+5. CORREGIR       → un cambio dirigido en la capa rota (§3.1)
+6. RE-VALIDAR     → Playwright headed del subset → specs E2E → headless → UT del módulo
+```
+
+### 3.0.1 Mensaje al dueño (antes del fix)
+
+Plantilla mínima (chat o nota en `implementacion.md`):
+
+```markdown
+## Hallazgo post-implementación — [STRY-XXX]
+
+**Qué está mal:** [síntoma observable; URL/tenant; paso del flujo]
+**Esperado vs actual:** [CA o fila de testing-usuario.md] vs [lo observado]
+**Hipótesis / capa:** [UI | API | servicio | datos | seed]
+**Cómo lo corregiré:** [archivo/capa + cambio concreto, sin refactor lateral]
+**Reproducción:** Playwright headed `--grep "STRY-XXX"` (trace + screenshots en test-results/)
+```
+
+### 3.0.2 Reproducción en Playwright CLI (obligatoria)
+
+```bash
+# Reproducir el fallo con evidencia (mismo tenant y pasos que testing-usuario.md)
+npx playwright test --headed --grep "STRY-XXX" --workers=1 --trace on --slow-mo 300
+
+# Si aún no hay spec: exploración mínima acotada al paso roto
+npx playwright test --headed --grep "[módulo o ruta]" --workers=1 --trace on
+```
+
+Durante la reproducción:
+
+- Seguir el paso exacto del AC / `testing-usuario.md` que falla.
+- Capturar screenshot en el estado erróneo: `test-results/stry-xxx-repro-paso-N.png`.
+- Anotar consola del navegador y peticiones 4xx/5xx relevantes.
+- **No** aplicar el fix hasta tener al menos un ciclo headed que muestre el fallo (o bloqueo documentado si no es reproducible tras 2 intentos con seed/entorno corregido).
+
+### 3.0.3 Documentación de reproducción
+
+En `.agents/sprint/STRY-XXX-[slug]/implementacion.md`, tabla **Reproducción pre-fix**:
+
+| ID  | Paso      | Tenant      | Comando Playwright                                          | Evidencia                           | Resultado         |
+| --- | --------- | ----------- | ----------------------------------------------------------- | ----------------------------------- | ----------------- |
+| R1  | [paso AC] | wondernails | `npx playwright test --headed --grep "STRY-XXX" --trace on` | `test-results/stry-xxx-repro-1.png` | Falla reproducida |
+
+Copiar pasos humanos en `tests/evidence/[STRY-XXX]/MANUAL_REPRODUCTION_STEPS.md` (plantilla `.agents/templates/MANUAL_REPRODUCTION_STEPS.md`).
+
+### 3.0.4 Re-validación post-fix (Playwright CLI)
+
+Tras el fix, **re-ejecutar en este orden** (no saltar pasos):
+
+```bash
+npm run typecheck
+npm run test:unit -- --grep "[módulo]"
+npm run test:e2e:subset -- --headed --grep "STRY-XXX" --workers=1
+npm run test:e2e:subset -- --grep "STRY-XXX" --workers=1
+```
+
+Si el alcance lo exige (`e2e-validation.md` §8): tour de sitio completo headed y `npm run test:e2e` headless antes de declarar validación cerrada.
+
+Actualizar la tabla **Loop E2E** (§4) con fila de reproducción + fix + re-validación headed/headless.
+
+---
+
+## 3.1 Árbol de diagnóstico y corrección de bugs
+
+Cuando se detecta un fallo, seguir este árbol **después** de §3.0 (diagnóstico + reproducción).  
 **Editar solo la capa rota. No refactorizar alrededor del bug.**
 
 ```
@@ -256,6 +330,8 @@ Cuando se detecta un fallo, seguir este árbol **antes** de editar código.
 ### Proceso de corrección dirigida
 
 ```
+0. COMPLETAR §3.0 (diagnóstico, mensaje al dueño, reproducción headed con trace)
+
 1. IDENTIFICAR la capa rota:
    DB query → servicio → API route → componente cliente
 
@@ -264,8 +340,7 @@ Cuando se detecta un fallo, seguir este árbol **antes** de editar código.
 3. VERIFICAR que compila:
    npm run typecheck -- --noEmit 2>&1 | tail -20
 
-4. RE-EJECUTAR solo el subset afectado:
-   npm run test:e2e:subset -- --headed --grep "STRY-XXX"
+4. RE-VALIDAR Playwright CLI (§3.0.4): headed → headless del subset
 
 5. VERIFICAR que el fix no rompe unit tests del módulo:
    npm run test:unit -- --grep "[módulo]"
@@ -286,11 +361,13 @@ MIENTRAS ciclo <= 5:
        ├── PASA → salir del loop → ir a §5 (headless)
        │
        └── FALLA →
-             a. Aplicar árbol de diagnóstico (§3)
-             b. Fix dirigido en la capa rota
-             c. Documentar en implementacion.md (ver formato abajo)
-             d. ciclo += 1
-             e. continuar
+             a. Diagnóstico + reproducción Playwright CLI (§3.0) antes de tocar código
+             b. Aplicar árbol de diagnóstico (§3.1)
+             c. Fix dirigido en la capa rota
+             d. Re-validar headed + headless (§3.0.4)
+             e. Documentar en implementacion.md (ver formato abajo)
+             f. ciclo += 1
+             g. continuar
 
 Si ciclo > 5 y aún falla:
   → BLOQUEO. Reportar con:
@@ -399,12 +476,15 @@ Marcar antes de reportar "implementado y validado por el agente":
 
 ```
 [ ] Servidor activo en http://localhost:3001 (levantado por el agente si estaba apagado)
+[ ] Cada fallo: diagnóstico + plan de fix comunicado/documentado (§3.0.1)
+[ ] Cada fallo: reproducción Playwright CLI headed con trace/screenshot antes del fix (§3.0.2)
 [ ] Playwright --headed: 0 errores visuales en el flujo completo
 [ ] Flujo completo probado: carga → acción → resultado → reload → persiste
 [ ] Caso de error probado: input inválido → mensaje de error visible y correcto
 [ ] Tests E2E creados/actualizados en tests/e2e/ con tag @stry-xxx
 [ ] Playwright headless: 0 tests fallidos, 0 skipped sin justificación
-[ ] Ciclos de corrección documentados en implementacion.md (tabla de ciclos)
+[ ] Post-fix: re-validación Playwright headed + headless del subset (§3.0.4)
+[ ] Ciclos de corrección documentados en implementacion.md (tabla de ciclos + reproducción pre-fix)
 [ ] Screenshot o trace de evidencia en test-results/
 ```
 
@@ -412,4 +492,137 @@ Solo con todos los ítems marcados → el agente puede reportar la fase E2E como
 
 ---
 
-_Versión 1.1 | 2026-05-06 — Puerto dinámico (3001/3002 auto-detect + BASE_URL), seed con BASE_URL, --workers=1 multitenant en headed y headless._
+## 8. Validación de Sitio Completo — Obligatoria antes del Deploy
+
+**Esta fase es OBLIGATORIA al final de cualquier US, tarea, fix, o ciclo de trabajo.**  
+No se puede hacer deploy sin pasar esta validación de sitio completo.
+
+### 8.1 Propósito
+
+Después de corregir un feature o bug, el agente SIEMPRE puede haber introducido regresiones en otras partes del sitio. Esta fase las detecta y corrige **antes** de hacer deploy.
+
+### 8.2 Cobertura mínima del tour de sitio completo
+
+```bash
+# Lanzar tour de sitio completo con slow-mo para inspección visual
+npx playwright test tests/e2e/site-tour/ --headed --slow-mo 300 --workers=1
+
+# Si no existe tests/e2e/site-tour/ → ejecutar manualmente las rutas críticas:
+npx playwright test --headed --slow-mo 300 --workers=1 --grep "@site-tour"
+```
+
+| Área                | Rutas a validar                           | Criterio de paso                      |
+| ------------------- | ----------------------------------------- | ------------------------------------- |
+| Landing / zo-system | `/`, `/t/zo-system/`                      | Carga sin error, hero visible         |
+| Auth                | `/api/auth/signin`, `/api/auth/register`  | Formularios funcionales               |
+| Admin global        | `/admin/tenants`, `/admin/social-planner` | Listados cargan, sin 500              |
+| Tenant admin        | `/t/wondernails/admin/`                   | Dashboard carga con datos             |
+| Finance             | `/t/wondernails/finance/`                 | KPIs visibles, sin pantalla blanca    |
+| Inventory           | `/t/wondernails/inventory/`               | Lista de productos carga              |
+| Bookings            | `/t/wondernails/book/`                    | Calendario visible, slots disponibles |
+| POS                 | `/t/wondernails/finance/pos/`             | Terminal carga, sin error de red      |
+
+### 8.3 Proceso auto-correctivo de sitio completo
+
+```
+ciclo_sitio = 1
+
+MIENTRAS ciclo_sitio <= 5 Y hay errores en el tour:
+
+  1. Registrar cada error encontrado:
+     - URL exacta
+     - Tipo (visual / 4xx / 5xx / JS error / pantalla blanca)
+     - Screenshot en test-results/site-tour/ciclo-N-[ruta].png
+
+  2. Priorizar por severidad:
+     P0 → 500 / pantalla blanca / JS crash
+     P1 → 404 / datos vacíos / formulario roto
+     P2 → UI degradada / elemento faltante
+
+  3. Corregir en orden P0 → P1 → P2
+     (un fix por archivo, un ciclo por conjunto de fixes relacionados)
+
+  4. npm run typecheck -- --noEmit (verificar que compila)
+
+  5. Reiniciar servidor y repetir tour desde §8.2
+
+  ciclo_sitio += 1
+
+Si ciclo_sitio > 5 y aún hay errores:
+  → BLOQUEO. Documentar en implementacion.md con:
+     - Lista de errores persistentes
+     - Fixes intentados
+     - Hipótesis de causa raíz
+```
+
+### 8.4 Gate final antes del deploy
+
+```bash
+# 1. Headless completo (todos los E2E, no solo el subset del feature)
+npm run test:e2e
+
+# 2. Build de producción (debe ser exitoso)
+npm run build
+
+# 3. Lint + typecheck (sin errores)
+npm run lint && npm run typecheck
+```
+
+**Solo si los tres comandos pasan sin error → proceder al deploy.**
+
+### 8.5 Apagar servicios y hacer deploy
+
+```powershell
+# PowerShell — apagar el servidor dev levantado por el agente
+Stop-Process -Name "node" -ErrorAction SilentlyContinue
+
+# Deploy: commit + push
+git add -A
+git commit -m "fix: [descripción de todos los fixes del ciclo]
+
+Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
+git push origin HEAD
+
+# Abrir PR si no existe
+gh pr create --title "[scope]: [descripción]" --body "..."
+# O actualizar PR existente (push automáticamente actualiza el PR)
+```
+
+**Reglas del commit de cierre:**
+
+- Conventional Commits obligatorio
+- El mensaje describe QUÉ se corrigió y por qué (no "varios fixes")
+- Si hay múltiples correcciones, usar bullets en el body
+
+---
+
+## 9. Checklist de Cierre COMPLETO (US / Task / Fix)
+
+```
+FASE FEATURE:
+[ ] Servidor activo en http://localhost:3001
+[ ] Playwright --headed: flujo del feature validado como persona
+[ ] Caso de error validado
+[ ] Tests E2E creados/actualizados en tests/e2e/ con tag @stry-xxx
+[ ] Playwright headless subset: 0 fallidos, 0 skipped sin justificación
+[ ] Ciclos de corrección documentados en implementacion.md
+
+FASE SITIO COMPLETO:
+[ ] Tour de sitio completo ejecutado (§8.2)
+[ ] 0 regresiones en rutas críticas (landing, auth, admin, finance, inventory, bookings)
+[ ] npm run test:e2e → 0 fallidos (headless completo)
+[ ] npm run build → exitoso
+[ ] npm run lint && npm run typecheck → sin errores
+
+FASE DEPLOY:
+[ ] Servidor dev detenido limpiamente
+[ ] Commit creado con Conventional Commits
+[ ] Push a rama activa
+[ ] PR creado / actualizado
+```
+
+Solo con todos los ítems marcados → la tarea está COMPLETA y se puede reportar al usuario.
+
+---
+
+_Versión 1.2 | 2026-05-09 — §8 Validación de Sitio Completo obligatoria + pipeline auto-correct-deploy antes de reportar done._

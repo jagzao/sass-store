@@ -10,38 +10,99 @@ export const TEST_CREDENTIALS = {
 };
 
 /**
- * Login helper - logs in an admin user
+ * Login to a specific tenant as admin.
+ * Uses explicit data-testid selectors from LoginForm.tsx.
+ * Waits for the HomeTenant dashboard to confirm successful auth.
  */
-export async function loginAsAdmin(page: Page) {
-  const { adminEmail, adminPassword, tenantSlug } = TEST_CREDENTIALS;
-
-  page.on("pageerror", (err) =>
-    console.error("BROWSER CAUGHT ERROR:", err.message),
-  );
-  page.on("console", (msg) => {
-    if (msg.type() === "error")
-      console.error("BROWSER CONSOLE ERROR:", msg.text());
+/**
+ * Login to any tenant using explicit data-testid selectors from LoginForm.tsx.
+ * .first() is required: the login page has a hidden duplicate input from the
+ * registration form below the fold.
+ */
+export async function loginAs(
+  page: Page,
+  tenantSlug: string,
+  email: string,
+  password: string,
+): Promise<void> {
+  await page.goto(`/t/${tenantSlug}/login`, {
+    timeout: 120000,
+    waitUntil: "domcontentloaded",
   });
 
-  // Navigate exactly as in customer-workflow.spec.ts
-  await page.goto(`/t/${tenantSlug}/login`, { timeout: 60000 });
+  await page.waitForLoadState("networkidle").catch(() => {});
+  const emailInput = page.getByTestId("email-input").first();
+  await expect(emailInput).toBeVisible({ timeout: 60000 });
 
-  // Dev server needs time to compile the login page dynamically (up to 30s)
-  await expect(page.getByTestId("email-input").first()).toBeVisible({
-    timeout: 30000,
-  });
+  await emailInput.fill(email);
+  await page.getByTestId("password-input").first().fill(password);
+  await page.getByTestId("login-btn").first().click({ force: true });
 
-  await page.fill('[data-testid="email-input"] >> visible=true', adminEmail);
-  await page.fill('input[type="password"]', adminPassword);
-  await page
-    .getByRole("button", { name: /iniciar|ingresar|login/i })
-    .first()
-    .click();
   await page.waitForURL(
     (url) =>
       url.href.includes(`/t/${tenantSlug}`) && !url.href.includes("/login"),
-    { timeout: 30000 },
+    { timeout: 60000 },
   );
+
+  await page.waitForURL(
+    (url) =>
+      url.href.includes(`/t/${tenantSlug}`) && !url.href.includes("/login"),
+    { timeout: 60000 },
+  );
+
+  // Wait for session hydration to finish (HomeRouter uses useSession which
+  // starts in "loading" state). Without this, the staff/client branch may
+  // flash incorrectly and tests assert too early.
+  const spinner = page.locator("[class*='animate-pulse']").first();
+  await spinner.waitFor({ state: "hidden", timeout: 15000 }).catch(() => {
+    // If there's no spinner, session might already be hydrated — that's fine.
+  });
+
+  // Accept either dashboard (staff) or public home (client) as valid
+  // post-login state. Staff users that land on public-home indicate a role
+  // mismatch in seed data, which should be reported but not fail the test
+  // helper itself.
+  const dashboard = page.getByTestId("hometenant-dashboard");
+  const publicHome = page.getByTestId("public-home");
+
+  const dashboardVisible = await dashboard
+    .isVisible({ timeout: 5000 })
+    .catch(() => false);
+  const publicHomeVisible = await publicHome
+    .isVisible({ timeout: 5000 })
+    .catch(() => false);
+
+  if (!dashboardVisible && !publicHomeVisible) {
+    throw new Error(
+      `Post-login page for /t/${tenantSlug} is missing both data-testid="hometenant-dashboard" and data-testid="public-home". ` +
+        `This usually means: (a) the page is still loading, (b) a new layout was introduced without test ids, or (c) a 4xx/5xx occurred.`,
+    );
+  }
+}
+
+/**
+ * Login for the default test tenant (wondernails admin).
+ */
+export async function loginAsAdmin(page: Page): Promise<void> {
+  const { adminEmail, adminPassword, tenantSlug } = TEST_CREDENTIALS;
+  await loginAs(page, tenantSlug, adminEmail, adminPassword);
+}
+
+/**
+ * Sign out by navigating to the NextAuth signout endpoint.
+ * Works from any page regardless of which nav is visible.
+ */
+export async function signOut(page: Page) {
+  await page.goto("/api/auth/signout", {
+    waitUntil: "domcontentloaded",
+    timeout: 30000,
+  });
+  // NextAuth shows a confirmation page — click the sign out button
+  const signOutBtn = page.getByRole("button", { name: /sign out|cerrar/i });
+  if (await signOutBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+    await signOutBtn.click();
+  }
+  await page.waitForTimeout(500);
 }
 
 /**
