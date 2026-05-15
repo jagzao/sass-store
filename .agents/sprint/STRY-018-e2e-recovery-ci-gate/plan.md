@@ -1,41 +1,38 @@
-﻿# Plan de ejecución — STRY-018 E2E Recovery + CI Gate
+﻿# STRY-018 — Plan de Ejecución
 
-> Guía para implementar la US de punta a punta de forma autónoma.
+## Alcance
 
-## Objetivo
+Recuperar suite E2E de ~50% a ≥90% pass, estabilizar flaky tests, implementar health endpoint, y configurar CI gate.
 
-Dejar la suite E2E con ≥88% tests passed (≤20 failed) y un CI gate que bloquee merge/deploy ante regresiones, más un health endpoint confiable.
+## Estado por fase
 
-## Orden sugerido
+| Fase                     | Estado         | Notas                                                               |
+| ------------------------ | -------------- | ------------------------------------------------------------------- |
+| 0 — Inventario           | 🔄 En progreso | Armando baseline con subsets por feature                            |
+| 1 — Fixes rápidos        | ⏳ Pendiente   | Post-inventario                                                     |
+| 2 — Stabilización flaky  | ⏳ Pendiente   | Bucle Dev↔QA                                                        |
+| 3 — CI Gate              | ⏳ Pendiente   | Revisar workflow + branch protection                                |
+| 4 — Health endpoint      | ✅ Cerrado     | Ya existe en `app/api/health/route.ts`, responde 200 con DB latency |
+| 5 — Playwright CLI final | ⏳ Pendiente   | Suite completa headless verde                                       |
 
-1. **Inventario completo** — Ejecutar `npx playwright test`, categorizar los ~119 fallos.
-2. **Fixes rápidos** — Selectors rotos, seeds faltantes, timeouts.
-3. **Stabilización flaky** — WaitForFunction, retry, seed consistente.
-4. **Skip justificado** — Tests de features incompletas (social/whatsapp) con comentario.
-5. **Health endpoint** — `app/api/health/route.ts` + UT.
-6. **CI gate** — Revisar `.github/workflows/e2e-tests.yml`, marcar required.
-7. **Validación final** — Headless completo ≥88%, headed spot-checks.
-8. **Handoff** — Evidencia Playwright + visto bueno dueño.
+## Tareas en ejecución
+
+1. **Inventario por subsets**: Ejecutar `test:e2e:subset` con `--grep` por dominio (auth, booking, pos, finance, tenants, etc.) para clasificar pass/fail/flaky.
+2. **Health endpoint**: Ya implementado y operativo. Verificado: `GET /api/health` → 200, DB latency ~130ms.
+3. **CI Gate**: Revisar `.github/workflows/e2e-tests.yml` y branch protection.
+
+## Inventario preliminar (suite completa)
+
+- **Total specs**: 68 files
+- **Total tests**: ~619 tests
+- **Baseline actual**: desconocido (suite completa no ejecutable por timeout de build en webServer)
+- **Estrategia**: subsets por feature con dev server reutilizado
 
 ## Riesgos
 
-- Majoría de fallos preexistentes: se documentan y skipan, no se persiguen features nuevas.
-- Seeds inconsistentes entre tenants: ajustar `seed-e2e`.
-- CI gate requiere permisos GitHub del dueño: documentar pasos manuales.
+- Build de webServer en Playwright tarda >5 min y puede timeout; solución: `E2E_REUSE_SERVER=1` con dev server en 3003.
+- Algunos specs dependen de features incompletas (social, whatsapp); plan: skip justificado.
 
-## Asunciones / defaults
+---
 
-- Si el dueño no responde sobre threshold objetivo: se usa 88% (210/239 passed) con ≤5 skips.
-- Si CI no es configurable por el agente: se documentan instrucciones manuales para Settings → Branches.
-
-## Estado
-
-| Fase              | Estado                    |
-| ----------------- | ------------------------- |
-| Inventario        | [ ]                       |
-| Fixes rápidos     | [ ]                       |
-| Stabilización     | [ ]                       |
-| Skip justificado  | [ ]                       |
-| Health endpoint   | [ ]                       |
-| CI gate           | [ ]                       |
-| Validación humana | [ ] pendiente visto bueno |
+**Actualizado:** 2026-05-13

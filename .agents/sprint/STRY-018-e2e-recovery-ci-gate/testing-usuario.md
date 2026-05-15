@@ -1,35 +1,49 @@
-﻿# Pasos de prueba — STRY-018 (agente / Playwright)
+﻿# STRY-018 — Testing de Usuario (QA Playwright CLI)
 
-**Grep E2E:** `STRY-018|e2e-recovery|health`.
+## Credenciales de prueba
 
-## Evidencia de ejecución
+- **Email:** `jagzao@gmail.com`
+- **Password:** `admin`
 
-```powershell
-$env:BASE_URL = "http://127.0.0.1:3002"
-npx playwright test --grep "STRY-018|health" --project=chromium
+## Entorno de prueba
+
+- **Servidor:** `npm run dev` en port 3003
+- **Base URL:** `http://localhost:3003`
+- **Reuse server:** `E2E_REUSE_SERVER=1`
+
+## Health endpoint
+
+| Escenario    | Método | URL           | Esperado                     | Resultado |
+| ------------ | ------ | ------------- | ---------------------------- | --------- |
+| Health check | GET    | `/api/health` | 200 + status ok + DB latency | ✅ Pass   |
+
+## Inventario E2E por feature
+
+| Feature         | Specs    | Tests estimados | Estado                           |
+| --------------- | -------- | --------------- | -------------------------------- |
+| auth            | 7 files  | ~20             | 🔄 Pendiente subset              |
+| booking         | 2 files  | ~10             | 🔄 Pendiente subset              |
+| cart/checkout   | 1 file   | ~5              | 🔄 Pendiente subset              |
+| customers       | 2 files  | ~10             | 🔄 Pendiente subset              |
+| finance         | 11 files | ~55             | 🔄 Pendiente subset              |
+| pos             | 4 files  | ~20             | 🔄 Pendiente subset              |
+| tenants/landing | 2 files  | ~8              | 🔄 Pendiente subset              |
+| admin           | 1 file   | ~5              | 🔄 Pendiente subset              |
+| deep-audit      | 1 file   | 9               | ✅ 9/9 pass (de STRY-020)        |
+| full-admin-nav  | 1 file   | 28              | ✅ 28/28 pass (de sesión previa) |
+
+## Comandos de validación
+
+```bash
+# Health endpoint
+node -e "fetch('http://localhost:3003/api/health').then(r=>r.json()).then(j=>console.log(j))"
+
+# Subsets por feature (usar dev server en 3003)
+BASE_URL=http://localhost:3003 E2E_REUSE_SERVER=1 npx playwright test --grep "auth"
+BASE_URL=http://localhost:3003 E2E_REUSE_SERVER=1 npx playwright test --grep "booking"
+BASE_URL=http://localhost:3003 E2E_REUSE_SERVER=1 npx playwright test --grep "pos"
 ```
-
-## Escenarios
-
-### Escenario A — Health endpoint
-
-| Paso | Acción                        | Resultado esperado            |
-| ---- | ----------------------------- | ----------------------------- |
-| A1   | `GET /api/health` sin cookies | 200, body JSON con status: ok |
-| A2   | Verificar campo timestamp     | ISO8601 válido                |
-| A3   | Verificar campo version       | String no vacío               |
-
-### Escenario B — E2E suite completa (post-fixes)
-
-| Paso | Acción                  | Resultado esperado               |
-| ---- | ----------------------- | -------------------------------- |
-| B1   | `npx playwright test`   | ≥210 passed, ≤20 failed          |
-| B2   | Revisar test-results/\* | Sin screenshots de fallos nuevos |
 
 ---
 
-- [ ] **Inventario** documentado en implementacion.md
-- [ ] **Todos los fixes** re-ejecutados y verdes
-- [ ] **Health** verde
-- [ ] **CI gate** configurado o documentado
-- [ ] Solo entonces: mensaje al dueño "lista para visto bueno"
+**Actualizado:** 2026-05-13
