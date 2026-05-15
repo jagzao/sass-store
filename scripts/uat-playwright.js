@@ -1,5 +1,5 @@
-// @ts-nocheck
 #!/usr/bin/env node
+// @ts-nocheck
 /**
  * uat-playwright.js
  * Ejecuta Playwright en modo "humano": headed, lento, screenshot en cada paso.

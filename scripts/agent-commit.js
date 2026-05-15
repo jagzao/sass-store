@@ -1,5 +1,5 @@
-// @ts-nocheck
 #!/usr/bin/env node
+// @ts-nocheck
 /**
  * agent-commit.js — Auto-commit + PR creation
  * Uso: node scripts/agent-commit.js "feat: descripción del feature"

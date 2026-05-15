@@ -1,5 +1,5 @@
-// @ts-nocheck
 #!/usr/bin/env node
+// @ts-nocheck
 
 /**
  * Basic smoke checks for deployed or local environments.

@@ -1,5 +1,5 @@
-// @ts-nocheck
 #!/usr/bin/env node
+// @ts-nocheck
 /**
  * send-uat-email.js
  * Envía el documento UAT al correo configurado (.env UAT_EMAIL_RECIPIENT).
