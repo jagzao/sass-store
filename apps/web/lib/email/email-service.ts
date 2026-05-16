@@ -37,7 +37,7 @@ export async function sendPasswordResetEmail({
     const { data, error } = await resend.emails.send({
       from: process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev",
       to: email,
-      subject: `ðŸ” Recuperar ContraseÃ±a - ${tenantName}`,
+      subject: `ðŸ” Recuperar Contraseña - ${tenantName}`,
       html: getPasswordResetEmailTemplate(
         resetLink,
         tenantName,
@@ -71,7 +71,7 @@ function getPasswordResetEmailTemplate(
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Recuperar ContraseÃ±a - ${tenantName}</title>
+  <title>Recuperar Contraseña - ${tenantName}</title>
 </head>
 <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f3f4f6;">
   <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f3f4f6; padding: 40px 20px;">
@@ -90,11 +90,11 @@ function getPasswordResetEmailTemplate(
           <tr>
             <td style="padding: 40px;">
               <h2 style="margin: 0 0 20px 0; color: #1f2937; font-size: 24px; font-weight: 600;">
-                Recuperar ContraseÃ±a
+                Recuperar Contraseña
               </h2>
 
               <p style="margin: 0 0 20px 0; color: #4b5563; font-size: 16px; line-height: 1.6;">
-                Hemos recibido una solicitud para restablecer tu contraseÃ±a. Haz clic en el botÃ³n de abajo para crear una nueva contraseÃ±a:
+                Hemos recibido una solicitud para restablecer tu contraseña. Haz clic en el botón de abajo para crear una nueva contraseña:
               </p>
 
               <!-- CTA Button -->
@@ -103,14 +103,14 @@ function getPasswordResetEmailTemplate(
                   <td align="center">
                     <a href="${resetLink}"
                        style="display: inline-block; padding: 18px 40px; background-color: ${tenantColor}; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 12px ${tenantColor}40; transition: all 0.3s;">
-                      ðŸ”’ Restablecer ContraseÃ±a
+                      ðŸ”’ Restablecer Contraseña
                     </a>
                   </td>
                 </tr>
               </table>
 
               <p style="margin: 20px 0 0 0; color: #6b7280; font-size: 14px; line-height: 1.6;">
-                Si no puedes hacer clic en el botÃ³n, copia y pega este enlace en tu navegador:
+                Si no puedes hacer clic en el botón, copia y pega este enlace en tu navegador:
               </p>
 
               <p style="margin: 10px 0 0 0; padding: 12px; background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 4px; color: #4b5563; font-size: 12px; word-break: break-all;">
@@ -120,7 +120,7 @@ function getPasswordResetEmailTemplate(
               <hr style="margin: 30px 0; border: none; border-top: 1px solid #e5e7eb;">
 
               <p style="margin: 0; color: #6b7280; font-size: 14px; line-height: 1.6;">
-                <strong>Nota de seguridad:</strong> Este enlace expirarÃ¡ en 1 hora. Si no solicitaste restablecer tu contraseÃ±a, puedes ignorar este correo de forma segura.
+                <strong>Nota de seguridad:</strong> Este enlace expirará en 1 hora. Si no solicitaste restablecer tu contraseña, puedes ignorar este correo de forma segura.
               </p>
             </td>
           </tr>
@@ -216,7 +216,7 @@ export async function sendPaymentFailedNotification({
   <p>Tu pago no pudo ser procesado.</p>
   <p><strong>Orden:</strong> #${orderId.slice(0, 8)}</p>
   <p><strong>Monto:</strong> ${currency} ${amount.toFixed(2)}</p>
-  <p><strong>RazÃ³n:</strong> ${reason}</p>
+  <p><strong>Razón:</strong> ${reason}</p>
   <p>Por favor, intenta nuevamente o contacta a soporte.</p>
 </body>
 </html>`,
@@ -264,7 +264,7 @@ export async function sendDisputeNotification({
   <p><strong>Orden:</strong> #${orderId.slice(0, 8)}</p>
   <p><strong>Disputa:</strong> ${disputeId}</p>
   <p><strong>Monto:</strong> ${currency} ${amount.toFixed(2)}</p>
-  <p><strong>RazÃ³n:</strong> ${reason}</p>
+  <p><strong>Razón:</strong> ${reason}</p>
   <p><strong>Estado:</strong> ${status}</p>
   <p>Por favor, contacta a soporte para resolver esta disputa.</p>
 </body>
@@ -313,7 +313,7 @@ export async function sendQuoteEmail({
     const { data, error } = await resend.emails.send({
       from: process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev",
       to,
-      subject: `ðŸ“„ CotizaciÃ³n #${quoteNumber} - ${tenantName}`,
+      subject: `ðŸ“„ Cotización #${quoteNumber} - ${tenantName}`,
       html: getQuoteEmailTemplate({
         quoteNumber,
         customerName,
@@ -381,7 +381,7 @@ function getQuoteEmailTemplate({
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CotizaciÃ³n #${quoteNumber} - ${tenantName}</title>
+  <title>Cotización #${quoteNumber} - ${tenantName}</title>
 </head>
 <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f3f4f6;">
   <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f3f4f6; padding: 40px 20px;">
@@ -396,7 +396,7 @@ function getQuoteEmailTemplate({
                   ? `<img src="${tenantLogo}" alt="${tenantName}" style="max-width: 150px; height: auto; margin-bottom: 16px;">`
                   : ""
               }
-              <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.1);">CotizaciÃ³n</h1>
+              <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.1);">Cotización</h1>
               <p style="margin: 8px 0 0 0; color: rgba(255,255,255,0.9); font-size: 16px;">#${quoteNumber}</p>
             </td>
           </tr>
@@ -408,14 +408,14 @@ function getQuoteEmailTemplate({
                 Hola <strong>${customerName}</strong>,
               </p>
               <p style="margin: 0 0 30px 0; color: #4b5563; font-size: 16px; line-height: 1.6;">
-                AquÃ­ tienes los detalles de la cotizaciÃ³n solicitada. Esta cotizaciÃ³n es vÃ¡lida por <strong>${validityDays} dÃ­as</strong>.
+                Aquí tienes los detalles de la cotización solicitada. Esta cotización es válida por <strong>${validityDays} días</strong>.
               </p>
 
               <!-- Items Table -->
               <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 30px; border-collapse: collapse;">
                 <thead>
                   <tr style="background-color: #f9fafb;">
-                    <th style="padding: 12px; text-align: left; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #6b7280; border-bottom: 1px solid #e5e7eb;">DescripciÃ³n</th>
+                    <th style="padding: 12px; text-align: left; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #6b7280; border-bottom: 1px solid #e5e7eb;">Descripción</th>
                     <th style="padding: 12px; text-align: center; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #6b7280; border-bottom: 1px solid #e5e7eb;">Cant.</th>
                     <th style="padding: 12px; text-align: right; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #6b7280; border-bottom: 1px solid #e5e7eb;">Precio Unit.</th>
                     <th style="padding: 12px; text-align: right; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #6b7280; border-bottom: 1px solid #e5e7eb;">Total</th>
@@ -437,7 +437,7 @@ function getQuoteEmailTemplate({
               <hr style="margin: 30px 0; border: none; border-top: 1px solid #e5e7eb;">
 
               <p style="margin: 0; color: #6b7280; font-size: 14px; line-height: 1.6; text-align: center;">
-                Si tienes alguna pregunta sobre esta cotizaciÃ³n, no dudes en contactarnos.
+                Si tienes alguna pregunta sobre esta cotización, no dudes en contactarnos.
               </p>
             </td>
           </tr>

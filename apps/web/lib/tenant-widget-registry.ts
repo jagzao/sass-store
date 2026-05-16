@@ -10,7 +10,7 @@ export interface TenantWidget<P = any> {
 
 export interface TenantWidgetConfig {
   heroCarousel?: TenantWidget;
-  // Futuros widgets se pueden aÃ±adir aquÃ­
+  // Futuros widgets se pueden añadir aquÃ­
   // footer?: TenantWidget;
   // navbar?: TenantWidget;
   // productGrid?: TenantWidget;
@@ -33,7 +33,7 @@ class TenantWidgetRegistry {
   }
 
   private initializeRegistry() {
-    // Wondernails widgets con import dinÃ¡mico
+    // Wondernails widgets con import dinámico
     this.widgets.set("wondernails", {
       heroCarousel: {
         component: lazy(
@@ -47,7 +47,7 @@ class TenantWidgetRegistry {
       },
     });
 
-    // NomNom widgets con import dinÃ¡mico
+    // NomNom widgets con import dinámico
     this.widgets.set("nom-nom", {
       heroCarousel: {
         component: lazy(
@@ -60,13 +60,13 @@ class TenantWidgetRegistry {
       },
     });
 
-    // Delirios widgets con import dinÃ¡mico
+    // Delirios widgets con import dinámico
     this.widgets.set("delirios", {
       heroCarousel: {
         component: lazy(() => import("../components/hero/HeroDeliriosWrapper")),
         name: "HeroDelirios",
         description:
-          "Hero slider fullscreen con cÃ­rculos concÃ©ntricos, texto circular animado, blur de fondo, GSAP avanzado",
+          "Hero slider fullscreen con círculos concéntricos, texto circular animado, blur de fondo, GSAP avanzado",
         requiredProps: [],
       },
     });
@@ -80,12 +80,12 @@ class TenantWidgetRegistry {
           })),
         ),
         name: "CarouselHero",
-        description: "Hero carousel genÃ©rico para todos los tenants",
+        description: "Hero carousel genérico para todos los tenants",
         requiredProps: ["tenantData"],
       },
     });
 
-    // Otros tenants pueden aÃ±adirse aquÃ­
+    // Otros tenants pueden añadirse aquÃ­
     // this.widgets.set('nom-nom', { ... });
     // this.widgets.set('centro-tenistico', { ... });
   }
@@ -94,7 +94,7 @@ class TenantWidgetRegistry {
     tenantSlug: string,
     widgetType: keyof TenantWidgetConfig,
   ): TenantWidget | null {
-    // Buscar widget especÃ­fico del tenant
+    // Buscar widget específico del tenant
     const tenantWidgets = this.widgets.get(tenantSlug);
     if (tenantWidgets?.[widgetType]) {
       return tenantWidgets[widgetType]!;

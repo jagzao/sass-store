@@ -8,7 +8,7 @@ class MemoryManager {
     IntersectionObserver | MutationObserver | ResizeObserver
   > = new Set();
 
-  // Registrar event listener para cleanup automÃ¡tico
+  // Registrar event listener para cleanup automático
   registerEventListener(
     element: Element | Window,
     event: string,
@@ -28,17 +28,17 @@ class MemoryManager {
     element.addEventListener(event, listener, options);
   }
 
-  // Registrar interval para cleanup automÃ¡tico
+  // Registrar interval para cleanup automático
   registerInterval(intervalId: NodeJS.Timeout) {
     this.intervals.add(intervalId);
   }
 
-  // Registrar timeout para cleanup automÃ¡tico
+  // Registrar timeout para cleanup automático
   registerTimeout(timeoutId: NodeJS.Timeout) {
     this.timeouts.add(timeoutId);
   }
 
-  // Registrar observer para cleanup automÃ¡tico
+  // Registrar observer para cleanup automático
   registerObserver(
     observer: IntersectionObserver | MutationObserver | ResizeObserver,
   ) {
@@ -80,7 +80,7 @@ class MemoryManager {
     console.warn(`[MemoryManager] Cleanup for component: ${componentId}`);
   }
 
-  // Obtener estadÃ­sticas de memoria
+  // Obtener estadísticas de memoria
   getMemoryStats() {
     if (typeof performance !== "undefined" && "memory" in performance) {
       const memInfo = (performance as any).memory;
@@ -106,9 +106,9 @@ class MemoryManager {
 // Instancia global del memory manager
 export const memoryManager = new MemoryManager();
 
-// Hook de React para gestiÃ³n automÃ¡tica de memoria
+// Hook de React para gestión automÃ¡tica de memoria
 export function useMemoryManagement(componentId?: string) {
-  // Cleanup automÃ¡tico al desmontar
+  // Cleanup automático al desmontar
   React.useEffect(() => {
     return () => {
       if (componentId) {
@@ -127,7 +127,7 @@ export function useMemoryManagement(componentId?: string) {
   };
 }
 
-// FunciÃ³n para forzar garbage collection (solo en desarrollo)
+// Función para forzar garbage collection (solo en desarrollo)
 export function forceGarbageCollection() {
   if (process.env.NODE_ENV === "development" && typeof window !== "undefined") {
     if ("gc" in window) {
@@ -137,7 +137,7 @@ export function forceGarbageCollection() {
   }
 }
 
-// Monitor de memory leaks bÃ¡sico
+// Monitor de memory leaks básico
 export function startMemoryLeakDetection() {
   if (typeof window === "undefined" || process.env.NODE_ENV !== "development")
     return;
@@ -168,18 +168,18 @@ export function startMemoryLeakDetection() {
   memoryManager.registerInterval(checkInterval);
 }
 
-// Limpiar memoria globalmente cuando la pÃ¡gina se oculta
+// Limpiar memoria globalmente cuando la página se oculta
 if (typeof document !== "undefined") {
   document.addEventListener("visibilitychange", () => {
     if (document.hidden) {
-      // Cleanup agresivo cuando la pÃ¡gina no es visible
+      // Cleanup agresivo cuando la página no es visible
       memoryManager.cleanup();
       console.warn("[Memory] Aggressive cleanup on page hidden");
     }
   });
 }
 
-// DeclaraciÃ³n para TypeScript
+// Declaración para TypeScript
 declare global {
   interface Window {
     gc?: () => void;

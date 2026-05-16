@@ -21,9 +21,9 @@ export async function seedTenantData() {
           secondaryColor: "#1F2937",
           logo: null,
           heroConfig: {
-            title: "ðŸ’… Â¡Transforma tus uÃ±as en obras de arte!",
+            title: "ðŸ’… Â¡Transforma tus uñas en obras de arte!",
             subtitle:
-              "El estudio de uÃ±as mÃ¡s exclusivo de Texcoco. Especialistas en nail art personalizado y tÃ©cnicas avanzadas.",
+              "El estudio de uñas más exclusivo de Texcoco. Especialistas en nail art personalizado y técnicas avanzadas.",
             backgroundType: "gradient",
             showContactInfo: true,
             showActionButtons: true,
@@ -48,7 +48,7 @@ export async function seedTenantData() {
           phone: "+52 55 6406 8409",
           email: "marialiciavh1984@gmail.com",
           address:
-            "Cda. 1-a Rtno. 21-3, San Lorenzo, 56140 Texcoco de Mora, 56140 MÃ©xico, MÃ©x.",
+            "Cda. 1-a Rtno. 21-3, San Lorenzo, 56140 Texcoco de Mora, 56140 México, MÃ©x.",
           website: "https://wondernails.local",
           googleMaps: "https://maps.app.goo.gl/FS471vtXdFdPTyjEA",
           hours: {
@@ -110,7 +110,7 @@ export async function seedTenantData() {
       },
       {
         slug: "centro-tenistico",
-        name: "Centro TenÃ­stico Villafuerte",
+        name: "Centro Tenístico Villafuerte",
         description: "Professional tennis training and court rental",
         mode: "booking",
         status: "active",
@@ -327,7 +327,7 @@ export async function seedTenantData() {
         active: true,
         metadata: { image: "ðŸ’¨", category: "styling" },
       },
-      // Centro TenÃ­stico Services
+      // Centro Tenístico Services
       {
         tenantId: tenantMap["centro-tenistico"],
         name: "Court Rental",

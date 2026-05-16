@@ -97,7 +97,7 @@ function validateBudgetQuery(searchParams: URLSearchParams): Result<
 
 export async function GET(request: NextRequest): Promise<Response> {
   try {
-    // Verificar autenticaciÃ³n
+    // Verificar autenticación
     const session = await auth();
     if (!session?.user) {
       return NextResponse.json(
@@ -109,7 +109,7 @@ export async function GET(request: NextRequest): Promise<Response> {
       );
     }
 
-    // Obtener parÃ¡metros de query
+    // Obtener parámetros de query
     const { searchParams } = new URL(request.url);
 
     // Validar query parameters
@@ -269,7 +269,7 @@ export async function GET(request: NextRequest): Promise<Response> {
 export async function POST(request: NextRequest): Promise<Response> {
   let body: any;
   try {
-    // Verificar autenticaciÃ³n
+    // Verificar autenticación
     const session = await auth();
     if (!session?.user) {
       return NextResponse.json(

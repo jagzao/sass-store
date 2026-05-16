@@ -52,10 +52,10 @@ export default async function CustomersPage({
             <main className="container mx-auto px-4 py-8">
               <div className="mb-8">
                 <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                  GestiÃ³n de Clientas
+                  Gestión de Clientas
                 </h1>
                 <p className="text-gray-600">
-                  Administra expedientes, historial de visitas y prÃ³ximas citas
+                  Administra expedientes, historial de visitas y próximas citas
                 </p>
               </div>
 
@@ -126,6 +126,6 @@ export async function generateMetadata({ params }: PageProps) {
 
   return {
     title: `Clientas - ${tenant.name}`,
-    description: `GestiÃ³n de clientas y expedientes para ${tenant.name}`,
+    description: `Gestión de clientas y expedientes para ${tenant.name}`,
   };
 }

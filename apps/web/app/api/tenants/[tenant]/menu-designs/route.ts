@@ -63,7 +63,7 @@ export async function POST(
 ) {
   try {
     const { tenant: tenantSlug } = await params;
-    console.warn(`[API] Creando menÃº para tenant: ${tenantSlug}`);
+    console.warn(`[API] Creando menú para tenant: ${tenantSlug}`);
 
     const session = await auth();
     if (!session) {
@@ -100,10 +100,10 @@ export async function POST(
         })
         .returning();
 
-      console.warn(`[API] DiseÃ±o creado exitosamente: ${newDesign.id}`);
+      console.warn(`[API] Diseño creado exitosamente: ${newDesign.id}`);
       return NextResponse.json(newDesign);
     } catch (dbError: any) {
-      console.error("[API] Error de base de datos al insertar menÃº:", dbError);
+      console.error("[API] Error de base de datos al insertar menú:", dbError);
       console.error(
         "[API] Detalle del error:",
         JSON.stringify(dbError, null, 2),
@@ -115,10 +115,10 @@ export async function POST(
     }
   } catch (error) {
     if (error instanceof z.ZodError) {
-      console.error("[API] Error de validaciÃ³n Zod:", error.errors);
+      console.error("[API] Error de validación Zod:", error.errors);
       return NextResponse.json({ error: error.errors }, { status: 400 });
     }
-    console.error("[API] Error general creando menÃº:", error);
+    console.error("[API] Error general creando menú:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 },

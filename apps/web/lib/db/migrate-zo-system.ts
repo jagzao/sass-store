@@ -41,7 +41,7 @@ async function migrateZoSystemToBooking() {
           tenantId: updatedTenant.id,
           name: "Desarrollo SaaS Personalizado",
           description:
-            "Desarrollo de aplicaciones multi-tenant escalables con Next.js, PostgreSQL y arquitectura cloud-native. Incluye diseÃ±o, implementaciÃ³n y deployment.",
+            "Desarrollo de aplicaciones multi-tenant escalables con Next.js, PostgreSQL y arquitectura cloud-native. Incluye diseño, implementación y deployment.",
           price: "15000.00",
           duration: 160,
           featured: true,
@@ -54,9 +54,9 @@ async function migrateZoSystemToBooking() {
         },
         {
           tenantId: updatedTenant.id,
-          name: "ConsultorÃ­a de Arquitectura de Software",
+          name: "Consultoría de Arquitectura de Software",
           description:
-            "AuditorÃ­a tÃ©cnica de tu arquitectura actual, identificaciÃ³n de bottlenecks y roadmap de optimizaciÃ³n.",
+            "Auditoría técnica de tu arquitectura actual, identificaciÃ³n de bottlenecks y roadmap de optimizaciÃ³n.",
           price: "2500.00",
           duration: 8,
           featured: true,
@@ -70,7 +70,7 @@ async function migrateZoSystemToBooking() {
           tenantId: updatedTenant.id,
           name: "Starter Kit SaaS Premium",
           description:
-            "Plantilla completa lista para producciÃ³n con autenticaciÃ³n, pagos Stripe, dashboard admin, API GraphQL y mÃ¡s.",
+            "Plantilla completa lista para producción con autenticación, pagos Stripe, dashboard admin, API GraphQL y más.",
           price: "499.00",
           duration: 2,
           featured: true,
@@ -104,9 +104,9 @@ async function migrateZoSystemToBooking() {
         },
         {
           tenantId: updatedTenant.id,
-          name: "IntegraciÃ³n de IA Personalizada",
+          name: "Integración de IA Personalizada",
           description:
-            "ImplementaciÃ³n de modelos de IA para automatizaciÃ³n, anÃ¡lisis de datos o asistentes virtuales.",
+            "ImplementaciÃ³n de modelos de IA para automatizaciÃ³n, análisis de datos o asistentes virtuales.",
           price: "5000.00",
           duration: 40,
           featured: true,
@@ -121,7 +121,7 @@ async function migrateZoSystemToBooking() {
           tenantId: updatedTenant.id,
           name: "E-Commerce Template",
           description:
-            "Tienda online completa con carrito, checkout, gestiÃ³n de inventario y panel de administraciÃ³n.",
+            "Tienda online completa con carrito, checkout, gestión de inventario y panel de administraciÃ³n.",
           price: "349.00",
           duration: 2,
           featured: true,
@@ -132,7 +132,7 @@ async function migrateZoSystemToBooking() {
             features: [
               "Carrito de compras completo",
               "Checkout con Stripe",
-              "GestiÃ³n de inventario",
+              "Gestión de inventario",
               "Panel de administraciÃ³n",
               "Reportes de ventas",
             ],
@@ -157,7 +157,7 @@ async function migrateZoSystemToBooking() {
           tenantId: updatedTenant.id,
           name: "DevOps & Infrastructure Setup",
           description:
-            "ConfiguraciÃ³n de infraestructura cloud, CI/CD pipelines, Docker, Kubernetes y monitoreo.",
+            "Configuración de infraestructura cloud, CI/CD pipelines, Docker, Kubernetes y monitoreo.",
           price: "2000.00",
           duration: 16,
           featured: false,

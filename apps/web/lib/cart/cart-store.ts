@@ -350,7 +350,7 @@ export const useCart = create<CartStoreWithSync>()(
 
           if (!coupon) {
             set({
-              couponError: "CupÃ³n invÃ¡lido o expirado",
+              couponError: "Cupón inválido o expirado",
               appliedCoupon: null,
             });
             return;
@@ -362,7 +362,7 @@ export const useCart = create<CartStoreWithSync>()(
             lastActivity: Date.now(),
           });
         } catch (error) {
-          set({ couponError: "Error al validar cupÃ³n", appliedCoupon: null });
+          set({ couponError: "Error al validar cupón", appliedCoupon: null });
         }
       },
 

@@ -1,20 +1,20 @@
 /**
  * WhatsApp Webhook Handler
  *
- * Maneja mensajes entrantes y verificaciÃ³n del webhook
+ * Maneja mensajes entrantes y verificación del webhook
  * Docs: https://developers.facebook.com/docs/whatsapp/cloud-api/guides/set-up-webhooks
  */
 
 import { NextRequest, NextResponse } from "next/server";
 
-// Token de verificaciÃ³n del webhook (debe coincidir con Meta Developer Dashboard)
+// Token de verificación del webhook (debe coincidir con Meta Developer Dashboard)
 const WEBHOOK_VERIFY_TOKEN = process.env.WHATSAPP_WEBHOOK_VERIFY_TOKEN!;
 
 /**
- * GET - VerificaciÃ³n del webhook
+ * GET - Verificación del webhook
  *
- * Meta envÃ­a este request para verificar que el webhook estÃ¡ configurado correctamente.
- * Debes responder con el challenge que Meta envÃ­a.
+ * Meta envía este request para verificar que el webhook estÃ¡ configurado correctamente.
+ * Debes responder con el challenge que Meta envía.
  */
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
 
   // Verificar que el modo sea "subscribe" y el token coincida
   if (mode === "subscribe" && token === WEBHOOK_VERIFY_TOKEN) {
-    console.warn("[WhatsApp Webhook] VerificaciÃ³n exitosa");
+    console.warn("[WhatsApp Webhook] Verificación exitosa");
     return new NextResponse(challenge, { status: 200 });
   }
 
@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
 /**
  * POST - Recibe mensajes de WhatsApp
  *
- * Meta envÃ­a los mensajes entrantes a este endpoint.
+ * Meta envía los mensajes entrantes a este endpoint.
  */
 export async function POST(request: NextRequest) {
   try {
