@@ -72,6 +72,11 @@ export default function TenantProfilePage() {
   const isWelcome = searchParams.get("welcome") === "1";
   const [isEditing, setIsEditing] = useState(false);
   const hasConsumedWelcomeRef = useRef(false);
+  const isEditingRef = useRef(false);
+  // Keep ref in sync so async callbacks don't overwrite in-progress edits
+  useEffect(() => {
+    isEditingRef.current = isEditing;
+  }, [isEditing]);
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -123,8 +128,12 @@ export default function TenantProfilePage() {
             birthdate: data.birthdate ? data.birthdate.slice(0, 10) : "",
             gender: data.gender ?? "",
           };
-          setFormData(nextFormData);
+          // Always update the baseline so cancel works correctly
           setInitialFormData(nextFormData);
+          // Don't overwrite in-progress edits
+          if (!isEditingRef.current) {
+            setFormData(nextFormData);
+          }
         })
         .catch(() => {});
     }
@@ -247,6 +256,7 @@ export default function TenantProfilePage() {
   };
 
   const handleEdit = () => {
+    isEditingRef.current = true; // sync antes del setState para evitar race condition en GET /api/profile
     setIsEditing(true);
   };
 
@@ -288,6 +298,7 @@ export default function TenantProfilePage() {
         setFormData(nextFormData);
         setInitialFormData(nextFormData);
 
+        isEditingRef.current = false;
         setIsEditing(false);
         showToast("Tu perfil fue actualizado correctamente", "success");
 
@@ -309,6 +320,7 @@ export default function TenantProfilePage() {
   };
 
   const handleCancel = () => {
+    isEditingRef.current = false;
     setFormData(initialFormData);
     setIsEditing(false);
   };

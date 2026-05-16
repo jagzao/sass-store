@@ -42,8 +42,7 @@ export async function PUT(req: NextRequest) {
 
     const updateData: Record<string, unknown> = { name, updatedAt: new Date() };
     if (phone !== undefined) updateData.phone = phone;
-    if (birthdate !== undefined)
-      updateData.birthdate = birthdate ? new Date(birthdate) : null;
+    if (birthdate !== undefined) updateData.birthdate = birthdate || null; // keep as "YYYY-MM-DD" string for pg date column
     if (gender !== undefined) updateData.gender = gender;
 
     await db.update(users).set(updateData).where(eq(users.id, session.user.id));
