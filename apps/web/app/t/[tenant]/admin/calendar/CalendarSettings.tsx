@@ -52,6 +52,7 @@ export function CalendarSettings({
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [activeDay, setActiveDay] = useState<DayKey>("mon");
+  const [rangeErrors, setRangeErrors] = useState<Record<string, string>>({});
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -102,7 +103,38 @@ export function CalendarSettings({
     });
   };
 
+  const validateConfig = (): boolean => {
+    const errors: Record<string, string> = {};
+    for (const day of DAY_KEYS) {
+      const ranges = config.days[day] ?? [];
+      ranges.forEach((range, i) => {
+        if (range.start >= range.end) {
+          errors[`${day}-${i}`] = "La hora de inicio debe ser antes del fin";
+        }
+      });
+      for (let i = 0; i < ranges.length; i++) {
+        for (let j = i + 1; j < ranges.length; j++) {
+          if (
+            ranges[i].start < ranges[j].end &&
+            ranges[j].start < ranges[i].end
+          ) {
+            errors[`${day}-${i}-overlap`] =
+              "Los bloques de este día se solapan";
+            errors[`${day}-${j}-overlap`] =
+              "Los bloques de este día se solapan";
+          }
+        }
+      }
+    }
+    setRangeErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   const handleSave = async () => {
+    if (!validateConfig()) {
+      toast.error("Corrige los errores de horario antes de guardar");
+      return;
+    }
     setSaving(true);
     try {
       const res = await fetch(`/api/tenants/${tenantSlug}/calendar/settings`, {
@@ -165,61 +197,89 @@ export function CalendarSettings({
             <p className="text-sm text-gray-500 mb-3">Cerrado este día.</p>
           ) : (
             <div className="space-y-3 mb-3">
-              {dayRanges.map((range, index) => (
-                <div
-                  key={`${activeDay}-${index}`}
-                  className="flex items-end gap-2"
-                >
-                  <div className="flex-1 space-y-1">
-                    <label className="text-[10px] text-gray-500">Desde</label>
-                    <Select
-                      value={range.start}
-                      onValueChange={(v) =>
-                        updateRange(activeDay, index, "start", v)
-                      }
-                    >
-                      <SelectTrigger className="h-9">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {HOURS.map((h) => (
-                          <SelectItem key={h} value={h}>
-                            {h}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+              {dayRanges.map((range, index) => {
+                const rangeError = rangeErrors[`${activeDay}-${index}`];
+                const overlapError =
+                  rangeErrors[`${activeDay}-${index}-overlap`];
+                const hasError = !!(rangeError || overlapError);
+                return (
+                  <div key={`${activeDay}-${index}`} className="space-y-1">
+                    <div className="flex items-end gap-2">
+                      <div className="flex-1 space-y-1">
+                        <label className="text-[10px] text-gray-500">
+                          Desde
+                        </label>
+                        <Select
+                          value={range.start}
+                          onValueChange={(v) => {
+                            updateRange(activeDay, index, "start", v);
+                            setRangeErrors((prev) => {
+                              const next = { ...prev };
+                              delete next[`${activeDay}-${index}`];
+                              delete next[`${activeDay}-${index}-overlap`];
+                              return next;
+                            });
+                          }}
+                        >
+                          <SelectTrigger className="h-9">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {HOURS.map((h) => (
+                              <SelectItem key={h} value={h}>
+                                {h}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="flex-1 space-y-1">
+                        <label className="text-[10px] text-gray-500">
+                          Hasta
+                        </label>
+                        <Select
+                          value={range.end}
+                          onValueChange={(v) => {
+                            updateRange(activeDay, index, "end", v);
+                            setRangeErrors((prev) => {
+                              const next = { ...prev };
+                              delete next[`${activeDay}-${index}`];
+                              delete next[`${activeDay}-${index}-overlap`];
+                              return next;
+                            });
+                          }}
+                        >
+                          <SelectTrigger
+                            className={`h-9 ${hasError ? "border-red-400" : ""}`}
+                          >
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {HOURS.map((h) => (
+                              <SelectItem key={h} value={h}>
+                                {h}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => removeRange(activeDay, index)}
+                        className="p-2 text-red-500 hover:bg-red-50 rounded-md mb-0.5"
+                        aria-label="Eliminar bloque"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                    {(rangeError || overlapError) && (
+                      <p className="text-[10px] text-red-500 pl-0.5">
+                        {rangeError ?? overlapError}
+                      </p>
+                    )}
                   </div>
-                  <div className="flex-1 space-y-1">
-                    <label className="text-[10px] text-gray-500">Hasta</label>
-                    <Select
-                      value={range.end}
-                      onValueChange={(v) =>
-                        updateRange(activeDay, index, "end", v)
-                      }
-                    >
-                      <SelectTrigger className="h-9">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {HOURS.map((h) => (
-                          <SelectItem key={h} value={h}>
-                            {h}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => removeRange(activeDay, index)}
-                    className="p-2 text-red-500 hover:bg-red-50 rounded-md mb-0.5"
-                    aria-label="Eliminar bloque"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
 
