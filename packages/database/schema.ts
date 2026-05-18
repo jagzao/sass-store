@@ -531,6 +531,7 @@ export const tenantsRelations = relations(tenants, ({ many }) => ({
   transactionCategories: many(transactionCategories),
   // Budgets
   budgets: many(budgets),
+  scheduledNotifications: many(scheduledNotifications),
 }));
 
 export const tenantConfigsRelations = relations(tenantConfigs, ({ one }) => ({
@@ -2956,6 +2957,106 @@ export const whatsappMessagesRelations = relations(
     customer: one(customers, {
       fields: [whatsappMessages.customerId],
       references: [customers.id],
+    }),
+  }),
+);
+
+/** Cola de notificaciones — encolada por la app, consumida por n8n/worker */
+export const scheduledNotificationStatuses = [
+  "pending",
+  "processing",
+  "sent",
+  "failed",
+  "cancelled",
+] as const;
+
+export type ScheduledNotificationStatus =
+  (typeof scheduledNotificationStatuses)[number];
+
+export const scheduledNotificationChannels = [
+  "whatsapp",
+  "email",
+  "sms",
+] as const;
+
+export type ScheduledNotificationChannel =
+  (typeof scheduledNotificationChannels)[number];
+
+export const scheduledNotifications = pgTable(
+  "scheduled_notifications",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .references(() => tenants.id, { onDelete: "cascade" })
+      .notNull(),
+    channel: varchar("channel", { length: 30 }).notNull().default("whatsapp"),
+    status: varchar("status", { length: 20 }).notNull().default("pending"),
+    scheduledAt: timestamp("scheduled_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+    processedAt: timestamp("processed_at", { withTimezone: true }),
+    sentAt: timestamp("sent_at", { withTimezone: true }),
+    recipientPhone: varchar("recipient_phone", { length: 20 }),
+    recipientEmail: varchar("recipient_email", { length: 255 }),
+    recipientName: varchar("recipient_name", { length: 100 }),
+    subject: varchar("subject", { length: 255 }),
+    body: text("body").notNull(),
+    templateKey: varchar("template_key", { length: 50 }),
+    payload: jsonb("payload"),
+    customerId: uuid("customer_id").references(() => customers.id, {
+      onDelete: "set null",
+    }),
+    bookingId: uuid("booking_id").references(() => bookings.id, {
+      onDelete: "set null",
+    }),
+    relatedEntityType: varchar("related_entity_type", { length: 50 }),
+    relatedEntityId: uuid("related_entity_id"),
+    externalMessageId: varchar("external_message_id", { length: 100 }),
+    attempts: integer("attempts").notNull().default(0),
+    maxAttempts: integer("max_attempts").notNull().default(3),
+    lastError: text("last_error"),
+    idempotencyKey: varchar("idempotency_key", { length: 120 }),
+    createdBy: varchar("created_by", { length: 100 }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => ({
+    idempotencyKeyIdx: uniqueIndex(
+      "scheduled_notifications_idempotency_key_idx",
+    ).on(table.idempotencyKey),
+    tenantStatusScheduledIdx: index(
+      "scheduled_notifications_tenant_status_scheduled_idx",
+    ).on(table.tenantId, table.status, table.scheduledAt),
+    pendingPollIdx: index("scheduled_notifications_pending_poll_idx").on(
+      table.status,
+      table.scheduledAt,
+    ),
+    bookingIdx: index("scheduled_notifications_booking_idx").on(
+      table.bookingId,
+    ),
+  }),
+);
+
+export const scheduledNotificationsRelations = relations(
+  scheduledNotifications,
+  ({ one }) => ({
+    tenant: one(tenants, {
+      fields: [scheduledNotifications.tenantId],
+      references: [tenants.id],
+    }),
+    customer: one(customers, {
+      fields: [scheduledNotifications.customerId],
+      references: [customers.id],
+    }),
+    booking: one(bookings, {
+      fields: [scheduledNotifications.bookingId],
+      references: [bookings.id],
     }),
   }),
 );

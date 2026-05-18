@@ -115,22 +115,45 @@ function getClient() {
 
   const useSsl = inferSslForConnectionString(connectionString);
 
+  const isRemotePooler =
+    /(supabase|pooler|neon|aws-1-us-east-2|aws-0-us-west-1)/i.test(
+      connectionString,
+    );
+
+  if (isRemotePooler) {
+    console.log(`🔌 Remote pooler detected, using max=1`);
+  }
+
   _client = postgres(connectionString, {
     prepare: false,
     ssl: useSsl,
     // Optimized for Serverless:
     // E2E mode needs higher max to avoid pool exhaustion during warmup
-    max:
-      process.env.E2E_SEED_ENABLED === "true"
+    // Remote poolers (Supabase/Neon) have strict connection limits — force max 1
+    max: isRemotePooler
+      ? 1
+      : process.env.E2E_SEED_ENABLED === "true"
         ? 10
         : isTestEnv
           ? 15
           : isLocalhost
             ? 10
             : 1, // Strict limit for production serverless
-    idle_timeout: process.env.E2E_SEED_ENABLED === "true" ? 30 : 10, // Keep connections alive longer in E2E
-    connect_timeout: process.env.E2E_SEED_ENABLED === "true" ? 15 : 5, // Fail fast (5s) to avoid 10s wait
-    max_lifetime: process.env.E2E_SEED_ENABLED === "true" ? 60 * 30 : 60 * 5, // 30 min max life in E2E
+    idle_timeout: isRemotePooler
+      ? 5
+      : process.env.E2E_SEED_ENABLED === "true"
+        ? 30
+        : 10, // Keep connections alive longer in E2E
+    connect_timeout: isRemotePooler
+      ? 30
+      : process.env.E2E_SEED_ENABLED === "true"
+        ? 15
+        : 5, // Fail fast (5s) to avoid 10s wait
+    max_lifetime: isRemotePooler
+      ? 60 * 2
+      : process.env.E2E_SEED_ENABLED === "true"
+        ? 60 * 30
+        : 60 * 5, // 30 min max life in E2E
     keep_alive: null, // Allow serverless freeze
     fetch_types: false, // Performance
     connection: {
