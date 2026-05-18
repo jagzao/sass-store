@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
+import { Trash2 } from "lucide-react";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { ProductModal, Product } from "./product-modal";
 
 export function ProductsClient({ tenantSlug }: { tenantSlug: string }) {
@@ -81,12 +83,6 @@ export function ProductsClient({ tenantSlug }: { tenantSlug: string }) {
   };
 
   const handleDelete = async (productId: string) => {
-    if (
-      !window.confirm("¿Estás seguro de que quieres eliminar este producto?")
-    ) {
-      return;
-    }
-
     try {
       const res = await fetch(`/api/v1/products/${productId}`, {
         method: "DELETE",
@@ -96,7 +92,6 @@ export function ProductsClient({ tenantSlug }: { tenantSlug: string }) {
         throw new Error("Error al eliminar el producto");
       }
 
-      // Refresh list
       fetchProducts();
     } catch (err: any) {
       alert(err.message);
@@ -290,12 +285,22 @@ export function ProductsClient({ tenantSlug }: { tenantSlug: string }) {
                       >
                         Editar
                       </button>
-                      <button
-                        onClick={() => handleDelete(product.id)}
-                        className="text-red-600 hover:text-red-900"
-                      >
-                        Eliminar
-                      </button>
+                      <ConfirmDialog
+                        trigger={
+                          <button
+                            className="inline-flex items-center gap-1 text-red-500 hover:text-red-700 transition-colors"
+                            title="Eliminar producto"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                            <span className="text-sm">Eliminar</span>
+                          </button>
+                        }
+                        title="¿Eliminar este producto?"
+                        description="Esta acción no se puede deshacer. Se eliminará permanentemente el producto"
+                        subjectName={product.name}
+                        confirmLabel="Eliminar producto"
+                        onConfirm={() => handleDelete(product.id)}
+                      />
                     </td>
                   </tr>
                 ))}

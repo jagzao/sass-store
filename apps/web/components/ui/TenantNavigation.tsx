@@ -77,6 +77,7 @@ export default function TenantNavigation({
 
   const navLinksList = buildLinks();
   const isCentroTenistico = tenantSlug === "centro-tenistico";
+  const isWondernails = tenantSlug === "wondernails";
   const ctvNavTypography = isCentroTenistico
     ? "font-light text-[13px] tracking-[0.06em]"
     : "text-sm font-medium tracking-wide";
@@ -103,11 +104,14 @@ export default function TenantNavigation({
       return "text-gray-300 hover:text-white";
     }
     if (isTransparent) {
+      if (isWondernails) {
+        return isActive
+          ? "text-[#C5A059] font-semibold"
+          : "text-[#333333] hover:text-[#C5A059]";
+      }
       if (isActive) {
-        // Wondernails fix: Use primary color or dark gray for active links on transparent light bg
         return "text-gray-900 font-bold";
       }
-      // Wondernails fix: Use dark gray for inactive links
       return "text-gray-600 hover:text-gray-900";
     }
     if (isActive) {

@@ -19,18 +19,8 @@ import {
   Trash2,
   Plus,
 } from "lucide-react";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import HistorialMedico, {
   type HistorialMedicoData,
@@ -397,77 +387,34 @@ const CustomerFileHeader = forwardRef<
         </span>
 
         {/* Delete Button */}
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
+        <ConfirmDialog
+          trigger={
             <button
-              className={`ml-4 p-2 rounded-full transition-colors ${
-                isLuxury
-                  ? "text-red-400 hover:text-red-600 hover:bg-red-50"
-                  : "text-red-400 hover:text-red-600 hover:bg-red-50"
-              }`}
+              className="ml-4 p-2 rounded-full text-red-400 hover:text-red-600 hover:bg-red-50 transition-colors"
               title="Eliminar clienta"
             >
               <Trash2 className="h-5 w-5" />
             </button>
-          </AlertDialogTrigger>
-          <AlertDialogContent
-            className={`${isLuxury ? "border-[#D4AF37]/20" : ""}`}
-          >
-            <AlertDialogHeader>
-              <AlertDialogTitle
-                className={`${isLuxury ? "text-[#1a1a1a] font-serif text-xl" : ""}`}
-              >
-                ¿Está seguro de eliminar esta clienta?
-              </AlertDialogTitle>
-              <AlertDialogDescription className="space-y-4">
-                <p>
-                  Esta acción no se puede deshacer. Se eliminará permanentemente
-                  la clienta{" "}
-                  <span className="font-semibold text-gray-900">
-                    "{customer.name}"
-                  </span>
-                  .
-                </p>
-
-                {stats && (
-                  <div
-                    className={`p-4 rounded-md ${isLuxury ? "bg-red-50 border border-red-100" : "bg-gray-100"}`}
-                  >
-                    <p
-                      className={`text-sm font-medium mb-2 ${isLuxury ? "text-red-800" : "text-gray-700"}`}
-                    >
-                      También se eliminarán o desvincularán:
-                    </p>
-                    <ul className="list-disc list-inside text-sm space-y-1 text-gray-600">
-                      <li>
-                        <span className="font-semibold">{stats.visits}</span>{" "}
-                        Visitas completadas
-                      </li>
-                      <li>
-                        <span className="font-semibold">{stats.bookings}</span>{" "}
-                        Reservas (pendientes o pasadas)
-                      </li>
-                    </ul>
-                  </div>
-                )}
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel
-                className={`${isLuxury ? "border-gray-200 text-gray-600 hover:bg-gray-50" : ""}`}
-              >
-                Cancelar
-              </AlertDialogCancel>
-              <AlertDialogAction
-                onClick={handleDelete}
-                className={buttonVariants({ variant: "destructive" })}
-                disabled={isDeleting}
-              >
-                {isDeleting ? "Eliminando..." : "Eliminar permanentemente"}
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+          }
+          title="¿Eliminar esta clienta?"
+          description="Esta acción no se puede deshacer. Se eliminará permanentemente la clienta"
+          subjectName={customer.name}
+          impactItems={
+            stats
+              ? [
+                  { count: stats.visits, label: "Visitas completadas" },
+                  {
+                    count: stats.bookings,
+                    label: "Reservas (pendientes o pasadas)",
+                  },
+                ]
+              : undefined
+          }
+          confirmLabel="Eliminar permanentemente"
+          loadingLabel="Eliminando…"
+          onConfirm={handleDelete}
+          loading={isDeleting}
+        />
       </div>
 
       {/* Tags */}

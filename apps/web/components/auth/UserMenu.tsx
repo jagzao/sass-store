@@ -49,7 +49,8 @@ export default function UserMenu({
     if (typeof window !== "undefined") {
       localStorage.removeItem("currentTenant");
     }
-    await signOut({ callbackUrl: "/" });
+    const redirectUrl = currentTenantSlug ? `/t/${currentTenantSlug}` : "/";
+    await signOut({ callbackUrl: redirectUrl });
   };
 
   const toggleMenu = () => {
@@ -79,7 +80,9 @@ export default function UserMenu({
         }
         className={
           isTransparent
-            ? "px-4 py-2 rounded border border-[#D4AF37] text-[#D4AF37] bg-transparent hover:bg-[#D4AF37] hover:text-black transition-colors font-medium"
+            ? currentTenantSlug === "wondernails"
+              ? "px-4 py-2 rounded border border-[#C5A059] text-[#C5A059] bg-transparent hover:bg-[#C5A059] hover:text-white transition-colors font-medium"
+              : "px-4 py-2 rounded border border-[#D4AF37] text-[#D4AF37] bg-transparent hover:bg-[#D4AF37] hover:text-black transition-colors font-medium"
             : isDark
               ? "bg-[#FF8000] text-black hover:bg-[#FF5500] hover:shadow-[0_0_15px_rgba(255,128,0,0.4)] px-4 py-2 rounded transition-all font-bold"
               : currentTenantSlug === "centro-tenistico"

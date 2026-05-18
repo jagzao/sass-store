@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useHolidays } from "@/lib/hooks";
 import { format, parseISO } from "date-fns";
 import { es } from "date-fns/locale";
+import { Trash2 } from "lucide-react";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 interface Holiday {
   id: string;
@@ -70,11 +72,7 @@ export function HolidaysManager() {
   };
 
   const handleDelete = async (id: string) => {
-    if (
-      window.confirm("¿Estás seguro de que quieres eliminar este día festivo?")
-    ) {
-      await deleteHoliday(id);
-    }
+    await deleteHoliday(id);
   };
 
   if (loading) {
@@ -156,12 +154,22 @@ export function HolidaysManager() {
                   >
                     Editar
                   </button>
-                  <button
-                    onClick={() => handleDelete(holiday.id)}
-                    className="text-red-600 hover:text-red-900"
-                  >
-                    Eliminar
-                  </button>
+                  <ConfirmDialog
+                    trigger={
+                      <button
+                        className="inline-flex items-center gap-1 text-red-500 hover:text-red-700 transition-colors"
+                        title="Eliminar día festivo"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                        <span className="text-sm">Eliminar</span>
+                      </button>
+                    }
+                    title="¿Eliminar este día festivo?"
+                    description="Esta acción no se puede deshacer. Se eliminará el día festivo"
+                    subjectName={holiday.name}
+                    confirmLabel="Eliminar día festivo"
+                    onConfirm={() => handleDelete(holiday.id)}
+                  />
                 </td>
               </tr>
             ))}
