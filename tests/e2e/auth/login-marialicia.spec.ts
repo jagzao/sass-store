@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-test.describe.skip("Specific User Login - Wondernails", () => {
+test.describe("Specific User Login - Wondernails", () => {
   const tenantSlug = "wondernails";
   const userEmail = "marialiciavh1984@gmail.com";
   // Allows override via environment variable, defaults to common test password
@@ -52,10 +52,10 @@ test.describe.skip("Specific User Login - Wondernails", () => {
 
       // 3. Header should likely contain a greeting
       // Using a broad check first to avoid brittleness if exact text changes
-      await expect(page.locator("header")).toBeVisible();
+      await expect(page.locator("header").first()).toBeVisible();
 
       // Optional: Check specifically for "Hola" if that's the standard greeting
-      await expect(page.locator("header")).toContainText(/Hola/i);
+      await expect(page.locator("header").first()).toContainText(/Hola/i);
 
       console.log("Login successful, user redirected to dashboard.");
     } catch (e) {

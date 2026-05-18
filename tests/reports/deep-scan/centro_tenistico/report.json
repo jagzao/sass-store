@@ -2,584 +2,671 @@
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/",
-    "finalUrl": "http://localhost:3002/t/centro-tenistico",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico",
     "status": "ok",
-    "title": "Centro TenÃ­stico Villafuerte - Professional tennis training and court rental",
-    "consoleErrors": ["Failed to load Stripe.js"],
+    "title": "Centro Tenístico Villafuerte - Club de tenis profesional con canchas premium, clases personalizadas y torneos",
+    "consoleErrors": [
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
+    ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__.png",
-    "loadTimeMs": 983
+    "loadTimeMs": 3305
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/services",
-    "finalUrl": "http://localhost:3002/t/centro-tenistico/services",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/services",
     "status": "ok",
     "title": "Sass Store",
     "consoleErrors": [
-      "Failed to load resource: the server responded with a status of 404 (Not Found)",
-      "Failed to load resource: the server responded with a status of 404 (Not Found)",
-      "Failed to load resource: the server responded with a status of 404 (Not Found)",
-      "Failed to load Stripe.js"
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
     ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__services.png",
-    "loadTimeMs": 768
+    "loadTimeMs": 3605
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/products",
-    "finalUrl": "http://localhost:3002/t/centro-tenistico/products",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/products",
     "status": "ok",
     "title": "Sass Store",
-    "consoleErrors": ["Failed to load Stripe.js"],
+    "consoleErrors": [
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
+    ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__products.png",
-    "loadTimeMs": 720
+    "loadTimeMs": 1648
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/book",
-    "finalUrl": "http://localhost:3002/t/centro-tenistico/book",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/book",
     "status": "ok",
     "title": "Sass Store",
-    "consoleErrors": ["Failed to load Stripe.js"],
+    "consoleErrors": [
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
+    ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__book.png",
-    "loadTimeMs": 803
+    "loadTimeMs": 1534
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/contact",
-    "finalUrl": "http://localhost:3002/t/centro-tenistico/contact",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/contact",
     "status": "ok",
-    "title": "Contacto - Centro TenÃ­stico Villafuerte",
-    "consoleErrors": ["Failed to load Stripe.js"],
+    "title": "Contacto - Centro Tenístico Villafuerte",
+    "consoleErrors": [
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
+    ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__contact.png",
-    "loadTimeMs": 699
+    "loadTimeMs": 1429
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/login",
-    "finalUrl": "http://localhost:3002/t/centro-tenistico/login",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/login",
     "status": "ok",
-    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
-    "consoleErrors": ["Failed to load Stripe.js"],
+    "title": "Iniciar Sesión - Centro Tenístico Villafuerte",
+    "consoleErrors": [
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
+    ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__login.png",
-    "loadTimeMs": 751
+    "loadTimeMs": 1785
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/register",
-    "finalUrl": "http://localhost:3002/t/centro-tenistico/register",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/register",
     "status": "ok",
     "title": "Sass Store",
-    "consoleErrors": ["Failed to load Stripe.js"],
+    "consoleErrors": [
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
+    ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__register.png",
-    "loadTimeMs": 722
+    "loadTimeMs": 2117
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/forgot-password",
-    "finalUrl": "http://localhost:3002/t/centro-tenistico/forgot-password",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/forgot-password",
     "status": "ok",
     "title": "Sass Store",
-    "consoleErrors": ["Failed to load Stripe.js"],
+    "consoleErrors": [
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
+    ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__forgot_password.png",
-    "loadTimeMs": 776
+    "loadTimeMs": 1875
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/admin",
-    "finalUrl": "http://localhost:3002/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
     "status": "redirect",
-    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
+    "title": "Iniciar Sesión - Centro Tenístico Villafuerte",
     "consoleErrors": [
-      "n: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at o (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:1:1008)\n    at async g (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:1:2650)\n    at async h._getSession (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:2:1633)",
-      "Failed to load Stripe.js"
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
     ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__admin.png",
-    "loadTimeMs": 932
+    "loadTimeMs": 2948
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/admin/calendar",
-    "finalUrl": "http://localhost:3002/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
     "status": "redirect",
-    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
+    "title": "Iniciar Sesión - Centro Tenístico Villafuerte",
     "consoleErrors": [
-      "n: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at o (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:1:1008)\n    at async g (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:1:2650)\n    at async h._getSession (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:2:1633)",
-      "Failed to load Stripe.js"
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
     ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__admin_calendar.png",
-    "loadTimeMs": 894
+    "loadTimeMs": 3903
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/admin/products",
-    "finalUrl": "http://localhost:3002/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
     "status": "redirect",
-    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
-    "consoleErrors": ["Failed to load Stripe.js"],
+    "title": "Iniciar Sesión - Centro Tenístico Villafuerte",
+    "consoleErrors": [
+      "ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at fetchData (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:514:22)\n    at async getSession (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:681:21)\n    at async SessionProvider.useEffect [as _getSession] (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:824:51)",
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
+    ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__admin_products.png",
-    "loadTimeMs": 780
+    "loadTimeMs": 3327
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/admin/content",
-    "finalUrl": "http://localhost:3002/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
     "status": "redirect",
-    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
+    "title": "Iniciar Sesión - Centro Tenístico Villafuerte",
     "consoleErrors": [
-      "n: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at o (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:1:1008)\n    at async g (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:1:2650)\n    at async h._getSession (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:2:1633)",
-      "Failed to load Stripe.js"
+      "ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at fetchData (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:514:22)\n    at async getSession (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:681:21)\n    at async SessionProvider.useEffect [as _getSession] (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:824:51)",
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
     ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__admin_content.png",
-    "loadTimeMs": 944
+    "loadTimeMs": 2456
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/admin/quotes",
-    "finalUrl": "http://localhost:3002/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
     "status": "redirect",
-    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
+    "title": "Iniciar Sesión - Centro Tenístico Villafuerte",
     "consoleErrors": [
-      "n: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at o (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:1:1008)\n    at async g (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:1:2650)\n    at async h._getSession (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:2:1633)",
-      "Failed to load Stripe.js"
+      "ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at fetchData (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:514:22)\n    at async getSession (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:681:21)\n    at async SessionProvider.useEffect [as _getSession] (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:824:51)",
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
     ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__admin_quotes.png",
-    "loadTimeMs": 790
+    "loadTimeMs": 2632
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/admin_services",
-    "finalUrl": "http://localhost:3002/t/centro-tenistico/login",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/login",
     "status": "redirect",
-    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
-    "consoleErrors": ["Failed to load Stripe.js"],
+    "title": "Iniciar Sesión - Centro Tenístico Villafuerte",
+    "consoleErrors": [
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
+    ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__admin_services.png",
-    "loadTimeMs": 1065
+    "loadTimeMs": 2329
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/admin_bookings",
-    "finalUrl": "http://localhost:3002/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
     "status": "redirect",
-    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
+    "title": "Iniciar Sesión - Centro Tenístico Villafuerte",
     "consoleErrors": [
-      "n: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at o (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:1:1008)\n    at async g (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:1:2650)\n    at async h._getSession (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:2:1633)",
-      "Failed to load Stripe.js"
+      "ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at fetchData (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:514:22)\n    at async getSession (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:681:21)\n    at async SessionProvider.useEffect [as _getSession] (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:824:51)",
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
     ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__admin_bookings.png",
-    "loadTimeMs": 849
+    "loadTimeMs": 2571
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/admin_tenants",
-    "finalUrl": "http://localhost:3002/t/centro-tenistico",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico",
     "status": "ok",
-    "title": "Centro TenÃ­stico Villafuerte - Professional tennis training and court rental",
-    "consoleErrors": ["Failed to load Stripe.js"],
+    "title": "Centro Tenístico Villafuerte - Club de tenis profesional con canchas premium, clases personalizadas y torneos",
+    "consoleErrors": [
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
+    ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__admin_tenants.png",
-    "loadTimeMs": 944
+    "loadTimeMs": 2274
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/admin_products",
-    "finalUrl": "http://localhost:3002/t/centro-tenistico/login",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/login",
     "status": "redirect",
-    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
-    "consoleErrors": ["Failed to load Stripe.js"],
+    "title": "Iniciar Sesión - Centro Tenístico Villafuerte",
+    "consoleErrors": [
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
+    ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__admin_products.png",
-    "loadTimeMs": 792
+    "loadTimeMs": 2032
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/pos",
-    "finalUrl": "http://localhost:3002/t/centro-tenistico/login",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/login",
     "status": "redirect",
-    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
-    "consoleErrors": ["Failed to load Stripe.js"],
+    "title": "Iniciar Sesión - Centro Tenístico Villafuerte",
+    "consoleErrors": [
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
+    ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__pos.png",
-    "loadTimeMs": 760
+    "loadTimeMs": 2233
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/reports",
-    "finalUrl": "http://localhost:3002/t/centro-tenistico/login",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/login",
     "status": "redirect",
-    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
-    "consoleErrors": ["Failed to load Stripe.js"],
+    "title": "Iniciar Sesión - Centro Tenístico Villafuerte",
+    "consoleErrors": [
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
+    ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__reports.png",
-    "loadTimeMs": 773
+    "loadTimeMs": 2122
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/finance",
-    "finalUrl": "http://localhost:3002/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
     "status": "redirect",
-    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
-    "consoleErrors": ["Failed to load Stripe.js"],
+    "title": "Iniciar Sesión - Centro Tenístico Villafuerte",
+    "consoleErrors": [
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
+    ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__finance.png",
-    "loadTimeMs": 859
+    "loadTimeMs": 3220
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/finance/movements",
-    "finalUrl": "http://localhost:3002/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
     "status": "redirect",
-    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
-    "consoleErrors": ["Failed to load Stripe.js"],
+    "title": "Iniciar Sesión - Centro Tenístico Villafuerte",
+    "consoleErrors": [
+      "ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at fetchData (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:514:22)\n    at async getSession (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:681:21)\n    at async SessionProvider.useEffect [as _getSession] (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:824:51)",
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
+    ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__finance_movements.png",
-    "loadTimeMs": 911
+    "loadTimeMs": 2575
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/finance/budgets",
-    "finalUrl": "http://localhost:3002/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
     "status": "redirect",
-    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
-    "consoleErrors": ["Failed to load Stripe.js"],
+    "title": "Iniciar Sesión - Centro Tenístico Villafuerte",
+    "consoleErrors": [
+      "ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at fetchData (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:514:22)\n    at async getSession (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:681:21)\n    at async SessionProvider.useEffect [as _getSession] (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:824:51)",
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
+    ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__finance_budgets.png",
-    "loadTimeMs": 830
+    "loadTimeMs": 2744
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/finance/categories",
-    "finalUrl": "http://localhost:3002/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
     "status": "redirect",
-    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
+    "title": "Iniciar Sesión - Centro Tenístico Villafuerte",
     "consoleErrors": [
-      "n: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at o (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:1:1008)\n    at async g (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:1:2650)\n    at async h._getSession (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:2:1633)",
-      "Failed to load Stripe.js"
+      "ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at fetchData (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:514:22)\n    at async getSession (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:681:21)\n    at async SessionProvider.useEffect [as _getSession] (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:824:51)",
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
     ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__finance_categories.png",
-    "loadTimeMs": 835
+    "loadTimeMs": 3208
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/inventory",
-    "finalUrl": "http://localhost:3002/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
     "status": "redirect",
-    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
-    "consoleErrors": ["Failed to load Stripe.js"],
+    "title": "Iniciar Sesión - Centro Tenístico Villafuerte",
+    "consoleErrors": [
+      "ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at fetchData (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:514:22)\n    at async getSession (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:681:21)\n    at async SessionProvider.useEffect [as _getSession] (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:824:51)",
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
+    ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__inventory.png",
-    "loadTimeMs": 872
+    "loadTimeMs": 2549
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/inventory/supplies",
-    "finalUrl": "http://localhost:3002/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
     "status": "redirect",
-    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
-    "consoleErrors": ["Failed to load Stripe.js"],
+    "title": "Iniciar Sesión - Centro Tenístico Villafuerte",
+    "consoleErrors": [
+      "ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at fetchData (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:514:22)\n    at async getSession (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:681:21)\n    at async SessionProvider.useEffect [as _getSession] (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:824:51)",
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
+    ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__inventory_supplies.png",
-    "loadTimeMs": 1407
+    "loadTimeMs": 3482
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/clientes",
-    "finalUrl": "http://localhost:3002/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
     "status": "redirect",
-    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
-    "consoleErrors": ["Failed to load Stripe.js"],
+    "title": "Iniciar Sesión - Centro Tenístico Villafuerte",
+    "consoleErrors": [
+      "ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at fetchData (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:514:22)\n    at async getSession (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:681:21)\n    at async SessionProvider.useEffect [as _getSession] (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:824:51)",
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
+    ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__clientes.png",
-    "loadTimeMs": 866
+    "loadTimeMs": 3082
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/clientes/nueva",
-    "finalUrl": "http://localhost:3002/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
     "status": "redirect",
-    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
-    "consoleErrors": ["Failed to load Stripe.js"],
+    "title": "Iniciar Sesión - Centro Tenístico Villafuerte",
+    "consoleErrors": [
+      "ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at fetchData (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:514:22)\n    at async getSession (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:681:21)\n    at async SessionProvider.useEffect [as _getSession] (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:824:51)",
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
+    ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__clientes_nueva.png",
-    "loadTimeMs": 993
+    "loadTimeMs": 5630
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/clientes/test",
-    "finalUrl": "http://localhost:3002/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
     "status": "redirect",
-    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
-    "consoleErrors": ["Failed to load Stripe.js"],
+    "title": "Iniciar Sesión - Centro Tenístico Villafuerte",
+    "consoleErrors": [
+      "ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at fetchData (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:514:22)\n    at async getSession (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:681:21)\n    at async SessionProvider.useEffect [as _getSession] (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:824:51)",
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
+    ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__clientes_test.png",
-    "loadTimeMs": 856
+    "loadTimeMs": 3465
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/cart",
-    "finalUrl": "http://localhost:3002/t/centro-tenistico/cart",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/cart",
     "status": "ok",
     "title": "Sass Store",
-    "consoleErrors": ["Failed to load Stripe.js"],
+    "consoleErrors": [
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
+    ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__cart.png",
-    "loadTimeMs": 763
+    "loadTimeMs": 2968
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/checkout",
-    "finalUrl": "http://localhost:3002/t/centro-tenistico/checkout",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/checkout",
     "status": "ok",
     "title": "Sass Store",
     "consoleErrors": [
-      "Loading the script 'https://js.stripe.com/basil/stripe.js' violates the following Content Security Policy directive: \"script-src 'self' https://sdk.mercadopago.com https://secure.mlstatic.com https://challenges.cloudflare.com 'unsafe-inline'\". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback. The action has been blocked.",
-      "Failed to load Stripe.js"
+      "Loading the script 'https://js.stripe.com/basil/stripe.js' violates the following Content Security Policy directive: \"script-src 'self' https://sdk.mercadopago.com https://secure.mlstatic.com https://challenges.cloudflare.com 'unsafe-eval' 'unsafe-inline'\". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback. The action has been blocked.",
+      "Failed to load Stripe.js",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
     ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__checkout.png",
-    "loadTimeMs": 808
+    "loadTimeMs": 2336
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/checkout/success",
-    "finalUrl": "http://localhost:3002/t/centro-tenistico/checkout/success",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/checkout/success",
     "status": "ok",
     "title": "Sass Store",
     "consoleErrors": [
-      "Failed to load resource: the server responded with a status of 404 (Not Found)",
-      "Failed to load resource: the server responded with a status of 404 (Not Found)",
-      "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
     ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__checkout_success.png",
-    "loadTimeMs": 15185
+    "loadTimeMs": 2338
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/orders",
-    "finalUrl": "http://localhost:3002/t/centro-tenistico/orders",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/orders",
     "status": "ok",
     "title": "Sass Store",
-    "consoleErrors": [],
+    "consoleErrors": [
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
+    ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__orders.png",
-    "loadTimeMs": 1044
+    "loadTimeMs": 1827
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/profile",
-    "finalUrl": "http://localhost:3002/t/centro-tenistico/login",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/login",
     "status": "redirect",
-    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
-    "consoleErrors": [],
+    "title": "Iniciar Sesión - Centro Tenístico Villafuerte",
+    "consoleErrors": [
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
+    ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__profile.png",
-    "loadTimeMs": 894
+    "loadTimeMs": 2989
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/account",
-    "finalUrl": "http://localhost:3002/t/centro-tenistico/account",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/account",
     "status": "ok",
     "title": "Sass Store",
     "consoleErrors": [
-      "Failed to load resource: the server responded with a status of 404 (Not Found)",
-      "Failed to load resource: the server responded with a status of 404 (Not Found)",
-      "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
     ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__account.png",
-    "loadTimeMs": 15140
+    "loadTimeMs": 1794
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/settings/calendar",
-    "finalUrl": "http://localhost:3002/t/centro-tenistico/settings/calendar",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/settings/calendar",
     "status": "ok",
     "title": "Sass Store",
-    "consoleErrors": [],
+    "consoleErrors": [
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
+    ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__settings_calendar.png",
-    "loadTimeMs": 752
+    "loadTimeMs": 2861
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/config",
-    "finalUrl": "http://localhost:3002/t/centro-tenistico/login",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/login",
     "status": "redirect",
-    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
-    "consoleErrors": [],
+    "title": "Iniciar Sesión - Centro Tenístico Villafuerte",
+    "consoleErrors": [
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
+    ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__config.png",
-    "loadTimeMs": 792
+    "loadTimeMs": 3350
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/favorites",
-    "finalUrl": "http://localhost:3002/t/centro-tenistico/favorites",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/favorites",
     "status": "ok",
     "title": "Sass Store",
     "consoleErrors": [
-      "Failed to load resource: the server responded with a status of 404 (Not Found)",
-      "Failed to load resource: the server responded with a status of 404 (Not Found)",
-      "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
     ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__favorites.png",
-    "loadTimeMs": 15206
+    "loadTimeMs": 2630
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/social",
-    "finalUrl": "http://localhost:3002/t/centro-tenistico/social",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/social",
     "status": "ok",
     "title": "Sass Store",
     "consoleErrors": [],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__social.png",
-    "loadTimeMs": 914
+    "loadTimeMs": 3630
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/retouch",
-    "finalUrl": "http://localhost:3002/t/centro-tenistico/retouch",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/retouch",
     "status": "ok",
     "title": "Sass Store",
     "consoleErrors": [],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__retouch.png",
-    "loadTimeMs": 813
+    "loadTimeMs": 1884
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/reorder",
-    "finalUrl": "http://localhost:3002/t/centro-tenistico/reorder",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/reorder",
     "status": "ok",
     "title": "Sass Store",
     "consoleErrors": [],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__reorder.png",
-    "loadTimeMs": 803
+    "loadTimeMs": 2350
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/booking",
-    "finalUrl": "http://localhost:3002/t/centro-tenistico/services",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/services",
     "status": "ok",
     "title": "Sass Store",
-    "consoleErrors": [
-      "Failed to load resource: the server responded with a status of 404 (Not Found)",
-      "Failed to load resource: the server responded with a status of 404 (Not Found)",
-      "Failed to load resource: the server responded with a status of 404 (Not Found)"
-    ],
+    "consoleErrors": [],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__booking.png",
-    "loadTimeMs": 939
+    "loadTimeMs": 5867
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/booking/test-booking-123",
-    "finalUrl": "http://localhost:3002/t/centro-tenistico/booking/test-booking-123",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/booking/test-booking-123",
     "status": "ok",
     "title": "Sass Store",
     "consoleErrors": [],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__booking_test_booking_123.png",
-    "loadTimeMs": 794
+    "loadTimeMs": 2643
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/booking/nonexistent",
-    "finalUrl": "http://localhost:3002/t/centro-tenistico/booking/nonexistent",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/booking/nonexistent",
     "status": "ok",
     "title": "Sass Store",
     "consoleErrors": [],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__booking_nonexistent.png",
-    "loadTimeMs": 820
+    "loadTimeMs": 2969
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/clientes/test-client-123",
-    "finalUrl": "http://localhost:3002/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
     "status": "redirect",
-    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
+    "title": "Iniciar Sesión - Centro Tenístico Villafuerte",
     "consoleErrors": [
-      "n: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at o (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:1:1008)\n    at async g (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:1:2650)\n    at async h._getSession (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:2:1633)"
+      "ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at fetchData (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:514:22)\n    at async getSession (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:681:21)\n    at async SessionProvider.useEffect [as _getSession] (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:824:51)"
     ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__clientes_test_client_123.png",
-    "loadTimeMs": 1258
+    "loadTimeMs": 6583
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/clientes/nonexistent",
-    "finalUrl": "http://localhost:3002/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
     "status": "redirect",
-    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
-    "consoleErrors": [],
+    "title": "Iniciar Sesión - Centro Tenístico Villafuerte",
+    "consoleErrors": [
+      "ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at fetchData (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:514:22)\n    at async getSession (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:681:21)\n    at async SessionProvider.useEffect [as _getSession] (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:824:51)"
+    ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__clientes_nonexistent.png",
-    "loadTimeMs": 856
+    "loadTimeMs": 6509
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/services/test-service-123/inventory",
-    "finalUrl": "http://localhost:3002/t/centro-tenistico/services/test-service-123/inventory",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/services/test-service-123/inventory",
     "status": "ok",
     "title": "Sass Store",
-    "consoleErrors": [],
+    "consoleErrors": [
+      "A param property was accessed directly with `params.serviceId`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis",
+      "A param property was accessed directly with `params.serviceId`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis"
+    ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__services_test_service_123_inventory.png",
-    "loadTimeMs": 664
+    "loadTimeMs": 1931
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/services/nonexistent/inventory",
-    "finalUrl": "http://localhost:3002/t/centro-tenistico/services/nonexistent/inventory",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/services/nonexistent/inventory",
     "status": "ok",
     "title": "Sass Store",
-    "consoleErrors": [],
+    "consoleErrors": [
+      "A param property was accessed directly with `params.serviceId`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis",
+      "A param property was accessed directly with `params.serviceId`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis"
+    ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__services_nonexistent_inventory.png",
-    "loadTimeMs": 655
+    "loadTimeMs": 1467
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/admin/quotes/test-quote-123",
-    "finalUrl": "http://localhost:3002/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
     "status": "redirect",
-    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
-    "consoleErrors": [],
+    "title": "Iniciar Sesión - Centro Tenístico Villafuerte",
+    "consoleErrors": [
+      "ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at fetchData (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:514:22)\n    at async getSession (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:681:21)\n    at async SessionProvider.useEffect [as _getSession] (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:824:51)"
+    ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__admin_quotes_test_quote_123.png",
-    "loadTimeMs": 924
+    "loadTimeMs": 5198
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/admin/quotes/nonexistent",
-    "finalUrl": "http://localhost:3002/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
     "status": "redirect",
-    "title": "Iniciar Sesión - Centro TenÃ­stico Villafuerte",
-    "consoleErrors": [],
+    "title": "Iniciar Sesión - Centro Tenístico Villafuerte",
+    "consoleErrors": [
+      "ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at fetchData (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:514:22)\n    at async getSession (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:681:21)\n    at async SessionProvider.useEffect [as _getSession] (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:824:51)"
+    ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__admin_quotes_nonexistent.png",
-    "loadTimeMs": 787
+    "loadTimeMs": 6550
   }
 ]

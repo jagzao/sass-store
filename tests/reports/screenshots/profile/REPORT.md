@@ -1,11 +1,11 @@
 # Profile — Test Report
 
-**Fecha última prueba:** 2026-05-15
+**Fecha última prueba:** 2026-05-16
 **URL:** http://localhost:3003/t/wondernails/profile
 **URL Final:** http://localhost:3003/t/wondernails/login
 **Status:** 🔀 REDIRECT
 **Título página:** Iniciar Sesión - Wonder Nails Studio
-**Errores consola:** 0
+**Errores consola:** 1
 
 ## 🔍 Funcionalidades detectadas
 
@@ -16,9 +16,9 @@
 
 ### 🔗 Links
 
+- Reservar
 - Productos
 - Servicios
-- Reservar
 - Contacto
 - Iniciar Sesión
 - ¿Olvidaste tu contraseña?
@@ -49,6 +49,11 @@
 ## 🖼️ Evidencia
 
 ![Screenshot](profile.png)
+
+## ⚠️ Errores de consola
+
+- `ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror
+  at fetchData (http://localhost:3`
 
 ---
 

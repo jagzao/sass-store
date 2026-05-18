@@ -26,9 +26,17 @@ test.describe("Finance Pages - Simple Load Test", () => {
     });
     await page.waitForTimeout(3000);
 
+    // Use heading-based check instead of raw body text:
+    // RSC payload may include not-found.tsx as prefetched fallback even when
+    // the actual page renders successfully. Check for visible NotFound heading
+    // instead of substring "Not Found" anywhere in DOM (which catches the RSC blob).
+    const notFoundHeading = page.getByRole("heading", {
+      name: "Tenant Not Found",
+    });
+    expect(await notFoundHeading.isVisible().catch(() => false)).toBe(false);
+
     const bodyText = await page.locator("body").textContent();
     expect(bodyText).not.toContain("404");
-    expect(bodyText).not.toContain("Not Found");
 
     const hasContent =
       bodyText?.includes("Categorías") || isLoginPage(bodyText);

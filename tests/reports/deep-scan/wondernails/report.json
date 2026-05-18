@@ -2,574 +2,625 @@
   {
     "tenant": "wondernails",
     "url": "/t/wondernails/",
-    "finalUrl": "http://localhost:3002/t/wondernails",
+    "finalUrl": "http://localhost:3003/t/wondernails",
     "status": "ok",
-    "title": "Wonder Nails Studio - Premium nail art and manicure services",
-    "consoleErrors": ["Failed to load Stripe.js"],
+    "title": "Wonder Nails Studio - Tenant bootstrap record",
+    "consoleErrors": [
+      "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+      "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <Head>\n      <__next_root_layout_boundary__>\n        <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n          <SegmentTrieNode>\n          <link>\n          <script>\n          <script>\n          <script>\n          <script>\n          <RootLayout>\n            <html lang=\"en\" suppressHydrationWarning={true}>\n              <head>\n              <body className=\"antialiased\" suppressHydrationWarning={true}>\n                <ClientInit>\n                <Providers>\n                  <QueryClientProvider client={{}}>\n                    <AuthSessionProvider>\n                      <SessionProvider basePath=\"/api/auth\" refetchOnWindowFocus={false}>\n                        <ToastProvider>\n                          <CartSyncProvider>\n                            <div\n+                             className=\"min-h-screen bg-background\"\n-                             className=\"min-h-screen bg-[#F8F9FA] text-[#333333]\"\n                            >\n                              ...\n                                <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n                                  <SegmentTrieNode>\n                                  <script>\n                                  <script>\n                                  <script>\n                                  <TenantLayout>\n                                    <TenantStyles>\n                                    <TenantLayout>\n+                                     <div className=\"min-h-screen bg-[#F8F9FA] text-[#333333]\">\n-                                     <header\n-                                       className=\"sticky top-0 z-50 transition-all duration-300 w-full bg-transparent...\"\n-                                       style={{position:\"sticky\",top:\"0px\"}}\n-                                     >\n                    ...\n      ...\n",
+      "Failed to load Stripe.js"
+    ],
     "visibleErrors": [],
     "screenshotPath": "wondernails/screenshots/wondernails__.png",
-    "loadTimeMs": 1855
+    "loadTimeMs": 7304
   },
   {
     "tenant": "wondernails",
     "url": "/t/wondernails/services",
-    "finalUrl": "http://localhost:3002/t/wondernails/services",
+    "finalUrl": "http://localhost:3003/t/wondernails/services",
     "status": "ok",
     "title": "Sass Store",
     "consoleErrors": [
-      "Failed to load resource: the server responded with a status of 404 (Not Found)",
-      "Failed to load resource: the server responded with a status of 404 (Not Found)",
-      "Failed to load resource: the server responded with a status of 404 (Not Found)",
-      "Failed to load resource: the server responded with a status of 404 (Not Found)",
-      "Failed to load resource: the server responded with a status of 404 (Not Found)",
-      "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <Head>\n      <__next_root_layout_boundary__>\n        <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n          <SegmentTrieNode>\n          <link>\n          <script>\n          <script>\n          <script>\n          <script>\n          <RootLayout>\n            <html lang=\"en\" suppressHydrationWarning={true}>\n              <head>\n              <body className=\"antialiased\" suppressHydrationWarning={true}>\n                <ClientInit>\n                <Providers>\n                  <QueryClientProvider client={{}}>\n                    <AuthSessionProvider>\n                      <SessionProvider basePath=\"/api/auth\" refetchOnWindowFocus={false}>\n                        <ToastProvider>\n                          <CartSyncProvider>\n                            <div\n+                             className=\"min-h-screen bg-background\"\n-                             className=\"min-h-screen bg-[#F8F9FA] text-[#333333]\"\n                            >\n                              ...\n                                <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n                                  <SegmentTrieNode>\n                                  <script>\n                                  <script>\n                                  <script>\n                                  <TenantLayout>\n                                    <TenantStyles>\n                                    <TenantLayout>\n+                                     <div className=\"min-h-screen bg-[#F8F9FA] text-[#333333]\">\n-                                     <header\n-                                       className=\"sticky top-0 z-50 transition-all duration-300 w-full bg-transparent...\"\n-                                       style={{position:\"sticky\",top:\"0px\"}}\n-                                     >\n                    ...\n      ...\n",
       "Failed to load Stripe.js"
     ],
     "visibleErrors": [],
     "screenshotPath": "wondernails/screenshots/wondernails__services.png",
-    "loadTimeMs": 948
+    "loadTimeMs": 3133
   },
   {
     "tenant": "wondernails",
     "url": "/t/wondernails/products",
-    "finalUrl": "http://localhost:3002/t/wondernails/products",
+    "finalUrl": "http://localhost:3003/t/wondernails/products",
     "status": "ok",
     "title": "Sass Store",
-    "consoleErrors": ["Failed to load Stripe.js"],
+    "consoleErrors": [
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <Head>\n      <__next_root_layout_boundary__>\n        <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n          <SegmentTrieNode>\n          <link>\n          <script>\n          <script>\n          <script>\n          <script>\n          <RootLayout>\n            <html lang=\"en\" suppressHydrationWarning={true}>\n              <head>\n              <body className=\"antialiased\" suppressHydrationWarning={true}>\n                <ClientInit>\n                <Providers>\n                  <QueryClientProvider client={{}}>\n                    <AuthSessionProvider>\n                      <SessionProvider basePath=\"/api/auth\" refetchOnWindowFocus={false}>\n                        <ToastProvider>\n                          <CartSyncProvider>\n                            <div\n+                             className=\"min-h-screen bg-background\"\n-                             className=\"min-h-screen bg-[#F8F9FA] text-[#333333]\"\n                            >\n                              ...\n                                <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n                                  <SegmentTrieNode>\n                                  <script>\n                                  <script>\n                                  <script>\n                                  <TenantLayout>\n                                    <TenantStyles>\n                                    <TenantLayout>\n+                                     <div className=\"min-h-screen bg-[#F8F9FA] text-[#333333]\">\n-                                     <header\n-                                       className=\"sticky top-0 z-50 transition-all duration-300 w-full bg-transparent...\"\n-                                       style={{position:\"sticky\",top:\"0px\"}}\n-                                     >\n                    ...\n      ...\n",
+      "Failed to load Stripe.js"
+    ],
     "visibleErrors": [],
     "screenshotPath": "wondernails/screenshots/wondernails__products.png",
-    "loadTimeMs": 1024
+    "loadTimeMs": 1655
   },
   {
     "tenant": "wondernails",
     "url": "/t/wondernails/book",
-    "finalUrl": "http://localhost:3002/t/wondernails/book",
+    "finalUrl": "http://localhost:3003/t/wondernails/book",
     "status": "ok",
     "title": "Sass Store",
-    "consoleErrors": ["Failed to load Stripe.js"],
+    "consoleErrors": [
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <Head>\n      <__next_root_layout_boundary__>\n        <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n          <SegmentTrieNode>\n          <link>\n          <script>\n          <script>\n          <script>\n          <script>\n          <RootLayout>\n            <html lang=\"en\" suppressHydrationWarning={true}>\n              <head>\n              <body className=\"antialiased\" suppressHydrationWarning={true}>\n                <ClientInit>\n                <Providers>\n                  <QueryClientProvider client={{}}>\n                    <AuthSessionProvider>\n                      <SessionProvider basePath=\"/api/auth\" refetchOnWindowFocus={false}>\n                        <ToastProvider>\n                          <CartSyncProvider>\n                            <div\n+                             className=\"min-h-screen bg-background\"\n-                             className=\"min-h-screen bg-[#F8F9FA] text-[#333333]\"\n                            >\n                              ...\n                                <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n                                  <SegmentTrieNode>\n                                  <script>\n                                  <script>\n                                  <script>\n                                  <TenantLayout>\n                                    <TenantStyles>\n                                    <TenantLayout>\n+                                     <div className=\"min-h-screen bg-[#F8F9FA] text-[#333333]\">\n-                                     <header\n-                                       className=\"sticky top-0 z-50 transition-all duration-300 w-full bg-transparent...\"\n-                                       style={{position:\"sticky\",top:\"0px\"}}\n-                                     >\n                    ...\n      ...\n",
+      "Failed to load Stripe.js"
+    ],
     "visibleErrors": [],
     "screenshotPath": "wondernails/screenshots/wondernails__book.png",
-    "loadTimeMs": 938
+    "loadTimeMs": 1766
   },
   {
     "tenant": "wondernails",
     "url": "/t/wondernails/contact",
-    "finalUrl": "http://localhost:3002/t/wondernails/contact",
+    "finalUrl": "http://localhost:3003/t/wondernails/contact",
     "status": "ok",
     "title": "Contacto - Wonder Nails Studio",
-    "consoleErrors": ["Failed to load Stripe.js"],
+    "consoleErrors": [
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <Head>\n      <__next_root_layout_boundary__>\n        <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n          <SegmentTrieNode>\n          <link>\n          <script>\n          <script>\n          <script>\n          <script>\n          <RootLayout>\n            <html lang=\"en\" suppressHydrationWarning={true}>\n              <head>\n              <body className=\"antialiased\" suppressHydrationWarning={true}>\n                <ClientInit>\n                <Providers>\n                  <QueryClientProvider client={{}}>\n                    <AuthSessionProvider>\n                      <SessionProvider basePath=\"/api/auth\" refetchOnWindowFocus={false}>\n                        <ToastProvider>\n                          <CartSyncProvider>\n                            <div\n+                             className=\"min-h-screen bg-background\"\n-                             className=\"min-h-screen bg-[#F8F9FA] text-[#333333]\"\n                            >\n                              ...\n                                <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n                                  <SegmentTrieNode>\n                                  <script>\n                                  <script>\n                                  <script>\n                                  <TenantLayout>\n                                    <TenantStyles>\n                                    <TenantLayout>\n+                                     <div className=\"min-h-screen bg-[#F8F9FA] text-[#333333]\">\n-                                     <header\n-                                       className=\"sticky top-0 z-50 transition-all duration-300 w-full bg-transparent...\"\n-                                       style={{position:\"sticky\",top:\"0px\"}}\n-                                     >\n                    ...\n      ...\n",
+      "Failed to load Stripe.js"
+    ],
     "visibleErrors": [],
     "screenshotPath": "wondernails/screenshots/wondernails__contact.png",
-    "loadTimeMs": 801
+    "loadTimeMs": 2251
   },
   {
     "tenant": "wondernails",
     "url": "/t/wondernails/login",
-    "finalUrl": "http://localhost:3002/t/wondernails/login",
+    "finalUrl": "http://localhost:3003/t/wondernails/login",
     "status": "ok",
     "title": "Iniciar Sesión - Wonder Nails Studio",
-    "consoleErrors": ["Failed to load Stripe.js"],
+    "consoleErrors": [
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <Head>\n      <__next_root_layout_boundary__>\n        <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n          <SegmentTrieNode>\n          <link>\n          <script>\n          <script>\n          <script>\n          <script>\n          <RootLayout>\n            <html lang=\"en\" suppressHydrationWarning={true}>\n              <head>\n              <body className=\"antialiased\" suppressHydrationWarning={true}>\n                <ClientInit>\n                <Providers>\n                  <QueryClientProvider client={{}}>\n                    <AuthSessionProvider>\n                      <SessionProvider basePath=\"/api/auth\" refetchOnWindowFocus={false}>\n                        <ToastProvider>\n                          <CartSyncProvider>\n                            <div\n+                             className=\"min-h-screen bg-background\"\n-                             className=\"min-h-screen bg-[#F8F9FA] text-[#333333]\"\n                            >\n                              ...\n                                <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n                                  <SegmentTrieNode>\n                                  <script>\n                                  <script>\n                                  <script>\n                                  <TenantLayout>\n                                    <TenantStyles>\n                                    <TenantLayout>\n+                                     <div className=\"min-h-screen bg-[#F8F9FA] text-[#333333]\">\n-                                     <header\n-                                       className=\"sticky top-0 z-50 transition-all duration-300 w-full bg-transparent...\"\n-                                       style={{position:\"sticky\",top:\"0px\"}}\n-                                     >\n                    ...\n      ...\n",
+      "Failed to load Stripe.js"
+    ],
     "visibleErrors": [],
     "screenshotPath": "wondernails/screenshots/wondernails__login.png",
-    "loadTimeMs": 860
+    "loadTimeMs": 2105
   },
   {
     "tenant": "wondernails",
     "url": "/t/wondernails/register",
-    "finalUrl": "http://localhost:3002/t/wondernails/register",
+    "finalUrl": "http://localhost:3003/t/wondernails/register",
     "status": "ok",
     "title": "Sass Store",
-    "consoleErrors": ["Failed to load Stripe.js"],
+    "consoleErrors": [
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <Head>\n      <__next_root_layout_boundary__>\n        <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n          <SegmentTrieNode>\n          <link>\n          <script>\n          <script>\n          <script>\n          <script>\n          <RootLayout>\n            <html lang=\"en\" suppressHydrationWarning={true}>\n              <head>\n              <body className=\"antialiased\" suppressHydrationWarning={true}>\n                <ClientInit>\n                <Providers>\n                  <QueryClientProvider client={{}}>\n                    <AuthSessionProvider>\n                      <SessionProvider basePath=\"/api/auth\" refetchOnWindowFocus={false}>\n                        <ToastProvider>\n                          <CartSyncProvider>\n                            <div\n+                             className=\"min-h-screen bg-background\"\n-                             className=\"min-h-screen bg-[#F8F9FA] text-[#333333]\"\n                            >\n                              ...\n                                <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n                                  <SegmentTrieNode>\n                                  <script>\n                                  <script>\n                                  <script>\n                                  <TenantLayout>\n                                    <TenantStyles>\n                                    <TenantLayout>\n+                                     <div className=\"min-h-screen bg-[#F8F9FA] text-[#333333]\">\n-                                     <header\n-                                       className=\"sticky top-0 z-50 transition-all duration-300 w-full bg-transparent...\"\n-                                       style={{position:\"sticky\",top:\"0px\"}}\n-                                     >\n                    ...\n      ...\n",
+      "Failed to load Stripe.js"
+    ],
     "visibleErrors": [],
     "screenshotPath": "wondernails/screenshots/wondernails__register.png",
-    "loadTimeMs": 878
+    "loadTimeMs": 1971
   },
   {
     "tenant": "wondernails",
     "url": "/t/wondernails/forgot-password",
-    "finalUrl": "http://localhost:3002/t/wondernails/forgot-password",
+    "finalUrl": "http://localhost:3003/t/wondernails/forgot-password",
     "status": "ok",
     "title": "Sass Store",
-    "consoleErrors": ["Failed to load Stripe.js"],
+    "consoleErrors": [
+      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <Head>\n      <__next_root_layout_boundary__>\n        <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n          <SegmentTrieNode>\n          <link>\n          <script>\n          <script>\n          <script>\n          <script>\n          <RootLayout>\n            <html lang=\"en\" suppressHydrationWarning={true}>\n              <head>\n              <body className=\"antialiased\" suppressHydrationWarning={true}>\n                <ClientInit>\n                <Providers>\n                  <QueryClientProvider client={{}}>\n                    <AuthSessionProvider>\n                      <SessionProvider basePath=\"/api/auth\" refetchOnWindowFocus={false}>\n                        <ToastProvider>\n                          <CartSyncProvider>\n                            <div\n+                             className=\"min-h-screen bg-background\"\n-                             className=\"min-h-screen bg-[#F8F9FA] text-[#333333]\"\n                            >\n                              ...\n                                <SegmentViewNode type=\"layout\" pagePath=\"/apps/web/...\">\n                                  <SegmentTrieNode>\n                                  <script>\n                                  <script>\n                                  <script>\n                                  <TenantLayout>\n                                    <TenantStyles>\n                                    <TenantLayout>\n+                                     <div className=\"min-h-screen bg-[#F8F9FA] text-[#333333]\">\n-                                     <header\n-                                       className=\"sticky top-0 z-50 transition-all duration-300 w-full bg-transparent...\"\n-                                       style={{position:\"sticky\",top:\"0px\"}}\n-                                     >\n                    ...\n      ...\n",
+      "Failed to load Stripe.js"
+    ],
     "visibleErrors": [],
     "screenshotPath": "wondernails/screenshots/wondernails__forgot_password.png",
-    "loadTimeMs": 768
+    "loadTimeMs": 2513
   },
   {
     "tenant": "wondernails",
     "url": "/t/wondernails/admin",
-    "finalUrl": "http://localhost:3002/t/wondernails/login?callbackUrl=/t/wondernails/admin",
+    "finalUrl": "http://localhost:3003/t/wondernails/login?callbackUrl=/t/wondernails/admin",
     "status": "redirect",
     "title": "Iniciar Sesión - Wonder Nails Studio",
     "consoleErrors": [
-      "n: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at o (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:1:1008)\n    at async g (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:1:2650)\n    at async h._getSession (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:2:1633)",
+      "ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at fetchData (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:514:22)\n    at async getSession (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:681:21)\n    at async SessionProvider.useEffect [as _getSession] (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:824:51)",
       "Failed to load Stripe.js"
     ],
     "visibleErrors": [],
     "screenshotPath": "wondernails/screenshots/wondernails__admin.png",
-    "loadTimeMs": 908
+    "loadTimeMs": 3521
   },
   {
     "tenant": "wondernails",
     "url": "/t/wondernails/admin/calendar",
-    "finalUrl": "http://localhost:3002/t/wondernails/login?callbackUrl=/t/wondernails/admin",
+    "finalUrl": "http://localhost:3003/t/wondernails/login?callbackUrl=/t/wondernails/admin",
     "status": "redirect",
     "title": "Iniciar Sesión - Wonder Nails Studio",
-    "consoleErrors": ["Failed to load Stripe.js"],
+    "consoleErrors": [
+      "ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at fetchData (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:514:22)\n    at async getSession (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:681:21)\n    at async SessionProvider.useEffect [as _getSession] (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:824:51)",
+      "Failed to load Stripe.js"
+    ],
     "visibleErrors": [],
     "screenshotPath": "wondernails/screenshots/wondernails__admin_calendar.png",
-    "loadTimeMs": 905
+    "loadTimeMs": 3848
   },
   {
     "tenant": "wondernails",
     "url": "/t/wondernails/admin/products",
-    "finalUrl": "http://localhost:3002/t/wondernails/login?callbackUrl=/t/wondernails/admin",
+    "finalUrl": "http://localhost:3003/t/wondernails/login?callbackUrl=/t/wondernails/admin",
     "status": "redirect",
     "title": "Iniciar Sesión - Wonder Nails Studio",
-    "consoleErrors": ["Failed to load Stripe.js"],
+    "consoleErrors": [
+      "ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at fetchData (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:514:22)\n    at async getSession (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:681:21)\n    at async SessionProvider.useEffect [as _getSession] (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:824:51)",
+      "Failed to load Stripe.js"
+    ],
     "visibleErrors": [],
     "screenshotPath": "wondernails/screenshots/wondernails__admin_products.png",
-    "loadTimeMs": 820
+    "loadTimeMs": 3982
   },
   {
     "tenant": "wondernails",
     "url": "/t/wondernails/admin/content",
-    "finalUrl": "http://localhost:3002/t/wondernails/login?callbackUrl=/t/wondernails/admin",
+    "finalUrl": "http://localhost:3003/t/wondernails/login?callbackUrl=/t/wondernails/admin",
     "status": "redirect",
     "title": "Iniciar Sesión - Wonder Nails Studio",
-    "consoleErrors": ["Failed to load Stripe.js"],
+    "consoleErrors": [
+      "ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at fetchData (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:514:22)\n    at async getSession (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:681:21)\n    at async SessionProvider.useEffect [as _getSession] (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:824:51)",
+      "Failed to load Stripe.js"
+    ],
     "visibleErrors": [],
     "screenshotPath": "wondernails/screenshots/wondernails__admin_content.png",
-    "loadTimeMs": 806
+    "loadTimeMs": 6657
   },
   {
     "tenant": "wondernails",
     "url": "/t/wondernails/admin/quotes",
-    "finalUrl": "http://localhost:3002/t/wondernails/login?callbackUrl=/t/wondernails/admin",
+    "finalUrl": "http://localhost:3003/t/wondernails/login?callbackUrl=/t/wondernails/admin",
     "status": "redirect",
     "title": "Iniciar Sesión - Wonder Nails Studio",
-    "consoleErrors": ["Failed to load Stripe.js"],
+    "consoleErrors": [
+      "ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at fetchData (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:514:22)\n    at async getSession (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:681:21)\n    at async SessionProvider.useEffect [as _getSession] (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:824:51)",
+      "Failed to load Stripe.js"
+    ],
     "visibleErrors": [],
     "screenshotPath": "wondernails/screenshots/wondernails__admin_quotes.png",
-    "loadTimeMs": 832
+    "loadTimeMs": 2682
   },
   {
     "tenant": "wondernails",
     "url": "/t/wondernails/admin_services",
-    "finalUrl": "http://localhost:3002/t/wondernails/login",
+    "finalUrl": "http://localhost:3003/t/wondernails/login",
     "status": "redirect",
     "title": "Iniciar Sesión - Wonder Nails Studio",
     "consoleErrors": ["Failed to load Stripe.js"],
     "visibleErrors": [],
     "screenshotPath": "wondernails/screenshots/wondernails__admin_services.png",
-    "loadTimeMs": 1010
+    "loadTimeMs": 2333
   },
   {
     "tenant": "wondernails",
     "url": "/t/wondernails/admin_bookings",
-    "finalUrl": "http://localhost:3002/t/wondernails/login?callbackUrl=/t/wondernails/admin",
+    "finalUrl": "http://localhost:3003/t/wondernails/login?callbackUrl=/t/wondernails/admin",
     "status": "redirect",
     "title": "Iniciar Sesión - Wonder Nails Studio",
-    "consoleErrors": ["Failed to load Stripe.js"],
+    "consoleErrors": [
+      "ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at fetchData (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:514:22)\n    at async getSession (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:681:21)\n    at async SessionProvider.useEffect [as _getSession] (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:824:51)",
+      "Failed to load Stripe.js"
+    ],
     "visibleErrors": [],
     "screenshotPath": "wondernails/screenshots/wondernails__admin_bookings.png",
-    "loadTimeMs": 814
+    "loadTimeMs": 2235
   },
   {
     "tenant": "wondernails",
     "url": "/t/wondernails/admin_tenants",
-    "finalUrl": "http://localhost:3002/t/wondernails",
+    "finalUrl": "http://localhost:3003/t/wondernails",
     "status": "ok",
-    "title": "Wonder Nails Studio - Premium nail art and manicure services",
+    "title": "Wonder Nails Studio - Tenant bootstrap record",
     "consoleErrors": ["Failed to load Stripe.js"],
     "visibleErrors": [],
     "screenshotPath": "wondernails/screenshots/wondernails__admin_tenants.png",
-    "loadTimeMs": 1733
+    "loadTimeMs": 15689
   },
   {
     "tenant": "wondernails",
     "url": "/t/wondernails/admin_products",
-    "finalUrl": "http://localhost:3002/t/wondernails/login",
+    "finalUrl": "http://localhost:3003/t/wondernails/login",
     "status": "redirect",
     "title": "Iniciar Sesión - Wonder Nails Studio",
-    "consoleErrors": ["Failed to load Stripe.js"],
+    "consoleErrors": [
+      "Failed to load resource: the server responded with a status of 504 (Gateway Timeout)",
+      "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+      "Failed to load Stripe.js"
+    ],
     "visibleErrors": [],
     "screenshotPath": "wondernails/screenshots/wondernails__admin_products.png",
-    "loadTimeMs": 858
+    "loadTimeMs": 24416
   },
   {
     "tenant": "wondernails",
     "url": "/t/wondernails/pos",
-    "finalUrl": "http://localhost:3002/t/wondernails/login",
+    "finalUrl": "http://localhost:3003/t/wondernails/login",
     "status": "redirect",
     "title": "Iniciar Sesión - Wonder Nails Studio",
     "consoleErrors": ["Failed to load Stripe.js"],
     "visibleErrors": [],
     "screenshotPath": "wondernails/screenshots/wondernails__pos.png",
-    "loadTimeMs": 819
+    "loadTimeMs": 3010
   },
   {
     "tenant": "wondernails",
     "url": "/t/wondernails/reports",
-    "finalUrl": "http://localhost:3002/t/wondernails/login",
+    "finalUrl": "http://localhost:3003/t/wondernails/login",
     "status": "redirect",
     "title": "Iniciar Sesión - Wonder Nails Studio",
     "consoleErrors": ["Failed to load Stripe.js"],
     "visibleErrors": [],
     "screenshotPath": "wondernails/screenshots/wondernails__reports.png",
-    "loadTimeMs": 899
+    "loadTimeMs": 3784
   },
   {
     "tenant": "wondernails",
     "url": "/t/wondernails/finance",
-    "finalUrl": "http://localhost:3002/t/wondernails/login?callbackUrl=/t/wondernails/admin",
+    "finalUrl": "http://localhost:3003/t/wondernails/login?callbackUrl=/t/wondernails/admin",
     "status": "redirect",
     "title": "Iniciar Sesión - Wonder Nails Studio",
     "consoleErrors": [
-      "n: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at o (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:1:1008)\n    at async g (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:1:2650)\n    at async h._getSession (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:2:1633)",
+      "ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at fetchData (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:514:22)\n    at async getSession (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:681:21)\n    at async SessionProvider.useEffect [as _getSession] (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:824:51)",
       "Failed to load Stripe.js"
     ],
     "visibleErrors": [],
     "screenshotPath": "wondernails/screenshots/wondernails__finance.png",
-    "loadTimeMs": 827
+    "loadTimeMs": 2789
   },
   {
     "tenant": "wondernails",
     "url": "/t/wondernails/finance/movements",
-    "finalUrl": "http://localhost:3002/t/wondernails/login?callbackUrl=/t/wondernails/admin",
+    "finalUrl": "http://localhost:3003/t/wondernails/login?callbackUrl=/t/wondernails/admin",
     "status": "redirect",
     "title": "Iniciar Sesión - Wonder Nails Studio",
     "consoleErrors": ["Failed to load Stripe.js"],
     "visibleErrors": [],
     "screenshotPath": "wondernails/screenshots/wondernails__finance_movements.png",
-    "loadTimeMs": 835
+    "loadTimeMs": 2946
   },
   {
     "tenant": "wondernails",
     "url": "/t/wondernails/finance/budgets",
-    "finalUrl": "http://localhost:3002/t/wondernails/login?callbackUrl=/t/wondernails/admin",
+    "finalUrl": "http://localhost:3003/t/wondernails/login?callbackUrl=/t/wondernails/admin",
     "status": "redirect",
     "title": "Iniciar Sesión - Wonder Nails Studio",
-    "consoleErrors": ["Failed to load Stripe.js"],
+    "consoleErrors": [
+      "ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at fetchData (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:514:22)\n    at async getSession (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:681:21)\n    at async SessionProvider.useEffect [as _getSession] (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:824:51)",
+      "Failed to load Stripe.js"
+    ],
     "visibleErrors": [],
     "screenshotPath": "wondernails/screenshots/wondernails__finance_budgets.png",
-    "loadTimeMs": 902
+    "loadTimeMs": 3609
   },
   {
     "tenant": "wondernails",
     "url": "/t/wondernails/finance/categories",
-    "finalUrl": "http://localhost:3002/t/wondernails/login?callbackUrl=/t/wondernails/admin",
+    "finalUrl": "http://localhost:3003/t/wondernails/login?callbackUrl=/t/wondernails/admin",
     "status": "redirect",
     "title": "Iniciar Sesión - Wonder Nails Studio",
     "consoleErrors": ["Failed to load Stripe.js"],
     "visibleErrors": [],
     "screenshotPath": "wondernails/screenshots/wondernails__finance_categories.png",
-    "loadTimeMs": 870
+    "loadTimeMs": 3613
   },
   {
     "tenant": "wondernails",
     "url": "/t/wondernails/inventory",
-    "finalUrl": "http://localhost:3002/t/wondernails/login?callbackUrl=/t/wondernails/admin",
+    "finalUrl": "http://localhost:3003/t/wondernails/login?callbackUrl=/t/wondernails/admin",
     "status": "redirect",
     "title": "Iniciar Sesión - Wonder Nails Studio",
-    "consoleErrors": ["Failed to load Stripe.js"],
+    "consoleErrors": [
+      "ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at fetchData (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:514:22)\n    at async getSession (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:681:21)\n    at async SessionProvider.useEffect [as _getSession] (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:824:51)",
+      "Failed to load Stripe.js"
+    ],
     "visibleErrors": [],
     "screenshotPath": "wondernails/screenshots/wondernails__inventory.png",
-    "loadTimeMs": 854
+    "loadTimeMs": 3322
   },
   {
     "tenant": "wondernails",
     "url": "/t/wondernails/inventory/supplies",
-    "finalUrl": "http://localhost:3002/t/wondernails/login?callbackUrl=/t/wondernails/admin",
+    "finalUrl": "http://localhost:3003/t/wondernails/login?callbackUrl=/t/wondernails/admin",
     "status": "redirect",
     "title": "Iniciar Sesión - Wonder Nails Studio",
-    "consoleErrors": ["Failed to load Stripe.js"],
+    "consoleErrors": [
+      "ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at fetchData (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:514:22)\n    at async getSession (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:681:21)\n    at async SessionProvider.useEffect [as _getSession] (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:824:51)",
+      "Failed to load Stripe.js"
+    ],
     "visibleErrors": [],
     "screenshotPath": "wondernails/screenshots/wondernails__inventory_supplies.png",
-    "loadTimeMs": 833
+    "loadTimeMs": 3434
   },
   {
     "tenant": "wondernails",
     "url": "/t/wondernails/clientes",
-    "finalUrl": "http://localhost:3002/t/wondernails/login?callbackUrl=/t/wondernails/admin",
+    "finalUrl": "http://localhost:3003/t/wondernails/login?callbackUrl=/t/wondernails/admin",
     "status": "redirect",
     "title": "Iniciar Sesión - Wonder Nails Studio",
-    "consoleErrors": ["Failed to load Stripe.js"],
+    "consoleErrors": [
+      "ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at fetchData (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:514:22)\n    at async getSession (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:681:21)\n    at async SessionProvider.useEffect [as _getSession] (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:824:51)",
+      "Failed to load Stripe.js"
+    ],
     "visibleErrors": [],
     "screenshotPath": "wondernails/screenshots/wondernails__clientes.png",
-    "loadTimeMs": 869
+    "loadTimeMs": 3742
   },
   {
     "tenant": "wondernails",
     "url": "/t/wondernails/clientes/nueva",
-    "finalUrl": "http://localhost:3002/t/wondernails/login?callbackUrl=/t/wondernails/admin",
+    "finalUrl": "http://localhost:3003/t/wondernails/login?callbackUrl=/t/wondernails/admin",
     "status": "redirect",
     "title": "Iniciar Sesión - Wonder Nails Studio",
     "consoleErrors": ["Failed to load Stripe.js"],
     "visibleErrors": [],
     "screenshotPath": "wondernails/screenshots/wondernails__clientes_nueva.png",
-    "loadTimeMs": 808
+    "loadTimeMs": 4515
   },
   {
     "tenant": "wondernails",
     "url": "/t/wondernails/clientes/test",
-    "finalUrl": "http://localhost:3002/t/wondernails/login?callbackUrl=/t/wondernails/admin",
+    "finalUrl": "http://localhost:3003/t/wondernails/login?callbackUrl=/t/wondernails/admin",
     "status": "redirect",
     "title": "Iniciar Sesión - Wonder Nails Studio",
-    "consoleErrors": ["Failed to load Stripe.js"],
+    "consoleErrors": [
+      "ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at fetchData (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:514:22)\n    at async getSession (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:681:21)\n    at async SessionProvider.useEffect [as _getSession] (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:824:51)",
+      "Failed to load Stripe.js"
+    ],
     "visibleErrors": [],
     "screenshotPath": "wondernails/screenshots/wondernails__clientes_test.png",
-    "loadTimeMs": 774
+    "loadTimeMs": 6650
   },
   {
     "tenant": "wondernails",
     "url": "/t/wondernails/cart",
-    "finalUrl": "http://localhost:3002/t/wondernails/cart",
+    "finalUrl": "http://localhost:3003/t/wondernails/cart",
     "status": "ok",
     "title": "Sass Store",
     "consoleErrors": ["Failed to load Stripe.js"],
     "visibleErrors": [],
     "screenshotPath": "wondernails/screenshots/wondernails__cart.png",
-    "loadTimeMs": 796
+    "loadTimeMs": 2187
   },
   {
     "tenant": "wondernails",
     "url": "/t/wondernails/checkout",
-    "finalUrl": "http://localhost:3002/t/wondernails/checkout",
+    "finalUrl": "http://localhost:3003/t/wondernails/checkout",
     "status": "ok",
     "title": "Sass Store",
     "consoleErrors": [
-      "Loading the script 'https://js.stripe.com/basil/stripe.js' violates the following Content Security Policy directive: \"script-src 'self' https://sdk.mercadopago.com https://secure.mlstatic.com https://challenges.cloudflare.com 'unsafe-inline'\". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback. The action has been blocked.",
+      "Loading the script 'https://js.stripe.com/basil/stripe.js' violates the following Content Security Policy directive: \"script-src 'self' https://sdk.mercadopago.com https://secure.mlstatic.com https://challenges.cloudflare.com 'unsafe-eval' 'unsafe-inline'\". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback. The action has been blocked.",
       "Failed to load Stripe.js"
     ],
     "visibleErrors": [],
     "screenshotPath": "wondernails/screenshots/wondernails__checkout.png",
-    "loadTimeMs": 785
+    "loadTimeMs": 1365
   },
   {
     "tenant": "wondernails",
     "url": "/t/wondernails/checkout/success",
-    "finalUrl": "http://localhost:3002/t/wondernails/checkout/success",
+    "finalUrl": "http://localhost:3003/t/wondernails/checkout/success",
     "status": "ok",
     "title": "Sass Store",
-    "consoleErrors": [
-      "Failed to load resource: the server responded with a status of 404 (Not Found)",
-      "Failed to load resource: the server responded with a status of 404 (Not Found)",
-      "Failed to load resource: the server responded with a status of 404 (Not Found)"
-    ],
+    "consoleErrors": [],
     "visibleErrors": [],
     "screenshotPath": "wondernails/screenshots/wondernails__checkout_success.png",
-    "loadTimeMs": 15157
+    "loadTimeMs": 3867
   },
   {
     "tenant": "wondernails",
     "url": "/t/wondernails/orders",
-    "finalUrl": "http://localhost:3002/t/wondernails/orders",
+    "finalUrl": "http://localhost:3003/t/wondernails/orders",
     "status": "ok",
     "title": "Sass Store",
     "consoleErrors": [],
     "visibleErrors": [],
     "screenshotPath": "wondernails/screenshots/wondernails__orders.png",
-    "loadTimeMs": 948
+    "loadTimeMs": 1382
   },
   {
     "tenant": "wondernails",
     "url": "/t/wondernails/profile",
-    "finalUrl": "http://localhost:3002/t/wondernails/login",
+    "finalUrl": "http://localhost:3003/t/wondernails/login",
     "status": "redirect",
     "title": "Iniciar Sesión - Wonder Nails Studio",
     "consoleErrors": [],
     "visibleErrors": [],
     "screenshotPath": "wondernails/screenshots/wondernails__profile.png",
-    "loadTimeMs": 790
+    "loadTimeMs": 1918
   },
   {
     "tenant": "wondernails",
     "url": "/t/wondernails/account",
-    "finalUrl": "http://localhost:3002/t/wondernails/account",
+    "finalUrl": "http://localhost:3003/t/wondernails/account",
     "status": "ok",
     "title": "Sass Store",
-    "consoleErrors": [
-      "Failed to load resource: the server responded with a status of 404 (Not Found)",
-      "Failed to load resource: the server responded with a status of 404 (Not Found)",
-      "Failed to load resource: the server responded with a status of 404 (Not Found)"
-    ],
+    "consoleErrors": [],
     "visibleErrors": [],
     "screenshotPath": "wondernails/screenshots/wondernails__account.png",
-    "loadTimeMs": 15159
+    "loadTimeMs": 1245
   },
   {
     "tenant": "wondernails",
     "url": "/t/wondernails/settings/calendar",
-    "finalUrl": "http://localhost:3002/t/wondernails/settings/calendar",
+    "finalUrl": "http://localhost:3003/t/wondernails/settings/calendar",
     "status": "ok",
     "title": "Sass Store",
     "consoleErrors": [],
     "visibleErrors": [],
     "screenshotPath": "wondernails/screenshots/wondernails__settings_calendar.png",
-    "loadTimeMs": 981
+    "loadTimeMs": 1486
   },
   {
     "tenant": "wondernails",
     "url": "/t/wondernails/config",
-    "finalUrl": "http://localhost:3002/t/wondernails/login",
+    "finalUrl": "http://localhost:3003/t/wondernails/login",
     "status": "redirect",
     "title": "Iniciar Sesión - Wonder Nails Studio",
     "consoleErrors": [],
     "visibleErrors": [],
     "screenshotPath": "wondernails/screenshots/wondernails__config.png",
-    "loadTimeMs": 926
+    "loadTimeMs": 1980
   },
   {
     "tenant": "wondernails",
     "url": "/t/wondernails/favorites",
-    "finalUrl": "http://localhost:3002/t/wondernails/favorites",
+    "finalUrl": "http://localhost:3003/t/wondernails/favorites",
     "status": "ok",
     "title": "Sass Store",
-    "consoleErrors": [
-      "Failed to load resource: the server responded with a status of 404 (Not Found)",
-      "Failed to load resource: the server responded with a status of 404 (Not Found)",
-      "Failed to load resource: the server responded with a status of 404 (Not Found)"
-    ],
+    "consoleErrors": [],
     "visibleErrors": [],
     "screenshotPath": "wondernails/screenshots/wondernails__favorites.png",
-    "loadTimeMs": 15292
+    "loadTimeMs": 2139
   },
   {
     "tenant": "wondernails",
     "url": "/t/wondernails/social",
-    "finalUrl": "http://localhost:3002/t/wondernails/social",
+    "finalUrl": "http://localhost:3003/t/wondernails/social",
     "status": "ok",
     "title": "Sass Store",
     "consoleErrors": [],
     "visibleErrors": [],
     "screenshotPath": "wondernails/screenshots/wondernails__social.png",
-    "loadTimeMs": 1048
+    "loadTimeMs": 3984
   },
   {
     "tenant": "wondernails",
     "url": "/t/wondernails/retouch",
-    "finalUrl": "http://localhost:3002/t/wondernails/retouch",
+    "finalUrl": "http://localhost:3003/t/wondernails/retouch",
     "status": "ok",
     "title": "Sass Store",
     "consoleErrors": [],
     "visibleErrors": [],
     "screenshotPath": "wondernails/screenshots/wondernails__retouch.png",
-    "loadTimeMs": 952
+    "loadTimeMs": 1716
   },
   {
     "tenant": "wondernails",
     "url": "/t/wondernails/reorder",
-    "finalUrl": "http://localhost:3002/t/wondernails/reorder",
+    "finalUrl": "http://localhost:3003/t/wondernails/reorder",
     "status": "ok",
     "title": "Sass Store",
     "consoleErrors": [],
     "visibleErrors": [],
     "screenshotPath": "wondernails/screenshots/wondernails__reorder.png",
-    "loadTimeMs": 779
+    "loadTimeMs": 1669
   },
   {
     "tenant": "wondernails",
     "url": "/t/wondernails/booking",
-    "finalUrl": "http://localhost:3002/t/wondernails/services",
+    "finalUrl": "http://localhost:3003/t/wondernails/services",
     "status": "ok",
     "title": "Sass Store",
     "consoleErrors": [
-      "n: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at o (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:1:1008)\n    at async g (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:1:2650)\n    at async h._getSession (http://localhost:3002/_next/static/chunks/a7e6154b7ea0ed37.js:2:1633)",
-      "Failed to load resource: the server responded with a status of 404 (Not Found)",
-      "Failed to load resource: the server responded with a status of 404 (Not Found)",
-      "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      "ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at fetchData (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:514:22)\n    at async getSession (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:681:21)\n    at async SessionProvider.useEffect [as _getSession] (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:824:51)"
     ],
     "visibleErrors": [],
     "screenshotPath": "wondernails/screenshots/wondernails__booking.png",
-    "loadTimeMs": 953
+    "loadTimeMs": 4947
   },
   {
     "tenant": "wondernails",
     "url": "/t/wondernails/booking/test-booking-123",
-    "finalUrl": "http://localhost:3002/t/wondernails/booking/test-booking-123",
+    "finalUrl": "http://localhost:3003/t/wondernails/booking/test-booking-123",
     "status": "ok",
     "title": "Sass Store",
     "consoleErrors": [],
     "visibleErrors": [],
     "screenshotPath": "wondernails/screenshots/wondernails__booking_test_booking_123.png",
-    "loadTimeMs": 794
+    "loadTimeMs": 3760
   },
   {
     "tenant": "wondernails",
     "url": "/t/wondernails/booking/nonexistent",
-    "finalUrl": "http://localhost:3002/t/wondernails/booking/nonexistent",
+    "finalUrl": "http://localhost:3003/t/wondernails/booking/nonexistent",
     "status": "ok",
     "title": "Sass Store",
     "consoleErrors": [],
     "visibleErrors": [],
     "screenshotPath": "wondernails/screenshots/wondernails__booking_nonexistent.png",
-    "loadTimeMs": 740
+    "loadTimeMs": 1296
   },
   {
     "tenant": "wondernails",
     "url": "/t/wondernails/clientes/test-client-123",
-    "finalUrl": "http://localhost:3002/t/wondernails/login?callbackUrl=/t/wondernails/admin",
+    "finalUrl": "http://localhost:3003/t/wondernails/login?callbackUrl=/t/wondernails/admin",
     "status": "redirect",
     "title": "Iniciar Sesión - Wonder Nails Studio",
-    "consoleErrors": [],
+    "consoleErrors": [
+      "ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at fetchData (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:514:22)\n    at async getSession (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:681:21)\n    at async SessionProvider.useEffect [as _getSession] (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:824:51)"
+    ],
     "visibleErrors": [],
     "screenshotPath": "wondernails/screenshots/wondernails__clientes_test_client_123.png",
-    "loadTimeMs": 818
+    "loadTimeMs": 6903
   },
   {
     "tenant": "wondernails",
     "url": "/t/wondernails/clientes/nonexistent",
-    "finalUrl": "http://localhost:3002/t/wondernails/login?callbackUrl=/t/wondernails/admin",
+    "finalUrl": "http://localhost:3003/t/wondernails/login?callbackUrl=/t/wondernails/admin",
     "status": "redirect",
     "title": "Iniciar Sesión - Wonder Nails Studio",
-    "consoleErrors": [],
+    "consoleErrors": [
+      "ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at fetchData (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:514:22)\n    at async getSession (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:681:21)\n    at async SessionProvider.useEffect [as _getSession] (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:824:51)"
+    ],
     "visibleErrors": [],
     "screenshotPath": "wondernails/screenshots/wondernails__clientes_nonexistent.png",
-    "loadTimeMs": 796
+    "loadTimeMs": 2648
   },
   {
     "tenant": "wondernails",
     "url": "/t/wondernails/services/test-service-123/inventory",
-    "finalUrl": "http://localhost:3002/t/wondernails/services/test-service-123/inventory",
+    "finalUrl": "http://localhost:3003/t/wondernails/services/test-service-123/inventory",
     "status": "ok",
     "title": "Sass Store",
-    "consoleErrors": [],
+    "consoleErrors": [
+      "A param property was accessed directly with `params.serviceId`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis",
+      "A param property was accessed directly with `params.serviceId`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis"
+    ],
     "visibleErrors": [],
     "screenshotPath": "wondernails/screenshots/wondernails__services_test_service_123_inventory.png",
-    "loadTimeMs": 661
+    "loadTimeMs": 5437
   },
   {
     "tenant": "wondernails",
     "url": "/t/wondernails/services/nonexistent/inventory",
-    "finalUrl": "http://localhost:3002/t/wondernails/services/nonexistent/inventory",
+    "finalUrl": "http://localhost:3003/t/wondernails/services/nonexistent/inventory",
     "status": "ok",
     "title": "Sass Store",
-    "consoleErrors": [],
+    "consoleErrors": [
+      "A param property was accessed directly with `params.serviceId`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis",
+      "A param property was accessed directly with `params.serviceId`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis"
+    ],
     "visibleErrors": [],
     "screenshotPath": "wondernails/screenshots/wondernails__services_nonexistent_inventory.png",
-    "loadTimeMs": 618
+    "loadTimeMs": 1629
   },
   {
     "tenant": "wondernails",
     "url": "/t/wondernails/admin/quotes/test-quote-123",
-    "finalUrl": "http://localhost:3002/t/wondernails/login?callbackUrl=/t/wondernails/admin",
+    "finalUrl": "http://localhost:3003/t/wondernails/login?callbackUrl=/t/wondernails/admin",
     "status": "redirect",
     "title": "Iniciar Sesión - Wonder Nails Studio",
-    "consoleErrors": [],
+    "consoleErrors": [
+      "ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at fetchData (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:514:22)\n    at async getSession (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:681:21)\n    at async SessionProvider.useEffect [as _getSession] (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:824:51)"
+    ],
     "visibleErrors": [],
     "screenshotPath": "wondernails/screenshots/wondernails__admin_quotes_test_quote_123.png",
-    "loadTimeMs": 771
+    "loadTimeMs": 5148
   },
   {
     "tenant": "wondernails",
     "url": "/t/wondernails/admin/quotes/nonexistent",
-    "finalUrl": "http://localhost:3002/t/wondernails/login?callbackUrl=/t/wondernails/admin",
+    "finalUrl": "http://localhost:3003/t/wondernails/login?callbackUrl=/t/wondernails/admin",
     "status": "redirect",
     "title": "Iniciar Sesión - Wonder Nails Studio",
-    "consoleErrors": [],
+    "consoleErrors": [
+      "ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at fetchData (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:514:22)\n    at async getSession (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:681:21)\n    at async SessionProvider.useEffect [as _getSession] (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:824:51)"
+    ],
     "visibleErrors": [],
     "screenshotPath": "wondernails/screenshots/wondernails__admin_quotes_nonexistent.png",
-    "loadTimeMs": 771
+    "loadTimeMs": 2085
   }
 ]

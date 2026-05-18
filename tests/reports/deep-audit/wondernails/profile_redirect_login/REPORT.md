@@ -4,7 +4,7 @@
 **URL:** http://localhost:3003/t/wondernails/profile  
 **Status:** 🔀 REDIRECT a login  
 **Título página:** Iniciar Sesión  
-**Fecha:** 2026-05-13  
+**Fecha:** 2026-05-16  
 **Errores consola:** 0
 
 ## 🔍 Funcionalidades detectadas
@@ -16,9 +16,9 @@
 
 ### 🔗 Links (8)
 
+- Reservar
 - Productos
 - Servicios
-- Reservar
 - Contacto
 - Iniciar Sesión
 - ¿Olvidaste tu contraseña?

@@ -1,0 +1,62 @@
+[
+  {
+    "tenant": "centro-tenistico",
+    "testName": "login válido",
+    "status": "pass",
+    "screenshotPath": "centro_tenistico/screenshots/login_valido.png"
+  },
+  {
+    "tenant": "centro-tenistico",
+    "testName": "login inválido",
+    "status": "pass",
+    "screenshotPath": "centro_tenistico/screenshots/login_invalido.png"
+  },
+  {
+    "tenant": "centro-tenistico",
+    "testName": "home navegacion",
+    "status": "pass",
+    "screenshotPath": "centro_tenistico/screenshots/home_nav.png"
+  },
+  {
+    "tenant": "centro-tenistico",
+    "testName": "services clicks",
+    "status": "pass",
+    "screenshotPath": "centro_tenistico/screenshots/services_clicks.png"
+  },
+  {
+    "tenant": "centro-tenistico",
+    "testName": "products clicks",
+    "status": "pass",
+    "screenshotPath": "centro_tenistico/screenshots/products_clicks.png"
+  },
+  {
+    "tenant": "centro-tenistico",
+    "testName": "book formulario",
+    "status": "pass",
+    "screenshotPath": "centro_tenistico/screenshots/book_form.png"
+  },
+  {
+    "tenant": "centro-tenistico",
+    "testName": "contact formulario",
+    "status": "pass",
+    "screenshotPath": "centro_tenistico/screenshots/contact_form.png"
+  },
+  {
+    "tenant": "centro-tenistico",
+    "testName": "admin dashboard",
+    "status": "pass",
+    "screenshotPath": "centro_tenistico/screenshots/admin_dashboard.png"
+  },
+  {
+    "tenant": "centro-tenistico",
+    "testName": "admin calendar",
+    "status": "pass",
+    "screenshotPath": "centro_tenistico/screenshots/admin_calendar.png"
+  },
+  {
+    "tenant": "centro-tenistico",
+    "testName": "clientes crud",
+    "status": "pass",
+    "screenshotPath": "centro_tenistico/screenshots/clientes_crud.png"
+  }
+]
