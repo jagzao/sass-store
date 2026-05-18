@@ -219,7 +219,7 @@ export async function POST(request: NextRequest) {
 
     await db.insert(channelCredentials).values({
       accountId: account.id,
-      accessTokenEnc: accessToken, // TODO: Add real encryption
+      accessTokenEnc: encryptToken(accessToken),
       status: "ok",
       tokenType: "bearer",
     });

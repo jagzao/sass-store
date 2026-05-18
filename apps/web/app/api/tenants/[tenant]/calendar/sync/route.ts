@@ -368,10 +368,20 @@ export async function GET(
       tenant.googleCalendarId ||
       (tenant.googleCalendarConnected ? "primary" : null);
 
+    const [{ count }] = await db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(bookings)
+      .where(
+        and(
+          eq(bookings.tenantId, tenant.id),
+          sql`${bookings.googleEventId} is not null`,
+        ),
+      );
+
     return NextResponse.json({
       connected: tenant.googleCalendarConnected || false,
       calendarId: calendarId,
-      totalSyncedBookings: 0, // TODO: Implement count from DB if needed
+      totalSyncedBookings: count ?? 0,
     });
   } catch (error) {
     console.error("Get sync status error:", error);
