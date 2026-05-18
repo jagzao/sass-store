@@ -1,4 +1,5 @@
 import { NextRequest } from "next/server";
+import bcrypt from "bcryptjs";
 import { db, tenants, users, userRoles } from "@sass-store/database";
 import { eq, and, ilike, or, desc } from "drizzle-orm";
 
@@ -182,7 +183,10 @@ const createTenant = async (
       // 2. Create admin user if provided
       if (tenantData.adminUser) {
         const userId = `user_${Date.now()}_${crypto.randomUUID().replace(/-/g, "").substring(0, 9)}`;
-        const hashedPassword = `hashed_${tenantData.adminUser.password}_${Date.now()}`;
+        const hashedPassword = await bcrypt.hash(
+          tenantData.adminUser.password,
+          12,
+        );
 
         await tx.insert(users).values({
           id: userId,

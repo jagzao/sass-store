@@ -4,6 +4,7 @@ import { db } from "@sass-store/database";
 import { users, tenants, userRoles } from "@sass-store/database/schema";
 import { eq, and } from "drizzle-orm";
 import { randomUUID } from "crypto";
+import bcrypt from "bcryptjs";
 
 // Import Result pattern utilities
 import { Result, Ok, Err, flatMap } from "@sass-store/core/src/result";
@@ -109,8 +110,7 @@ const createUser = async (
   try {
     const userId = randomUUID();
 
-    // Note: In a real implementation, you'd hash the password here
-    const hashedPassword = `hashed_${userData.password}_${Date.now()}`; // Simplified for POC
+    const hashedPassword = await bcrypt.hash(userData.password, 12);
 
     await db.insert(users).values({
       id: userId,

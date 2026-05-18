@@ -27,26 +27,17 @@ const TEST_USER = {
  * Solo disponible en desarrollo y test.
  */
 export async function POST(request: NextRequest) {
-  if (process.env.VERCEL_ENV === "production") {
-    return NextResponse.json(
-      { error: "Not available in production" },
-      { status: 403 },
-    );
-  }
-
-  const isTestDb = (process.env.DATABASE_URL || "").includes("sass_store_test");
   if (
-    process.env.NODE_ENV === "production" &&
-    !process.env.E2E_SEED_ENABLED &&
-    !isTestDb
+    process.env.NODE_ENV === "production" ||
+    process.env.VERCEL_ENV === "production"
   ) {
-    return NextResponse.json({ error: "E2E seed disabled" }, { status: 403 });
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
   if (process.env.VERCEL_ENV === "production") {
     return NextResponse.json(
       { error: "Not available in production" },
-      { status: 403 },
+      { status: 404 },
     );
   }
 
