@@ -14,6 +14,7 @@ import {
   index,
   uniqueIndex,
   pgEnum,
+  type AnyPgColumn,
 } from "drizzle-orm/pg-core";
 import { relations, sql } from "drizzle-orm";
 
@@ -2492,7 +2493,9 @@ export const transactionCategories = pgTable(
     icon: varchar("icon", { length: 50 }),
     isFixed: boolean("is_fixed").default(false),
     isDefault: boolean("is_default").default(false),
-    parentId: uuid("parent_id").references(() => transactionCategories.id),
+    parentId: uuid("parent_id").references(
+      (): AnyPgColumn => transactionCategories.id,
+    ),
     budgetAlertThreshold: integer("budget_alert_threshold").default(80),
     sortOrder: integer("sort_order").default(0),
     createdAt: timestamp("created_at").defaultNow(),
