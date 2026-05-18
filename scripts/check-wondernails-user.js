@@ -1,7 +1,11 @@
+require("dotenv").config();
 const postgres = require("../node_modules/postgres");
 
-const connectionString =
-  "postgresql://postgres.jedryjmljffuvegggjmw:TSGmf_3G-rbLbz!@aws-1-us-east-2.pooler.supabase.com:6543/postgres?pgbouncer=true";
+const connectionString = process.env.DATABASE_URL;
+if (!connectionString) {
+  console.error("❌ DATABASE_URL no está definida en el entorno.");
+  process.exit(1);
+}
 
 const sql = postgres(connectionString, {
   ssl: "require",

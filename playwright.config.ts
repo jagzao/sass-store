@@ -1,9 +1,28 @@
 import { defineConfig, devices } from "@playwright/test";
 import * as dotenv from "dotenv";
 import * as path from "path";
+import { existsSync } from "fs";
 
 // Load test environment variables
 dotenv.config({ path: path.resolve(__dirname, ".env.test") });
+
+function findChrome(): string | undefined {
+  const candidates = [
+    process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH,
+    process.env.PW_CHROME_PATH,
+    "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
+    "C:\\Users\\" +
+      process.env.USERNAME +
+      "\\AppData\\Local\\Google\\Chrome\\Application\\chrome.exe",
+  ];
+  for (const c of candidates) {
+    if (c && existsSync(c)) return c;
+  }
+  return undefined;
+}
+
+const chromeExecutable = findChrome();
 
 const isCI = !!process.env.CI;
 const workerCount = process.env.PW_WORKERS
@@ -49,7 +68,7 @@ const webServer = useExternalDevServer
 export default defineConfig({
   testDir: "./tests/e2e",
 
-  // CI/ENTORNO DEV SERVIDOR LENTO: secuencial para evitar contención
+  // CI/ENTORNO DEV SERVIDOR LENTO: secuencial para evitar contenci�n
   fullyParallel: false,
 
   // Retry on CI, but not locally for faster feedback
@@ -63,7 +82,7 @@ export default defineConfig({
   // Timeout configuration (Next `next start` E2E puede tardar en cold build)
   timeout: 120_000, // 120s per test
   expect: {
-    timeout: 15_000, // assertions que esperan UI post-compilación
+    timeout: 15_000, // assertions que esperan UI post-compilaci�n
   },
 
   // Reporter: list in dev (better UX), html in CI
@@ -94,6 +113,7 @@ export default defineConfig({
         ...devices["Desktop Chrome"],
         // Performance: Disable unnecessary features
         launchOptions: {
+          executablePath: chromeExecutable,
           args: [
             "--disable-dev-shm-usage", // Prevent shared memory issues
             "--no-sandbox", // For CI environments
