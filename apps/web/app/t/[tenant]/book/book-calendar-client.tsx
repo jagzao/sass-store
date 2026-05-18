@@ -1,6 +1,13 @@
 "use client";
 
-import { FormEvent, useMemo, useState, type CSSProperties } from "react";
+import {
+  FormEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  type CSSProperties,
+} from "react";
 import { motion } from "framer-motion";
 import { useSession } from "next-auth/react";
 import { getOrdinal } from "@/lib/booking/book-date-format";
@@ -11,6 +18,12 @@ import {
   CTV_INK,
   CTV_MUTED,
 } from "@/lib/design/centro-tenistico-brand";
+import {
+  WN_CHARCOAL,
+  WN_GOLD,
+  WN_LILAC_SPOTLIGHT,
+  WN_MUTED,
+} from "@/lib/design/wondernails-brand";
 
 /**
  * CTV: mismo lenguaje visual que el hero (menta #F0FDF4, rejilla, serif, arcilla #B85C38).
@@ -154,7 +167,9 @@ export function BookCalendarClient({
   const showGuestFields = !isAuthed;
 
   const isCTV = tenantSlug === "centro-tenistico";
-  const accent = isCTV ? CTV_CLAY_ORANGE : primaryColor;
+  const isLuxury = tenantSlug === "wondernails";
+  const isLightPanel = isCTV || isLuxury;
+  const accent = isCTV ? CTV_CLAY_ORANGE : isLuxury ? WN_GOLD : primaryColor;
 
   const [selectedServiceId, setSelectedServiceId] = useState(
     () => services[0]?.id ?? "",
@@ -189,6 +204,57 @@ export function BookCalendarClient({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [customerMatches, setCustomerMatches] = useState<
+    {
+      id: string;
+      name: string;
+      email: string | null;
+      phone: string | null;
+      reasons: string[];
+    }[]
+  >([]);
+  const [linkedCustomerId, setLinkedCustomerId] = useState<string | null>(null);
+
+  const runCustomerMatch = useCallback(async () => {
+    if (isAuthed || !showGuestFields) return;
+    const phone = customerPhone.replace(/\D/g, "");
+    if (!customerName.trim() && !phone && !customerEmail.trim()) {
+      setCustomerMatches([]);
+      return;
+    }
+    const params = new URLSearchParams();
+    if (customerName.trim()) params.set("name", customerName.trim());
+    if (customerEmail.trim()) params.set("email", customerEmail.trim());
+    if (phone) params.set("phone", phone);
+    try {
+      const res = await fetch(
+        `/api/tenants/${tenantSlug}/customers/match?${params}`,
+      );
+      if (!res.ok) return;
+      const json = await res.json();
+      setCustomerMatches(json.data?.matches ?? []);
+      if (json.data?.suggestedCustomerId && !linkedCustomerId) {
+        setLinkedCustomerId(json.data.suggestedCustomerId);
+      }
+    } catch {
+      setCustomerMatches([]);
+    }
+  }, [
+    customerEmail,
+    customerName,
+    customerPhone,
+    isAuthed,
+    linkedCustomerId,
+    showGuestFields,
+    tenantSlug,
+  ]);
+
+  useEffect(() => {
+    const t = setTimeout(() => {
+      void runCustomerMatch();
+    }, 400);
+    return () => clearTimeout(t);
+  }, [runCustomerMatch]);
 
   const weekDates = useMemo(() => {
     return Array.from({ length: 5 }, (_, index) => {
@@ -263,6 +329,7 @@ export function BookCalendarClient({
         body: JSON.stringify({
           serviceId: selectedService.id,
           staffId: defaultStaffId,
+          customerId: !isAuthed ? linkedCustomerId || undefined : undefined,
           customerName: isAuthed
             ? (
                 session?.user?.name ||
@@ -298,6 +365,8 @@ export function BookCalendarClient({
       setCustomerPhone("");
       setCustomerEmail("");
       setNotes("");
+      setLinkedCustomerId(null);
+      setCustomerMatches([]);
     } catch (error) {
       console.error("Error creating booking:", error);
       setErrorMessage("Ocurrio un error al agendar. Intenta nuevamente.");
@@ -332,19 +401,22 @@ export function BookCalendarClient({
     if (isCTV) {
       vars.fontFamily =
         'ui-serif, "Palatino Linotype", Palatino, "Book Antiqua", Georgia, Cambria, serif';
-    } else {
+    } else if (!isLuxury) {
       vars.fontFamily =
         'system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
     }
     return vars;
-  }, [accent, isCTV]);
+  }, [accent, isCTV, isLuxury]);
 
   const inputClass = isCTV
     ? "w-full rounded-xl px-3 py-2.5 text-sm bg-white border border-stone-200 text-stone-900 placeholder:text-stone-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--book-accent)]/35 focus-visible:border-stone-300 transition-shadow"
-    : "w-full rounded-lg px-3 py-2.5 text-sm bg-zinc-900/80 border border-white/[0.1] text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--book-accent)]/45 focus-visible:border-white/15";
+    : isLuxury
+      ? "w-full rounded-lg px-3 py-2.5 text-sm bg-white border border-[#333333]/20 text-[#333333] placeholder:text-gray-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C5A059]/35 focus-visible:border-[#C5A059]/50 transition-shadow"
+      : "w-full rounded-lg px-3 py-2.5 text-sm bg-zinc-900/80 border border-white/[0.1] text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--book-accent)]/45 focus-visible:border-white/15";
 
-  const lightInputClass =
-    "w-full rounded-lg px-3 py-2.5 text-sm bg-zinc-50 border border-zinc-200/90 text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--book-accent)]/35 focus-visible:border-zinc-300 transition-shadow";
+  const lightInputClass = isLuxury
+    ? inputClass
+    : "w-full rounded-lg px-3 py-2.5 text-sm bg-zinc-50 border border-zinc-200/90 text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--book-accent)]/35 focus-visible:border-zinc-300 transition-shadow";
 
   const serviceMeta = selectedService
     ? `${selectedService.duration} min · ${priceMx(selectedService.price)}`
@@ -363,10 +435,12 @@ export function BookCalendarClient({
           className={
             isCTV
               ? "relative overflow-hidden rounded-2xl border border-stone-200/90 bg-white/95 shadow-[0_20px_50px_-24px_rgba(31,41,55,0.12),0_1px_0_0_rgba(255,255,255,0.8)_inset]"
-              : "relative overflow-hidden rounded-2xl border border-white/[0.08] bg-zinc-900/85 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)] backdrop-blur-xl ring-1 ring-white/[0.04]"
+              : isLuxury
+                ? "relative overflow-hidden rounded-2xl border border-[#E5E7EB] bg-white shadow-[0_20px_50px_-24px_rgba(160,130,180,0.12)]"
+                : "relative overflow-hidden rounded-2xl border border-white/[0.08] bg-zinc-900/85 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)] backdrop-blur-xl ring-1 ring-white/[0.04]"
           }
         >
-          {!isCTV ? (
+          {!isLightPanel ? (
             <div
               className="pointer-events-none absolute inset-0 opacity-[0.35]"
               aria-hidden
@@ -374,7 +448,7 @@ export function BookCalendarClient({
                 backgroundImage: `repeating-linear-gradient(125deg, transparent, transparent 14px, rgba(255,255,255,0.02) 14px, rgba(255,255,255,0.02) 15px)`,
               }}
             />
-          ) : (
+          ) : isCTV ? (
             <div
               className="pointer-events-none absolute inset-0 opacity-[0.5]"
               aria-hidden
@@ -383,7 +457,7 @@ export function BookCalendarClient({
                   "linear-gradient(180deg, rgba(184,92,56,0.04) 0%, transparent 42%)",
               }}
             />
-          )}
+          ) : null}
           <div className="relative h-px w-full bg-gradient-to-r from-transparent via-[color:var(--book-accent)]/55 to-transparent" />
 
           <motion.div
@@ -396,7 +470,7 @@ export function BookCalendarClient({
             <motion.header
               variants={panelItem}
               className={
-                isCTV
+                isLightPanel
                   ? "px-5 pt-5 pb-4 border-b border-stone-100"
                   : "px-5 pt-5 pb-4 border-b border-white/[0.08]"
               }
@@ -425,14 +499,16 @@ export function BookCalendarClient({
                 />
               </div>
               <p
-                className="text-[11px] sm:text-xs mt-3 tracking-wide"
-                style={isCTV ? { color: CTV_MUTED } : undefined}
+                className={`text-[11px] sm:text-xs mt-3 tracking-wide ${!isLightPanel ? "text-zinc-500" : ""}`}
+                style={
+                  isCTV
+                    ? { color: CTV_MUTED }
+                    : isLuxury
+                      ? { color: WN_MUTED }
+                      : undefined
+                }
               >
-                {!isCTV ? (
-                  <span className="text-zinc-500">{serviceMeta}</span>
-                ) : (
-                  serviceMeta
-                )}
+                {serviceMeta}
               </p>
             </motion.header>
 
@@ -440,7 +516,7 @@ export function BookCalendarClient({
             <motion.div
               variants={panelItem}
               className={
-                isCTV
+                isLightPanel
                   ? "px-4 sm:px-5 py-4 border-b border-stone-100"
                   : "px-4 sm:px-5 py-4 border-b border-white/[0.06]"
               }
@@ -450,7 +526,7 @@ export function BookCalendarClient({
                   <button
                     type="button"
                     className={
-                      isCTV
+                      isLightPanel
                         ? "flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-stone-200 bg-white text-stone-500 hover:bg-stone-50 hover:text-stone-800 disabled:opacity-30 disabled:pointer-events-none transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--book-accent)]/30"
                         : "flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-white/55 hover:text-white hover:bg-white/[0.06] disabled:opacity-25 disabled:pointer-events-none transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white/25"
                     }
@@ -462,18 +538,24 @@ export function BookCalendarClient({
                   </button>
                   <span
                     className={
-                      isCTV
+                      isLightPanel
                         ? "text-[13px] font-medium tracking-[0.06em] capitalize text-center flex-1"
                         : "text-[13px] font-medium tracking-wide text-zinc-300 capitalize text-center flex-1"
                     }
-                    style={isCTV ? { color: CTV_INK } : undefined}
+                    style={
+                      isCTV
+                        ? { color: CTV_INK }
+                        : isLuxury
+                          ? { color: WN_CHARCOAL }
+                          : undefined
+                    }
                   >
                     {monthTitle}
                   </span>
                   <button
                     type="button"
                     className={
-                      isCTV
+                      isLightPanel
                         ? "flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-stone-200 bg-white text-stone-500 hover:bg-stone-50 hover:text-stone-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--book-accent)]/30"
                         : "flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-white/55 hover:text-white hover:bg-white/[0.06] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white/25"
                     }
@@ -485,76 +567,97 @@ export function BookCalendarClient({
                 </div>
 
                 <div
-                  className={
-                    isCTV
-                      ? "flex gap-2 overflow-x-auto pb-0.5 -mx-1 px-1 [scrollbar-width:thin] [scrollbar-color:rgba(120,113,108,0.35)_transparent]"
-                      : "flex gap-2 overflow-x-auto pb-0.5 -mx-1 px-1 [scrollbar-width:thin] [scrollbar-color:rgba(255,255,255,0.2)_transparent]"
-                  }
+                  className={isLuxury ? "relative -mx-1 px-1 py-1" : undefined}
                 >
-                  {weekDates.map((day) => {
-                    const isSelected = selectedDate === day.iso;
-                    return (
-                      <button
-                        key={day.iso}
-                        type="button"
-                        onClick={() => setSelectedDate(day.iso)}
-                        data-testid={`book-day-${day.iso}`}
-                        className={`min-w-[4.75rem] shrink-0 rounded-xl px-2 py-2.5 text-center transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${
-                          isCTV
-                            ? "focus-visible:ring-[#B85C38]/40 focus-visible:ring-offset-white"
-                            : "focus-visible:ring-[color:var(--book-accent)]/50 focus-visible:ring-offset-0"
-                        } ${
-                          isSelected
-                            ? isCTV
-                              ? "text-white shadow-md ring-1 ring-black/5"
-                              : "text-white ring-1 ring-white/10"
-                            : isCTV
-                              ? "border border-stone-200 bg-white text-stone-800 hover:border-stone-300 hover:bg-stone-50/80"
-                              : "border border-white/[0.1] bg-white/[0.03] text-white/80 hover:bg-white/[0.06] hover:border-white/[0.14]"
-                        }`}
-                        style={
-                          isSelected
-                            ? {
-                                backgroundColor: accent,
-                                boxShadow: isCTV
-                                  ? `0 8px 22px -6px ${accent}55`
-                                  : `0 0 0 1px ${accent}, 0 8px 24px -6px rgba(0,0,0,0.45)`,
-                              }
-                            : undefined
-                        }
-                      >
-                        <p
-                          className={`text-[9px] font-semibold uppercase tracking-[0.14em] ${
-                            isSelected
-                              ? "text-white/90"
+                  {isLuxury ? (
+                    <div
+                      className="pointer-events-none absolute inset-0 rounded-2xl opacity-90"
+                      aria-hidden
+                      style={{ background: WN_LILAC_SPOTLIGHT }}
+                    />
+                  ) : null}
+                  <div
+                    className={
+                      isLightPanel
+                        ? "relative flex gap-2 overflow-x-auto pb-0.5 [scrollbar-width:thin] [scrollbar-color:rgba(120,113,108,0.35)_transparent]"
+                        : "flex gap-2 overflow-x-auto pb-0.5 -mx-1 px-1 [scrollbar-width:thin] [scrollbar-color:rgba(255,255,255,0.2)_transparent]"
+                    }
+                  >
+                    {weekDates.map((day) => {
+                      const isSelected = selectedDate === day.iso;
+                      return (
+                        <button
+                          key={day.iso}
+                          type="button"
+                          onClick={() => setSelectedDate(day.iso)}
+                          data-testid={`book-day-${day.iso}`}
+                          className={`min-w-[4.75rem] shrink-0 rounded-xl px-2 py-2.5 text-center transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${
+                            isLuxury
+                              ? "focus-visible:ring-[#C5A059]/40 focus-visible:ring-offset-white"
                               : isCTV
-                                ? "text-stone-500"
-                                : "text-white/70"
-                          }`}
-                        >
-                          {day.dayLabel}
-                        </p>
-                        <p
-                          className={`text-[15px] font-semibold tabular-nums leading-tight mt-0.5 ${
-                            !isSelected && isCTV ? "text-stone-900" : ""
-                          }`}
-                        >
-                          {day.dateLabel}
-                        </p>
-                        <p
-                          className={`text-[9px] mt-1 font-normal ${
+                                ? "focus-visible:ring-[#B85C38]/40 focus-visible:ring-offset-white"
+                                : "focus-visible:ring-[color:var(--book-accent)]/50 focus-visible:ring-offset-0"
+                          } ${
                             isSelected
-                              ? "text-white/80"
-                              : isCTV
-                                ? "text-stone-400"
-                                : "text-white/50"
+                              ? isLuxury
+                                ? "border-2 border-[#C5A059] bg-white text-[#333333] shadow-[0_8px_24px_-8px_rgba(200,160,255,0.35)]"
+                                : isCTV
+                                  ? "text-white shadow-md ring-1 ring-black/5"
+                                  : "text-white ring-1 ring-white/10"
+                              : isLightPanel
+                                ? "border border-stone-200 bg-white text-stone-800 hover:border-stone-300 hover:bg-stone-50/80"
+                                : "border border-white/[0.1] bg-white/[0.03] text-white/80 hover:bg-white/[0.06] hover:border-white/[0.14]"
                           }`}
+                          style={
+                            isSelected && !isLuxury
+                              ? {
+                                  backgroundColor: accent,
+                                  boxShadow: isCTV
+                                    ? `0 8px 22px -6px ${accent}55`
+                                    : `0 0 0 1px ${accent}, 0 8px 24px -6px rgba(0,0,0,0.45)`,
+                                }
+                              : undefined
+                          }
                         >
-                          {day.available ? "Libre" : "Ocupado"}
-                        </p>
-                      </button>
-                    );
-                  })}
+                          <p
+                            className={`text-[9px] font-semibold uppercase tracking-[0.14em] ${
+                              isSelected
+                                ? isLuxury
+                                  ? "text-[#C5A059]"
+                                  : "text-white/90"
+                                : isLightPanel
+                                  ? "text-stone-500"
+                                  : "text-white/70"
+                            }`}
+                          >
+                            {day.dayLabel}
+                          </p>
+                          <p
+                            className={`text-[15px] font-semibold tabular-nums leading-tight mt-0.5 ${
+                              isLightPanel && (!isSelected || isLuxury)
+                                ? "text-stone-900"
+                                : ""
+                            }`}
+                          >
+                            {day.dateLabel}
+                          </p>
+                          <p
+                            className={`text-[9px] mt-1 font-normal ${
+                              isSelected
+                                ? isLuxury
+                                  ? "text-gray-500"
+                                  : "text-white/80"
+                                : isLightPanel
+                                  ? "text-stone-400"
+                                  : "text-white/50"
+                            }`}
+                          >
+                            {day.available ? "Libre" : "Ocupado"}
+                          </p>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             </motion.div>
@@ -563,18 +666,24 @@ export function BookCalendarClient({
             <motion.div
               variants={panelItem}
               className={
-                isCTV
+                isLightPanel
                   ? "px-4 sm:px-5 py-4 border-b border-stone-100"
                   : "px-4 sm:px-5 py-4 border-b border-white/[0.06]"
               }
             >
               <h2
                 className={
-                  isCTV
+                  isLightPanel
                     ? "text-[11px] font-semibold uppercase tracking-[0.2em] mb-3"
                     : "text-[11px] font-medium uppercase tracking-[0.16em] text-zinc-500 mb-3"
                 }
-                style={isCTV ? { color: CTV_MUTED } : undefined}
+                style={
+                  isCTV
+                    ? { color: CTV_MUTED }
+                    : isLuxury
+                      ? { color: WN_GOLD }
+                      : undefined
+                }
               >
                 Horarios disponibles
               </h2>
@@ -588,16 +697,20 @@ export function BookCalendarClient({
                       data-testid={`book-time-${slot}`}
                       onClick={() => setSelectedTime(slot)}
                       className={`rounded-xl border py-2.5 text-[12px] sm:text-[13px] font-semibold tabular-nums transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--book-accent)]/40 ${
-                        isCTV
+                        isLuxury
                           ? isSelected
-                            ? "border-transparent text-white shadow-md"
-                            : "border-stone-200 bg-white text-stone-800 hover:bg-stone-50 hover:border-stone-300"
-                          : isSelected
-                            ? "border-transparent text-white shadow-sm focus-visible:ring-offset-0"
-                            : "border-white/[0.1] bg-white/[0.03] text-white/88 hover:bg-white/[0.07] hover:border-white/[0.12] focus-visible:ring-offset-0"
+                            ? "border-2 border-[#C5A059] bg-[#C5A059]/10 text-[#333333] shadow-sm"
+                            : "border border-[#C5A059]/45 bg-white text-[#333333] hover:bg-[#C5A059]/5 hover:border-[#C5A059]"
+                          : isCTV
+                            ? isSelected
+                              ? "border-transparent text-white shadow-md"
+                              : "border-stone-200 bg-white text-stone-800 hover:bg-stone-50 hover:border-stone-300"
+                            : isSelected
+                              ? "border-transparent text-white shadow-sm focus-visible:ring-offset-0"
+                              : "border-white/[0.1] bg-white/[0.03] text-white/88 hover:bg-white/[0.07] hover:border-white/[0.12] focus-visible:ring-offset-0"
                       }`}
                       style={
-                        isSelected
+                        isSelected && !isLuxury
                           ? {
                               backgroundColor: accent,
                               boxShadow: isCTV
@@ -618,8 +731,8 @@ export function BookCalendarClient({
             <motion.footer
               variants={panelItem}
               className={
-                isCTV
-                  ? "px-4 sm:px-5 py-5 bg-stone-50/90"
+                isLightPanel
+                  ? "px-4 sm:px-5 py-5 bg-white"
                   : "px-4 sm:px-5 py-5 bg-black/[0.15]"
               }
             >
@@ -628,11 +741,18 @@ export function BookCalendarClient({
                 disabled={isSubmitting}
                 data-testid="book-submit"
                 className={
-                  isCTV
-                    ? "w-full rounded-xl px-5 py-3.5 text-sm font-semibold text-white disabled:opacity-45 disabled:cursor-not-allowed transition-[transform,box-shadow,filter] duration-200 ease-out hover:brightness-[1.05] active:scale-[0.99] focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--book-accent)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-white shadow-[0_10px_28px_-8px_rgba(184,92,56,0.55)]"
+                  isLightPanel
+                    ? "w-full rounded-xl px-5 py-3.5 text-sm font-semibold text-white disabled:opacity-45 disabled:cursor-not-allowed transition-[transform,box-shadow,filter] duration-200 ease-out hover:brightness-[1.05] active:scale-[0.99] focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--book-accent)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-white"
                     : "w-full rounded-xl px-5 py-3.5 text-sm font-semibold text-white disabled:opacity-45 disabled:cursor-not-allowed transition-[transform,box-shadow,filter] duration-200 ease-out hover:brightness-[1.06] active:scale-[0.99] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/35 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 shadow-[0_8px_28px_-8px_rgba(0,0,0,0.5)]"
                 }
-                style={{ backgroundColor: accent }}
+                style={{
+                  backgroundColor: accent,
+                  boxShadow: isLuxury
+                    ? "0 10px 28px -8px rgba(197, 160, 89, 0.45)"
+                    : isCTV
+                      ? "0 10px 28px -8px rgba(184, 92, 56, 0.55)"
+                      : undefined,
+                }}
               >
                 {isSubmitting ? "Reservando…" : "Reservar ahora"}
               </button>
@@ -650,29 +770,88 @@ export function BookCalendarClient({
               ease: [0.22, 1, 0.36, 1],
             }}
             className={
-              isCTV
-                ? "rounded-2xl border border-stone-200/90 bg-white/95 p-5 sm:p-6 shadow-[0_16px_40px_-28px_rgba(31,41,55,0.15)]"
+              isLightPanel
+                ? "rounded-2xl border border-stone-200/90 bg-white p-5 sm:p-6 shadow-[0_16px_40px_-28px_rgba(160,130,180,0.12)]"
                 : "rounded-2xl border border-zinc-200 bg-white p-5 sm:p-6 shadow-sm"
             }
             data-testid="book-customer-fields"
-            style={isCTV ? { color: CTV_INK } : undefined}
+            style={
+              isCTV
+                ? { color: CTV_INK }
+                : isLuxury
+                  ? { color: WN_CHARCOAL }
+                  : undefined
+            }
           >
             <h3
               className={
-                isCTV
+                isLightPanel
                   ? "mb-4 text-[11px] font-semibold uppercase tracking-[0.2em]"
                   : "mb-4 text-[11px] font-semibold uppercase tracking-[0.14em] text-zinc-500"
               }
-              style={isCTV ? { color: CTV_MUTED } : undefined}
+              style={
+                isCTV
+                  ? { color: CTV_MUTED }
+                  : isLuxury
+                    ? { color: WN_GOLD }
+                    : undefined
+              }
             >
               Tus datos
             </h3>
+            {customerMatches.length > 0 ? (
+              <div
+                className="mb-4 rounded-xl border border-[#C5A059]/25 bg-[#C5A059]/5 p-3 space-y-2"
+                data-testid="book-customer-matches"
+              >
+                <p className="text-xs font-medium text-[#333333]">
+                  ¿Ya eres nuestra clienta? Selecciona tu perfil para vincular
+                  la cita:
+                </p>
+                {customerMatches.map((m) => (
+                  <button
+                    key={m.id}
+                    type="button"
+                    onClick={() =>
+                      setLinkedCustomerId(
+                        linkedCustomerId === m.id ? null : m.id,
+                      )
+                    }
+                    className={`w-full text-left px-3 py-2 rounded-lg border text-sm transition-colors ${
+                      linkedCustomerId === m.id
+                        ? "border-[#C5A059] bg-white ring-1 ring-[#C5A059]/40"
+                        : "border-gray-200 bg-white hover:border-[#C5A059]/40"
+                    }`}
+                  >
+                    <span className="font-medium text-[#333333]">{m.name}</span>
+                    {m.phone ? (
+                      <span className="block text-xs text-gray-500">
+                        {m.phone}
+                      </span>
+                    ) : null}
+                    <span className="text-[10px] text-gray-400">
+                      Coincide: {m.reasons.join(", ")}
+                    </span>
+                  </button>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => setLinkedCustomerId(null)}
+                  className="text-xs text-gray-500 underline"
+                >
+                  Reservar como clienta nueva
+                </button>
+              </div>
+            ) : null}
             <div className="grid sm:grid-cols-2 gap-3 sm:gap-4">
               <input
                 type="text"
                 value={customerName}
-                onChange={(event) => setCustomerName(event.target.value)}
-                className={isCTV ? inputClass : lightInputClass}
+                onChange={(event) => {
+                  setCustomerName(event.target.value);
+                  setLinkedCustomerId(null);
+                }}
+                className={isLightPanel ? inputClass : lightInputClass}
                 placeholder="Nombre completo"
                 data-testid="book-customer-name"
                 required
@@ -707,7 +886,7 @@ export function BookCalendarClient({
                   const digits = raw.replace(/\D/g, "").slice(0, 15);
                   setCustomerPhone(digits);
                 }}
-                className={isCTV ? inputClass : lightInputClass}
+                className={isLightPanel ? inputClass : lightInputClass}
                 placeholder="Teléfono"
                 data-testid="book-customer-phone"
                 required
@@ -722,14 +901,14 @@ export function BookCalendarClient({
                 onBlur={() => {
                   setCustomerEmail((prev) => prev.trim());
                 }}
-                className={isCTV ? inputClass : lightInputClass}
+                className={isLightPanel ? inputClass : lightInputClass}
                 placeholder="Email (opcional)"
                 data-testid="book-customer-email"
               />
               <textarea
                 value={notes}
                 onChange={(event) => setNotes(event.target.value)}
-                className={`${isCTV ? inputClass : lightInputClass} resize-none`}
+                className={`${isLightPanel ? inputClass : lightInputClass} resize-none`}
                 placeholder="Notas (opcional)"
                 data-testid="book-customer-notes"
                 rows={3}

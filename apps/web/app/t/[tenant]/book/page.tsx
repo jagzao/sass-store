@@ -6,6 +6,7 @@ import {
   CTV_CLAY_ORANGE,
   CTV_PAGE_BG,
 } from "@/lib/design/centro-tenistico-brand";
+import { WN_PAGE_BG } from "@/lib/design/wondernails-brand";
 import { BookCalendarClient } from "./book-calendar-client";
 
 interface BookPageProps {
@@ -23,16 +24,37 @@ export default async function BookPage({ params }: BookPageProps) {
   const defaultStaffId = tenantData.staff[0]?.id;
 
   const isCTV = resolvedParams.tenant === "centro-tenistico";
+  const isWondernails = resolvedParams.tenant === "wondernails";
 
   return (
     <div
       className={
-        isCTV
+        isCTV || isWondernails
           ? "relative min-h-screen overflow-x-hidden px-4 py-8 sm:py-12"
           : "container mx-auto px-4 py-8 sm:py-10"
       }
-      style={isCTV ? { backgroundColor: CTV_PAGE_BG } : undefined}
+      style={
+        isCTV
+          ? { backgroundColor: CTV_PAGE_BG }
+          : isWondernails
+            ? { backgroundColor: WN_PAGE_BG }
+            : undefined
+      }
     >
+      {isWondernails ? (
+        <div
+          className="pointer-events-none absolute inset-0 overflow-hidden"
+          aria-hidden
+        >
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                "radial-gradient(circle at 50% 28%, rgba(200, 160, 255, 0.2) 0%, rgba(255, 255, 255, 0) 58%)",
+            }}
+          />
+        </div>
+      ) : null}
       {isCTV ? (
         <div
           className="pointer-events-none absolute inset-0 overflow-hidden"
@@ -51,7 +73,7 @@ export default async function BookPage({ params }: BookPageProps) {
           />
         </div>
       ) : null}
-      <div className={isCTV ? "relative z-10" : undefined}>
+      <div className={isCTV || isWondernails ? "relative z-10" : undefined}>
         {services.length > 0 ? (
           <BookCalendarClient
             tenantSlug={tenantData.slug}
