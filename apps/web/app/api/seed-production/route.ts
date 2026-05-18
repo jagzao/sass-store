@@ -3,6 +3,13 @@ import { db } from "@sass-store/database";
 import { tenants } from "@sass-store/database/schema";
 
 export async function GET(request: NextRequest) {
+  if (
+    process.env.NODE_ENV === "production" ||
+    process.env.VERCEL_ENV === "production"
+  ) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+
   try {
     // Verificar si hay un token de autorización para prevenir ejecuciones no autorizadas
     const authHeader = request.headers.get("authorization");

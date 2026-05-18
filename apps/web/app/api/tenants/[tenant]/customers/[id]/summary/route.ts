@@ -4,8 +4,9 @@ import {
   customers,
   tenants,
   customerVisits,
+  bookings,
 } from "@sass-store/database/schema";
-import { eq, and, desc } from "drizzle-orm";
+import { eq, and, desc, gt, asc } from "drizzle-orm";
 
 export async function GET(
   request: NextRequest,
@@ -57,8 +58,20 @@ export async function GET(
 
     const lastVisit = allVisits.length > 0 ? allVisits[0].visitDate : undefined;
 
-    // TODO: Implement nextAppointment when bookings table is created
-    const nextAppointment = undefined;
+    const [nextBooking] = await db
+      .select({ startTime: bookings.startTime, status: bookings.status })
+      .from(bookings)
+      .where(
+        and(
+          eq(bookings.customerId, customerId),
+          eq(bookings.tenantId, tenant.id),
+          gt(bookings.startTime, new Date()),
+        ),
+      )
+      .orderBy(asc(bookings.startTime))
+      .limit(1);
+
+    const nextAppointment = nextBooking?.startTime?.toISOString();
 
     const summary = {
       totalSpent,

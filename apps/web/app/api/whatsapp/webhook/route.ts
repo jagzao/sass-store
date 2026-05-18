@@ -6,6 +6,8 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { db } from "@sass-store/database";
+import { whatsappMessages } from "@sass-store/database/schema";
 
 // Token de verificación del webhook (debe coincidir con Meta Developer Dashboard)
 const WEBHOOK_VERIFY_TOKEN = process.env.WHATSAPP_WEBHOOK_VERIFY_TOKEN!;
@@ -168,8 +170,8 @@ async function processIncomingMessage(
 }
 
 /**
- * Guardar mensaje recibido en la base de datos
- * TODO: Implementar con Drizzle cuando se cree la tabla
+ * Persiste un mensaje entrante de WhatsApp en la tabla whatsapp_messages.
+ * tenantId es nullable — se asocia al tenant en un paso posterior si es necesario.
  */
 async function guardarMensajeRecibido(data: {
   numero: string;
@@ -180,23 +182,22 @@ async function guardarMensajeRecibido(data: {
   timestamp: string;
   phoneNumberId: string;
 }) {
-  // Por ahora solo logging
-  // TODO: Insertar en tabla whatsapp_messages
-  console.warn("[WhatsApp DB] Guardando mensaje:", {
-    numero: data.numero,
-    mensajeId: data.mensajeId,
-    contenido: data.contenido.substring(0, 50),
-    timestamp: data.timestamp,
-  });
-
-  // ImplementaciÃ³n futura:
-  // await db.insert(whatsappMessages).values({
-  //   mensajeId: data.mensajeId,
-  //   numero: data.numero,
-  //   contenido: data.contenido,
-  //   tipo: data.tipo,
-  //   direccion: 'inbound',
-  //   timestamp: new Date(parseInt(data.timestamp) * 1000),
-  //   metadata: { phoneNumberId: data.phoneNumberId },
-  // });
+  try {
+    await db
+      .insert(whatsappMessages)
+      .values({
+        mensajeId: data.mensajeId,
+        numero: data.numero,
+        contenido: data.contenido,
+        tipo: data.tipo,
+        direccion: "inbound",
+        estado: "received",
+        tipoInteraccion: data.tipoInteraccion,
+        metadata: { phoneNumberId: data.phoneNumberId },
+      })
+      .onConflictDoNothing();
+  } catch (err) {
+    // Log but don't throw — webhook must always return 200 to Meta
+    console.error("[WhatsApp DB] Error guardando mensaje:", err);
+  }
 }

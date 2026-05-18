@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@sass-store/database";
+import { encryptToken } from "@/lib/crypto/token-encryption";
 import {
   tenants,
   tenantChannels,
@@ -187,7 +188,7 @@ export async function POST(request: NextRequest) {
       .insert(channelCredentials)
       .values({
         accountId: account.id,
-        accessTokenEnc: accessToken, // TODO: Add real encryption
+        accessTokenEnc: encryptToken(accessToken),
         status: "ok",
         tokenType: "bearer",
       })
