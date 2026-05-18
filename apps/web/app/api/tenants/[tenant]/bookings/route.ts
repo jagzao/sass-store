@@ -11,6 +11,10 @@ import {
 import { eq, and, desc, gte, lte, inArray } from "drizzle-orm";
 import { z } from "zod";
 import { Resend } from "resend";
+import {
+  findCustomerMatches,
+  pickBestCustomerMatch,
+} from "@/lib/customers/match-customer";
 
 /**
  * Bookings API Endpoint
@@ -227,14 +231,15 @@ export async function POST(
       );
     }
 
-    // Verify customer exists if customerId is provided
-    if (data.customerId) {
+    let linkedCustomerId = data.customerId ?? null;
+
+    if (linkedCustomerId) {
       const [customer] = await db
         .select()
         .from(customers)
         .where(
           and(
-            eq(customers.id, data.customerId),
+            eq(customers.id, linkedCustomerId),
             eq(customers.tenantId, tenant.id),
           ),
         )
@@ -246,6 +251,16 @@ export async function POST(
           { status: 404 },
         );
       }
+    } else {
+      const matches = await findCustomerMatches(tenant.id, {
+        name: data.customerName,
+        email: data.customerEmail,
+        phone: data.customerPhone,
+      });
+      const best = pickBestCustomerMatch(matches);
+      if (best) {
+        linkedCustomerId = best.id;
+      }
     }
 
     // Create booking
@@ -254,7 +269,7 @@ export async function POST(
       .values({
         tenantId: tenant.id,
         serviceId: data.serviceId,
-        customerId: data.customerId || null,
+        customerId: linkedCustomerId,
         staffId: data.staffId || null,
         customerName: data.customerName,
         customerEmail: data.customerEmail || null,

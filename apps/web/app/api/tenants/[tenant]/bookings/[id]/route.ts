@@ -1,8 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@sass-store/database";
-import { bookings, tenants } from "@sass-store/database/schema";
+import {
+  bookings,
+  customers,
+  services,
+  tenants,
+} from "@sass-store/database/schema";
 import { eq, and } from "drizzle-orm";
 import { z } from "zod";
+import { enqueueBookingRescheduleNotification } from "@/lib/notifications/booking-reschedule-notification";
 
 const VALID_STATUSES = [
   "pending",
@@ -10,9 +16,22 @@ const VALID_STATUSES = [
   "completed",
   "cancelled",
 ] as const;
-const patchSchema = z.object({
-  status: z.enum(VALID_STATUSES),
-});
+const patchSchema = z
+  .object({
+    status: z.enum(VALID_STATUSES).optional(),
+    startTime: z.string().datetime().optional(),
+    endTime: z.string().datetime().optional(),
+    customerId: z.string().uuid().nullable().optional(),
+  })
+  .refine(
+    (data) =>
+      Object.keys(data).length > 0 &&
+      (data.startTime === undefined) === (data.endTime === undefined),
+    {
+      message:
+        "startTime y endTime deben enviarse juntos, o ninguno de los dos",
+    },
+  );
 
 export async function DELETE(
   _request: NextRequest,
@@ -98,10 +117,10 @@ export async function PATCH(
   try {
     const { tenant: tenantSlug, id: bookingId } = await params;
     const body = await request.json();
-    const { status } = patchSchema.parse(body);
+    const data = patchSchema.parse(body);
 
     const [tenant] = await db
-      .select({ id: tenants.id })
+      .select({ id: tenants.id, name: tenants.name })
       .from(tenants)
       .where(eq(tenants.slug, tenantSlug))
       .limit(1);
@@ -110,9 +129,64 @@ export async function PATCH(
       return NextResponse.json({ error: "Tenant not found" }, { status: 404 });
     }
 
+    const [existingBooking] = await db
+      .select({
+        id: bookings.id,
+        customerId: bookings.customerId,
+        customerName: bookings.customerName,
+        customerPhone: bookings.customerPhone,
+        startTime: bookings.startTime,
+        serviceId: bookings.serviceId,
+        serviceName: services.name,
+      })
+      .from(bookings)
+      .innerJoin(services, eq(bookings.serviceId, services.id))
+      .where(and(eq(bookings.id, bookingId), eq(bookings.tenantId, tenant.id)))
+      .limit(1);
+
+    if (!existingBooking) {
+      return NextResponse.json({ error: "Booking not found" }, { status: 404 });
+    }
+
+    if (data.customerId) {
+      const [customer] = await db
+        .select({ id: customers.id })
+        .from(customers)
+        .where(
+          and(
+            eq(customers.id, data.customerId),
+            eq(customers.tenantId, tenant.id),
+          ),
+        )
+        .limit(1);
+
+      if (!customer) {
+        return NextResponse.json(
+          { error: "Cliente no encontrado en este tenant" },
+          { status: 404 },
+        );
+      }
+    }
+
+    const updatePayload: {
+      updatedAt: Date;
+      status?: (typeof VALID_STATUSES)[number];
+      startTime?: Date;
+      endTime?: Date;
+      customerId?: string | null;
+    } = { updatedAt: new Date() };
+    if (data.status !== undefined) updatePayload.status = data.status;
+    if (data.startTime !== undefined) {
+      updatePayload.startTime = new Date(data.startTime);
+      updatePayload.endTime = new Date(data.endTime!);
+    }
+    if (data.customerId !== undefined) {
+      updatePayload.customerId = data.customerId;
+    }
+
     const [updated] = await db
       .update(bookings)
-      .set({ status, updatedAt: new Date() })
+      .set(updatePayload)
       .where(and(eq(bookings.id, bookingId), eq(bookings.tenantId, tenant.id)))
       .returning();
 
@@ -120,8 +194,32 @@ export async function PATCH(
       return NextResponse.json({ error: "Booking not found" }, { status: 404 });
     }
 
+    let scheduledNotification = null;
+    if (
+      data.startTime !== undefined &&
+      existingBooking.startTime.getTime() !== updatePayload.startTime!.getTime()
+    ) {
+      try {
+        scheduledNotification = await enqueueBookingRescheduleNotification({
+          tenantId: tenant.id,
+          tenantSlug,
+          tenantName: tenant.name,
+          bookingId: updated.id,
+          customerId: updated.customerId,
+          customerName: updated.customerName,
+          customerPhone: updated.customerPhone,
+          serviceName: existingBooking.serviceName,
+          previousStart: existingBooking.startTime,
+          newStart: updatePayload.startTime!,
+        });
+      } catch (notifyError) {
+        console.error("Booking reschedule notification enqueue:", notifyError);
+      }
+    }
+
     return NextResponse.json({
       data: { ...updated, totalPrice: Number(updated.totalPrice) },
+      scheduledNotification,
     });
   } catch (error) {
     if (error instanceof z.ZodError) {

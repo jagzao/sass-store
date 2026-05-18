@@ -6,6 +6,7 @@ import { db } from "@sass-store/database";
 import { bookings, services } from "@sass-store/database/schema";
 import { eq, and } from "drizzle-orm";
 import CalendarTimeline from "./CalendarTimeline";
+import { getOperatingHours } from "@/lib/calendar/calendar-config-store";
 import { AdminLayoutProvider } from "@/components/home/AdminLayoutProvider";
 import {
   Popover,
@@ -73,6 +74,8 @@ export default async function CalendarAdminPage({ params }: PageProps) {
   const endOfWeek = new Date(currentWeek[6]);
   endOfWeek.setHours(23, 59, 59, 999);
 
+  const operatingHours = await getOperatingHours(tenantData.id);
+
   // Fetch real bookings from database
   const dbBookings = await db
     .select({
@@ -80,6 +83,8 @@ export default async function CalendarAdminPage({ params }: PageProps) {
       serviceName: services.name,
       customerName: bookings.customerName,
       customerPhone: bookings.customerPhone,
+      customerEmail: bookings.customerEmail,
+      customerId: bookings.customerId,
       startTime: bookings.startTime,
       duration: services.duration,
       status: bookings.status,
@@ -101,6 +106,9 @@ export default async function CalendarAdminPage({ params }: PageProps) {
       status: b.status,
       phone: b.customerPhone || "Sin teléfono",
       totalPrice: Number(b.totalPrice),
+      customerId: b.customerId,
+      customerEmail: b.customerEmail,
+      startTimeIso: dt.toISOString(),
     };
   });
 
@@ -168,7 +176,7 @@ export default async function CalendarAdminPage({ params }: PageProps) {
                       className="w-[400px] p-0"
                       sideOffset={8}
                     >
-                      <CalendarSettings />
+                      <CalendarSettings tenantSlug={resolvedParams.tenant} />
                     </PopoverContent>
                   </Popover>
 
@@ -237,6 +245,8 @@ export default async function CalendarAdminPage({ params }: PageProps) {
                   initialBookings={mappedBookings}
                   currentDate={today}
                   tenantSlug={resolvedParams.tenant}
+                  tenantName={tenantData.name}
+                  operatingHours={operatingHours}
                 />
               </div>
             </div>

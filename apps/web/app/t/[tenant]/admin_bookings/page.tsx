@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import AdminRouteGuard from "@/components/auth/AdminRouteGuard";
 import { AdminLayoutProvider } from "@/components/home/AdminLayoutProvider";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 interface Booking {
   id: string;
@@ -129,13 +130,7 @@ export default function AdminBookingsPage() {
     }
   };
 
-  const deleteBooking = async (id: string, name: string) => {
-    if (
-      !window.confirm(
-        `¿Eliminar la cita de ${name}? Esta acción no se puede deshacer.`,
-      )
-    )
-      return;
+  const deleteBooking = async (id: string) => {
     try {
       setUpdating(id);
       const res = await fetch(`/api/tenants/${tenantSlug}/bookings/${id}`, {
@@ -400,16 +395,22 @@ export default function AdminBookingsPage() {
                               Cancelar
                             </button>
                           )}
-                          <button
-                            onClick={() =>
-                              deleteBooking(booking.id, booking.customerName)
+                          <ConfirmDialog
+                            trigger={
+                              <button
+                                disabled={busy}
+                                title="Eliminar cita"
+                                className="p-1.5 text-gray-400 hover:text-red-600 rounded-lg hover:bg-red-50 transition-colors"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </button>
                             }
-                            disabled={busy}
-                            title="Eliminar"
-                            className="p-1.5 text-gray-400 hover:text-red-600 rounded-lg hover:bg-red-50 transition-colors"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </button>
+                            title="¿Eliminar esta cita?"
+                            description="Esta acción no se puede deshacer. Se eliminará la cita de"
+                            subjectName={booking.customerName}
+                            confirmLabel="Eliminar cita"
+                            onConfirm={() => deleteBooking(booking.id)}
+                          />
                         </div>
                       </div>
                     </div>
