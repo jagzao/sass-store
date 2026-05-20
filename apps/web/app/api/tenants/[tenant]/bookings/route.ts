@@ -15,6 +15,7 @@ import {
   findCustomerMatches,
   pickBestCustomerMatch,
 } from "@/lib/customers/match-customer";
+import { enqueueBookingReminderNotifications } from "@/lib/notifications/booking-reminder-notification";
 
 /**
  * Bookings API Endpoint
@@ -296,7 +297,30 @@ export async function POST(
       console.error("Bookings admin notification error:", notificationError);
     }
 
-    return NextResponse.json({ data: newBooking }, { status: 201 });
+    let bookingReminders = null;
+    const bookingStatus = data.status || "pending";
+    if (bookingStatus !== "cancelled") {
+      try {
+        bookingReminders = await enqueueBookingReminderNotifications({
+          tenantId: tenant.id,
+          tenantSlug,
+          tenantName: tenant.name,
+          bookingId: newBooking.id,
+          customerId: linkedCustomerId,
+          customerName: data.customerName,
+          customerPhone: data.customerPhone,
+          serviceName: service.name,
+          startTime: new Date(data.startTime),
+        });
+      } catch (reminderError) {
+        console.error("Booking reminder enqueue error:", reminderError);
+      }
+    }
+
+    return NextResponse.json(
+      { data: newBooking, bookingReminders },
+      { status: 201 },
+    );
   } catch (error) {
     console.error("Bookings POST error:", error);
 

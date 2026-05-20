@@ -7,7 +7,7 @@
 
 import { db } from "@sass-store/database";
 import { scheduledNotifications } from "@sass-store/database/schema";
-import { and, eq, sql } from "drizzle-orm";
+import { and, eq, inArray, sql } from "drizzle-orm";
 import type {
   ScheduledNotificationChannel,
   ScheduledNotificationStatus,
@@ -129,6 +129,28 @@ export async function markNotificationSent(
     .where(eq(scheduledNotifications.id, id))
     .returning();
   return row;
+}
+
+/** Cancela recordatorios pendientes de una cita (reprogramación o cancelación). */
+export async function cancelPendingBookingNotifications(
+  bookingId: string,
+  templateKeys?: string[],
+) {
+  const conditions = [
+    eq(scheduledNotifications.bookingId, bookingId),
+    eq(scheduledNotifications.status, "pending"),
+  ];
+  if (templateKeys?.length) {
+    conditions.push(inArray(scheduledNotifications.templateKey, templateKeys));
+  }
+  return db
+    .update(scheduledNotifications)
+    .set({
+      status: "cancelled",
+      updatedAt: new Date(),
+    })
+    .where(and(...conditions))
+    .returning({ id: scheduledNotifications.id });
 }
 
 export async function markNotificationFailed(id: string, error: string) {

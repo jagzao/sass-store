@@ -331,31 +331,37 @@ Usar `payload.waLink` — no recomendado para producción; la app ya no abre el 
 
 ## 8. Cómo dispara la app una notificación hoy
 
-1. Admin en `/t/{tenant}/admin/calendar` arrastra una cita a nuevo horario.
-2. Confirma en el diálogo.
-3. Frontend: `PATCH /api/tenants/{tenant}/bookings/{id}` con `startTime`, `endTime`.
-4. Backend:
-   - Actualiza `bookings`.
-   - Si cambió `startTime` y hay teléfono → `enqueueBookingRescheduleNotification()`.
-5. Respuesta incluye `scheduledNotification` (fila creada o existente por idempotencia).
+### Nueva cita (recordatorios)
 
-**Sin teléfono:** no se encola; el calendario muestra toast indicándolo.
+1. Cliente o admin crea cita → `POST /api/tenants/{tenant}/bookings`.
+2. Si hay teléfono y la cita no está cancelada → encola `booking_reminder_24h` y/o `booking_reminder_1h` con `scheduled_at` futuro.
+3. n8n envía cuando llega cada `scheduled_at`.
+
+### Reprogramación (calendario admin)
+
+1. Admin arrastra cita → `PATCH` con `startTime`, `endTime`.
+2. Encola `booking_reschedule` (inmediato) y reprograma recordatorios 24h/1h.
+
+**Sin teléfono:** no se encola recordatorio ni reprogramación WhatsApp.
 
 ---
 
 ## 9. Archivos de código relevantes
 
-| Archivo                                                           | Rol                              |
-| ----------------------------------------------------------------- | -------------------------------- |
-| `packages/database/migrations/0017_scheduled_notifications.sql`   | DDL                              |
-| `packages/database/schema.ts`                                     | Drizzle `scheduledNotifications` |
-| `apps/web/lib/notifications/scheduled-notification-queue.ts`      | Encolar / listar / actualizar    |
-| `apps/web/lib/notifications/booking-reschedule-notification.ts`   | Plantilla reprogramación         |
-| `apps/web/lib/notifications/internal-api-auth.ts`                 | Auth Bearer                      |
-| `apps/web/app/api/internal/scheduled-notifications/route.ts`      | GET poll                         |
-| `apps/web/app/api/internal/scheduled-notifications/[id]/route.ts` | PATCH estado                     |
-| `apps/web/app/api/tenants/[tenant]/bookings/[id]/route.ts`        | PATCH booking + encola           |
-| `apps/web/lib/whatsapp.ts`                                        | Referencia Cloud API             |
+| Archivo                                                              | Rol                              |
+| -------------------------------------------------------------------- | -------------------------------- |
+| `packages/database/migrations/0017_scheduled_notifications.sql`      | DDL                              |
+| `packages/database/schema.ts`                                        | Drizzle `scheduledNotifications` |
+| `apps/web/lib/notifications/scheduled-notification-queue.ts`         | Encolar / listar / actualizar    |
+| `apps/web/lib/notifications/booking-reschedule-notification.ts`      | Plantilla reprogramación         |
+| `apps/web/lib/notifications/booking-reminder-notification.ts`        | Recordatorios 24h / 1h           |
+| `apps/web/lib/notifications/notification-template.ts`                | Plantillas por tenant            |
+| `apps/web/app/api/tenants/[tenant]/notifications/templates/route.ts` | GET/PUT mensajes tenant          |
+| `apps/web/lib/notifications/internal-api-auth.ts`                    | Auth Bearer                      |
+| `apps/web/app/api/internal/scheduled-notifications/route.ts`         | GET poll                         |
+| `apps/web/app/api/internal/scheduled-notifications/[id]/route.ts`    | PATCH estado                     |
+| `apps/web/app/api/tenants/[tenant]/bookings/[id]/route.ts`           | PATCH booking + encola           |
+| `apps/web/lib/whatsapp.ts`                                           | Referencia Cloud API             |
 
 ---
 
@@ -391,19 +397,70 @@ curl -s -X PATCH -H "Authorization: Bearer $KEY" -H "Content-Type: application/j
 
 ---
 
-## 12. Extensiones futuras (fuera de alcance actual)
+## 12. Recordatorios de cita (24h y 1h antes) — implementado
 
-| Plantilla              | Trigger app                                  |
-| ---------------------- | -------------------------------------------- |
-| `booking_confirmation` | POST booking público                         |
-| `booking_reminder_24h` | Cron que inserta `scheduled_at = cita - 24h` |
-| `booking_cancelled`    | PATCH status → cancelled                     |
+### Flujo
 
-Mismo patrón: encolar con `template_key` + `payload`; n8n ramifica por `template_key` si hace falta.
+1. El **tenant** define el texto del mensaje (plantillas) vía API o `tenant_configs`.
+2. Al **crear** una cita (`POST /api/tenants/{slug}/bookings`), la app inserta en `scheduled_notifications`:
+   - `template_key = booking_reminder_24h`, `scheduled_at = startTime − 24h` (si aún no pasó)
+   - `template_key = booking_reminder_1h`, `scheduled_at = startTime − 1h` (si aún no pasó)
+3. **n8n** hace poll; cuando `scheduled_at <= NOW()` envía WhatsApp con el `body` ya redactado.
+4. Si **reprograman** la cita: se cancelan recordatorios `pending` y se encolan de nuevo con el nuevo horario.
+5. Si **cancelan** o **eliminan** la cita: recordatorios `pending` → `cancelled`.
+
+### Plantillas por tenant
+
+**GET/PUT** `/api/tenants/{tenantSlug}/notifications/templates`
+
+Placeholders: `{{customerName}}`, `{{tenantName}}`, `{{serviceName}}`, `{{appointmentDateTime}}`
+
+Ejemplo PUT:
+
+```json
+{
+  "reminder24h": "Hola {{customerName}}, mañana tienes cita en {{tenantName}} ({{serviceName}}) a las {{appointmentDateTime}}.",
+  "reminder1h": "Hola {{customerName}}, en 1 hora es tu cita en {{tenantName}}: {{appointmentDateTime}}."
+}
+```
+
+Sin configuración, se usan textos por defecto en español (MX).
+
+En BD (`tenant_configs`):
+
+| category        | key            | value (jsonb)       |
+| --------------- | -------------- | ------------------- |
+| `notifications` | `reminder_24h` | `{ "body": "..." }` |
+| `notifications` | `reminder_1h`  | `{ "body": "..." }` |
+
+### Payload típico (`booking_reminder_24h` / `booking_reminder_1h`)
+
+```json
+{
+  "tenantSlug": "wondernails",
+  "serviceName": "Gel Manicure",
+  "startIso": "2026-06-01T18:00:00.000Z"
+}
+```
+
+**Idempotencia:** `booking_reminder_24h:{bookingId}:{startIso}` (misma cita + mismo horario no duplica).
+
+### n8n
+
+No calcular horarios en n8n: solo enviar filas `pending` cuando el poll las devuelve. Opcional: rama Switch por `template_key` si distintos formatos Meta.
 
 ---
 
-## 13. Contacto / dudas técnicas
+## 13. Otras plantillas (futuro)
+
+| Plantilla              | Trigger app              |
+| ---------------------- | ------------------------ |
+| `booking_confirmation` | POST booking (inmediato) |
+| `booking_cancelled`    | PATCH status → cancelled |
+
+---
+
+## 14. Contacto / dudas técnicas
 
 - Repo: `sass-store` monorepo, app en `apps/web` (dev suele usar puerto **3003** si `PORT=3003` en `.env.local`).
 - Multitenant: ver **§1.1**; poll global o `?tenantSlug=`; cada fila incluye `tenantId` + `payload.tenantSlug`.

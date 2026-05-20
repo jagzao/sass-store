@@ -9,6 +9,8 @@ import {
 import { eq, and } from "drizzle-orm";
 import { z } from "zod";
 import { enqueueBookingRescheduleNotification } from "@/lib/notifications/booking-reschedule-notification";
+import { rescheduleBookingReminderNotifications } from "@/lib/notifications/booking-reminder-notification";
+import { cancelPendingBookingNotifications } from "@/lib/notifications/scheduled-notification-queue";
 
 const VALID_STATUSES = [
   "pending",
@@ -60,6 +62,15 @@ export async function DELETE(
         { error: "Booking not found or does not belong to this tenant" },
         { status: 404 },
       );
+    }
+
+    try {
+      await cancelPendingBookingNotifications(bookingId, [
+        "booking_reminder_24h",
+        "booking_reminder_1h",
+      ]);
+    } catch (cancelError) {
+      console.error("Booking reminder cancel on delete:", cancelError);
     }
 
     return NextResponse.json({ success: true, id: deleted.id });
@@ -195,6 +206,19 @@ export async function PATCH(
     }
 
     let scheduledNotification = null;
+    let bookingReminders = null;
+
+    if (data.status === "cancelled") {
+      try {
+        await cancelPendingBookingNotifications(updated.id, [
+          "booking_reminder_24h",
+          "booking_reminder_1h",
+        ]);
+      } catch (cancelError) {
+        console.error("Booking reminder cancel error:", cancelError);
+      }
+    }
+
     if (
       data.startTime !== undefined &&
       existingBooking.startTime.getTime() !== updatePayload.startTime!.getTime()
@@ -215,11 +239,30 @@ export async function PATCH(
       } catch (notifyError) {
         console.error("Booking reschedule notification enqueue:", notifyError);
       }
+
+      if (updated.status !== "cancelled") {
+        try {
+          bookingReminders = await rescheduleBookingReminderNotifications({
+            tenantId: tenant.id,
+            tenantSlug,
+            tenantName: tenant.name,
+            bookingId: updated.id,
+            customerId: updated.customerId,
+            customerName: updated.customerName,
+            customerPhone: updated.customerPhone,
+            serviceName: existingBooking.serviceName,
+            startTime: updatePayload.startTime!,
+          });
+        } catch (reminderError) {
+          console.error("Booking reminder reschedule error:", reminderError);
+        }
+      }
     }
 
     return NextResponse.json({
       data: { ...updated, totalPrice: Number(updated.totalPrice) },
       scheduledNotification,
+      bookingReminders,
     });
   } catch (error) {
     if (error instanceof z.ZodError) {

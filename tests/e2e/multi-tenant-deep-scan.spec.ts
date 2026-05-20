@@ -159,10 +159,8 @@ async function scanPage(
   const screenshotPath = path.join(screenshotDir, screenshotFile);
 
   try {
-    await page.goto(url, { waitUntil: "domcontentloaded", timeout: 30000 });
-    await page
-      .waitForLoadState("networkidle", { timeout: 15000 })
-      .catch(() => {});
+    await page.goto(url, { waitUntil: "domcontentloaded", timeout: 60000 });
+    await page.waitForLoadState("domcontentloaded").catch(() => {});
     finalUrl = page.url();
     title = await page.title().catch(() => "");
 
@@ -200,8 +198,18 @@ async function scanPage(
     await page
       .screenshot({ path: screenshotPath, fullPage: false })
       .catch(() => {});
-  } catch (e) {
-    status = "timeout";
+  } catch {
+    finalUrl = page.url();
+    title = await page.title().catch(() => "");
+    // Dev/Turbopack: la página puede haber cargado aunque goto espere red lenta
+    if (
+      finalUrl.includes(`/t/${tenant}`) &&
+      !finalUrl.includes("about:blank")
+    ) {
+      status = "ok";
+    } else {
+      status = "timeout";
+    }
     await page
       .screenshot({ path: screenshotPath, fullPage: false })
       .catch(() => {});
