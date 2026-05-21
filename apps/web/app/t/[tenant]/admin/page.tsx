@@ -652,21 +652,22 @@ export default async function AdminDashboardPage({ params }: PageProps) {
                   className={`flex items-center justify-between p-3 border ${isLuxury ? "border-[#D4AF37]/10 bg-[#121212]/50" : "border-gray-200"} rounded-lg`}
                 >
                   <div className="flex items-center">
-                    <span className="text-2xl mr-3">📧</span>
+                    <span className="text-2xl mr-3">📱</span>
                     <div>
                       <div className="font-medium">Notificaciones</div>
                       <div
                         className={`text-sm ${isLuxury ? "text-gray-400" : "text-gray-500"}`}
                       >
-                        Email y SMS
+                        WhatsApp, recordatorios y campañas
                       </div>
                     </div>
                   </div>
-                  <button
+                  <a
+                    href={`/t/${resolvedParams.tenant}/admin/notifications`}
                     className={`${isLuxury ? "text-[#D4AF37] hover:text-[#b3932d]" : "text-indigo-600 hover:text-indigo-700"} text-sm`}
                   >
-                    Configurar
-                  </button>
+                    Gestionar →
+                  </a>
                 </div>
               </div>
             </div>
