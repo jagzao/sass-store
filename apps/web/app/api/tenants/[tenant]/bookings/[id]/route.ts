@@ -11,6 +11,8 @@ import { z } from "zod";
 import { enqueueBookingRescheduleNotification } from "@/lib/notifications/booking-reschedule-notification";
 import { rescheduleBookingReminderNotifications } from "@/lib/notifications/booking-reminder-notification";
 import { cancelPendingBookingNotifications } from "@/lib/notifications/scheduled-notification-queue";
+import { enqueueBookingCancelledNotification } from "@/lib/notifications/booking-cancelled-notification";
+import { enqueueBookingConfirmedNotification } from "@/lib/notifications/booking-confirmation-notification";
 
 const VALID_STATUSES = [
   "pending",
@@ -207,15 +209,44 @@ export async function PATCH(
 
     let scheduledNotification = null;
     let bookingReminders = null;
+    let statusNotification = null;
+
+    const notifBase = {
+      tenantId: tenant.id,
+      tenantSlug,
+      tenantName: tenant.name,
+      bookingId: updated.id,
+      customerId: updated.customerId,
+      customerName: updated.customerName,
+      customerPhone: updated.customerPhone,
+      serviceName: existingBooking.serviceName,
+      startTime: updatePayload.startTime ?? existingBooking.startTime,
+    };
 
     if (data.status === "cancelled") {
       try {
         await cancelPendingBookingNotifications(updated.id, [
           "booking_reminder_24h",
           "booking_reminder_1h",
+          "booking_review_request",
         ]);
       } catch (cancelError) {
         console.error("Booking reminder cancel error:", cancelError);
+      }
+      try {
+        statusNotification =
+          await enqueueBookingCancelledNotification(notifBase);
+      } catch (e) {
+        console.error("Booking cancelled notification error:", e);
+      }
+    }
+
+    if (data.status === "confirmed") {
+      try {
+        statusNotification =
+          await enqueueBookingConfirmedNotification(notifBase);
+      } catch (e) {
+        console.error("Booking confirmed notification error:", e);
       }
     }
 
@@ -263,6 +294,7 @@ export async function PATCH(
       data: { ...updated, totalPrice: Number(updated.totalPrice) },
       scheduledNotification,
       bookingReminders,
+      statusNotification,
     });
   } catch (error) {
     if (error instanceof z.ZodError) {

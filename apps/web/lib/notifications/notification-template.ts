@@ -4,18 +4,46 @@ import { and, eq } from "drizzle-orm";
 
 export const NOTIFICATIONS_CATEGORY = "notifications";
 
+export type NotificationTemplateKey =
+  | "reminder_24h"
+  | "reminder_1h"
+  | "confirmation"
+  | "cancelled"
+  | "confirmed"
+  | "noshow"
+  | "review_request";
+
+// Keep old type alias for backwards compat
 export type ReminderTemplateKey = "reminder_24h" | "reminder_1h";
 
-export type TenantReminderTemplates = {
+export type TenantNotificationTemplates = {
   reminder24h: string;
   reminder1h: string;
+  confirmation: string;
+  cancelled: string;
+  confirmed: string;
+  noshow: string;
+  reviewRequest: string;
 };
 
-const DEFAULT_TEMPLATES: TenantReminderTemplates = {
+// Keep old type alias for backwards compat
+export type TenantReminderTemplates = TenantNotificationTemplates;
+
+const DEFAULT_TEMPLATES: TenantNotificationTemplates = {
   reminder24h:
     "Hola {{customerName}}, te recordamos que mañana tienes cita en {{tenantName}} para {{serviceName}} el {{appointmentDateTime}}. ¡Te esperamos!",
   reminder1h:
     "Hola {{customerName}}, tu cita en {{tenantName}} ({{serviceName}}) es en 1 hora: {{appointmentDateTime}}. ¡Te esperamos!",
+  confirmation:
+    "Hola {{customerName}}, tu cita en {{tenantName}} para {{serviceName}} ha sido agendada para el {{appointmentDateTime}}. ¡Te esperamos! Si necesitas cambiar algo, responde este mensaje.",
+  cancelled:
+    "Hola {{customerName}}, te informamos que tu cita en {{tenantName}} para {{serviceName}} del {{appointmentDateTime}} ha sido cancelada. Para reagendar, responde este mensaje.",
+  confirmed:
+    "Hola {{customerName}}, tu cita en {{tenantName}} para {{serviceName}} el {{appointmentDateTime}} ha sido confirmada. ¡Te esperamos!",
+  noshow:
+    "Hola {{customerName}}, notamos que no pudiste asistir a tu cita en {{tenantName}} para {{serviceName}}. ¿Te gustaría reagendar? Responde este mensaje y con gusto te ayudamos.",
+  reviewRequest:
+    "Hola {{customerName}}, esperamos que hayas disfrutado tu visita a {{tenantName}}. ¿Podrías dejarnos una reseña? Tu opinión nos ayuda mucho. ¡Gracias!",
 };
 
 export function formatAppointmentDateTime(d: Date): string {
@@ -38,9 +66,31 @@ export function interpolateTemplate(
   );
 }
 
-export async function getTenantReminderTemplates(
+function extractBody(raw: unknown): string | null {
+  if (typeof raw === "string") return raw;
+  if (
+    raw &&
+    typeof raw === "object" &&
+    "body" in raw &&
+    typeof (raw as { body: unknown }).body === "string"
+  )
+    return (raw as { body: string }).body;
+  return null;
+}
+
+const TEMPLATE_KEY_MAP: Record<string, keyof TenantNotificationTemplates> = {
+  reminder_24h: "reminder24h",
+  reminder_1h: "reminder1h",
+  confirmation: "confirmation",
+  cancelled: "cancelled",
+  confirmed: "confirmed",
+  noshow: "noshow",
+  review_request: "reviewRequest",
+};
+
+export async function getTenantNotificationTemplates(
   tenantId: string,
-): Promise<TenantReminderTemplates> {
+): Promise<TenantNotificationTemplates> {
   const rows = await db
     .select({ key: tenantConfigs.key, value: tenantConfigs.value })
     .from(tenantConfigs)
@@ -53,22 +103,16 @@ export async function getTenantReminderTemplates(
 
   const out = { ...DEFAULT_TEMPLATES };
   for (const row of rows) {
-    const raw = row.value;
-    const body =
-      typeof raw === "string"
-        ? raw
-        : raw &&
-            typeof raw === "object" &&
-            "body" in raw &&
-            typeof (raw as { body: unknown }).body === "string"
-          ? (raw as { body: string }).body
-          : null;
+    const body = extractBody(row.value);
     if (!body?.trim()) continue;
-    if (row.key === "reminder_24h") out.reminder24h = body.trim();
-    if (row.key === "reminder_1h") out.reminder1h = body.trim();
+    const field = TEMPLATE_KEY_MAP[row.key];
+    if (field) out[field] = body.trim();
   }
   return out;
 }
+
+// Backwards-compatible alias
+export const getTenantReminderTemplates = getTenantNotificationTemplates;
 
 export async function saveTenantReminderTemplate(
   tenantId: string,
