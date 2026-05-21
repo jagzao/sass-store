@@ -36,6 +36,12 @@ const NAV_ITEMS: NavItem[] = [
   { label: "Finanzas", href: "/finance", emoji: "💰", authProtected: true },
   { label: "Redes", href: "/social", emoji: "📱" },
   { label: "Inventario", href: "/inventory", emoji: "📦" },
+  {
+    label: "Notificaciones",
+    href: "/admin/notifications",
+    emoji: "🔔",
+    authProtected: true,
+  },
 ];
 
 /**
