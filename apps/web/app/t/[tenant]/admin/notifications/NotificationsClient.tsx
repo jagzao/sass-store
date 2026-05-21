@@ -28,6 +28,8 @@ import {
   RefreshCw,
 } from "lucide-react";
 import type { TenantNotificationTemplates } from "@/lib/notifications/notification-template";
+import { useAdminTheme } from "@/components/admin/admin-theme-context";
+import { adminCardStyle } from "@/lib/tenant/admin-theme";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -161,6 +163,7 @@ function TemplateEditor({
   value,
   onChange,
   saving,
+  primaryColor,
 }: {
   label: string;
   desc: string;
@@ -169,6 +172,7 @@ function TemplateEditor({
   value: string;
   onChange: (key: keyof TenantNotificationTemplates, val: string) => void;
   saving: boolean;
+  primaryColor: string;
 }) {
   const insertPlaceholder = (p: string) => {
     onChange(fieldKey, value + p);
@@ -198,7 +202,12 @@ function TemplateEditor({
             key={p}
             type="button"
             onClick={() => insertPlaceholder(p)}
-            className="text-xs px-2 py-0.5 bg-blue-50 text-blue-600 rounded border border-blue-100 hover:bg-blue-100 transition-colors"
+            className="text-xs px-2 py-0.5 rounded border transition-colors"
+            style={{
+              color: primaryColor,
+              borderColor: `${primaryColor}40`,
+              backgroundColor: `${primaryColor}14`,
+            }}
           >
             {p}
           </button>
@@ -265,6 +274,11 @@ export function NotificationsClient({
   initialStaffPhone,
   totalCustomersWithPhone,
 }: Props) {
+  const theme = useAdminTheme();
+  const cardCls =
+    "bg-white border border-gray-200 shadow-sm rounded-lg text-gray-800";
+  const sectionTitle = `${theme.serifHeading ? "font-serif" : ""} text-base font-semibold`;
+  const cardSurface = adminCardStyle(theme);
   // ── Templates state ──────────────────────────────────────────────────────
   const [templates, setTemplates] =
     useState<TenantNotificationTemplates>(initialTemplates);
@@ -433,9 +447,7 @@ export function NotificationsClient({
                 key={tab.value}
                 value={tab.value}
                 onClick={() => tab.value === "history" && loadHistory()}
-                className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300
-                  data-[state=active]:bg-[#C5A059] data-[state=active]:text-white data-[state=active]:shadow-md
-                  data-[state=inactive]:text-gray-600 data-[state=inactive]:hover:bg-[#C5A059]/10"
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 data-[state=active]:shadow-md data-[state=active]:bg-[var(--color-primary)] data-[state=active]:text-white data-[state=inactive]:text-gray-600 data-[state=inactive]:hover:bg-gray-100"
               >
                 {tab.icon}
                 {tab.label}
@@ -447,27 +459,30 @@ export function NotificationsClient({
         {/* ── TAB 1: Templates ─────────────────────────────────────────────── */}
         <TabsContent value="templates" className="mt-0 outline-none space-y-6">
           {/* Staff phone */}
-          <Card className="border-[#C5A059]/20">
+          <Card className={cardCls} style={cardSurface}>
             <CardHeader className="pb-3">
-              <CardTitle className="text-base flex items-center gap-2">
-                <Users size={16} className="text-[#C5A059]" />
+              <CardTitle
+                className={`${sectionTitle} flex items-center gap-2`}
+                style={{ color: theme.headingColor }}
+              >
+                <Users size={16} style={{ color: theme.primary }} />
                 Número de WhatsApp del negocio (staff)
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-gray-500">
                 Las notificaciones de nueva cita y recordatorios llegarán a este
                 número. Dejarlo vacío desactiva los avisos al staff.
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="flex gap-3 items-center max-w-sm">
-                <span className="text-sm text-gray-500 shrink-0">🇲🇽 +52</span>
+                <span className="text-sm shrink-0 text-gray-500">🇲🇽 +52</span>
                 <Input
                   placeholder="551234567890"
                   value={staffPhone}
                   onChange={(e) =>
                     setStaffPhone(e.target.value.replace(/\D/g, ""))
                   }
-                  className="font-mono"
+                  className="font-mono bg-white"
                   maxLength={15}
                 />
               </div>
@@ -475,13 +490,16 @@ export function NotificationsClient({
           </Card>
 
           {/* Client templates */}
-          <Card>
+          <Card className={cardCls} style={cardSurface}>
             <CardHeader className="pb-3">
-              <CardTitle className="text-base flex items-center gap-2">
-                <Bell size={16} className="text-[#C5A059]" />
+              <CardTitle
+                className={`${sectionTitle} flex items-center gap-2`}
+                style={{ color: theme.headingColor }}
+              >
+                <Bell size={16} style={{ color: theme.primary }} />
                 Mensajes al cliente
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-gray-500">
                 Personaliza cada mensaje usando los marcadores de posición.
               </CardDescription>
             </CardHeader>
@@ -496,16 +514,20 @@ export function NotificationsClient({
                   value={templates[t.key] as string}
                   onChange={handleTemplateChange}
                   saving={templateSaving}
+                  primaryColor={theme.primary}
                 />
               ))}
             </CardContent>
           </Card>
 
           {/* Staff templates */}
-          <Card>
+          <Card className={cardCls} style={cardSurface}>
             <CardHeader className="pb-3">
-              <CardTitle className="text-base flex items-center gap-2">
-                <Settings size={16} className="text-[#C5A059]" />
+              <CardTitle
+                className={`${sectionTitle} flex items-center gap-2`}
+                style={{ color: theme.headingColor }}
+              >
+                <Settings size={16} style={{ color: theme.primary }} />
                 Mensajes al negocio (staff)
               </CardTitle>
               <CardDescription>
@@ -523,6 +545,7 @@ export function NotificationsClient({
                   value={templates[t.key] as string}
                   onChange={handleTemplateChange}
                   saving={templateSaving}
+                  primaryColor={theme.primary}
                 />
               ))}
             </CardContent>
@@ -533,7 +556,8 @@ export function NotificationsClient({
             <Button
               onClick={saveTemplates}
               disabled={templateSaving}
-              className="bg-[#C5A059] hover:bg-[#B08040] text-white px-6"
+              className="px-6 text-white hover:opacity-90"
+              style={{ backgroundColor: theme.primary }}
             >
               {templateSaving ? (
                 <Loader2 size={16} className="animate-spin mr-2" />
@@ -556,10 +580,13 @@ export function NotificationsClient({
             {/* Left: config */}
             <div className="space-y-5">
               {/* Recipients */}
-              <Card>
+              <Card className={cardCls} style={cardSurface}>
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-base flex items-center gap-2">
-                    <Users size={16} className="text-[#C5A059]" />
+                  <CardTitle
+                    className={`${sectionTitle} flex items-center gap-2`}
+                    style={{ color: theme.headingColor }}
+                  >
+                    <Users size={16} style={{ color: theme.primary }} />
                     Destinatarios
                   </CardTitle>
                   <CardDescription>
@@ -589,7 +616,7 @@ export function NotificationsClient({
                       key={opt.value}
                       className={`flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition-all ${
                         recipientType === opt.value
-                          ? "border-[#C5A059] bg-[#C5A059]/5"
+                          ? "border-[var(--color-primary)] bg-[var(--color-primary)]/5"
                           : "border-gray-100 hover:border-gray-200"
                       }`}
                     >
@@ -599,7 +626,7 @@ export function NotificationsClient({
                         value={opt.value}
                         checked={recipientType === opt.value}
                         onChange={() => setRecipientType(opt.value)}
-                        className="mt-0.5 accent-[#C5A059]"
+                        className="mt-0.5 accent-[var(--color-primary)]"
                       />
                       <div>
                         <p className="text-sm font-medium text-gray-800">
@@ -650,10 +677,13 @@ export function NotificationsClient({
               </Card>
 
               {/* Schedule */}
-              <Card>
+              <Card className={cardCls} style={cardSurface}>
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-base flex items-center gap-2">
-                    <Clock size={16} className="text-[#C5A059]" />
+                  <CardTitle
+                    className={`${sectionTitle} flex items-center gap-2`}
+                    style={{ color: theme.headingColor }}
+                  >
+                    <Clock size={16} style={{ color: theme.primary }} />
                     Programación
                   </CardTitle>
                 </CardHeader>
@@ -664,7 +694,7 @@ export function NotificationsClient({
                         type="radio"
                         checked={scheduleNow}
                         onChange={() => setScheduleNow(true)}
-                        className="accent-[#C5A059]"
+                        className="accent-[var(--color-primary)]"
                       />
                       <span className="text-sm">Enviar ahora</span>
                     </label>
@@ -673,7 +703,7 @@ export function NotificationsClient({
                         type="radio"
                         checked={!scheduleNow}
                         onChange={() => setScheduleNow(false)}
-                        className="accent-[#C5A059]"
+                        className="accent-[var(--color-primary)]"
                       />
                       <span className="text-sm">Programar</span>
                     </label>
@@ -692,10 +722,13 @@ export function NotificationsClient({
 
             {/* Right: message + preview */}
             <div className="space-y-5">
-              <Card>
+              <Card className={cardCls} style={cardSurface}>
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-base flex items-center gap-2">
-                    <Send size={16} className="text-[#C5A059]" />
+                  <CardTitle
+                    className={`${sectionTitle} flex items-center gap-2`}
+                    style={{ color: theme.headingColor }}
+                  >
+                    <Send size={16} style={{ color: theme.primary }} />
                     Mensaje
                   </CardTitle>
                   <CardDescription>
@@ -719,14 +752,14 @@ export function NotificationsClient({
               </Card>
 
               {/* Preview + send */}
-              <Card className="border-[#C5A059]/20 bg-[#C5A059]/5">
+              <Card className="border-[var(--color-primary)]/20 bg-[var(--color-primary)]/5">
                 <CardContent className="pt-4 space-y-3">
                   <div className="flex items-center justify-between">
                     <p className="text-sm font-medium text-gray-700">Resumen</p>
                     {recipientType !== "specific" && (
                       <button
                         onClick={fetchEstimate}
-                        className="text-xs text-[#C5A059] hover:underline flex items-center gap-1"
+                        className="text-xs text-[var(--color-primary)] hover:underline flex items-center gap-1"
                       >
                         <RefreshCw size={11} /> Actualizar
                       </button>
@@ -734,7 +767,7 @@ export function NotificationsClient({
                   </div>
                   <div className="grid grid-cols-2 gap-3 text-sm">
                     <div className="bg-white rounded-lg p-3 text-center">
-                      <p className="text-2xl font-bold text-[#C5A059]">
+                      <p className="text-2xl font-bold text-[var(--color-primary)]">
                         {estimatedCount ?? "—"}
                       </p>
                       <p className="text-xs text-gray-500">
@@ -763,7 +796,7 @@ export function NotificationsClient({
                       !broadcastMsg.trim() ||
                       estimatedCount === 0
                     }
-                    className="w-full bg-[#C5A059] hover:bg-[#B08040] text-white"
+                    className="w-full bg-[var(--color-primary)] hover:opacity-90 text-white"
                   >
                     {broadcastSending ? (
                       <>
@@ -842,8 +875,8 @@ export function NotificationsClient({
                 }}
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
                   historyFilter === f
-                    ? "bg-[#C5A059] text-white border-[#C5A059]"
-                    : "bg-white text-gray-600 border-gray-200 hover:border-[#C5A059]/50"
+                    ? "bg-[var(--color-primary)] text-white border-[var(--color-primary)]"
+                    : "bg-white text-gray-600 border-gray-200 hover:border-[var(--color-primary)]/50"
                 }`}
               >
                 {f === "" ? "Todos" : f.charAt(0).toUpperCase() + f.slice(1)}
@@ -862,11 +895,11 @@ export function NotificationsClient({
           </div>
 
           {/* Table */}
-          <Card>
+          <Card className={cardCls} style={cardSurface}>
             <CardContent className="p-0">
               {historyLoading ? (
                 <div className="flex justify-center items-center h-32">
-                  <Loader2 className="animate-spin text-[#C5A059]" />
+                  <Loader2 className="animate-spin text-[var(--color-primary)]" />
                 </div>
               ) : history.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-32 text-gray-400">
