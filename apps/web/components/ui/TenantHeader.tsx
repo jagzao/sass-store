@@ -42,14 +42,19 @@ export default function TenantHeader({
     "/bookings",
     "/settings",
     "/admin",
-    "/admin_bookings",
   ];
 
-  // Keep the tenant public header visible on admin calendar,
-  // because this screen relies on the same top branding/nav context.
-  const isAdminCalendarRoute = pathname?.includes("/admin/calendar");
+  // Páginas admin que deben conservar el navbar público (logo + nav del tenant).
+  const keepPublicHeaderRoutes = [
+    "/admin/calendar",
+    "/admin_bookings",
+    "/admin/notifications",
+  ];
+  const showPublicTenantHeader = keepPublicHeaderRoutes.some((route) =>
+    pathname?.includes(route),
+  );
   const isDashboardRoute =
-    !isAdminCalendarRoute &&
+    !showPublicTenantHeader &&
     adminRoutes.some((route) => pathname?.includes(route));
 
   if (isDashboardRoute) {

@@ -9,6 +9,7 @@
 
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { MonthlyAppointmentsBadge } from "./MonthlyAppointmentsBadge";
 
 export interface HomeTenantHeaderProps {
@@ -32,25 +33,45 @@ export default function HomeTenantHeader({
 }: HomeTenantHeaderProps) {
   const { data: session } = useSession();
   const user = session?.user as any;
+  const pathname = usePathname();
 
   const isWondernails =
     tenantSlug === "wondernails" || tenantSlug === "zo-system";
+
+  // Páginas que usan el navbar público: ocultar la barra interna duplicada
+  const hideSecondaryAdminBar =
+    pathname?.includes("/admin_bookings") ||
+    pathname?.includes("/admin/notifications");
 
   const headerClasses = isWondernails
     ? "bg-[#0D0D0D]/90 backdrop-blur-md border-b border-white/10 text-white"
     : "bg-white/95 backdrop-blur-sm border-b border-[#C5A059]/20 text-gray-800";
 
+  if (hideSecondaryAdminBar) {
+    return null;
+  }
+
   return (
     <header className={`sticky top-0 z-20 ${headerClasses}`}>
       <div className="flex items-center justify-between px-4 py-3 lg:px-6">
-        {/* Left: Hamburger (tablet/mobile) */}
-        <div className="flex items-center gap-3 w-1/3">
-          {/* Hamburger Menu Button - Tablet only */}
+        {/* Left: marca + menú */}
+        <div className="flex items-center gap-3 w-1/3 min-w-0">
+          <Link
+            href={`/t/${tenantSlug}/admin`}
+            className={`truncate font-semibold text-sm sm:text-base hover:opacity-80 ${
+              isWondernails ? "text-white" : "text-gray-900"
+            }`}
+          >
+            {tenantName}
+          </Link>
           <button
             data-testid="mobile-menu-trigger"
             onClick={onMenuClick}
-            className="hidden md:flex lg:hidden p-2 rounded-lg text-gray-600 
-                       hover:bg-[#E6E6FA]/30 hover:text-[#C5A059] transition-colors"
+            className={`lg:hidden p-2 rounded-lg transition-colors ${
+              isWondernails
+                ? "text-white/80 hover:bg-white/10"
+                : "text-gray-600 hover:bg-[#E6E6FA]/30 hover:text-[#C5A059]"
+            }`}
             aria-label="Abrir menú"
           >
             <svg
