@@ -17,6 +17,10 @@ import {
 } from "@/lib/customers/match-customer";
 import { enqueueBookingReminderNotifications } from "@/lib/notifications/booking-reminder-notification";
 import { enqueueBookingConfirmationNotification } from "@/lib/notifications/booking-confirmation-notification";
+import {
+  enqueueStaffNewBookingNotification,
+  enqueueStaffReminderNotifications,
+} from "@/lib/notifications/booking-staff-notification";
 
 /**
  * Bookings API Endpoint
@@ -327,6 +331,18 @@ export async function POST(
           await enqueueBookingReminderNotifications(notifParams);
       } catch (reminderError) {
         console.error("Booking reminder enqueue error:", reminderError);
+      }
+
+      // Staff alerts: new booking alert + evening before + 2h before
+      try {
+        await enqueueStaffNewBookingNotification(notifParams);
+      } catch (e) {
+        console.error("Staff new booking notification error:", e);
+      }
+      try {
+        await enqueueStaffReminderNotifications(notifParams);
+      } catch (e) {
+        console.error("Staff reminder notification error:", e);
       }
     }
 

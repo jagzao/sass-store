@@ -13,6 +13,7 @@ import { rescheduleBookingReminderNotifications } from "@/lib/notifications/book
 import { cancelPendingBookingNotifications } from "@/lib/notifications/scheduled-notification-queue";
 import { enqueueBookingCancelledNotification } from "@/lib/notifications/booking-cancelled-notification";
 import { enqueueBookingConfirmedNotification } from "@/lib/notifications/booking-confirmation-notification";
+import { rescheduleStaffReminderNotifications } from "@/lib/notifications/booking-staff-notification";
 
 const VALID_STATUSES = [
   "pending",
@@ -272,20 +273,27 @@ export async function PATCH(
       }
 
       if (updated.status !== "cancelled") {
+        const rescheduleParams = {
+          tenantId: tenant.id,
+          tenantSlug,
+          tenantName: tenant.name,
+          bookingId: updated.id,
+          customerId: updated.customerId,
+          customerName: updated.customerName,
+          customerPhone: updated.customerPhone,
+          serviceName: existingBooking.serviceName,
+          startTime: updatePayload.startTime!,
+        };
         try {
-          bookingReminders = await rescheduleBookingReminderNotifications({
-            tenantId: tenant.id,
-            tenantSlug,
-            tenantName: tenant.name,
-            bookingId: updated.id,
-            customerId: updated.customerId,
-            customerName: updated.customerName,
-            customerPhone: updated.customerPhone,
-            serviceName: existingBooking.serviceName,
-            startTime: updatePayload.startTime!,
-          });
+          bookingReminders =
+            await rescheduleBookingReminderNotifications(rescheduleParams);
         } catch (reminderError) {
           console.error("Booking reminder reschedule error:", reminderError);
+        }
+        try {
+          await rescheduleStaffReminderNotifications(rescheduleParams);
+        } catch (e) {
+          console.error("Staff reminder reschedule error:", e);
         }
       }
     }

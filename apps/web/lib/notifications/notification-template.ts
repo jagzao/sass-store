@@ -11,12 +11,16 @@ export type NotificationTemplateKey =
   | "cancelled"
   | "confirmed"
   | "noshow"
-  | "review_request";
+  | "review_request"
+  | "staff_new_booking"
+  | "staff_reminder_evening"
+  | "staff_reminder_2h";
 
 // Keep old type alias for backwards compat
 export type ReminderTemplateKey = "reminder_24h" | "reminder_1h";
 
 export type TenantNotificationTemplates = {
+  // Client notifications
   reminder24h: string;
   reminder1h: string;
   confirmation: string;
@@ -24,6 +28,10 @@ export type TenantNotificationTemplates = {
   confirmed: string;
   noshow: string;
   reviewRequest: string;
+  // Staff/owner notifications
+  staffNewBooking: string;
+  staffReminderEvening: string;
+  staffReminder2h: string;
 };
 
 // Keep old type alias for backwards compat
@@ -44,6 +52,13 @@ const DEFAULT_TEMPLATES: TenantNotificationTemplates = {
     "Hola {{customerName}}, notamos que no pudiste asistir a tu cita en {{tenantName}} para {{serviceName}}. ¿Te gustaría reagendar? Responde este mensaje y con gusto te ayudamos.",
   reviewRequest:
     "Hola {{customerName}}, esperamos que hayas disfrutado tu visita a {{tenantName}}. ¿Podrías dejarnos una reseña? Tu opinión nos ayuda mucho. ¡Gracias!",
+  // Staff templates
+  staffNewBooking:
+    "📅 Nueva cita: {{customerName}} | {{serviceName}} | {{appointmentDateTime}}. Teléfono: {{customerPhone}}.",
+  staffReminderEvening:
+    "🌙 Recordatorio para mañana: {{customerName}} | {{serviceName}} | {{appointmentDateTime}}. ¡Prepara todo!",
+  staffReminder2h:
+    "⏰ En 2 horas: {{customerName}} para {{serviceName}} ({{appointmentDateTime}}). ¡A punto!",
 };
 
 export function formatAppointmentDateTime(d: Date): string {
@@ -86,6 +101,9 @@ const TEMPLATE_KEY_MAP: Record<string, keyof TenantNotificationTemplates> = {
   confirmed: "confirmed",
   noshow: "noshow",
   review_request: "reviewRequest",
+  staff_new_booking: "staffNewBooking",
+  staff_reminder_evening: "staffReminderEvening",
+  staff_reminder_2h: "staffReminder2h",
 };
 
 export async function getTenantNotificationTemplates(
