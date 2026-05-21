@@ -26,6 +26,8 @@ import {
   AlertCircle,
   Loader2,
   RefreshCw,
+  Search,
+  X,
 } from "lucide-react";
 import type { TenantNotificationTemplates } from "@/lib/notifications/notification-template";
 import { useAdminTheme } from "@/components/admin/admin-theme-context";
@@ -66,6 +68,12 @@ type HistoryStats = {
 };
 
 type RecipientType = "all" | "upcoming" | "inactive" | "specific";
+
+type CustomerOption = {
+  id: string;
+  name: string;
+  phone: string;
+};
 
 // ─── Template definitions ──────────────────────────────────────────────────────
 
@@ -327,6 +335,13 @@ export function NotificationsClient({
   const [recipientType, setRecipientType] = useState<RecipientType>("all");
   const [daysAhead, setDaysAhead] = useState(7);
   const [daysSince, setDaysSince] = useState(60);
+  // Specific customers picker
+  const [customerSearch, setCustomerSearch] = useState("");
+  const [customerResults, setCustomerResults] = useState<CustomerOption[]>([]);
+  const [selectedCustomers, setSelectedCustomers] = useState<CustomerOption[]>(
+    [],
+  );
+  const [customerSearching, setCustomerSearching] = useState(false);
   const [broadcastMsg, setBroadcastMsg] = useState("");
   const [scheduleNow, setScheduleNow] = useState(true);
   const [scheduleDate, setScheduleDate] = useState("");
@@ -352,10 +367,55 @@ export function NotificationsClient({
 
   useEffect(() => {
     if (recipientType !== "specific") fetchEstimate();
-  }, [fetchEstimate, recipientType]);
+    else setEstimatedCount(selectedCustomers.length);
+  }, [fetchEstimate, recipientType, selectedCustomers.length]);
+
+  // Search customers for specific picker
+  const searchCustomers = useCallback(
+    async (q: string) => {
+      if (!q.trim()) {
+        setCustomerResults([]);
+        return;
+      }
+      setCustomerSearching(true);
+      try {
+        const res = await fetch(
+          `/api/tenants/${tenantSlug}/customers?search=${encodeURIComponent(q)}&limit=20`,
+        );
+        const json = await res.json();
+        const rows: CustomerOption[] = (json.customers ?? json.data ?? [])
+          .filter((c: { phone?: string }) => c.phone)
+          .map((c: { id: string; name: string; phone: string }) => ({
+            id: c.id,
+            name: c.name,
+            phone: c.phone,
+          }));
+        setCustomerResults(rows);
+      } catch {
+        setCustomerResults([]);
+      } finally {
+        setCustomerSearching(false);
+      }
+    },
+    [tenantSlug],
+  );
+
+  useEffect(() => {
+    const t = setTimeout(() => searchCustomers(customerSearch), 300);
+    return () => clearTimeout(t);
+  }, [customerSearch, searchCustomers]);
+
+  const toggleCustomer = (c: CustomerOption) => {
+    setSelectedCustomers((prev) =>
+      prev.find((x) => x.id === c.id)
+        ? prev.filter((x) => x.id !== c.id)
+        : [...prev, c],
+    );
+  };
 
   const sendBroadcast = async () => {
     if (!broadcastMsg.trim()) return;
+    if (recipientType === "specific" && selectedCustomers.length === 0) return;
     setBroadcastSending(true);
     setBroadcastResult(null);
     try {
@@ -368,6 +428,11 @@ export function NotificationsClient({
         body.recipients = { type: "upcoming", daysAhead };
       if (recipientType === "inactive")
         body.recipients = { type: "inactive", daysSince };
+      if (recipientType === "specific")
+        body.recipients = {
+          type: "specific",
+          customerIds: selectedCustomers.map((c) => c.id),
+        };
 
       const res = await fetch(
         `/api/tenants/${tenantSlug}/notifications/broadcast`,
@@ -384,6 +449,7 @@ export function NotificationsClient({
         text: `✓ ${json.data.queued} mensajes encolados. Llegarán en los próximos 5 minutos.`,
       });
       setBroadcastMsg("");
+      setSelectedCustomers([]);
     } catch (e: unknown) {
       setBroadcastResult({
         ok: false,
@@ -611,6 +677,11 @@ export function NotificationsClient({
                       label: "Sin visitar desde...",
                       desc: "Re-engagement para clientes que no han vuelto",
                     },
+                    {
+                      value: "specific" as RecipientType,
+                      label: "Clientes específicos",
+                      desc: "Elige uno o varios clientes de la lista",
+                    },
                   ].map((opt) => (
                     <label
                       key={opt.value}
@@ -671,6 +742,114 @@ export function NotificationsClient({
                       <Label className="text-xs text-gray-600 shrink-0">
                         días
                       </Label>
+                    </div>
+                  )}
+
+                  {/* ── Specific customer picker ─────────────────────────── */}
+                  {recipientType === "specific" && (
+                    <div className="ml-0 mt-2 space-y-2">
+                      {/* Selected chips */}
+                      {selectedCustomers.length > 0 && (
+                        <div className="flex flex-wrap gap-1.5 p-2 bg-gray-50 rounded-lg border border-gray-200">
+                          {selectedCustomers.map((c) => (
+                            <span
+                              key={c.id}
+                              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs bg-white border border-gray-200 text-gray-700"
+                            >
+                              {c.name}
+                              <button
+                                type="button"
+                                onClick={() => toggleCustomer(c)}
+                                className="ml-0.5 hover:text-red-500 transition-colors"
+                              >
+                                <X size={10} />
+                              </button>
+                            </span>
+                          ))}
+                          <button
+                            type="button"
+                            onClick={() => setSelectedCustomers([])}
+                            className="text-xs text-red-400 hover:text-red-600 ml-1"
+                          >
+                            Limpiar todo
+                          </button>
+                        </div>
+                      )}
+
+                      {/* Search input */}
+                      <div className="relative">
+                        <Search
+                          size={14}
+                          className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                        />
+                        <Input
+                          placeholder="Buscar cliente por nombre o teléfono..."
+                          value={customerSearch}
+                          onChange={(e) => setCustomerSearch(e.target.value)}
+                          className="pl-8 text-sm"
+                        />
+                        {customerSearching && (
+                          <Loader2
+                            size={14}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 animate-spin text-gray-400"
+                          />
+                        )}
+                      </div>
+
+                      {/* Results */}
+                      {customerResults.length > 0 && (
+                        <div className="border border-gray-200 rounded-lg overflow-hidden max-h-48 overflow-y-auto divide-y divide-gray-50">
+                          {customerResults.map((c) => {
+                            const selected = selectedCustomers.some(
+                              (x) => x.id === c.id,
+                            );
+                            return (
+                              <button
+                                key={c.id}
+                                type="button"
+                                onClick={() => toggleCustomer(c)}
+                                className={`w-full flex items-center justify-between px-3 py-2 text-left transition-colors text-sm ${
+                                  selected
+                                    ? "bg-[var(--color-primary)]/5"
+                                    : "hover:bg-gray-50"
+                                }`}
+                              >
+                                <div>
+                                  <p className="font-medium text-gray-800">
+                                    {c.name}
+                                  </p>
+                                  <p className="text-xs text-gray-400">
+                                    {c.phone}
+                                  </p>
+                                </div>
+                                {selected && (
+                                  <CheckCircle2
+                                    size={14}
+                                    className="shrink-0 text-[var(--color-primary)]"
+                                  />
+                                )}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      )}
+
+                      {customerSearch &&
+                        !customerSearching &&
+                        customerResults.length === 0 && (
+                          <p className="text-xs text-gray-400 text-center py-2">
+                            No se encontraron clientes con teléfono registrado
+                          </p>
+                        )}
+
+                      {selectedCustomers.length > 0 && (
+                        <p className="text-xs text-gray-500">
+                          {selectedCustomers.length} cliente
+                          {selectedCustomers.length !== 1 ? "s" : ""}{" "}
+                          seleccionado
+                          {selectedCustomers.length !== 1 ? "s" : ""}
+                        </p>
+                      )}
                     </div>
                   )}
                 </CardContent>
@@ -794,7 +973,9 @@ export function NotificationsClient({
                     disabled={
                       broadcastSending ||
                       !broadcastMsg.trim() ||
-                      estimatedCount === 0
+                      (recipientType === "specific"
+                        ? selectedCustomers.length === 0
+                        : estimatedCount === 0)
                     }
                     className="w-full bg-[var(--color-primary)] hover:opacity-90 text-white"
                   >
