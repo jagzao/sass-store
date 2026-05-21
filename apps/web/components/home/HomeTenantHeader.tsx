@@ -41,7 +41,8 @@ export default function HomeTenantHeader({
   // Páginas que usan el navbar público: ocultar la barra interna duplicada
   const hideSecondaryAdminBar =
     pathname?.includes("/admin_bookings") ||
-    pathname?.includes("/admin/notifications");
+    pathname?.includes("/admin/notifications") ||
+    pathname?.includes("/clientes");
 
   const headerClasses = isWondernails
     ? "bg-[#0D0D0D]/90 backdrop-blur-md border-b border-white/10 text-white"

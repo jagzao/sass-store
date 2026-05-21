@@ -7,6 +7,7 @@ import type { TenantData } from "@/types/tenant";
 import CustomerFileHeader from "@/components/customers/CustomerFileHeader";
 import CustomerFileSummary from "@/components/customers/CustomerFileSummary";
 import CustomerVisitsHistory from "@/components/customers/CustomerVisitsHistory";
+import { getClientTerms } from "@/lib/tenant/client-terminology";
 
 interface PageProps {
   params: Promise<{
@@ -17,6 +18,7 @@ interface PageProps {
 
 export default async function CustomerFilePage({ params }: PageProps) {
   const { tenant: tenantSlug, id: customerId } = await params;
+  const terms = getClientTerms(tenantSlug);
 
   // Get tenant data directly from database (server-side only, no HTTP calls)
   const tenant = await getTenantBySlug(tenantSlug);
@@ -55,7 +57,7 @@ export default async function CustomerFilePage({ params }: PageProps) {
                     href={`/t/${tenantSlug}/clientes`}
                     className={`${isLuxury ? "text-gray-500 hover:text-[#D4AF37]" : "text-gray-700 hover:text-blue-600"} transition-colors`}
                   >
-                    Clientas
+                    {terms.plural}
                   </a>
                 </div>
               </li>
@@ -162,12 +164,12 @@ export async function generateMetadata({ params }: PageProps) {
 
   if (!tenant) {
     return {
-      title: "Expediente de Clienta",
+      title: terms.fileLabel,
     };
   }
 
   return {
-    title: `Expediente de Clienta - ${tenant.name}`,
+    title: `${terms.fileLabel} - ${tenant.name}`,
     description: `Historial completo de visitas y servicios`,
   };
 }

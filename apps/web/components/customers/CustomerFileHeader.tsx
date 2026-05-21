@@ -7,6 +7,7 @@ import {
   useImperativeHandle,
   forwardRef,
 } from "react";
+import { getClientTerms } from "@/lib/tenant/client-terminology";
 import { useRouter } from "next/navigation";
 import {
   User,
@@ -51,6 +52,7 @@ const CustomerFileHeader = forwardRef<
   CustomerFileHeaderHandle,
   CustomerFileHeaderProps
 >(({ tenantSlug, customerId }, ref) => {
+  const t = getClientTerms(tenantSlug);
   const historialRef = useRef<HistorialMedicoHandle>(null);
 
   useImperativeHandle(ref, () => ({
@@ -97,7 +99,7 @@ const CustomerFileHeader = forwardRef<
         const data = await response.json();
 
         if (!data.customer) {
-          throw new Error("No se encontraron datos de la clienta");
+          throw new Error(`No se encontraron datos del ${t.singularLower}`);
         }
 
         setCustomer(data.customer);
@@ -114,7 +116,7 @@ const CustomerFileHeader = forwardRef<
         setError(
           error instanceof Error
             ? error.message
-            : "Error al cargar la información de la clienta",
+            : `Error al cargar la información del ${t.singularLower}`,
         );
       } finally {
         setLoading(false);
@@ -185,7 +187,7 @@ const CustomerFileHeader = forwardRef<
       router.refresh(); // Force a refresh to update the customer list
     } catch (error) {
       console.error("Error deleting customer:", error);
-      alert("Error al eliminar la clienta");
+      alert(`Error al eliminar el ${t.singularLower}`);
       setIsDeleting(false);
     }
   };
@@ -214,7 +216,7 @@ const CustomerFileHeader = forwardRef<
             </h3>
             <p className="text-red-700 mb-4">
               {error ||
-                "No se pudo cargar la información de la clienta. Por favor, intente nuevamente."}
+                `No se pudo cargar la información del ${t.singularLower}. Por favor, intente nuevamente.`}
             </p>
             <div className="flex gap-2">
               <button
@@ -244,7 +246,7 @@ const CustomerFileHeader = forwardRef<
                       setError(
                         err instanceof Error
                           ? err.message
-                          : "Error al cargar la información de la clienta",
+                          : `Error al cargar la información del ${t.singularLower}`,
                       );
                     })
                     .finally(() => setLoading(false));
@@ -257,7 +259,7 @@ const CustomerFileHeader = forwardRef<
                 href={`/t/${tenantSlug}/clientes`}
                 className="px-3 py-1 bg-white text-red-800 border border-red-300 rounded-md text-sm hover:bg-red-50 transition-colors"
               >
-                Volver a clientas
+                Volver a {t.pluralLower}
               </a>
             </div>
           </div>
@@ -391,13 +393,13 @@ const CustomerFileHeader = forwardRef<
           trigger={
             <button
               className="ml-4 p-2 rounded-full text-red-400 hover:text-red-600 hover:bg-red-50 transition-colors"
-              title="Eliminar clienta"
+              title={`Eliminar ${t.singularLower}`}
             >
               <Trash2 className="h-5 w-5" />
             </button>
           }
-          title="¿Eliminar esta clienta?"
-          description="Esta acción no se puede deshacer. Se eliminará permanentemente la clienta"
+          title={`¿Eliminar este ${t.singularLower}?`}
+          description={`Esta acción no se puede deshacer. Se eliminará permanentemente el ${t.singularLower}`}
           subjectName={customer.name}
           impactItems={
             stats

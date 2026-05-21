@@ -49,6 +49,7 @@ export default function TenantHeader({
     "/admin/calendar",
     "/admin_bookings",
     "/admin/notifications",
+    "/clientes",
   ];
   const showPublicTenantHeader = keepPublicHeaderRoutes.some((route) =>
     pathname?.includes(route),

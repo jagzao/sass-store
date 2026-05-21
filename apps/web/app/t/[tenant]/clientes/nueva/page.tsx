@@ -1,8 +1,6 @@
-import { notFound } from "next/navigation";
 import { LiveRegionProvider } from "@/components/a11y/LiveRegion";
-import { fetchStatic } from "@/lib/api/fetch-with-cache";
-import type { TenantData } from "@/types/tenant";
 import CustomerForm from "@/components/customers/CustomerForm";
+import { getClientTerms } from "@/lib/tenant/client-terminology";
 
 interface PageProps {
   params: Promise<{
@@ -12,6 +10,7 @@ interface PageProps {
 
 export default async function NewCustomerPage({ params }: PageProps) {
   const { tenant: tenantSlug } = await params;
+  const terms = getClientTerms(tenantSlug);
 
   return (
     <LiveRegionProvider>
@@ -36,14 +35,14 @@ export default async function NewCustomerPage({ params }: PageProps) {
                     href={`/t/${tenantSlug}/clientes`}
                     className="text-gray-700 hover:text-blue-600"
                   >
-                    Clientas
+                    {terms.plural}
                   </a>
                 </div>
               </li>
               <li aria-current="page">
                 <div className="flex items-center">
                   <span className="mx-2 text-gray-400">/</span>
-                  <span className="text-gray-500">Nueva Clienta</span>
+                  <span className="text-gray-500">{terms.addLabel}</span>
                 </div>
               </li>
             </ol>
@@ -52,10 +51,10 @@ export default async function NewCustomerPage({ params }: PageProps) {
           {/* Page Title */}
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              Agregar Nueva Clienta
+              {terms.addLabel}
             </h1>
             <p className="text-gray-600">
-              Complete la información básica de la clienta
+              Complete la información básica del {terms.singularLower}
             </p>
           </div>
 
@@ -79,12 +78,12 @@ export async function generateMetadata({ params }: PageProps) {
     ]);
 
     return {
-      title: `Nueva Clienta - ${tenant.name}`,
-      description: `Agregar nueva clienta en ${tenant.name}`,
+      title: `${terms.addLabel} - ${tenant.name}`,
+      description: `Agregar ${terms.singularLower} en ${tenant.name}`,
     };
   } catch (error) {
     return {
-      title: "Nueva Clienta",
+      title: terms.addLabel,
     };
   }
 }

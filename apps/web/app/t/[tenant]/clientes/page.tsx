@@ -7,6 +7,7 @@ import CustomersList from "@/components/customers/CustomersList";
 import CustomersFilters from "@/components/customers/CustomersFilters";
 import ClientesPageWrapper from "./ClientesPageWrapper";
 import { AdminLayoutProvider } from "@/components/home/AdminLayoutProvider";
+import { getClientTerms } from "@/lib/tenant/client-terminology";
 
 interface PageProps {
   params: Promise<{
@@ -22,44 +23,30 @@ export default async function CustomersPage({
   params,
   searchParams,
 }: PageProps) {
-  console.warn("[CustomersPage] Received params:", params);
   const resolvedParams = await params;
-  console.warn("[CustomersPage] Resolved params:", resolvedParams);
   const { tenant: tenantSlug } = resolvedParams;
-  console.warn("[CustomersPage] Extracted tenantSlug:", tenantSlug);
-
   const resolvedSearchParams = await searchParams;
-  console.warn("[CustomersPage] Resolved searchParams:", resolvedSearchParams);
 
-  // Get tenant data directly from database (server-side only, no HTTP calls)
   const tenantData = await getTenantBySlug(tenantSlug);
+  if (!tenantData) notFound();
 
-  if (!tenantData) {
-    console.error(`[CustomersPage] Tenant not found: ${tenantSlug}`);
-    notFound();
-  }
-
-  console.warn(
-    `[CustomersPage] Successfully loaded tenant: ${tenantData.name}`,
-  );
+  const terms = getClientTerms(tenantSlug);
 
   return (
     <AdminLayoutProvider tenantSlug={tenantSlug}>
       <ClientesPageWrapper tenantSlug={tenantSlug}>
         <LiveRegionProvider>
           <div className="min-h-screen">
-            {/* Main Content */}
             <main className="container mx-auto px-4 py-8">
               <div className="mb-8">
                 <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                  Gestión de Clientas
+                  {terms.managementTitle}
                 </h1>
                 <p className="text-gray-600">
                   Administra expedientes, historial de visitas y próximas citas
                 </p>
               </div>
 
-              {/* Filters */}
               <Suspense
                 fallback={
                   <div className="h-12 bg-gray-100 rounded-lg animate-pulse" />
@@ -71,11 +58,11 @@ export default async function CustomersPage({
                 />
               </Suspense>
 
-              {/* Customers List */}
               <Suspense fallback={<CustomersListSkeleton />}>
                 <CustomersList
                   tenantSlug={tenantSlug}
                   searchParams={resolvedSearchParams}
+                  clientTerms={terms}
                 />
               </Suspense>
             </main>
@@ -115,17 +102,13 @@ function CustomersListSkeleton() {
 
 export async function generateMetadata({ params }: PageProps) {
   const { tenant: tenantSlug } = await params;
-
   const tenant = await getTenantBySlug(tenantSlug);
+  const terms = getClientTerms(tenantSlug);
 
-  if (!tenant) {
-    return {
-      title: "Clientas",
-    };
-  }
+  if (!tenant) return { title: terms.plural };
 
   return {
-    title: `Clientas - ${tenant.name}`,
-    description: `Gestión de clientas y expedientes para ${tenant.name}`,
+    title: `${terms.plural} - ${tenant.name}`,
+    description: `${terms.managementTitle} y expedientes para ${tenant.name}`,
   };
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import type { ClientTerms } from "@/lib/tenant/client-terminology";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -50,12 +51,25 @@ interface CustomersListProps {
     sort?: string;
     order?: string;
   };
+  clientTerms?: ClientTerms;
 }
+
+const DEFAULT_TERMS: ClientTerms = {
+  singular: "Clienta",
+  plural: "Clientas",
+  singularLower: "clienta",
+  pluralLower: "clientas",
+  managementTitle: "Gestión de Clientas",
+  fileLabel: "Expediente de Clienta",
+  addLabel: "Agregar Clienta",
+};
 
 export default function CustomersList({
   tenantSlug,
   searchParams,
+  clientTerms = DEFAULT_TERMS,
 }: CustomersListProps) {
+  const t = clientTerms;
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -188,7 +202,7 @@ export default function CustomersList({
   };
 
   const columnLabels: Record<string, string> = {
-    name: "Clienta",
+    name: t.singular,
     birthday: "Cumpleaños",
     lastVisit: "Última Visita",
     nextAppointment: "Próxima Cita",
@@ -202,7 +216,7 @@ export default function CustomersList({
     return (
       <div className="bg-white rounded-lg shadow p-8 text-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div>
-        <p className="mt-4 text-gray-600">Cargando clientas...</p>
+        <p className="mt-4 text-gray-600">Cargando {t.pluralLower}...</p>
       </div>
     );
   }
@@ -220,16 +234,17 @@ export default function CustomersList({
       <div className="bg-white rounded-lg shadow p-12 text-center">
         <User className="mx-auto h-12 w-12 text-gray-400 mb-4" />
         <h3 className="text-lg font-medium text-gray-900 mb-2">
-          No se encontraron clientas
+          No se encontraron {t.pluralLower}
         </h3>
         <p className="text-gray-600 mb-6">
-          Comienza agregando tu primera clienta al sistema.
+          Comienza agregando tu primer{t.singular.endsWith("a") ? "a" : ""}{" "}
+          {t.singularLower} al sistema.
         </p>
         <Link
           href={`/t/${tenantSlug}/clientes/nueva`}
           className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
         >
-          Agregar Clienta
+          {t.addLabel}
         </Link>
       </div>
     );
@@ -248,13 +263,13 @@ export default function CustomersList({
 
   return (
     <>
-      {/* Modal: Agregar Clienta */}
+      {/* Modal: Agregar */}
       {showAddModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between p-5 border-b border-gray-200">
               <h2 className="text-xl font-semibold text-gray-900">
-                Agregar Nueva Clienta
+                {t.addLabel}
               </h2>
               <button
                 onClick={() => setShowAddModal(false)}
@@ -299,7 +314,7 @@ export default function CustomersList({
           >
             <div className="flex items-center justify-between p-5 border-b border-gray-200 sticky top-0 bg-white z-10">
               <h2 className="text-xl font-semibold text-[#5B21B6] font-serif">
-                Expediente de Clienta
+                {t.fileLabel}
               </h2>
               {/* Center: Save & Close button */}
               <button
@@ -366,7 +381,7 @@ export default function CustomersList({
           <div className="flex items-center gap-3 flex-1 min-w-0">
             <h2 className="text-lg font-semibold text-gray-900 whitespace-nowrap">
               {customers.length}{" "}
-              {customers.length === 1 ? "Clienta" : "Clientas"}
+              {customers.length === 1 ? t.singular : t.plural}
             </h2>
             {searchParams.sort && columnLabels[searchParams.sort] && (
               <button
@@ -404,12 +419,11 @@ export default function CustomersList({
               </button>
             )}
           </div>
-          {/* Agregar Clienta */}
           <button
             onClick={() => setShowAddModal(true)}
             className="inline-flex items-center gap-1.5 px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 whitespace-nowrap"
           >
-            + Agregar Clienta
+            + {t.addLabel}
           </button>
         </div>
 
@@ -429,7 +443,7 @@ export default function CustomersList({
                   onClick={() => handleSort("name")}
                 >
                   <div className="flex items-center">
-                    Clienta
+                    {t.singular}
                     {getSortIcon("name")}
                   </div>
                 </th>
