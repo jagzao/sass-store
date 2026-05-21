@@ -2,6 +2,7 @@ import { db } from "@sass-store/database";
 import { customers, tenants } from "@sass-store/database/schema";
 import { and, eq, isNotNull, ne } from "drizzle-orm";
 import { redirect } from "next/navigation";
+import { AdminLayoutProvider } from "@/components/home/AdminLayoutProvider";
 import { NotificationsClient } from "./NotificationsClient";
 import { getTenantNotificationTemplates } from "@/lib/notifications/notification-template";
 import { getTenantStaffPhone } from "@/lib/notifications/booking-staff-notification";
@@ -21,11 +22,11 @@ export default async function NotificationsPage({
 
   if (!tenant) redirect(`/t/${tenantSlug}/admin`);
 
-  const [templates, staffPhone, customerCount] = await Promise.all([
+  const [templates, staffPhone, customerRows] = await Promise.all([
     getTenantNotificationTemplates(tenant.id),
     getTenantStaffPhone(tenant.id),
     db
-      .select({ count: customers.id })
+      .select({ id: customers.id })
       .from(customers)
       .where(
         and(
@@ -33,17 +34,38 @@ export default async function NotificationsPage({
           isNotNull(customers.phone),
           ne(customers.phone, ""),
         ),
-      )
-      .then((r) => r.length),
+      ),
   ]);
 
   return (
-    <NotificationsClient
-      tenantSlug={tenantSlug}
-      tenantName={tenant.name}
-      initialTemplates={templates}
-      initialStaffPhone={staffPhone}
-      totalCustomersWithPhone={customerCount}
-    />
+    <AdminLayoutProvider tenantSlug={tenantSlug}>
+      <div className="min-h-screen bg-gray-50">
+        <div className="container mx-auto px-4 py-8">
+          <div className="max-w-5xl mx-auto">
+            {/* Breadcrumb */}
+            <div className="mb-6 flex items-center space-x-3">
+              <a
+                href={`/t/${tenantSlug}/admin`}
+                className="text-indigo-600 hover:text-indigo-700 text-sm"
+              >
+                ← Panel Admin
+              </a>
+              <span className="text-gray-400">/</span>
+              <h1 className="text-2xl font-bold text-gray-900">
+                Notificaciones
+              </h1>
+            </div>
+
+            <NotificationsClient
+              tenantSlug={tenantSlug}
+              tenantName={tenant.name}
+              initialTemplates={templates}
+              initialStaffPhone={staffPhone}
+              totalCustomersWithPhone={customerRows.length}
+            />
+          </div>
+        </div>
+      </div>
+    </AdminLayoutProvider>
   );
 }

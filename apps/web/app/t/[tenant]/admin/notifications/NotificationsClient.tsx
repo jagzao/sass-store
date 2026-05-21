@@ -174,7 +174,7 @@ function TemplateEditor({
     onChange(fieldKey, value + p);
   };
   return (
-    <div className="border border-gray-100 rounded-xl p-4 space-y-3 bg-white/60 hover:bg-white/80 transition-all">
+    <div className="border border-gray-200 rounded-xl p-4 space-y-3 bg-white hover:bg-gray-50 transition-all">
       <div className="flex items-start justify-between gap-2">
         <div>
           <p className="font-medium text-gray-800 text-sm">{label}</p>
@@ -407,20 +407,7 @@ export function NotificationsClient({
   // ─────────────────────────────────────────────────────────────────────────
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white p-6 space-y-6">
-      {/* Header */}
-      <div className="flex items-center gap-3">
-        <div className="p-2 bg-[#C5A059]/10 rounded-xl">
-          <Bell className="w-6 h-6 text-[#C5A059]" />
-        </div>
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Notificaciones</h1>
-          <p className="text-sm text-gray-500">
-            {tenantName} · Gestiona mensajes automáticos y campañas
-          </p>
-        </div>
-      </div>
-
+    <div className="space-y-6">
       <Tabs defaultValue="templates" className="w-full">
         {/* Tab nav */}
         <div className="sticky top-4 z-10 backdrop-blur-md bg-white/70 border border-white/20 rounded-2xl shadow-sm p-2 mb-6">
