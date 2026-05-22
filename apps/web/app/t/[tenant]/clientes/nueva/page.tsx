@@ -70,20 +70,6 @@ export default async function NewCustomerPage({ params }: PageProps) {
 
 export async function generateMetadata({ params }: PageProps) {
   const { tenant: tenantSlug } = await params;
-
-  try {
-    const tenant = await fetchStatic<TenantData>(`/api/tenants/${tenantSlug}`, [
-      "tenant",
-      tenantSlug,
-    ]);
-
-    return {
-      title: `${terms.addLabel} - ${tenant.name}`,
-      description: `Agregar ${terms.singularLower} en ${tenant.name}`,
-    };
-  } catch (error) {
-    return {
-      title: terms.addLabel,
-    };
-  }
+  const metaTerms = getClientTerms(tenantSlug);
+  return { title: metaTerms.addLabel };
 }

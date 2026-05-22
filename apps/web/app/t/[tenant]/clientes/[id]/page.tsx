@@ -159,17 +159,15 @@ function VisitsHistorySkeleton() {
 
 export async function generateMetadata({ params }: PageProps) {
   const { tenant: tenantSlug } = await params;
-
+  const metaTerms = getClientTerms(tenantSlug);
   const tenant = await getTenantBySlug(tenantSlug);
 
   if (!tenant) {
-    return {
-      title: terms.fileLabel,
-    };
+    return { title: metaTerms.fileLabel };
   }
 
   return {
-    title: `${terms.fileLabel} - ${tenant.name}`,
+    title: `${metaTerms.fileLabel} - ${tenant.name}`,
     description: `Historial completo de visitas y servicios`,
   };
 }
