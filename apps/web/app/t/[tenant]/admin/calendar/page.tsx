@@ -6,8 +6,8 @@ import { db } from "@sass-store/database";
 import { bookings, services } from "@sass-store/database/schema";
 import { eq, and } from "drizzle-orm";
 import CalendarTimeline from "./CalendarTimeline";
+import { CalendarStatsCards } from "./CalendarStatsCards";
 import { getOperatingHours } from "@/lib/calendar/calendar-config-store";
-import { AdminLayoutProvider } from "@/components/home/AdminLayoutProvider";
 import {
   Popover,
   PopoverContent,
@@ -139,120 +139,87 @@ export default async function CalendarAdminPage({ params }: PageProps) {
   };
 
   return (
-    <AdminLayoutProvider tenantSlug={resolvedParams.tenant}>
-      <div className="min-h-screen bg-gray-50">
-        <div className="container mx-auto px-4 py-8">
-          <div className="max-w-7xl mx-auto">
-            {/* Page Header */}
-            <div className="mb-8">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="flex items-center space-x-3">
-                    <a
-                      href={`/t/${resolvedParams.tenant}/admin`}
-                      className="text-indigo-600 hover:text-indigo-700"
-                    >
-                      ← Panel Admin
-                    </a>
-                    <span className="text-gray-600">/</span>
-                    <h1 className="text-3xl font-bold text-gray-900">
-                      Gestión de Calendario
-                    </h1>
-                  </div>
-                  <p className="text-gray-600 mt-2">
-                    Administra citas, horarios y disponibilidad
-                  </p>
-                </div>
-                <div className="flex space-x-3">
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <button className="flex items-center px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-gray-700 border-b-2">
-                        <Settings className="w-4 h-4 mr-2" />
-                        Configuración
-                      </button>
-                    </PopoverTrigger>
-                    <PopoverContent
-                      align="end"
-                      className="w-[400px] p-0"
-                      sideOffset={8}
-                    >
-                      <CalendarSettings tenantSlug={resolvedParams.tenant} />
-                    </PopoverContent>
-                  </Popover>
-
-                  <button
-                    disabled
-                    title="Crear cita manualmente — próximamente"
-                    className="flex items-center px-4 py-2 bg-[#C5A059]/40 text-white/60 rounded-lg cursor-not-allowed shadow-sm font-medium"
+    <div className="min-h-screen bg-gray-50">
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-7xl mx-auto">
+          {/* Page Header */}
+          <div className="mb-8">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="flex items-center space-x-3">
+                  <a
+                    href={`/t/${resolvedParams.tenant}/admin`}
+                    className="text-indigo-600 hover:text-indigo-700"
                   >
-                    <Plus className="w-4 h-4 mr-2" />
-                    Nueva Cita
-                  </button>
+                    ← Panel Admin
+                  </a>
+                  <span className="text-gray-600">/</span>
+                  <h1 className="text-3xl font-bold text-gray-900">
+                    Gestión de Calendario
+                  </h1>
                 </div>
+                <p className="text-gray-600 mt-2">
+                  Administra citas, horarios y disponibilidad
+                </p>
+              </div>
+              <div className="flex space-x-3">
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <button className="flex items-center px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-gray-700 border-b-2">
+                      <Settings className="w-4 h-4 mr-2" />
+                      Configuración
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent
+                    align="end"
+                    className="w-[400px] p-0"
+                    sideOffset={8}
+                  >
+                    <CalendarSettings tenantSlug={resolvedParams.tenant} />
+                  </PopoverContent>
+                </Popover>
+
+                <button
+                  disabled
+                  title="Crear cita manualmente — próximamente"
+                  className="flex items-center px-4 py-2 bg-[#C5A059]/40 text-white/60 rounded-lg cursor-not-allowed shadow-sm font-medium"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Nueva Cita
+                </button>
               </div>
             </div>
+          </div>
 
-            {/* Stats Summary */}
-            <div className="grid md:grid-cols-4 gap-6 mb-8">
-              <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
-                <div className="text-2xl font-bold text-blue-600">
-                  {
-                    mappedBookings.filter(
-                      (b) => b.date === formatDate(new Date()),
-                    ).length
-                  }
-                </div>
-                <div className="text-sm text-gray-600 font-medium tracking-wide uppercase mt-1">
-                  Citas Hoy
-                </div>
-              </div>
-              <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
-                <div className="text-2xl font-bold text-green-600">
-                  {
-                    mappedBookings.filter((b) => b.status === "confirmed")
-                      .length
-                  }
-                </div>
-                <div className="text-sm text-gray-600 font-medium tracking-wide uppercase mt-1">
-                  Confirmadas
-                </div>
-              </div>
-              <div className="bg-[#C5A059]/10 rounded-lg shadow-sm border border-[#C5A059]/20 p-6">
-                <div className="text-2xl font-bold text-[#C5A059]">
-                  {mappedBookings.filter((b) => b.status === "pending").length}
-                </div>
-                <div className="text-sm text-[#C5A059] font-medium tracking-wide uppercase mt-1">
-                  Pendientes
-                </div>
-              </div>
-              <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
-                <div className="text-2xl font-bold text-red-600">
-                  {
-                    mappedBookings.filter((b) => b.status === "cancelled")
-                      .length
-                  }
-                </div>
-                <div className="text-sm text-gray-600 font-medium tracking-wide uppercase mt-1">
-                  Canceladas
-                </div>
-              </div>
-            </div>
+          <CalendarStatsCards
+            tenantSlug={resolvedParams.tenant}
+            counts={{
+              today: mappedBookings.filter(
+                (b) => b.date === formatDate(new Date()),
+              ).length,
+              confirmed: mappedBookings.filter((b) => b.status === "confirmed")
+                .length,
+              pending: mappedBookings.filter((b) => b.status === "pending")
+                .length,
+              cancelled: mappedBookings.filter((b) => b.status === "cancelled")
+                .length,
+            }}
+          />
 
-            <div className="w-full">
-              {/* Calendar View Custom Grid (Cinema-Style) */}
-              <div className="lg:col-span-4 max-w-full">
-                <CalendarTimeline
-                  initialBookings={mappedBookings}
-                  currentDate={today}
-                  tenantSlug={resolvedParams.tenant}
-                  tenantName={tenantData.name}
-                  operatingHours={operatingHours}
-                />
-              </div>
+          <div className="w-full">
+            {/* Calendar View Custom Grid (Cinema-Style) */}
+            <div className="lg:col-span-4 max-w-full">
+              <CalendarTimeline
+                initialBookings={mappedBookings}
+                currentDate={today}
+                tenantSlug={resolvedParams.tenant}
+                tenantName={tenantData.name}
+                operatingHours={operatingHours}
+              />
             </div>
           </div>
         </div>
       </div>
-    </AdminLayoutProvider>
+    </div>
   );
 }

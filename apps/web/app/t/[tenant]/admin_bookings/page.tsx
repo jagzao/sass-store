@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import {
   Trash2,
   CheckCircle,
@@ -52,12 +52,37 @@ const FILTER_TABS: { key: FilterType; label: string }[] = [
   { key: "cancelled", label: "Canceladas" },
 ];
 
+function parseFilterFromUrl(
+  status: string | null,
+  scope: string | null,
+): { filter: FilterType; scopeToday: boolean } {
+  const valid: FilterType[] = [
+    "all",
+    "pending",
+    "confirmed",
+    "completed",
+    "cancelled",
+  ];
+  const scopeToday = scope === "today";
+  if (status && valid.includes(status as FilterType)) {
+    return { filter: status as FilterType, scopeToday };
+  }
+  return { filter: "all", scopeToday };
+}
+
 export default function AdminBookingsPage() {
   const params = useParams();
+  const searchParams = useSearchParams();
   const tenantSlug = params.tenant as string;
 
+  const initialUrl = parseFilterFromUrl(
+    searchParams.get("status"),
+    searchParams.get("scope"),
+  );
+
   const [bookings, setBookings] = useState<Booking[]>([]);
-  const [filter, setFilter] = useState<FilterType>("all");
+  const [filter, setFilter] = useState<FilterType>(initialUrl.filter);
+  const [scopeToday, setScopeToday] = useState(initialUrl.scopeToday);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -68,14 +93,32 @@ export default function AdminBookingsPage() {
     setTimeout(() => setSuccessMsg(null), 3000);
   };
 
+  useEffect(() => {
+    const next = parseFilterFromUrl(
+      searchParams.get("status"),
+      searchParams.get("scope"),
+    );
+    setFilter(next.filter);
+    setScopeToday(next.scopeToday);
+  }, [searchParams]);
+
   const fetchBookings = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
-      const url =
-        filter === "all"
-          ? `/api/tenants/${tenantSlug}/bookings`
-          : `/api/tenants/${tenantSlug}/bookings?status=${filter}`;
+      const qs = new URLSearchParams();
+      if (scopeToday) {
+        const start = new Date();
+        start.setHours(0, 0, 0, 0);
+        const end = new Date();
+        end.setHours(23, 59, 59, 999);
+        qs.set("from", start.toISOString());
+        qs.set("to", end.toISOString());
+      } else if (filter !== "all") {
+        qs.set("status", filter);
+      }
+      const query = qs.toString();
+      const url = `/api/tenants/${tenantSlug}/bookings${query ? `?${query}` : ""}`;
       const res = await fetch(url);
       if (!res.ok) throw new Error("Error al cargar citas");
       const data = await res.json();
@@ -85,7 +128,7 @@ export default function AdminBookingsPage() {
     } finally {
       setLoading(false);
     }
-  }, [tenantSlug, filter]);
+  }, [tenantSlug, filter, scopeToday]);
 
   useEffect(() => {
     fetchBookings();
@@ -179,10 +222,18 @@ export default function AdminBookingsPage() {
               </h1>
               <p className="text-sm text-gray-500 mt-1">
                 Citas agendadas por clientes · {bookings.length}{" "}
-                {filter === "all"
-                  ? "en total"
-                  : STATUS_LABELS[filter]?.toLowerCase()}
+                {scopeToday
+                  ? "hoy"
+                  : filter === "all"
+                    ? "en total"
+                    : STATUS_LABELS[filter]?.toLowerCase()}
               </p>
+              <a
+                href={`/t/${tenantSlug}/admin/calendar`}
+                className="text-sm text-indigo-600 hover:text-indigo-700 mt-1 inline-block"
+              >
+                ← Volver al calendario
+              </a>
             </div>
             <button
               onClick={fetchBookings}
@@ -219,7 +270,10 @@ export default function AdminBookingsPage() {
             {FILTER_TABS.map(({ key, label }) => (
               <button
                 key={key}
-                onClick={() => setFilter(key)}
+                onClick={() => {
+                  setScopeToday(false);
+                  setFilter(key);
+                }}
                 data-testid={`filter-${key}`}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                   filter === key
@@ -257,9 +311,11 @@ export default function AdminBookingsPage() {
             <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
               <div className="text-4xl mb-4">📅</div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                {filter === "all"
-                  ? "Aún no hay citas agendadas"
-                  : `No hay citas ${STATUS_LABELS[filter]?.toLowerCase()}`}
+                {scopeToday
+                  ? "No hay citas para hoy"
+                  : filter === "all"
+                    ? "Aún no hay citas agendadas"
+                    : `No hay citas ${STATUS_LABELS[filter]?.toLowerCase()}`}
               </h3>
               <p className="text-gray-500 text-sm">
                 Las citas agendadas por los clientes en el formulario público

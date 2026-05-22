@@ -19,7 +19,10 @@ export default function DashboardLayoutWrapper({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <div className="flex min-h-screen bg-white">
+    <div
+      className="flex min-h-screen"
+      style={{ backgroundColor: "var(--admin-page-bg, #F8F9FA)" }}
+    >
       {/* Main Content Area - Full Width */}
       <div className="flex-1 flex flex-col min-h-screen max-w-full overflow-hidden">
         {/* Header with user info and tenant branding */}
