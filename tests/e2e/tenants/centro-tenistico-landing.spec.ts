@@ -16,18 +16,10 @@ test.describe("Centro Tenístico — Landing Page", () => {
     expect(response?.status()).not.toBe(404);
   });
 
-  test("muestra el hero con slides de tenis", async ({ page }) => {
-    // Al menos uno de los títulos del hero debe estar visible
-    const heroTitles = page.locator("h1");
-    await expect(heroTitles.first()).toBeVisible({ timeout: 10000 });
-
-    const titleText = await heroTitles.first().innerText();
-    const validTitles = [
-      "Canchas de Tenis",
-      "Clases Privadas",
-      "Clases Grupales",
-    ];
-    expect(validTitles.some((t) => titleText.includes(t))).toBeTruthy();
+  test("muestra el hero scrollytelling (Clases Grupales)", async ({ page }) => {
+    const heroTitle = page.locator("h1").first();
+    await expect(heroTitle).toBeVisible({ timeout: 10000 });
+    await expect(heroTitle).toContainText("Clases Grupales");
   });
 
   test("muestra precio en el hero", async ({ page }) => {
@@ -77,28 +69,22 @@ test.describe("Centro Tenístico — Landing Page", () => {
     expect(bgColor).not.toBe("rgba(0, 0, 0, 0)");
   });
 
-  test("los slides del hero cambian al hacer click en las tabs", async ({
-    page,
-  }) => {
-    // Obtener título inicial
-    const initialTitle = await page.locator("h1").first().innerText();
-
-    // Click en la segunda tab
-    const tabs = page.locator("button").filter({ hasText: /\$/ });
-    const tabCount = await tabs.count();
-
-    if (tabCount >= 2) {
-      await tabs.nth(1).click();
-      await page.waitForTimeout(600); // esperar animación
-      const newTitle = await page.locator("h1").first().innerText();
-      // El título debe haber cambiado o al menos seguir siendo válido
-      const validTitles = [
-        "Canchas de Tenis",
-        "Clases Privadas",
-        "Clases Grupales",
-      ];
-      expect(validTitles.some((t) => newTitle.includes(t))).toBeTruthy();
-    }
+  test("canvas de pelota visible en desktop", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto(`/t/${TENANT}`, {
+      waitUntil: "networkidle",
+      timeout: 60000,
+    });
+    const canvas = page.locator("#tennis-canvas");
+    await expect(canvas).toHaveAttribute("data-ctv-scrolly-enabled", "true", {
+      timeout: 30000,
+    });
+    await expect
+      .poll(() => canvas.getAttribute("data-ctv-load-state"), {
+        timeout: 60000,
+      })
+      .toBe("ready");
+    await expect(page.locator('img[src*="tennis-ball/ball_"]')).toHaveCount(0);
   });
 
   test("no hay borde dorado de wondernails en modales", async ({ page }) => {

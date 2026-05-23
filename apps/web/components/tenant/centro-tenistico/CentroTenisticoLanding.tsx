@@ -1,8 +1,11 @@
 import { Suspense } from "react";
-import { fetchRevalidating } from "@/lib/api/fetch-with-cache";
 import type { Service } from "@/types/tenant";
 import { CTV_CLAY_ORANGE } from "@/lib/design/centro-tenistico-brand";
+import { db } from "@sass-store/database";
+import { services, tenants } from "@sass-store/database/schema";
+import { eq, and } from "drizzle-orm";
 import HeroCentroTenistico from "./hero/HeroCentroTenistico";
+import CentroTenisticoScrollyShell from "./parallax/CentroTenisticoScrollyShell";
 
 interface Props {
   tenantSlug: string;
@@ -12,65 +15,109 @@ const PRIMARY = CTV_CLAY_ORANGE;
 
 export default async function CentroTenisticoLanding({ tenantSlug }: Props) {
   return (
-    <div className="min-h-screen" style={{ backgroundColor: "#F0FDF4" }}>
-      <HeroCentroTenistico />
+    <CentroTenisticoScrollyShell>
+      <div className="min-h-screen">
+        <HeroCentroTenistico />
 
-      <Suspense fallback={<ServicesSkeleton />}>
-        <ServicesSection tenantSlug={tenantSlug} />
-      </Suspense>
+        <Suspense fallback={<ServicesSkeleton />}>
+          <ServicesSection tenantSlug={tenantSlug} />
+        </Suspense>
 
-      <HowItWorksSection />
-      <CTASection />
-      <InfoSection />
-    </div>
+        <HowItWorksSection />
+        <CTASection />
+        <InfoSection />
+      </div>
+    </CentroTenisticoScrollyShell>
   );
 }
 
 async function ServicesSection({ tenantSlug }: { tenantSlug: string }) {
-  const res = await fetchRevalidating<{ data: Service[] }>(
-    `/api/v1/public/services?tenant=${tenantSlug}&limit=6`,
-    ["services", tenantSlug],
-  );
+  // Direct DB query — avoids self-fetch deadlock in serverless environments
+  const tenantResult = await db
+    .select({ id: tenants.id })
+    .from(tenants)
+    .where(eq(tenants.slug, tenantSlug))
+    .limit(1);
 
-  const services = res?.data ?? [];
+  if (!tenantResult || tenantResult.length === 0) {
+    return <StaticServiceCards />;
+  }
+
+  const tenantId = tenantResult[0].id;
+
+  const rows = await db
+    .select({
+      id: services.id,
+      tenantId: services.tenantId,
+      name: services.name,
+      description: services.description,
+      price: services.price,
+      duration: services.duration,
+      featured: services.featured,
+      imageUrl: services.imageUrl,
+      metadata: services.metadata,
+    })
+    .from(services)
+    .where(
+      and(
+        eq(services.tenantId, tenantId),
+        eq(services.active, true),
+        eq(services.featured, true),
+      ),
+    )
+    .limit(6);
+
+  const mappedServices: Service[] = rows.map((s) => ({
+    id: s.id,
+    tenantId: s.tenantId,
+    name: s.name,
+    description: s.description || "",
+    price: parseFloat(s.price as unknown as string),
+    duration: parseFloat(s.duration as unknown as string),
+    imageUrl: s.imageUrl ?? undefined,
+    featured: s.featured ?? undefined,
+    metadata: (s.metadata || {}) as Service["metadata"],
+  }));
+
+  const displayServices = mappedServices.length > 0 ? mappedServices : [];
 
   return (
-    <section className="py-20 bg-white">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="text-center max-w-2xl mx-auto mb-14">
-          <p
-            className="text-xs font-semibold tracking-widest uppercase mb-3"
-            style={{ color: PRIMARY }}
-          >
-            Lo que ofrecemos
-          </p>
-          <h2 className="text-4xl font-black" style={{ color: "#1F2937" }}>
-            Servicios y Canchas
-          </h2>
-          <p className="mt-4 text-base" style={{ color: "#6B7280" }}>
-            Todo lo que necesitas para disfrutar y mejorar tu juego
-          </p>
-        </div>
-
-        {/* Cards */}
-        {services.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {services.map((s) => (
-              <TennisServiceCard
-                key={s.id}
-                name={s.name}
-                description={s.description ?? ""}
-                price={Number(s.price)}
-                duration={s.duration}
-                tenantSlug={tenantSlug}
-                id={s.id}
-              />
-            ))}
+    <section className="content-section py-20 min-h-[85vh] flex items-center">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 w-full">
+        <div className="ctv-content-right">
+          <div className="mb-10 ctv-scrolly-panel p-6 sm:p-8">
+            <p
+              className="text-xs font-semibold tracking-widest uppercase mb-3"
+              style={{ color: PRIMARY }}
+            >
+              Lo que ofrecemos
+            </p>
+            <h2 className="text-4xl font-black" style={{ color: "#1F2937" }}>
+              Servicios y Canchas
+            </h2>
+            <p className="mt-4 text-base" style={{ color: "#6B7280" }}>
+              Todo lo que necesitas para disfrutar y mejorar tu juego
+            </p>
           </div>
-        ) : (
-          <StaticServiceCards />
-        )}
+
+          {displayServices.length > 0 ? (
+            <div className="grid grid-cols-1 gap-6">
+              {displayServices.map((s) => (
+                <TennisServiceCard
+                  key={s.id}
+                  name={s.name}
+                  description={s.description ?? ""}
+                  price={Number(s.price)}
+                  duration={s.duration}
+                  tenantSlug={tenantSlug}
+                  id={s.id}
+                />
+              ))}
+            </div>
+          ) : (
+            <StaticServiceCards />
+          )}
+        </div>
       </div>
     </section>
   );
@@ -99,7 +146,6 @@ function TennisServiceCard({
         boxShadow: "0 1px 3px rgba(0,0,0,0.08)",
       }}
     >
-      {/* Top bar */}
       <div className="h-1" style={{ backgroundColor: PRIMARY }} />
 
       <div className="p-6 space-y-4">
@@ -110,7 +156,7 @@ function TennisServiceCard({
           >
             {name}
           </h3>
-          {duration && (
+          {duration ? (
             <span
               className="flex-shrink-0 text-xs font-semibold px-2 py-1 rounded-full"
               style={{
@@ -120,7 +166,7 @@ function TennisServiceCard({
             >
               {duration} min
             </span>
-          )}
+          ) : null}
         </div>
 
         <p className="text-sm leading-relaxed" style={{ color: "#6B7280" }}>
@@ -132,11 +178,16 @@ function TennisServiceCard({
             ${price.toFixed(0)}
           </span>
           <a
-            href={`/t/${tenantSlug}/bookings?service=${id}`}
+            href={
+              id
+                ? `/t/${tenantSlug}/bookings?service=${id}`
+                : `/t/${tenantSlug}/bookings`
+            }
             className="px-4 py-2 rounded-lg text-sm font-semibold text-white transition-all duration-200 hover:opacity-90 hover:scale-[1.02]"
             style={{ backgroundColor: PRIMARY }}
+            data-testid="ctv-service-reservar"
           >
-            Reservar
+            Reservar Cancha
           </a>
         </div>
       </div>
@@ -170,7 +221,7 @@ function StaticServiceCards() {
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 gap-6">
       {items.map((item) => (
         <TennisServiceCard
           key={item.name}
@@ -209,52 +260,53 @@ function HowItWorksSection() {
   ];
 
   return (
-    <section className="py-20" style={{ backgroundColor: "#F0FDF4" }}>
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-xl mx-auto mb-14">
-          <p
-            className="text-xs font-semibold tracking-widest uppercase mb-3"
-            style={{ color: PRIMARY }}
-          >
-            Proceso simple
-          </p>
-          <h2 className="text-4xl font-black" style={{ color: "#1F2937" }}>
-            Reserva en 3 pasos
-          </h2>
-        </div>
+    <section className="content-section py-20 min-h-[90vh] flex items-center">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 w-full">
+        <div className="ctv-content-center">
+          <div className="text-center max-w-xl mx-auto mb-14 ctv-scrolly-panel ctv-scrolly-panel--soft px-6 py-4">
+            <p
+              className="text-xs font-semibold tracking-widest uppercase mb-3"
+              style={{ color: PRIMARY }}
+            >
+              Proceso simple
+            </p>
+            <h2 className="text-4xl font-black" style={{ color: "#1F2937" }}>
+              Reserva en 3 pasos
+            </h2>
+          </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
-          {/* Connector line */}
-          <div
-            className="hidden md:block absolute top-10 left-1/3 right-1/3 h-0.5"
-            style={{ backgroundColor: `${PRIMARY}30` }}
-          />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+            <div
+              className="hidden md:block absolute top-10 left-1/3 right-1/3 h-0.5"
+              style={{ backgroundColor: `${PRIMARY}30` }}
+            />
 
-          {steps.map((step, i) => (
-            <div key={i} className="text-center relative">
-              <div
-                className="w-20 h-20 rounded-2xl flex items-center justify-center text-2xl font-black text-white mx-auto mb-6 shadow-lg"
-                style={{
-                  backgroundColor: PRIMARY,
-                  boxShadow: `0 8px 24px ${PRIMARY}30`,
-                }}
-              >
-                {step.number}
+            {steps.map((step, i) => (
+              <div key={i} className="text-center relative z-[4]">
+                <div
+                  className="w-20 h-20 rounded-2xl flex items-center justify-center text-2xl font-black text-white mx-auto mb-6 shadow-lg"
+                  style={{
+                    backgroundColor: PRIMARY,
+                    boxShadow: `0 8px 24px ${PRIMARY}30`,
+                  }}
+                >
+                  {step.number}
+                </div>
+                <h3
+                  className="text-xl font-bold mb-3"
+                  style={{ color: "#1F2937" }}
+                >
+                  {step.title}
+                </h3>
+                <p
+                  className="text-sm leading-relaxed"
+                  style={{ color: "#6B7280" }}
+                >
+                  {step.description}
+                </p>
               </div>
-              <h3
-                className="text-xl font-bold mb-3"
-                style={{ color: "#1F2937" }}
-              >
-                {step.title}
-              </h3>
-              <p
-                className="text-sm leading-relaxed"
-                style={{ color: "#6B7280" }}
-              >
-                {step.description}
-              </p>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </section>
@@ -264,11 +316,10 @@ function HowItWorksSection() {
 function CTASection() {
   return (
     <section
-      className="py-20 relative overflow-hidden"
-      style={{ backgroundColor: PRIMARY }}
+      className="content-section py-20 min-h-[50vh] relative overflow-hidden flex items-center ctv-scrolly-panel"
+      style={{ backgroundColor: "rgba(184, 92, 56, 0.88)" }}
     >
-      {/* Background tennis lines */}
-      <div className="absolute inset-0 opacity-10">
+      <div className="absolute inset-0 opacity-10 pointer-events-none">
         <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
           <line
             x1="0"
@@ -298,7 +349,7 @@ function CTASection() {
         </svg>
       </div>
 
-      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 text-center w-full">
         <p className="text-xs font-semibold tracking-widest uppercase text-white/70 mb-4">
           Únete hoy
         </p>
@@ -316,6 +367,7 @@ function CTASection() {
             href="/t/centro-tenistico/bookings"
             className="px-8 py-4 bg-white rounded-xl font-bold text-base transition-all duration-200 hover:scale-[1.03] hover:shadow-xl"
             style={{ color: PRIMARY }}
+            data-testid="ctv-cta-reservar"
           >
             Reservar ahora
           </a>
@@ -344,7 +396,7 @@ function InfoSection() {
   ];
 
   return (
-    <section className="py-12 bg-white border-t border-gray-100">
+    <section className="content-section py-12 border-t border-gray-200/60">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
           {info.map((item) => (
@@ -368,10 +420,10 @@ function InfoSection() {
 
 function ServicesSkeleton() {
   return (
-    <section className="py-20 bg-white">
+    <section className="content-section py-20">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="h-8 w-48 bg-gray-200 rounded mx-auto mb-14 animate-pulse" />
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="h-8 w-48 bg-gray-200 rounded mb-14 animate-pulse ctv-content-right ml-auto" />
+        <div className="grid grid-cols-1 gap-6 ctv-content-right ml-auto">
           {[...Array(3)].map((_, i) => (
             <div key={i} className="bg-gray-50 rounded-2xl p-6 animate-pulse">
               <div className="h-5 bg-gray-200 rounded mb-3 w-3/4" />
