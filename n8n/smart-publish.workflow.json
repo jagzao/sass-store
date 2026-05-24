@@ -1,0 +1,120 @@
+{
+  "name": "Smart Publish — AI Content Generator",
+  "nodes": [
+    {
+      "id": "webhook_trigger",
+      "name": "Smart Publish Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [160, 300],
+      "parameters": {
+        "path": "smart-publish",
+        "responseMode": "responseNode",
+        "httpMethod": "POST",
+        "options": {}
+      },
+      "webhookId": "smart-publish"
+    },
+    {
+      "id": "build_prompt",
+      "name": "Build Ollama Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [400, 300],
+      "parameters": {
+        "jsCode": "const data = $input.first().json.body || $input.first().json;\nconst { type, price, textDescription, imageUrl } = data;\n\nconst typeLabel = type === 'product' ? 'producto' : 'servicio';\n\nlet systemPrompt = `Eres un experto en marketing y copywriting para pequeños negocios en México y Latinoamérica.\nTu misión: generar nombres atractivos y descripciones persuasivas que vendan.\nSiempre responde SOLO con JSON válido, sin texto extra, sin markdown, sin bloques de código.`;\n\nlet userText = `Analiza este ${typeLabel} y genera contenido profesional para venderlo online.\n\nDatos del ${typeLabel}:\n- Tipo: ${typeLabel}\n- Precio: $${price} MXN`;\n\nif (textDescription && textDescription.trim()) {\n  userText += `\\n- Descripción del propietario: \"${textDescription.trim()}\"`;\n}\n\nuserText += `\\n\\nResponde ÚNICAMENTE con este JSON exacto (sin nada más):\n{\n  \"name\": \"nombre corto y atractivo (máximo 60 caracteres)\",\n  \"description\": \"descripción profesional y persuasiva de 80-150 palabras, destaca beneficios y valor\",\n  \"shortDescription\": \"frase de venta poderosa para redes sociales (máximo 140 caracteres)\",\n  \"category\": \"categoría del ${typeLabel} en 1-3 palabras\",\n  \"suggestedSku\": \"código identificador en mayúsculas sin espacios, ejemplo: BOLSA-ARTESANAL-01\"\n}`;\n\nconst messages = [];\n\n// Add image as vision input if provided\nif (imageUrl && (imageUrl.startsWith('http') || imageUrl.startsWith('data:'))) {\n  messages.push({\n    role: 'user',\n    content: [\n      { type: 'text', text: userText },\n      { type: 'image_url', image_url: { url: imageUrl } }\n    ]\n  });\n} else {\n  messages.push({ role: 'user', content: userText });\n}\n\nconst ollamaBody = {\n  model: process.env.OLLAMA_MODEL || 'kimi-k2.6',\n  messages: [\n    { role: 'system', content: systemPrompt },\n    ...messages\n  ],\n  stream: false,\n  temperature: 0.7\n};\n\nreturn [{ json: { ollamaBody, originalData: data } }];"
+      }
+    },
+    {
+      "id": "ollama_request",
+      "name": "Ollama — Generate Content",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [640, 300],
+      "parameters": {
+        "url": "={{ $env.OLLAMA_BASE_URL || 'https://ollama.com/v1' }}/chat/completions",
+        "method": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": []
+        },
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.ollamaBody) }}",
+        "options": {
+          "timeout": 90000,
+          "response": {
+            "response": {
+              "fullResponse": false
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "parse_response",
+      "name": "Parse AI Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [880, 300],
+      "parameters": {
+        "jsCode": "const ollamaResponse = $input.first().json;\nconst originalData = $('Build Ollama Prompt').first().json.originalData;\n\nlet aiContent;\ntry {\n  const rawContent = ollamaResponse.choices[0].message.content;\n  // Remove markdown code fences if model adds them\n  const cleaned = rawContent\n    .replace(/```json\\s*/gi, '')\n    .replace(/```\\s*/g, '')\n    .trim();\n  aiContent = JSON.parse(cleaned);\n} catch (parseError) {\n  // Graceful fallback if AI doesn't return valid JSON\n  const fallbackName = originalData.textDescription\n    ? originalData.textDescription.substring(0, 60)\n    : (originalData.type === 'product' ? 'Nuevo Producto' : 'Nuevo Servicio');\n\n  aiContent = {\n    name: fallbackName,\n    description: originalData.textDescription || 'Descripción generada automáticamente. Por favor edita para personalizar.',\n    shortDescription: fallbackName,\n    category: 'General',\n    suggestedSku: 'ITEM-' + Date.now()\n  };\n}\n\nreturn [{\n  json: {\n    success: true,\n    name: (aiContent.name || '').substring(0, 200),\n    description: aiContent.description || '',\n    shortDescription: (aiContent.shortDescription || '').substring(0, 140),\n    category: (aiContent.category || 'General').substring(0, 50),\n    suggestedSku: (aiContent.suggestedSku || ('ITEM-' + Date.now())).replace(/\\s+/g, '-').toUpperCase(),\n    type: originalData.type,\n    price: originalData.price\n  }\n}];"
+      }
+    },
+    {
+      "id": "respond_webhook",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1120, 300],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [{ "name": "Content-Type", "value": "application/json" }]
+          }
+        }
+      }
+    },
+    {
+      "id": "error_handler",
+      "name": "Error Handler",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [880, 500],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\"success\": false, \"error\": \"AI generation failed\"}",
+        "options": {
+          "responseCode": 500
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Smart Publish Webhook": {
+      "main": [[{ "node": "Build Ollama Prompt", "type": "main", "index": 0 }]]
+    },
+    "Build Ollama Prompt": {
+      "main": [
+        [{ "node": "Ollama — Generate Content", "type": "main", "index": 0 }]
+      ]
+    },
+    "Ollama — Generate Content": {
+      "main": [[{ "node": "Parse AI Response", "type": "main", "index": 0 }]]
+    },
+    "Parse AI Response": {
+      "main": [[{ "node": "Respond to Webhook", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

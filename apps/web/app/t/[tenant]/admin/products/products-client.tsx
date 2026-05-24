@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { Trash2 } from "lucide-react";
+import { Trash2, Sparkles } from "lucide-react";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { ProductModal, Product } from "./product-modal";
+import { SmartPublishWizard } from "@/components/smart-publish/SmartPublishWizard";
 
 export function ProductsClient({ tenantSlug }: { tenantSlug: string }) {
   const { data: session } = useSession();
@@ -15,6 +16,7 @@ export function ProductsClient({ tenantSlug }: { tenantSlug: string }) {
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [isWizardOpen, setIsWizardOpen] = useState(false);
 
   useEffect(() => {
     if (session) {
@@ -24,9 +26,9 @@ export function ProductsClient({ tenantSlug }: { tenantSlug: string }) {
     }
   }, [session, tenantSlug]);
 
-  const fetchProducts = async () => {
+  const fetchProducts = async (silent = false) => {
     try {
-      setLoading(true);
+      if (!silent) setLoading(true);
       const res = await fetch(`/api/v1/products?tenant=${tenantSlug}`);
 
       if (!res.ok) {
@@ -37,9 +39,9 @@ export function ProductsClient({ tenantSlug }: { tenantSlug: string }) {
       setProducts(data.data || []);
     } catch (err: any) {
       console.error("Error fetching products:", err);
-      setError(err.message);
+      if (!silent) setError(err.message);
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   };
 
@@ -160,13 +162,22 @@ export function ProductsClient({ tenantSlug }: { tenantSlug: string }) {
               Administra tu catálogo de productos
             </p>
           </div>
-          <button
-            onClick={handleOpenCreate}
-            className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
-          >
-            <span className="mr-2">+</span>
-            Nuevo Producto
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setIsWizardOpen(true)}
+              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-lg hover:from-indigo-600 hover:to-purple-700 transition-all shadow-sm font-medium"
+            >
+              <Sparkles size={16} />
+              Publicar con IA
+            </button>
+            <button
+              onClick={handleOpenCreate}
+              className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+            >
+              <span className="mr-2">+</span>
+              Nuevo Producto
+            </button>
+          </div>
         </div>
       </div>
 
@@ -389,6 +400,15 @@ export function ProductsClient({ tenantSlug }: { tenantSlug: string }) {
         onSave={handleSaveProduct}
         product={editingProduct}
       />
+
+      {/* Smart Publish Wizard */}
+      {isWizardOpen && (
+        <SmartPublishWizard
+          tenantSlug={tenantSlug}
+          onSuccess={() => fetchProducts(true)}
+          onClose={() => setIsWizardOpen(false)}
+        />
+      )}
     </>
   );
 }

@@ -3,12 +3,13 @@
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import UserMenu from "@/components/auth/UserMenu";
-import { Trash2, Pencil } from "lucide-react";
+import { Trash2, Pencil, Sparkles } from "lucide-react";
 import SingleImageUpload from "@/components/ui/single-image-upload";
 import { useFormPersist } from "@/hooks/useFormPersist";
 import MenuDesignerModal from "@/components/admin/menu-designer/MenuDesignerModal";
 import AdminRouteGuard from "@/components/auth/AdminRouteGuard";
 import { useTenantTheme } from "@/lib/hooks/useTenantTheme";
+import { SmartPublishWizard } from "@/components/smart-publish/SmartPublishWizard";
 
 interface Service {
   id: string;
@@ -35,6 +36,7 @@ export default function AdminServicesPage() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showMenuDesigner, setShowMenuDesigner] = useState(false);
   const [editingService, setEditingService] = useState<Service | null>(null);
+  const [isWizardOpen, setIsWizardOpen] = useState(false);
 
   // Search, Sort, Pagination State
   const [searchTerm, setSearchTerm] = useState("");
@@ -137,9 +139,9 @@ export default function AdminServicesPage() {
     }
   };
 
-  const loadServices = async () => {
+  const loadServices = async (silent = false) => {
     try {
-      setLoading(true);
+      if (!silent) setLoading(true);
       const response = await fetch(
         `/api/v1/public/services?tenant=${tenantSlug}`,
       );
@@ -150,7 +152,7 @@ export default function AdminServicesPage() {
     } catch (error) {
       console.error("Error loading services:", error);
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   };
 
@@ -268,7 +270,14 @@ export default function AdminServicesPage() {
                 Gestiona el catálogo de servicios de tu negocio
               </p>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-wrap">
+              <button
+                onClick={() => setIsWizardOpen(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-lg hover:from-indigo-600 hover:to-purple-700 transition-all shadow-sm font-medium"
+              >
+                <Sparkles size={16} />
+                Publicar con IA
+              </button>
               <button
                 data-testid="menu-designer-btn"
                 onClick={() => setShowMenuDesigner(true)}
@@ -686,6 +695,15 @@ export default function AdminServicesPage() {
             isOpen={showMenuDesigner}
             onClose={() => setShowMenuDesigner(false)}
             tenantSlug={tenantSlug}
+          />
+        )}
+
+        {/* Smart Publish Wizard */}
+        {isWizardOpen && (
+          <SmartPublishWizard
+            tenantSlug={tenantSlug}
+            onSuccess={() => loadServices(true)}
+            onClose={() => setIsWizardOpen(false)}
           />
         )}
       </div>
