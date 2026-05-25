@@ -4,6 +4,7 @@ import { products, services, tenants } from "@sass-store/database/schema";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { logger } from "@/lib/logger";
+import { auth } from "@sass-store/config/auth";
 
 const saveSchema = z.object({
   tenant: z.string().min(1),
@@ -20,6 +21,11 @@ const saveSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
+    const session = await auth();
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const body = await request.json();
     const data = saveSchema.parse(body);
 

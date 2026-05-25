@@ -131,7 +131,7 @@ export function ProductsClient({ tenantSlug }: { tenantSlug: string }) {
       <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
         <p>Error: {error}</p>
         <button
-          onClick={fetchProducts}
+          onClick={() => void fetchProducts()}
           className="mt-2 text-sm underline hover:no-underline"
         >
           Intentar de nuevo
@@ -383,7 +383,7 @@ export function ProductsClient({ tenantSlug }: { tenantSlug: string }) {
                 + Nuevo Producto
               </button>
               <button
-                onClick={fetchProducts}
+                onClick={() => void fetchProducts()}
                 className="w-full text-left p-2 rounded hover:bg-gray-50 transition-colors text-sm"
               >
                 🔄 Recargar Lista

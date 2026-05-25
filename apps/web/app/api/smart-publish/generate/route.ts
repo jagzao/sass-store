@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { v2 as cloudinary } from "cloudinary";
 import { logger } from "@/lib/logger";
+import { auth } from "@sass-store/config/auth";
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -9,15 +10,29 @@ cloudinary.config({
 });
 
 const N8N_WEBHOOK_URL = `${process.env.N8N_BASE_URL || "http://127.0.0.1:5678"}/webhook/smart-publish`;
+
+// Tier 2: Local Ollama (same machine as Next.js)
 const OLLAMA_BASE_URL =
   process.env.OLLAMA_BASE_URL || "http://127.0.0.1:11434/v1";
 const OLLAMA_MODEL = process.env.OLLAMA_MODEL || "llama3.2-vision:latest";
+
+// Tier 3: Ollama Cloud (OpenAI-compatible provider)
+const OLLAMA_CLOUD_BASE_URL =
+  process.env.OLLAMA_CLOUD_BASE_URL || "https://ollama.com/v1";
+const OLLAMA_CLOUD_API_KEY = process.env.OLLAMA_CLOUD_API_KEY || "";
+const OLLAMA_CLOUD_MODEL =
+  process.env.OLLAMA_CLOUD_MODEL || "qwen3-coder:480b-cloud";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 120;
 
 export async function POST(request: NextRequest) {
   try {
+    const session = await auth();
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const formData = await request.formData();
     const type = formData.get("type") as "product" | "service";
     const price = parseFloat(formData.get("price") as string);
@@ -79,7 +94,17 @@ export async function POST(request: NextRequest) {
       imageUrl,
     };
 
-    let aiResult: Record<string, unknown>;
+    let aiResult: Record<string, unknown> = {
+      success: false,
+      fallback: true,
+      name:
+        textDescription.trim().substring(0, 60) ||
+        (type === "product" ? "Nuevo Producto" : "Nuevo Servicio"),
+      description: textDescription.trim() || "",
+      shortDescription: "",
+      category: "General",
+      suggestedSku: `ITEM-${Date.now()}`,
+    };
 
     // ── 1. Try n8n (orchestration path) ─────────────────────────────────────
     let n8nSucceeded = false;
@@ -171,21 +196,109 @@ Responde ÚNICAMENTE con este JSON exacto (sin nada más):
             .replace(/\s+/g, "-")
             .toUpperCase(),
         };
-      } catch (ollamaErr) {
-        logger.error("Direct Ollama call also failed", ollamaErr);
-        // ── 3. Graceful text placeholder ────────────────────────────────────
-        const fallbackName =
-          textDescription.trim().substring(0, 60) ||
-          (type === "product" ? "Nuevo Producto" : "Nuevo Servicio");
-        aiResult = {
-          success: false,
-          fallback: true,
-          name: fallbackName,
-          description: textDescription.trim() || "",
-          shortDescription: "",
-          category: "General",
-          suggestedSku: `ITEM-${Date.now()}`,
-        };
+      } catch (ollamaLocalErr) {
+        logger.warn("Local Ollama failed, trying cloud", ollamaLocalErr);
+
+        // ── 3. Ollama Cloud fallback (https://ollama.com/v1) ─────────────────
+        if (OLLAMA_CLOUD_API_KEY) {
+          try {
+            const cloudMessages: Array<{ role: string; content: unknown }> = [];
+            const typeLabel = type === "product" ? "producto" : "servicio";
+            const systemPrompt = `Eres un experto en marketing y copywriting para pequeños negocios en México y Latinoamérica.
+Tu misión: generar nombres atractivos y descripciones persuasivas que vendan.
+Siempre responde SOLO con JSON válido, sin texto extra, sin markdown, sin bloques de código.`;
+            const userPrompt = `Analiza este ${typeLabel} y genera contenido para venderlo online.
+Datos: tipo=${typeLabel}, precio=$${price} MXN${textDescription.trim() ? `, descripción="${textDescription.trim()}"` : ""}.
+Responde SOLO con JSON: {"name":"...","description":"...","shortDescription":"...","category":"...","suggestedSku":"..."}`;
+
+            if (imageUrl) {
+              cloudMessages.push({
+                role: "user",
+                content: [
+                  { type: "text", text: userPrompt },
+                  { type: "image_url", image_url: { url: imageUrl } },
+                ],
+              });
+            } else {
+              cloudMessages.push({ role: "user", content: userPrompt });
+            }
+
+            const cloudRes = await fetch(
+              `${OLLAMA_CLOUD_BASE_URL}/chat/completions`,
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${OLLAMA_CLOUD_API_KEY}`,
+                },
+                body: JSON.stringify({
+                  model: OLLAMA_CLOUD_MODEL,
+                  messages: [
+                    { role: "system", content: systemPrompt },
+                    ...cloudMessages,
+                  ],
+                  stream: false,
+                  temperature: 0.7,
+                }),
+                signal: AbortSignal.timeout(90_000),
+              },
+            );
+
+            if (!cloudRes.ok)
+              throw new Error(`Ollama cloud returned ${cloudRes.status}`);
+
+            const cloudJson = await cloudRes.json();
+            const rawCloud: string = cloudJson.choices[0].message.content;
+            const cleanedCloud = rawCloud
+              .replace(/```json\s*/gi, "")
+              .replace(/```\s*/g, "")
+              .trim();
+            const parsedCloud = JSON.parse(cleanedCloud);
+
+            aiResult = {
+              success: true,
+              name: (parsedCloud.name || "").substring(0, 200),
+              description: parsedCloud.description || "",
+              shortDescription: (parsedCloud.shortDescription || "").substring(
+                0,
+                140,
+              ),
+              category: (parsedCloud.category || "General").substring(0, 50),
+              suggestedSku: (parsedCloud.suggestedSku || `ITEM-${Date.now()}`)
+                .replace(/\s+/g, "-")
+                .toUpperCase(),
+            };
+          } catch (cloudErr) {
+            logger.error("Ollama cloud also failed", cloudErr);
+            // ── 4. Graceful text placeholder ──────────────────────────────
+            const fallbackName =
+              textDescription.trim().substring(0, 60) ||
+              (type === "product" ? "Nuevo Producto" : "Nuevo Servicio");
+            aiResult = {
+              success: false,
+              fallback: true,
+              name: fallbackName,
+              description: textDescription.trim() || "",
+              shortDescription: "",
+              category: "General",
+              suggestedSku: `ITEM-${Date.now()}`,
+            };
+          }
+        } else {
+          // No cloud key configured → text placeholder
+          const fallbackName =
+            textDescription.trim().substring(0, 60) ||
+            (type === "product" ? "Nuevo Producto" : "Nuevo Servicio");
+          aiResult = {
+            success: false,
+            fallback: true,
+            name: fallbackName,
+            description: textDescription.trim() || "",
+            shortDescription: "",
+            category: "General",
+            suggestedSku: `ITEM-${Date.now()}`,
+          };
+        }
       }
     }
 

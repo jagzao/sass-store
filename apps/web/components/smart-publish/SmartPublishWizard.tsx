@@ -253,7 +253,7 @@ export function SmartPublishWizard({ tenantSlug, onSuccess, onClose }: Props) {
     savedItem &&
     (savedItem.type === "product"
       ? `/t/${tenantSlug}/admin/products`
-      : `/t/${tenantSlug}/admin/services`);
+      : `/t/${tenantSlug}/admin_services`);
 
   // ─── Render ─────────────────────────────────────────────────────────────────
 
