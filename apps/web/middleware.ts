@@ -236,9 +236,12 @@ export async function middleware(request: NextRequest) {
   const forwardedHeaders = new Headers(request.headers);
   forwardedHeaders.set("x-tenant", resolvedTenant.slug);
   forwardedHeaders.set("x-tenant-id", resolvedTenant.id);
-  forwardedHeaders.set("x-tenant-mode", resolvedTenant.featureMode);
-  forwardedHeaders.set("x-tenant-locale", resolvedTenant.locale);
-  forwardedHeaders.set("x-tenant-currency", resolvedTenant.currency);
+  forwardedHeaders.set(
+    "x-tenant-mode",
+    resolvedTenant.featureMode || "catalog",
+  );
+  forwardedHeaders.set("x-tenant-locale", resolvedTenant.locale || "es-MX");
+  forwardedHeaders.set("x-tenant-currency", resolvedTenant.currency || "MXN");
 
   const response = NextResponse.next({
     request: { headers: forwardedHeaders },

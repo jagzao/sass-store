@@ -29,6 +29,9 @@ export interface ResolvedTenant {
   id: string;
   slug: string;
   source: "session" | "header" | "path" | "subdomain" | "fallback";
+  featureMode?: "catalog" | "booking";
+  locale?: string;
+  currency?: string;
 }
 
 /**
