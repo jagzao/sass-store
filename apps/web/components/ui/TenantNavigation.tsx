@@ -83,6 +83,9 @@ export default function TenantNavigation({
     : "text-sm font-medium tracking-wide";
 
   const getNavStyles = () => {
+    if (isCentroTenistico) {
+      return "bg-transparent border-transparent";
+    }
     if (isDark) {
       return isScrolled
         ? "bg-[#0D0D0D]/80 backdrop-blur-md border-b border-white/5"
@@ -97,6 +100,12 @@ export default function TenantNavigation({
   };
 
   const getLinkStyles = (isActive: boolean) => {
+    if (isCentroTenistico) {
+      if (isActive) {
+        return "text-[#B85C38] font-semibold";
+      }
+      return "text-slate-700/75 hover:text-slate-950";
+    }
     if (isDark) {
       if (isActive) {
         return "text-[#FF8000]";
@@ -121,6 +130,9 @@ export default function TenantNavigation({
   };
 
   const getMobileMenuStyles = () => {
+    if (isCentroTenistico) {
+      return "bg-white/[0.92] border-b border-white/60 backdrop-blur-xl";
+    }
     if (isDark) {
       return "bg-[#0D0D0D] border-b border-white/10";
     }
@@ -128,6 +140,12 @@ export default function TenantNavigation({
   };
 
   const getMobileLinkStyles = (isActive: boolean) => {
+    if (isCentroTenistico) {
+      if (isActive) {
+        return "text-[#B85C38] bg-slate-900/[0.06]";
+      }
+      return "text-slate-700 hover:text-slate-950 hover:bg-slate-900/[0.06]";
+    }
     if (isDark) {
       if (isActive) {
         return "text-[#FF8000] bg-white/5";
@@ -143,7 +161,13 @@ export default function TenantNavigation({
   return (
     <nav
       className={`transition-all duration-300 ${
-        isDark ? "py-4" : isTransparent ? "py-4" : "py-3"
+        isCentroTenistico
+          ? "py-0"
+          : isDark
+            ? "py-4"
+            : isTransparent
+              ? "py-4"
+              : "py-3"
       } ${getNavStyles()}`}
     >
       <div className="flex items-center justify-between">
@@ -187,7 +211,7 @@ export default function TenantNavigation({
           className={`md:hidden p-2 rounded-md transition-colors ${
             isDark
               ? "text-white hover:bg-white/10"
-              : isTransparent
+              : isTransparent || isCentroTenistico
                 ? "text-white hover:bg-white/10"
                 : "text-gray-900 hover:bg-gray-100"
           }`}

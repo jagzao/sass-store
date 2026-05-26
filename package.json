@@ -9,6 +9,8 @@
     "packages/*"
   ],
   "scripts": {
+    "ctv:sprites:refined": "python video_2_frames/extract_frames.py --refined",
+    "ctv:sprites:rembg": "python video_2_frames/extract_frames_rembg.py",
     "dev": "turbo run dev --filter=@sass-store/web",
     "dev:all": "turbo run dev",
     "build": "turbo run build --filter=@sass-store/web",

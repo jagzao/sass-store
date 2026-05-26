@@ -21,6 +21,7 @@ export default function TenantLogo({
   const [imageError, setImageError] = useState(false);
   // Retry state: 0 = gold, 1 = flat, 2 = svg, 3 = text (error)
   const [retryStage, setRetryStage] = useState(0);
+  const isCentroTenistico = tenantSlug === "centro-tenistico";
 
   const handleImageError = () => {
     if (logoUrl) {
@@ -67,7 +68,7 @@ export default function TenantLogo({
             key={logoUrl || retryStage} // Force re-render on stage change
             src={getSrc()}
             alt={`${tenantName} logo`}
-            className={`h-16 md:h-20 w-auto transition-all duration-300 object-contain ${variant === "transparent" && tenantSlug !== "wondernails" && !logoUrl ? "brightness-0 invert" : ""}`}
+            className={`${isCentroTenistico ? "h-11 md:h-12 drop-shadow-[0_6px_18px_rgba(0,0,0,0.35)]" : "h-16 md:h-20"} w-auto transition-all duration-300 object-contain ${variant === "transparent" && tenantSlug !== "wondernails" && !logoUrl ? "brightness-0 invert" : ""}`}
             onError={handleImageError}
           />
         ) : (

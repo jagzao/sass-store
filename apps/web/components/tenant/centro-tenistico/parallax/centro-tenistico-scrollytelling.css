@@ -1,6 +1,20 @@
 .zo-workspace-container.ctv-scrolly-root {
   position: relative;
   width: 100%;
+  background:
+    radial-gradient(
+      circle at 70% 15%,
+      rgba(132, 204, 22, 0.18),
+      transparent 34rem
+    ),
+    radial-gradient(
+      circle at 12% 70%,
+      rgba(15, 118, 110, 0.22),
+      transparent 32rem
+    ),
+    linear-gradient(135deg, #101412 0%, #18201d 45%, #0b0f0e 100%);
+  color: rgba(255, 255, 255, 0.92);
+  overflow-x: clip;
 }
 
 /* Contenedor fijo: el canvas permanece en pantalla mientras hace scroll el contenido */
@@ -10,13 +24,34 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  z-index: 1;
+  z-index: 0;
   pointer-events: none;
-  background-color: #f0fdf4;
+  background: transparent;
+  opacity: 0;
+  transition: opacity 0.35s ease;
 }
 
-#tennis-canvas,
-.ctv-tennis-canvas {
+.ctv-scrolly-container[data-ctv-ready="true"] {
+  opacity: 1;
+}
+
+.ctv-scrolly-loading {
+  position: fixed;
+  bottom: 1.25rem;
+  right: 1.25rem;
+  z-index: 4;
+  padding: 0.5rem 0.85rem;
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #4b5563;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  pointer-events: none;
+}
+
+#hero-canvas,
+.ctv-hero-canvas {
   display: block;
   width: 100%;
   height: 100%;
@@ -26,7 +61,7 @@
 /* Contenido por encima del canvas */
 .ctv-scrolly-content.content-wrapper {
   position: relative;
-  z-index: 2;
+  z-index: 10;
   width: 100%;
   min-height: 300vh;
 }
@@ -38,14 +73,52 @@
 }
 
 .ctv-scrolly-panel {
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(6px);
-  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.055) !important;
+  backdrop-filter: blur(12px) saturate(1.35);
+  border: 1px solid rgba(255, 255, 255, 0.11) !important;
+  border-radius: 1.2rem;
+  box-shadow:
+    0 24px 80px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .ctv-scrolly-panel--soft {
-  background: rgba(240, 253, 244, 0.85);
-  backdrop-filter: blur(4px);
+  background: rgba(255, 255, 255, 0.065) !important;
+  backdrop-filter: blur(12px) saturate(1.35);
+}
+
+.ctv-scrolly-root .ctv-scrolly-panel h1,
+.ctv-scrolly-root .ctv-scrolly-panel h2,
+.ctv-scrolly-root .ctv-scrolly-panel h3,
+.ctv-scrolly-root .ctv-scrolly-panel p,
+.ctv-scrolly-root .ctv-scrolly-panel span {
+  color: rgba(255, 255, 255, 0.92) !important;
+}
+
+.ctv-scrolly-root .ctv-scrolly-panel p,
+.ctv-scrolly-root .ctv-scrolly-panel span {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.ctv-scrolly-root .group.bg-white {
+  background: rgba(255, 255, 255, 0.055) !important;
+  backdrop-filter: blur(12px) saturate(1.25);
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.22) !important;
+}
+
+.ctv-scrolly-root .group.bg-white h3,
+.ctv-scrolly-root .group.bg-white p,
+.ctv-scrolly-root .group.bg-white span {
+  color: rgba(255, 255, 255, 0.86) !important;
+}
+
+.ctv-scrolly-root .border-gray-100 {
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+.ctv-scrolly-root .bg-white {
+  background-color: rgba(255, 255, 255, 0.08) !important;
 }
 
 .ctv-content-left {

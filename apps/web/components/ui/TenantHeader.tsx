@@ -67,8 +67,14 @@ export default function TenantHeader({
   const isTransparent = variant === "transparent";
   const isDark = effectiveVariant === "dark";
   const isWondernails = tenantData.slug === "wondernails";
+  const isCentroTenistico = tenantData.slug === "centro-tenistico";
 
   const getHeaderStyles = () => {
+    if (isCentroTenistico) {
+      return isScrolled
+        ? "bg-white/[0.82] backdrop-blur-2xl border-b border-white/60 shadow-[0_18px_55px_rgba(15,23,42,0.14)]"
+        : "bg-white/[0.68] backdrop-blur-xl border-b border-white/50 shadow-[0_16px_48px_rgba(15,23,42,0.1)]";
+    }
     if (isTransparent) {
       if (isScrolled) {
         return isWondernails
@@ -94,7 +100,7 @@ export default function TenantHeader({
       style={{ position: "sticky", top: 0 }}
     >
       <div
-        className={`container mx-auto px-4 flex items-center justify-between ${isPointerTransparent ? "pointer-events-auto" : ""}`}
+        className={`container mx-auto px-4 flex items-center justify-between ${isCentroTenistico ? "py-2" : ""} ${isPointerTransparent ? "pointer-events-auto" : ""}`}
       >
         <TenantLogo
           tenantSlug={tenantData.slug}

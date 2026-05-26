@@ -6,8 +6,7 @@ import { preloadTennisBallFrames } from "@/lib/centro-tenistico/tennis-ball-prel
 import { TENNIS_BALL_FRAME_COUNT } from "@/lib/centro-tenistico/tennis-ball-frames";
 import "./centro-tenistico-scrollytelling.css";
 
-/** Retraso suave al soltar scroll (patrón “premium” del PRD / review). */
-const SCROLL_SCRUB = 0.5;
+const SCROLL_SCRUB = 1.5;
 const MOBILE_MAX_WIDTH = 767;
 
 type Props = {
@@ -35,27 +34,30 @@ export default function CentroTenisticoScrollyShell({ children }: Props) {
     if (!canvasEnabled || !canvasRef.current || !contentRef.current) {
       engineRef.current?.destroy();
       engineRef.current = null;
+      setLoadState("idle");
       return;
     }
 
     let cancelled = false;
+    let removeResize: (() => void) | undefined;
     let removeLoad: (() => void) | undefined;
 
     setLoadState("loading");
 
     void (async () => {
       try {
-        const [gsapModule, stModule, images] = await Promise.all([
-          import("gsap"),
-          import("gsap/ScrollTrigger"),
-          preloadTennisBallFrames((loaded, total) => {
-            if (!cancelled) {
-              setLoadState(loaded === total ? "ready" : "loading");
-            }
-          }),
-        ]);
+        const images = await preloadTennisBallFrames((loaded, total) => {
+          if (!cancelled) {
+            setLoadState(loaded === total ? "ready" : "loading");
+          }
+        });
 
         if (cancelled || !canvasRef.current || !contentRef.current) return;
+
+        const [gsapModule, stModule] = await Promise.all([
+          import("gsap"),
+          import("gsap/ScrollTrigger"),
+        ]);
 
         const gsap = gsapModule.default;
         const { ScrollTrigger } = stModule;
@@ -70,37 +72,65 @@ export default function CentroTenisticoScrollyShell({ children }: Props) {
           scrub: SCROLL_SCRUB,
         });
         engineRef.current = engine;
+        ScrollTrigger.refresh();
+        engine.refresh();
 
+        const onResize = () => {
+          engine.resize();
+          ScrollTrigger.refresh();
+        };
+        const onScroll = () => engine.syncToScroll();
         const onLoad = () => {
           ScrollTrigger.refresh();
-          engine.render();
+          engine.refresh();
         };
+
+        window.addEventListener("resize", onResize);
+        window.addEventListener("scroll", onScroll, { passive: true });
         window.addEventListener("load", onLoad);
+        removeResize = () => {
+          window.removeEventListener("resize", onResize);
+          window.removeEventListener("scroll", onScroll);
+        };
         removeLoad = () => window.removeEventListener("load", onLoad);
 
         if (!cancelled) setLoadState("ready");
-      } catch {
+      } catch (err) {
+        console.error("[CTV scrolly] init failed", err);
         if (!cancelled) setLoadState("error");
       }
     })();
 
     return () => {
       cancelled = true;
+      removeResize?.();
       removeLoad?.();
       engineRef.current?.destroy();
       engineRef.current = null;
     };
   }, [canvasEnabled]);
 
+  const showCanvas = canvasEnabled && loadState === "ready";
+
   return (
     <div className="zo-workspace-container ctv-scrolly-root">
       {canvasEnabled ? (
-        <div className="ctv-scrolly-container" aria-hidden>
+        <div
+          className="ctv-scrolly-container"
+          data-ctv-ready={showCanvas ? "true" : "false"}
+          aria-hidden
+        >
           <canvas
-            id="tennis-canvas"
+            id="hero-canvas"
             ref={canvasRef}
-            className="ctv-tennis-canvas"
+            className="ctv-hero-canvas"
           />
+        </div>
+      ) : null}
+
+      {loadState === "loading" && canvasEnabled ? (
+        <div className="ctv-scrolly-loading" aria-live="polite">
+          Cargando animación…
         </div>
       ) : null}
 

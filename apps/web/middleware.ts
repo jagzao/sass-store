@@ -186,7 +186,15 @@ export async function middleware(request: NextRequest) {
       // In development, allow URL tenant to override resolved tenant
       if (process.env.NODE_ENV === "development") {
         const urlTenantResolved = buildTenantResponse(urlTenantSlug);
-        const response = NextResponse.next();
+        const devHeaders = new Headers(request.headers);
+        devHeaders.set("x-tenant", urlTenantResolved.slug);
+        devHeaders.set("x-tenant-id", urlTenantResolved.id);
+        devHeaders.set("x-tenant-mode", urlTenantResolved.featureMode);
+        devHeaders.set("x-tenant-locale", urlTenantResolved.locale);
+        devHeaders.set("x-tenant-currency", urlTenantResolved.currency);
+        const response = NextResponse.next({
+          request: { headers: devHeaders },
+        });
         setTenantHeaders(response, urlTenantResolved);
         return response;
       }
@@ -221,8 +229,20 @@ export async function middleware(request: NextRequest) {
 
   // =========================================
   // STEP 8: Build response with security headers
+  // Forward tenant headers to the request so Server Components can read
+  // them via `headers()` from next/headers (response.headers alone does not
+  // reach Server Component / API Route handlers in Next.js App Router).
   // =========================================
-  const response = NextResponse.next();
+  const forwardedHeaders = new Headers(request.headers);
+  forwardedHeaders.set("x-tenant", resolvedTenant.slug);
+  forwardedHeaders.set("x-tenant-id", resolvedTenant.id);
+  forwardedHeaders.set("x-tenant-mode", resolvedTenant.featureMode);
+  forwardedHeaders.set("x-tenant-locale", resolvedTenant.locale);
+  forwardedHeaders.set("x-tenant-currency", resolvedTenant.currency);
+
+  const response = NextResponse.next({
+    request: { headers: forwardedHeaders },
+  });
   setTenantHeaders(response, resolvedTenant);
 
   // Add security headers to prevent session sharing
@@ -366,11 +386,20 @@ async function resolveTenantStrict(
     }
   }
 
-  // Fallback: Use default tenant and log
+  // Fallback: Use default tenant (zo-system)
   unknownHostCount++;
-  console.warn(
-    `[TenantResolution] Unknown host '${host}' using fallback tenant 'zo-system'`,
-  );
+
+  // Only warn for unexpected external hosts in production.
+  // In development, localhost paths without a /t/ prefix (e.g. /, /auth, /admin)
+  // always reach this branch — that is expected and not worth logging.
+  const isLocalhost =
+    host.includes("localhost") || host.includes("127.0.0.1") || host === "";
+  if (process.env.NODE_ENV === "production" || !isLocalhost) {
+    console.warn(
+      `[TenantResolution] Unknown host '${host}' — falling back to 'zo-system'`,
+    );
+  }
+
   return {
     tenant: buildTenantResponse("zo-system"),
     source: "fallback",

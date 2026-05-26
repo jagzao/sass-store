@@ -3,30 +3,30 @@ import {
   tennisBallFrameSrc,
 } from "./tennis-ball-frames";
 
+function loadFrame(index: number): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.decoding = "async";
+    img.onload = () => resolve(img);
+    img.onerror = () =>
+      reject(new Error(`Failed to load ${tennisBallFrameSrc(index + 1)}`));
+    img.src = tennisBallFrameSrc(index + 1);
+  });
+}
+
 /**
- * Pre-carga los 120 frames en memoria (sin insertar <img> en el DOM).
- * Patrón equivalente al for-loop del snippet de referencia.
+ * Pre-carga secuencial de los 120 frames en memoria.
+ * ScrollTrigger solo debe montarse cuando esta promesa resuelve.
  */
-export function preloadTennisBallFrames(
+export async function preloadTennisBallFrames(
   onProgress?: (loaded: number, total: number) => void,
 ): Promise<HTMLImageElement[]> {
-  const images: HTMLImageElement[] = [];
-  let loaded = 0;
+  const images: HTMLImageElement[] = new Array(TENNIS_BALL_FRAME_COUNT);
 
-  const promises = Array.from({ length: TENNIS_BALL_FRAME_COUNT }, (_, i) => {
-    const img = new Image();
-    images[i] = img;
-    return new Promise<HTMLImageElement>((resolve, reject) => {
-      img.onload = () => {
-        loaded += 1;
-        onProgress?.(loaded, TENNIS_BALL_FRAME_COUNT);
-        resolve(img);
-      };
-      img.onerror = () =>
-        reject(new Error(`Failed to load ${tennisBallFrameSrc(i + 1)}`));
-      img.src = tennisBallFrameSrc(i + 1);
-    });
-  });
+  for (let i = 0; i < TENNIS_BALL_FRAME_COUNT; i += 1) {
+    images[i] = await loadFrame(i);
+    onProgress?.(i + 1, TENNIS_BALL_FRAME_COUNT);
+  }
 
-  return Promise.all(promises).then(() => images);
+  return images;
 }

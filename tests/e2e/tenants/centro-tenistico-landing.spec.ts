@@ -75,15 +75,16 @@ test.describe("Centro Tenístico — Landing Page", () => {
       waitUntil: "networkidle",
       timeout: 60000,
     });
-    const canvas = page.locator("#tennis-canvas");
-    await expect(canvas).toHaveAttribute("data-ctv-scrolly-enabled", "true", {
+    const content = page.locator(".ctv-scrolly-content");
+    await expect(content).toHaveAttribute("data-ctv-scrolly-enabled", "true", {
       timeout: 30000,
     });
     await expect
-      .poll(() => canvas.getAttribute("data-ctv-load-state"), {
+      .poll(() => content.getAttribute("data-ctv-load-state"), {
         timeout: 60000,
       })
       .toBe("ready");
+    await expect(page.locator("#hero-canvas")).toHaveCount(1);
     await expect(page.locator('img[src*="tennis-ball/ball_"]')).toHaveCount(0);
   });
 

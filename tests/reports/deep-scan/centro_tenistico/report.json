@@ -5,13 +5,10 @@
     "finalUrl": "http://localhost:3003/t/centro-tenistico",
     "status": "ok",
     "title": "Centro Tenístico Villafuerte - Club de tenis profesional con canchas premium, clases personalizadas y torneos",
-    "consoleErrors": [
-      "Failed to load Stripe.js",
-      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
-    ],
+    "consoleErrors": ["Failed to load Stripe.js"],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__.png",
-    "loadTimeMs": 3305
+    "loadTimeMs": 2142
   },
   {
     "tenant": "centro-tenistico",
@@ -19,13 +16,10 @@
     "finalUrl": "http://localhost:3003/t/centro-tenistico/services",
     "status": "ok",
     "title": "Sass Store",
-    "consoleErrors": [
-      "Failed to load Stripe.js",
-      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
-    ],
+    "consoleErrors": ["Failed to load Stripe.js"],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__services.png",
-    "loadTimeMs": 3605
+    "loadTimeMs": 2135
   },
   {
     "tenant": "centro-tenistico",
@@ -33,13 +27,10 @@
     "finalUrl": "http://localhost:3003/t/centro-tenistico/products",
     "status": "ok",
     "title": "Sass Store",
-    "consoleErrors": [
-      "Failed to load Stripe.js",
-      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
-    ],
+    "consoleErrors": ["Failed to load Stripe.js"],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__products.png",
-    "loadTimeMs": 1648
+    "loadTimeMs": 609
   },
   {
     "tenant": "centro-tenistico",
@@ -47,13 +38,10 @@
     "finalUrl": "http://localhost:3003/t/centro-tenistico/book",
     "status": "ok",
     "title": "Sass Store",
-    "consoleErrors": [
-      "Failed to load Stripe.js",
-      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
-    ],
+    "consoleErrors": ["Failed to load Stripe.js"],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__book.png",
-    "loadTimeMs": 1534
+    "loadTimeMs": 1184
   },
   {
     "tenant": "centro-tenistico",
@@ -61,13 +49,10 @@
     "finalUrl": "http://localhost:3003/t/centro-tenistico/contact",
     "status": "ok",
     "title": "Contacto - Centro Tenístico Villafuerte",
-    "consoleErrors": [
-      "Failed to load Stripe.js",
-      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
-    ],
+    "consoleErrors": ["Failed to load Stripe.js"],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__contact.png",
-    "loadTimeMs": 1429
+    "loadTimeMs": 819
   },
   {
     "tenant": "centro-tenistico",
@@ -75,13 +60,10 @@
     "finalUrl": "http://localhost:3003/t/centro-tenistico/login",
     "status": "ok",
     "title": "Iniciar Sesión - Centro Tenístico Villafuerte",
-    "consoleErrors": [
-      "Failed to load Stripe.js",
-      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
-    ],
+    "consoleErrors": ["Failed to load Stripe.js"],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__login.png",
-    "loadTimeMs": 1785
+    "loadTimeMs": 1211
   },
   {
     "tenant": "centro-tenistico",
@@ -89,13 +71,10 @@
     "finalUrl": "http://localhost:3003/t/centro-tenistico/register",
     "status": "ok",
     "title": "Sass Store",
-    "consoleErrors": [
-      "Failed to load Stripe.js",
-      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
-    ],
+    "consoleErrors": ["Failed to load Stripe.js"],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__register.png",
-    "loadTimeMs": 2117
+    "loadTimeMs": 2031
   },
   {
     "tenant": "centro-tenistico",
@@ -103,13 +82,10 @@
     "finalUrl": "http://localhost:3003/t/centro-tenistico/forgot-password",
     "status": "ok",
     "title": "Sass Store",
-    "consoleErrors": [
-      "Failed to load Stripe.js",
-      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
-    ],
+    "consoleErrors": ["Failed to load Stripe.js"],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__forgot_password.png",
-    "loadTimeMs": 1875
+    "loadTimeMs": 2034
   },
   {
     "tenant": "centro-tenistico",
@@ -118,12 +94,12 @@
     "status": "redirect",
     "title": "Iniciar Sesión - Centro Tenístico Villafuerte",
     "consoleErrors": [
-      "Failed to load Stripe.js",
-      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
+      "ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at fetchData (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:514:22)\n    at async getSession (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:681:21)\n    at async SessionProvider.useEffect [as _getSession] (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:824:51)",
+      "Failed to load Stripe.js"
     ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__admin.png",
-    "loadTimeMs": 2948
+    "loadTimeMs": 3134
   },
   {
     "tenant": "centro-tenistico",
@@ -132,12 +108,12 @@
     "status": "redirect",
     "title": "Iniciar Sesión - Centro Tenístico Villafuerte",
     "consoleErrors": [
-      "Failed to load Stripe.js",
-      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
+      "ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at fetchData (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:514:22)\n    at async getSession (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:681:21)\n    at async SessionProvider.useEffect [as _getSession] (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:824:51)",
+      "Failed to load Stripe.js"
     ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__admin_calendar.png",
-    "loadTimeMs": 3903
+    "loadTimeMs": 2282
   },
   {
     "tenant": "centro-tenistico",
@@ -147,12 +123,11 @@
     "title": "Iniciar Sesión - Centro Tenístico Villafuerte",
     "consoleErrors": [
       "ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at fetchData (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:514:22)\n    at async getSession (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:681:21)\n    at async SessionProvider.useEffect [as _getSession] (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:824:51)",
-      "Failed to load Stripe.js",
-      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
+      "Failed to load Stripe.js"
     ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__admin_products.png",
-    "loadTimeMs": 3327
+    "loadTimeMs": 1964
   },
   {
     "tenant": "centro-tenistico",
@@ -162,216 +137,191 @@
     "title": "Iniciar Sesión - Centro Tenístico Villafuerte",
     "consoleErrors": [
       "ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at fetchData (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:514:22)\n    at async getSession (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:681:21)\n    at async SessionProvider.useEffect [as _getSession] (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:824:51)",
-      "Failed to load Stripe.js",
-      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
+      "Failed to load Stripe.js"
     ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__admin_content.png",
-    "loadTimeMs": 2456
+    "loadTimeMs": 1932
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/admin/quotes",
-    "finalUrl": "http://localhost:3003/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
-    "status": "redirect",
-    "title": "Iniciar Sesión - Centro Tenístico Villafuerte",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/admin/quotes",
+    "status": "ok",
+    "title": "Sass Store",
     "consoleErrors": [
       "ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at fetchData (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:514:22)\n    at async getSession (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:681:21)\n    at async SessionProvider.useEffect [as _getSession] (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:824:51)",
-      "Failed to load Stripe.js",
-      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
+      "Failed to load Stripe.js"
     ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__admin_quotes.png",
-    "loadTimeMs": 2632
+    "loadTimeMs": 1695
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/admin_services",
-    "finalUrl": "http://localhost:3003/t/centro-tenistico/login",
-    "status": "redirect",
-    "title": "Iniciar Sesión - Centro Tenístico Villafuerte",
-    "consoleErrors": [
-      "Failed to load Stripe.js",
-      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
-    ],
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/admin_services",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": ["Failed to load Stripe.js"],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__admin_services.png",
-    "loadTimeMs": 2329
+    "loadTimeMs": 809
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/admin_bookings",
-    "finalUrl": "http://localhost:3003/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
-    "status": "redirect",
-    "title": "Iniciar Sesión - Centro Tenístico Villafuerte",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/admin_bookings",
+    "status": "ok",
+    "title": "Sass Store",
     "consoleErrors": [
+      "Error loading tenant data: TypeError: Failed to fetch\n    at _0x1b0025.fetch (eval at <anonymous> (http://localhost:3003/_next/static/chunks/node_modules_next_dist_f3530cac._.js:16:78), <anonymous>:1:48941)\n    at loadTenantData (http://localhost:3003/_next/static/chunks/apps_web_0c53ff15._.js:2367:36)\n    at AdminServicesPage.useEffect (http://localhost:3003/_next/static/chunks/apps_web_0c53ff15._.js:2359:13)\n    at Object.react_stack_bottom_frame (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:14876:22)\n    at runWithFiberInDEV (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:965:74)\n    at commitHookEffectListMount (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:7266:167)\n    at commitHookPassiveMountEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:7301:60)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8786:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8800:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8800:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8800:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8800:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8800:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8800:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8800:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8800:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8800:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)",
+      "Error loading services: TypeError: Failed to fetch\n    at _0x1b0025.fetch (eval at <anonymous> (http://localhost:3003/_next/static/chunks/node_modules_next_dist_f3530cac._.js:16:78), <anonymous>:1:48941)\n    at loadServices (http://localhost:3003/_next/static/chunks/apps_web_0c53ff15._.js:2379:36)\n    at AdminServicesPage.useEffect (http://localhost:3003/_next/static/chunks/apps_web_0c53ff15._.js:2360:13)\n    at Object.react_stack_bottom_frame (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:14876:22)\n    at runWithFiberInDEV (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:965:74)\n    at commitHookEffectListMount (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:7266:167)\n    at commitHookPassiveMountEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:7301:60)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8786:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8800:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8800:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8800:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8800:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8800:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8800:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8800:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8800:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8800:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)",
       "ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at fetchData (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:514:22)\n    at async getSession (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:681:21)\n    at async SessionProvider.useEffect [as _getSession] (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:824:51)",
-      "Failed to load Stripe.js",
-      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
+      "Failed to load Stripe.js"
     ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__admin_bookings.png",
-    "loadTimeMs": 2571
+    "loadTimeMs": 2254
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/admin_tenants",
-    "finalUrl": "http://localhost:3003/t/centro-tenistico",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/admin_tenants",
     "status": "ok",
-    "title": "Centro Tenístico Villafuerte - Club de tenis profesional con canchas premium, clases personalizadas y torneos",
-    "consoleErrors": [
-      "Failed to load Stripe.js",
-      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
-    ],
+    "title": "Sass Store",
+    "consoleErrors": ["Failed to load Stripe.js"],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__admin_tenants.png",
-    "loadTimeMs": 2274
+    "loadTimeMs": 831
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/admin_products",
-    "finalUrl": "http://localhost:3003/t/centro-tenistico/login",
-    "status": "redirect",
-    "title": "Iniciar Sesión - Centro Tenístico Villafuerte",
-    "consoleErrors": [
-      "Failed to load Stripe.js",
-      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
-    ],
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/admin_products",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": ["Failed to load Stripe.js"],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__admin_products.png",
-    "loadTimeMs": 2032
+    "loadTimeMs": 938
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/pos",
-    "finalUrl": "http://localhost:3003/t/centro-tenistico/login",
-    "status": "redirect",
-    "title": "Iniciar Sesión - Centro Tenístico Villafuerte",
-    "consoleErrors": [
-      "Failed to load Stripe.js",
-      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
-    ],
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/pos",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": ["Failed to load Stripe.js"],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__pos.png",
-    "loadTimeMs": 2233
+    "loadTimeMs": 1265
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/reports",
-    "finalUrl": "http://localhost:3003/t/centro-tenistico/login",
-    "status": "redirect",
-    "title": "Iniciar Sesión - Centro Tenístico Villafuerte",
-    "consoleErrors": [
-      "Failed to load Stripe.js",
-      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
-    ],
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/reports",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": ["Failed to load Stripe.js"],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__reports.png",
-    "loadTimeMs": 2122
+    "loadTimeMs": 1134
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/finance",
-    "finalUrl": "http://localhost:3003/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
-    "status": "redirect",
-    "title": "Iniciar Sesión - Centro Tenístico Villafuerte",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/finance",
+    "status": "ok",
+    "title": "Sass Store",
     "consoleErrors": [
-      "Failed to load Stripe.js",
-      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
+      "ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at fetchData (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:514:22)\n    at async getSession (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:681:21)\n    at async SessionProvider.useEffect [as _getSession] (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:824:51)",
+      "Failed to load Stripe.js"
     ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__finance.png",
-    "loadTimeMs": 3220
+    "loadTimeMs": 1646
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/finance/movements",
-    "finalUrl": "http://localhost:3003/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
-    "status": "redirect",
-    "title": "Iniciar Sesión - Centro Tenístico Villafuerte",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/finance/movements",
+    "status": "ok",
+    "title": "Sass Store",
     "consoleErrors": [
       "ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at fetchData (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:514:22)\n    at async getSession (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:681:21)\n    at async SessionProvider.useEffect [as _getSession] (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:824:51)",
-      "Failed to load Stripe.js",
-      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
+      "Failed to load Stripe.js"
     ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__finance_movements.png",
-    "loadTimeMs": 2575
+    "loadTimeMs": 1817
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/finance/budgets",
-    "finalUrl": "http://localhost:3003/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
-    "status": "redirect",
-    "title": "Iniciar Sesión - Centro Tenístico Villafuerte",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/finance/budgets",
+    "status": "ok",
+    "title": "Presupuestos - Gestion Financiera",
     "consoleErrors": [
       "ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at fetchData (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:514:22)\n    at async getSession (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:681:21)\n    at async SessionProvider.useEffect [as _getSession] (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:824:51)",
-      "Failed to load Stripe.js",
-      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
+      "Failed to load Stripe.js"
     ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__finance_budgets.png",
-    "loadTimeMs": 2744
+    "loadTimeMs": 1745
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/finance/categories",
-    "finalUrl": "http://localhost:3003/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
-    "status": "redirect",
-    "title": "Iniciar Sesión - Centro Tenístico Villafuerte",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/finance/categories",
+    "status": "ok",
+    "title": "Categorías - Gestión Financiera",
     "consoleErrors": [
       "ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at fetchData (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:514:22)\n    at async getSession (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:681:21)\n    at async SessionProvider.useEffect [as _getSession] (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:824:51)",
-      "Failed to load Stripe.js",
-      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
+      "Failed to load Stripe.js"
     ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__finance_categories.png",
-    "loadTimeMs": 3208
+    "loadTimeMs": 1930
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/inventory",
-    "finalUrl": "http://localhost:3003/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
-    "status": "redirect",
-    "title": "Iniciar Sesión - Centro Tenístico Villafuerte",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/inventory",
+    "status": "ok",
+    "title": "Sass Store",
     "consoleErrors": [
       "ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at fetchData (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:514:22)\n    at async getSession (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:681:21)\n    at async SessionProvider.useEffect [as _getSession] (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:824:51)",
-      "Failed to load Stripe.js",
-      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
+      "Failed to load Stripe.js"
     ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__inventory.png",
-    "loadTimeMs": 2549
+    "loadTimeMs": 1763
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/inventory/supplies",
-    "finalUrl": "http://localhost:3003/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
-    "status": "redirect",
-    "title": "Iniciar Sesión - Centro Tenístico Villafuerte",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/inventory/supplies",
+    "status": "ok",
+    "title": "Gastos de Insumos - Inventario",
     "consoleErrors": [
       "ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at fetchData (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:514:22)\n    at async getSession (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:681:21)\n    at async SessionProvider.useEffect [as _getSession] (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:824:51)",
-      "Failed to load Stripe.js",
-      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
+      "Failed to load Stripe.js"
     ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__inventory_supplies.png",
-    "loadTimeMs": 3482
+    "loadTimeMs": 1604
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/clientes",
-    "finalUrl": "http://localhost:3003/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
-    "status": "redirect",
-    "title": "Iniciar Sesión - Centro Tenístico Villafuerte",
-    "consoleErrors": [
-      "ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at fetchData (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:514:22)\n    at async getSession (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:681:21)\n    at async SessionProvider.useEffect [as _getSession] (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:824:51)",
-      "Failed to load Stripe.js",
-      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
-    ],
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/clientes",
+    "status": "ok",
+    "title": "Clientas - Centro Tenístico Villafuerte",
+    "consoleErrors": ["Failed to load Stripe.js"],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__clientes.png",
-    "loadTimeMs": 3082
+    "loadTimeMs": 2071
   },
   {
     "tenant": "centro-tenistico",
@@ -381,27 +331,25 @@
     "title": "Iniciar Sesión - Centro Tenístico Villafuerte",
     "consoleErrors": [
       "ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at fetchData (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:514:22)\n    at async getSession (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:681:21)\n    at async SessionProvider.useEffect [as _getSession] (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:824:51)",
-      "Failed to load Stripe.js",
-      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
+      "Failed to load Stripe.js"
     ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__clientes_nueva.png",
-    "loadTimeMs": 5630
+    "loadTimeMs": 2271
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/clientes/test",
-    "finalUrl": "http://localhost:3003/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
-    "status": "redirect",
-    "title": "Iniciar Sesión - Centro Tenístico Villafuerte",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/clientes/test",
+    "status": "ok",
+    "title": "Sass Store",
     "consoleErrors": [
       "ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at fetchData (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:514:22)\n    at async getSession (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:681:21)\n    at async SessionProvider.useEffect [as _getSession] (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:824:51)",
-      "Failed to load Stripe.js",
-      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
+      "Failed to load Stripe.js"
     ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__clientes_test.png",
-    "loadTimeMs": 3465
+    "loadTimeMs": 1607
   },
   {
     "tenant": "centro-tenistico",
@@ -409,13 +357,10 @@
     "finalUrl": "http://localhost:3003/t/centro-tenistico/cart",
     "status": "ok",
     "title": "Sass Store",
-    "consoleErrors": [
-      "Failed to load Stripe.js",
-      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
-    ],
+    "consoleErrors": ["Failed to load Stripe.js"],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__cart.png",
-    "loadTimeMs": 2968
+    "loadTimeMs": 932
   },
   {
     "tenant": "centro-tenistico",
@@ -424,13 +369,13 @@
     "status": "ok",
     "title": "Sass Store",
     "consoleErrors": [
+      "Error loading tenant data: TypeError: Failed to fetch\n    at _0x1b0025.fetch (eval at <anonymous> (http://localhost:3003/_next/static/chunks/node_modules_next_dist_f3530cac._.js:16:78), <anonymous>:1:48941)\n    at CartPage.useEffect.loadTenantData (http://localhost:3003/_next/static/chunks/apps_web_2c00f356._.js:1586:48)\n    at CartPage.useEffect (http://localhost:3003/_next/static/chunks/apps_web_2c00f356._.js:1598:13)\n    at Object.react_stack_bottom_frame (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:14876:22)\n    at runWithFiberInDEV (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:965:74)\n    at commitHookEffectListMount (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:7266:167)\n    at commitHookPassiveMountEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:7301:60)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8786:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8800:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8800:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8800:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8800:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8800:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8800:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8800:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8800:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8800:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)",
       "Loading the script 'https://js.stripe.com/basil/stripe.js' violates the following Content Security Policy directive: \"script-src 'self' https://sdk.mercadopago.com https://secure.mlstatic.com https://challenges.cloudflare.com 'unsafe-eval' 'unsafe-inline'\". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback. The action has been blocked.",
-      "Failed to load Stripe.js",
-      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
+      "Failed to load Stripe.js"
     ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__checkout.png",
-    "loadTimeMs": 2336
+    "loadTimeMs": 1178
   },
   {
     "tenant": "centro-tenistico",
@@ -438,12 +383,10 @@
     "finalUrl": "http://localhost:3003/t/centro-tenistico/checkout/success",
     "status": "ok",
     "title": "Sass Store",
-    "consoleErrors": [
-      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
-    ],
+    "consoleErrors": [],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__checkout_success.png",
-    "loadTimeMs": 2338
+    "loadTimeMs": 1129
   },
   {
     "tenant": "centro-tenistico",
@@ -451,25 +394,21 @@
     "finalUrl": "http://localhost:3003/t/centro-tenistico/orders",
     "status": "ok",
     "title": "Sass Store",
-    "consoleErrors": [
-      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
-    ],
+    "consoleErrors": [],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__orders.png",
-    "loadTimeMs": 1827
+    "loadTimeMs": 854
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/profile",
-    "finalUrl": "http://localhost:3003/t/centro-tenistico/login",
-    "status": "redirect",
-    "title": "Iniciar Sesión - Centro Tenístico Villafuerte",
-    "consoleErrors": [
-      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
-    ],
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/profile",
+    "status": "ok",
+    "title": "Sass Store",
+    "consoleErrors": [],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__profile.png",
-    "loadTimeMs": 2989
+    "loadTimeMs": 929
   },
   {
     "tenant": "centro-tenistico",
@@ -478,11 +417,11 @@
     "status": "ok",
     "title": "Sass Store",
     "consoleErrors": [
-      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
+      "Error loading tenant: TypeError: Failed to fetch\n    at _0x1b0025.fetch (eval at <anonymous> (http://localhost:3003/_next/static/chunks/node_modules_next_dist_f3530cac._.js:16:78), <anonymous>:1:48941)\n    at TenantProfilePage.useEffect.loadTenantData (http://localhost:3003/_next/static/chunks/apps_web_bc7abe44._.js:1058:48)\n    at TenantProfilePage.useEffect (http://localhost:3003/_next/static/chunks/apps_web_bc7abe44._.js:1068:13)\n    at Object.react_stack_bottom_frame (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:14876:22)\n    at runWithFiberInDEV (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:965:74)\n    at commitHookEffectListMount (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:7266:167)\n    at commitHookPassiveMountEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:7301:60)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8786:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8800:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8800:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8800:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8800:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8800:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8800:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8800:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8800:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8800:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)"
     ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__account.png",
-    "loadTimeMs": 1794
+    "loadTimeMs": 1358
   },
   {
     "tenant": "centro-tenistico",
@@ -490,25 +429,23 @@
     "finalUrl": "http://localhost:3003/t/centro-tenistico/settings/calendar",
     "status": "ok",
     "title": "Sass Store",
-    "consoleErrors": [
-      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
-    ],
+    "consoleErrors": [],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__settings_calendar.png",
-    "loadTimeMs": 2861
+    "loadTimeMs": 842
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/config",
-    "finalUrl": "http://localhost:3003/t/centro-tenistico/login",
-    "status": "redirect",
-    "title": "Iniciar Sesión - Centro Tenístico Villafuerte",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/config",
+    "status": "ok",
+    "title": "Sass Store",
     "consoleErrors": [
-      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
+      "Failed to fetch calendar status: TypeError: Failed to fetch\n    at _0x1b0025.fetch (eval at <anonymous> (http://localhost:3003/_next/static/chunks/node_modules_next_dist_f3530cac._.js:16:78), <anonymous>:1:48941)\n    at fetchStatus (http://localhost:3003/_next/static/chunks/_9b73ac07._.js:447:36)\n    at CalendarSettingsPage.useEffect (http://localhost:3003/_next/static/chunks/_9b73ac07._.js:441:13)\n    at Object.react_stack_bottom_frame (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:14876:22)\n    at runWithFiberInDEV (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:965:74)\n    at commitHookEffectListMount (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:7266:167)\n    at commitHookPassiveMountEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:7301:60)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8786:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8800:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8800:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8800:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8800:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8800:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8800:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8800:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8800:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8800:17)\n    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8773:13)\n    at reconnectPassiveEffects (http://localhost:3003/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8785:17)"
     ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__config.png",
-    "loadTimeMs": 3350
+    "loadTimeMs": 1085
   },
   {
     "tenant": "centro-tenistico",
@@ -516,12 +453,10 @@
     "finalUrl": "http://localhost:3003/t/centro-tenistico/favorites",
     "status": "ok",
     "title": "Sass Store",
-    "consoleErrors": [
-      "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <FavoritesPage>\n      <div className=\"min-h-scre...\">\n        ...\n          <div className=\"max-w-scre...\">\n            <div className=\"flex items...\">\n              <LinkComponent>\n              <form onSubmit={function TopNav.useCallback[handleSearch]} className=\"flex-1 max...\">\n                <div className=\"flex h-12 ...\">\n                  <div className=\"w-48\">\n                    <SearchableSelectSingle options={[...]} value=\"all\" onChange={function onChange} ...>\n                      <SearchableSelectComponent options={[...]} value=\"all\" onChange={function onChange} ...>\n                        <div className=\"\">\n                          <Select ref={null} isMulti={false} isSearchable={false} isClearable={true} isDisabled={false} ...>\n                            <SelectContainer clearValue={function} cx={function} getStyles={function} ...>\n                              <EmotionCssPropInternal css={{label:\"con...\", ...}} className=\"h-full\" id={undefined} ...>\n                                <Insertion>\n+                               <div className=\"h-full css-b62m3t-container\" id={undefined} onKeyDown={function}>\n-                               <style data-emotion=\"css b62m3t-container\">\n                  ...\n              ...\n            ...\n        ...\n"
-    ],
+    "consoleErrors": [],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__favorites.png",
-    "loadTimeMs": 2630
+    "loadTimeMs": 1481
   },
   {
     "tenant": "centro-tenistico",
@@ -532,7 +467,7 @@
     "consoleErrors": [],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__social.png",
-    "loadTimeMs": 3630
+    "loadTimeMs": 1424
   },
   {
     "tenant": "centro-tenistico",
@@ -540,10 +475,12 @@
     "finalUrl": "http://localhost:3003/t/centro-tenistico/retouch",
     "status": "ok",
     "title": "Sass Store",
-    "consoleErrors": [],
+    "consoleErrors": [
+      "Failed to fetch monthly count TypeError: Failed to fetch\n    at _0x1b0025.fetch (eval at <anonymous> (http://localhost:3003/_next/static/chunks/node_modules_next_dist_f3530cac._.js:16:78), <anonymous>:1:48941)\n    at fetchMonthlyCount (http://localhost:3003/_next/static/chunks/apps_web_components_e3704ab0._.js:8641:43)"
+    ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__retouch.png",
-    "loadTimeMs": 1884
+    "loadTimeMs": 1804
   },
   {
     "tenant": "centro-tenistico",
@@ -554,18 +491,20 @@
     "consoleErrors": [],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__reorder.png",
-    "loadTimeMs": 2350
+    "loadTimeMs": 1100
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/booking",
-    "finalUrl": "http://localhost:3003/t/centro-tenistico/services",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/booking",
     "status": "ok",
     "title": "Sass Store",
-    "consoleErrors": [],
+    "consoleErrors": [
+      "ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at fetchData (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:514:22)\n    at async getSession (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:681:21)\n    at async SessionProvider.useEffect [as _getSession] (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:824:51)"
+    ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__booking.png",
-    "loadTimeMs": 5867
+    "loadTimeMs": 1885
   },
   {
     "tenant": "centro-tenistico",
@@ -576,7 +515,7 @@
     "consoleErrors": [],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__booking_test_booking_123.png",
-    "loadTimeMs": 2643
+    "loadTimeMs": 1043
   },
   {
     "tenant": "centro-tenistico",
@@ -587,33 +526,33 @@
     "consoleErrors": [],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__booking_nonexistent.png",
-    "loadTimeMs": 2969
+    "loadTimeMs": 981
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/clientes/test-client-123",
-    "finalUrl": "http://localhost:3003/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
-    "status": "redirect",
-    "title": "Iniciar Sesión - Centro Tenístico Villafuerte",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/clientes/test-client-123",
+    "status": "ok",
+    "title": "Expediente de Clienta - Centro Tenístico Villafuerte",
     "consoleErrors": [
       "ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at fetchData (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:514:22)\n    at async getSession (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:681:21)\n    at async SessionProvider.useEffect [as _getSession] (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:824:51)"
     ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__clientes_test_client_123.png",
-    "loadTimeMs": 6583
+    "loadTimeMs": 1722
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/clientes/nonexistent",
-    "finalUrl": "http://localhost:3003/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
-    "status": "redirect",
-    "title": "Iniciar Sesión - Centro Tenístico Villafuerte",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/clientes/nonexistent",
+    "status": "ok",
+    "title": "Expediente de Clienta - Centro Tenístico Villafuerte",
     "consoleErrors": [
       "ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at fetchData (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:514:22)\n    at async getSession (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:681:21)\n    at async SessionProvider.useEffect [as _getSession] (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:824:51)"
     ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__clientes_nonexistent.png",
-    "loadTimeMs": 6509
+    "loadTimeMs": 1726
   },
   {
     "tenant": "centro-tenistico",
@@ -627,7 +566,7 @@
     ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__services_test_service_123_inventory.png",
-    "loadTimeMs": 1931
+    "loadTimeMs": 1533
   },
   {
     "tenant": "centro-tenistico",
@@ -641,32 +580,32 @@
     ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__services_nonexistent_inventory.png",
-    "loadTimeMs": 1467
+    "loadTimeMs": 1004
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/admin/quotes/test-quote-123",
-    "finalUrl": "http://localhost:3003/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
-    "status": "redirect",
-    "title": "Iniciar Sesión - Centro Tenístico Villafuerte",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/admin/quotes/test-quote-123",
+    "status": "ok",
+    "title": "Sass Store",
     "consoleErrors": [
       "ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at fetchData (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:514:22)\n    at async getSession (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:681:21)\n    at async SessionProvider.useEffect [as _getSession] (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:824:51)"
     ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__admin_quotes_test_quote_123.png",
-    "loadTimeMs": 5198
+    "loadTimeMs": 1854
   },
   {
     "tenant": "centro-tenistico",
     "url": "/t/centro-tenistico/admin/quotes/nonexistent",
-    "finalUrl": "http://localhost:3003/t/centro-tenistico/login?callbackUrl=/t/centro-tenistico/admin",
-    "status": "redirect",
-    "title": "Iniciar Sesión - Centro Tenístico Villafuerte",
+    "finalUrl": "http://localhost:3003/t/centro-tenistico/admin/quotes/nonexistent",
+    "status": "ok",
+    "title": "Sass Store",
     "consoleErrors": [
       "ClientFetchError: Failed to fetch. Read more at https://errors.authjs.dev#autherror\n    at fetchData (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:514:22)\n    at async getSession (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:681:21)\n    at async SessionProvider.useEffect [as _getSession] (http://localhost:3003/_next/static/chunks/node_modules_fe794d67._.js:824:51)"
     ],
     "visibleErrors": [],
     "screenshotPath": "centro_tenistico/screenshots/centro_tenistico__admin_quotes_nonexistent.png",
-    "loadTimeMs": 6550
+    "loadTimeMs": 1737
   }
 ]
