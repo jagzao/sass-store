@@ -37,8 +37,8 @@ Este documento centraliza pendientes activos del proyecto: features, bugs, deuda
 
 - [x] **P1 | Observabilidad** Estandarizar logs por dominio (tenant/auth/cart/finance) con niveles `info/warn/error` y contexto mínimo
   - Fix: commit `752541e` — DomainLogger con tenantLogger/authLogger/cartLogger/financeLogger/dbLogger/apiLogger; prod=warn+, dev=info+; dedup 10s; LOG_LEVEL_TENANT=debug para override
-- [ ] **P1 | Frontend Performance** Revisar polling/re-fetch frecuente de sesión + carrito (`/api/auth/session`, `PUT /api/users/*/cart`)
-  - Objetivo: disminuir tráfico repetitivo y carga de servidor.
+- [x] **P1 | Frontend Performance** Revisar polling/re-fetch frecuente de sesión + carrito (`/api/auth/session`, `PUT /api/users/*/cart`)
+  - Fix: commit `dd2d4bb` — CartSyncProvider: polling de 30s → debounce de 5s en cambios de items; loadUserCart/saveCartToUser reciben userId de useSession (sin fetch extra de /api/auth/session); SessionProvider: refetchInterval=0 (sin polling de sesión); beforeunload via sendBeacon.
 - [ ] **P2 | Error Handling** Homogeneizar manejo de errores de red en hooks del frontend
   - Objetivo: mensajes útiles al usuario + reducción de errores de consola no accionables.
 - [ ] **P2 | Documentation** Definir política de triage de incidentes y SLA interno para bugs recurrentes.
