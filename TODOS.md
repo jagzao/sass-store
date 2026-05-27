@@ -28,8 +28,8 @@ Este documento centraliza pendientes activos del proyecto: features, bugs, deuda
   - Fix: commit `939e9fc` — suprime log en dev para hosts localhost; solo loggea en producción o hosts externos.
 - [x] **P1 | Tenant Validation** Corregir flujo que produce `Missing x-tenant header`
   - Fix: commit `939e9fc` — middleware usa `NextResponse.next({ request: { headers } })` para forward tenant headers a Server Components y API Routes.
-- [ ] **P2 | Assets** Resolver 404 de logos (`/logos/delirios.png`, `/logos/vigistudio.png`, `/logos/nom-nom.png`, etc.)
-  - Impacto: branding incompleto en UI.
+- [x] **P2 | Assets** Resolver 404 de logos (`/logos/delirios.png`, `/logos/vigistudio.png`, `/logos/nom-nom.png`, etc.)
+  - Fix: commit `76488aa` — SVG logos añadidos para delirios/manada-juma/zo-system; get-tenant.ts remapea placeholder.zo.dev → /tenants/[slug]/logo/logo.svg; resolver.ts y tenant-provider.tsx usan rutas locales.
 
 ---
 
