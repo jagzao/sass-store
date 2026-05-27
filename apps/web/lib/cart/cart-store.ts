@@ -2,6 +2,7 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { cartLogger } from "@/lib/logger";
 
 export interface CartItem {
   sku: string;
@@ -73,9 +74,9 @@ interface CartStore {
 
 // Interface extension to include sync methods
 interface CartStoreWithSync extends CartStore {
-  syncCartWithUser: () => Promise<void>;
-  loadUserCart: () => Promise<void>;
-  saveCartToUser: () => Promise<void>;
+  syncCartWithUser: (userId?: string) => Promise<void>;
+  loadUserCart: (userId?: string) => Promise<void>;
+  saveCartToUser: (userId?: string) => Promise<void>;
 }
 
 // Cache for cart data to improve performance
@@ -130,12 +131,10 @@ export const useCart = create<CartStoreWithSync>()(
 
       addItem: (newItem, quantity = 1) => {
         set((state) => {
-          // DEBUG: Log para identificar duplicados
-          console.warn("[CART] addItem called:", {
+          cartLogger.debug("addItem", {
             sku: newItem.sku,
             quantity,
             currentItems: state.items.length,
-            existingSkus: state.items.map((i) => i.sku),
           });
 
           const existingItem = state.items.find(
@@ -146,8 +145,8 @@ export const useCart = create<CartStoreWithSync>()(
           if (existingItem) {
             // INCREMENT the quantity (add to existing)
             const newQuantity = existingItem.quantity + quantity;
-            console.warn(
-              `[CART] Incrementing ${newItem.sku}: ${existingItem.quantity} + ${quantity} = ${newQuantity}`,
+            cartLogger.debug(
+              `Incrementing ${newItem.sku}: ${existingItem.quantity} + ${quantity} = ${newQuantity}`,
             );
 
             // Validate stock if available
@@ -166,13 +165,10 @@ export const useCart = create<CartStoreWithSync>()(
             }
           } else {
             // Add new item with specified quantity
-            console.warn(
-              `[CART] Adding new item ${newItem.sku} with quantity ${quantity}`,
-            );
+            cartLogger.debug(`Adding new item ${newItem.sku} qty=${quantity}`);
             updatedItems = [...state.items, { ...newItem, quantity }];
           }
 
-          console.warn("[CART] Updated items:", updatedItems.length);
           return {
             items: updatedItems,
             isOpen: true,
@@ -443,107 +439,96 @@ export const useCart = create<CartStoreWithSync>()(
       },
 
       // Synchronization methods
-      syncCartWithUser: async () => {
-        // First, try to load the cart from user account if logged in
-        await get().loadUserCart();
-
-        // Then save current cart to user account
-        await get().saveCartToUser();
+      syncCartWithUser: async (userId?: string) => {
+        await get().loadUserCart(userId);
+        await get().saveCartToUser(userId);
       },
 
-      loadUserCart: async () => {
-        // Check if user is authenticated
-        const response = await fetch("/api/auth/session");
-        if (!response.ok) {
-          // User not authenticated, nothing to load
-          return;
-        }
+      /**
+       * Load cart from server.
+       * Pass userId (from useSession) to avoid an extra /api/auth/session fetch.
+       */
+      loadUserCart: async (userId?: string) => {
+        let resolvedId = userId;
 
-        const session = await response.json();
-        if (!session?.user?.id) {
-          // No user in session, nothing to load
-          return;
-        }
-
-        try {
-          // Fetch user's cart from the backend
-          const cartResponse = await fetch(
-            `/api/users/${session.user.id}/cart`,
-          );
-          if (cartResponse.ok) {
-            const userData = await cartResponse.json();
-            const userCartItems = userData.cart || [];
-
-            // Merge user cart with existing local cart
-            set((state) => {
-              // Create a map of existing items by SKU for easy lookup
-              const existingItemsMap = new Map(
-                state.items.map((item) => [item.sku, item]),
-              );
-
-              // Process user cart items
-              const mergedItems = [...userCartItems];
-
-              // Add items that are in local storage but not in user cart
-              state.items.forEach((item) => {
-                if (!existingItemsMap.has(item.sku)) {
-                  mergedItems.push(item);
-                } else {
-                  // If item exists in both, use the quantity from the cart with highest quantity
-                  const existingUserItem = userCartItems.find(
-                    (userItem: CartItem) => userItem.sku === item.sku,
-                  );
-                  if (
-                    existingUserItem &&
-                    existingUserItem.quantity < item.quantity
-                  ) {
-                    mergedItems[
-                      mergedItems.findIndex((i: CartItem) => i.sku === item.sku)
-                    ] = item;
-                  }
-                }
-              });
-
-              return {
-                ...state,
-                items: mergedItems,
-                lastActivity: Date.now(),
-              };
-            });
+        if (!resolvedId) {
+          // Fallback: fetch session when called without userId (legacy paths)
+          try {
+            const response = await fetch("/api/auth/session");
+            if (!response.ok) return;
+            const session = await response.json();
+            resolvedId = session?.user?.id;
+          } catch {
+            return;
           }
+        }
+
+        if (!resolvedId) return;
+
+        try {
+          const cartResponse = await fetch(`/api/users/${resolvedId}/cart`);
+          if (!cartResponse.ok) return;
+
+          const userData = await cartResponse.json();
+          const userCartItems: CartItem[] = userData.cart || [];
+
+          set((state) => {
+            const mergedItems = [...userCartItems];
+
+            // Merge local-only items and prefer higher quantities
+            state.items.forEach((localItem) => {
+              const idx = mergedItems.findIndex((i) => i.sku === localItem.sku);
+              if (idx === -1) {
+                mergedItems.push(localItem);
+              } else if (mergedItems[idx].quantity < localItem.quantity) {
+                mergedItems[idx] = localItem;
+              }
+            });
+
+            return { ...state, items: mergedItems, lastActivity: Date.now() };
+          });
+
+          cartLogger.debug(
+            `loadUserCart: loaded ${userCartItems.length} items for user ${resolvedId}`,
+          );
         } catch (error) {
-          console.error("Error loading user cart:", error);
+          cartLogger.warn("loadUserCart error", error);
         }
       },
 
-      saveCartToUser: async () => {
-        // Check if user is authenticated
-        const response = await fetch("/api/auth/session");
-        if (!response.ok) {
-          // User not authenticated, can't save to user account
-          return;
+      /**
+       * Persist cart to server.
+       * Pass userId (from useSession) to avoid an extra /api/auth/session fetch.
+       */
+      saveCartToUser: async (userId?: string) => {
+        let resolvedId = userId;
+
+        if (!resolvedId) {
+          // Fallback: fetch session when called without userId (legacy paths)
+          try {
+            const response = await fetch("/api/auth/session");
+            if (!response.ok) return;
+            const session = await response.json();
+            resolvedId = session?.user?.id;
+          } catch {
+            return;
+          }
         }
 
-        const session = await response.json();
-        if (!session?.user?.id) {
-          // No user in session, can't save to user account
-          return;
-        }
+        if (!resolvedId) return;
 
-        // Get current cart items
-        const state = get();
-
+        const { items } = get();
         try {
-          // Save current cart to user account
-          await fetch(`/api/users/${session.user.id}/cart`, {
+          await fetch(`/api/users/${resolvedId}/cart`, {
             method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ cart: state.items }),
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ cart: items }),
           });
+          cartLogger.debug(
+            `saveCartToUser: saved ${items.length} items for user ${resolvedId}`,
+          );
         } catch (error) {
-          console.error("Error saving cart to user:", error);
+          cartLogger.warn("saveCartToUser error", error);
         }
       },
     }),
@@ -558,15 +543,12 @@ export const useCart = create<CartStoreWithSync>()(
       // Sanitize and deduplicate data when loading from storage
       onRehydrateStorage: () => (state) => {
         if (state && state.items.length > 0) {
-          console.warn(
-            "[CART] Rehydrating from storage, sanitizing and deduplicating items...",
-          );
           const sanitized = state._sanitizeItems(state.items);
           const deduplicated = state._deduplicateItems(sanitized);
 
           if (deduplicated.length < state.items.length) {
-            console.warn(
-              `[CART] Removed ${state.items.length - deduplicated.length} duplicate items during rehydration`,
+            cartLogger.debug(
+              `Removed ${state.items.length - deduplicated.length} duplicates during rehydration`,
             );
           }
 
