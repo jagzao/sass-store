@@ -8,9 +8,17 @@ import { TenantStyles } from "@/components/tenant/TenantStyles";
 import { LiveRegionProvider } from "@/components/a11y/LiveRegion";
 import { GoogleAuthBinder } from "@/components/auth/GoogleAuthBinder";
 
-// Force dynamic rendering for all tenant pages
-export const dynamic = "force-dynamic";
-// export const revalidate = 3600; // Removed to prevent stale 404s for new tenants
+import { db } from "@sass-store/database";
+import { tenants } from "@sass-store/database/schema";
+
+// ISR: revalidate tenant pages every 60 seconds
+export const revalidate = 60;
+
+// Pre-render known tenants at build time; unknown slugs trigger on-demand generation (dynamicParams = true by default)
+export async function generateStaticParams() {
+  const all = await db.select({ slug: tenants.slug }).from(tenants).limit(200);
+  return all.map((t) => ({ tenant: t.slug }));
+}
 
 interface TenantLayoutProps {
   children: ReactNode;
@@ -24,9 +32,7 @@ export default async function TenantLayout({
   params,
 }: TenantLayoutProps) {
   const resolvedParams = await params;
-  console.warn("[TenantLayout] Resolved params:", resolvedParams);
   const { tenant: tenantSlug } = resolvedParams;
-  console.warn("[TenantLayout] Extracted tenantSlug:", tenantSlug);
 
   // Get tenant data directly from database (server-side only, no HTTP calls)
   const tenantRaw = await getTenantBySlug(tenantSlug);
@@ -43,8 +49,6 @@ export default async function TenantLayout({
     console.error(`[TenantLayout] Tenant not found: ${tenantSlug}`);
     notFound();
   }
-
-  console.warn(`[TenantLayout] Successfully loaded tenant: ${tenantData.name}`);
 
   const isWondernails = tenantSlug === "wondernails";
   const isZoSystem = tenantSlug === "zo-system";
@@ -85,10 +89,3 @@ export default async function TenantLayout({
     </>
   );
 }
-
-// Disable static generation at build time for Vercel
-// Pages will be rendered on-demand (ISR/SSR)
-// This prevents build failures when API is not available during build
-// export async function generateStaticParams() {
-//   return [];
-// }

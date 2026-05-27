@@ -15,10 +15,15 @@ import { toast } from "sonner";
 
 const CATEGORIES_KEY = "categories";
 
-export function useCategories(tenantId: string, type?: "income" | "expense") {
+export function useCategories(
+  tenantId: string,
+  type?: "income" | "expense",
+  limit = 50,
+  offset = 0,
+) {
   return useQuery({
-    queryKey: [CATEGORIES_KEY, tenantId, type],
-    queryFn: () => getCategories(tenantId, type),
+    queryKey: [CATEGORIES_KEY, tenantId, type, limit, offset],
+    queryFn: () => getCategories(tenantId, type, limit, offset),
     enabled: !!tenantId,
   });
 }

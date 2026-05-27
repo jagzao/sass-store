@@ -68,6 +68,14 @@ export async function GET(
       return NextResponse.json({ error: "Tenant not found" }, { status: 404 });
     }
 
+    // Paginate visits
+    const { searchParams } = new URL(request.url);
+    const limit = Math.min(
+      parseInt(searchParams.get("limit") || "50", 10),
+      100,
+    );
+    const offset = parseInt(searchParams.get("offset") || "0", 10);
+
     // Fetch visits with relations
     const visits = await db.query.customerVisits.findMany({
       where: and(
@@ -88,6 +96,8 @@ export async function GET(
         photos: true,
       },
       orderBy: [desc(customerVisits.visitDate)],
+      limit,
+      offset,
     });
 
     // Transform scans to match frontend expectations

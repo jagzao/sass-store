@@ -45,10 +45,16 @@ export interface UpdateCategoryData {
 export async function getCategories(
   tenantId: string,
   type?: "income" | "expense",
+  limit?: number,
+  offset?: number,
 ): Promise<Category[]> {
   const url = new URL(`${API_BASE}/api/categories`);
   url.searchParams.append("tenant", tenantId);
   if (type) url.searchParams.append("type", type);
+  if (typeof limit === "number")
+    url.searchParams.append("limit", String(limit));
+  if (typeof offset === "number")
+    url.searchParams.append("offset", String(offset));
 
   const response = await fetch(url.toString());
   const data = await response.json();

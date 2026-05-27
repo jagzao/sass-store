@@ -1,55 +1,45 @@
-# Pasos de prueba — STRY-017 (rendimiento + seguridad)
+# Testing Usuario � STRY-017 Rendimiento
 
-> **Fuente de verdad** para QA de esta épica: el agente ejecuta según fases activas en `plan.md`. Donde no haya UI, el “UAT” es verificación técnica + regresión E2E de tenants críticos.
+## Precondiciones
 
-**Grep E2E sugerido:** `STRY-017` (crear tag en specs cuando existan pruebas dedicadas).
+- npm run dev en puerto 3001
+- BD seed con tenants: wondernails, centro-tenistico
+- Login: jagzao@gmail.com / admin
 
-## Tenants de regresión (mínimo)
+## Escenarios por tenant
 
-| Slug               |
-| ------------------ |
-| `wondernails`      |
-| `centro-tenistico` |
+### E1: Landing tenant ISR
 
-Credencial estándar: `jagzao@gmail.com` / `admin`.
+- Visitar /t/wondernails
+- Sin 404, metadata SEO correcta
+- Recarga m�s r�pida (cach�)
 
----
+### E2: Products p�blicos
 
-## Fase 0 — Investigación (sin automatizar todo; checklist humano/agente)
+- /t/wondernails/products
+- Paginaci�n visible si aplica
 
-| Paso | Acción                                                                                | Esperado                                   |
-| ---- | ------------------------------------------------------------------------------------- | ------------------------------------------ |
-| I1   | `npm run build` + `lint` + `typecheck`                                                | Sin errores                                |
-| I2   | Levantar app; navegar `/t/{slug}/login`, `/book`, `/pos`, `/contact` en ambos tenants | Sin 500; header coherente                  |
-| I3   | Revisar logs consola/servidor en esas rutas                                           | Sin secretos; sin fugas datos cross-tenant |
-| I4   | Documentar en `implementacion.md` tabla de hallazgos                                  | Filas H-00x                                |
+### E3: Quotes admin
 
----
+- /t/wondernails/admin/quotes
+- Lista carga =50 items
 
-## Fases 1+ — Regresión por entrega
+### E4: Customer visits
 
-Tras **cada** PR del programa:
+- Cliente ? ver visitas
+- Lista carga =50 items
 
-| Paso | Acción                                                                               | Esperado                     |
-| ---- | ------------------------------------------------------------------------------------ | ---------------------------- | ----- |
-| R1   | `npm run test:e2e:subset -- --grep "STRY-001                                         | tenant"` (o suite acordada)  | Verde |
-| R2   | Si el PR tocó middleware o auth: probar login + API POS/terminals con y sin sesión   | Comportamiento documentado   |
-| R3   | Si el PR tocó caché: verificar datos actualizados tras mutación admin (manual o E2E) | Sin datos obsoletos críticos |
+### E5: Bookings calendar
 
----
+- /t/wondernails/admin/calendar
+- Crear reserva <3s
 
-## Seguridad (smoke repetible)
+### E6: Multitenant
 
-| Paso | Acción                                          | Esperado                                    |
-| ---- | ----------------------------------------------- | ------------------------------------------- |
-| S1   | Petición `POST` mutación sin CSRF donde aplique | Rechazo según política                      |
-| S2   | `GET /api/...` sensible sin cookie              | 401/403 según contrato                      |
-| S3   | `npm audit --production` (o pipeline CI)        | Sin high/critical sin excepción documentada |
+- Repetir E1 en centro-tenistico
+- Sin datos cruzados
 
----
+## Regresi�n
 
-## Obligación del agente (antes de visto bueno por fase)
-
-- [ ] Hallazgos y baseline en `implementacion.md`
-- [ ] Regresión mínima en dos tenants para cambios que afecten layout/auth/API
-- [ ] Playwright headless + headed según `AGENTS.md` si hubo cambio de flujo usuario
+- npm run test:e2e:subset -- --grep "wondernails|centro-tenistico"
+- Headed primero, luego headless

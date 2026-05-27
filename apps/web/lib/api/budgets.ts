@@ -82,10 +82,14 @@ export interface UpdateBudgetData {
 export async function getBudgets(
   tenantId: string,
   status?: BudgetStatus,
+  limit = 50,
+  offset = 0,
 ): Promise<Budget[]> {
   const url = new URL(`${getApiUrl()}/api/finance/budgets`);
   url.searchParams.append("tenant", tenantId);
   if (status) url.searchParams.append("status", status);
+  url.searchParams.append("limit", String(limit));
+  url.searchParams.append("offset", String(offset));
 
   const response = await fetch(url.toString());
   const data = await response.json();

@@ -105,22 +105,13 @@ export class CacheManager {
     }
   }
 
-  /**
-   * Invalidate all keys matching a pattern
-   */
-  async invalidatePattern(pattern: string): Promise<void> {
-    try {
-      // Upstash Redis doesn't support SCAN, so we store keys with prefixes
-      // and manually invalidate related keys
-      console.log(`[Cache INVALIDATE PATTERN] ${pattern}`);
-    } catch (error) {
-      console.error(`[Cache INVALIDATE PATTERN ERROR] ${pattern}:`, error);
-    }
+  // Track keys in memory for basic pattern invalidation support
+  private _keyIndex: Set<string> = new Set();
+
+  trackKey(key: string): void {
+    this._keyIndex.add(key);
   }
 
-  /**
-   * Cache keys generator for consistency
-   */
   static keys = {
     tenant: (slug: string) => `tenant:${slug}`,
     tenantById: (id: string) => `tenant:id:${id}`,
@@ -128,6 +119,39 @@ export class CacheManager {
     product: (id: string) => `product:${id}`,
     mediaAsset: (id: string) => `media:${id}`,
   };
+
+  /**
+   * Invalidate all keys matching a pattern string (simple prefix match).
+   */
+  async invalidatePattern(pattern: string): Promise<void> {
+    try {
+      if (redis) {
+        const keysToDelete: string[] = [];
+        for (const key of this._keyIndex) {
+          if (key.startsWith(pattern)) {
+            keysToDelete.push(key);
+          }
+        }
+        if (keysToDelete.length) {
+          await redis.del(...keysToDelete);
+          for (const k of keysToDelete) this._keyIndex.delete(k);
+        }
+      } else {
+        const keysToDelete: string[] = [];
+        for (const key of memoryCache.keys()) {
+          if (key.startsWith(pattern)) {
+            keysToDelete.push(key);
+          }
+        }
+        for (const k of keysToDelete) memoryCache.delete(k);
+      }
+      console.log(
+        `[Cache INVALIDATE PATTERN] ${pattern} — ${this._keyIndex.size} keys tracked`,
+      );
+    } catch (error) {
+      console.error(`[Cache INVALIDATE PATTERN ERROR] ${pattern}:`, error);
+    }
+  }
 }
 
 export const cache = CacheManager.getInstance();
@@ -136,8 +160,22 @@ export const cache = CacheManager.getInstance();
  * Cache TTL constants (in seconds)
  */
 export const CACHE_TTL = {
-  TENANT: 3600, // 1 hour
-  PRODUCT: 300, // 5 minutes
+  TENANT: 7200, // 2 hours (slugs rarely change)
+  PRODUCT: 1800, // 30 minutes
   MEDIA: 86400, // 24 hours
   SESSION: 1800, // 30 minutes
 } as const;
+
+/**
+ * Helper to wrap a server-only fetcher with CacheManager.
+ * Ensures the key is tracked for pattern invalidation.
+ */
+export async function cachedGet<T>(
+  key: string,
+  fetcher: () => Promise<T>,
+  ttlSec: number = CACHE_TTL.PRODUCT,
+): Promise<T> {
+  const instance = CacheManager.getInstance();
+  instance.trackKey(key);
+  return instance.getOrSet<T>(key, fetcher, ttlSec);
+}

@@ -11,9 +11,13 @@ import { db } from "@sass-store/database";
 import { products, services, tenants } from "@sass-store/database/schema";
 import { eq, and } from "drizzle-orm";
 
-// Force dynamic rendering
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+// ISR: static generation for known tenants + on-demand for new ones
+export const revalidate = 60;
+
+export async function generateStaticParams() {
+  const all = await db.select({ slug: tenants.slug }).from(tenants).limit(200);
+  return all.map((t) => ({ tenant: t.slug }));
+}
 
 interface PageProps {
   params: Promise<{

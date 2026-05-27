@@ -18,10 +18,15 @@ const EXPENSE_LINKS_KEY = "expense-links";
 const EXPENSE_LINK_KEY = "expense-link";
 const SUPPLY_REPORT_KEY = "supply-report";
 
-export function useExpenseLinks(tenantId: string, productId?: string) {
+export function useExpenseLinks(
+  tenantId: string,
+  productId?: string,
+  limit = 50,
+  offset = 0,
+) {
   return useQuery({
-    queryKey: [EXPENSE_LINKS_KEY, tenantId, productId],
-    queryFn: () => getExpenseLinks(tenantId, productId),
+    queryKey: [EXPENSE_LINKS_KEY, tenantId, productId, limit, offset],
+    queryFn: () => getExpenseLinks(tenantId, productId, limit, offset),
     enabled: !!tenantId,
   });
 }

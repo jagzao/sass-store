@@ -23,10 +23,15 @@ const BUDGETS_KEY = "budgets";
 const BUDGET_KEY = "budget";
 const BUDGET_CATEGORIES_KEY = "budget-categories";
 
-export function useBudgets(tenantId: string, status?: BudgetStatus) {
+export function useBudgets(
+  tenantId: string,
+  status?: BudgetStatus,
+  limit = 50,
+  offset = 0,
+) {
   return useQuery({
-    queryKey: [BUDGETS_KEY, tenantId, status],
-    queryFn: () => getBudgets(tenantId, status),
+    queryKey: [BUDGETS_KEY, tenantId, status, limit, offset],
+    queryFn: () => getBudgets(tenantId, status, limit, offset),
     enabled: !!tenantId,
   });
 }

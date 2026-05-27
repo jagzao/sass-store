@@ -1,43 +1,42 @@
-# Plan — STRY-017 Plataforma: rendimiento y seguridad
-
-> Fase 0 primero; el resto se prioriza según hallazgos. Actualizar checkboxes y fechas.
+# Plan � STRY-017 Plataforma: rendimiento y seguridad (ejecuci�n)
 
 ## Objetivo
 
-Investigación completa del monorepo + **baseline** medible + **roadmap** de optimización (rendimiento y seguridad) con entregas en PRs pequeños, sin romper multitenancy.
+Resolver los 9 cuellos de botella de rendimiento identificados en la Fase 0.
+Entregar por fases, validando con Playwright CLI (headed fix headless) en cada una.
 
-## Fase 0 — Investigación (obligatoria)
+## Fases
 
-| #   | Área                   | Qué revisar                                                                               | Salida                       |
-| --- | ---------------------- | ----------------------------------------------------------------------------------------- | ---------------------------- |
-| 0.1 | **DB / Supabase**      | `DATABASE_URL`, pooler vs direct, queries calientes, índices, RLS                         | Notas en `implementacion.md` |
-| 0.2 | **Caché**              | `lib/cache/redis.ts`, TTL, `TenantCache`, invalidación al escribir                        | Tabla riesgos                |
-| 0.3 | **Next / RSC**         | `force-dynamic`, duplicación `getTenantBySlug`/`getTenantDataForPage`, `generateMetadata` | Lista quick-wins             |
-| 0.4 | **Middleware**         | `resolveTenantStrict`, BUG-001/BUG-002, APIs `/api/*` sin path tenant                     | Propuesta técnica            |
-| 0.5 | **API / auth**         | `withResultHandler`, filtrado errores, rate limit, CSRF                                   | Checklist seguridad          |
-| 0.6 | **Cliente**            | bundles, imágenes, polling (BUG-004), Web Vitals                                          | Lista                        |
-| 0.7 | **Dependencias**       | `npm audit`, supply chain, env en Vercel                                                  | Resumen                      |
-| 0.8 | **Alineación backlog** | BUG-001…004, TECH-001…007                                                                 | Mapeo ID → acción            |
+| Fase   | Nombre                                         | Archivos clave          | Impacto                  |
+| ------ | ---------------------------------------------- | ----------------------- | ------------------------ |
+| Fase 1 | ISR + quitar force-dynamic en rutas tenant     | layout.tsx, page.tsx    | TTFB -80%, DB -60%       |
+| Fase 2 | Memoizaci�n getTenantBySlug con unstable_cache | get-tenant.ts           | -2 queries/req           |
+| Fase 3 | Pool DB: subir max en remoto                   | connection.ts           | Paralelismo              |
+| Fase 4 | Paginaci�n obligatoria en API cr�ticas         | 4 API routes            | Evita degradaci�n lineal |
+| Fase 5 | Paginaci�n en hooks React Query                | hooks + lib/api         | Menos payload client     |
+| Fase 6 | CacheManager real en hot paths                 | cache.ts, public routes | Cache hits >80%          |
+| Fase 7 | Bundle: dynamic import GSAP                    | Hero components         | -80KB JS inicial         |
+| Fase 8 | Paralelizar validaciones booking POST          | bookings/route.ts       | -30% latencia escritura  |
 
-## Fases 1+ (ejemplos; orden real = salida Fase 0)
+## Reglas de pipeline
 
-1. Conexión serverless + pooler documentado y validado en preview.
-2. Deduplicación lecturas tenant (p. ej. `React.cache` o capa única).
-3. Invalidación Redis / tags para datos que mutan.
-4. Middleware: menos fallback incorrecto en dev/E2E sin debilitar prod.
-5. Headers seguridad + revisión respuestas API.
-6. Reducción logs sensibles / volumen en hot paths.
+1. C�digo ? test CLI headed ? fix ? test CLI headless ? siguiente fase.
+2. M�ximo 5 intentos por paso. Si persiste, reportar bloqueo.
+3. Build + lint + typecheck tras cada fase.
+4. E2E subset con grep STRY-017 o tenant.
+5. Multitenant: validar en wondernails y centro-tenistico.
 
 ## Estado
 
-| Fase                     | Estado |
-| ------------------------ | ------ |
-| Fase 0 Discovery         | [ ]    |
-| Fase 1 Implementación P0 | [ ]    |
-| UAT / E2E STRY-017       | [ ]    |
-| Visto bueno dueño        | [ ]    |
-
-## Riesgos
-
-- Optimizar sin baseline → no demostrable mejora.
-- Caché sin tenant en key → incidente seguridad.
+| Fase                  | Estado      |
+| --------------------- | ----------- |
+| Fase 1 ISR            | in_progress |
+| Fase 2 Memoizaci�n    | pending     |
+| Fase 3 Pool DB        | pending     |
+| Fase 4 Paginaci�n API | pending     |
+| Fase 5 Paginaci�n UI  | pending     |
+| Fase 6 Redis Cache    | pending     |
+| Fase 7 Bundle         | pending     |
+| Fase 8 Paralelismo    | pending     |
+| UAT E2E               | pending     |
+| Visto bueno due�o     | pending     |

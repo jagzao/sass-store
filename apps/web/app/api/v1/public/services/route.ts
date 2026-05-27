@@ -10,7 +10,11 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const tenantSlug = searchParams.get("tenant");
     const featured = searchParams.get("featured") === "true";
-    const limit = parseInt(searchParams.get("limit") || "100", 10);
+    const limit = Math.min(
+      parseInt(searchParams.get("limit") || "50", 10),
+      100,
+    );
+    const offset = parseInt(searchParams.get("offset") || "0", 10);
 
     if (!tenantSlug) {
       return NextResponse.json(
@@ -46,7 +50,8 @@ export async function GET(request: NextRequest) {
       .from(services)
       .where(and(...conditions))
       .orderBy(desc(services.createdAt))
-      .limit(limit);
+      .limit(limit)
+      .offset(offset);
 
     return NextResponse.json({ data });
   } catch (error) {

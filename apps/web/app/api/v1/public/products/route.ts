@@ -31,6 +31,13 @@ export async function GET(request: NextRequest) {
 
     const tenantId = tenantResult[0].id;
 
+    // Pagination defaults
+    const limitVal = Math.min(
+      parseInt(searchParams.get("limit") || "24", 10),
+      100,
+    );
+    const offsetVal = parseInt(searchParams.get("offset") || "0", 10);
+
     // Build query to get products using Drizzle query builder
     const conditions = [
       eq(products.tenantId, tenantId),
@@ -41,7 +48,7 @@ export async function GET(request: NextRequest) {
       conditions.push(eq(products.featured, true));
     }
 
-    let query = db
+    const query = db
       .select({
         id: products.id,
         tenantId: products.tenantId,
@@ -55,12 +62,9 @@ export async function GET(request: NextRequest) {
         imageUrl: products.imageUrl,
       })
       .from(products)
-      .where(and(...conditions));
-
-    // Add limit if provided
-    if (limit) {
-      query = query.limit(limit) as typeof query;
-    }
+      .where(and(...conditions))
+      .limit(limitVal)
+      .offset(offsetVal);
 
     const result = await query;
 

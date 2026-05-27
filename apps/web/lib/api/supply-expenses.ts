@@ -51,10 +51,14 @@ export interface CreateExpenseLinkData {
 export async function getExpenseLinks(
   tenantId: string,
   productId?: string,
+  limit = 50,
+  offset = 0,
 ): Promise<InventoryExpenseLink[]> {
   const url = new URL(`${API_BASE}/api/inventory/expense-links`);
   url.searchParams.append("tenant", tenantId);
   if (productId) url.searchParams.append("productId", productId);
+  url.searchParams.append("limit", String(limit));
+  url.searchParams.append("offset", String(offset));
 
   const response = await fetch(url.toString());
   const data = await response.json();

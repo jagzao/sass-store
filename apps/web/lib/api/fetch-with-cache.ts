@@ -94,21 +94,22 @@ export async function fetchWithCache<T = unknown>(
   let fullUrl: string;
 
   if (typeof window === "undefined") {
-    // SERVER-SIDE: Use same web app endpoints
-    // Check if URL is for internal /api routes
-    if (
-      url.startsWith("/api/tenants") ||
-      url.startsWith("/api/v1/public") ||
-      url.startsWith("/api/users")
-    ) {
+    // SERVER-SIDE: Prefer direct DB access; allow legacy patterns for public endpoints
+    const isAllowedInternal =
+      url.startsWith("/api/v1/public/") || url.startsWith("/api/v1/social/");
+    if (url.startsWith("/api/") && !isAllowedInternal) {
+      console.warn(
+        `[fetchWithCache SSR] internal API call ${url} should be replaced by server-only helpers. ` +
+          `See docs/SSR-PERFORMANCE.md for migration guide.`,
+      );
+    }
+    if (isAllowedInternal) {
       const port = process.env.PORT?.trim() || "3001";
       const baseUrl = `http://127.0.0.1:${port}`;
-
       fullUrl = `${baseUrl}${url}`;
       // eslint-disable-next-line no-console
-      console.log(`[fetchWithCache] SERVER - Internal API: ${fullUrl}`);
+      console.log(`[fetchWithCache] SERVER - Legacy Internal API: ${fullUrl}`);
     } else {
-      // External API calls (if ever needed)
       const baseUrl =
         process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || "";
       fullUrl = url.startsWith("http") ? url : `${baseUrl}${url}`;

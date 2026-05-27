@@ -104,12 +104,21 @@ export async function GET(
 ) {
   return withTenantContextFromParams(request, params, async (req, tenantId) => {
     try {
+      const { searchParams } = new URL(req.url);
+      const limit = Math.min(
+        parseInt(searchParams.get("limit") || "50", 10),
+        100,
+      );
+      const offset = parseInt(searchParams.get("offset") || "0", 10);
+
       const allQuotes = await db.query.quotes.findMany({
         where: eq(quotes.tenantId, tenantId),
         orderBy: [desc(quotes.createdAt)],
         with: {
           items: true,
         },
+        limit,
+        offset,
       });
 
       return NextResponse.json(allQuotes);

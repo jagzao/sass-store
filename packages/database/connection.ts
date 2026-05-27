@@ -131,16 +131,16 @@ function getClient() {
     // E2E mode needs higher max to avoid pool exhaustion during warmup
     // Remote poolers (Supabase/Neon) have strict connection limits — force max 1
     max: isRemotePooler
-      ? 1
+      ? 3
       : process.env.E2E_SEED_ENABLED === "true"
         ? 10
         : isTestEnv
           ? 15
           : isLocalhost
             ? 10
-            : 1, // Strict limit for production serverless
+            : 3, // Optimised for production serverless (was 1)
     idle_timeout: isRemotePooler
-      ? 5
+      ? 20
       : process.env.E2E_SEED_ENABLED === "true"
         ? 30
         : 10, // Keep connections alive longer in E2E
@@ -150,7 +150,7 @@ function getClient() {
         ? 15
         : 5, // Fail fast (5s) to avoid 10s wait
     max_lifetime: isRemotePooler
-      ? 60 * 2
+      ? 60 * 10
       : process.env.E2E_SEED_ENABLED === "true"
         ? 60 * 30
         : 60 * 5, // 30 min max life in E2E

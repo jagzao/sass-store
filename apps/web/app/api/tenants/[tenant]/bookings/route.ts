@@ -163,8 +163,12 @@ export async function GET(
       conditions.push(lte(bookings.startTime, new Date(to)));
     }
 
-    // Get limit
-    const limit = parseInt(searchParams.get("limit") || "100");
+    // Pagination
+    const limit = Math.min(
+      parseInt(searchParams.get("limit") || "50", 10),
+      100,
+    );
+    const offset = parseInt(searchParams.get("offset") || "0", 10);
 
     // Fetch bookings with relations
     const allBookings = await db.query.bookings.findMany({
@@ -176,6 +180,7 @@ export async function GET(
       },
       orderBy: [desc(bookings.startTime)],
       limit,
+      offset,
     });
 
     // Transform for frontend
@@ -206,7 +211,7 @@ export async function POST(
   try {
     const { tenant: tenantSlug } = await params;
 
-    // Find tenant
+    // Resolve tenant before consuming request body (stream can only be read once)
     const [tenant] = await db
       .select({ id: tenants.id, name: tenants.name })
       .from(tenants)
@@ -217,18 +222,37 @@ export async function POST(
       return NextResponse.json({ error: "Tenant not found" }, { status: 404 });
     }
 
-    // Parse and validate request body
+    // Parse and validate body
     const body = await request.json();
     const data = createBookingSchema.parse(body);
 
-    // Verify service exists and belongs to tenant
-    const [service] = await db
-      .select()
-      .from(services)
-      .where(
-        and(eq(services.id, data.serviceId), eq(services.tenantId, tenant.id)),
-      )
-      .limit(1);
+    // Resolve service and optional customer in parallel
+    const [serviceResult, customerResult] = await Promise.all([
+      db
+        .select()
+        .from(services)
+        .where(
+          and(
+            eq(services.id, data.serviceId),
+            eq(services.tenantId, tenant.id),
+          ),
+        )
+        .limit(1),
+      data.customerId
+        ? db
+            .select()
+            .from(customers)
+            .where(
+              and(
+                eq(customers.id, data.customerId),
+                eq(customers.tenantId, tenant.id),
+              ),
+            )
+            .limit(1)
+        : Promise.resolve([] as (typeof customers.$inferSelect)[]),
+    ]);
+
+    const [service] = serviceResult;
 
     if (!service) {
       return NextResponse.json(
@@ -240,16 +264,7 @@ export async function POST(
     let linkedCustomerId = data.customerId ?? null;
 
     if (linkedCustomerId) {
-      const [customer] = await db
-        .select()
-        .from(customers)
-        .where(
-          and(
-            eq(customers.id, linkedCustomerId),
-            eq(customers.tenantId, tenant.id),
-          ),
-        )
-        .limit(1);
+      const [customer] = customerResult;
 
       if (!customer) {
         return NextResponse.json(

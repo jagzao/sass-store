@@ -9,24 +9,7 @@ import { tenants } from "@sass-store/database/schema";
 import { eq } from "drizzle-orm";
 import type { Tenant } from "@/types/tenant";
 import { tenantLogger } from "@/lib/logger";
-
-// In-memory short-lived cache to prevent DB pool exhaustion during warmup
-const _cache = new Map<string, { tenant: Tenant | null; ts: number }>();
-const CACHE_TTL_MS = 60_000;
-
-function getCached(slug: string): Tenant | null | undefined {
-  const entry = _cache.get(slug);
-  if (!entry) return undefined;
-  if (Date.now() - entry.ts > CACHE_TTL_MS) {
-    _cache.delete(slug);
-    return undefined;
-  }
-  return entry.tenant;
-}
-
-function setCached(slug: string, tenant: Tenant | null) {
-  _cache.set(slug, { tenant, ts: Date.now() });
-}
+import { cachedGet, CACHE_TTL } from "@sass-store/database/cache";
 
 function isTransientDbError(err: unknown): boolean {
   const codeSet = new Set([
@@ -91,15 +74,7 @@ async function withTransientRetry<T>(
   throw last;
 }
 
-/**
- * Get tenant by slug - Server-side only
- * @param slug - Tenant slug
- * @returns Tenant data or null if not found
- */
-export async function getTenantBySlug(slug: string): Promise<Tenant | null> {
-  const cached = getCached(slug);
-  if (cached !== undefined) return cached;
-
+async function _fetchTenantBySlug(slug: string): Promise<Tenant | null> {
   try {
     tenantLogger.debug(`getTenantBySlug looking for: ${slug}`);
 
@@ -124,7 +99,6 @@ export async function getTenantBySlug(slug: string): Promise<Tenant | null> {
         tenantLogger.error(`getTenantBySlug error listing tenants`, logError);
       }
 
-      setCached(slug, null);
       return null;
     }
 
@@ -132,7 +106,6 @@ export async function getTenantBySlug(slug: string): Promise<Tenant | null> {
 
     // FIX: Intercept yellow branding colors and convert to Blanco Hueso (#F5F5DC)
     // and Wondernails Gold (#C5A059) globally for any tenant to fix the UI breaking bug.
-    // This affects 'wondernails' and 'manada-juma' equally.
     if (tenant.branding) {
       const b = tenant.branding as any;
       const isYellow = (color: string) =>
@@ -154,8 +127,6 @@ export async function getTenantBySlug(slug: string): Promise<Tenant | null> {
       }
 
       // FIX: Remap placeholder.zo.dev logo/favicon URLs to actual local assets.
-      // Seed data uses placeholder.zo.dev which is not a real domain — map to
-      // /public/tenants/[slug]/logo/logo.svg which exists on disk.
       const isPlaceholder = (url: string) =>
         typeof url === "string" && url.includes("placeholder.zo.dev");
 
@@ -170,10 +141,55 @@ export async function getTenantBySlug(slug: string): Promise<Tenant | null> {
       }
     }
 
-    setCached(slug, tenant as Tenant);
     return tenant as Tenant;
   } catch (error) {
     tenantLogger.error(`getTenantBySlug error fetching tenant ${slug}`, error);
     throw error;
+  }
+}
+
+// In-memory short-lived cache to prevent DB pool exhaustion during warmup
+const _cache = new Map<string, { tenant: Tenant | null; ts: number }>();
+const CACHE_TTL_MS = 60_000;
+
+function getCached(slug: string): Tenant | null | undefined {
+  const entry = _cache.get(slug);
+  if (!entry) return undefined;
+  if (Date.now() - entry.ts > CACHE_TTL_MS) {
+    _cache.delete(slug);
+    return undefined;
+  }
+  return entry.tenant;
+}
+
+function setCached(slug: string, tenant: Tenant | null) {
+  _cache.set(slug, { tenant, ts: Date.now() });
+}
+
+/**
+ * Get tenant by slug - Server-side only
+ * Uses a short-lived per-process cache + optional Redis via CacheManager.
+ * @param slug - Tenant slug
+ * @returns Tenant data or null if not found
+ */
+export async function getTenantBySlug(slug: string): Promise<Tenant | null> {
+  // 1) Per-process memory cache (fastest, no serialization limits)
+  const mem = getCached(slug);
+  if (mem !== undefined) return mem;
+
+  // 2) Shared cache (Redis or in-memory singleton)
+  try {
+    const shared = await cachedGet<Tenant | null>(
+      `tenant:${slug}`,
+      () => _fetchTenantBySlug(slug),
+      CACHE_TTL.TENANT,
+    );
+    setCached(slug, shared);
+    return shared;
+  } catch {
+    // Fallback to direct DB if cache layer throws
+    const direct = await _fetchTenantBySlug(slug);
+    setCached(slug, direct);
+    return direct;
   }
 }
