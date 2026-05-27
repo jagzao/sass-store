@@ -15,7 +15,7 @@ Este documento centraliza pendientes activos del proyecto: features, bugs, deuda
 
 - [-] **P1 | System** Migrar proyecto a User Stories + Orquestador autónomo
   - Contexto: necesitamos completar autonomía del workflow como fábrica de software.
-  - Estado: estructura creada (BACKLOG.md, _template.md, story-orchestrator.md), pending validación completa.
+  - Estado: estructura creada (BACKLOG.md, \_template.md, story-orchestrator.md), pending validación completa.
 - [-] **P1 | Frontend/Auth** Evitar errores ruidosos en login por endpoints financieros (`/api/finance/*`) cuando no hay sesión
   - Contexto: en login aparecía `Failed to fetch KPIs` por `401/403`.
   - Estado: mitigado en cliente, pendiente validación completa en escenarios multi-tenant.
@@ -24,10 +24,10 @@ Este documento centraliza pendientes activos del proyecto: features, bugs, deuda
 
 ## Backlog de bugs
 
-- [ ] **P1 | Tenant/Middleware** Reducir `Unknown host 'localhost:3001' using fallback tenant 'zo-system'`
-  - Impacto: ruido en logs y posible confusión en resolución de tenant.
-- [ ] **P1 | Tenant Validation** Corregir flujo que produce `Missing x-tenant header`
-  - Impacto: requests inválidos/reintentados y ruido operativo.
+- [x] **P1 | Tenant/Middleware** Reducir `Unknown host 'localhost:3001' using fallback tenant 'zo-system'`
+  - Fix: commit `939e9fc` — suprime log en dev para hosts localhost; solo loggea en producción o hosts externos.
+- [x] **P1 | Tenant Validation** Corregir flujo que produce `Missing x-tenant header`
+  - Fix: commit `939e9fc` — middleware usa `NextResponse.next({ request: { headers } })` para forward tenant headers a Server Components y API Routes.
 - [ ] **P2 | Assets** Resolver 404 de logos (`/logos/delirios.png`, `/logos/vigistudio.png`, `/logos/nom-nom.png`, etc.)
   - Impacto: branding incompleto en UI.
 
