@@ -39,17 +39,21 @@ Este documento centraliza pendientes activos del proyecto: features, bugs, deuda
   - Fix: commit `752541e` — DomainLogger con tenantLogger/authLogger/cartLogger/financeLogger/dbLogger/apiLogger; prod=warn+, dev=info+; dedup 10s; LOG_LEVEL_TENANT=debug para override
 - [x] **P1 | Frontend Performance** Revisar polling/re-fetch frecuente de sesión + carrito (`/api/auth/session`, `PUT /api/users/*/cart`)
   - Fix: commit `dd2d4bb` — CartSyncProvider: polling de 30s → debounce de 5s en cambios de items; loadUserCart/saveCartToUser reciben userId de useSession (sin fetch extra de /api/auth/session); SessionProvider: refetchInterval=0 (sin polling de sesión); beforeunload via sendBeacon.
-- [ ] **P2 | Error Handling** Homogeneizar manejo de errores de red en hooks del frontend
-  - Objetivo: mensajes útiles al usuario + reducción de errores de consola no accionables.
-- [ ] **P2 | Documentation** Definir política de triage de incidentes y SLA interno para bugs recurrentes.
+- [x] **P2 | Error Handling** Homogeneizar manejo de errores de red en hooks del frontend
+  - Fix: commit `09b7fba` — POS/Reports/Movements: alert() → toast (sonner); console.error → financeLogger; use-finance.ts: todos los console.error/warn → financeLogger. API calls ahora incluyen tenant param obligatorio.
+- [x] **P2 | Documentation** Definir política de triage de incidentes y SLA interno para bugs recurrentes.
+  - Fix: commit `3996962` — `docs/INCIDENT_TRIAGE.md`: tabla P0-P3 SLA, árbol de diagnóstico, runbooks por área (auth/tenant/finance/logos/Ollama/n8n), escalación y template post-mortem.
 
 ---
 
 ## Mejoras funcionales pendientes
 
-- [ ] **P2 | Finance** Validar integración completa de reportes y exportaciones (PDF/Excel) por tenant
-- [ ] **P2 | POS** Reforzar manejo de errores y mensajes de UX en procesamiento de ventas
-- [ ] **P3 | UX** Crear vista de estado operativo (health panel) para errores de tenant, assets y auth.
+- [x] **P2 | Finance** Validar integración completa de reportes y exportaciones (PDF/Excel) por tenant
+  - Fix: commit `09b7fba` — agrega `tenant=tenantSlug` en API calls (era 400); transforma respuesta de API a SalesReport/ProductsReport; exportReport() ahora genera CSV client-side (Excel) + window.print() (PDF), sin dependencias externas.
+- [x] **P2 | POS** Reforzar manejo de errores y mensajes de UX en procesamiento de ventas
+  - Fix: commit `09b7fba` — agrega `tenantSlug` al body del POST (era 400); toast.success/error reemplazan alert(); financeLogger.error reemplaza console.error.
+- [x] **P3 | UX** Crear vista de estado operativo (health panel) para errores de tenant, assets y auth.
+  - Fix: commit `3996962` — /api/system/status (DB + Ollama + n8n, auth protegido); StatusPanel client component con auto-refresh 60s y skeletons; integrado en admin dashboard.
 
 ---
 
