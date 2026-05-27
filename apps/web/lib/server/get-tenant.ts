@@ -152,6 +152,22 @@ export async function getTenantBySlug(slug: string): Promise<Tenant | null> {
       ) {
         b.backgroundColor = "#F8F9FA"; // Blanco Hueso Variant
       }
+
+      // FIX: Remap placeholder.zo.dev logo/favicon URLs to actual local assets.
+      // Seed data uses placeholder.zo.dev which is not a real domain — map to
+      // /public/tenants/[slug]/logo/logo.svg which exists on disk.
+      const isPlaceholder = (url: string) =>
+        typeof url === "string" && url.includes("placeholder.zo.dev");
+
+      if (isPlaceholder(b.logo)) {
+        b.logo = `/tenants/${tenant.slug}/logo/logo.svg`;
+      }
+      if (isPlaceholder(b.logoUrl)) {
+        b.logoUrl = `/tenants/${tenant.slug}/logo/logo.svg`;
+      }
+      if (isPlaceholder(b.favicon)) {
+        b.favicon = `/tenants/${tenant.slug}/favicon.ico`;
+      }
     }
 
     setCached(slug, tenant as Tenant);

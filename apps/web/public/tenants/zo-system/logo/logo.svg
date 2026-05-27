@@ -1,0 +1,7 @@
+<svg width="200" height="60" xmlns="http://www.w3.org/2000/svg">
+  <rect width="200" height="60" rx="8" fill="#0f172a"/>
+  <text x="40" y="38" font-family="Arial Black, sans-serif" font-size="28" fill="#FF8000" font-weight="900">Zo</text>
+  <text x="75" y="38" font-family="Arial, sans-serif" font-size="16" fill="#94a3b8" font-weight="300">System</text>
+  <circle cx="22" cy="30" r="12" fill="none" stroke="#FF8000" stroke-width="2.5"/>
+  <text x="22" y="35" font-family="Arial Black" font-size="13" fill="#FF8000" text-anchor="middle" font-weight="900">Z</text>
+</svg>

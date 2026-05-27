@@ -14,8 +14,8 @@ const DEFAULT_TENANT: Tenant = {
   branding: {
     primaryColor: "#FF8000",
     secondaryColor: "#1F2937",
-    logo: "https://placeholder.zo.dev/logos/zo-system.png",
-    favicon: "https://placeholder.zo.dev/favicons/zo-system.ico",
+    logo: "/tenants/zo-system/logo/logo.svg",
+    favicon: "/favicon.ico",
     website: "https://zo.dev",
     theme: "dark",
     navLinks: [
