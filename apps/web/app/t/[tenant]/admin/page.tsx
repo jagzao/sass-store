@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { resolveTenant } from "@/lib/tenant/resolver";
 import { TopNav } from "@/components/navigation/top-nav";
 import { getTenantDataForPage } from "@/lib/db/tenant-service";
+import { StatusPanel } from "@/components/admin/StatusPanel";
 
 interface PageProps {
   params: Promise<{
@@ -671,6 +672,11 @@ export default async function AdminDashboardPage({ params }: PageProps) {
                 </div>
               </div>
             </div>
+          </div>
+
+          {/* System Status Panel */}
+          <div className="mt-8">
+            <StatusPanel />
           </div>
 
           {/* Quick Actions Bar */}
