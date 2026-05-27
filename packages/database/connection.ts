@@ -121,7 +121,9 @@ function getClient() {
     );
 
   if (isRemotePooler) {
-    console.log(`🔌 Remote pooler detected, using max=1`);
+    console.log(
+      `🔌 Remote pooler detected, using max=3 (was 1), idle_timeout=20`,
+    );
   }
 
   _client = postgres(connectionString, {
@@ -228,6 +230,6 @@ export function getDatabaseDebugInfo() {
     isPooler,
     maskedUrl,
     ssl: inferSslForConnectionString(url),
-    maxConnections: isTestEnv ? 15 : isLocalhost ? 10 : 1,
+    maxConnections: isTestEnv ? 15 : isLocalhost ? 10 : 3,
   };
 }
