@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { TennisBallCardFocus } from "@/lib/centro-tenistico/tennis-ball-card-focus";
 import { TennisBallScrollyEngine } from "@/lib/centro-tenistico/tennis-ball-scrolly-engine";
 import { preloadTennisBallFrames } from "@/lib/centro-tenistico/tennis-ball-preload";
 import { TENNIS_BALL_FRAME_COUNT } from "@/lib/centro-tenistico/tennis-ball-frames";
@@ -17,6 +18,7 @@ export default function CentroTenisticoScrollyShell({ children }: Props) {
   const contentRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<TennisBallScrollyEngine | null>(null);
+  const cardFocusRef = useRef<TennisBallCardFocus | null>(null);
   const [canvasEnabled, setCanvasEnabled] = useState(true);
   const [loadState, setLoadState] = useState<
     "idle" | "loading" | "ready" | "error"
@@ -32,6 +34,8 @@ export default function CentroTenisticoScrollyShell({ children }: Props) {
 
   useEffect(() => {
     if (!canvasEnabled || !canvasRef.current || !contentRef.current) {
+      cardFocusRef.current?.destroy();
+      cardFocusRef.current = null;
       engineRef.current?.destroy();
       engineRef.current = null;
       setLoadState("idle");
@@ -63,6 +67,10 @@ export default function CentroTenisticoScrollyShell({ children }: Props) {
         const { ScrollTrigger } = stModule;
         gsap.registerPlugin(ScrollTrigger);
 
+        cardFocusRef.current?.destroy();
+        const cardFocus = new TennisBallCardFocus(gsap, contentRef.current);
+        cardFocusRef.current = cardFocus;
+
         engineRef.current?.destroy();
         const engine = new TennisBallScrollyEngine(canvasRef.current, images);
         engine.mount({
@@ -70,6 +78,7 @@ export default function CentroTenisticoScrollyShell({ children }: Props) {
           scrollTrigger: ScrollTrigger,
           trigger: contentRef.current,
           scrub: SCROLL_SCRUB,
+          onAfterRender: (eng) => cardFocus.update(eng),
         });
         engineRef.current = engine;
         ScrollTrigger.refresh();
@@ -105,6 +114,8 @@ export default function CentroTenisticoScrollyShell({ children }: Props) {
       cancelled = true;
       removeResize?.();
       removeLoad?.();
+      cardFocusRef.current?.destroy();
+      cardFocusRef.current = null;
       engineRef.current?.destroy();
       engineRef.current = null;
     };

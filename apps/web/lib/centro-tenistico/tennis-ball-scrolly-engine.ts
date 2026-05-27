@@ -7,6 +7,8 @@ export type TennisBallScrollyEngineOptions = {
   scrollTrigger: typeof ScrollTriggerPlugin;
   trigger: HTMLElement;
   scrub?: number | boolean;
+  /** Llamado tras cada redibujado del canvas (proximidad de cards, debug). */
+  onAfterRender?: (engine: TennisBallScrollyEngine) => void;
 };
 
 type ScrollyScene = {
@@ -41,6 +43,8 @@ export class TennisBallScrollyEngine {
   private gsapInstance: typeof gsap | null = null;
   private trigger: HTMLElement | null = null;
   private scrubDuration = 1;
+  private onAfterRender: ((engine: TennisBallScrollyEngine) => void) | null =
+    null;
 
   constructor(canvas: HTMLCanvasElement, images: HTMLImageElement[]) {
     const ctx = canvas.getContext("2d", { alpha: true });
@@ -130,6 +134,19 @@ export class TennisBallScrollyEngine {
     return bounds;
   }
 
+  /** Círculo de impacto en coords de viewport (canvas full-screen). */
+  getBallHitCircle(): { cx: number; cy: number; radius: number } {
+    const maxFrame = this.images.length - 1;
+    const f = Math.min(maxFrame, Math.max(0, Math.round(this.ballState.frame)));
+    const { sw, sh } = this.getAlphaBounds(f);
+    const base = Math.max(sw, sh) / 2;
+    return {
+      cx: this.ballState.x,
+      cy: this.ballState.y,
+      radius: base * this.ballState.scale * 0.94,
+    };
+  }
+
   private drawFrameCentered(index: number, alpha: number): void {
     const img = this.images[index];
     if (!img.naturalWidth || alpha <= 0) return;
@@ -168,10 +185,13 @@ export class TennisBallScrollyEngine {
     this.canvas.dataset.ctvX = String(Math.round(this.ballState.x));
     this.canvas.dataset.ctvY = String(Math.round(this.ballState.y));
     this.canvas.dataset.ctvScale = this.ballState.scale.toFixed(3);
+
+    this.onAfterRender?.(this);
   };
 
   mount(options: TennisBallScrollyEngineOptions): void {
-    const { gsap, trigger, scrub = 1 } = options;
+    const { gsap, trigger, scrub = 1, onAfterRender } = options;
+    this.onAfterRender = onAfterRender ?? null;
     const maxFrame = TENNIS_BALL_FRAME_COUNT - 1;
     const timelineDuration = 6.2;
 
@@ -334,5 +354,6 @@ export class TennisBallScrollyEngine {
     this.timeline = null;
     this.gsapInstance = null;
     this.trigger = null;
+    this.onAfterRender = null;
   }
 }

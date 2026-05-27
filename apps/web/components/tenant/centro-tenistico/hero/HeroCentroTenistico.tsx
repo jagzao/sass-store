@@ -10,7 +10,10 @@ export default function HeroCentroTenistico() {
     <section className="content-section relative min-h-[100vh] flex flex-col overflow-hidden">
       <div className="relative z-10 flex flex-1 items-center">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full">
-          <div className="ctv-content-left ctv-scrolly-panel ctv-scrolly-panel--soft p-6 sm:p-8 space-y-6">
+          <div
+            className="ctv-content-left ctv-scrolly-panel ctv-scrolly-panel--soft p-6 sm:p-8 space-y-6"
+            data-ctv-focus-card="clases-grupales"
+          >
             <span
               className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold tracking-widest"
               style={{

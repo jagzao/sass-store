@@ -85,7 +85,10 @@ async function ServicesSection({ tenantSlug }: { tenantSlug: string }) {
     <section className="content-section py-20 min-h-[85vh] flex items-center">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 w-full">
         <div className="ctv-content-right">
-          <div className="mb-10 ctv-scrolly-panel p-6 sm:p-8">
+          <div
+            className="mb-10 ctv-scrolly-panel p-6 sm:p-8"
+            data-ctv-focus-card="servicios"
+          >
             <p
               className="text-xs font-semibold tracking-widest uppercase mb-3"
               style={{ color: PRIMARY }}
@@ -263,7 +266,10 @@ function HowItWorksSection() {
     <section className="content-section py-20 min-h-[90vh] flex items-center">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 w-full">
         <div className="ctv-content-center">
-          <div className="text-center max-w-xl mx-auto mb-14 ctv-scrolly-panel ctv-scrolly-panel--soft px-6 py-4">
+          <div
+            className="text-center max-w-xl mx-auto mb-14 ctv-scrolly-panel ctv-scrolly-panel--soft px-6 py-4"
+            data-ctv-focus-card="reserva"
+          >
             <p
               className="text-xs font-semibold tracking-widest uppercase mb-3"
               style={{ color: PRIMARY }}

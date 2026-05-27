@@ -107,6 +107,40 @@ test.describe("Centro Tenístico parallax home @CTV-PARALLAX", () => {
     await page.getByTestId("ctv-hero-cta-group").click({ trial: true });
   });
 
+  test("servicios card gets ball-focus zoom on overlap", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto("/t/centro-tenistico", {
+      waitUntil: "networkidle",
+      timeout: 120000,
+    });
+
+    await expect(
+      page.getByRole("heading", { name: "Clases Grupales" }),
+    ).toBeVisible({ timeout: 60000 });
+
+    await expect
+      .poll(() =>
+        page
+          .locator(".ctv-scrolly-content")
+          .getAttribute("data-ctv-load-state"),
+      )
+      .toBe("ready");
+
+    const serviciosCard = page.locator('[data-ctv-focus-card="servicios"]');
+    await expect(serviciosCard).toBeVisible();
+
+    await page
+      .getByRole("heading", { name: "Servicios y Canchas" })
+      .scrollIntoViewIfNeeded();
+    await page.evaluate(() => window.scrollBy(0, -120));
+
+    await expect
+      .poll(() => serviciosCard.getAttribute("data-ctv-ball-focused"), {
+        timeout: 20000,
+      })
+      .toBe("true");
+  });
+
   test("canvas hidden on mobile viewport", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto("/t/centro-tenistico", {
