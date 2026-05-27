@@ -7,6 +7,7 @@ import MovementsTable from "@/components/finance/MovementsTable";
 import FilterPanel from "@/components/finance/FilterPanel";
 import KPICard from "@/components/finance/KPICard";
 import { useFinance } from "@/lib/hooks/use-finance";
+import { financeLogger } from "@/lib/logger";
 import {
   MovementsTableSkeleton,
   FilterPanelSkeleton,
@@ -49,7 +50,7 @@ export default function FinanceMovementsPage() {
           setCurrentTenant(data);
         }
       } catch (error) {
-        console.error("Error loading tenant:", error);
+        financeLogger.warn("movements: loadTenantData failed", error);
       }
     };
 
@@ -182,7 +183,7 @@ export default function FinanceMovementsPage() {
               loading={loading}
               onMovementClick={(movement) => {
                 // TODO: Implement movement details modal
-                console.warn("Movement clicked:", movement);
+                financeLogger.debug("movement clicked", { id: movement.id });
               }}
             />
           )}

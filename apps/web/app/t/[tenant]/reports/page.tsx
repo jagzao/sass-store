@@ -8,6 +8,8 @@ import FormSelect from "@/components/ui/forms/FormSelect";
 import { useFinance } from "@/lib/hooks/use-finance";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import { toast } from "sonner";
+import { financeLogger } from "@/lib/logger";
 import type { Tenant } from "@/types/tenant";
 import type {
   SalesReport,
@@ -54,7 +56,7 @@ export default function ReportsPage() {
           setCurrentTenant(tenantData);
         }
       } catch (error) {
-        console.error("Error loading tenant:", error);
+        financeLogger.warn("reports: loadTenantData failed", error);
       }
     };
 
@@ -66,22 +68,73 @@ export default function ReportsPage() {
   const generateSalesReport = async () => {
     setLoading(true);
     try {
-      const params = new URLSearchParams();
-      if (dateFrom) params.append("from", new Date(dateFrom).toISOString());
-      if (dateTo) params.append("to", new Date(dateTo).toISOString());
-      if (terminalId) params.append("terminalId", terminalId);
-      if (paymentMethod) params.append("paymentMethod", paymentMethod);
+      const qp = new URLSearchParams();
+      qp.append("tenant", tenantSlug); // required by API
+      if (dateFrom) qp.append("from", new Date(dateFrom).toISOString());
+      if (dateTo) qp.append("to", new Date(dateTo).toISOString());
+      if (terminalId) qp.append("terminalId", terminalId);
+      if (paymentMethod) qp.append("paymentMethod", paymentMethod);
 
-      const response = await fetch(`/api/finance/reports/sales?${params}`);
+      const response = await fetch(`/api/finance/reports/sales?${qp}`);
       if (!response.ok) {
-        throw new Error("Failed to generate sales report");
+        const body = await response.json().catch(() => ({}));
+        throw new Error(body.error || `Error ${response.status}`);
       }
 
-      const report = await response.json();
-      setSalesReport(report);
+      // API returns { data: { salesByPeriod, paymentMethods, topProducts } }
+      // — transform into the SalesReport shape the page expects.
+      const apiData = await response.json();
+      const salesByPeriod: any[] = apiData.data?.salesByPeriod ?? [];
+      const payMethods: any[] = apiData.data?.paymentMethods ?? [];
+      const topProds: any[] = apiData.data?.topProducts ?? [];
+
+      const totalSales = salesByPeriod.reduce(
+        (s: number, p: any) => s + (p.orderCount ?? 0),
+        0,
+      );
+      const totalRevenue = salesByPeriod.reduce(
+        (s: number, p: any) => s + (p.totalSales ?? 0),
+        0,
+      );
+      const averageOrderValue = totalSales > 0 ? totalRevenue / totalSales : 0;
+      const totalItems = topProds.reduce(
+        (s: number, p: any) => s + (p.totalQuantity ?? 0),
+        0,
+      );
+      const paymentMethodBreakdown = Object.fromEntries(
+        payMethods.map((pm: any) => [pm.paymentMethod, pm.paymentCount]),
+      );
+
+      // Build SaleData rows from period aggregates (no transaction-level data from this endpoint)
+      const data: SaleData[] = salesByPeriod.map((p: any, i: number) => ({
+        id: String(i),
+        orderNumber: p.period,
+        customerName: `${p.orderCount} órdenes`,
+        terminalId: undefined,
+        total: p.totalSales?.toFixed(2),
+        paymentMethod: undefined,
+        createdAt: undefined,
+      }));
+
+      setSalesReport({
+        data,
+        summary: {
+          totalSales,
+          totalRevenue,
+          averageOrderValue,
+          totalItems,
+          paymentMethodBreakdown,
+        },
+        filters: {},
+        generatedAt: new Date().toISOString(),
+      });
+
+      toast.success("Reporte de ventas generado");
     } catch (error) {
-      console.error("Error generating sales report:", error);
-      alert("Error al generar el reporte de ventas");
+      financeLogger.error("generateSalesReport failed", error);
+      toast.error(
+        `Error al generar el reporte de ventas: ${(error as Error).message}`,
+      );
     } finally {
       setLoading(false);
     }
@@ -90,77 +143,145 @@ export default function ReportsPage() {
   const generateProductsReport = async () => {
     setLoading(true);
     try {
-      const params = new URLSearchParams();
-      if (dateFrom) params.append("from", new Date(dateFrom).toISOString());
-      if (dateTo) params.append("to", new Date(dateTo).toISOString());
-      if (category) params.append("category", category);
+      const qp = new URLSearchParams();
+      qp.append("tenant", tenantSlug); // required by API
+      if (dateFrom) qp.append("from", new Date(dateFrom).toISOString());
+      if (dateTo) qp.append("to", new Date(dateTo).toISOString());
+      if (category) qp.append("category", category);
 
-      const response = await fetch(`/api/finance/reports/products?${params}`);
+      const response = await fetch(`/api/finance/reports/products?${qp}`);
       if (!response.ok) {
-        throw new Error("Failed to generate products report");
+        const body = await response.json().catch(() => ({}));
+        throw new Error(body.error || `Error ${response.status}`);
       }
 
-      const report = await response.json();
-      setProductsReport(report);
+      // API returns { data: { products, categories } }
+      // — transform into the ProductsReport shape the page expects.
+      const apiData = await response.json();
+      const products: any[] = apiData.data?.products ?? [];
+
+      const totalRevenue = products.reduce(
+        (s: number, p: any) => s + (p.totalRevenue ?? 0),
+        0,
+      );
+      const totalUnitsSold = products.reduce(
+        (s: number, p: any) => s + (p.totalQuantity ?? 0),
+        0,
+      );
+      const averagePrice =
+        products.length > 0
+          ? products.reduce((s: number, p: any) => s + (p.price ?? 0), 0) /
+            products.length
+          : 0;
+
+      const data: ProductSalesData[] = products.map((p: any) => ({
+        id: p.id,
+        productId: p.id,
+        name: p.name,
+        sku: p.id, // no SKU in this API response
+        category: p.category ?? "",
+        price: p.price?.toString(),
+        totalSold: p.totalQuantity,
+        totalRevenue: p.totalRevenue,
+        orderCount: p.orderCount,
+      }));
+
+      setProductsReport({
+        data,
+        summary: {
+          totalProducts: products.length,
+          totalRevenue,
+          totalUnitsSold,
+          averagePrice,
+          topCategory: {},
+        },
+        filters: {},
+        generatedAt: new Date().toISOString(),
+      });
+
+      toast.success("Reporte de productos generado");
     } catch (error) {
-      console.error("Error generating products report:", error);
-      alert("Error al generar el reporte de productos");
+      financeLogger.error("generateProductsReport failed", error);
+      toast.error(
+        `Error al generar el reporte de productos: ${(error as Error).message}`,
+      );
     } finally {
       setLoading(false);
     }
   };
 
-  const exportReport = async (format: "pdf" | "excel") => {
-    setLoading(true);
-    try {
-      const params = new URLSearchParams();
-      if (dateFrom) params.append("from", new Date(dateFrom).toISOString());
-      if (dateTo) params.append("to", new Date(dateTo).toISOString());
-      if (terminalId) params.append("terminalId", terminalId);
-      if (paymentMethod) params.append("paymentMethod", paymentMethod);
-      params.append("format", format);
+  /** Client-side export — no server round-trip needed */
+  const exportReport = (exportFmt: "pdf" | "excel") => {
+    const dateStr = new Date().toISOString().split("T")[0];
 
-      let url;
-      if (activeTab === "sales") {
-        url = `/api/finance/reports/sales?${params}`;
-      } else if (activeTab === "products") {
-        url = `/api/finance/reports/products?${params}`; // Assuming a products report API exists
+    if (exportFmt === "excel") {
+      // Generate CSV (Excel opens .csv natively)
+      let rows: string[][] = [];
+      let filename = `reporte-${dateStr}.csv`;
+
+      if (activeTab === "sales" && salesReport) {
+        rows = [
+          ["Período / Orden", "Órdenes", "Ingresos (MXN)", "Ticket Promedio"],
+          ...salesReport.data.map((sale) => [
+            sale.orderNumber ?? "",
+            sale.customerName ?? "",
+            sale.total ?? "0",
+            "",
+          ]),
+          // Summary row
+          ["", "", "", ""],
+          [
+            "TOTAL",
+            String(salesReport.summary.totalSales),
+            salesReport.summary.totalRevenue.toFixed(2),
+            salesReport.summary.averageOrderValue.toFixed(2),
+          ],
+        ];
+        filename = `ventas-${dateStr}.csv`;
+      } else if (activeTab === "products" && productsReport) {
+        rows = [
+          ["Producto", "Categoría", "Precio", "Unidades Vendidas", "Ingresos"],
+          ...productsReport.data.map((p) => [
+            p.name,
+            p.category ?? "",
+            p.price ?? "0",
+            String(p.totalSold ?? 0),
+            String((p as any).totalRevenue ?? 0),
+          ]),
+        ];
+        filename = `productos-${dateStr}.csv`;
       } else {
-        throw new Error("Export not implemented for this report type");
+        toast.error("Genera el reporte primero antes de exportar.");
+        return;
       }
 
-      // Make request to fetch the file
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error(
-          `Failed to export ${format} report: ${response.statusText}`,
-        );
-      }
+      const csv =
+        "﻿" + // BOM for Excel UTF-8
+        rows
+          .map((row) =>
+            row
+              .map((cell) => `"${String(cell).replace(/"/g, '""')}"`)
+              .join(","),
+          )
+          .join("\r\n");
 
-      // Create blob from response
-      const blob = await response.blob();
-
-      // Create download link
-      const downloadUrl = window.URL.createObjectURL(blob);
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
-      link.href = downloadUrl;
-
-      // Set filename based on report type and current date
-      const dateStr = new Date().toISOString().split("T")[0];
-      link.download = `${activeTab}-report-${dateStr}.${format === "pdf" ? "pdf" : "xlsx"}`;
-
-      // Trigger download
+      link.href = url;
+      link.download = filename;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      window.URL.revokeObjectURL(downloadUrl);
-    } catch (error) {
-      console.error(`Error exporting ${format} report:`, error);
-      alert(
-        `Error al exportar el reporte a ${format.toUpperCase()}: ${(error as Error).message}`,
+      URL.revokeObjectURL(url);
+      toast.success(`Reporte exportado: ${filename}`);
+    } else {
+      // PDF — browser print dialog
+      toast.info(
+        "Se abrirá el diálogo de impresión. Elige 'Guardar como PDF'.",
+        { duration: 4000 },
       );
-    } finally {
-      setLoading(false);
+      setTimeout(() => window.print(), 400);
     }
   };
 

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useParams } from "next/navigation";
+import { financeLogger } from "@/lib/logger";
 
 interface KPIData {
   totalIncome: number;
@@ -139,7 +140,7 @@ export const useFinance = (options?: { enabled?: boolean }) => {
 
         return result;
       } catch (error) {
-        console.warn("Error fetching KPIs:", error);
+        financeLogger.warn("fetchKPIs failed", error);
         setData((prev) => ({
           ...prev,
           loading: false,
@@ -216,7 +217,7 @@ export const useFinance = (options?: { enabled?: boolean }) => {
 
         return result;
       } catch (error) {
-        console.warn("Error fetching movements:", error);
+        financeLogger.warn("fetchMovements failed", error);
         setData((prev) => ({
           ...prev,
           loading: false,
@@ -264,7 +265,7 @@ export const useFinance = (options?: { enabled?: boolean }) => {
 
       return result;
     } catch (error) {
-      console.error("Error connecting to Mercado Pago:", error);
+      financeLogger.warn("connectMercadoPago failed", error);
       return { connected: false };
     }
   }, []);
@@ -320,7 +321,7 @@ export const useFinance = (options?: { enabled?: boolean }) => {
 
         return result;
       } catch (error) {
-        console.error("Error creating POS sale:", error);
+        financeLogger.error("createPOSSale failed", error);
         throw error;
       }
     },
@@ -339,7 +340,7 @@ export const useFinance = (options?: { enabled?: boolean }) => {
       const result = await response.json();
       return result.data || [];
     } catch (error) {
-      console.error("Error fetching POS terminals:", error);
+      financeLogger.warn("getPOSTerminals failed", error);
       return [];
     }
   }, [tenantSlug]);
@@ -371,7 +372,7 @@ export const useFinance = (options?: { enabled?: boolean }) => {
 
         return await response.json();
       } catch (error) {
-        console.error("Error generating sales report:", error);
+        financeLogger.error("generateSalesReport failed", error);
         throw error;
       }
     },
@@ -404,7 +405,7 @@ export const useFinance = (options?: { enabled?: boolean }) => {
 
         return await response.json();
       } catch (error) {
-        console.error("Error generating products report:", error);
+        financeLogger.error("generateProductsReport failed", error);
         throw error;
       }
     },
@@ -421,7 +422,7 @@ export const useFinance = (options?: { enabled?: boolean }) => {
       const result = await response.json();
       return result || { connected: false };
     } catch (error) {
-      console.error("Error checking Mercado Pago status:", error);
+      financeLogger.warn("checkMercadoPagoStatus failed", error);
       return { connected: false };
     }
   }, []);
@@ -467,7 +468,7 @@ export const useFinance = (options?: { enabled?: boolean }) => {
 
         return result;
       } catch (error) {
-        console.error("Error reconciling movement:", error);
+        financeLogger.error("reconcileMovement failed", error);
         throw error;
       }
     },

@@ -5,6 +5,8 @@ import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import UserMenu from "@/components/auth/UserMenu";
 import { useFinance } from "@/lib/hooks/use-finance";
+import { toast } from "sonner";
+import { financeLogger } from "@/lib/logger";
 
 interface Product {
   id: string;
@@ -61,7 +63,8 @@ export default function POSPage() {
           setProducts(productsData.data || []);
         }
       } catch (error) {
-        console.error("Error loading POS data:", error);
+        financeLogger.error("POS loadData failed", error);
+        toast.error("Error al cargar los datos. Intenta recargar la página.");
       }
     };
 
@@ -156,6 +159,7 @@ export default function POSPage() {
       }
 
       const saleData = {
+        tenantSlug,
         terminalId,
         items: cart.map((item) => ({
           productId: item.product.id,
@@ -175,23 +179,26 @@ export default function POSPage() {
       });
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || "Failed to process sale");
+        const errorBody = await response.json().catch(() => ({}));
+        throw new Error(errorBody.error || `Error ${response.status}`);
       }
 
       const result = await response.json();
+      const orderNumber = result.data?.order?.orderNumber ?? "–";
+      const total = getTotal();
 
       // Clear cart and reset form
       setCart([]);
       setCustomerName("");
       setPaymentMethod("cash");
 
-      alert(
-        `Venta procesada exitosamente!\nTotal: $${getTotal().toFixed(2)}\nOrden: ${result.data.order.orderNumber}`,
+      toast.success(
+        `✓ Venta procesada — Orden: ${orderNumber} | Total: $${total.toFixed(2)}`,
+        { duration: 6000 },
       );
     } catch (error) {
-      console.error("Error processing sale:", error);
-      alert("Error al procesar la venta: " + (error as Error).message);
+      financeLogger.error("processSale failed", error);
+      toast.error(`Error al procesar la venta: ${(error as Error).message}`);
     } finally {
       setLoading(false);
     }
