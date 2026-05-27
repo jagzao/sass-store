@@ -8,6 +8,7 @@ import { db } from "@sass-store/database";
 import { tenants } from "@sass-store/database/schema";
 import { eq } from "drizzle-orm";
 import type { Tenant } from "@/types/tenant";
+import { tenantLogger } from "@/lib/logger";
 
 // In-memory short-lived cache to prevent DB pool exhaustion during warmup
 const _cache = new Map<string, { tenant: Tenant | null; ts: number }>();
@@ -77,8 +78,8 @@ async function withTransientRetry<T>(
       const retry = isTransientDbError(e) && i < attempts - 1;
       if (retry) {
         const delay = Math.min(12_000, 350 * 2 ** i);
-        console.warn(
-          `[getTenantBySlug] ${label} transient DB error (attempt ${i + 1}/${attempts}), retry in ${delay}ms:`,
+        tenantLogger.warn(
+          `getTenantBySlug ${label} transient DB error (attempt ${i + 1}/${attempts}), retry in ${delay}ms`,
           e instanceof Error ? e.message : e,
         );
         await new Promise((r) => setTimeout(r, delay));
@@ -100,7 +101,7 @@ export async function getTenantBySlug(slug: string): Promise<Tenant | null> {
   if (cached !== undefined) return cached;
 
   try {
-    console.warn(`[getTenantBySlug] Looking for tenant: ${slug}`);
+    tenantLogger.debug(`getTenantBySlug looking for: ${slug}`);
 
     const tenant = await withTransientRetry("findFirst", () =>
       db.query.tenants.findFirst({
@@ -109,30 +110,25 @@ export async function getTenantBySlug(slug: string): Promise<Tenant | null> {
     );
 
     if (!tenant) {
-      console.warn(`[getTenantBySlug] Tenant not found: ${slug}`);
+      tenantLogger.warn(`getTenantBySlug tenant not found: ${slug}`);
 
       try {
         const allTenants = await withTransientRetry("list sample", () =>
           db.select().from(tenants).limit(5),
         );
-        console.warn(
-          `[getTenantBySlug] Available tenants:`,
-          allTenants.map((t) => ({ id: t.id, name: t.name, slug: t.slug })),
+        tenantLogger.warn(
+          `getTenantBySlug available slugs`,
+          allTenants.map((t) => t.slug),
         );
       } catch (logError) {
-        console.error(
-          `[getTenantBySlug] Error logging available tenants:`,
-          logError,
-        );
+        tenantLogger.error(`getTenantBySlug error listing tenants`, logError);
       }
 
       setCached(slug, null);
       return null;
     }
 
-    console.warn(
-      `[getTenantBySlug] Found tenant: ${tenant.name} (${tenant.id})`,
-    );
+    tenantLogger.debug(`getTenantBySlug found: ${tenant.name} (${tenant.id})`);
 
     // FIX: Intercept yellow branding colors and convert to Blanco Hueso (#F5F5DC)
     // and Wondernails Gold (#C5A059) globally for any tenant to fix the UI breaking bug.
@@ -161,7 +157,7 @@ export async function getTenantBySlug(slug: string): Promise<Tenant | null> {
     setCached(slug, tenant as Tenant);
     return tenant as Tenant;
   } catch (error) {
-    console.error(`[getTenantBySlug] Error fetching tenant ${slug}:`, error);
+    tenantLogger.error(`getTenantBySlug error fetching tenant ${slug}`, error);
     throw error;
   }
 }

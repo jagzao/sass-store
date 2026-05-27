@@ -1,6 +1,7 @@
 import { headers } from "next/headers";
 import { cookies } from "next/headers";
 import { Tenant } from "./types";
+import { tenantLogger } from "@/lib/logger";
 
 // Default fallback tenant (zo-system)
 const DEFAULT_TENANT: Tenant = {
@@ -69,8 +70,8 @@ export async function resolveTenant(urlSlug?: string): Promise<Tenant> {
   const tenantCurrency = headersList.get("x-tenant-currency");
 
   if (!tenantSlug) {
-    console.error(
-      "Missing tenant resolution headers from middleware and no URL slug provided",
+    tenantLogger.warn(
+      "resolveTenant: no x-tenant header and no urlSlug — falling back to zo-system",
     );
     // Fallback to default if everything is missing
     return DEFAULT_TENANT;
@@ -92,7 +93,9 @@ export async function resolveTenant(urlSlug?: string): Promise<Tenant> {
   }
 
   // If tenant data not found but middleware resolved it, use fallback
-  console.warn(`Tenant data not found for resolved slug: ${tenantSlug}`);
+  tenantLogger.warn(
+    `resolveTenant: DB returned null for slug '${tenantSlug}' — falling back`,
+  );
   return DEFAULT_TENANT;
 }
 
@@ -127,7 +130,7 @@ async function fetchTenantBySlug(slug: string): Promise<Tenant | null> {
       };
     }
   } catch (error) {
-    console.error("Error fetching tenant from database:", error);
+    tenantLogger.error("fetchTenantBySlug error", error);
   }
 
   return null;
@@ -141,7 +144,9 @@ export async function getTenantSlug(): Promise<string> {
   if (tenantSlug) return tenantSlug;
 
   // Fallback if middleware headers are missing
-  console.warn("Missing x-tenant header from middleware");
+  tenantLogger.debug(
+    "getTenantSlug: x-tenant header missing — fallback zo-system",
+  );
   return "zo-system";
 }
 
@@ -154,12 +159,12 @@ export async function getTenantId(): Promise<string> {
     if (tenantId) return tenantId;
 
     // Fallback
-    console.warn("Missing x-tenant-id header from middleware");
+    tenantLogger.debug(
+      "getTenantId: x-tenant-id header missing — fallback zo-system",
+    );
     return "zo-system";
-  } catch (error) {
+  } catch {
     // During build time or static prerendering, headers() may not be available
-    // Return fallback tenant ID
-    console.warn("Unable to read headers during static generation:", error);
     return "zo-system";
   }
 }
@@ -178,11 +183,8 @@ export async function getTenantIdForRequest(
     const headersList = await headers();
     const tenantId = headersList.get("x-tenant-id");
     if (tenantId) return tenantId;
-  } catch (error) {
-    // During build time or static prerendering, headers() may not be available
-    console.warn(
-      "Unable to read headers during static generation, using fallback tenant",
-    );
+  } catch {
+    // During build time or static prerendering — silent fallback
   }
 
   // Fallback to default

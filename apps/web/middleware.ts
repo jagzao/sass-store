@@ -15,6 +15,7 @@ import {
   AuthenticatedTenantContext,
 } from "@sass-store/core";
 import { verifyAuthToken } from "@sass-store/core/src/middleware/auth-middleware";
+import { tenantLogger } from "@/lib/logger";
 
 // Known tenant slugs from seed data
 const KNOWN_TENANTS = [
@@ -99,7 +100,7 @@ export async function middleware(request: NextRequest) {
 
     if (!consistencyResult.success) {
       // Tenant mismatch - potential spoofing attack
-      console.warn(
+      tenantLogger.warn(
         `[SECURITY] Tenant consistency check failed for user ${sessionTenant.userId}`,
       );
 
@@ -146,7 +147,7 @@ export async function middleware(request: NextRequest) {
     const originResult = validateOriginForMutation(origin, host);
 
     if (!originResult.isValid) {
-      console.warn(
+      tenantLogger.warn(
         `[SECURITY] Origin validation failed: origin=${origin}, host=${host}, reason=${originResult.reason}`,
       );
       return new NextResponse("Invalid request origin", { status: 403 });
@@ -170,7 +171,7 @@ export async function middleware(request: NextRequest) {
         // 1. User trying to access another tenant's data
         // 2. Attacker trying to spoof tenant via URL
         if (urlTenantResolved.id !== sessionTenant.tenantId) {
-          console.warn(
+          tenantLogger.warn(
             `[SECURITY] URL tenant mismatch: url=${urlTenantSlug}, session=${sessionTenant.tenantId}`,
           );
 
@@ -205,7 +206,7 @@ export async function middleware(request: NextRequest) {
         urlTenantSlug !== resolvedTenant.slug &&
         !KNOWN_TENANTS.includes(urlTenantSlug)
       ) {
-        console.warn(
+        tenantLogger.warn(
           `Tenant URL '${urlTenantSlug}' might be new or custom domain. Passing to app layer.`,
         );
       }
@@ -284,10 +285,10 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // Log metrics for unknown hosts
+  // Log metrics for unknown hosts (only in production or when rate is high)
   const unknownHostRate = (unknownHostCount / totalHostResolutions) * 100;
-  if (unknownHostRate > 5) {
-    console.warn(
+  if (unknownHostRate > 5 && process.env.NODE_ENV === "production") {
+    tenantLogger.warn(
       `High unknown host rate: ${unknownHostRate.toFixed(2)}% (${unknownHostCount}/${totalHostResolutions})`,
     );
   }
