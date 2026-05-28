@@ -80,11 +80,16 @@ function generateCSP(env) {
     // Allow WebSocket connections for HMR
     directives['connect-src'].push('ws://localhost:*', 'ws://127.0.0.1:*');
   } else {
-    // NOTE: MercadoPago requires 'unsafe-inline' in script-src for embedded checkout
-    // This is a known limitation - see MercadoPago CSP documentation
-    // We mitigate with strict frame-ancestors and other directives
-    directives['script-src'].push("'unsafe-inline'");
-    // Add upgrade-insecure-requests only in production
+    // STRY-021 SEC-010: MercadoPago SDK v1 requiere 'unsafe-inline'.
+    // Se mitiga con 'strict-dynamic': en Chrome/FF/Safari modernos, strict-dynamic
+    // hace que unsafe-inline sea ignorado para scripts dinámicos, reduciendo
+    // la superficie XSS real sin romper el checkout de MP.
+    // TODO STRY-022: Implementar nonce completo al migrar a MP SDK v2.
+    directives['script-src'].push(
+      "'unsafe-inline'",    // Requerido por MercadoPago SDK v1
+      "'strict-dynamic'",   // Mitiga unsafe-inline en navegadores modernos
+    );
+    // Upgrade insecure requests solo en producción
     directives['upgrade-insecure-requests'] = [];
   }
 

@@ -14,11 +14,13 @@ import bcrypt from "bcryptjs";
 
 const SLUG_RE = /^[a-z0-9-]{1,64}$/;
 
+// STRY-021 SEC-003: Email y contraseña ya no son hardcodeados.
+// Usar variables de entorno E2E_TEST_USER_EMAIL y E2E_TEST_USER_PASSWORD.
 const TEST_USER = {
   id: "e2e-test-user-001",
   name: "E2E Admin",
-  email: "jagzao@gmail.com",
-  password: "admin",
+  email: process.env.E2E_TEST_USER_EMAIL ?? "e2e-admin@test.internal",
+  password: process.env.E2E_TEST_USER_PASSWORD ?? "e2e-test-change-me",
 };
 
 /**
@@ -34,11 +36,16 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  if (process.env.VERCEL_ENV === "production") {
-    return NextResponse.json(
-      { error: "Not available in production" },
-      { status: 404 },
-    );
+  // STRY-021 SEC-003: En staging, requiere token para evitar reset accidental del admin
+  const expectedToken = process.env.E2E_SEED_SECRET;
+  if (expectedToken) {
+    const authHeader = request.headers.get("authorization");
+    const token = authHeader?.startsWith("Bearer ")
+      ? authHeader.slice(7)
+      : null;
+    if (!token || token !== expectedToken) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
   }
 
   let tenantSlug = "wondernails";

@@ -68,7 +68,8 @@ async function getSessionTenant(
   }
 }
 
-export async function middleware(request: NextRequest) {
+// STRY-021: Next.js 16 renombró middleware → proxy. El export debe llamarse `proxy`.
+export async function proxy(request: NextRequest) {
   const url = request.nextUrl;
   const pathname = url.pathname;
   const host = request.headers.get("host") || "";
@@ -112,8 +113,16 @@ export async function middleware(request: NextRequest) {
   // =========================================
   // STEP 4: SECURITY CHECK - CSRF Protection
   // For mutation methods, validate CSRF token
+  // Excluir webhooks externos y rutas de API que usan su propio auth
   // =========================================
-  if (!isCsrfExempt(pathname)) {
+  // STRY-021 SEC-004: Las rutas API ahora están dentro del matcher.
+  // Los webhooks externos (WhatsApp, MercadoPago) no envían CSRF — se eximen.
+  const isExternalWebhook =
+    pathname.startsWith("/api/whatsapp/") ||
+    pathname.startsWith("/api/webhooks/") ||
+    pathname.startsWith("/api/internal/");
+
+  if (!isCsrfExempt(pathname) && !isExternalWebhook) {
     if (CSRF_PROTECTED_METHODS.includes(method)) {
       const csrfTokenFromHeader = request.headers.get(CSRF_HEADER_NAME);
       const cookieHeader = request.headers.get("cookie") || "";
@@ -346,23 +355,10 @@ async function resolveTenantStrict(
     };
   }
 
-  // Priority 3: X-Tenant header (ONLY for internal service-to-service calls)
-  // WARNING: This should NOT be trusted for client authorization
-  const tenantHeader = request.headers.get("x-tenant");
-  const isInternalRequest =
-    request.headers.get("x-internal-request") === "true" ||
-    request.headers.get("user-agent")?.includes("internal-service");
-
-  if (
-    tenantHeader &&
-    isInternalRequest &&
-    KNOWN_TENANTS.includes(tenantHeader)
-  ) {
-    return {
-      tenant: buildTenantResponse(tenantHeader),
-      source: "header",
-    };
-  }
+  // Priority 3 (ELIMINADO STRY-021 SEC-006):
+  // x-internal-request era falseable por cualquier cliente externo.
+  // Las llamadas servicio-a-servicio deben usar /t/{slug}/ o subdomain.
+  // Si se necesita en el futuro: implementar con JWT firmado o IP allowlist.
 
   // Priority 4: Development-only query param (?tenant=wondernails)
   if (
@@ -416,8 +412,21 @@ interface FullResolvedTenant extends ResolvedTenant {
   currency: string;
 }
 
+// STRY-021 SEC-005: Mapa slug → UUID real.
+// Poblar con los UUIDs de la BD: SELECT id, slug FROM tenants;
+// Hasta que se implemente la consulta edge (STRY-022), las vars de entorno
+// son la fuente de verdad. Si una var no está seteada, cae en el slug como
+// fallback (compatible hacia atrás, pero sin protección UUID real).
+const TENANT_UUID_MAP: Record<string, string> = {
+  wondernails: process.env.TENANT_UUID_WONDERNAILS || "wondernails",
+  "centro-tenistico":
+    process.env.TENANT_UUID_CENTRO_TENISTICO || "centro-tenistico",
+  delirios: process.env.TENANT_UUID_DELIRIOS || "delirios",
+  "manada-juma": process.env.TENANT_UUID_MANADA_JUMA || "manada-juma",
+  "zo-system": process.env.TENANT_UUID_ZO_SYSTEM || "zo-system",
+};
+
 function buildTenantResponse(slug: string): FullResolvedTenant {
-  // Simplified mapping - in production this would come from DB
   const tenantModes: Record<string, "catalog" | "booking"> = {
     wondernails: "booking",
     "centro-tenistico": "booking",
@@ -427,7 +436,8 @@ function buildTenantResponse(slug: string): FullResolvedTenant {
   };
 
   return {
-    id: slug, // In production, this would be a UUID
+    // STRY-021 SEC-005: usar UUID real cuando está disponible vía env var
+    id: TENANT_UUID_MAP[slug] ?? slug,
     slug,
     source: "fallback",
     featureMode: tenantModes[slug] || "catalog",
@@ -474,14 +484,10 @@ function extractCookieValue(
 export const config = {
   matcher: [
     /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - tenants (tenant assets - images, CSS, etc.)
-     * - public static assets
+     * STRY-021 SEC-004: /api/* ahora INCLUIDO para que reciba headers de
+     * tenant (x-tenant, x-tenant-id) y las verificaciones de seguridad.
+     * Solo se excluyen assets estáticos de Next.js y tenants/ (logos/CSS).
      */
-    "/((?!api|_next/static|_next/image|favicon.ico|tenants).*)",
+    "/((?!_next/static|_next/image|favicon.ico|tenants/).*)",
   ],
 };

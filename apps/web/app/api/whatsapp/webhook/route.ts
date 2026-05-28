@@ -3,9 +3,13 @@
  *
  * Maneja mensajes entrantes y verificación del webhook
  * Docs: https://developers.facebook.com/docs/whatsapp/cloud-api/guides/set-up-webhooks
+ *
+ * STRY-021 SEC-007: Verificación HMAC-SHA256 de Meta
+ * STRY-021 PERF-007: Logs reducidos — sin PII, sin pretty-print
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import crypto from "crypto";
 import { db } from "@sass-store/database";
 import { whatsappMessages } from "@sass-store/database/schema";
 
@@ -13,10 +17,52 @@ import { whatsappMessages } from "@sass-store/database/schema";
 const WEBHOOK_VERIFY_TOKEN = process.env.WHATSAPP_WEBHOOK_VERIFY_TOKEN!;
 
 /**
+ * Verifica la firma HMAC-SHA256 que Meta incluye en X-Hub-Signature-256.
+ * Docs: https://developers.facebook.com/docs/messenger-platform/webhooks#validate-payloads
+ */
+function verifyMetaSignature(
+  rawBody: string,
+  signatureHeader: string | null,
+): boolean {
+  const appSecret = process.env.WHATSAPP_APP_SECRET;
+
+  // Si no está configurado: en dev permitir, en prod rechazar siempre
+  if (!appSecret) {
+    if (process.env.NODE_ENV === "production") {
+      console.error(
+        "[WhatsApp Webhook] WHATSAPP_APP_SECRET no configurado — rechazando en producción",
+      );
+      return false;
+    }
+    return true; // dev sin secret configurado — permitir para facilitar testing local
+  }
+
+  if (!signatureHeader?.startsWith("sha256=")) {
+    return false;
+  }
+
+  const expectedSignature =
+    "sha256=" +
+    crypto
+      .createHmac("sha256", appSecret)
+      .update(rawBody, "utf8")
+      .digest("hex");
+
+  // Comparación timing-safe para evitar timing attacks
+  try {
+    return crypto.timingSafeEqual(
+      Buffer.from(signatureHeader),
+      Buffer.from(expectedSignature),
+    );
+  } catch {
+    // Buffer lengths differ — firma claramente incorrecta
+    return false;
+  }
+}
+
+/**
  * GET - Verificación del webhook
- *
- * Meta envía este request para verificar que el webhook estÃ¡ configurado correctamente.
- * Debes responder con el challenge que Meta envía.
+ * Meta envía este request para verificar que el webhook está configurado.
  */
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
@@ -24,15 +70,10 @@ export async function GET(request: NextRequest) {
   const token = searchParams.get("hub.verify_token");
   const challenge = searchParams.get("hub.challenge");
 
-  // SECURITY: Redacted sensitive log;
-
-  // Verificar que el modo sea "subscribe" y el token coincida
   if (mode === "subscribe" && token === WEBHOOK_VERIFY_TOKEN) {
-    console.warn("[WhatsApp Webhook] Verificación exitosa");
+    console.log("[WhatsApp Webhook] Verificación exitosa");
     return new NextResponse(challenge, { status: 200 });
   }
-
-  // SECURITY: Redacted sensitive log;
 
   return NextResponse.json(
     { error: "Forbidden - Invalid verify token" },
@@ -42,38 +83,44 @@ export async function GET(request: NextRequest) {
 
 /**
  * POST - Recibe mensajes de WhatsApp
- *
- * Meta envía los mensajes entrantes a este endpoint.
  */
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    // Leer body como texto primero para poder verificar la firma HMAC
+    const rawBody = await request.text();
+    const signatureHeader = request.headers.get("x-hub-signature-256");
 
-    console.warn(
-      "[WhatsApp Webhook] Mensaje recibido:",
-      JSON.stringify(body, null, 2),
-    );
+    // STRY-021 SEC-007: Verificar firma de Meta antes de procesar
+    if (!verifyMetaSignature(rawBody, signatureHeader)) {
+      console.warn(
+        "[WhatsApp Webhook] Firma HMAC inválida — request rechazado",
+      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-    // Verificar que es un mensaje de WhatsApp Business Account
+    let body: any;
+    try {
+      body = JSON.parse(rawBody);
+    } catch {
+      return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+    }
+
+    // STRY-021 PERF-007: Log reducido — sin PII ni pretty-print
+    console.log("[WhatsApp Webhook] Recibido", {
+      object: body.object,
+      entryCount: body.entry?.length ?? 0,
+    });
+
     if (body.object !== "whatsapp_business_account") {
-      console.warn("[WhatsApp Webhook] Objeto no reconocido:", body.object);
       return NextResponse.json({ success: true });
     }
 
-    // Procesar cada entry
     const entries = body.entry || [];
-
     for (const entry of entries) {
       const changes = entry.changes || [];
-
       for (const change of changes) {
         const value = change.value;
-
-        if (!value?.messages) {
-          continue;
-        }
-
-        // Procesar mensajes
+        if (!value?.messages) continue;
         for (const message of value.messages) {
           await processIncomingMessage(message, value.metadata);
         }
@@ -113,50 +160,30 @@ async function processIncomingMessage(
   const mensajeId = message.id;
   const timestamp = message.timestamp;
 
-  console.warn("[WhatsApp] Mensaje de:", numeroCliente, "Tipo:", message.type);
-
-  // Determinar el contenido del mensaje
   let contenido = "";
   let tipoInteraccion = "texto";
 
   switch (message.type) {
     case "text":
       contenido = message.text?.body || "";
-      console.warn(`[WhatsApp] Texto: ${contenido}`);
       break;
-
     case "button":
       contenido = message.button?.text || "";
       tipoInteraccion = `button:${message.button?.payload}`;
-      console.warn(
-        `[WhatsApp] BotÃ³n presionado: ${contenido} (payload: ${message.button?.payload})`,
-      );
       break;
-
     case "interactive":
       if (message.interactive?.type === "list_reply") {
         contenido = message.interactive.list_reply?.title || "";
         tipoInteraccion = `list:${message.interactive.list_reply?.id}`;
-        console.warn(
-          `[WhatsApp] Respuesta de lista: ${contenido} (id: ${message.interactive.list_reply?.id})`,
-        );
       } else if (message.interactive?.type === "button_reply") {
         contenido = message.interactive.button_reply?.title || "";
         tipoInteraccion = `button:${message.interactive.button_reply?.id}`;
-        console.warn(
-          `[WhatsApp] BotÃ³nå›žåº”: ${contenido} (id: ${message.interactive.button_reply?.id})`,
-        );
       }
       break;
-
     default:
-      console.warn(`[WhatsApp] Tipo de mensaje no manejado: ${message.type}`);
+      // Tipo no manejado — ignorar silenciosamente
+      break;
   }
-
-  // AquÃ­ puedes:
-  // 1. Guardar el mensaje en la base de datos
-  // 2. Procesar comandos del usuario
-  // 3. Responder automÃ¡ticamente
 
   await guardarMensajeRecibido({
     numero: numeroCliente,
@@ -170,8 +197,7 @@ async function processIncomingMessage(
 }
 
 /**
- * Persiste un mensaje entrante de WhatsApp en la tabla whatsapp_messages.
- * tenantId es nullable — se asocia al tenant en un paso posterior si es necesario.
+ * Persiste un mensaje entrante en la tabla whatsapp_messages.
  */
 async function guardarMensajeRecibido(data: {
   numero: string;
@@ -197,7 +223,7 @@ async function guardarMensajeRecibido(data: {
       })
       .onConflictDoNothing();
   } catch (err) {
-    // Log but don't throw — webhook must always return 200 to Meta
+    // Log pero no lanzar — webhook siempre debe retornar 200 a Meta
     console.error("[WhatsApp DB] Error guardando mensaje:", err);
   }
 }

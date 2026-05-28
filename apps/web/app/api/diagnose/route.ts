@@ -1,12 +1,17 @@
 // @ts-nocheck
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { checkDatabaseConnection, db } from "@sass-store/database/connection";
 import { tenants } from "@sass-store/database/schema";
 import { eq } from "drizzle-orm";
+import { requireDiagnoseAuth } from "@/lib/api/diagnose-auth";
 
 export const dynamic = "force-dynamic";
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
+  // STRY-021 SEC-009: Proteger con guard de diagnóstico
+  const authError = requireDiagnoseAuth(request);
+  if (authError) return authError;
+
   const { searchParams } = new URL(request.url);
   const tenantSlug = searchParams.get("tenant") || "wondernails";
 
@@ -15,7 +20,7 @@ export async function GET(request: Request) {
     environment: {
       NODE_ENV: process.env.NODE_ENV,
       DATABASE_URL: process.env.DATABASE_URL ? "✓ Set" : "✗ Missing",
-      DATABASE_URL_preview: process.env.DATABASE_URL?.substring(0, 30) + "...",
+      // STRY-021 SEC-009: Eliminado DATABASE_URL_preview — exponía host/credenciales parciales
     },
     tests: {},
   };

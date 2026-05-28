@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { requireDiagnoseAuth } from "@/lib/api/diagnose-auth";
 
 interface DiagnosticResult {
   name: string;
@@ -9,13 +10,10 @@ interface DiagnosticResult {
   duration?: number;
 }
 
-export async function GET() {
-  if (
-    process.env.NODE_ENV === "production" ||
-    process.env.VERCEL_ENV === "production"
-  ) {
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
-  }
+export async function GET(request: NextRequest) {
+  // STRY-021 SEC-009: Guard unificado de diagnóstico
+  const authError = requireDiagnoseAuth(request);
+  if (authError) return authError;
 
   try {
     const startTime = Date.now();

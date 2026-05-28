@@ -1,0 +1,3468 @@
+{
+  "id": "7338be73-682a-4b11-b928-2f7060a862d4",
+  "projectId": "5e5aca38-18eb-40b0-93f7-727c6763ccdd",
+  "status": "completed",
+  "startedAt": "2026-05-28T17:02:20.9014488+00:00",
+  "finishedAt": "2026-05-28T17:02:20.9014647+00:00",
+  "qualityScore": 0,
+  "documentation": {
+    "foundFiles": ["PRD.md", "ARCHITECTURE.md"],
+    "missingFiles": [
+      "ROADMAP.md",
+      "USER-STORIES.md",
+      "ACCEPTANCE-CRITERIA.md",
+      "API-SPEC.md",
+      "DATABASE.md",
+      "TEST-PLAN.md",
+      "SECURITY.md",
+      "DEPLOYMENT.md",
+      "QUALITY-REPORT.md",
+      "CHANGELOG.md"
+    ],
+    "completePercentage": 17
+  },
+  "agents": {
+    "exists": true,
+    "missingPaths": [
+      "README.md",
+      "orchestrator/workflow.md",
+      "orchestrator/routing.json",
+      "orchestrator/gates.md",
+      "orchestrator/pr-policy.md",
+      "memory/project-context.md",
+      "memory/architecture-decisions.md",
+      "memory/coding-standards.md",
+      "memory/testing-strategy.md",
+      "memory/known-errors.md",
+      "memory/changelog-memory.md",
+      "skills/backend-dotnet.md",
+      "skills/frontend-react.md",
+      "skills/playwright-testing.md",
+      "skills/database-postgresql.md",
+      "skills/security-review.md",
+      "skills/refactoring.md",
+      "skills/ci-cd.md",
+      "skills/documentation.md",
+      "templates/user-story.md",
+      "templates/implementation-plan.md",
+      "templates/test-plan.md",
+      "templates/bug-report.md",
+      "templates/pull-request.md",
+      "templates/review-checklist.md",
+      "workflows/01-discovery.md",
+      "workflows/02-planning.md",
+      "workflows/03-implementation.md",
+      "workflows/04-validation.md",
+      "workflows/05-pr.md",
+      "workflows/06-postmortem.md",
+      "guards/forbidden-actions.md",
+      "guards/security-rules.md",
+      "guards/database-rules.md",
+      "guards/architecture-rules.md",
+      "session/current-task.md",
+      "session/decisions.md",
+      "session/progress.md",
+      "session/validation-result.md"
+    ],
+    "completePercentage": 0
+  },
+  "tests": {
+    "totalFiles": 500,
+    "unitFiles": 37,
+    "integrationFiles": 9,
+    "e2EFiles": 25,
+    "detectedPaths": [
+      ".env.test",
+      ".env.test.example",
+      ".tmp-vitest-simple.json",
+      "CORRECCIONES_RESERVAS_Y_TESTS.md",
+      "failed_tests_list.txt",
+      "final-test-state.png",
+      "plan-fix-playwright-tests.md",
+      "report-test-run.log",
+      "report-test-run3.log",
+      "run_nightly_tests.bat",
+      "SOCIAL_QUEUE_REORDER_TESTS.md",
+      "test-api-connection.js",
+      "test-customers-rls.sql",
+      "test-db-connection.js",
+      "test-db.js",
+      "test-debug.txt",
+      "test-drizzle.ts",
+      "test-isolation.ts",
+      "test-output-2.log",
+      "test-output.json",
+      "test-output.log",
+      "test-output.txt",
+      "test-pos-terminals-rls.sql",
+      "test-pq.js",
+      "test-quote-email.js",
+      "test-results-final.log",
+      "test-results-fixed.log",
+      "test-results-full.txt",
+      "test-results.log",
+      "test-retouches.ts",
+      "test1.json",
+      "test2.json",
+      "test3.json",
+      "test4.json",
+      "test5.json",
+      "TESTING_IMPLEMENTATION_GUIDE.md",
+      "TESTING_IMPLEMENTATION_SUMMARY.md",
+      "TESTING_IMPROVEMENT_PLAN.md",
+      "test_centro.json",
+      "test_delirios.json",
+      "TEST_FIXES_SUMMARY.md",
+      "TEST_IMPROVEMENTS_SUMMARY.md",
+      "test_nomnom.json",
+      "test_output.log",
+      "test_output.txt",
+      "test_output_2.txt",
+      "test_vigistudio.json",
+      "test_wondernails.json",
+      "test_zosystem.json",
+      "tmp-vitest.txt",
+      "TMP_TEST",
+      "vitest-errors.json",
+      "vitest-global.json",
+      "vitest-isolated.txt",
+      "vitest-minimal.config.ts",
+      "vitest-no-globals.config.ts",
+      "vitest-results.txt",
+      "vitest-working.config.ts",
+      "vitest.config.ts",
+      "vitest.debug.config.ts",
+      "vitest.isolation.config.ts",
+      "vitest.minimal-no-setup.config.ts",
+      "vitest.minimal.config.ts",
+      "vitest.no-setup.config.ts",
+      "vitest.simple.config.ts",
+      "vitest.unit.config.ts",
+      "vitest.working.config.ts",
+      ".agent-reports\\latest-status.json",
+      ".agent-reports\\missing-tests.json",
+      "docs\\E2E_AUTH_TESTING.md",
+      "docs\\E2E_TESTING_GUIDE.md",
+      "docs\\TESTING.md",
+      "docs\\TESTING_MASTER_PLAN.md",
+      "plans\\financial-planning-matrix-e2e-testing.md",
+      "plans\\home-tenant-nueva-visita-test-coverage.md",
+      "plans\\test-failure-remediation-plan.md",
+      "plans\\test-suite-remediation-plan.md",
+      "scripts\\check-test-db.ts",
+      "scripts\\clean-wondernails-test-data.ts",
+      "scripts\\create-salontest-tenant.ts",
+      "scripts\\create-test-service.js",
+      "scripts\\delete-service-test-salon-tenants.ts",
+      "scripts\\delete-test-tenants.ts",
+      "scripts\\list-test-tenants.ts",
+      "scripts\\run-report-test.js",
+      "scripts\\setup-tests.js",
+      "scripts\\smoke-test.js",
+      "scripts\\test-all-tenants.ts",
+      "scripts\\test-auth-import.ts",
+      "scripts\\test-cart-manually.md",
+      "scripts\\test-db-connection.ts",
+      "scripts\\test-fetch.js",
+      "scripts\\test-forgot-password-email.js",
+      "scripts\\test-inventory-integration.ts",
+      "scripts\\test-manual-filters.ts",
+      "scripts\\test-monitoring.js",
+      "scripts\\test-report.sh",
+      "scripts\\test-resend-direct.js",
+      "scripts\\test-retouch-api.ts",
+      "scripts\\test-retouch-http.ts",
+      "scripts\\test-rls-isolation.ts",
+      "scripts\\test-rls.ts",
+      "scripts\\test-runner.js",
+      "scripts\\test-transaction-context.ts",
+      "scripts\\test-video-processing.ts",
+      "test-results-logs\\test-results-template.md",
+      ".agents\\history\\test_cases.md",
+      ".agents\\protocols\\testing.md",
+      ".agents\\templates\\USER_ACCEPTANCE_TEST_STEPS.md",
+      ".claude\\agents\\tester.md",
+      ".github\\workflows\\e2e-tests.yml",
+      "apps\\web\\test-auth-redirect.js",
+      "node_modules\\.ai-wzWDMgto\\test.d.ts",
+      "node_modules\\.bin\\node-gyp-build-test",
+      "node_modules\\.bin\\node-gyp-build-test.cmd",
+      "node_modules\\.bin\\node-gyp-build-test.ps1",
+      "node_modules\\.bin\\specificity",
+      "node_modules\\.bin\\specificity.cmd",
+      "node_modules\\.bin\\specificity.ps1",
+      "node_modules\\.bin\\vitest",
+      "node_modules\\.bin\\vitest.cmd",
+      "node_modules\\.bin\\vitest.ps1",
+      "node_modules\\.color-name-rViYvmQ4\\test.js",
+      "node_modules\\.promisepipe-2AnHr4g0\\test.js",
+      "node_modules\\.pump-CIOqwYQQ\\test-browser.js",
+      "node_modules\\.pump-CIOqwYQQ\\test-node.js",
+      "node_modules\\.react-dom-zGUOXD8i\\test-utils.js",
+      "node_modules\\.react-easy-crop-kIfJeVci\\helpers.test.d.ts",
+      "node_modules\\.react-easy-crop-kIfJeVci\\helpers.test.d.ts.map",
+      "node_modules\\.teex-lIdjKnEW\\test.js",
+      "node_modules\\ai\\test.d.ts",
+      "node_modules\\atomic-sleep\\test.js",
+      "node_modules\\buffer-equal-constant-time\\test.js",
+      "node_modules\\date-fns\\minutesToHours.d.mts",
+      "node_modules\\date-fns\\minutesToHours.d.ts",
+      "node_modules\\date-fns\\minutesToHours.js",
+      "node_modules\\date-fns\\minutesToHours.mjs",
+      "node_modules\\date-fns\\minutesToMilliseconds.d.mts",
+      "node_modules\\date-fns\\minutesToMilliseconds.d.ts",
+      "node_modules\\date-fns\\minutesToMilliseconds.js",
+      "node_modules\\date-fns\\minutesToMilliseconds.mjs",
+      "node_modules\\date-fns\\minutesToSeconds.d.mts",
+      "node_modules\\date-fns\\minutesToSeconds.d.ts",
+      "node_modules\\date-fns\\minutesToSeconds.js",
+      "node_modules\\date-fns\\minutesToSeconds.mjs",
+      "node_modules\\date-fns-jalali\\minutesToHours.cjs",
+      "node_modules\\date-fns-jalali\\minutesToHours.d.cts",
+      "node_modules\\date-fns-jalali\\minutesToHours.d.ts",
+      "node_modules\\date-fns-jalali\\minutesToHours.js",
+      "node_modules\\date-fns-jalali\\minutesToMilliseconds.cjs",
+      "node_modules\\date-fns-jalali\\minutesToMilliseconds.d.cts",
+      "node_modules\\date-fns-jalali\\minutesToMilliseconds.d.ts",
+      "node_modules\\date-fns-jalali\\minutesToMilliseconds.js",
+      "node_modules\\date-fns-jalali\\minutesToSeconds.cjs",
+      "node_modules\\date-fns-jalali\\minutesToSeconds.d.cts",
+      "node_modules\\date-fns-jalali\\minutesToSeconds.d.ts",
+      "node_modules\\date-fns-jalali\\minutesToSeconds.js",
+      "node_modules\\defaults\\test.js",
+      "node_modules\\fast-safe-stringify\\test-stable.js",
+      "node_modules\\fast-safe-stringify\\test.js",
+      "node_modules\\help-me\\test.js",
+      "node_modules\\langsmith\\vitest.cjs",
+      "node_modules\\langsmith\\vitest.d.cts",
+      "node_modules\\langsmith\\vitest.d.ts",
+      "node_modules\\langsmith\\vitest.js",
+      "node_modules\\node-gyp-build\\build-test.js",
+      "node_modules\\node-int64\\test.js",
+      "node_modules\\object-inspect\\test-core-js.js",
+      "node_modules\\object-inspect\\util.inspect.js",
+      "node_modules\\pend\\test.js",
+      "node_modules\\pg-types\\index.test-d.ts",
+      "node_modules\\playwright\\test.d.ts",
+      "node_modules\\playwright\\test.js",
+      "node_modules\\playwright\\test.mjs",
+      "node_modules\\proxy-from-env\\test.js",
+      "node_modules\\pump\\test-browser.js",
+      "node_modules\\pump\\test-node.js",
+      "node_modules\\react-dom\\test-utils.js",
+      "node_modules\\react-easy-crop\\helpers.test.d.ts",
+      "node_modules\\react-easy-crop\\helpers.test.d.ts.map",
+      "node_modules\\reusify\\test.js",
+      "node_modules\\rfdc\\index.test-d.ts",
+      "node_modules\\rope-sequence\\test.js",
+      "node_modules\\safer-buffer\\tests.js",
+      "node_modules\\siginfo\\test.js",
+      "node_modules\\split2\\test.js",
+      "node_modules\\stackback\\test.js",
+      "node_modules\\strnum\\strnum.test.js",
+      "node_modules\\strnum\\test.js",
+      "node_modules\\styled-jsx\\babel-test.js",
+      "node_modules\\vitest\\vitest.mjs",
+      "node_modules\\xtend\\test.js",
+      "tests\\api\\reviews.test.ts",
+      "tests\\e2e\\calendar.spec.ts",
+      "tests\\e2e\\deep-audit-pages.spec.ts",
+      "tests\\e2e\\email-validation.spec.ts",
+      "tests\\e2e\\example.spec.ts",
+      "tests\\e2e\\full-admin-navigation.spec.ts",
+      "tests\\e2e\\health.spec.ts",
+      "tests\\e2e\\mobile-carousel-swipe.spec.ts",
+      "tests\\e2e\\mobile-carousel.spec.ts",
+      "tests\\e2e\\multi-tenant-deep-scan.spec.ts",
+      "tests\\e2e\\reporte-general-web.spec.ts",
+      "tests\\e2e\\retouch-monitor.spec.ts",
+      "tests\\e2e\\smoke-anon-crawl.spec.ts",
+      "tests\\e2e\\tenant-exhaustive-audit.spec.ts",
+      "tests\\e2e\\web-map-report.spec.ts",
+      "tests\\e2e\\wondernails-500-fix.spec.ts",
+      "tests\\integration\\api-connection.spec.ts",
+      "tests\\integration\\api-integration.spec.ts",
+      "tests\\integration\\database-integration.spec.ts",
+      "tests\\integration\\lint-paths.int.spec.ts",
+      "tests\\integration\\products-api-tenant-isolation.test.ts",
+      "tests\\integration\\quotes-api.test.ts",
+      "tests\\integration\\wondernails-performance.int.spec.ts",
+      "tests\\integration\\workflow-validation.spec.ts",
+      "tests\\security\\rls.test.ts",
+      "tests\\setup\\test-database.ts",
+      "tests\\setup\\TestContext.ts",
+      "tests\\setup\\TestUtilities.ts",
+      "tests\\setup\\vitest-minimal.setup.ts",
+      "tests\\setup\\vitest.global-setup.ts",
+      "tests\\setup\\vitest.setup.ts",
+      "tests\\unit\\alerts.spec.ts",
+      "tests\\unit\\appointments-data.spec.ts",
+      "tests\\unit\\book-date-format.spec.ts",
+      "tests\\unit\\booking-notification-lifecycle.spec.ts",
+      "tests\\unit\\booking-operations.spec.ts",
+      "tests\\unit\\booking-operations.test.ts",
+      "tests\\unit\\booking-reminder-notification.spec.ts",
+      "tests\\unit\\cache-headers.test.ts",
+      "tests\\unit\\calendar-dnd.test.tsx",
+      "tests\\unit\\cart-operations.test.ts",
+      "tests\\unit\\cart-operations.test.ts.backup",
+      "tests\\unit\\centro-tenistico-brand.spec.ts",
+      "tests\\unit\\complete-flows.test.ts",
+      "tests\\unit\\customer-visits-history.spec.ts",
+      "tests\\unit\\health-endpoint.spec.ts",
+      "tests\\unit\\health.spec.ts",
+      "tests\\unit\\logger.spec.ts",
+      "tests\\unit\\order-processing.test.ts",
+      "tests\\unit\\payment-operations.test.ts",
+      "tests\\unit\\payment-operations.test.ts.backup",
+      "tests\\unit\\result-pattern.spec.ts",
+      "tests\\unit\\retouch-monitor-service.test.ts",
+      "tests\\unit\\service-crud.test.ts",
+      "tests\\unit\\service-worker.test.ts",
+      "tests\\unit\\social-library.test.ts",
+      "tests\\unit\\social-posts.test.ts",
+      "tests\\unit\\social-queue-reorder-mock.test.ts",
+      "tests\\unit\\social-queue-reorder.test.ts",
+      "tests\\unit\\tenant-context.test.ts",
+      "tests\\unit\\tenant-operations.test.ts",
+      "tests\\unit\\tennis-ball-card-focus.spec.ts",
+      "tests\\unit\\tennis-ball-frames.spec.ts",
+      "tests\\unit\\user-operations.test.ts",
+      "tests\\unit\\user-operations.test.ts.backup",
+      "tests\\unit\\visit-utils.spec.ts",
+      "tests\\unit\\whatsapp-link.spec.ts",
+      ".agents\\sprint\\STRY-001-pos-robusto-e2e\\testing-usuario.md",
+      ".agents\\sprint\\STRY-017-platform-perf-sec\\testing-usuario.md",
+      ".agents\\sprint\\STRY-018-e2e-recovery-ci-gate\\testing-usuario.md",
+      ".agents\\sprint\\STRY-019-secrets-observability\\testing-usuario.md",
+      ".agents\\sprint\\STRY-020-production-release\\testing-usuario.md",
+      ".agents\\sprint\\STRY-021-security-perf-hardening\\testing-usuario.md",
+      ".agents\\sprint\\STRY-CTV-pro-elite-book\\testing-usuario.md",
+      ".kilo\\node_modules\\.bin\\node-gyp-build-optional-packages-test",
+      ".kilo\\node_modules\\.bin\\node-gyp-build-optional-packages-test.cmd",
+      ".kilo\\node_modules\\.bin\\node-gyp-build-optional-packages-test.ps1",
+      ".kilo\\node_modules\\msgpackr\\test-worker.js",
+      ".kilo\\node_modules\\node-gyp-build-optional-packages\\build-test.js",
+      "agents\\outputs\\media\\spec.md",
+      "agents\\swarm\\agents\\tester-agent.ts",
+      "apps\\web\\lib\\ab-testing.ts",
+      "apps\\web\\tests\\customer-appointments-features.spec.ts",
+      "node_modules\\.core-js-pure-ZBEvTiea\\internals\\array-method-has-species-support.js",
+      "node_modules\\.core-js-pure-ZBEvTiea\\internals\\array-species-constructor.js",
+      "node_modules\\.core-js-pure-ZBEvTiea\\internals\\array-species-create.js",
+      "node_modules\\.core-js-pure-ZBEvTiea\\internals\\inspect-source.js",
+      "node_modules\\.core-js-pure-ZBEvTiea\\internals\\set-species.js",
+      "node_modules\\.core-js-pure-ZBEvTiea\\internals\\species-constructor.js",
+      "node_modules\\.core-js-pure-ZBEvTiea\\modules\\es.array.species.js",
+      "node_modules\\.core-js-pure-ZBEvTiea\\modules\\es.regexp.test.js",
+      "node_modules\\.core-js-pure-ZBEvTiea\\modules\\es.symbol.species.js",
+      "node_modules\\.d3-format-adN8xYNV\\src\\formatSpecifier.js",
+      "node_modules\\.es-iterator-helpers-dxz65DgV\\test\\tests.js",
+      "node_modules\\.file-uri-to-path-Rr6fE69l\\test\\test.js",
+      "node_modules\\.file-uri-to-path-Rr6fE69l\\test\\tests.json",
+      "node_modules\\.generic-pool-49BmY3DH\\test\\doubly-linked-list-iterator-test.js",
+      "node_modules\\.generic-pool-49BmY3DH\\test\\doubly-linked-list-test.js",
+      "node_modules\\.generic-pool-49BmY3DH\\test\\generic-pool-acquiretimeout-test.js",
+      "node_modules\\.generic-pool-49BmY3DH\\test\\generic-pool-test.js",
+      "node_modules\\.generic-pool-49BmY3DH\\test\\resource-request-test.js",
+      "node_modules\\.graphql-P5cQuzhV\\jsutils\\inspect.d.ts",
+      "node_modules\\.graphql-P5cQuzhV\\jsutils\\inspect.js",
+      "node_modules\\.graphql-P5cQuzhV\\jsutils\\inspect.mjs",
+      "node_modules\\.graphql-P5cQuzhV\\type\\introspection.d.ts",
+      "node_modules\\.graphql-P5cQuzhV\\type\\introspection.js",
+      "node_modules\\.graphql-P5cQuzhV\\type\\introspection.mjs",
+      "node_modules\\.graphql-P5cQuzhV\\utilities\\getIntrospectionQuery.d.ts",
+      "node_modules\\.graphql-P5cQuzhV\\utilities\\getIntrospectionQuery.js",
+      "node_modules\\.graphql-P5cQuzhV\\utilities\\getIntrospectionQuery.mjs",
+      "node_modules\\.graphql-P5cQuzhV\\utilities\\introspectionFromSchema.d.ts",
+      "node_modules\\.graphql-P5cQuzhV\\utilities\\introspectionFromSchema.js",
+      "node_modules\\.graphql-P5cQuzhV\\utilities\\introspectionFromSchema.mjs",
+      "node_modules\\.graphql-P5cQuzhV\\validation\\specifiedRules.d.ts",
+      "node_modules\\.graphql-P5cQuzhV\\validation\\specifiedRules.js",
+      "node_modules\\.graphql-P5cQuzhV\\validation\\specifiedRules.mjs",
+      "node_modules\\.json-schema-traverse-HbFAKQHV\\spec\\index.spec.js",
+      "node_modules\\.lz-string-P4RcmcVa\\tests\\lz-string-spec.js",
+      "node_modules\\.lz-string-P4RcmcVa\\tests\\SpecRunner.html",
+      "node_modules\\.path-browserify-ZsVc5oPx\\test\\test-path-basename.js",
+      "node_modules\\.path-browserify-ZsVc5oPx\\test\\test-path-dirname.js",
+      "node_modules\\.path-browserify-ZsVc5oPx\\test\\test-path-extname.js",
+      "node_modules\\.path-browserify-ZsVc5oPx\\test\\test-path-isabsolute.js",
+      "node_modules\\.path-browserify-ZsVc5oPx\\test\\test-path-join.js",
+      "node_modules\\.path-browserify-ZsVc5oPx\\test\\test-path-parse-format.js",
+      "node_modules\\.path-browserify-ZsVc5oPx\\test\\test-path-relative.js",
+      "node_modules\\.path-browserify-ZsVc5oPx\\test\\test-path-resolve.js",
+      "node_modules\\.path-browserify-ZsVc5oPx\\test\\test-path-zero-length-strings.js",
+      "node_modules\\.path-browserify-ZsVc5oPx\\test\\test-path.js",
+      "node_modules\\.pg-protocol-CYP9lRg5\\dist\\inbound-parser.test.d.ts",
+      "node_modules\\.pg-protocol-CYP9lRg5\\dist\\inbound-parser.test.js",
+      "node_modules\\.pg-protocol-CYP9lRg5\\dist\\inbound-parser.test.js.map",
+      "node_modules\\.pg-protocol-CYP9lRg5\\dist\\outbound-serializer.test.d.ts",
+      "node_modules\\.pg-protocol-CYP9lRg5\\dist\\outbound-serializer.test.js",
+      "node_modules\\.pg-protocol-CYP9lRg5\\dist\\outbound-serializer.test.js.map",
+      "node_modules\\.pg-protocol-CYP9lRg5\\src\\inbound-parser.test.ts",
+      "node_modules\\.pg-protocol-CYP9lRg5\\src\\outbound-serializer.test.ts",
+      "node_modules\\.prosemirror-changeset-Fud3mDaq\\test\\test-changed-range.ts",
+      "node_modules\\.prosemirror-changeset-Fud3mDaq\\test\\test-changes.ts",
+      "node_modules\\.prosemirror-changeset-Fud3mDaq\\test\\test-diff.ts",
+      "node_modules\\.prosemirror-changeset-Fud3mDaq\\test\\test-merge.ts",
+      "node_modules\\.prosemirror-changeset-Fud3mDaq\\test\\test-simplify.ts",
+      "node_modules\\.react-dom-zGUOXD8i\\cjs\\react-dom-test-utils.development.js",
+      "node_modules\\.react-dom-zGUOXD8i\\cjs\\react-dom-test-utils.production.js",
+      "node_modules\\.sonic-boom-nAkrbm3Z\\test\\destroy.test.js",
+      "node_modules\\.sonic-boom-nAkrbm3Z\\test\\end.test.js",
+      "node_modules\\.sonic-boom-nAkrbm3Z\\test\\flush-sync.test.js",
+      "node_modules\\.sonic-boom-nAkrbm3Z\\test\\flush.test.js",
+      "node_modules\\.sonic-boom-nAkrbm3Z\\test\\fsync.test.js",
+      "node_modules\\.sonic-boom-nAkrbm3Z\\test\\minlength.test.js",
+      "node_modules\\.sonic-boom-nAkrbm3Z\\test\\mode.test.js",
+      "node_modules\\.sonic-boom-nAkrbm3Z\\test\\periodicflush.test.js",
+      "node_modules\\.sonic-boom-nAkrbm3Z\\test\\reopen.test.js",
+      "node_modules\\.sonic-boom-nAkrbm3Z\\test\\retry.test.js",
+      "node_modules\\.sonic-boom-nAkrbm3Z\\test\\sync.test.js",
+      "node_modules\\.sonic-boom-nAkrbm3Z\\test\\write.test.js",
+      "node_modules\\.stat-mode-rZTGHnCy\\test\\test.js",
+      "node_modules\\.strnum-e6PEZIs4\\tests\\infinity_test.js",
+      "node_modules\\.strnum-e6PEZIs4\\tests\\strnum_test.js",
+      "node_modules\\.svix-eiXvSr5D\\src\\index.test.ts",
+      "node_modules\\.svix-eiXvSr5D\\src\\KitchenSink.test.ts",
+      "node_modules\\.svix-eiXvSr5D\\src\\mockttp.test.ts",
+      "node_modules\\.svix-eiXvSr5D\\src\\webhook.test.ts",
+      "node_modules\\.vercel-93L9PHg8\\dist\\get-latest-worker.cjs",
+      "node_modules\\@ai-sdk\\.provider-utils-TZ2ibnXv\\test.d.ts",
+      "node_modules\\@ai-sdk\\provider-utils\\test.d.ts",
+      "node_modules\\@pinojs\\redact\\index.test-d.ts",
+      "node_modules\\@sass-store\\web\\test-auth-redirect.js",
+      "node_modules\\@stablelib\\base64\\base64.test.ts",
+      "node_modules\\@testing-library\\jest-dom\\vitest.d.ts",
+      "node_modules\\@testing-library\\jest-dom\\vitest.js",
+      "node_modules\\@types\\node\\inspector.d.ts",
+      "node_modules\\@types\\node\\test.d.ts",
+      "node_modules\\ajv\\scripts\\prepare-tests",
+      "node_modules\\array-includes\\test\\tests.js",
+      "node_modules\\array.prototype.findlast\\test\\tests.js",
+      "node_modules\\array.prototype.findlastindex\\test\\tests.js",
+      "node_modules\\array.prototype.flat\\test\\tests.js",
+      "node_modules\\array.prototype.flatmap\\test\\tests.js",
+      "node_modules\\array.prototype.tosorted\\test\\tests.js",
+      "node_modules\\arraybuffer.prototype.slice\\test\\tests.js",
+      "node_modules\\bcrypt\\test\\async.test.js",
+      "node_modules\\bcrypt\\test\\implementation.test.js",
+      "node_modules\\bcrypt\\test\\promise.test.js",
+      "node_modules\\bcrypt\\test\\repetitions.test.js",
+      "node_modules\\bcrypt\\test\\sync.test.js",
+      "node_modules\\bl\\test\\test.js",
+      "node_modules\\cache\\.turbo\\turbo-test.log",
+      "node_modules\\core-js-pure\\internals\\array-method-has-species-support.js",
+      "node_modules\\core-js-pure\\internals\\array-species-constructor.js",
+      "node_modules\\core-js-pure\\internals\\array-species-create.js",
+      "node_modules\\core-js-pure\\internals\\inspect-source.js",
+      "node_modules\\core-js-pure\\internals\\set-species.js",
+      "node_modules\\core-js-pure\\internals\\species-constructor.js",
+      "node_modules\\core-js-pure\\modules\\es.array.species.js",
+      "node_modules\\core-js-pure\\modules\\es.regexp.test.js",
+      "node_modules\\core-js-pure\\modules\\es.symbol.species.js",
+      "node_modules\\d3-array\\src\\greatest.js",
+      "node_modules\\d3-array\\src\\greatestIndex.js",
+      "node_modules\\d3-format\\src\\formatSpecifier.js",
+      "node_modules\\damerau-levenshtein\\test\\test.js",
+      "node_modules\\date-fns\\fp\\minutesToHours.d.mts",
+      "node_modules\\date-fns\\fp\\minutesToHours.d.ts",
+      "node_modules\\date-fns\\fp\\minutesToHours.js",
+      "node_modules\\date-fns\\fp\\minutesToHours.mjs",
+      "node_modules\\date-fns\\fp\\minutesToMilliseconds.d.mts",
+      "node_modules\\date-fns\\fp\\minutesToMilliseconds.d.ts",
+      "node_modules\\date-fns\\fp\\minutesToMilliseconds.js",
+      "node_modules\\date-fns\\fp\\minutesToMilliseconds.mjs",
+      "node_modules\\date-fns\\fp\\minutesToSeconds.d.mts",
+      "node_modules\\date-fns\\fp\\minutesToSeconds.d.ts",
+      "node_modules\\date-fns\\fp\\minutesToSeconds.js",
+      "node_modules\\date-fns\\fp\\minutesToSeconds.mjs",
+      "node_modules\\date-fns\\_lib\\test.d.mts",
+      "node_modules\\date-fns\\_lib\\test.d.ts",
+      "node_modules\\date-fns\\_lib\\test.js",
+      "node_modules\\date-fns\\_lib\\test.mjs",
+      "node_modules\\date-fns-jalali\\fp\\minutesToHours.cjs",
+      "node_modules\\date-fns-jalali\\fp\\minutesToHours.d.cts",
+      "node_modules\\date-fns-jalali\\fp\\minutesToHours.d.ts",
+      "node_modules\\date-fns-jalali\\fp\\minutesToHours.js",
+      "node_modules\\date-fns-jalali\\fp\\minutesToMilliseconds.cjs",
+      "node_modules\\date-fns-jalali\\fp\\minutesToMilliseconds.d.cts",
+      "node_modules\\date-fns-jalali\\fp\\minutesToMilliseconds.d.ts",
+      "node_modules\\date-fns-jalali\\fp\\minutesToMilliseconds.js",
+      "node_modules\\date-fns-jalali\\fp\\minutesToSeconds.cjs",
+      "node_modules\\date-fns-jalali\\fp\\minutesToSeconds.d.cts",
+      "node_modules\\date-fns-jalali\\fp\\minutesToSeconds.d.ts",
+      "node_modules\\date-fns-jalali\\fp\\minutesToSeconds.js",
+      "node_modules\\date-fns-jalali\\_lib\\test.cjs",
+      "node_modules\\date-fns-jalali\\_lib\\test.d.cts",
+      "node_modules\\date-fns-jalali\\_lib\\test.d.ts",
+      "node_modules\\date-fns-jalali\\_lib\\test.js",
+      "node_modules\\devtools-protocol\\types\\protocol-tests-proxy-api.d.ts",
+      "node_modules\\dom-helpers\\cjs\\hyphenateStyle.d.ts",
+      "node_modules\\dom-helpers\\cjs\\hyphenateStyle.js",
+      "node_modules\\dom-helpers\\esm\\hyphenateStyle.d.ts",
+      "node_modules\\dom-helpers\\esm\\hyphenateStyle.js",
+      "node_modules\\es-abstract\\2022\\TestIntegrityLevel.js",
+      "node_modules\\es-abstract\\2022\\ToDateString.js",
+      "node_modules\\es-abstract\\2022\\TypedArraySpeciesCreate.js",
+      "node_modules\\es-abstract\\2023\\ArraySpeciesCreate.js",
+      "node_modules\\es-abstract\\2023\\DateString.js",
+      "node_modules\\es-abstract\\2023\\RawBytesToNumeric.js",
+      "node_modules\\es-abstract\\2023\\SpeciesConstructor.js",
+      "node_modules\\es-abstract\\2023\\TestIntegrityLevel.js",
+      "node_modules\\es-abstract\\2023\\ToDateString.js",
+      "node_modules\\es-abstract\\2023\\TypedArraySpeciesCreate.js",
+      "node_modules\\es-abstract\\2024\\ArraySpeciesCreate.js",
+      "node_modules\\es-abstract\\2024\\DateString.js",
+      "node_modules\\es-abstract\\2024\\RawBytesToNumeric.js",
+      "node_modules\\es-abstract\\2024\\SpeciesConstructor.js",
+      "node_modules\\es-abstract\\2024\\TestIntegrityLevel.js",
+      "node_modules\\es-abstract\\2024\\ToDateString.js",
+      "node_modules\\es-abstract\\2024\\TypedArraySpeciesCreate.js",
+      "node_modules\\es-abstract\\2025\\ArraySpeciesCreate.js",
+      "node_modules\\es-abstract\\2025\\DateString.js",
+      "node_modules\\es-abstract\\2025\\RawBytesToNumeric.js",
+      "node_modules\\es-abstract\\2025\\SpeciesConstructor.js",
+      "node_modules\\es-abstract\\2025\\TestIntegrityLevel.js",
+      "node_modules\\es-abstract\\2025\\ToDateString.js",
+      "node_modules\\es-abstract\\2025\\TypedArraySpeciesCreate.js",
+      "node_modules\\es-abstract\\helpers\\regexTester.js",
+      "node_modules\\es-iterator-helpers\\test\\tests.js",
+      "node_modules\\eslint-plugin-jsx-a11y\\__tests__\\index-test.js",
+      "node_modules\\events\\tests\\special-event-names.js",
+      "node_modules\\fast-json-stable-stringify\\benchmark\\test.json",
+      "node_modules\\fast-uri\\.github\\tests_checker.yml",
+      "node_modules\\fast-uri\\test\\ajv.test.js",
+      "node_modules\\fast-uri\\test\\equal.test.js",
+      "node_modules\\fast-uri\\test\\parse.test.js",
+      "node_modules\\fast-uri\\test\\resolve.test.js",
+      "node_modules\\fast-uri\\test\\rfc-3986.test.js",
+      "node_modules\\fast-uri\\test\\serialize.test.js",
+      "node_modules\\fast-uri\\test\\uri-js-compatibility.test.js",
+      "node_modules\\fast-uri\\test\\uri-js.test.js",
+      "node_modules\\fast-uri\\test\\util.test.js",
+      "node_modules\\fast-uri\\types\\index.test-d.ts",
+      "node_modules\\fastq\\test\\test.js",
+      "node_modules\\fd-slicer\\test\\test.js",
+      "node_modules\\find-root\\test\\test.js",
+      "node_modules\\for-each\\test\\test.js",
+      "node_modules\\fraction.js\\tests\\fraction.test.js",
+      "node_modules\\function.prototype.name\\test\\tests.js",
+      "node_modules\\gensync\\test\\index.test.js",
+      "node_modules\\globalthis\\test\\tests.js",
+      "node_modules\\has-symbols\\test\\tests.js",
+      "node_modules\\has-tostringtag\\test\\tests.js",
+      "node_modules\\json-schema-traverse\\spec\\index.spec.js",
+      "node_modules\\node-domexception\\.history\\test_20210527205603.js",
+      "node_modules\\node-domexception\\.history\\test_20210527205957.js",
+      "node_modules\\node-domexception\\.history\\test_20210527210021.js",
+      "node_modules\\node-plop\\types\\test.ts",
+      "node_modules\\object-inspect\\example\\inspect.js",
+      "node_modules\\object-inspect\\test\\inspect.js",
+      "node_modules\\object-inspect\\test\\quoteStyle.js",
+      "node_modules\\object.assign\\test\\tests.js",
+      "node_modules\\object.entries\\test\\tests.js",
+      "node_modules\\object.fromentries\\test\\tests.js",
+      "node_modules\\object.groupby\\test\\tests.js",
+      "node_modules\\object.values\\test\\tests.js",
+      "node_modules\\on-exit-leak-free\\test\\base.test.js",
+      "node_modules\\on-exit-leak-free\\test\\event-emitter-leak.test.js",
+      "node_modules\\pg-protocol\\dist\\inbound-parser.test.d.ts",
+      "node_modules\\pg-protocol\\dist\\inbound-parser.test.js",
+      "node_modules\\pg-protocol\\dist\\inbound-parser.test.js.map",
+      "node_modules\\pg-protocol\\dist\\outbound-serializer.test.d.ts",
+      "node_modules\\pg-protocol\\dist\\outbound-serializer.test.js"
+    ]
+  },
+  "structure": {
+    "hasReadme": true,
+    "hasPackageJson": true,
+    "hasDotNetSolution": false,
+    "hasDockerCompose": true,
+    "hasOpenApiSpec": false,
+    "hasCiPipeline": true,
+    "backendEndpoints": [],
+    "frontendRoutes": [
+      "/",
+      "./runtime-types.d.ts",
+      "../shared/runtime-utils.ts",
+      "../shared/runtime-utils.ts",
+      "../shared/runtime-utils.ts",
+      "../shared-node/base-externals-utils.ts",
+      "../shared-node/node-externals-utils.ts",
+      "../shared-node/node-wasm-utils.ts",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "./runtime-types.d.ts",
+      "../shared/runtime-utils.ts",
+      "../shared/runtime-utils.ts",
+      "../shared/runtime-utils.ts",
+      "../shared-node/base-externals-utils.ts",
+      "../shared-node/node-externals-utils.ts",
+      "../shared-node/node-wasm-utils.ts",
+      "./runtime-types.d.ts",
+      "../shared/runtime-utils.ts",
+      "../shared/runtime-utils.ts",
+      "../shared/runtime-utils.ts",
+      "../shared-node/base-externals-utils.ts",
+      "../shared-node/node-externals-utils.ts",
+      "../shared-node/node-wasm-utils.ts",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "./runtime-types.d.ts",
+      "../shared/runtime-utils.ts",
+      "../shared/runtime-utils.ts",
+      "../shared/runtime-utils.ts",
+      "../shared-node/base-externals-utils.ts",
+      "../shared-node/node-externals-utils.ts",
+      "../shared-node/node-wasm-utils.ts",
+      "M",
+      "M ",
+      "M ",
+      "M",
+      "M ",
+      "M ",
+      "M ",
+      "./runtime-types.d.ts",
+      "../base/globals.d.ts",
+      "../../../shared/runtime-utils.ts",
+      "./dev-globals.d.ts",
+      "./dev-protocol.d.ts",
+      "./dev-extensions.ts",
+      "../../../browser/runtime/base/runtime-base.ts",
+      "../../../shared/runtime-types.d.ts",
+      "../base/runtime-base.ts",
+      "../base/dev-base.ts",
+      "./runtime-backend-dom.ts",
+      "../../../shared/require-type.d.ts",
+      "../../../shared/runtime-types.d.ts",
+      "../../runtime/base/dev-globals.d.ts",
+      "../../runtime/base/dev-protocol.d.ts",
+      "../../runtime/base/dev-extensions.ts",
+      "/",
+      "/",
+      "./runtime-types.d.ts",
+      "../shared/runtime-utils.ts",
+      "../shared/runtime-utils.ts",
+      "../shared/runtime-utils.ts",
+      "../shared-node/base-externals-utils.ts",
+      "../shared-node/node-externals-utils.ts",
+      "../shared-node/node-wasm-utils.ts",
+      "/",
+      "/",
+      "/",
+      "/",
+      "/",
+      "M",
+      "M ",
+      "M ",
+      "M",
+      "M ",
+      "M ",
+      "M ",
+      "./runtime-types.d.ts",
+      "../shared/runtime-utils.ts",
+      "../shared/runtime-utils.ts",
+      "../shared/runtime-utils.ts",
+      "../shared-node/base-externals-utils.ts",
+      "../shared-node/node-externals-utils.ts",
+      "../shared-node/node-wasm-utils.ts",
+      "/",
+      "./runtime-types.d.ts",
+      "../base/globals.d.ts",
+      "../../../shared/runtime-utils.ts",
+      "./dev-globals.d.ts",
+      "./dev-protocol.d.ts",
+      "./dev-extensions.ts",
+      "../shared/runtime-utils.ts",
+      "../base/runtime-base.ts",
+      "../../../shared/require-type.d.ts",
+      "../../../shared-node/base-externals-utils.ts",
+      "../base/dev-protocol.d.ts"
+    ],
+    "projectFiles": []
+  },
+  "security": {
+    "hasEnvExample": true,
+    "envFiles": [
+      ".env",
+      ".env.cloudflare",
+      ".env.local",
+      ".env.test",
+      "apps\\web\\.env.local",
+      "apps\\web\\.env.local.backup"
+    ],
+    "secretSignals": [
+      {
+        "path": "check-services-schema.js",
+        "kind": "connectionstring",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "check-visits-schema.js",
+        "kind": "connectionstring",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "fix-campaigns-tenant-fk.js",
+        "kind": "connectionstring",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "fix-db-schema.js",
+        "kind": "connectionstring",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "fix-services-schema.js",
+        "kind": "connectionstring",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "test-api-connection.js",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "test-pq.js",
+        "kind": "connectionstring",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": ".claude\\settings.json",
+        "kind": "api-key",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": ".claude\\settings.json",
+        "kind": "api-key",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": ".claude\\settings.json",
+        "kind": "api-key",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": ".claude\\settings.json",
+        "kind": "api-key",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": ".claude\\settings.json",
+        "kind": "api-key",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": ".claude\\settings.json",
+        "kind": "api-key",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": ".claude\\settings.json",
+        "kind": "api-key",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": ".claude\\settings.json",
+        "kind": "api-key",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": ".claude\\settings.json",
+        "kind": "api-key",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": ".claude\\settings.json",
+        "kind": "api-key",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": ".claude\\settings.json",
+        "kind": "api-key",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": ".claude\\settings.json",
+        "kind": "api-key",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": ".claude\\settings.json",
+        "kind": "api-key",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": ".claude\\settings.local.json",
+        "kind": "api-key",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": ".claude\\settings.local.json",
+        "kind": "api-key",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": ".claude\\settings.local.json",
+        "kind": "api-key",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": ".claude\\settings.local.json",
+        "kind": "api-key",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": ".claude\\settings.local.json",
+        "kind": "api-key",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": ".claude\\settings.local.json",
+        "kind": "api-key",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "n8n\\social-daily-publisher.workflow.json",
+        "kind": "access_token",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "n8n\\social-daily-publisher.workflow.json",
+        "kind": "access_token",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "scripts\\apply-migrations.ts",
+        "kind": "connectionstring",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "scripts\\apply-rls-migration.js",
+        "kind": "connectionstring",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "scripts\\apply-rls-safe.js",
+        "kind": "connectionstring",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "scripts\\apply-schema.ts",
+        "kind": "connectionstring",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "scripts\\backup-database.js",
+        "kind": "apikey",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "scripts\\check-roles.js",
+        "kind": "connectionstring",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "scripts\\check-tenant.js",
+        "kind": "connectionstring",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "scripts\\check-tenant.ts",
+        "kind": "connectionstring",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "scripts\\check-test-db.ts",
+        "kind": "connectionstring",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "scripts\\check-user-role.js",
+        "kind": "connectionstring",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "scripts\\check-wondernails-user.js",
+        "kind": "connectionstring",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "scripts\\complete-rls-policies.js",
+        "kind": "connectionstring",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "scripts\\create-app-user.ts",
+        "kind": "connectionstring",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "scripts\\create-app-user.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "scripts\\create-retouch-tables.js",
+        "kind": "connectionstring",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "scripts\\create-salontest-tenant.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "scripts\\create-salontest-tenant.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "scripts\\create-test-service.js",
+        "kind": "connectionstring",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "scripts\\debug-rls.ts",
+        "kind": "connectionstring",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "scripts\\fix-roles.js",
+        "kind": "connectionstring",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "scripts\\force-rls.ts",
+        "kind": "connectionstring",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "scripts\\grant-pgbouncer-access.ts",
+        "kind": "connectionstring",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "scripts\\list-tables.ts",
+        "kind": "connectionstring",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "scripts\\list-tenant-context.js",
+        "kind": "connectionstring",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "scripts\\run-migration-0016.js",
+        "kind": "connectionstring",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "scripts\\setup-db-complete.js",
+        "kind": "connectionstring",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "scripts\\test-all-tenants.ts",
+        "kind": "connectionstring",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "scripts\\test-monitoring.js",
+        "kind": "connectionstring",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "scripts\\test-rls.ts",
+        "kind": "connectionstring",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "scripts\\update-user-role.js",
+        "kind": "connectionstring",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "scripts\\validate-scheduled-notifications-api.js",
+        "kind": "apikey",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "scripts\\validate-scheduled-notifications-api.js",
+        "kind": "apikey",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "scripts\\verify-rls-isolation.ts",
+        "kind": "connectionstring",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "scripts\\verify-rls.js",
+        "kind": "connectionstring",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "scripts\\verify-tenant-context.js",
+        "kind": "connectionstring",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "packages\\config\\index.ts",
+        "kind": "secret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "packages\\database\\connection.ts",
+        "kind": "connectionstring",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "packages\\database\\connection.ts",
+        "kind": "connectionstring",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "packages\\database\\connection.ts",
+        "kind": "connectionstring",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\builders\\TenantBuilder.ts",
+        "kind": "accesstoken",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\builders\\TenantBuilder.ts",
+        "kind": "refreshtoken",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\integration\\api-integration.spec.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\integration\\api-integration.spec.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\integration\\api-integration.spec.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\integration\\database-integration.spec.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\setup\\test-database.ts",
+        "kind": "connectionstring",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\setup\\test-database.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\unit\\complete-flows.test.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\unit\\user-operations.test.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\lib\\whatsapp.ts",
+        "kind": "access_token",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "packages\\config\\src\\auth-api.ts",
+        "kind": "apikey",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "packages\\config\\src\\auth-api.ts",
+        "kind": "apikey",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "packages\\config\\src\\auth-api.ts",
+        "kind": "apikey",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "packages\\config\\src\\auth-env.ts",
+        "kind": "secret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "packages\\config\\src\\auth.ts",
+        "kind": "secret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "packages\\config\\src\\auth.ts",
+        "kind": "clientsecret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\e2e\\auth\\google-auth-flows.spec.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\e2e\\booking\\booking-admin-exhaustive.spec.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\e2e\\pos\\stry-001-pos-multitenant.spec.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\e2e\\profile\\profile-exhaustive.spec.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\e2e\\services\\service-crud.spec.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\integration\\api\\API.integration.spec.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\integration\\api\\API.integration.spec.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\integration\\api\\API.integration.spec.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\integration\\api\\product-api-copied.spec.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\integration\\api\\product-api-copied.spec.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\integration\\api\\product-api-copied.spec.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\integration\\api\\product-api.spec.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\integration\\api\\product-api.spec.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\integration\\api\\product-api.spec.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\unit\\auth\\jwt-service.spec.ts",
+        "kind": "secret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\unit\\auth\\jwt-service.spec.ts",
+        "kind": "secret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\unit\\auth\\jwt-service.spec.ts",
+        "kind": "secret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\unit\\auth\\jwt-service.spec.ts",
+        "kind": "secret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\unit\\auth\\jwt-service.spec.ts",
+        "kind": "secret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\unit\\auth\\users-authorization.spec.ts",
+        "kind": "secret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\unit\\auth\\users-authorization.spec.ts",
+        "kind": "secret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\unit\\auth\\users-authorization.spec.ts",
+        "kind": "secret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\unit\\auth\\users-authorization.spec.ts",
+        "kind": "secret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\unit\\services\\AuthSecurity.spec.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\unit\\services\\AuthSecurity.spec.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\unit\\services\\AuthSecurity.spec.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\unit\\services\\AuthSecurity.spec.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\unit\\services\\AuthSecurity.spec.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\unit\\services\\AuthSecurity.spec.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\unit\\services\\AuthSecurity.spec.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\unit\\services\\AuthSecurity.spec.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\unit\\services\\AuthSecurity.spec.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\unit\\services\\AuthSecurity.spec.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\unit\\services\\AuthSecurity.spec.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\unit\\services\\AuthSecurity.spec.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\unit\\services\\AuthSecurity.spec.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\unit\\services\\AuthSecurity.spec.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\unit\\services\\AuthSecurity.spec.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\unit\\services\\AuthSecurity.spec.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\unit\\services\\AuthSecurity.spec.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\unit\\services\\AuthSecurity.spec.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\unit\\services\\AuthSecurity.spec.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\unit\\services\\AuthSecurity.spec.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\unit\\services\\AuthSecurity.spec.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\unit\\services\\UserService.spec.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\unit\\services\\UserService.spec.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\unit\\services\\UserService.spec.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\unit\\services\\UserService.spec.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\unit\\services\\UserService.spec.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\unit\\services\\UserService.spec.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\unit\\services\\UserService.spec.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\unit\\services\\UserService.spec.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\unit\\services\\UserService.spec.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\unit\\services\\UserService.spec.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\unit\\services\\UserService.spec.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\utils\\builders\\UserBuilders.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\utils\\builders\\UserBuilders.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "tests\\utils\\builders\\UserBuilders.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\components\\payments\\checkout-form.tsx",
+        "kind": "clientsecret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\lib\\db\\connection.ts",
+        "kind": "connectionstring",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\lib\\email\\email-service.ts",
+        "kind": "apikey",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\lib\\services\\UserService.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\lib\\services\\UserService.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\lib\\services\\UserService.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "packages\\core\\src\\auth\\result-helpers.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "packages\\core\\src\\auth\\result-helpers.ts",
+        "kind": "apikey",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\.next\\server\\chunks\\node_modules_ad24bcdb._.js",
+        "kind": "refreshtoken",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\.next\\server\\chunks\\node_modules_ad24bcdb._.js",
+        "kind": "apikey",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
+        "kind": "secret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
+        "kind": "secret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
+        "kind": "secret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
+        "kind": "secret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
+        "kind": "secret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
+        "kind": "secret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
+        "kind": "secret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
+        "kind": "secret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
+        "kind": "secret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
+        "kind": "secret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
+        "kind": "secret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
+        "kind": "secret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
+        "kind": "secret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
+        "kind": "secret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
+        "kind": "secret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
+        "kind": "secret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
+        "kind": "secret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
+        "kind": "secret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
+        "kind": "secret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
+        "kind": "secret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
+        "kind": "secret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
+        "kind": "secret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
+        "kind": "secret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
+        "kind": "secret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
+        "kind": "secret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
+        "kind": "secret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
+        "kind": "secret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
+        "kind": "secret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
+        "kind": "secret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
+        "kind": "secret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
+        "kind": "secret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
+        "kind": "secret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
+        "kind": "secret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
+        "kind": "secret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
+        "kind": "secret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
+        "kind": "secret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
+        "kind": "secret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
+        "kind": "secret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
+        "kind": "secret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
+        "kind": "secret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
+        "kind": "secret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
+        "kind": "secret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\.next\\server\\chunks\\node_modules_e10160b7._.js",
+        "kind": "api_key",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\.next\\server\\chunks\\node_modules_next_c12b44f0._.js",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\.next\\server\\chunks\\node_modules_next_dfa214da._.js",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\.next\\server\\chunks\\node_modules_next_dist_esm_build_templates_app-route_6877dc82.js",
+        "kind": "api_key",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\.next\\server\\chunks\\node_modules_next_dist_esm_build_templates_app-route_b31d82f5.js",
+        "kind": "api_key",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\.next\\server\\chunks\\node_modules_next_dist_esm_build_templates_app-route_cb617b91.js",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      }
+    ]
+  },
+  "functionalMap": {
+    "modules": [
+      {
+        "name": "Mercadopago Payment",
+        "priority": "P0",
+        "riskLevel": "high",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": [
+          "mercadopago_payments",
+          "mercadopago_payments",
+          "mercadopago_payments",
+          "mercadopago_payments",
+          "mercadopago_payments",
+          "mercadopago_payments",
+          "mercadopago_payments",
+          "mercadopago_payments",
+          "mercadopago_payments"
+        ],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration", "smoke", "regression"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Oauth State Token",
+        "priority": "P0",
+        "riskLevel": "high",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": ["oauth_state_tokens"],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration", "smoke", "regression"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Order",
+        "priority": "P0",
+        "riskLevel": "high",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": [
+          "orders",
+          "orders",
+          "orders",
+          "orders",
+          "orders",
+          "orders",
+          "orders",
+          "orders"
+        ],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration", "smoke", "regression"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Order Item",
+        "priority": "P0",
+        "riskLevel": "high",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": [
+          "order_items",
+          "order_items",
+          "order_items",
+          "order_items",
+          "order_items",
+          "order_items",
+          "order_items",
+          "order_items"
+        ],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration", "smoke", "regression"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Payment",
+        "priority": "P0",
+        "riskLevel": "high",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": [
+          "payments",
+          "payments",
+          "payments",
+          "payments",
+          "payments",
+          "payments",
+          "payments",
+          "payments"
+        ],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration", "smoke", "regression"],
+        "qualityScore": 85
+      },
+      {
+        "name": "User",
+        "priority": "P0",
+        "riskLevel": "high",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": [
+          "users",
+          "users",
+          "users",
+          "users",
+          "users",
+          "users",
+          "users",
+          "users",
+          "users"
+        ],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration", "smoke", "regression"],
+        "qualityScore": 85
+      },
+      {
+        "name": "User Cart",
+        "priority": "P0",
+        "riskLevel": "high",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": ["user_carts", "user_carts", "user_carts", "user_carts"],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration", "smoke", "regression"],
+        "qualityScore": 85
+      },
+      {
+        "name": "User Role",
+        "priority": "P0",
+        "riskLevel": "high",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": ["user_roles"],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration", "smoke", "regression"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Customer",
+        "priority": "P1",
+        "riskLevel": "medium",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": [
+          "customers",
+          "customers",
+          "customers",
+          "customers",
+          "customers",
+          "customers",
+          "customers",
+          "customers",
+          "customers",
+          "customers",
+          "customers"
+        ],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration", "smoke"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Customer Advance",
+        "priority": "P1",
+        "riskLevel": "medium",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": ["customer_advances"],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration", "smoke"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Customer Visit",
+        "priority": "P1",
+        "riskLevel": "medium",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": [
+          "customer_visits",
+          "customer_visits",
+          "customer_visits",
+          "customer_visits",
+          "customer_visits",
+          "customer_visits",
+          "customer_visits",
+          "customer_visits",
+          "customer_visits",
+          "customer_visits"
+        ],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration", "smoke"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Customer Visit Service",
+        "priority": "P1",
+        "riskLevel": "medium",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": [
+          "customer_visit_services",
+          "customer_visit_services",
+          "customer_visit_services",
+          "customer_visit_services",
+          "customer_visit_services",
+          "customer_visit_services",
+          "customer_visit_services",
+          "customer_visit_services",
+          "customer_visit_services",
+          "customer_visit_services"
+        ],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration", "smoke"],
+        "qualityScore": 85
+      },
+      {
+        "name": ".",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [
+          "./runtime-types.d.ts",
+          "./runtime-types.d.ts",
+          "./runtime-types.d.ts",
+          "./runtime-types.d.ts",
+          "./runtime-types.d.ts",
+          "./dev-globals.d.ts",
+          "./dev-protocol.d.ts",
+          "./dev-extensions.ts",
+          "./runtime-backend-dom.ts",
+          "./runtime-types.d.ts",
+          "./runtime-types.d.ts",
+          "./runtime-types.d.ts",
+          "./dev-globals.d.ts",
+          "./dev-protocol.d.ts",
+          "./dev-extensions.ts"
+        ],
+        "endpoints": [],
+        "tables": [],
+        "detectedRules": ["User-facing workflow"],
+        "requiredTests": ["unit", "e2e"],
+        "qualityScore": 85
+      },
+      {
+        "name": "..",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [
+          "../shared/runtime-utils.ts",
+          "../shared/runtime-utils.ts",
+          "../shared/runtime-utils.ts",
+          "../shared-node/base-externals-utils.ts",
+          "../shared-node/node-externals-utils.ts",
+          "../shared-node/node-wasm-utils.ts",
+          "../shared/runtime-utils.ts",
+          "../shared/runtime-utils.ts",
+          "../shared/runtime-utils.ts",
+          "../shared-node/base-externals-utils.ts",
+          "../shared-node/node-externals-utils.ts",
+          "../shared-node/node-wasm-utils.ts",
+          "../shared/runtime-utils.ts",
+          "../shared/runtime-utils.ts",
+          "../shared/runtime-utils.ts",
+          "../shared-node/base-externals-utils.ts",
+          "../shared-node/node-externals-utils.ts",
+          "../shared-node/node-wasm-utils.ts",
+          "../shared/runtime-utils.ts",
+          "../shared/runtime-utils.ts",
+          "../shared/runtime-utils.ts",
+          "../shared-node/base-externals-utils.ts",
+          "../shared-node/node-externals-utils.ts",
+          "../shared-node/node-wasm-utils.ts",
+          "../base/globals.d.ts",
+          "../../../shared/runtime-utils.ts",
+          "../../../browser/runtime/base/runtime-base.ts",
+          "../../../shared/runtime-types.d.ts",
+          "../base/runtime-base.ts",
+          "../base/dev-base.ts",
+          "../../../shared/require-type.d.ts",
+          "../../../shared/runtime-types.d.ts",
+          "../../runtime/base/dev-globals.d.ts",
+          "../../runtime/base/dev-protocol.d.ts",
+          "../../runtime/base/dev-extensions.ts",
+          "../shared/runtime-utils.ts",
+          "../shared/runtime-utils.ts",
+          "../shared/runtime-utils.ts",
+          "../shared-node/base-externals-utils.ts",
+          "../shared-node/node-externals-utils.ts",
+          "../shared-node/node-wasm-utils.ts",
+          "../shared/runtime-utils.ts",
+          "../shared/runtime-utils.ts",
+          "../shared/runtime-utils.ts",
+          "../shared-node/base-externals-utils.ts",
+          "../shared-node/node-externals-utils.ts",
+          "../shared-node/node-wasm-utils.ts",
+          "../base/globals.d.ts",
+          "../../../shared/runtime-utils.ts",
+          "../shared/runtime-utils.ts",
+          "../base/runtime-base.ts",
+          "../../../shared/require-type.d.ts",
+          "../../../shared-node/base-externals-utils.ts",
+          "../base/dev-protocol.d.ts"
+        ],
+        "endpoints": [],
+        "tables": [],
+        "detectedRules": ["User-facing workflow"],
+        "requiredTests": ["unit", "e2e"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Account",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": [
+          "accounts",
+          "accounts",
+          "accounts",
+          "accounts",
+          "accounts",
+          "accounts",
+          "accounts",
+          "accounts",
+          "accounts"
+        ],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Advance Application",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": ["advance_applications"],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Api Key",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": ["api_keys"],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Audit Log",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": [
+          "audit_logs",
+          "audit_logs",
+          "audit_logs",
+          "audit_logs",
+          "audit_logs",
+          "audit_logs",
+          "audit_logs",
+          "audit_logs",
+          "audit_logs"
+        ],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Booking",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": [
+          "bookings",
+          "bookings",
+          "bookings",
+          "bookings",
+          "bookings",
+          "bookings",
+          "bookings",
+          "bookings"
+        ],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Budget",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": ["budgets"],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Budget Category",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": ["budget_categories"],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Campaign",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": [
+          "campaigns",
+          "campaigns",
+          "campaigns",
+          "campaigns",
+          "campaigns"
+        ],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Channel Account",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": [
+          "channel_accounts",
+          "channel_accounts",
+          "channel_accounts",
+          "channel_accounts",
+          "channel_accounts",
+          "channel_accounts",
+          "channel_accounts",
+          "channel_accounts"
+        ],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Channel Credential",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": [
+          "channel_credentials",
+          "channel_credentials",
+          "channel_credentials",
+          "channel_credentials",
+          "channel_credentials",
+          "channel_credentials",
+          "channel_credentials",
+          "channel_credentials"
+        ],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Content Variant",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": [
+          "content_variants",
+          "content_variants",
+          "content_variants",
+          "content_variants",
+          "content_variants",
+          "content_variants",
+          "content_variants",
+          "content_variants"
+        ],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Financial Kpi",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": [
+          "financial_kpis",
+          "financial_kpis",
+          "financial_kpis",
+          "financial_kpis",
+          "financial_kpis",
+          "financial_kpis",
+          "financial_kpis",
+          "financial_kpis",
+          "financial_kpis"
+        ],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Financial Movement",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": [
+          "financial_movements",
+          "financial_movements",
+          "financial_movements",
+          "financial_movements",
+          "financial_movements",
+          "financial_movements",
+          "financial_movements",
+          "financial_movements",
+          "financial_movements"
+        ],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration"],
+        "qualityScore": 85
+      },
+      {
+        "name": "General",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/",
+          "/"
+        ],
+        "endpoints": [],
+        "tables": [],
+        "detectedRules": ["User-facing workflow"],
+        "requiredTests": ["unit", "e2e"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Inventory Alert",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": [
+          "inventory_alerts",
+          "inventory_alerts",
+          "inventory_alerts",
+          "inventory_alerts"
+        ],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Inventory Expense Link",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": ["inventory_expense_links"],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Inventory Transaction",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": [
+          "inventory_transactions",
+          "inventory_transactions",
+          "inventory_transactions",
+          "inventory_transactions"
+        ],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration"],
+        "qualityScore": 85
+      },
+      {
+        "name": "M",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [
+          "M",
+          "M ",
+          "M ",
+          "M",
+          "M ",
+          "M ",
+          "M ",
+          "M",
+          "M ",
+          "M ",
+          "M",
+          "M ",
+          "M ",
+          "M "
+        ],
+        "endpoints": [],
+        "tables": [],
+        "detectedRules": ["User-facing workflow"],
+        "requiredTests": ["unit", "e2e"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Media Asset",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": [
+          "media_assets",
+          "media_assets",
+          "media_assets",
+          "media_assets",
+          "media_assets",
+          "media_assets",
+          "media_assets",
+          "media_assets"
+        ],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Media Rendition",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": [
+          "media_renditions",
+          "media_renditions",
+          "media_renditions",
+          "media_renditions",
+          "media_renditions",
+          "media_renditions",
+          "media_renditions",
+          "media_renditions"
+        ],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Mercadopago Token",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": [
+          "mercadopago_tokens",
+          "mercadopago_tokens",
+          "mercadopago_tokens",
+          "mercadopago_tokens",
+          "mercadopago_tokens",
+          "mercadopago_tokens",
+          "mercadopago_tokens",
+          "mercadopago_tokens",
+          "mercadopago_tokens"
+        ],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Pos Terminal",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": [
+          "pos_terminals",
+          "pos_terminals",
+          "pos_terminals",
+          "pos_terminals",
+          "pos_terminals",
+          "pos_terminals",
+          "pos_terminals",
+          "pos_terminals",
+          "pos_terminals"
+        ],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Post Job",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": [
+          "post_jobs",
+          "post_jobs",
+          "post_jobs",
+          "post_jobs",
+          "post_jobs",
+          "post_jobs",
+          "post_jobs",
+          "post_jobs"
+        ],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Post Result",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": [
+          "post_results",
+          "post_results",
+          "post_results",
+          "post_results",
+          "post_results",
+          "post_results",
+          "post_results",
+          "post_results"
+        ],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Posting Rule",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": [
+          "posting_rules",
+          "posting_rules",
+          "posting_rules",
+          "posting_rules",
+          "posting_rules",
+          "posting_rules",
+          "posting_rules",
+          "posting_rules"
+        ],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Product",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": [
+          "products",
+          "products",
+          "products",
+          "products",
+          "products",
+          "products",
+          "products",
+          "products"
+        ],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Product Alert Config",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": [
+          "product_alert_config",
+          "product_alert_config",
+          "product_alert_config",
+          "product_alert_config"
+        ],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Product Inventory",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": [
+          "product_inventory",
+          "product_inventory",
+          "product_inventory",
+          "product_inventory"
+        ],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Product Review",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": [
+          "product_reviews",
+          "product_reviews",
+          "product_reviews",
+          "product_reviews",
+          "product_reviews",
+          "product_reviews",
+          "product_reviews",
+          "product_reviews"
+        ],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Public",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": ["public"],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Quote",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": ["quotes"],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Quote Item",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": ["quote_items"],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Reel",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": ["reels", "reels", "reels", "reels", "reels"],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Scheduled Notification",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": ["scheduled_notifications"],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Service",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": [
+          "services",
+          "services",
+          "services",
+          "services",
+          "services",
+          "services",
+          "services",
+          "services",
+          "services",
+          "services"
+        ],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Service Product",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": [
+          "service_products",
+          "service_products",
+          "service_products",
+          "service_products"
+        ],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Service Quote",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": [
+          "service_quotes",
+          "service_quotes",
+          "service_quotes",
+          "service_quotes"
+        ],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Service Retouch Config",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": ["service_retouch_config"],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Session",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": [
+          "sessions",
+          "sessions",
+          "sessions",
+          "sessions",
+          "sessions",
+          "sessions",
+          "sessions",
+          "sessions",
+          "sessions"
+        ],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Social Content Library",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": [
+          "social_content_library",
+          "social_content_library",
+          "social_content_library",
+          "social_content_library"
+        ],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Social Post",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": [
+          "social_posts",
+          "social_posts",
+          "social_posts",
+          "social_posts",
+          "social_posts",
+          "social_posts",
+          "social_posts",
+          "social_posts",
+          "social_posts",
+          "social_posts",
+          "social_posts",
+          "social_posts",
+          "social_posts"
+        ],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Social Post Analytic",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": [
+          "social_post_analytics",
+          "social_post_analytics",
+          "social_post_analytics",
+          "social_post_analytics"
+        ],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Social Post Target",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": [
+          "social_post_targets",
+          "social_post_targets",
+          "social_post_targets",
+          "social_post_targets",
+          "social_post_targets",
+          "social_post_targets",
+          "social_post_targets",
+          "social_post_targets",
+          "social_post_targets"
+        ],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Social Post Variant",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": [
+          "social_post_variants",
+          "social_post_variants",
+          "social_post_variants",
+          "social_post_variants"
+        ],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Staff",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": [
+          "staff",
+          "staff",
+          "staff",
+          "staff",
+          "staff",
+          "staff",
+          "staff",
+          "staff"
+        ],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Support Ticket",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": ["support_tickets"],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Tenant",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": [
+          "tenants",
+          "tenants",
+          "tenants",
+          "tenants",
+          "tenants",
+          "tenants",
+          "tenants",
+          "tenants",
+          "tenants",
+          "tenants",
+          "tenants"
+        ],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Tenant Channel",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": [
+          "tenant_channels",
+          "tenant_channels",
+          "tenant_channels",
+          "tenant_channels",
+          "tenant_channels",
+          "tenant_channels",
+          "tenant_channels",
+          "tenant_channels"
+        ],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Tenant Config",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": [
+          "tenant_configs",
+          "tenant_configs",
+          "tenant_configs",
+          "tenant_configs",
+          "tenant_configs",
+          "tenant_configs",
+          "tenant_configs",
+          "tenant_configs",
+          "tenant_configs"
+        ],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Tenant Holiday",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": ["tenant_holidays"],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Tenant Quota",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": [
+          "tenant_quotas",
+          "tenant_quotas",
+          "tenant_quotas",
+          "tenant_quotas",
+          "tenant_quotas",
+          "tenant_quotas",
+          "tenant_quotas",
+          "tenant_quotas"
+        ],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Tenant Social Platform",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": [
+          "tenant_social_platforms",
+          "tenant_social_platforms",
+          "tenant_social_platforms",
+          "tenant_social_platforms"
+        ],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Ticket Comment",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": ["ticket_comments"],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Transaction Category",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": ["transaction_categories"],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Verification Token",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": [
+          "verification_tokens",
+          "verification_tokens",
+          "verification_tokens",
+          "verification_tokens",
+          "verification_tokens",
+          "verification_tokens",
+          "verification_tokens",
+          "verification_tokens",
+          "verification_tokens"
+        ],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Visit Photo",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": ["visit_photos"],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration"],
+        "qualityScore": 85
+      },
+      {
+        "name": "Whatsapp Message",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [],
+        "endpoints": [],
+        "tables": ["whatsapp_messages"],
+        "detectedRules": ["Persists data"],
+        "requiredTests": ["unit", "integration"],
+        "qualityScore": 85
+      }
+    ]
+  },
+  "findings": [
+    {
+      "type": "missing_doc",
+      "title": "Missing required documentation: ROADMAP.md",
+      "description": "Required Quality OS documentation was not found.",
+      "priority": "P2",
+      "confidence": "High confidence"
+    },
+    {
+      "type": "missing_doc",
+      "title": "Missing required documentation: USER-STORIES.md",
+      "description": "Required Quality OS documentation was not found.",
+      "priority": "P2",
+      "confidence": "High confidence"
+    },
+    {
+      "type": "missing_doc",
+      "title": "Missing required documentation: ACCEPTANCE-CRITERIA.md",
+      "description": "Required Quality OS documentation was not found.",
+      "priority": "P2",
+      "confidence": "High confidence"
+    },
+    {
+      "type": "missing_doc",
+      "title": "Missing required documentation: API-SPEC.md",
+      "description": "Required Quality OS documentation was not found.",
+      "priority": "P2",
+      "confidence": "High confidence"
+    },
+    {
+      "type": "missing_doc",
+      "title": "Missing required documentation: DATABASE.md",
+      "description": "Required Quality OS documentation was not found.",
+      "priority": "P2",
+      "confidence": "High confidence"
+    },
+    {
+      "type": "missing_doc",
+      "title": "Missing required documentation: TEST-PLAN.md",
+      "description": "Required Quality OS documentation was not found.",
+      "priority": "P1",
+      "confidence": "High confidence"
+    },
+    {
+      "type": "missing_doc",
+      "title": "Missing required documentation: SECURITY.md",
+      "description": "Required Quality OS documentation was not found.",
+      "priority": "P1",
+      "confidence": "High confidence"
+    },
+    {
+      "type": "missing_doc",
+      "title": "Missing required documentation: DEPLOYMENT.md",
+      "description": "Required Quality OS documentation was not found.",
+      "priority": "P2",
+      "confidence": "High confidence"
+    },
+    {
+      "type": "missing_doc",
+      "title": "Missing required documentation: QUALITY-REPORT.md",
+      "description": "Required Quality OS documentation was not found.",
+      "priority": "P2",
+      "confidence": "High confidence"
+    },
+    {
+      "type": "missing_doc",
+      "title": "Missing required documentation: CHANGELOG.md",
+      "description": "Required Quality OS documentation was not found.",
+      "priority": "P2",
+      "confidence": "High confidence"
+    },
+    {
+      "type": "env_file_detected",
+      "title": "Environment file should be reviewed: .env",
+      "description": "A non-example .env file was detected. Confirm it is excluded from source control and does not contain secrets.",
+      "priority": "P1",
+      "confidence": "Medium confidence"
+    },
+    {
+      "type": "env_file_detected",
+      "title": "Environment file should be reviewed: .env.cloudflare",
+      "description": "A non-example .env file was detected. Confirm it is excluded from source control and does not contain secrets.",
+      "priority": "P1",
+      "confidence": "Medium confidence"
+    },
+    {
+      "type": "env_file_detected",
+      "title": "Environment file should be reviewed: .env.local",
+      "description": "A non-example .env file was detected. Confirm it is excluded from source control and does not contain secrets.",
+      "priority": "P1",
+      "confidence": "Medium confidence"
+    },
+    {
+      "type": "env_file_detected",
+      "title": "Environment file should be reviewed: .env.test",
+      "description": "A non-example .env file was detected. Confirm it is excluded from source control and does not contain secrets.",
+      "priority": "P1",
+      "confidence": "Medium confidence"
+    },
+    {
+      "type": "env_file_detected",
+      "title": "Environment file should be reviewed: apps\\web\\.env.local",
+      "description": "A non-example .env file was detected. Confirm it is excluded from source control and does not contain secrets.",
+      "priority": "P1",
+      "confidence": "Medium confidence"
+    },
+    {
+      "type": "env_file_detected",
+      "title": "Environment file should be reviewed: apps\\web\\.env.local.backup",
+      "description": "A non-example .env file was detected. Confirm it is excluded from source control and does not contain secrets.",
+      "priority": "P1",
+      "confidence": "Medium confidence"
+    },
+    {
+      "type": "possible_secret_in_code",
+      "title": "Possible secrets detected in project files",
+      "description": "Detected 200 possible secret signal(s). Values are intentionally not exposed by Quality OS.",
+      "priority": "P0",
+      "confidence": "Medium confidence"
+    },
+    {
+      "type": "missing_rules",
+      "title": "No agent rules found",
+      "description": "The .agents folder exists but does not define guard rules under guards/*.md.",
+      "priority": "P1",
+      "confidence": "High confidence"
+    },
+    {
+      "type": "missing_quality_config",
+      "title": "Missing quality.config.json",
+      "description": "The project does not define a Quality OS contract.",
+      "priority": "P1",
+      "confidence": "High confidence"
+    }
+  ],
+  "agentTasks": [
+    {
+      "id": "26fec3fb-cef0-4e7b-8fe0-f099d35fffab",
+      "assignedAgent": "Docs Agent",
+      "title": "Create draft ROADMAP.md",
+      "description": "Generate a draft marked as Generated draft and Needs human review.",
+      "priority": "P2",
+      "status": "open",
+      "sourceReport": "quality-report",
+      "createdAt": "2026-05-28T17:03:50.5797421+00:00",
+      "updatedAt": "2026-05-28T17:03:50.5797441+00:00"
+    },
+    {
+      "id": "7395cf0d-fc92-4b05-9a09-52a329342bcc",
+      "assignedAgent": "Docs Agent",
+      "title": "Create draft USER-STORIES.md",
+      "description": "Generate a draft marked as Generated draft and Needs human review.",
+      "priority": "P2",
+      "status": "open",
+      "sourceReport": "quality-report",
+      "createdAt": "2026-05-28T17:03:50.5797489+00:00",
+      "updatedAt": "2026-05-28T17:03:50.579749+00:00"
+    },
+    {
+      "id": "572e2c66-0ddd-475f-9319-e54fdc39b21a",
+      "assignedAgent": "Docs Agent",
+      "title": "Create draft ACCEPTANCE-CRITERIA.md",
+      "description": "Generate a draft marked as Generated draft and Needs human review.",
+      "priority": "P2",
+      "status": "open",
+      "sourceReport": "quality-report",
+      "createdAt": "2026-05-28T17:03:50.5797493+00:00",
+      "updatedAt": "2026-05-28T17:03:50.5797493+00:00"
+    },
+    {
+      "id": "b32d478d-13aa-4193-bfc7-f558a4077546",
+      "assignedAgent": "Docs Agent",
+      "title": "Create draft API-SPEC.md",
+      "description": "Generate a draft marked as Generated draft and Needs human review.",
+      "priority": "P2",
+      "status": "open",
+      "sourceReport": "quality-report",
+      "createdAt": "2026-05-28T17:03:50.5797495+00:00",
+      "updatedAt": "2026-05-28T17:03:50.5797496+00:00"
+    },
+    {
+      "id": "581e7833-0e5b-476d-b1f0-c4d444c75bf7",
+      "assignedAgent": "Docs Agent",
+      "title": "Create draft DATABASE.md",
+      "description": "Generate a draft marked as Generated draft and Needs human review.",
+      "priority": "P2",
+      "status": "open",
+      "sourceReport": "quality-report",
+      "createdAt": "2026-05-28T17:03:50.5797513+00:00",
+      "updatedAt": "2026-05-28T17:03:50.5797514+00:00"
+    },
+    {
+      "id": "280c04ab-a3e7-41de-99f9-f6dbb3c90e2e",
+      "assignedAgent": "Docs Agent",
+      "title": "Create draft TEST-PLAN.md",
+      "description": "Generate a draft marked as Generated draft and Needs human review.",
+      "priority": "P1",
+      "status": "open",
+      "sourceReport": "quality-report",
+      "createdAt": "2026-05-28T17:03:50.5797574+00:00",
+      "updatedAt": "2026-05-28T17:03:50.5797574+00:00"
+    },
+    {
+      "id": "c3b9c59c-c8d6-4644-b60d-c3a7ea2d323b",
+      "assignedAgent": "Docs Agent",
+      "title": "Create draft SECURITY.md",
+      "description": "Generate a draft marked as Generated draft and Needs human review.",
+      "priority": "P1",
+      "status": "open",
+      "sourceReport": "quality-report",
+      "createdAt": "2026-05-28T17:03:50.5797576+00:00",
+      "updatedAt": "2026-05-28T17:03:50.5797583+00:00"
+    },
+    {
+      "id": "d6c8546e-94a4-4e47-a7c6-6befeb5fe67a",
+      "assignedAgent": "Docs Agent",
+      "title": "Create draft DEPLOYMENT.md",
+      "description": "Generate a draft marked as Generated draft and Needs human review.",
+      "priority": "P2",
+      "status": "open",
+      "sourceReport": "quality-report",
+      "createdAt": "2026-05-28T17:03:50.5797589+00:00",
+      "updatedAt": "2026-05-28T17:03:50.5797589+00:00"
+    },
+    {
+      "id": "780d418c-1c30-4e1c-87b1-8c32a9d3b10c",
+      "assignedAgent": "Docs Agent",
+      "title": "Create draft QUALITY-REPORT.md",
+      "description": "Generate a draft marked as Generated draft and Needs human review.",
+      "priority": "P2",
+      "status": "open",
+      "sourceReport": "quality-report",
+      "createdAt": "2026-05-28T17:03:50.5797596+00:00",
+      "updatedAt": "2026-05-28T17:03:50.5797596+00:00"
+    },
+    {
+      "id": "9dc37382-6a96-4242-b80a-ec1da0076a9c",
+      "assignedAgent": "Docs Agent",
+      "title": "Create draft CHANGELOG.md",
+      "description": "Generate a draft marked as Generated draft and Needs human review.",
+      "priority": "P2",
+      "status": "open",
+      "sourceReport": "quality-report",
+      "createdAt": "2026-05-28T17:03:50.57976+00:00",
+      "updatedAt": "2026-05-28T17:03:50.5797601+00:00"
+    },
+    {
+      "id": "afce42e6-d57f-4e2f-8dbf-6498f89c7b58",
+      "assignedAgent": "Security Agent",
+      "title": "Review possible secrets",
+      "description": "Inspect detected secret signal locations, rotate exposed credentials if needed, and move secrets to an approved secret store.",
+      "priority": "P0",
+      "status": "open",
+      "sourceReport": "quality-report",
+      "createdAt": "2026-05-28T17:03:50.5797899+00:00",
+      "updatedAt": "2026-05-28T17:03:50.57979+00:00"
+    },
+    {
+      "id": "875f6aeb-0315-43a0-89d5-7e5db9f4c66a",
+      "assignedAgent": "Security Agent",
+      "title": "Define project guard rules",
+      "description": "Create .agents/guards rules for forbidden actions, security, database, and architecture.",
+      "priority": "P1",
+      "status": "open",
+      "sourceReport": "quality-report",
+      "createdAt": "2026-05-28T17:03:50.5828667+00:00",
+      "updatedAt": "2026-05-28T17:03:50.5828682+00:00"
+    },
+    {
+      "id": "5f007a92-a588-4381-8361-afe5a5bb45e5",
+      "assignedAgent": "QA Agent",
+      "title": "Create quality.config.json",
+      "description": "Define minimum score, critical flows, required docs, required test types, environments, and allowed commands.",
+      "priority": "P1",
+      "status": "open",
+      "sourceReport": "quality-report",
+      "createdAt": "2026-05-28T17:03:50.5830106+00:00",
+      "updatedAt": "2026-05-28T17:03:50.5830107+00:00"
+    }
+  ]
+}
