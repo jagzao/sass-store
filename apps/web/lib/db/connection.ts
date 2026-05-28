@@ -161,7 +161,9 @@ function createDatabaseInstance() {
       idle_timeout: connectionConfig.idleTimeout,
       connect_timeout: 30,
       onnotice: () => {}, // Silence notices
-      debug: process.env.NODE_ENV === "development",
+      // STRY-022 PERF-NEW-003: debug=false por defecto.
+      // Activar explícitamente con DB_DEBUG=true cuando se necesite inspeccionar queries.
+      debug: process.env.DB_DEBUG === "true",
     });
 
     return drizzle(client, { schema });

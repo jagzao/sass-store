@@ -40,7 +40,7 @@ export async function GET() {
         status: "error",
         message: "Drizzle Query API Failed",
         error: error instanceof Error ? error.message : "Unknown error",
-        stack: error instanceof Error ? error.stack : undefined,
+        // STRY-022: stack trace removido
         schemaKeys: Object.keys(db.query || {}),
       },
       { status: 500 },

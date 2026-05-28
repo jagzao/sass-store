@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
     diagnostics.tests.databaseConnection = {
       status: "✗ Failed",
       error: error.message,
-      stack: error.stack,
+      // STRY-022: stack trace removido — no exponer internals en respuestas
     };
     return NextResponse.json(diagnostics, { status: 500 });
   }
@@ -66,7 +66,7 @@ export async function GET(request: NextRequest) {
     diagnostics.tests.tenantsQuery = {
       status: "✗ Failed",
       error: error.message,
-      stack: error.stack,
+      // STRY-022: stack trace removido — no exponer internals en respuestas
     };
     return NextResponse.json(diagnostics, { status: 500 });
   }
@@ -95,7 +95,7 @@ export async function GET(request: NextRequest) {
     diagnostics.tests.specificTenant = {
       status: "✗ Failed",
       error: error.message,
-      stack: error.stack,
+      // STRY-022: stack trace removido — no exponer internals en respuestas
     };
   }
 
@@ -119,7 +119,7 @@ export async function GET(request: NextRequest) {
     diagnostics.tests.getTenantBySlug = {
       status: "✗ Failed",
       error: error.message,
-      stack: error.stack,
+      // STRY-022: stack trace removido — no exponer internals en respuestas
     };
   }
 

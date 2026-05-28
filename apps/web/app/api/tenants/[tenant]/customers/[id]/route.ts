@@ -88,7 +88,7 @@ export async function GET(
       {
         error: "Internal server error",
         details: error instanceof Error ? error.message : "Unknown error",
-        stack: error instanceof Error ? error.stack : undefined,
+        // STRY-022: stack trace removido
       },
       { status: 500 },
     );
