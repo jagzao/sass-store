@@ -112,17 +112,20 @@ export async function proxy(request: NextRequest) {
 
   // =========================================
   // STEP 4: SECURITY CHECK - CSRF Protection
-  // For mutation methods, validate CSRF token
-  // Excluir webhooks externos y rutas de API que usan su propio auth
+  // Para rutas de página (formularios SSR). Las rutas /api/* no necesitan
+  // CSRF token explícito porque:
+  //   a) Están protegidas por auth() + SameSite=lax cookies
+  //   b) Los componentes React usan fetch sin CSRF headers (no hay middleware global)
+  //   c) El Origin check (STEP 5) protege contra CSRF cross-origin para APIs
   // =========================================
-  // STRY-021 SEC-004: Las rutas API ahora están dentro del matcher.
-  // Los webhooks externos (WhatsApp, MercadoPago) no envían CSRF — se eximen.
+  const isApiRoute = pathname.startsWith("/api/");
   const isExternalWebhook =
     pathname.startsWith("/api/whatsapp/") ||
     pathname.startsWith("/api/webhooks/") ||
     pathname.startsWith("/api/internal/");
 
-  if (!isCsrfExempt(pathname) && !isExternalWebhook) {
+  // Solo aplicar CSRF token check a rutas de PÁGINA (no APIs)
+  if (!isCsrfExempt(pathname) && !isExternalWebhook && !isApiRoute) {
     if (CSRF_PROTECTED_METHODS.includes(method)) {
       const csrfTokenFromHeader = request.headers.get(CSRF_HEADER_NAME);
       const cookieHeader = request.headers.get("cookie") || "";

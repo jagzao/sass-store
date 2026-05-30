@@ -177,7 +177,8 @@ test.describe("Auth Regression Smoke Tests", () => {
       await page.waitForURL((url) => !url.href.includes("/login"), {
         timeout: 30000,
       });
-      await expect(page.locator("header")).toBeVisible();
+      // La página tiene 2 headers (layout público + dashboard), usar first() o testid
+      await expect(page.locator("header").first()).toBeVisible();
 
       // Verify successful login - should not be on login page
       expect(page.url()).not.toMatch(/.*\/login.*/);

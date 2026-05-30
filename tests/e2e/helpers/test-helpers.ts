@@ -1,4 +1,36 @@
-import { Page, expect } from "@playwright/test";
+import { Page, expect, APIRequestContext } from "@playwright/test";
+
+// Nombres de tokens CSRF (deben coincidir con packages/core/src/security/csrf.ts)
+const CSRF_COOKIE_NAME = "csrf-token";
+const CSRF_HEADER_NAME = "x-csrf-token";
+
+/**
+ * Lee el token CSRF de las cookies del navegador y retorna los headers necesarios.
+ * Usar en cualquier page.request.post/put/delete que requiera CSRF.
+ *
+ * Ejemplo:
+ *   const headers = await getCsrfHeaders(page);
+ *   await page.request.post('/api/...', { headers, data: {...} });
+ */
+export async function getCsrfHeaders(
+  page: Page,
+): Promise<Record<string, string>> {
+  // Obtener el token del cookie del navegador
+  const cookies = await page.context().cookies();
+  const csrfCookie = cookies.find((c) => c.name === CSRF_COOKIE_NAME);
+
+  if (csrfCookie?.value) {
+    return { [CSRF_HEADER_NAME]: csrfCookie.value };
+  }
+
+  // Fallback: hacer un GET a la raíz para forzar que el middleware emita el cookie
+  await page.evaluate(() => fetch("/api/health").catch(() => null));
+  await page.waitForTimeout(300);
+
+  const cookies2 = await page.context().cookies();
+  const csrfCookie2 = cookies2.find((c) => c.name === CSRF_COOKIE_NAME);
+  return csrfCookie2?.value ? { [CSRF_HEADER_NAME]: csrfCookie2.value } : {};
+}
 
 /**
  * Test credentials from environment variables
@@ -34,15 +66,13 @@ export async function loginAs(
   const emailInput = page.getByTestId("email-input").first();
   await expect(emailInput).toBeVisible({ timeout: 60000 });
 
-  await emailInput.fill(email);
-  await page.getByTestId("password-input").first().fill(password);
-  await page.getByTestId("login-btn").first().click({ force: true });
-
-  await page.waitForURL(
-    (url) =>
-      url.href.includes(`/t/${tenantSlug}`) && !url.href.includes("/login"),
-    { timeout: 60000 },
-  );
+  // Usar page.fill (selector nivel página) — este patrón dispara correctamente
+  // los eventos React en Turbopack dev mode. locator.fill() + force:true causa
+  // submit nativo GET en lugar de llamar al handleSubmit de React.
+  await page.fill('[data-testid="email-input"]', email);
+  await page.fill('[data-testid="password-input"]', password);
+  // click sin force — para que React's synthetic event system lo intercepte
+  await page.getByTestId("login-btn").first().click();
 
   await page.waitForURL(
     (url) =>

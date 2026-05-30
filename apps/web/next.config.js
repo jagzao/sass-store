@@ -81,13 +81,14 @@ function generateCSP(env) {
     directives['connect-src'].push('ws://localhost:*', 'ws://127.0.0.1:*');
   } else {
     // STRY-021 SEC-010: MercadoPago SDK v1 requiere 'unsafe-inline'.
-    // Se mitiga con 'strict-dynamic': en Chrome/FF/Safari modernos, strict-dynamic
-    // hace que unsafe-inline sea ignorado para scripts dinámicos, reduciendo
-    // la superficie XSS real sin romper el checkout de MP.
-    // TODO STRY-022: Implementar nonce completo al migrar a MP SDK v2.
+    // STRY-022 FIX: 'strict-dynamic' bloqueaba TODOS los scripts de Next.js
+    // porque con strict-dynamic activo, 'self' se ignora y los scripts
+    // requieren nonce o ser cargados por scripts ya confiables.
+    // Next.js no genera nonces automáticamente → toda la app quedaba sin JS.
+    // Revertido a solo 'unsafe-inline' hasta implementar nonce en STRY-023.
     directives['script-src'].push(
       "'unsafe-inline'",    // Requerido por MercadoPago SDK v1
-      "'strict-dynamic'",   // Mitiga unsafe-inline en navegadores modernos
+      // NO 'strict-dynamic' — rompe Next.js chunks sin nonce
     );
     // Upgrade insecure requests solo en producción
     directives['upgrade-insecure-requests'] = [];
