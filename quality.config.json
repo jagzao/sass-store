@@ -1,0 +1,51 @@
+{
+  "project": "sass-store",
+  "version": "1.0.0",
+  "qualityOs": {
+    "enabled": true,
+    "scanInterval": "daily",
+    "expectedDocs": [
+      "ROADMAP.md",
+      "USER-STORIES.md",
+      "ACCEPTANCE-CRITERIA.md",
+      "API-SPEC.md",
+      "DATABASE.md",
+      "TEST-PLAN.md",
+      "SECURITY.md",
+      "DEPLOYMENT.md",
+      "QUALITY-REPORT.md",
+      "CHANGELOG.md"
+    ],
+    "expectedDirectories": {
+      "agentGuards": ".agents/guards",
+      "stories": "docs/stories",
+      "tests": "tests"
+    },
+    "rules": {
+      "requireAgentGuards": true,
+      "requireTestPlan": true,
+      "requireApiSpec": true,
+      "requireSecurityDoc": true,
+      "requireDeploymentDoc": true,
+      "requireChangelog": true
+    },
+    "endpoints": {
+      "health": "/api/health",
+      "systemStatus": "/api/system/status",
+      "systemQuality": "/api/system/quality",
+      "diagnose": "/api/diagnose",
+      "diagnosePing": "/api/diagnose/ping"
+    },
+    "frontendRoutes": {
+      "adminDashboard": "/admin",
+      "adminQuality": "/admin/quality",
+      "tenantAdmin": "/t/{tenant}/admin"
+    },
+    "exclusions": {
+      "p0Secrets": {
+        "note": "Managed by STRY-019",
+        "skip": true
+      }
+    }
+  }
+}

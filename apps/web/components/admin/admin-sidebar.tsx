@@ -11,6 +11,11 @@ const navigationItems = [
     icon: "🏠",
   },
   {
+    name: "Calidad",
+    href: "/admin/quality",
+    icon: "🛡️",
+  },
+  {
     name: "Social Planner",
     href: "/admin/social-planner",
     icon: "📱",
@@ -45,7 +50,8 @@ const navigationItems = [
 export function AdminSidebar() {
   const pathname = usePathname();
   const tenantSlug = useTenantSlug();
-  const tenantBase = tenantSlug ? `/t/${tenantSlug}` : "";
+  const isTenantScoped = pathname?.startsWith("/t/");
+  const tenantBase = isTenantScoped && tenantSlug ? `/t/${tenantSlug}` : "";
 
   const toHref = (path: string) => `${tenantBase}${path}`;
 
