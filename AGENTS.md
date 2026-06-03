@@ -929,6 +929,19 @@ Cuando ejecutes tests E2E contra `localhost` (puerto 3001 o 3002):
 
 ---
 
+## 🏁 Regla Obligatoria: Análisis de `.agent-reports` / Quality OS
+
+El directorio `C:\Dev\Zo\sass-store\.agent-reports` es el **indicador de calidad** del proyecto.
+
+- Cuando el usuario solicite analizar `.agent-reports` (o Quality OS), el agente **debe**:
+  1. Leer los archivos del directorio (`quality-report.json`, `quality-report.md`, `suggested-fixes.md`, etc.).
+  2. **Actualizar o crear** la User Story `STRY-022-quality-os` en `docs/stories/active/` y `.agents/sprint/STRY-022-quality-os/`.
+  3. Documentar hallazgos, score y diferencias respecto al estado anterior en `implementacion.md`.
+  4. Si hay brechas nuevas: planificar su corrección; si no, confirmar estado.
+- **No** reportar análisis suelto: todo resultado de calidad queda trazado a `STRY-022`.
+
+---
+
 **🚨 CRITICAL: Compliance with the Result Pattern is mandatory for all new code. PRs violating these guidelines will be automatically rejected.**
 
 The Result Pattern provides:

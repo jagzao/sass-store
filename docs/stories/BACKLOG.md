@@ -13,6 +13,7 @@
 | **STRY-018** | **Recuperación E2E y CI Gate**              | **P0**    | **active** | **S1**    | **QA → Dev → QA**                                                                                                        |
 | **STRY-019** | **Higiene de secretos y observabilidad**    | **P0**    | **active** | **S1/S2** | **Security → Dev**                                                                                                       |
 | **STRY-020** | **Go-Live hardening y salida a producción** | **P0**    | **active** | **S2**    | **PM → Architect → Dev → QA → DevOps**                                                                                   |
+| **STRY-022** | **Quality OS compliance y dashboard**       | **P0**    | **active** | **S2**    | **Dev → QA → [`active/STRY-022-quality-os.md`](active/STRY-022-quality-os.md)**                                          |
 | STRY-017     | Plataforma: rendimiento + seguridad (épica) | P0        | analysis   | S1        | Architect → Dev → [`active/STRY-017-platform-performance-security.md`](active/STRY-017-platform-performance-security.md) |
 | STRY-002     | Retouch System — E2E + validación           | P0        | backlog    | S1        | Dev                                                                                                                      |
 | STRY-003     | Inventory auto-deduction en POS             | P0        | backlog    | S1        | Dev                                                                                                                      |
