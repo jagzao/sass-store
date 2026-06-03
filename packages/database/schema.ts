@@ -3172,3 +3172,54 @@ export const scheduledNotificationsRelations = relations(
     }),
   }),
 );
+
+// ---------------------------------------------------------------------------
+// WhatsApp Booking Conversations — estado conversacional del Booking Assistant
+// ---------------------------------------------------------------------------
+
+export const waBookingConversationStates = [
+  "awaiting_confirm",
+  "confirmed",
+  "cancelled",
+  "expired",
+] as const;
+
+export type WaBookingConversationState =
+  (typeof waBookingConversationStates)[number];
+
+export const waBookingConversations = pgTable(
+  "wa_booking_conversations",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    phone: varchar("phone", { length: 20 }).notNull(),
+    tenantSlug: varchar("tenant_slug", { length: 100 })
+      .notNull()
+      .default("wondernails"),
+    state: varchar("state", { length: 30 })
+      .notNull()
+      .default("awaiting_confirm"),
+    serviceId: uuid("service_id"),
+    serviceName: varchar("service_name", { length: 255 }),
+    servicePrice: decimal("service_price", { precision: 10, scale: 2 }),
+    dateIso: date("date_iso"),
+    timeStr: varchar("time_str", { length: 10 }),
+    customerName: varchar("customer_name", { length: 100 }),
+    customerId: uuid("customer_id"),
+    triggerMsgId: varchar("trigger_msg_id", { length: 100 }),
+    confirmMsgId: varchar("confirm_msg_id", { length: 100 }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    expiresAt: timestamp("expires_at", { withTimezone: true })
+      .notNull()
+      .default(sql`NOW() + INTERVAL '30 minutes'`),
+  },
+  (table) => ({
+    phoneIdx: index("wa_booking_convos_phone_idx").on(table.phone),
+    stateIdx: index("wa_booking_convos_state_idx").on(table.state),
+    expiresIdx: index("wa_booking_convos_expires_idx").on(table.expiresAt),
+  }),
+);
