@@ -132,6 +132,50 @@ export async function getTenantNotificationTemplates(
 // Backwards-compatible alias
 export const getTenantReminderTemplates = getTenantNotificationTemplates;
 
+export type TenantSessionTemplates = {
+  sessionReminder24h: string;
+  sessionReminder1h: string;
+  sessionEnrollmentConfirmation: string;
+};
+
+const DEFAULT_SESSION_TEMPLATES: TenantSessionTemplates = {
+  sessionReminder24h:
+    "Hola {{customerName}}, te recordamos que mañana tienes clase **{{sessionTitle}}** en {{tenantName}} a las {{sessionDateTime}}.",
+  sessionReminder1h:
+    "Hola {{customerName}}, en 1 hora es tu clase **{{sessionTitle}}** en {{tenantName}} ({{sessionDateTime}}).",
+  sessionEnrollmentConfirmation:
+    "Hola {{customerName}}, quedaste inscrito en **{{sessionTitle}}** en {{tenantName}} el {{sessionDateTime}}. ¡Te esperamos!",
+};
+
+const SESSION_TEMPLATE_KEY_MAP: Record<string, keyof TenantSessionTemplates> = {
+  session_reminder_24h: "sessionReminder24h",
+  session_reminder_1h: "sessionReminder1h",
+  session_enrollment_confirmation: "sessionEnrollmentConfirmation",
+};
+
+export async function getTenantSessionTemplates(
+  tenantId: string,
+): Promise<TenantSessionTemplates> {
+  const rows = await db
+    .select({ key: tenantConfigs.key, value: tenantConfigs.value })
+    .from(tenantConfigs)
+    .where(
+      and(
+        eq(tenantConfigs.tenantId, tenantId),
+        eq(tenantConfigs.category, NOTIFICATIONS_CATEGORY),
+      ),
+    );
+
+  const out = { ...DEFAULT_SESSION_TEMPLATES };
+  for (const row of rows) {
+    const body = extractBody(row.value);
+    if (!body?.trim()) continue;
+    const field = SESSION_TEMPLATE_KEY_MAP[row.key];
+    if (field) out[field] = body.trim();
+  }
+  return out;
+}
+
 export async function saveTenantReminderTemplate(
   tenantId: string,
   key: ReminderTemplateKey,

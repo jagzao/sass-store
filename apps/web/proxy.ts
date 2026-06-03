@@ -69,12 +69,29 @@ async function getSessionTenant(
 }
 
 // STRY-021: Next.js 16 renombró middleware → proxy. El export debe llamarse `proxy`.
+const SESSION_COOKIE_PROD = "__Secure-authjs.session-token";
+const SESSION_COOKIE_DEV = "authjs.session-token";
+
 export async function proxy(request: NextRequest) {
   const url = request.nextUrl;
   const pathname = url.pathname;
   const host = request.headers.get("host") || "";
   const method = request.method;
   const origin = request.headers.get("origin");
+
+  // Admin routes: require session cookie (Edge-safe; JWT validated in route handlers)
+  const isGlobalAdmin = pathname.startsWith("/admin");
+  const isTenantAdmin = /^\/t\/[^/]+\/admin(\/|$)/.test(pathname);
+  if (isGlobalAdmin || isTenantAdmin) {
+    const sessionCookie =
+      request.cookies.get(SESSION_COOKIE_PROD)?.value ??
+      request.cookies.get(SESSION_COOKIE_DEV)?.value;
+    if (!sessionCookie) {
+      const signInUrl = new URL("/auth/signin", request.url);
+      signInUrl.searchParams.set("callbackUrl", pathname);
+      return NextResponse.redirect(signInUrl);
+    }
+  }
 
   totalHostResolutions++;
 

@@ -16,7 +16,7 @@ const PRIMARY = CTV_CLAY_ORANGE;
 export default async function CentroTenisticoLanding({ tenantSlug }: Props) {
   return (
     <CentroTenisticoScrollyShell>
-      <div className="min-h-screen">
+      <div className="min-h-screen" data-testid="public-home">
         <HeroCentroTenistico />
 
         <Suspense fallback={<ServicesSkeleton />}>
@@ -133,6 +133,8 @@ function TennisServiceCard({
   duration,
   tenantSlug,
   id,
+  ctaHref,
+  ctaLabel = "Reservar",
 }: {
   name: string;
   description: string;
@@ -140,7 +142,12 @@ function TennisServiceCard({
   duration?: number;
   tenantSlug: string;
   id: string;
+  ctaHref?: string;
+  ctaLabel?: string;
 }) {
+  const href =
+    ctaHref ??
+    (id ? `/t/${tenantSlug}/book?service=${id}` : `/t/${tenantSlug}/book`);
   return (
     <div
       className="group bg-white rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
@@ -181,16 +188,12 @@ function TennisServiceCard({
             ${price.toFixed(0)}
           </span>
           <a
-            href={
-              id
-                ? `/t/${tenantSlug}/bookings?service=${id}`
-                : `/t/${tenantSlug}/bookings`
-            }
+            href={href}
             className="px-4 py-2 rounded-lg text-sm font-semibold text-white transition-all duration-200 hover:opacity-90 hover:scale-[1.02]"
             style={{ backgroundColor: PRIMARY }}
             data-testid="ctv-service-reservar"
           >
-            Reservar Cancha
+            {ctaLabel}
           </a>
         </div>
       </div>
@@ -220,6 +223,8 @@ function StaticServiceCards() {
         "Aprende en grupo de máximo 8 personas. Todos los niveles bienvenidos.",
       price: 35,
       duration: 90,
+      ctaHref: "/t/centro-tenistico/sessions",
+      ctaLabel: "Inscribirse",
     },
   ];
 
@@ -234,6 +239,8 @@ function StaticServiceCards() {
           price={item.price}
           duration={item.duration}
           tenantSlug="centro-tenistico"
+          ctaHref={"ctaHref" in item ? item.ctaHref : undefined}
+          ctaLabel={"ctaLabel" in item ? item.ctaLabel : undefined}
         />
       ))}
     </div>
@@ -370,19 +377,27 @@ function CTASection() {
         </p>
         <div className="flex flex-wrap justify-center gap-4">
           <a
-            href="/t/centro-tenistico/bookings"
+            href="/t/centro-tenistico/book"
             className="px-8 py-4 bg-white rounded-xl font-bold text-base transition-all duration-200 hover:scale-[1.03] hover:shadow-xl"
             style={{ color: PRIMARY }}
             data-testid="ctv-cta-reservar"
           >
-            Reservar ahora
+            Reservar cancha
+          </a>
+          <a
+            href="/t/centro-tenistico/sessions"
+            className="px-8 py-4 rounded-xl font-bold text-base text-white transition-all duration-200 hover:scale-[1.02]"
+            style={{ backgroundColor: "rgba(255,255,255,0.15)" }}
+            data-testid="ctv-cta-sessions"
+          >
+            Inscribirse a clases
           </a>
           <a
             href="/t/centro-tenistico/services"
             className="px-8 py-4 rounded-xl font-bold text-base text-white transition-all duration-200 hover:scale-[1.02]"
             style={{ border: "1.5px solid rgba(255,255,255,0.5)" }}
           >
-            Ver todos los servicios
+            Ver servicios
           </a>
         </div>
       </div>

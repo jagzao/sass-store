@@ -19,6 +19,8 @@ import TodayAppointmentsSection from "./sections/TodayAppointmentsSection";
 import PendingAppointmentsSection from "./sections/PendingAppointmentsSection";
 import BusinessNavGrid from "./sections/BusinessNavGrid";
 import CustomersList from "@/components/customers/CustomersList";
+import SessionsTodaySection from "@/components/sessions/SessionsTodaySection";
+import { isSportsTenant } from "@/lib/tenant/client-terminology";
 
 export interface HomeTenantProps {
   /** Tenant slug for data fetching */
@@ -35,6 +37,7 @@ export default function HomeTenant({
   tenantData,
 }: HomeTenantProps) {
   const tenantName = tenantData?.name || "Negocio";
+  const sports = isSportsTenant(tenantSlug);
 
   return (
     <DashboardLayoutWrapper tenantSlug={tenantSlug} tenantName={tenantName}>
@@ -42,7 +45,11 @@ export default function HomeTenant({
         {/* Fila 1: Citas Hoy y Monitor de Retoques */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-auto md:h-[40vh] xl:h-[35vh]">
           <section className="h-full overflow-y-auto pr-1 pb-2">
-            <TodayAppointmentsSection tenantSlug={tenantSlug} />
+            {sports ? (
+              <SessionsTodaySection tenantSlug={tenantSlug} />
+            ) : (
+              <TodayAppointmentsSection tenantSlug={tenantSlug} />
+            )}
           </section>
 
           <section className="h-full overflow-y-auto pr-1 pb-2">

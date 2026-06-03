@@ -8,6 +8,7 @@
  */
 
 import NavGridItem from "./NavGridItem";
+import { isSportsTenant } from "@/lib/tenant/client-terminology";
 
 export interface BusinessNavGridProps {
   /** Tenant slug for navigation */
@@ -67,7 +68,20 @@ const NAV_ITEMS: NavGridItemData[] = [
 /**
  * Business navigation grid with 2-3 columns
  */
+const SPORTS_NAV: NavGridItemData[] = [
+  {
+    emoji: "🎾",
+    label: "Sesiones / Clases",
+    href: "/admin/sessions",
+    description: "Clases grupales e inscripciones",
+  },
+];
+
 export default function BusinessNavGrid({ tenantSlug }: BusinessNavGridProps) {
+  const items = isSportsTenant(tenantSlug)
+    ? [SPORTS_NAV[0], ...NAV_ITEMS]
+    : NAV_ITEMS;
+
   return (
     <div className="space-y-4">
       {/* Section Header */}
@@ -82,7 +96,7 @@ export default function BusinessNavGrid({ tenantSlug }: BusinessNavGridProps) {
 
       {/* Grid */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3 lg:gap-4">
-        {NAV_ITEMS.map((item) => {
+        {items.map((item) => {
           const fullPath = item.external
             ? item.href
             : `/t/${tenantSlug}${item.href}`;
