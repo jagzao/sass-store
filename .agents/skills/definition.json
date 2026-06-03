@@ -254,6 +254,37 @@
       }
     },
     {
+      "id": "spec-discovery",
+      "scope": "project-local",
+      "enabled": true,
+      "path": ".agents/skills/spec-discovery/SKILL.md",
+      "purpose": "Descubre y valida specs funcionales desde una historia de usuario: borrador con asunciones, listado para revision del dueno, preguntas una a una con barra de progreso y 4 opciones + Otra.",
+      "useWhen": [
+        "usuario pide definir spec o especificacion antes de implementar",
+        "usuario entrega historia de usuario para rellenar espacios en blanco",
+        "se necesita validar asunciones no tecnicas o funcionales antes de .specs/",
+        "usuario dice 'crea spec', 'define spec' o equivalente"
+      ],
+      "doNotUseWhen": [
+        "la spec ya existe y esta aprobada en .specs/",
+        "usuario pide implementar directamente (usar story-orchestrator)",
+        "solo revision de PR (usar pr-reviewer)"
+      ],
+      "protocol": {
+        "readFirst": [
+          ".agents/skills/spec-discovery/spec-template.md",
+          ".specs/sesiones_deportivas.md"
+        ],
+        "followSkill": ".agents/skills/spec-discovery/SKILL.md",
+        "phases": [
+          "borrador-con-asunciones",
+          "listado-revision",
+          "preguntas-una-a-una",
+          "listo-para-crear-spec"
+        ]
+      }
+    },
+    {
       "id": "story-orchestrator",
       "scope": "project-local",
       "enabled": true,
