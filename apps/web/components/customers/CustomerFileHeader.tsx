@@ -19,6 +19,8 @@ import {
   MapPin,
   Trash2,
   Plus,
+  Calendar,
+  Activity,
 } from "lucide-react";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Button } from "@/components/ui/button";
@@ -39,6 +41,7 @@ interface Customer {
   email?: string;
   address?: string;
   generalNotes?: string;
+  birthday?: string;
   tags: string[];
   status: "active" | "inactive" | "blocked";
 }
@@ -68,10 +71,18 @@ const CustomerFileHeader = forwardRef<
   const [editedNotes, setEditedNotes] = useState("");
   const [editedName, setEditedName] = useState("");
   const [editedPhone, setEditedPhone] = useState("");
+  const [editedEmail, setEditedEmail] = useState("");
   const [editedAddress, setEditedAddress] = useState("");
+  const [editedBirthday, setEditedBirthday] = useState("");
+  const [editedStatus, setEditedStatus] = useState<
+    "active" | "inactive" | "blocked"
+  >("active");
   const [editedTags, setEditedTags] = useState<string[]>([]);
   const [newTag, setNewTag] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [validationError, setValidationError] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
   const [stats, setStats] = useState<{
     visits: number;
     bookings: number;
@@ -109,8 +120,17 @@ const CustomerFileHeader = forwardRef<
         setEditedNotes(data.customer.generalNotes || "");
         setEditedName(data.customer.name || "");
         setEditedPhone(data.customer.phone || "");
+        setEditedEmail(data.customer.email || "");
         setEditedAddress(data.customer.address || "");
+        setEditedBirthday(
+          data.customer.birthday
+            ? new Date(data.customer.birthday).toISOString().split("T")[0]
+            : "",
+        );
+        setEditedStatus(data.customer.status || "active");
         setEditedTags(data.customer.tags || []);
+        setSaveError(null);
+        setValidationError(null);
       } catch (error) {
         console.error("Error fetching customer:", error);
         setError(
@@ -129,6 +149,26 @@ const CustomerFileHeader = forwardRef<
   const handleSave = async () => {
     if (!customer) return;
 
+    // Validation
+    if (!editedName.trim()) {
+      setValidationError("El nombre es obligatorio.");
+      return;
+    }
+    if (!editedPhone.trim()) {
+      setValidationError("El teléfono es obligatorio.");
+      return;
+    }
+    if (
+      editedEmail.trim() &&
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(editedEmail.trim())
+    ) {
+      setValidationError("El correo electrónico no es válido.");
+      return;
+    }
+    setValidationError(null);
+    setSaveError(null);
+    setSaving(true);
+
     try {
       const response = await fetch(
         `/api/tenants/${tenantSlug}/customers/${customerId}`,
@@ -136,25 +176,57 @@ const CustomerFileHeader = forwardRef<
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            name: editedName,
-            phone: editedPhone,
-            address: editedAddress,
-            generalNotes: editedNotes,
+            name: editedName.trim(),
+            phone: editedPhone.trim(),
+            email: editedEmail.trim() || null,
+            address: editedAddress.trim() || null,
+            birthday: editedBirthday || null,
+            status: editedStatus,
+            generalNotes: editedNotes.trim() || null,
             tags: editedTags,
           }),
         },
       );
 
-      if (!response.ok) throw new Error("Failed to update customer");
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || "Failed to update customer");
+      }
 
       const updatedData = await response.json();
 
       setCustomer(updatedData.customer);
       setEditing(false);
+      setSaveError(null);
     } catch (error) {
       console.error("Error updating customer:", error);
-      alert("Error al guardar los cambios");
+      setSaveError(
+        error instanceof Error
+          ? error.message
+          : "Error al guardar los cambios. Intente nuevamente.",
+      );
+    } finally {
+      setSaving(false);
     }
+  };
+
+  const handleCancel = () => {
+    if (!customer) return;
+    setEditedName(customer.name || "");
+    setEditedPhone(customer.phone || "");
+    setEditedEmail(customer.email || "");
+    setEditedAddress(customer.address || "");
+    setEditedBirthday(
+      customer.birthday
+        ? new Date(customer.birthday).toISOString().split("T")[0]
+        : "",
+    );
+    setEditedStatus(customer.status || "active");
+    setEditedNotes(customer.generalNotes || "");
+    setEditedTags(customer.tags || []);
+    setValidationError(null);
+    setSaveError(null);
+    setEditing(false);
   };
 
   const addTag = () => {
@@ -298,6 +370,7 @@ const CustomerFileHeader = forwardRef<
                     ? "text-[#1a1a1a] font-serif border-[#D4AF37]/50 focus-visible:ring-[#D4AF37]"
                     : "text-gray-900"
                 }`}
+                data-testid="input-name"
               />
             ) : (
               <h1
@@ -317,6 +390,28 @@ const CustomerFileHeader = forwardRef<
                       onChange={(e) => setEditedPhone(e.target.value)}
                       placeholder="Teléfono"
                       className="h-8"
+                      data-testid="input-phone"
+                    />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Mail className="h-4 w-4 text-gray-400" />
+                    <Input
+                      type="email"
+                      value={editedEmail}
+                      onChange={(e) => setEditedEmail(e.target.value)}
+                      placeholder="Correo electrónico"
+                      className="h-8"
+                      data-testid="input-email"
+                    />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Calendar className="h-4 w-4 text-gray-400" />
+                    <Input
+                      type="date"
+                      value={editedBirthday}
+                      onChange={(e) => setEditedBirthday(e.target.value)}
+                      className="h-8"
+                      data-testid="input-birthday"
                     />
                   </div>
                   <div className="flex items-center gap-2">
@@ -326,7 +421,25 @@ const CustomerFileHeader = forwardRef<
                       onChange={(e) => setEditedAddress(e.target.value)}
                       placeholder="Dirección completa"
                       className="h-8"
+                      data-testid="input-address"
                     />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Activity className="h-4 w-4 text-gray-400" />
+                    <select
+                      value={editedStatus}
+                      onChange={(e) =>
+                        setEditedStatus(
+                          e.target.value as "active" | "inactive" | "blocked",
+                        )
+                      }
+                      className="h-8 text-sm border border-gray-300 rounded-md px-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      data-testid="select-status"
+                    >
+                      <option value="active">Activa</option>
+                      <option value="inactive">Inactiva</option>
+                      <option value="blocked">Bloqueada</option>
+                    </select>
                   </div>
                 </div>
               ) : (
@@ -349,6 +462,20 @@ const CustomerFileHeader = forwardRef<
                       {customer.email}
                     </div>
                   )}
+                  {customer.birthday && (
+                    <div
+                      className={`flex items-center text-sm ${isLuxury ? "text-gray-600" : "text-gray-600"}`}
+                    >
+                      <Calendar
+                        className={`h-4 w-4 mr-1 ${isLuxury ? "text-[#D4AF37]" : ""}`}
+                      />
+                      {new Date(customer.birthday).toLocaleDateString("es-MX", {
+                        day: "2-digit",
+                        month: "long",
+                        year: "numeric",
+                      })}
+                    </div>
+                  )}
                   {customer.address && (
                     <div
                       className={`flex items-center text-sm ${isLuxury ? "text-gray-600" : "text-gray-600"}`}
@@ -365,58 +492,76 @@ const CustomerFileHeader = forwardRef<
           </div>
         </div>
 
-        {/* Status Badge */}
-        <span
-          className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-            isLuxury
-              ? customer.status === "active"
-                ? "bg-[#D4AF37]/10 text-[#b3932d] border border-[#D4AF37]/20"
-                : customer.status === "inactive"
-                  ? "bg-gray-100 text-gray-500 border border-gray-200"
-                  : "bg-red-50 text-red-600 border border-red-100"
-              : customer.status === "active"
-                ? "bg-green-100 text-green-800"
-                : customer.status === "inactive"
-                  ? "bg-gray-100 text-gray-800"
-                  : "bg-red-100 text-red-800"
-          }`}
-        >
-          {customer.status === "active"
-            ? "Activa"
-            : customer.status === "inactive"
-              ? "Inactiva"
-              : "Bloqueada"}
-        </span>
-
-        {/* Delete Button */}
-        <ConfirmDialog
-          trigger={
+        {/* Status Badge + Edit + Delete */}
+        <div className="flex items-center gap-2">
+          {!editing && (
             <button
-              className="ml-4 p-2 rounded-full text-red-400 hover:text-red-600 hover:bg-red-50 transition-colors"
-              title={`Eliminar ${t.singularLower}`}
+              onClick={() => setEditing(true)}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                isLuxury
+                  ? "bg-[#D4AF37]/10 text-[#b3932d] border border-[#D4AF37]/20 hover:bg-[#D4AF37]/20"
+                  : "bg-blue-50 text-blue-700 border border-blue-100 hover:bg-blue-100"
+              }`}
+              title={`Editar ${t.singularLower}`}
+              data-testid="btn-edit-customer"
             >
-              <Trash2 className="h-5 w-5" />
+              <Edit className="h-4 w-4" />
+              Editar
             </button>
-          }
-          title={`¿Eliminar este ${t.singularLower}?`}
-          description={`Esta acción no se puede deshacer. Se eliminará permanentemente el ${t.singularLower}`}
-          subjectName={customer.name}
-          impactItems={
-            stats
-              ? [
-                  { count: stats.visits, label: "Visitas completadas" },
-                  {
-                    count: stats.bookings,
-                    label: "Reservas (pendientes o pasadas)",
-                  },
-                ]
-              : undefined
-          }
-          confirmLabel="Eliminar permanentemente"
-          loadingLabel="Eliminando…"
-          onConfirm={handleDelete}
-          loading={isDeleting}
-        />
+          )}
+
+          <span
+            className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
+              isLuxury
+                ? customer.status === "active"
+                  ? "bg-[#D4AF37]/10 text-[#b3932d] border border-[#D4AF37]/20"
+                  : customer.status === "inactive"
+                    ? "bg-gray-100 text-gray-500 border border-gray-200"
+                    : "bg-red-50 text-red-600 border border-red-100"
+                : customer.status === "active"
+                  ? "bg-green-100 text-green-800"
+                  : customer.status === "inactive"
+                    ? "bg-gray-100 text-gray-800"
+                    : "bg-red-100 text-red-800"
+            }`}
+          >
+            {customer.status === "active"
+              ? "Activa"
+              : customer.status === "inactive"
+                ? "Inactiva"
+                : "Bloqueada"}
+          </span>
+
+          {/* Delete Button */}
+          <ConfirmDialog
+            trigger={
+              <button
+                className="ml-2 p-2 rounded-full text-red-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+                title={`Eliminar ${t.singularLower}`}
+              >
+                <Trash2 className="h-5 w-5" />
+              </button>
+            }
+            title={`¿Eliminar este ${t.singularLower}?`}
+            description={`Esta acción no se puede deshacer. Se eliminará permanentemente el ${t.singularLower}`}
+            subjectName={customer.name}
+            impactItems={
+              stats
+                ? [
+                    { count: stats.visits, label: "Visitas completadas" },
+                    {
+                      count: stats.bookings,
+                      label: "Reservas (pendientes o pasadas)",
+                    },
+                  ]
+                : undefined
+            }
+            confirmLabel="Eliminar permanentemente"
+            loadingLabel="Eliminando…"
+            onConfirm={handleDelete}
+            loading={isDeleting}
+          />
+        </div>
       </div>
 
       {/* Tags */}
@@ -468,6 +613,47 @@ const CustomerFileHeader = forwardRef<
               </div>
             )}
           </div>
+        </div>
+      )}
+
+      {/* Action buttons + errors in edit mode */}
+      {editing && (
+        <div className="mb-4 space-y-2">
+          <div className="flex items-center gap-2">
+            <Button
+              onClick={handleSave}
+              disabled={saving}
+              className="flex items-center gap-1.5"
+              data-testid="btn-save-customer"
+            >
+              {saving ? (
+                <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full inline-block" />
+              ) : (
+                <Save className="h-4 w-4" />
+              )}
+              {saving ? "Guardando..." : "Guardar cambios"}
+            </Button>
+            <Button
+              variant="outline"
+              onClick={handleCancel}
+              disabled={saving}
+              className="flex items-center gap-1.5"
+              data-testid="btn-cancel-edit"
+            >
+              <X className="h-4 w-4" />
+              Cancelar
+            </Button>
+          </div>
+          {validationError && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-700">
+              {validationError}
+            </div>
+          )}
+          {saveError && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-700">
+              {saveError}
+            </div>
+          )}
         </div>
       )}
 
