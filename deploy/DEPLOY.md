@@ -94,10 +94,12 @@
 
 ## 6. Historial de deploys
 
-| Versión | Fecha      | Notas                                                         |
-| ------- | ---------- | ------------------------------------------------------------- |
-| 1.001   | 2026-06-04 | Versión inicial del sistema de versionado + memoria de deploy |
+| Versión | Fecha      | Commit    | Notas                                 | Estado API `/version`                                |
+| ------- | ---------- | --------- | ------------------------------------- | ---------------------------------------------------- |
+| 1.001   | 2026-06-04 | `422293f` | Versión inicial + console.log en home | N/A                                                  |
+| 1.001+  | 2026-06-04 | `38e7ced` | Agrega `/api/version` endpoint        | **Pendiente de deploy** — endpoint 404 en producción |
 
 ---
 
 _Última actualización: 2026-06-04_
+_Último push a master: `38e7ced` — deploy Vercel en curso o requiere trigger manual_
