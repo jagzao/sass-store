@@ -20,40 +20,44 @@
 
 ### 1.2 Proceso de deploy (Git → Vercel)
 
+**Plataforma oficial:** Vercel (`https://sass-store-web.vercel.app`)
+
+Los workflows de Cloudflare Pages en `.github/workflows/deploy-prod.yml` son **legacy / no activos**.
+
+#### Opción A — GitHub Actions (RECOMENDADO, automatizado)
+
+**Workflow:** `.github/workflows/deploy-vercel.yml`
+
+**Secrets necesarios en GitHub** (Settings → Secrets and variables → Actions):
+
+| Secret              | Valor                              | Cómo obtener                                                            |
+| ------------------- | ---------------------------------- | ----------------------------------------------------------------------- |
+| `VERCEL_TOKEN`      | Token de API Vercel                | [vercel.com/account/tokens](https://vercel.com/account/tokens) → Create |
+| `VERCEL_ORG_ID`     | `team_mQyHI45nTHLlechqrcICsxL7`    | Copiar de `.vercel/project.json`                                        |
+| `VERCEL_PROJECT_ID` | `prj_SxXYPfxnt6McX409he7AUNgG8qqy` | Copiar de `.vercel/project.json`                                        |
+
+**Trigger:** Push a `master` dispara deploy automático.
+
+#### Opción B — Vercel Dashboard (manual, inmediato)
+
+1. Ir a [vercel.com/dashboard](https://vercel.com/dashboard) → proyecto `sass-store-web`
+2. Tab **Deployments** → buscar commit reciente
+3. Si no aparece o está fallado → clic **Redeploy** del último deploy exitoso
+4. Esperar 1-2 min
+
+#### Opción C — Vercel CLI (requiere `vercel login`)
+
 ```bash
-# 1. Commit con version bump
-# 2. Push a master/main
-# 3. Vercel auto-deploy (si Git integration está activa)
-#    o manual: npx vercel --prod
-#    o GitHub Actions: ver .github/workflows/deploy-prod.yml
+npx vercel --prod
 ```
 
-**Nota importante:** Este proyecto tiene dos pipelines de deploy configurados:
-
-- **Vercel:** `https://sass-store-web.vercel.app` (desde Git push o `vercel --prod`)
-- **Cloudflare Pages:** `https://sassstore.com` (desde GitHub Actions)
-
-Verificar en qué plataforma está activo el deploy actual antes de proceder.
-
-### Estado actual del deploy (último push)
-
-- **Commit en `master`:** `930ecef`
-- **Push a GitHub:** ✅ Completado
-- **Vercel auto-deploy:** ❌ No detectado (endpoint `/api/version` devuelve 404)
-- **Cloudflare Pages:** ❓ Estado desconocido (requiere verificar en dashboard)
-
-### Troubleshooting — deploy no se activa
-
-| Síntoma                                         | Causa probable                           | Solución                                                                                              |
-| ----------------------------------------------- | ---------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| Push a `master` no dispara deploy               | Git integration desactivada en Vercel    | Ir a Vercel dashboard → project → Settings → Git → verificar que `master` está en "Production Branch" |
-| `npx vercel --prod` falla con "token not valid" | CLI no autenticado                       | Ejecutar `npx vercel login` (requiere navegador) o usar `VERCEL_TOKEN` env var                        |
-| `/api/version` 404 en producción                | Build anterior aún sirviendo (cache CDN) | Esperar 2-5 min tras deploy, o forzar redeploy en Vercel dashboard                                    |
+> **Nota:** Si `vercel login` falla con error de certificado SSL (`unable to verify the first certificate`), usá la **Opción B** (dashboard web).
 
 ### 1.3 Post-deploy checklist
 
 - [ ] Health check: `GET /api/health` → `{"status":"ok"}`
-- [ ] Verificar versión en consola del navegador (F12 → Console)
+- [ ] Version check: `GET /api/version` → `{"version":"1.001",...}`
+- [ ] Verificar versión en consola del navegador (F12 → Console) → `[Sass Store] v1.001`
 - [ ] Smoke test: login + home + navegación crítica
 - [ ] Validar que la fecha de deploy en `deploy/DEPLOY.md` coincide
 
@@ -113,19 +117,28 @@ Verificar en qué plataforma está activo el deploy actual antes de proceder.
 - Verificar env vars en Vercel dashboard vs `.env.local`
 - Limpiar cache de build: `vercel --prod --force`
 
+### Vercel CLI falla con error SSL
+
+```
+Error: unable to verify the first certificate
+```
+
+- Causa: red corporativa, antivirus o proxy interceptando TLS
+- Solución: usar **Opción B** (dashboard web) en lugar de CLI
+
 ---
 
 ## 6. Historial de deploys
 
-| Versión | Fecha      | Commit    | Notas                                                | Estado producción                  |
-| ------- | ---------- | --------- | ---------------------------------------------------- | ---------------------------------- |
-| 1.001   | 2026-06-04 | `422293f` | Versión inicial: console.log en home + deploy memory | ✅ `/api/health` ok                |
-| 1.001+  | 2026-06-04 | `38e7ced` | Agrega `/api/version` endpoint                       | ❌ No deployado aún (endpoint 404) |
-| 1.001+  | 2026-06-04 | `930ecef` | Actualiza deploy/DEPLOY.md con troubleshooting       | ❌ No deployado aún                |
+| Versión | Fecha      | Commit    | Notas                                                | Estado producción   |
+| ------- | ---------- | --------- | ---------------------------------------------------- | ------------------- |
+| 1.001   | 2026-06-04 | `422293f` | Versión inicial: console.log en home + deploy memory | ✅ `/api/health` ok |
+| 1.001+  | 2026-06-04 | `38e7ced` | Agrega `/api/version` endpoint                       | ❌ No deployado     |
+| 1.001+  | 2026-06-04 | `930ecef` | Actualiza deploy/DEPLOY.md con troubleshooting       | ❌ No deployado     |
 
 ---
 
-**Estado actual:** Build local ✅ | Push GitHub ✅ | Deploy producción ⏳ **pendiente** (requiere trigger manual en Vercel dashboard o `vercel --prod`)
+**Estado actual:** Build local ✅ | Push GitHub ✅ | Deploy producción ⏳ **pendiente**
 
 _Última actualización: 2026-06-04_
-_Último push a master: `38e7ced` — deploy Vercel en curso o requiere trigger manual_
+_Último push a master: `930ecef` — deploy Vercel requiere trigger manual (dashboard) o configurar GitHub Actions_

@@ -1,0 +1,60 @@
+name: 🚀 Deploy to Vercel (Production)
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-vercel-prod
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy to Vercel Production
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🧪 Run tests
+        run: |
+          npm run lint
+          npm run typecheck
+          npm run test:unit
+
+      - name: 🏗️ Build application
+        run: npm run build
+        env:
+          NODE_ENV: production
+
+      - name: 🚀 Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: "--prod"
+          working-directory: ./apps/web
+
+      - name: 🩺 Post-deploy health check
+        run: |
+          sleep 30
+          curl -f "https://sass-store-web.vercel.app/api/health" || exit 1
+          curl -f "https://sass-store-web.vercel.app/api/version" || exit 1
+
+      - name: 📢 Notify deployment
+        if: success()
+        run: |
+          echo "🎉 PRODUCTION DEPLOYED TO VERCEL!"
+          echo "🌐 URL: https://sass-store-web.vercel.app"
