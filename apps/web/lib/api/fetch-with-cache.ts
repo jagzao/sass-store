@@ -137,6 +137,16 @@ export async function fetchWithCache<T = unknown>(
 
     return response.json();
   } catch (error) {
+    // During SSG build on Vercel, the local server is not running.
+    // Gracefully fall back to empty data for public API endpoints
+    // so the build completes. Data will be hydrated at runtime.
+    if (typeof window === "undefined" && url.startsWith("/api/v1/public/")) {
+      console.warn(
+        `[fetchWithCache] SSG build fallback for ${url}: returning empty data`,
+      );
+      return { data: [] } as T;
+    }
+
     console.error(`[fetchWithCache] Error fetching ${fullUrl}:`, error);
     throw error;
   }
