@@ -28,6 +28,8 @@ CREATE TABLE IF NOT EXISTS wa_booking_conversations (
   expires_at      TIMESTAMPTZ NOT NULL DEFAULT NOW() + INTERVAL '30 minutes'
 );
 
-CREATE INDEX IF NOT EXISTS wa_booking_convos_phone_idx  ON wa_booking_conversations(phone);
-CREATE INDEX IF NOT EXISTS wa_booking_convos_state_idx  ON wa_booking_conversations(state);
-CREATE INDEX IF NOT EXISTS wa_booking_convos_expires_idx ON wa_booking_conversations(expires_at);
+CREATE INDEX IF NOT EXISTS wa_booking_convos_phone_idx    ON wa_booking_conversations(phone);
+CREATE INDEX IF NOT EXISTS wa_booking_convos_state_idx    ON wa_booking_conversations(state);
+CREATE INDEX IF NOT EXISTS wa_booking_convos_expires_idx  ON wa_booking_conversations(expires_at);
+ALTER TABLE wa_booking_conversations
+  ADD CONSTRAINT wa_booking_convos_trigger_msg_id_uq UNIQUE (trigger_msg_id);

@@ -3221,5 +3221,8 @@ export const waBookingConversations = pgTable(
     phoneIdx: index("wa_booking_convos_phone_idx").on(table.phone),
     stateIdx: index("wa_booking_convos_state_idx").on(table.state),
     expiresIdx: index("wa_booking_convos_expires_idx").on(table.expiresAt),
+    triggerMsgIdUq: uniqueIndex("wa_booking_convos_trigger_msg_id_uq").on(
+      table.triggerMsgId,
+    ),
   }),
 );
