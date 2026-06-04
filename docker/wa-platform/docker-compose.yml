@@ -1,0 +1,50 @@
+version: "3.9"
+
+# WA Platform — Stack completo de desarrollo
+# Incluye: n8n, Redis, y la app Next.js
+#
+# Uso: docker compose -f docker/wa-platform/docker-compose.yml up -d
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: wa-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: wa-n8n
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_BASIC_AUTH_ACTIVE=false
+      - N8N_HOST=0.0.0.0
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - WEBHOOK_URL=${N8N_WEBHOOK_URL:-http://localhost:5678}
+      - GENERIC_TIMEZONE=America/Mexico_City
+      - N8N_RUNNERS_ENABLED=true
+      - N8N_RUNNERS_MAX_CONCURRENCY=10
+    volumes:
+      - n8n-data:/home/node/.n8n
+      - ./../../n8n/workflows:/home/node/workflows:ro  # workflows versionados
+    depends_on:
+      redis:
+        condition: service_healthy
+
+volumes:
+  redis-data:
+  n8n-data:
+
+networks:
+  default:
+    name: wa-platform-net

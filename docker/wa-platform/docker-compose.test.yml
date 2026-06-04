@@ -1,0 +1,14 @@
+version: "3.9"
+
+# Override para tests — Redis efímero, n8n mockeado
+# Uso: docker compose -f docker-compose.yml -f docker-compose.test.yml up -d
+
+services:
+  redis:
+    image: redis:7-alpine
+    command: redis-server --save ""  # sin persistencia en tests
+    tmpfs:
+      - /data
+
+  n8n:
+    profiles: ["disabled"]  # no levantar n8n en tests (se mockea)

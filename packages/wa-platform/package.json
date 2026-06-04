@@ -1,0 +1,21 @@
+{
+  "name": "@sass-store/wa-platform",
+  "version": "0.1.0",
+  "private": true,
+  "description": "WhatsApp messaging platform for sass-store multitenant SaaS",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@sass-store/database": "*",
+    "@sass-store/core": "*"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "vitest": "^1.0.0"
+  }
+}
