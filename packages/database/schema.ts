@@ -3226,3 +3226,40 @@ export const waBookingConversations = pgTable(
     ),
   }),
 );
+
+/** Configuración WhatsApp por tenant — mapeo phone_number_id → tenant_slug */
+export const waTenantConfig = pgTable(
+  "wa_tenant_config",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantSlug: varchar("tenant_slug", { length: 100 }).unique().notNull(),
+    phoneNumberId: varchar("phone_number_id", { length: 50 })
+      .unique()
+      .notNull(),
+    displayName: varchar("display_name", { length: 100 }).notNull(),
+    botName: varchar("bot_name", { length: 50 }).notNull().default("Asistente"),
+    tone: varchar("tone", { length: 20 }).notNull().default("amigable"),
+    greetingMsg: text("greeting_msg")
+      .notNull()
+      .default("¡Hola! 👋 ¿En qué puedo ayudarte?"),
+    fallbackMsg: text("fallback_msg")
+      .notNull()
+      .default("No entendí bien, ¿puedes repetirlo de otra forma?"),
+    escalationMsg: text("escalation_msg")
+      .notNull()
+      .default("Te voy a conectar con alguien del equipo ahora."),
+    escalationPhone: varchar("escalation_phone", { length: 20 }),
+    aiEnabled: boolean("ai_enabled").notNull().default(true),
+    maxAiTokens: integer("max_ai_tokens").notNull().default(300),
+    features: jsonb("features").notNull().default({}),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => ({
+    slugIdx: index("wa_tenant_config_slug_idx").on(table.tenantSlug),
+  }),
+);
