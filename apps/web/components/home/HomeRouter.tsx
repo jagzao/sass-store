@@ -13,9 +13,10 @@
  */
 
 import { useSession } from "next-auth/react";
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 import { shouldShowHomeTenant, normalizeRole } from "@/lib/auth/role-guards";
 import HomeTenant from "./HomeTenant";
+import { APP_VERSION, APP_NAME } from "@/lib/version";
 
 export interface HomeRouterProps {
   /** Tenant slug for data fetching */
@@ -38,6 +39,12 @@ export default function HomeRouter({
   publicHomeContent,
   className,
 }: HomeRouterProps) {
+  useEffect(() => {
+    console.log(
+      `[${APP_NAME}] v${APP_VERSION} — deploy: ${new Date().toISOString().split("T")[0]}`,
+    );
+  }, []);
+
   const { data: session, status } = useSession();
 
   const isLoading = status === "loading";
