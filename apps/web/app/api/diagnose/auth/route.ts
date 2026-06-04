@@ -121,7 +121,7 @@ export async function GET() {
       {
         status: "crash",
         error: error.message,
-        stack: error.stack,
+        // STRY-022: stack trace removido — no exponer internals en respuestas
       },
       { status: 200 }, // Return 200 even on crash to see the error in browser
     );

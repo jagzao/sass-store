@@ -131,6 +131,29 @@ export async function markNotificationSent(
   return row;
 }
 
+/** Cancela notificaciones pendientes de una inscripción a sesión deportiva. */
+export async function cancelPendingSessionEnrollmentNotifications(
+  enrollmentId: string,
+  templateKeys?: string[],
+) {
+  const conditions = [
+    eq(scheduledNotifications.relatedEntityType, "session_enrollment"),
+    eq(scheduledNotifications.relatedEntityId, enrollmentId),
+    eq(scheduledNotifications.status, "pending"),
+  ];
+  if (templateKeys?.length) {
+    conditions.push(inArray(scheduledNotifications.templateKey, templateKeys));
+  }
+  return db
+    .update(scheduledNotifications)
+    .set({
+      status: "cancelled",
+      updatedAt: new Date(),
+    })
+    .where(and(...conditions))
+    .returning({ id: scheduledNotifications.id });
+}
+
 /** Cancela recordatorios pendientes de una cita (reprogramación o cancelación). */
 export async function cancelPendingBookingNotifications(
   bookingId: string,

@@ -12,11 +12,14 @@ import { z } from "zod";
 const updateCustomerSchema = z.object({
   name: z.string().min(1, "El nombre es requerido").optional(),
   phone: z.string().min(1, "El teléfono es requerido").optional(),
-  generalNotes: z.string().optional(),
-  address: z.string().optional(),
+  email: z
+    .union([z.string().email("Correo inválido"), z.literal(""), z.null()])
+    .optional(),
+  generalNotes: z.union([z.string(), z.null()]).optional(),
+  address: z.union([z.string(), z.null()]).optional(),
   status: z.enum(["active", "inactive", "blocked"]).optional(),
   tags: z.array(z.string()).optional(),
-  birthday: z.string().optional(),
+  birthday: z.union([z.string(), z.null()]).optional(),
   medicalHistory: z.any().optional(),
 });
 
@@ -75,8 +78,15 @@ export async function GET(
         ),
       );
 
+    // Unpack metadata into birthday and medicalHistory for frontend convenience
+    const enrichedCustomer = {
+      ...customer,
+      birthday: (customer.metadata as any)?.birthday || null,
+      medicalHistory: (customer.metadata as any)?.medicalHistory || null,
+    };
+
     return NextResponse.json({
-      customer,
+      customer: enrichedCustomer,
       stats: {
         visits: Number(visitsCount?.count || 0),
         bookings: Number(bookingsCount?.count || 0),
@@ -88,7 +98,7 @@ export async function GET(
       {
         error: "Internal server error",
         details: error instanceof Error ? error.message : "Unknown error",
-        stack: error instanceof Error ? error.stack : undefined,
+        // STRY-022: stack trace removido
       },
       { status: 500 },
     );
@@ -117,13 +127,57 @@ export async function PATCH(
     const body = await request.json();
     const data = updateCustomerSchema.parse(body);
 
+    // Fetch existing customer for metadata merge
+    const [existingCustomer] = await db
+      .select()
+      .from(customers)
+      .where(
+        and(eq(customers.id, customerId), eq(customers.tenantId, tenant.id)),
+      )
+      .limit(1);
+
+    if (!existingCustomer) {
+      return NextResponse.json(
+        { error: "Customer not found" },
+        { status: 404 },
+      );
+    }
+
+    // Build update payload
+    const updatePayload: Record<string, any> = {
+      name: data.name,
+      phone: data.phone,
+      email: data.email || null,
+      address: data.address,
+      generalNotes: data.generalNotes,
+      status: data.status,
+      tags: data.tags,
+      updatedAt: new Date(),
+    };
+
+    // Merge birthday and medicalHistory into metadata JSONB
+    if (data.birthday !== undefined || data.medicalHistory !== undefined) {
+      const existingMeta = (existingCustomer.metadata as any) || {};
+      updatePayload.metadata = {
+        ...existingMeta,
+        ...(data.birthday !== undefined && { birthday: data.birthday }),
+        ...(data.medicalHistory !== undefined && {
+          medicalHistory: data.medicalHistory,
+        }),
+      };
+    }
+
+    // Remove undefined keys
+    Object.keys(updatePayload).forEach((key) => {
+      if (updatePayload[key] === undefined) {
+        delete updatePayload[key];
+      }
+    });
+
     // Update customer
     const [updatedCustomer] = await db
       .update(customers)
-      .set({
-        ...data,
-        updatedAt: new Date(),
-      })
+      .set(updatePayload)
       .where(
         and(eq(customers.id, customerId), eq(customers.tenantId, tenant.id)),
       )
@@ -136,7 +190,14 @@ export async function PATCH(
       );
     }
 
-    return NextResponse.json({ customer: updatedCustomer });
+    // Enrich response for frontend convenience
+    const responseCustomer = {
+      ...updatedCustomer,
+      birthday: (updatedCustomer.metadata as any)?.birthday || null,
+      medicalHistory: (updatedCustomer.metadata as any)?.medicalHistory || null,
+    };
+
+    return NextResponse.json({ customer: responseCustomer });
   } catch (error) {
     console.error("Customer PATCH error:", error);
 

@@ -8,16 +8,14 @@ import { TenantStyles } from "@/components/tenant/TenantStyles";
 import { LiveRegionProvider } from "@/components/a11y/LiveRegion";
 import { GoogleAuthBinder } from "@/components/auth/GoogleAuthBinder";
 
-import { db } from "@sass-store/database";
-import { tenants } from "@sass-store/database/schema";
+import { getTenantStaticParams } from "@/lib/server/tenant-static-params";
 
 // ISR: revalidate tenant pages every 60 seconds
 export const revalidate = 60;
 
 // Pre-render known tenants at build time; unknown slugs trigger on-demand generation (dynamicParams = true by default)
 export async function generateStaticParams() {
-  const all = await db.select({ slug: tenants.slug }).from(tenants).limit(200);
-  return all.map((t) => ({ tenant: t.slug }));
+  return getTenantStaticParams();
 }
 
 interface TenantLayoutProps {

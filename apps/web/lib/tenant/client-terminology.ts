@@ -49,6 +49,10 @@ function detectTenantType(tenantSlug: string): "beauty" | "sports" | "default" {
   return "default";
 }
 
+export function isSportsTenant(tenantSlug: string): boolean {
+  return detectTenantType(tenantSlug) === "sports";
+}
+
 export function getClientTerms(tenantSlug: string): ClientTerms {
   const type = detectTenantType(tenantSlug);
 

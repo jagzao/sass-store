@@ -1,246 +1,208 @@
+/**
+ * STRY-021 PERF-004 — Rate limiter basado en Upstash Redis.
+ *
+ * Reemplaza la implementación in-memory (Map) que era inútil en entornos
+ * serverless/multi-instancia (Vercel). Ahora el estado es compartido entre
+ * todas las instancias Lambda via Redis.
+ *
+ * Algoritmo: Sliding window con sorted set de Redis.
+ * Fallback: fail-open si Redis no está configurado (con advertencia).
+ */
+
+import { Redis } from "@upstash/redis";
 import { NextRequest } from "next/server";
-import { securityLogger } from "./audit-logger";
 
-interface RateLimitConfig {
-  windowMs: number; // Time window in milliseconds
-  maxRequests: number; // Maximum requests per window
-  blockDurationMs?: number; // How long to block after exceeding limit
-  whitelist?: string[]; // IP addresses to whitelist
-  blacklist?: string[]; // IP addresses to blacklist
+function getRedisClient(): Redis | null {
+  const url =
+    process.env.UPSTASH_REDIS_REST_URL?.trim() ||
+    process.env.UPSTASH_REDIS_URL?.trim();
+  const token =
+    process.env.UPSTASH_REDIS_REST_TOKEN?.trim() ||
+    process.env.UPSTASH_REDIS_TOKEN?.trim();
+
+  if (!url || !token) return null;
+
+  return new Redis({ url, token });
 }
 
-interface RateLimitEntry {
-  count: number;
+// Singleton — se comparte entre todas las instancias del módulo
+const redis = getRedisClient();
+
+export interface RateLimitResult {
+  allowed: boolean;
+  remaining: number;
   resetTime: number;
-  blockedUntil?: number;
-  suspiciousActivity: boolean;
+  blocked: boolean;
+  blockReason?: string;
 }
-
-// In-memory store (in production, use Redis)
-const rateLimitStore = new Map<string, RateLimitEntry>();
 
 /**
- * Advanced rate limiter with attack detection
+ * Sliding window rate limiter usando Redis sorted set.
+ * Cada request agrega una entrada con score=timestamp. Las entradas fuera
+ * de la ventana se eliminan en la misma operación (pipeline atómico).
  */
-export class AdvancedRateLimiter {
-  private config: RateLimitConfig;
-
-  constructor(config: RateLimitConfig) {
-    this.config = config;
+async function checkRateLimitRedis(
+  key: string,
+  maxRequests: number,
+  windowSeconds: number,
+): Promise<RateLimitResult> {
+  if (!redis) {
+    // Sin Redis: fail-open con log de advertencia (solo una vez)
+    if (process.env.NODE_ENV === "production") {
+      console.warn(
+        "[RateLimit] Redis no configurado — rate limiting desactivado en producción",
+      );
+    }
+    return {
+      allowed: true,
+      remaining: maxRequests,
+      resetTime: 0,
+      blocked: false,
+    };
   }
 
-  /**
-   * Check if request should be rate limited
-   */
-  async checkLimit(
-    request: NextRequest,
-    identifier: string = "global",
-  ): Promise<{
-    allowed: boolean;
-    remaining: number;
-    resetTime: number;
-    blocked: boolean;
-    blockReason?: string;
-  }> {
-    const ip = this.getClientIP(request);
-    const key = `${identifier}:${ip}`;
+  const now = Date.now();
+  const windowMs = windowSeconds * 1000;
+  const windowStart = now - windowMs;
 
-    // Check blacklist
-    if (this.config.blacklist?.includes(ip)) {
-      await securityLogger.logSuspiciousActivity(
-        null,
-        null,
-        "blacklisted_ip_access",
-        ["blacklisted_ip"],
-        ip,
-        request.headers.get("user-agent") || "unknown",
-      );
+  try {
+    // Pipeline atómico:
+    // 1. Eliminar entradas fuera de la ventana de tiempo
+    // 2. Contar entradas dentro de la ventana
+    // 3. Agregar la request actual
+    // 4. Setear TTL para auto-cleanup
+    const pipeline = redis.pipeline();
+    pipeline.zremrangebyscore(key, 0, windowStart);
+    pipeline.zcard(key);
+    pipeline.zadd(key, { score: now, member: `${now}-${Math.random()}` });
+    pipeline.expire(key, windowSeconds + 1);
 
+    const results = await pipeline.exec();
+    // results[1] es el count ANTES de agregar la request actual
+    const currentCount = (results[1] as number) ?? 0;
+
+    if (currentCount >= maxRequests) {
       return {
         allowed: false,
         remaining: 0,
-        resetTime: Date.now() + 24 * 60 * 60 * 1000, // 24 hours
-        blocked: true,
-        blockReason: "IP address is blacklisted",
-      };
-    }
-
-    // Check whitelist
-    if (this.config.whitelist?.includes(ip)) {
-      return {
-        allowed: true,
-        remaining: this.config.maxRequests,
-        resetTime: Date.now() + this.config.windowMs,
-        blocked: false,
-      };
-    }
-
-    const now = Date.now();
-    let entry = rateLimitStore.get(key);
-
-    // Initialize or reset entry if window expired
-    if (!entry || now > entry.resetTime) {
-      entry = {
-        count: 0,
-        resetTime: now + this.config.windowMs,
-        suspiciousActivity: false,
-      };
-    }
-
-    // Check if currently blocked
-    if (entry.blockedUntil && now < entry.blockedUntil) {
-      return {
-        allowed: false,
-        remaining: 0,
-        resetTime: entry.blockedUntil,
-        blocked: true,
-        blockReason: "Rate limit exceeded - temporarily blocked",
-      };
-    }
-
-    // Check rate limit
-    if (entry.count >= this.config.maxRequests) {
-      // Block the IP
-      const blockDuration = this.config.blockDurationMs || 15 * 60 * 1000; // 15 minutes default
-      entry.blockedUntil = now + blockDuration;
-      entry.suspiciousActivity = true;
-
-      rateLimitStore.set(key, entry);
-
-      // Log suspicious activity
-      await securityLogger.logSuspiciousActivity(
-        null,
-        null,
-        "rate_limit_exceeded",
-        ["excessive_requests", "potential_attack"],
-        ip,
-        request.headers.get("user-agent") || "unknown",
-        {
-          requestsInWindow: entry.count,
-          windowMs: this.config.windowMs,
-          blockDuration,
-        },
-      );
-
-      return {
-        allowed: false,
-        remaining: 0,
-        resetTime: entry.blockedUntil,
+        resetTime: now + windowMs,
         blocked: true,
         blockReason: "Rate limit exceeded",
       };
     }
 
-    // Allow request
-    entry.count++;
-    rateLimitStore.set(key, entry);
-
-    const remaining = Math.max(0, this.config.maxRequests - entry.count);
-
     return {
       allowed: true,
-      remaining,
-      resetTime: entry.resetTime,
+      remaining: Math.max(0, maxRequests - currentCount - 1),
+      resetTime: now + windowMs,
+      blocked: false,
+    };
+  } catch (error) {
+    // Fail-open: si Redis falla, no bloquear requests legítimas
+    console.error("[RateLimit] Redis error:", error);
+    return {
+      allowed: true,
+      remaining: maxRequests,
+      resetTime: 0,
       blocked: false,
     };
   }
+}
 
-  /**
-   * Get client IP address from request
-   */
-  private getClientIP(request: NextRequest): string {
-    // Check common headers for IP
-    const forwarded = request.headers.get("x-forwarded-for");
-    const realIP = request.headers.get("x-real-ip");
-    const cfConnectingIP = request.headers.get("cf-connecting-ip");
+function getClientIP(request: NextRequest): string {
+  // Cloudflare primero, luego proxies standard
+  return (
+    request.headers.get("cf-connecting-ip") ??
+    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+    request.headers.get("x-real-ip") ??
+    "unknown"
+  );
+}
 
-    // Use the first available IP
-    const ip =
-      forwarded?.split(",")[0]?.trim() || realIP || cfConnectingIP || "unknown";
+interface RateLimiterConfig {
+  windowMs: number;
+  maxRequests: number;
+  blockDurationMs?: number; // Ya no se usa — Redis maneja TTL automáticamente
+  whitelist?: string[];
+  blacklist?: string[];
+  identifier?: string;
+}
 
-    return ip;
+/**
+ * Rate limiter compatible con la API anterior (AdvancedRateLimiter).
+ * Ahora usa Redis en lugar de Map en memoria.
+ */
+export class AdvancedRateLimiter {
+  private maxRequests: number;
+  private windowSeconds: number;
+  private identifier: string;
+  private whitelist: string[];
+  private blacklist: string[];
+
+  constructor(config: RateLimiterConfig) {
+    this.maxRequests = config.maxRequests;
+    this.windowSeconds = Math.floor(config.windowMs / 1000);
+    this.identifier = config.identifier ?? "rl";
+    this.whitelist = config.whitelist ?? [];
+    this.blacklist = config.blacklist ?? [];
   }
 
-  /**
-   * Clean up expired entries (should be called periodically)
-   */
-  cleanup(): void {
-    const now = Date.now();
+  async checkLimit(
+    request: NextRequest,
+    identifier?: string,
+  ): Promise<RateLimitResult> {
+    const ip = getClientIP(request);
 
-    for (const [key, entry] of rateLimitStore.entries()) {
-      if (
-        now > entry.resetTime &&
-        (!entry.blockedUntil || now > entry.blockedUntil)
-      ) {
-        rateLimitStore.delete(key);
-      }
+    if (this.blacklist.includes(ip)) {
+      return {
+        allowed: false,
+        remaining: 0,
+        resetTime: Date.now() + 24 * 60 * 60 * 1000,
+        blocked: true,
+        blockReason: "IP address is blacklisted",
+      };
     }
-  }
 
-  /**
-   * Get rate limit status for an IP
-   */
-  getStatus(ip: string, identifier: string = "global"): RateLimitEntry | null {
-    return rateLimitStore.get(`${identifier}:${ip}`) || null;
-  }
-
-  /**
-   * Manually block an IP
-   */
-  blockIP(ip: string, durationMs: number = 60 * 60 * 1000): void {
-    // 1 hour default
-    const key = `global:${ip}`;
-    const entry = rateLimitStore.get(key) || {
-      count: 0,
-      resetTime: Date.now() + this.config.windowMs,
-      suspiciousActivity: false,
-    };
-
-    entry.blockedUntil = Date.now() + durationMs;
-    rateLimitStore.set(key, entry);
-  }
-
-  /**
-   * Manually unblock an IP
-   */
-  unblockIP(ip: string): void {
-    const key = `global:${ip}`;
-    const entry = rateLimitStore.get(key);
-
-    if (entry) {
-      entry.blockedUntil = undefined;
-      rateLimitStore.set(key, entry);
+    if (this.whitelist.includes(ip)) {
+      return {
+        allowed: true,
+        remaining: this.maxRequests,
+        resetTime: Date.now() + this.windowSeconds * 1000,
+        blocked: false,
+      };
     }
+
+    const key = `ratelimit:${identifier ?? this.identifier}:${ip}`;
+    return checkRateLimitRedis(key, this.maxRequests, this.windowSeconds);
+  }
+
+  // Métodos legacy — ya no son necesarios con Redis (TTL automático)
+  cleanup(): void {}
+  blockIP(_ip: string, _durationMs?: number): void {}
+  unblockIP(_ip: string): void {}
+  getStatus(_ip: string, _identifier?: string): null {
+    return null;
   }
 }
 
-// Pre-configured rate limiters for different endpoints
+// Pre-configured rate limiters (misma configuración que antes)
 export const authRateLimiter = new AdvancedRateLimiter({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  maxRequests: 5, // 5 attempts per 15 minutes
-  blockDurationMs: 60 * 60 * 1000, // 1 hour block
+  windowMs: 15 * 60 * 1000, // 15 minutos
+  maxRequests: 5, // 5 intentos por ventana
+  identifier: "auth",
 });
 
 export const apiRateLimiter = new AdvancedRateLimiter({
-  windowMs: 60 * 1000, // 1 minute
-  maxRequests: 100, // 100 requests per minute
-  blockDurationMs: 15 * 60 * 1000, // 15 minutes block
+  windowMs: 60 * 1000, // 1 minuto
+  maxRequests: 100, // 100 req/min
+  identifier: "api",
 });
 
 export const configRateLimiter = new AdvancedRateLimiter({
-  windowMs: 60 * 1000, // 1 minute
-  maxRequests: 30, // 30 config changes per minute
-  blockDurationMs: 30 * 60 * 1000, // 30 minutes block
+  windowMs: 60 * 1000, // 1 minuto
+  maxRequests: 30, // 30 cambios de config por minuto
+  identifier: "config",
 });
 
-// Periodic cleanup (run every 5 minutes)
-if (typeof globalThis !== "undefined") {
-  setInterval(
-    () => {
-      authRateLimiter.cleanup();
-      apiRateLimiter.cleanup();
-      configRateLimiter.cleanup();
-    },
-    5 * 60 * 1000,
-  );
-}
+// STRY-021 PERF-004: Eliminado setInterval de cleanup —
+// Redis maneja la expiración automáticamente con TTL.

@@ -1,4 +1,3 @@
-import { notFound } from "next/navigation";
 import { getTenantDataForPage } from "@/lib/db/tenant-service";
 import { CheckoutClient } from "./checkout-client";
 

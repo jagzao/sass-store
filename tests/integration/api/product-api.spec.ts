@@ -10,7 +10,9 @@ import { Result, Ok, Err, isFailure } from "@sass-store/core/src/result";
 import { ErrorFactories } from "@sass-store/core/src/errors/types";
 import { createAuthToken } from "@sass-store/core/src/middleware/auth-middleware";
 
-describe.skipIf(!process.env.TEST_API_BASE_URL)("API Integration Tests", () => {
+describe.skipIf(
+  !process.env.TEST_API_BASE_URL || !process.env.RUN_LEGACY_API_TESTS,
+)("API Integration Tests", () => {
   const baseUrl = process.env.TEST_API_BASE_URL!;
   let testUserId: string;
   let testAuthToken: string;

@@ -1,5 +1,13 @@
+/**
+ * File Upload API
+ *
+ * STRY-021 SEC-008: Requiere sesión autenticada.
+ * STRY-021 PERF-008: Eliminado fallback base64 — devuelve 503 si Cloudinary no está configurado.
+ */
+
 import { NextRequest, NextResponse } from "next/server";
 import { v2 as cloudinary } from "cloudinary";
+import { auth } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -17,6 +25,28 @@ if (
 }
 
 export async function POST(request: NextRequest) {
+  // STRY-021 SEC-008: Requiere sesión autenticada
+  const session = await auth();
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // Verificar que Cloudinary está configurado antes de procesar el archivo
+  if (
+    !process.env.CLOUDINARY_CLOUD_NAME ||
+    !process.env.CLOUDINARY_API_KEY ||
+    !process.env.CLOUDINARY_API_SECRET
+  ) {
+    // STRY-021 PERF-008: Eliminado fallback base64 — podía devolver >6MB de JSON
+    return NextResponse.json(
+      {
+        error: "Upload service not configured",
+        message: "Cloudinary credentials missing. Contact administrator.",
+      },
+      { status: 503 },
+    );
+  }
+
   try {
     const formData = await request.formData();
     const file = formData.get("file") as File;
@@ -45,66 +75,35 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // If Cloudinary is configured, upload to Cloudinary
-    if (
-      process.env.CLOUDINARY_CLOUD_NAME &&
-      process.env.CLOUDINARY_API_KEY &&
-      process.env.CLOUDINARY_API_SECRET
-    ) {
-      try {
-        // Convert file to buffer
-        const bytes = await file.arrayBuffer();
-        const buffer = Buffer.from(bytes);
-
-        // Upload to Cloudinary using a promise
-        const result = await new Promise<{ secure_url: string }>(
-          (resolve, reject) => {
-            const uploadStream = cloudinary.uploader.upload_stream(
-              {
-                folder: `sass-store/${folder}`,
-                resource_type: "auto",
-              },
-              (error, result) => {
-                if (error) reject(error);
-                else if (result) resolve(result);
-                else reject(new Error("Upload failed"));
-              },
-            );
-
-            uploadStream.end(buffer);
-          },
-        );
-
-        return NextResponse.json({
-          url: result.secure_url,
-          success: true,
-          message: "File uploaded successfully to Cloudinary",
-        });
-      } catch (error) {
-        console.error("Cloudinary upload error:", error);
-        // Fall through to base64 fallback
-      }
-    }
-
-    // Fallback: Convert to base64 data URL
+    // Convert file to buffer and upload to Cloudinary
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
-    const base64 = buffer.toString("base64");
-    const dataUrl = `data:${file.type};base64,${base64}`;
+
+    const result = await new Promise<{ secure_url: string }>(
+      (resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          {
+            folder: `sass-store/${folder}`,
+            resource_type: "auto",
+          },
+          (error, result) => {
+            if (error) reject(error);
+            else if (result) resolve(result);
+            else reject(new Error("Upload failed — no result returned"));
+          },
+        );
+        uploadStream.end(buffer);
+      },
+    );
 
     return NextResponse.json({
-      url: dataUrl,
+      url: result.secure_url,
       success: true,
-      message: "File converted to base64 (Cloudinary not configured)",
-      isBase64: true,
     });
   } catch (error) {
-    console.error("Upload error:", error);
+    console.error("[Upload] Error:", error);
     return NextResponse.json(
-      {
-        error: "Failed to upload file",
-        details: error instanceof Error ? error.message : "Unknown error",
-      },
+      { error: "Failed to upload file" },
       { status: 500 },
     );
   }

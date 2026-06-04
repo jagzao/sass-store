@@ -5,6 +5,7 @@ import { eq, and } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { randomUUID } from "crypto";
+import { authRateLimiter } from "@/lib/security/rate-limiter";
 
 const emailRegex =
   /^[a-zA-Z0-9ñÑáéíóúÁÉÍÓÚüÜ._%+-]+@[a-zA-Z0-9ñÑáéíóúÁÉÍÓÚüÜ.-]+\.[a-zA-Z]{2,}$/;
@@ -20,6 +21,20 @@ const registerSchema = z.object({
 });
 
 export async function POST(request: NextRequest) {
+  // STRY-022: Rate limiting en registro — previene creación masiva de cuentas
+  const rl = await authRateLimiter.checkLimit(request, "register");
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: "Too many requests. Please try again later." },
+      {
+        status: 429,
+        headers: {
+          "Retry-After": String(Math.ceil((rl.resetTime - Date.now()) / 1000)),
+        },
+      },
+    );
+  }
+
   try {
     const body = await request.json();
     const result = registerSchema.safeParse(body);

@@ -2,6 +2,7 @@
 import { drizzle } from "drizzle-orm/postgres-js";
 import type { PgTable, PgColumn } from "drizzle-orm/pg-core";
 import type { SQL } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 import postgres from "postgres";
 import * as schema from "./schema";
 
@@ -115,33 +116,19 @@ declare global {
 }
 
 // Helper to check database connectivity
+// STRY-021 PERF-006: Reusar el pool singleton en lugar de abrir nueva conexión TCP
 export async function checkDatabaseConnection(): Promise<boolean> {
   if (!connectionString) {
-    if (process.env.NODE_ENV === "development") {
-      console.warn(
-        "[Self-Healing] Database connection check skipped - no DATABASE_URL",
-      );
-    }
     return false;
   }
 
   try {
-    const checkLocalhost =
-      connectionString.includes("localhost") ||
-      connectionString.includes("127.0.0.1");
-    const client = postgres(connectionString, {
-      prepare: false,
-      ssl: checkLocalhost ? false : "require",
-      max: 1,
-      idle_timeout: 10,
-      connect_timeout: 5,
-    });
-
-    await client`SELECT 1`;
-    await client.end();
+    // Usar el singleton db — no crear una nueva conexión TCP solo para el ping
+    const dbInstance = globalThis.__webDbInstance ?? createDatabaseInstance();
+    await dbInstance.execute(sql`SELECT 1`);
     return true;
   } catch (error) {
-    console.error("[Self-Healing] Database connection failed:", error);
+    console.error("[DB] Health check failed:", error);
     return false;
   }
 }
@@ -174,7 +161,9 @@ function createDatabaseInstance() {
       idle_timeout: connectionConfig.idleTimeout,
       connect_timeout: 30,
       onnotice: () => {}, // Silence notices
-      debug: process.env.NODE_ENV === "development",
+      // STRY-022 PERF-NEW-003: debug=false por defecto.
+      // Activar explícitamente con DB_DEBUG=true cuando se necesite inspeccionar queries.
+      debug: process.env.DB_DEBUG === "true",
     });
 
     return drizzle(client, { schema });

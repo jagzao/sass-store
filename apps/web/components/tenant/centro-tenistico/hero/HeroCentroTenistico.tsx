@@ -69,7 +69,7 @@ export default function HeroCentroTenistico() {
 
             <div className="flex flex-wrap gap-3 pt-2">
               <a
-                href="/t/centro-tenistico/bookings"
+                href="/t/centro-tenistico/sessions"
                 className="px-6 py-3 rounded-xl font-semibold text-white text-sm transition-all duration-200 hover:scale-[1.03] hover:shadow-lg active:scale-[0.98]"
                 style={{
                   backgroundColor: GROUP_ACCENT,
@@ -77,7 +77,7 @@ export default function HeroCentroTenistico() {
                 }}
                 data-testid="ctv-hero-cta-group"
               >
-                Unirse al Grupo
+                Inscribirse a clases
               </a>
               <a
                 href="/t/centro-tenistico/services"

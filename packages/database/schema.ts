@@ -1728,6 +1728,72 @@ export const customers = pgTable(
   }),
 );
 
+// Class sessions (sports tenants — group classes with roster) — STRY-023
+export const classSessions = pgTable(
+  "class_sessions",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .references(() => tenants.id)
+      .notNull(),
+    title: varchar("title", { length: 255 }).notNull(),
+    description: text("description"),
+    startsAt: timestamp("starts_at", { withTimezone: true }).notNull(),
+    endsAt: timestamp("ends_at", { withTimezone: true }).notNull(),
+    maxCapacity: integer("max_capacity").notNull(),
+    staffId: uuid("staff_id").references(() => staff.id),
+    status: varchar("status", { length: 20 }).notNull().default("scheduled"),
+    location: varchar("location", { length: 255 }),
+    socialExport: jsonb("social_export"),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
+  },
+  (table) => ({
+    tenantStartsIdx: index("class_sessions_tenant_starts_idx").on(
+      table.tenantId,
+      table.startsAt,
+    ),
+  }),
+);
+
+export const sessionEnrollments = pgTable(
+  "session_enrollments",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    sessionId: uuid("session_id")
+      .references(() => classSessions.id, { onDelete: "cascade" })
+      .notNull(),
+    customerId: uuid("customer_id")
+      .references(() => customers.id)
+      .notNull(),
+    tenantId: uuid("tenant_id")
+      .references(() => tenants.id)
+      .notNull(),
+    status: varchar("status", { length: 20 }).notNull().default("active"),
+    enrolledAt: timestamp("enrolled_at", { withTimezone: true }).defaultNow(),
+  },
+  (table) => ({
+    sessionCustomerUnique: uniqueIndex(
+      "session_enrollments_session_customer_unique",
+    ).on(table.sessionId, table.customerId),
+    sessionIdx: index("session_enrollments_session_idx").on(
+      table.sessionId,
+      table.status,
+    ),
+  }),
+);
+
+export const sessionAttendance = pgTable("session_attendance", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  enrollmentId: uuid("enrollment_id")
+    .references(() => sessionEnrollments.id, { onDelete: "cascade" })
+    .notNull()
+    .unique(),
+  present: boolean("present").notNull().default(false),
+  markedAt: timestamp("marked_at", { withTimezone: true }),
+  markedBy: uuid("marked_by"),
+});
+
 // Customer Visits table - Visit history per customer
 export const customerVisits = pgTable(
   "customer_visits",
@@ -1928,7 +1994,51 @@ export const customersRelations = relations(customers, ({ one, many }) => ({
     fields: [customers.retouchServiceId],
     references: [services.id],
   }),
+  sessionEnrollments: many(sessionEnrollments),
 }));
+
+export const classSessionsRelations = relations(
+  classSessions,
+  ({ one, many }) => ({
+    tenant: one(tenants, {
+      fields: [classSessions.tenantId],
+      references: [tenants.id],
+    }),
+    staff: one(staff, {
+      fields: [classSessions.staffId],
+      references: [staff.id],
+    }),
+    enrollments: many(sessionEnrollments),
+  }),
+);
+
+export const sessionEnrollmentsRelations = relations(
+  sessionEnrollments,
+  ({ one }) => ({
+    session: one(classSessions, {
+      fields: [sessionEnrollments.sessionId],
+      references: [classSessions.id],
+    }),
+    customer: one(customers, {
+      fields: [sessionEnrollments.customerId],
+      references: [customers.id],
+    }),
+    attendance: one(sessionAttendance, {
+      fields: [sessionEnrollments.id],
+      references: [sessionAttendance.enrollmentId],
+    }),
+  }),
+);
+
+export const sessionAttendanceRelations = relations(
+  sessionAttendance,
+  ({ one }) => ({
+    enrollment: one(sessionEnrollments, {
+      fields: [sessionAttendance.enrollmentId],
+      references: [sessionEnrollments.id],
+    }),
+  }),
+);
 
 export const customerVisitsRelations = relations(
   customerVisits,
@@ -3060,5 +3170,59 @@ export const scheduledNotificationsRelations = relations(
       fields: [scheduledNotifications.bookingId],
       references: [bookings.id],
     }),
+  }),
+);
+
+// ---------------------------------------------------------------------------
+// WhatsApp Booking Conversations — estado conversacional del Booking Assistant
+// ---------------------------------------------------------------------------
+
+export const waBookingConversationStates = [
+  "awaiting_confirm",
+  "confirmed",
+  "cancelled",
+  "expired",
+] as const;
+
+export type WaBookingConversationState =
+  (typeof waBookingConversationStates)[number];
+
+export const waBookingConversations = pgTable(
+  "wa_booking_conversations",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    phone: varchar("phone", { length: 20 }).notNull(),
+    tenantSlug: varchar("tenant_slug", { length: 100 })
+      .notNull()
+      .default("wondernails"),
+    state: varchar("state", { length: 30 })
+      .notNull()
+      .default("awaiting_confirm"),
+    serviceId: uuid("service_id"),
+    serviceName: varchar("service_name", { length: 255 }),
+    servicePrice: decimal("service_price", { precision: 10, scale: 2 }),
+    dateIso: date("date_iso"),
+    timeStr: varchar("time_str", { length: 10 }),
+    customerName: varchar("customer_name", { length: 100 }),
+    customerId: uuid("customer_id"),
+    triggerMsgId: varchar("trigger_msg_id", { length: 100 }),
+    confirmMsgId: varchar("confirm_msg_id", { length: 100 }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    expiresAt: timestamp("expires_at", { withTimezone: true })
+      .notNull()
+      .default(sql`NOW() + INTERVAL '30 minutes'`),
+  },
+  (table) => ({
+    phoneIdx: index("wa_booking_convos_phone_idx").on(table.phone),
+    stateIdx: index("wa_booking_convos_state_idx").on(table.state),
+    expiresIdx: index("wa_booking_convos_expires_idx").on(table.expiresAt),
+    triggerMsgIdUq: uniqueIndex("wa_booking_convos_trigger_msg_id_uq").on(
+      table.triggerMsgId,
+    ),
   }),
 );

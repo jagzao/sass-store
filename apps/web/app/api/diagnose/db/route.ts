@@ -33,7 +33,7 @@ export async function GET() {
         status: "error",
         message: "Error al conectar con la base de datos",
         error: error instanceof Error ? error.message : "Error desconocido",
-        stack: error instanceof Error ? error.stack : undefined,
+        // STRY-022: stack trace removido
       },
       { status: 500 },
     );

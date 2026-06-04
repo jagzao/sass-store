@@ -78,9 +78,7 @@ export class TenantService {
   // Get tenant by slug with complete data
   static async getTenantBySlug(slug: string) {
     try {
-      console.warn(`[TenantService] Fetching tenant from database: ${slug}`);
-
-      // Query the actual database
+      // STRY-021 PERF-002: Eliminados console.warn de hot path
       const tenant = await db
         .select()
         .from(tenants)
@@ -89,9 +87,6 @@ export class TenantService {
 
       if (tenant && tenant.length > 0) {
         const tenantData = tenant[0];
-        console.warn(
-          `[TenantService] Found tenant in database: ${tenantData.name}`,
-        );
 
         const isYellow = (color: string) =>
           color?.toLowerCase() === "yellow" ||
@@ -135,11 +130,6 @@ export class TenantService {
   // Get tenant services (booking-mode tenants)
   static async getTenantServices(tenantId: string) {
     try {
-      console.warn(
-        `[TenantService] Fetching services from database for tenant: ${tenantId}`,
-      );
-
-      // Query services from the database with RLS
       const tenantServices = await withTenantContext(
         db,
         tenantId,
@@ -153,10 +143,6 @@ export class TenantService {
       );
 
       if (Array.isArray(tenantServices)) {
-        console.warn(
-          `[TenantService] Found ${tenantServices.length} services for tenant: ${tenantId}`,
-        );
-
         return tenantServices.map((service: Service) => ({
           id: service.id,
           name: service.name,
@@ -185,11 +171,6 @@ export class TenantService {
   // Get tenant products (catalog-mode tenants)
   static async getTenantProducts(tenantId: string) {
     try {
-      console.warn(
-        `[TenantService] Fetching products from database for tenant: ${tenantId}`,
-      );
-
-      // Query products from the database with RLS
       const tenantProducts = await withTenantContext(
         db,
         tenantId,
@@ -217,10 +198,6 @@ export class TenantService {
       );
 
       if (Array.isArray(tenantProducts)) {
-        console.warn(
-          `[TenantService] Found ${tenantProducts.length} products for tenant: ${tenantId}`,
-        );
-
         return tenantProducts.map((product: Product) => ({
           id: product.id,
           sku: product.sku,
@@ -243,11 +220,6 @@ export class TenantService {
   // Get tenant staff (for booking tenants)
   static async getTenantStaff(tenantId: string) {
     try {
-      console.warn(
-        `[TenantService] Fetching staff from database for tenant: ${tenantId}`,
-      );
-
-      // Query staff from the database with RLS
       const tenantStaff = await withTenantContext(
         db,
         tenantId,
@@ -261,10 +233,6 @@ export class TenantService {
       );
 
       if (Array.isArray(tenantStaff)) {
-        console.warn(
-          `[TenantService] Found ${tenantStaff.length} staff members for tenant: ${tenantId}`,
-        );
-
         return tenantStaff.map((staffMember: typeof staff.$inferSelect) => ({
           id: staffMember.id,
           name: staffMember.name,
@@ -292,7 +260,6 @@ export class TenantService {
     // Check in-memory cache first (fastest)
     const memCached = TenantCache.get(memoryCacheKey);
     if (memCached) {
-      console.warn(`[TenantService] Using in-memory cache for: ${slug}`);
       return memCached;
     }
 
@@ -301,11 +268,7 @@ export class TenantService {
       redisCacheKey,
       async () => {
         try {
-          console.warn(
-            `[TenantService] Fetching complete tenant data for: ${slug}`,
-          );
-
-          // Single optimized query to get tenant with all relations in one go
+          // STRY-021 PERF-002: Eliminados todos los console.warn del hot path
           const tenant = await db
             .select()
             .from(tenants)
@@ -313,16 +276,10 @@ export class TenantService {
             .limit(1);
 
           if (!tenant || tenant.length === 0) {
-            console.warn(
-              `[TenantService] Tenant not found in database: ${slug}`,
-            );
             return null;
           }
 
           const tenantData = tenant[0];
-          console.warn(
-            `[TenantService] Found tenant in database: ${tenantData.name}`,
-          );
 
           // Parallel fetch of all related data with RLS context
           const [tenantServices, tenantProducts, tenantStaff] =
@@ -360,10 +317,6 @@ export class TenantService {
                   : Promise.resolve([]),
               ]);
             });
-
-          console.warn(
-            `[TenantService] Loaded ${tenantServices.length} services, ${tenantProducts.length} products, ${tenantStaff.length} staff`,
-          );
 
           // FIX: Global Interceptor for fluorescent yellow colors causing UI bugs.
           const isYellow = (color: string) =>

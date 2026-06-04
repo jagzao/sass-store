@@ -1,4 +1,5 @@
 import { NextRequest } from "next/server";
+import { auth } from "@/lib/auth";
 import { Result, Ok, Err, isFailure } from "@sass-store/core/src/result";
 import { DomainError, ErrorFactories } from "@sass-store/core/src/errors/types";
 import { db } from "@sass-store/database";
@@ -232,6 +233,13 @@ const getKPIData = async (
 };
 
 export async function GET(request: NextRequest): Promise<Response> {
+  // STRY-022 SEC-NEW-002: Requiere sesión autenticada.
+  // Sin este guard, cualquiera podía obtener KPIs financieros de cualquier tenant.
+  const session = await auth();
+  if (!session?.user?.id) {
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     const { searchParams } = new URL(request.url);
 

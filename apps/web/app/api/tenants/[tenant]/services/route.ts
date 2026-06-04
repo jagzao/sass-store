@@ -80,7 +80,7 @@ export async function POST(
     );
     console.error(
       "Stack trace:",
-      error instanceof Error ? error.stack : "No stack trace",
+      error instanceof Error ? error.message : "Unknown error",
     );
 
     if (error instanceof z.ZodError) {

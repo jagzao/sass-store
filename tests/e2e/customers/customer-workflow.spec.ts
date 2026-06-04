@@ -1,5 +1,9 @@
 import { test, expect } from "@playwright/test";
-import { TEST_CREDENTIALS, loginAsAdmin } from "../helpers/test-helpers";
+import {
+  TEST_CREDENTIALS,
+  loginAsAdmin,
+  getCsrfHeaders,
+} from "../helpers/test-helpers";
 
 test.describe.serial("Customer & Visit Workflow", () => {
   const { tenantSlug } = TEST_CREDENTIALS;
@@ -26,8 +30,9 @@ test.describe.serial("Customer & Visit Workflow", () => {
     const clientPhone = `555${String(randomId).slice(-7)}`;
     const clientEmail = `visit-${randomId}@test.com`;
 
+    // El modal usa {t.addLabel} = "Agregar Clienta" (sin "Nueva")
     await expect(
-      page.getByRole("heading", { name: /Agregar Nueva Clienta/i }),
+      page.getByRole("heading", { name: /Agregar Clienta/i }),
     ).toBeVisible({ timeout: 10000 });
 
     await page
@@ -72,10 +77,16 @@ test.describe.serial("Customer & Visit Workflow", () => {
     ).toBeVisible({ timeout: 10000 });
 
     // 4) Add a service to enable submit
+    // Incluir CSRF header — el proxy ahora protege todas las rutas /api/*
+    const csrfHeaders = await getCsrfHeaders(page);
     const serviceName = `Visit Service ${randomId}`;
     const serviceResponse = await page.request.post(
       `/api/tenants/${tenantSlug}/services`,
       {
+        headers: {
+          "Content-Type": "application/json",
+          ...csrfHeaders,
+        },
         data: {
           name: serviceName,
           description: "Service created by E2E for visit flow",
