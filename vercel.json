@@ -1,8 +1,7 @@
 {
-  "rootDirectory": "apps/web",
-  "installCommand": "cd ../.. && npm install --legacy-peer-deps",
-  "buildCommand": "npm run build",
-  "devCommand": "cd ../.. && npm run dev",
+  "installCommand": "npm install --legacy-peer-deps",
+  "buildCommand": "cd apps/web && npm run build",
+  "devCommand": "npm run dev",
   "framework": "nextjs",
   "functions": {
     "app/api/health/**": { "maxDuration": 5 },
