@@ -1,0 +1,123 @@
+{
+  "name": "sass-store: WA Support Webhook (Kimi K2.5)",
+  "active": true,
+  "settings": { "executionOrder": "v1" },
+  "nodes": [
+    {
+      "id": "trig-sup",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [200, 300],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "wa-support",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "webhookId": "wa-support-v1"
+    },
+    {
+      "id": "resp-sup",
+      "name": "Respond OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [400, 200],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"ok\": true }"
+      }
+    },
+    {
+      "id": "ctx-sup",
+      "name": "Load Tenant Context",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [400, 400],
+      "credentials": {
+        "postgres": {
+          "id": "FmvG7eSe9Y6nG73Z",
+          "name": "sass-store Supabase DB"
+        }
+      },
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT s.name AS service_name, s.price, s.duration_minutes, wt.bot_name, wt.tone, wt.display_name, wt.fallback_msg, wt.max_ai_tokens, wt.ai_enabled FROM services s JOIN tenants t ON s.tenant_id = t.id JOIN wa_tenant_config wt ON wt.tenant_slug = t.slug WHERE t.slug = '{{ $json.body.tenantSlug }}' AND s.is_active = true LIMIT 10",
+        "options": {}
+      }
+    },
+    {
+      "id": "ai-sup",
+      "name": "Call Kimi K2.5",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [600, 400],
+      "parameters": {
+        "method": "POST",
+        "url": "https://ollama.com/v1/chat/completions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer {{OLLAMA_KEY}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ (() => { const rows = $('Load Tenant Context').all().map(i => i.json); const cfg = rows[0] || {}; const services = rows.map(r => '- ' + r.service_name + ': $' + r.price + ' MXN').join('\\n'); const msg = $('Webhook').item.json.body.message.content; const prompt = 'Eres ' + (cfg.bot_name || 'Asistente') + ' de ' + (cfg.display_name || 'el negocio') + '. Tono: ' + (cfg.tone || 'amigable') + '. Español mexicano. Máx ' + (cfg.max_ai_tokens || 200) + ' tokens. Sin markdown.\\nSERVICIOS:\\n' + services; return JSON.stringify({ model: 'kimi-k2.5', messages: [{ role: 'system', content: prompt }, { role: 'user', content: msg }], max_tokens: (cfg.max_ai_tokens || 200), temperature: 0.7, stream: false }); })() }}"
+      }
+    },
+    {
+      "id": "parse-sup",
+      "name": "Parse Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [800, 400],
+      "parameters": {
+        "jsCode": "const aiResp = $('Call Kimi K2.5').item.json;\nconst rows = $('Load Tenant Context').all().map(i => i.json);\nconst cfg = rows[0] || {};\nconst phone = $('Webhook').item.json.body.message.phone;\nconst content = aiResp?.choices?.[0]?.message?.content?.trim()\n  || cfg.fallback_msg\n  || 'Lo siento, no entendí bien. ¿Puedes repetirlo?';\nreturn [{ json: { phone, content } }];"
+      }
+    },
+    {
+      "id": "send-sup",
+      "name": "Send WA",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1000, 400],
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v18.0/214863935038316/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer {{WA_TOKEN}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({ messaging_product: 'whatsapp', to: $json.phone, type: 'text', text: { body: $json.content } }) }}"
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          { "node": "Respond OK", "type": "main", "index": 0 },
+          { "node": "Load Tenant Context", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Load Tenant Context": {
+      "main": [[{ "node": "Call Kimi K2.5", "type": "main", "index": 0 }]]
+    },
+    "Call Kimi K2.5": {
+      "main": [[{ "node": "Parse Response", "type": "main", "index": 0 }]]
+    },
+    "Parse Response": {
+      "main": [[{ "node": "Send WA", "type": "main", "index": 0 }]]
+    }
+  }
+}
