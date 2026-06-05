@@ -1,0 +1,174 @@
+{
+  "name": "sass-store: WA Automation Executor",
+  "settings": { "executionOrder": "v1" },
+  "nodes": [
+    {
+      "id": "trig-auto",
+      "name": "Every Hour",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [200, 300],
+      "parameters": {
+        "rule": { "interval": [{ "field": "hours", "hoursInterval": 1 }] }
+      }
+    },
+    {
+      "id": "booking-confirmed",
+      "name": "Booking Confirmed Triggers",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [400, 200],
+      "credentials": {
+        "postgres": {
+          "id": "FmvG7eSe9Y6nG73Z",
+          "name": "sass-store Supabase DB"
+        }
+      },
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT ar.id AS rule_id, ar.tenant_slug, ar.action_type, ar.action_config, b.customer_phone AS phone, b.customer_name, s.name AS service_name, b.start_time, wt.phone_number_id FROM wa_automation_rules ar JOIN tenants t ON t.slug = ar.tenant_slug JOIN wa_tenant_config wt ON wt.tenant_slug = ar.tenant_slug JOIN bookings b ON b.tenant_id = t.id LEFT JOIN services s ON s.id = b.service_id WHERE ar.trigger_event = 'booking_confirmed' AND ar.enabled = true AND b.status = 'confirmed' AND b.created_at >= NOW() - interval '65 minutes' AND b.created_at >= NOW() - interval '65 minutes' - ((ar.action_config->>'delayMinutes')::int * interval '1 minute') AND b.customer_phone IS NOT NULL AND NOT EXISTS (SELECT 1 FROM whatsapp_messages wm WHERE wm.numero = b.customer_phone AND wm.metadata->>'rule_id' = ar.id::text AND wm.created_at >= b.created_at) LIMIT 20",
+        "options": {}
+      }
+    },
+    {
+      "id": "inactive-triggers",
+      "name": "Inactive Customer Triggers",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [400, 420],
+      "credentials": {
+        "postgres": {
+          "id": "FmvG7eSe9Y6nG73Z",
+          "name": "sass-store Supabase DB"
+        }
+      },
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT ar.id AS rule_id, ar.tenant_slug, ar.action_type, ar.action_config, c.phone, c.first_name AS customer_name, wt.phone_number_id FROM wa_automation_rules ar JOIN tenants t ON t.slug = ar.tenant_slug JOIN wa_tenant_config wt ON wt.tenant_slug = ar.tenant_slug JOIN customers c ON c.tenant_id = t.id WHERE ar.trigger_event = 'customer_inactive_30d' AND ar.enabled = true AND c.phone IS NOT NULL AND (c.last_visit_at IS NULL OR c.last_visit_at < NOW() - interval '30 days') AND NOT EXISTS (SELECT 1 FROM whatsapp_messages wm WHERE wm.numero = c.phone AND wm.metadata->>'rule_id' = ar.id::text AND wm.created_at >= NOW() - interval '31 days') LIMIT 20",
+        "options": {}
+      }
+    },
+    {
+      "id": "merge-triggers",
+      "name": "Merge Triggers",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [600, 300],
+      "parameters": { "mode": "append" }
+    },
+    {
+      "id": "if-triggers",
+      "name": "Has Triggers?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [800, 300],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "1",
+              "leftValue": "={{ $items().length }}",
+              "rightValue": 0,
+              "operator": { "type": "number", "operation": "gt" }
+            }
+          ],
+          "combinator": "and"
+        }
+      }
+    },
+    {
+      "id": "build-msg",
+      "name": "Build Message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1000, 220],
+      "parameters": {
+        "jsCode": "const item = $json;\nconst config = item.action_config || {};\nlet msg = config.message || 'Hola, tenemos un mensaje para ti.';\nmsg = msg.replace(/\\{\\{nombre\\}\\}/g, item.customer_name || 'cliente');\nmsg = msg.replace(/\\{\\{servicio\\}\\}/g, item.service_name || '');\nif (item.start_time) {\n  const d = new Date(item.start_time);\n  msg = msg.replace(/\\{\\{fecha\\}\\}/g, d.toLocaleDateString('es-MX'));\n}\nreturn [{ json: { ...item, resolvedMessage: msg } }];"
+      }
+    },
+    {
+      "id": "send-auto",
+      "name": "Send WA",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1200, 220],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'https://graph.facebook.com/v18.0/' + $json.phone_number_id + '/messages' }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer {{WA_TOKEN}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({ messaging_product: 'whatsapp', to: $json.phone, type: 'text', text: { body: $json.resolvedMessage } }) }}"
+      }
+    },
+    {
+      "id": "log-sent",
+      "name": "Log Sent",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [1400, 220],
+      "credentials": {
+        "postgres": {
+          "id": "FmvG7eSe9Y6nG73Z",
+          "name": "sass-store Supabase DB"
+        }
+      },
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO whatsapp_messages (mensaje_id, numero, contenido, tipo, direccion, estado, metadata) VALUES (gen_random_uuid()::text, '{{ $json.phone }}', '{{ $json.resolvedMessage }}', 'text', 'outbound', 'sent', '{\"rule_id\": \"{{ $json.rule_id }}\", \"automation\": true}'::jsonb) ON CONFLICT DO NOTHING",
+        "options": {}
+      }
+    },
+    {
+      "id": "no-triggers",
+      "name": "No Triggers",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [1000, 420],
+      "parameters": {}
+    }
+  ],
+  "connections": {
+    "Every Hour": {
+      "main": [
+        [
+          { "node": "Booking Confirmed Triggers", "type": "main", "index": 0 },
+          { "node": "Inactive Customer Triggers", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Booking Confirmed Triggers": {
+      "main": [[{ "node": "Merge Triggers", "type": "main", "index": 0 }]]
+    },
+    "Inactive Customer Triggers": {
+      "main": [[{ "node": "Merge Triggers", "type": "main", "index": 1 }]]
+    },
+    "Merge Triggers": {
+      "main": [[{ "node": "Has Triggers?", "type": "main", "index": 0 }]]
+    },
+    "Has Triggers?": {
+      "main": [
+        [{ "node": "Build Message", "type": "main", "index": 0 }],
+        [{ "node": "No Triggers", "type": "main", "index": 0 }]
+      ]
+    },
+    "Build Message": {
+      "main": [[{ "node": "Send WA", "type": "main", "index": 0 }]]
+    },
+    "Send WA": {
+      "main": [[{ "node": "Log Sent", "type": "main", "index": 0 }]]
+    }
+  }
+}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Badge } from "@sass-store/ui/components/badge";
 import { Button } from "@sass-store/ui/components/button";
 import {
@@ -17,8 +18,8 @@ import {
   Settings,
   Plus,
   CheckCircle2,
-  Clock,
-  XCircle,
+  Trash2,
+  Power,
 } from "lucide-react";
 import type { InferSelectModel } from "drizzle-orm";
 import type {
@@ -28,6 +29,7 @@ import type {
   tenants,
 } from "@sass-store/database/schema";
 import { CampaignCreateDialog } from "./campaign-create-dialog";
+import { AutomationCreateDialog } from "./automation-create-dialog";
 
 type Campaign = InferSelectModel<typeof waCampaigns>;
 type Rule = InferSelectModel<typeof waAutomationRules>;
@@ -68,7 +70,12 @@ export function WhatsAppDashboard({
   campaigns: Campaign[];
   rules: Rule[];
 }) {
+  const router = useRouter();
   const [createOpen, setCreateOpen] = useState(false);
+  const [automationOpen, setAutomationOpen] = useState(false);
+  const [localRules, setLocalRules] = useState(rules);
+  const [togglingId, setTogglingId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const activeCampaigns = campaigns.filter(
     (c) => c.status === "sending",
@@ -76,7 +83,36 @@ export function WhatsAppDashboard({
   const completedCampaigns = campaigns.filter(
     (c) => c.status === "completed",
   ).length;
-  const activeRules = rules.filter((r) => r.enabled).length;
+  const activeRules = localRules.filter((r) => r.enabled).length;
+
+  async function toggleRule(id: string, enabled: boolean) {
+    setTogglingId(id);
+    try {
+      await fetch(`/api/tenants/${tenant.slug}/whatsapp/automations/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ enabled: !enabled }),
+      });
+      setLocalRules((prev) =>
+        prev.map((r) => (r.id === id ? { ...r, enabled: !enabled } : r)),
+      );
+    } finally {
+      setTogglingId(null);
+    }
+  }
+
+  async function deleteRule(id: string) {
+    if (!confirm("¿Eliminar esta automatización?")) return;
+    setDeletingId(id);
+    try {
+      await fetch(`/api/tenants/${tenant.slug}/whatsapp/automations/${id}`, {
+        method: "DELETE",
+      });
+      setLocalRules((prev) => prev.filter((r) => r.id !== id));
+    } finally {
+      setDeletingId(null);
+    }
+  }
 
   return (
     <div className="p-6 space-y-6 max-w-5xl">
@@ -198,34 +234,90 @@ export function WhatsAppDashboard({
 
         {/* ─── Automatizaciones ─────────────────────────────────────────── */}
         <TabsContent value="automations" className="space-y-4 mt-4">
-          <p className="text-sm text-muted-foreground">
-            Envía mensajes automáticos cuando ocurra un evento
-          </p>
-          {rules.length === 0 ? (
+          <div className="flex justify-between items-center">
+            <p className="text-sm text-muted-foreground">
+              Mensajes automáticos cuando ocurre un evento
+            </p>
+            <Button
+              size="sm"
+              onClick={() => setAutomationOpen(true)}
+              className="gap-2"
+            >
+              <Plus className="h-4 w-4" /> Nueva regla
+            </Button>
+          </div>
+
+          {localRules.length === 0 ? (
             <Card>
               <CardContent className="py-12 text-center text-muted-foreground">
-                Sin automatizaciones. Puedes crear reglas como recordatorios
-                post-visita.
+                Sin automatizaciones. Crea una regla para enviar mensajes
+                automáticos.
               </CardContent>
             </Card>
           ) : (
             <div className="space-y-2">
-              {rules.map((r) => (
-                <Card key={r.id}>
-                  <CardContent className="py-4 flex items-center justify-between">
-                    <div>
-                      <div className="font-medium">{r.name}</div>
-                      <div className="text-sm text-muted-foreground">
-                        Cuando:{" "}
-                        {TRIGGER_LABELS[r.triggerEvent] ?? r.triggerEvent}
+              {localRules.map((r) => {
+                const config = r.actionConfig as Record<string, unknown>;
+                const delay = config?.delayMinutes as number | undefined;
+                const delayLabel = delay
+                  ? delay >= 1440
+                    ? `${Math.round(delay / 1440)}d después`
+                    : delay >= 60
+                      ? `${Math.round(delay / 60)}h después`
+                      : `${delay}min después`
+                  : "Inmediato";
+
+                return (
+                  <Card key={r.id} className={r.enabled ? "" : "opacity-60"}>
+                    <CardContent className="py-3 flex items-center justify-between gap-4">
+                      <div className="flex-1 min-w-0">
+                        <div className="font-medium truncate">{r.name}</div>
+                        <div className="text-xs text-muted-foreground mt-0.5 flex gap-2 flex-wrap">
+                          <span>
+                            Trigger:{" "}
+                            {TRIGGER_LABELS[r.triggerEvent] ?? r.triggerEvent}
+                          </span>
+                          <span>·</span>
+                          <span>{delayLabel}</span>
+                          <span>·</span>
+                          <span>
+                            {r.actionType === "send_text"
+                              ? "Texto"
+                              : r.actionType === "send_template"
+                                ? "Plantilla"
+                                : "Escalar"}
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                    <Badge variant={r.enabled ? "default" : "outline"}>
-                      {r.enabled ? "Activa" : "Pausada"}
-                    </Badge>
-                  </CardContent>
-                </Card>
-              ))}
+                      <div className="flex items-center gap-2 shrink-0">
+                        <Badge variant={r.enabled ? "default" : "outline"}>
+                          {r.enabled ? "Activa" : "Pausada"}
+                        </Badge>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="h-8 w-8"
+                          title={r.enabled ? "Pausar" : "Activar"}
+                          disabled={togglingId === r.id}
+                          onClick={() => toggleRule(r.id, r.enabled)}
+                        >
+                          <Power className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="h-8 w-8 text-destructive hover:text-destructive"
+                          title="Eliminar"
+                          disabled={deletingId === r.id}
+                          onClick={() => deleteRule(r.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
           )}
         </TabsContent>
@@ -286,6 +378,14 @@ export function WhatsAppDashboard({
       <CampaignCreateDialog
         open={createOpen}
         onClose={() => setCreateOpen(false)}
+        tenantSlug={tenant.slug}
+      />
+      <AutomationCreateDialog
+        open={automationOpen}
+        onClose={() => {
+          setAutomationOpen(false);
+          router.refresh();
+        }}
         tenantSlug={tenant.slug}
       />
     </div>
