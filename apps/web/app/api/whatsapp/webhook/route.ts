@@ -18,6 +18,12 @@ import { db } from "@sass-store/database";
 import { whatsappMessages } from "@sass-store/database/schema";
 import { classifyIntent } from "@/lib/wa/intent-classifier";
 import { resolveTenant } from "@/lib/wa/tenant-resolver";
+import {
+  getSession,
+  saveSession,
+  newSession,
+  appendMessage,
+} from "@/lib/wa/session-store";
 
 const WEBHOOK_VERIFY_TOKEN = process.env.WHATSAPP_WEBHOOK_VERIFY_TOKEN!;
 const N8N_BASE_URL = process.env.N8N_BASE_URL ?? "http://127.0.0.1:5678";
@@ -120,11 +126,28 @@ async function dispatchToN8n(msg: NormalizedMessage): Promise<void> {
     return;
   }
 
+  // B4: Cargar o crear sesión activa
+  let session = await getSession(tenantSlug, msg.phone);
+  if (!session) session = newSession(tenantSlug, msg.phone);
+  session = appendMessage(session, "user", msg.content);
+
   // Clasificar intent
   const intent = classifyIntent(msg.content, msg.buttonPayload);
+  session.lastIntent = intent.type;
+
+  // Actualizar estado de sesión
+  if (intent.type === "booking_start") session.state = "collecting_booking";
+  else if (intent.type === "confirm_yes" || intent.type === "confirm_no")
+    session.state = "awaiting_confirm";
+  else if (intent.type === "support_query" || intent.type === "unknown")
+    session.state = "support_active";
+  else if (intent.type === ("escalated" as string)) session.state = "escalated";
+
+  await saveSession(session);
 
   const webhookPath = INTENT_WEBHOOK[intent.type] ?? "/webhook/wa-support";
-  const payload = { message: msg, intent, tenantSlug };
+  // session incluye historial de conversación → contexto para Kimi K2.5
+  const payload = { message: msg, intent, tenantSlug, session };
 
   await fetch(`${N8N_BASE_URL}${webhookPath}`, {
     method: "POST",

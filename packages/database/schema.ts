@@ -3263,3 +3263,63 @@ export const waTenantConfig = pgTable(
     slugIdx: index("wa_tenant_config_slug_idx").on(table.tenantSlug),
   }),
 );
+
+/** Campañas de WhatsApp por tenant */
+export const waCampaigns = pgTable(
+  "wa_campaigns",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantSlug: varchar("tenant_slug", { length: 100 }).notNull(),
+    name: varchar("name", { length: 255 }).notNull(),
+    status: varchar("status", { length: 20 }).notNull().default("draft"),
+    messageTemplateId: varchar("message_template_id", { length: 100 }),
+    templateVars: jsonb("template_vars").notNull().default({}),
+    audienceType: varchar("audience_type", { length: 20 })
+      .notNull()
+      .default("all"),
+    audienceFilter: jsonb("audience_filter").notNull().default({}),
+    scheduledAt: timestamp("scheduled_at", { withTimezone: true }),
+    sentCount: integer("sent_count").notNull().default(0),
+    deliveredCount: integer("delivered_count").notNull().default(0),
+    readCount: integer("read_count").notNull().default(0),
+    replyCount: integer("reply_count").notNull().default(0),
+    createdBy: uuid("created_by"),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => ({
+    tenantIdx: index("wa_campaigns_tenant_idx").on(table.tenantSlug),
+    statusIdx: index("wa_campaigns_status_idx").on(table.status),
+  }),
+);
+
+/** Reglas de automatización WA por tenant (if-this-then-that) */
+export const waAutomationRules = pgTable(
+  "wa_automation_rules",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantSlug: varchar("tenant_slug", { length: 100 }).notNull(),
+    name: varchar("name", { length: 255 }).notNull(),
+    enabled: boolean("enabled").notNull().default(true),
+    triggerEvent: varchar("trigger_event", { length: 100 }).notNull(),
+    conditions: jsonb("conditions").notNull().default({}),
+    actionType: varchar("action_type", { length: 50 })
+      .notNull()
+      .default("send_template"),
+    actionConfig: jsonb("action_config").notNull().default({}),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => ({
+    tenantIdx: index("wa_automation_rules_tenant_idx").on(table.tenantSlug),
+    triggerIdx: index("wa_automation_rules_trigger_idx").on(table.triggerEvent),
+  }),
+);

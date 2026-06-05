@@ -1,0 +1,266 @@
+{
+  "name": "sass-store: WA Booking Confirm Webhook",
+  "settings": { "executionOrder": "v1" },
+  "nodes": [
+    {
+      "id": "trig-conf",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [200, 300],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "wa-booking-confirm",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "webhookId": "wa-booking-confirm-v1"
+    },
+    {
+      "id": "resp-conf",
+      "name": "Respond OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [400, 180],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"ok\": true }"
+      }
+    },
+    {
+      "id": "parse-conf",
+      "name": "Parse Intent",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [400, 400],
+      "parameters": {
+        "jsCode": "const p = $json.body;\nconst phone = p.message.phone;\nconst tenantSlug = p.tenantSlug;\nconst isConfirm = p.intent?.type === 'confirm_yes' || p.message?.buttonPayload === 'confirmar';\nreturn [{ json: { phone, tenantSlug, isConfirm } }];"
+      }
+    },
+    {
+      "id": "if-conf",
+      "name": "Confirmar?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [600, 400],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "1",
+              "leftValue": "={{ $json.isConfirm }}",
+              "rightValue": true,
+              "operator": { "type": "boolean", "operation": "equals" }
+            }
+          ],
+          "combinator": "and"
+        }
+      }
+    },
+    {
+      "id": "get-convo-yes",
+      "name": "Get Pending Convo (Yes)",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [800, 260],
+      "credentials": {
+        "postgres": {
+          "id": "FmvG7eSe9Y6nG73Z",
+          "name": "sass-store Supabase DB"
+        }
+      },
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT wbc.*, t.id AS tenant_id FROM wa_booking_conversations wbc JOIN tenants t ON t.slug = wbc.tenant_slug WHERE wbc.phone = '{{ $json.phone }}' AND wbc.tenant_slug = '{{ $json.tenantSlug }}' AND wbc.state = 'awaiting_confirm' AND wbc.expires_at > NOW() ORDER BY wbc.created_at DESC LIMIT 1",
+        "options": {}
+      }
+    },
+    {
+      "id": "if-convo-yes",
+      "name": "Convo found?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [1000, 260],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "1",
+              "leftValue": "={{ $json.id !== undefined && $json.id !== null }}",
+              "rightValue": true,
+              "operator": { "type": "boolean", "operation": "equals" }
+            }
+          ],
+          "combinator": "and"
+        }
+      }
+    },
+    {
+      "id": "create-booking",
+      "name": "Create Booking",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [1200, 180],
+      "credentials": {
+        "postgres": {
+          "id": "FmvG7eSe9Y6nG73Z",
+          "name": "sass-store Supabase DB"
+        }
+      },
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO bookings (tenant_id, service_id, customer_name, customer_phone, start_time, end_time, status, total_price, notes) VALUES ('{{ $json.tenant_id }}'::uuid, '{{ $json.service_id }}'::uuid, '{{ $json.customer_name || $json.phone }}', '{{ $json.phone }}', ('{{ $json.date_iso }}'::date + '{{ $json.time_str }}'::time)::timestamp, ('{{ $json.date_iso }}'::date + '{{ $json.time_str }}'::time + interval '1 hour')::timestamp, 'confirmed', {{ $json.service_price }}, 'Agendado por WhatsApp') RETURNING id",
+        "options": {}
+      }
+    },
+    {
+      "id": "mark-confirmed",
+      "name": "Mark Confirmed",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [1400, 180],
+      "credentials": {
+        "postgres": {
+          "id": "FmvG7eSe9Y6nG73Z",
+          "name": "sass-store Supabase DB"
+        }
+      },
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE wa_booking_conversations SET state = 'confirmed', updated_at = NOW() WHERE id = '{{ $('Get Pending Convo (Yes)').item.json.id }}'::uuid",
+        "options": {}
+      }
+    },
+    {
+      "id": "send-booked",
+      "name": "Send Booked WA",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1600, 180],
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v18.0/214863935038316/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer {{WA_TOKEN}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ (() => { const c = $('Get Pending Convo (Yes)').item.json; const dateObj = new Date(c.date_iso + 'T12:00:00'); const days = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado']; const months = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre']; const dateStr = days[dateObj.getDay()] + ' ' + dateObj.getDate() + ' de ' + months[dateObj.getMonth()]; const msg = '¡Tu cita está confirmada! 🎉\\n\\n📋 ' + c.service_name + '\\n📅 ' + dateStr + ' a las ' + c.time_str + '\\n💰 $' + c.service_price + ' MXN\\n\\nTe esperamos. Si necesitas cancelar, escríbenos con anticipación. 💅'; return JSON.stringify({ messaging_product: 'whatsapp', to: c.phone, type: 'text', text: { body: msg } }); })() }}"
+      }
+    },
+    {
+      "id": "send-no-pending",
+      "name": "Send No Pending WA",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1200, 380],
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v18.0/214863935038316/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer {{WA_TOKEN}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({ messaging_product: 'whatsapp', to: $('Parse Intent').item.json.phone, type: 'text', text: { body: 'No encontré una cita pendiente de confirmar. Si quieres agendar una nueva, dime el servicio, fecha y hora 😊' } }) }}"
+      }
+    },
+    {
+      "id": "get-convo-no",
+      "name": "Get Pending Convo (No)",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [800, 540],
+      "credentials": {
+        "postgres": {
+          "id": "FmvG7eSe9Y6nG73Z",
+          "name": "sass-store Supabase DB"
+        }
+      },
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE wa_booking_conversations SET state = 'cancelled', updated_at = NOW() WHERE phone = '{{ $json.phone }}' AND tenant_slug = '{{ $json.tenantSlug }}' AND state = 'awaiting_confirm' AND expires_at > NOW() RETURNING id",
+        "options": {}
+      }
+    },
+    {
+      "id": "send-cancelled",
+      "name": "Send Cancelled WA",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1000, 540],
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v18.0/214863935038316/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer {{WA_TOKEN}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({ messaging_product: 'whatsapp', to: $('Parse Intent').item.json.phone, type: 'text', text: { body: 'Entendido, no hay problema 😊 Si cambias de opinión o quieres agendar otra cita, con gusto te ayudo.' } }) }}"
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          { "node": "Respond OK", "type": "main", "index": 0 },
+          { "node": "Parse Intent", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Parse Intent": {
+      "main": [[{ "node": "Confirmar?", "type": "main", "index": 0 }]]
+    },
+    "Confirmar?": {
+      "main": [
+        [{ "node": "Get Pending Convo (Yes)", "type": "main", "index": 0 }],
+        [{ "node": "Get Pending Convo (No)", "type": "main", "index": 0 }]
+      ]
+    },
+    "Get Pending Convo (Yes)": {
+      "main": [[{ "node": "Convo found?", "type": "main", "index": 0 }]]
+    },
+    "Convo found?": {
+      "main": [
+        [{ "node": "Create Booking", "type": "main", "index": 0 }],
+        [{ "node": "Send No Pending WA", "type": "main", "index": 0 }]
+      ]
+    },
+    "Create Booking": {
+      "main": [[{ "node": "Mark Confirmed", "type": "main", "index": 0 }]]
+    },
+    "Mark Confirmed": {
+      "main": [[{ "node": "Send Booked WA", "type": "main", "index": 0 }]]
+    },
+    "Get Pending Convo (No)": {
+      "main": [[{ "node": "Send Cancelled WA", "type": "main", "index": 0 }]]
+    }
+  }
+}

@@ -1,0 +1,168 @@
+{
+  "name": "sass-store: WA Campaign Dispatcher",
+  "settings": { "executionOrder": "v1" },
+  "nodes": [
+    {
+      "id": "trig-camp",
+      "name": "Every 5 Minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [200, 300],
+      "parameters": {
+        "rule": { "interval": [{ "field": "minutes", "minutesInterval": 5 }] }
+      }
+    },
+    {
+      "id": "get-campaigns",
+      "name": "Get Scheduled Campaigns",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [400, 300],
+      "credentials": {
+        "postgres": {
+          "id": "FmvG7eSe9Y6nG73Z",
+          "name": "sass-store Supabase DB"
+        }
+      },
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT c.*, wt.phone_number_id FROM wa_campaigns c JOIN wa_tenant_config wt ON wt.tenant_slug = c.tenant_slug WHERE c.status = 'scheduled' AND c.scheduled_at <= NOW() + interval '2 minutes' AND c.scheduled_at >= NOW() - interval '10 minutes' LIMIT 5",
+        "options": {}
+      }
+    },
+    {
+      "id": "if-campaigns",
+      "name": "Has Campaigns?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [600, 300],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "1",
+              "leftValue": "={{ $items().length }}",
+              "rightValue": 0,
+              "operator": { "type": "number", "operation": "gt" }
+            }
+          ],
+          "combinator": "and"
+        }
+      }
+    },
+    {
+      "id": "mark-sending",
+      "name": "Mark as Sending",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [800, 200],
+      "credentials": {
+        "postgres": {
+          "id": "FmvG7eSe9Y6nG73Z",
+          "name": "sass-store Supabase DB"
+        }
+      },
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE wa_campaigns SET status = 'sending', updated_at = NOW() WHERE id = '{{ $json.id }}'::uuid",
+        "options": {}
+      }
+    },
+    {
+      "id": "get-audience",
+      "name": "Get Audience Phones",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [1000, 200],
+      "credentials": {
+        "postgres": {
+          "id": "FmvG7eSe9Y6nG73Z",
+          "name": "sass-store Supabase DB"
+        }
+      },
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT DISTINCT c.phone, c.first_name FROM customers c JOIN tenants t ON c.tenant_id = t.id WHERE t.slug = '{{ $('Get Scheduled Campaigns').item.json.tenant_slug }}' AND c.phone IS NOT NULL LIMIT 500",
+        "options": {}
+      }
+    },
+    {
+      "id": "send-messages",
+      "name": "Send WA Message",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1200, 200],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'https://graph.facebook.com/v18.0/' + $('Get Scheduled Campaigns').item.json.phone_number_id + '/messages' }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer {{WA_TOKEN}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ (() => { const campaign = $('Get Scheduled Campaigns').item.json; const msg = (campaign.template_vars?.message || '').replace(/\\{\\{nombre\\}\\}/g, $json.first_name || 'cliente'); return JSON.stringify({ messaging_product: 'whatsapp', to: $json.phone, type: 'text', text: { body: msg } }); })() }}"
+      }
+    },
+    {
+      "id": "mark-completed",
+      "name": "Mark Completed",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [1400, 200],
+      "credentials": {
+        "postgres": {
+          "id": "FmvG7eSe9Y6nG73Z",
+          "name": "sass-store Supabase DB"
+        }
+      },
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE wa_campaigns SET status = 'completed', sent_count = (SELECT COUNT(*) FROM customers c JOIN tenants t ON c.tenant_id = t.id WHERE t.slug = tenant_slug AND c.phone IS NOT NULL), updated_at = NOW() WHERE id = '{{ $('Get Scheduled Campaigns').item.json.id }}'::uuid",
+        "options": {}
+      }
+    },
+    {
+      "id": "no-campaigns",
+      "name": "No Campaigns",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [800, 420],
+      "parameters": {}
+    }
+  ],
+  "connections": {
+    "Every 5 Minutes": {
+      "main": [
+        [{ "node": "Get Scheduled Campaigns", "type": "main", "index": 0 }]
+      ]
+    },
+    "Get Scheduled Campaigns": {
+      "main": [[{ "node": "Has Campaigns?", "type": "main", "index": 0 }]]
+    },
+    "Has Campaigns?": {
+      "main": [
+        [{ "node": "Mark as Sending", "type": "main", "index": 0 }],
+        [{ "node": "No Campaigns", "type": "main", "index": 0 }]
+      ]
+    },
+    "Mark as Sending": {
+      "main": [[{ "node": "Get Audience Phones", "type": "main", "index": 0 }]]
+    },
+    "Get Audience Phones": {
+      "main": [[{ "node": "Send WA Message", "type": "main", "index": 0 }]]
+    },
+    "Send WA Message": {
+      "main": [[{ "node": "Mark Completed", "type": "main", "index": 0 }]]
+    }
+  }
+}

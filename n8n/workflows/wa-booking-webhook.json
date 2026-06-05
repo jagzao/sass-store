@@ -1,0 +1,224 @@
+{
+  "name": "sass-store: WA Booking Webhook",
+  "settings": { "executionOrder": "v1" },
+  "nodes": [
+    {
+      "id": "trig-book",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [200, 300],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "wa-booking",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "webhookId": "wa-booking-v1"
+    },
+    {
+      "id": "resp-book",
+      "name": "Respond OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [400, 180],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"ok\": true }"
+      }
+    },
+    {
+      "id": "parse-book",
+      "name": "Parse Entities",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [400, 400],
+      "parameters": {
+        "jsCode": "const payload = $json.body;\nconst phone = payload.message.phone;\nconst tenantSlug = payload.tenantSlug;\nconst entities = payload.intent?.entities || {};\nconst service = entities.service || null;\nconst dateIso = entities.dateIso || null;\nconst timeStr = entities.timeStr || null;\nconst missing = [];\nif (!service) missing.push('el *servicio* que deseas (ej: manicure, gel, pedicure)');\nif (!dateIso) missing.push('la *fecha* (ej: mañana, el martes, el 15)');\nif (!timeStr) missing.push('la *hora* (ej: 3pm, 15:00)');\nreturn [{ json: { phone, tenantSlug, service, dateIso, timeStr, isComplete: missing.length === 0, missing, triggerMsgId: payload.message.messageId } }];"
+      }
+    },
+    {
+      "id": "if-complete",
+      "name": "All details?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [600, 400],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "1",
+              "leftValue": "={{ $json.isComplete }}",
+              "rightValue": true,
+              "operator": { "type": "boolean", "operation": "equals" }
+            }
+          ],
+          "combinator": "and"
+        }
+      }
+    },
+    {
+      "id": "send-incomplete",
+      "name": "Send Incomplete WA",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [800, 550],
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v18.0/214863935038316/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer {{WA_TOKEN}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({ messaging_product: 'whatsapp', to: $json.phone, type: 'text', text: { body: 'Para agendar tu cita necesito saber ' + $json.missing.join(' y ') + '. ¿Me lo puedes indicar? 😊' } }) }}"
+      }
+    },
+    {
+      "id": "lookup-svc",
+      "name": "Lookup Service",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [800, 280],
+      "credentials": {
+        "postgres": {
+          "id": "FmvG7eSe9Y6nG73Z",
+          "name": "sass-store Supabase DB"
+        }
+      },
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT s.id, s.name, s.price, s.duration_minutes FROM services s JOIN tenants t ON s.tenant_id = t.id WHERE t.slug = '{{ $json.tenantSlug }}' AND LOWER(s.name) LIKE '%{{ $json.service }}%' AND s.is_active = true ORDER BY s.name LIMIT 1",
+        "options": {}
+      }
+    },
+    {
+      "id": "if-svc",
+      "name": "Service found?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [1000, 280],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "1",
+              "leftValue": "={{ $json.id !== undefined && $json.id !== null }}",
+              "rightValue": true,
+              "operator": { "type": "boolean", "operation": "equals" }
+            }
+          ],
+          "combinator": "and"
+        }
+      }
+    },
+    {
+      "id": "send-nosvc",
+      "name": "Send No Service WA",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1200, 420],
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v18.0/214863935038316/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer {{WA_TOKEN}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({ messaging_product: 'whatsapp', to: $('Parse Entities').item.json.phone, type: 'text', text: { body: 'No encontré ese servicio. ¿Puedes decirme el nombre exacto? Por ejemplo: manicure, gel, pedicure, acrílico.' } }) }}"
+      }
+    },
+    {
+      "id": "save-convo",
+      "name": "Save Booking Convo",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [1200, 180],
+      "credentials": {
+        "postgres": {
+          "id": "FmvG7eSe9Y6nG73Z",
+          "name": "sass-store Supabase DB"
+        }
+      },
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO wa_booking_conversations (phone, tenant_slug, state, service_id, service_name, service_price, date_iso, time_str, trigger_msg_id) VALUES ('{{ $('Parse Entities').item.json.phone }}', '{{ $('Parse Entities').item.json.tenantSlug }}', 'awaiting_confirm', '{{ $json.id }}'::uuid, '{{ $json.name }}', {{ $json.price }}, '{{ $('Parse Entities').item.json.dateIso }}'::date, '{{ $('Parse Entities').item.json.timeStr }}', '{{ $('Parse Entities').item.json.triggerMsgId }}') ON CONFLICT (trigger_msg_id) DO NOTHING RETURNING id, service_name, service_price, date_iso, time_str",
+        "options": {}
+      }
+    },
+    {
+      "id": "send-confirm",
+      "name": "Send Confirm Buttons",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1400, 180],
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v18.0/214863935038316/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer {{WA_TOKEN}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ (() => { const svc = $('Lookup Service').item.json; const parsed = $('Parse Entities').item.json; const dateObj = new Date(parsed.dateIso + 'T12:00:00'); const days = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado']; const months = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre']; const dateStr = days[dateObj.getDay()] + ' ' + dateObj.getDate() + ' de ' + months[dateObj.getMonth()]; const body = '¡Listo! Voy a agendar tu cita 💅\\n\\n📋 *Servicio:* ' + svc.name + '\\n📅 *Fecha:* ' + dateStr + '\\n⏰ *Hora:* ' + parsed.timeStr + '\\n💰 *Precio:* $' + svc.price + ' MXN\\n\\n¿Confirmamos?'; return JSON.stringify({ messaging_product: 'whatsapp', to: parsed.phone, type: 'interactive', interactive: { type: 'button', body: { text: body }, action: { buttons: [{ type: 'reply', reply: { id: 'confirmar', title: '✅ Confirmar' } }, { type: 'reply', reply: { id: 'cancelar', title: '❌ Cancelar' } }] } } }); })() }}"
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          { "node": "Respond OK", "type": "main", "index": 0 },
+          { "node": "Parse Entities", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Parse Entities": {
+      "main": [[{ "node": "All details?", "type": "main", "index": 0 }]]
+    },
+    "All details?": {
+      "main": [
+        [{ "node": "Lookup Service", "type": "main", "index": 0 }],
+        [{ "node": "Send Incomplete WA", "type": "main", "index": 0 }]
+      ]
+    },
+    "Lookup Service": {
+      "main": [[{ "node": "Service found?", "type": "main", "index": 0 }]]
+    },
+    "Service found?": {
+      "main": [
+        [{ "node": "Save Booking Convo", "type": "main", "index": 0 }],
+        [{ "node": "Send No Service WA", "type": "main", "index": 0 }]
+      ]
+    },
+    "Save Booking Convo": {
+      "main": [[{ "node": "Send Confirm Buttons", "type": "main", "index": 0 }]]
+    }
+  }
+}
