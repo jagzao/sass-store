@@ -1,7 +1,8 @@
 /** Total pre-rendered WebP frames for Centro Tenístico scrollytelling. */
 export const TENNIS_BALL_FRAME_COUNT = 120;
 
-export const TENNIS_BALL_SPRITE_BASE = "/assets/sprites/tennis-ball";
+export const TENNIS_BALL_SPRITE_BASE =
+  "https://res.cloudinary.com/drxcxttn0/image/upload/sass-store/sprites/tennis-ball";
 
 /** 1-based frame number → public URL (ball_001.webp … ball_120.webp). */
 export function tennisBallFrameSrc(frameNumber: number): string {

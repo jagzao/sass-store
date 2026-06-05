@@ -22,12 +22,10 @@ describe("tennis-ball-frames", () => {
   });
 
   it("builds sequential asset paths", () => {
-    expect(tennisBallFrameSrc(1)).toBe(
-      "/assets/sprites/tennis-ball/ball_001.webp",
-    );
-    expect(tennisBallFrameSrc(120)).toBe(
-      "/assets/sprites/tennis-ball/ball_120.webp",
-    );
+    const base =
+      "https://res.cloudinary.com/drxcxttn0/image/upload/sass-store/sprites/tennis-ball";
+    expect(tennisBallFrameSrc(1)).toBe(`${base}/ball_001.webp`);
+    expect(tennisBallFrameSrc(120)).toBe(`${base}/ball_120.webp`);
   });
 
   it("converts frame index to 1-based number", () => {
