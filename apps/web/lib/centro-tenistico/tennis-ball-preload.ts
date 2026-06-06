@@ -7,6 +7,7 @@ function loadFrame(index: number): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.decoding = "async";
+    img.crossOrigin = "anonymous"; // required: prevents canvas taint for getImageData()
     img.onload = () => resolve(img);
     img.onerror = () =>
       reject(new Error(`Failed to load ${tennisBallFrameSrc(index + 1)}`));
