@@ -133,3 +133,8 @@ apps/*.out
 video_2_frames/
 
 
+
+# npm workspace self-referencing symlinks
+packages/config/config
+packages/database/database
+packages/ui/ui
