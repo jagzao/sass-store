@@ -171,6 +171,10 @@ const nextConfig = {
     turbopackUseSystemTlsCerts: true,
   },
 
+  turbopack: {
+    root: path.join(__dirname, '../../'),
+  },
+
   // TypeScript — build strict (no ignoreBuildErrors)
   typescript: {
     // ignoreBuildErrors eliminado en STRY-019 — build ahora es estricto
