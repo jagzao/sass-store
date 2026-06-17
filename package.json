@@ -123,11 +123,17 @@
     "node": ">=18.0.0"
   },
   "lint-staged": {
-    "*.{ts,tsx}": [
+    "apps/**/*.{ts,tsx}": [
       "eslint --fix",
       "prettier --write"
     ],
-    "*.{json,css,md}": [
+    "apps/**/*.{json,css}": [
+      "prettier --write"
+    ],
+    "packages/**/*.{ts,tsx}": [
+      "prettier --write"
+    ],
+    "*.{ts,tsx}": [
       "prettier --write"
     ]
   },

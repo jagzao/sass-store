@@ -1,15 +1,18 @@
 {
-  "id": "b5d45867-85b2-4e1b-88ab-50480c0ca1d7",
+  "id": "bec7866c-205d-41e7-befe-9341ac47d306",
   "projectId": "5e5aca38-18eb-40b0-93f7-727c6763ccdd",
   "status": "completed",
-  "startedAt": "2026-05-30T02:00:13.956284+00:00",
-  "finishedAt": "2026-05-30T02:00:13.9563221+00:00",
+  "startedAt": "2026-06-08T02:00:13.5348821+00:00",
+  "finishedAt": "2026-06-08T02:00:13.5349631+00:00",
   "qualityScore": 0,
   "documentation": {
-    "foundFiles": ["PRD.md", "ARCHITECTURE.md"],
+    "foundFiles": [
+      "PRD.md",
+      "ARCHITECTURE.md",
+      "USER-STORIES.md"
+    ],
     "missingFiles": [
       "ROADMAP.md",
-      "USER-STORIES.md",
       "ACCEPTANCE-CRITERIA.md",
       "API-SPEC.md",
       "DATABASE.md",
@@ -19,7 +22,7 @@
       "QUALITY-REPORT.md",
       "CHANGELOG.md"
     ],
-    "completePercentage": 17
+    "completePercentage": 25
   },
   "agents": {
     "exists": true,
@@ -70,7 +73,7 @@
     "totalFiles": 500,
     "unitFiles": 37,
     "integrationFiles": 9,
-    "e2EFiles": 25,
+    "e2EFiles": 30,
     "detectedPaths": [
       ".env.test",
       ".env.test.example",
@@ -177,6 +180,7 @@
       "scripts\\test-runner.js",
       "scripts\\test-transaction-context.ts",
       "scripts\\test-video-processing.ts",
+      "test-results\\admin-full-inspect.png",
       "test-results-logs\\test-results-template.md",
       ".agents\\history\\test_cases.md",
       ".agents\\protocols\\testing.md",
@@ -184,6 +188,8 @@
       ".claude\\agents\\tester.md",
       ".github\\workflows\\e2e-tests.yml",
       "apps\\web\\test-auth-redirect.js",
+      "docker\\wa-platform\\docker-compose.test.yml",
+      "docs\\wa-platform\\SPEC.md",
       "node_modules\\.ai-wzWDMgto\\test.d.ts",
       "node_modules\\.bin\\node-gyp-build-test",
       "node_modules\\.bin\\node-gyp-build-test.cmd",
@@ -264,7 +270,95 @@
       "node_modules\\styled-jsx\\babel-test.js",
       "node_modules\\vitest\\vitest.mjs",
       "node_modules\\xtend\\test.js",
+      "test-results\\admin-services-Service-CRU-fa9b4--a-new-service-successfully-chromium\\test-failed-1.png",
+      "test-results\\auth-auth-admin-comprehens-0a65b-ard-rechaza-acceso-al-admin-chromium\\test-failed-1.png",
+      "test-results\\auth-auth-admin-comprehens-168d0-ogout-recupera-el-dashboard-chromium\\test-failed-1.png",
+      "test-results\\auth-auth-admin-comprehens-52af1-\u2192-heading-grid-de-horas-NAV-chromium\\test-failed-1.png",
+      "test-results\\auth-full-auth-Authenticat-6bbbb-ogin-with-admin-credentials-chromium\\test-failed-1.png",
+      "test-results\\auth-google-auth-flows-Goo-39e72-nner-visible-with-welcome-1-chromium\\test-failed-1.png",
+      "test-results\\auth-google-auth-flows-Goo-49aaf-with-form-and-Google-button-chromium\\test-failed-1.png",
+      "test-results\\auth-google-oauth-redirect-b4986-edirects-to-Google-accounts-chromium\\test-failed-1.png",
+      "test-results\\calendar-Calendar-Drag-and-17ccf-ointment-to-a-new-time-slot-chromium\\test-failed-1.png",
+      "test-results\\crawl-internal-link-smoke--02687--crawl-storefront-\u2014-nom-nom-chromium\\test-failed-1.png",
+      "test-results\\crawl-internal-link-smoke--27ec3-wl-storefront-\u2014-wondernails-chromium\\test-failed-1.png",
+      "test-results\\crawl-internal-link-smoke--89696-rawl-storefront-\u2014-zo-system-chromium\\test-failed-1.png",
+      "test-results\\customers-customer-workflo-11323-ew-visit-from-customer-file-chromium\\test-failed-1.png",
+      "test-results\\customers-product-visits-P-f1ddc-uld-add-products-to-a-visit-chromium\\test-failed-1.png",
+      "test-results\\dashboard-admin-dashboard--5b647--without-the-legacy-sidebar-chromium\\test-failed-1.png",
+      "test-results\\finance-diagnostic-Login-D-1bb9a-page-and-capture-screenshot-chromium\\test-failed-1.png",
+      "test-results\\finance-matrix-matrix-crud-5b333-a-y-persistir-tras-recargar-chromium\\test-failed-1.png",
+      "test-results\\finance-matrix-matrix-crud-a27c7-o-impacto-visible-en-matriz-chromium\\test-failed-1.png",
+      "test-results\\multitenant-tenant-isolati-09b14-be-isolated-between-tenants-chromium\\test-failed-1.png",
+      "test-results\\quotas-cost-guards-Quotas--2833a-quests-when-limits-exceeded-chromium\\test-failed-1.png",
+      "test-results\\quotas-cost-guards-Quotas--d023a-rnings-at-boundaries-80-90--chromium\\test-failed-1.png",
+      "test-results\\security-stry-tour-final-\uD83D\uDC65-Clientes-lista-con-sesi\u00F3n-chromium\\test-failed-1.png",
+      "test-results\\security-stry-tour-final-\uD83D\uDCB0-Finance-matrix-de-planeaci\u00F3n-chromium\\test-failed-1.png",
+      "test-results\\security-stry-tour-final-\uD83D\uDCB0-Finance-presupuestos-chromium\\test-failed-1.png",
+      "test-results\\security-stry-tour-final-\uD83D\uDCC5-Admin-calendario-de-citas-chromium\\test-failed-1.png",
+      "test-results\\security-stry-tour-final-\uD83D\uDCE6-Inventario-insumos-chromium\\test-failed-1.png",
+      "test-results\\security-stry-tour-final-\uD83D\uDD11-Login-Admin-dashboard-chromium\\test-failed-1.png",
+      "test-results\\security-stry-tour-final-\uFFFD-26599-lecci\u00F3n-de-servicio-y-fecha-chromium\\test-failed-1.png",
+      "test-results\\security-stry-tour-final-\uFFFD-a3841-categor\u00EDas-de-transacciones-chromium\\test-failed-1.png",
+      "test-results\\sesiones-deportivas-STRY-0-29bb4-create-session-via-admin-UI-chromium\\test-failed-1.png",
+      "test-results\\sesiones-deportivas-STRY-0-65c70-s-no-sports-sessions-module-chromium\\test-failed-1.png",
+      "test-results\\sesiones-deportivas-STRY-0-6fed9-4-admin-sessions-page-loads-chromium\\test-failed-1.png",
+      "test-results\\sesiones-deportivas-STRY-0-9e616-ublic-enrollment-page-loads-chromium\\test-failed-1.png",
+      "test-results\\smart-publish-smart-publis-27323-aso-1-correcto-tipo-precio--chromium\\test-failed-1.png",
+      "test-results\\smart-publish-smart-publis-35d64-ot\u00F3n-Atr\u00E1s-vuelve-al-paso-1-chromium\\test-failed-1.png",
+      "test-results\\smart-publish-smart-publis-42273-estra-contenido-IA-editable-chromium\\test-failed-1.png",
+      "test-results\\smart-publish-smart-publis-428b1-ar-deshabilitado-sin-precio-chromium\\test-failed-1.png",
+      "test-results\\smart-publish-smart-publis-50257-visible-mientras-IA-trabaja-chromium\\test-failed-1.png",
+      "test-results\\smart-publish-smart-publis-53d69--IA-deshabilitado-sin-input-chromium\\test-failed-1.png",
+      "test-results\\smart-publish-smart-publis-60257-o-Texto-Ambos-cambian-la-UI-chromium\\test-failed-1.png",
+      "test-results\\smart-publish-smart-publis-88fda-guardar-\u2192-pantalla-de-\u00E9xito-chromium\\test-failed-1.png",
+      "test-results\\smart-publish-smart-publis-90fb9-ible-en-p\u00E1gina-de-productos-chromium\\test-failed-1.png",
+      "test-results\\smart-publish-smart-publis-9be23--bot\u00F3n-X-regresa-a-la-lista-chromium\\test-failed-1.png",
+      "test-results\\smart-publish-smart-publis-9ec43-tipo-Servicio-seleccionable-chromium\\test-failed-1.png",
+      "test-results\\smart-publish-smart-publis-b93c4--\u2192-paso-2-avanza-con-precio-chromium\\test-failed-1.png",
+      "test-results\\smart-publish-smart-publis-d6a20-ro-resetea-wizard-al-paso-1-chromium\\test-failed-1.png",
+      "test-results\\smart-publish-smart-publis-ef97b-ible-en-p\u00E1gina-de-servicios-chromium\\test-failed-1.png",
+      "test-results\\smart-publish-verify-real--15f0f-ervices-IA-genera-se-guarda-chromium\\test-failed-1.png",
+      "test-results\\smart-publish-verify-real--a4a93-eal-se-guarda-correctamente-chromium\\test-failed-1.png",
+      "test-results\\smoke-anon-crawl-\uD83C\uDF10-Smoke--3917a--links-del-footer-y-tenants-chromium\\test-failed-1.png",
+      "test-results\\smoke-full-smoke-Smoke-Sui-45493-ed-smoke-Finance-page-loads-chromium\\test-failed-1.png",
+      "test-results\\smoke-full-smoke-Smoke-Sui-6318f-sponds-without-server-error-chromium\\test-failed-1.png",
+      "test-results\\smoke-full-smoke-Smoke-Sui-cff14-sponds-without-server-error-chromium\\test-failed-1.png",
+      "test-results\\smoke-full-smoke-Smoke-Sui-e0398-dmin-loads-with-stats-cards-chromium\\test-failed-1.png",
+      "test-results\\smoke-full-smoke-Smoke-Sui-f24cf-sponds-without-server-error-chromium\\test-failed-1.png",
+      "test-results\\tenant-exhaustive-audit-\uD83D\uDD2C-27ef5-\u00E1lido-redirige-al-dashboard-chromium\\test-failed-1.png",
+      "test-results\\tenant-exhaustive-audit-\uD83D\uDD2C-6a435-\u00E1lido-redirige-al-dashboard-chromium\\test-failed-1.png",
+      "test-results\\tenants-nom-nom-landing-No-1dfda--sin-errores-no-500-no-404--chromium\\test-failed-1.png",
+      "test-results\\tenants-nom-nom-landing-No-55bc4-i\u00F3n-de-catering-CTA-aparece-chromium\\test-failed-1.png",
+      "test-results\\tenants-nom-nom-landing-No-ba5ba-izar-catering-est\u00E1-presente-chromium\\test-failed-1.png",
+      "test-results\\tenants-nom-nom-landing-No-c8ff5-or-qu\u00E9-nom-nom-est\u00E1-visible-chromium\\test-failed-1.png",
+      "test-results\\tenants-nom-nom-landing-No-f7b28-\u00F3n-de-contacto-est\u00E1-visible-chromium\\test-failed-1.png",
+      "test-results\\tenants-nom-nom-landing-No-fd8c7-ecci\u00F3n-de-men\u00FA-se-renderiza-chromium\\test-failed-1.png",
+      "test-results\\wondernails-wondernails-co-05039-d-navigate-to-bookings-page-chromium\\test-failed-1.png",
+      "test-results\\wondernails-wondernails-co-0b15b-n-404-for-non-existent-page-chromium\\test-failed-1.png",
+      "test-results\\wondernails-wondernails-co-2d99a-S-Flow-should-load-POS-page-chromium\\test-failed-1.png",
+      "test-results\\wondernails-wondernails-co-358f2--navigate-to-customers-page-chromium\\test-failed-1.png",
+      "test-results\\wondernails-wondernails-co-399f0-d-navigate-to-settings-page-chromium\\test-failed-1.png",
+      "test-results\\wondernails-wondernails-co-40a55-e-should-load-calendar-page-chromium\\test-failed-1.png",
+      "test-results\\wondernails-wondernails-co-4b9d6-d-navigate-to-calendar-page-chromium\\test-failed-1.png",
+      "test-results\\wondernails-wondernails-co-693b3-ow-should-show-booking-form-chromium\\test-failed-1.png",
+      "test-results\\wondernails-wondernails-co-6bd63-ully-with-valid-credentials-chromium\\test-failed-1.png",
+      "test-results\\wondernails-wondernails-co-819a6-should-show-products-in-POS-chromium\\test-failed-1.png",
+      "test-results\\wondernails-wondernails-co-8b840--should-load-customers-page-chromium\\test-failed-1.png",
+      "test-results\\wondernails-wondernails-co-ac613-should-navigate-to-POS-page-chromium\\test-failed-1.png",
+      "test-results\\wondernails-wondernails-co-b8527--load-dashboard-after-login-chromium\\test-failed-1.png",
+      "test-results\\wondernails-wondernails-co-c86c2-ow-should-load-booking-page-chromium\\test-failed-1.png",
+      "test-results\\wondernails-wondernails-co-f0165-age-should-search-customers-chromium\\test-failed-1.png",
+      "test-results\\wondernails-wondernails-fu-02237-n-Navigation-POS-page-loads-chromium\\test-failed-1.png",
+      "test-results\\wondernails-wondernails-fu-05ea9-kings-management-page-loads-chromium\\test-failed-1.png",
+      "test-results\\wondernails-wondernails-fu-1ec83-ettings-calendar-page-loads-chromium\\test-failed-1.png",
+      "test-results\\wondernails-wondernails-fu-52bbf-igation-calendar-page-loads-chromium\\test-failed-1.png",
+      "test-results\\wondernails-wondernails-fu-77689-ls-redirects-to-tenant-home-chromium\\test-failed-1.png",
+      "test-results\\wondernails-wondernails-fu-9a0c6-te-via-sidebar-topnav-links-chromium\\test-failed-1.png",
+      "test-results\\wondernails-wondernails-fu-a6f59-ation-admin-dashboard-loads-chromium\\test-failed-1.png",
+      "test-results\\wondernails-wondernails-fu-e909b-n-existent-page-returns-404-chromium\\test-failed-1.png",
       "tests\\api\\reviews.test.ts",
+      "tests\\e2e\\appointment-navigation.spec.ts",
+      "tests\\e2e\\calendar-picker.spec.ts",
       "tests\\e2e\\calendar.spec.ts",
       "tests\\e2e\\deep-audit-pages.spec.ts",
       "tests\\e2e\\email-validation.spec.ts",
@@ -274,8 +368,11 @@
       "tests\\e2e\\mobile-carousel-swipe.spec.ts",
       "tests\\e2e\\mobile-carousel.spec.ts",
       "tests\\e2e\\multi-tenant-deep-scan.spec.ts",
+      "tests\\e2e\\overdue-followup.spec.ts",
+      "tests\\e2e\\quotation-whatsapp.spec.ts",
       "tests\\e2e\\reporte-general-web.spec.ts",
       "tests\\e2e\\retouch-monitor.spec.ts",
+      "tests\\e2e\\sesiones-deportivas.spec.ts",
       "tests\\e2e\\smoke-anon-crawl.spec.ts",
       "tests\\e2e\\tenant-exhaustive-audit.spec.ts",
       "tests\\e2e\\web-map-report.spec.ts",
@@ -331,12 +428,17 @@
       "tests\\unit\\user-operations.test.ts.backup",
       "tests\\unit\\visit-utils.spec.ts",
       "tests\\unit\\whatsapp-link.spec.ts",
+      ".agents\\skills\\spec-discovery\\spec-template.md",
       ".agents\\sprint\\STRY-001-pos-robusto-e2e\\testing-usuario.md",
       ".agents\\sprint\\STRY-017-platform-perf-sec\\testing-usuario.md",
       ".agents\\sprint\\STRY-018-e2e-recovery-ci-gate\\testing-usuario.md",
       ".agents\\sprint\\STRY-019-secrets-observability\\testing-usuario.md",
       ".agents\\sprint\\STRY-020-production-release\\testing-usuario.md",
       ".agents\\sprint\\STRY-021-security-perf-hardening\\testing-usuario.md",
+      ".agents\\sprint\\STRY-023-sesiones-deportivas\\testing-usuario.md",
+      ".agents\\sprint\\STRY-024-editar-cliente-expediente\\testing-usuario.md",
+      ".agents\\sprint\\STRY-025-mejoras-calendario-citas-notificaciones\\test-matrix.md",
+      ".agents\\sprint\\STRY-025-mejoras-calendario-citas-notificaciones\\test-spec.md",
       ".agents\\sprint\\STRY-CTV-pro-elite-book\\testing-usuario.md",
       ".kilo\\node_modules\\.bin\\node-gyp-build-optional-packages-test",
       ".kilo\\node_modules\\.bin\\node-gyp-build-optional-packages-test.cmd",
@@ -472,106 +574,7 @@
       "node_modules\\date-fns\\fp\\minutesToMilliseconds.d.mts",
       "node_modules\\date-fns\\fp\\minutesToMilliseconds.d.ts",
       "node_modules\\date-fns\\fp\\minutesToMilliseconds.js",
-      "node_modules\\date-fns\\fp\\minutesToMilliseconds.mjs",
-      "node_modules\\date-fns\\fp\\minutesToSeconds.d.mts",
-      "node_modules\\date-fns\\fp\\minutesToSeconds.d.ts",
-      "node_modules\\date-fns\\fp\\minutesToSeconds.js",
-      "node_modules\\date-fns\\fp\\minutesToSeconds.mjs",
-      "node_modules\\date-fns\\_lib\\test.d.mts",
-      "node_modules\\date-fns\\_lib\\test.d.ts",
-      "node_modules\\date-fns\\_lib\\test.js",
-      "node_modules\\date-fns\\_lib\\test.mjs",
-      "node_modules\\date-fns-jalali\\fp\\minutesToHours.cjs",
-      "node_modules\\date-fns-jalali\\fp\\minutesToHours.d.cts",
-      "node_modules\\date-fns-jalali\\fp\\minutesToHours.d.ts",
-      "node_modules\\date-fns-jalali\\fp\\minutesToHours.js",
-      "node_modules\\date-fns-jalali\\fp\\minutesToMilliseconds.cjs",
-      "node_modules\\date-fns-jalali\\fp\\minutesToMilliseconds.d.cts",
-      "node_modules\\date-fns-jalali\\fp\\minutesToMilliseconds.d.ts",
-      "node_modules\\date-fns-jalali\\fp\\minutesToMilliseconds.js",
-      "node_modules\\date-fns-jalali\\fp\\minutesToSeconds.cjs",
-      "node_modules\\date-fns-jalali\\fp\\minutesToSeconds.d.cts",
-      "node_modules\\date-fns-jalali\\fp\\minutesToSeconds.d.ts",
-      "node_modules\\date-fns-jalali\\fp\\minutesToSeconds.js",
-      "node_modules\\date-fns-jalali\\_lib\\test.cjs",
-      "node_modules\\date-fns-jalali\\_lib\\test.d.cts",
-      "node_modules\\date-fns-jalali\\_lib\\test.d.ts",
-      "node_modules\\date-fns-jalali\\_lib\\test.js",
-      "node_modules\\devtools-protocol\\types\\protocol-tests-proxy-api.d.ts",
-      "node_modules\\dom-helpers\\cjs\\hyphenateStyle.d.ts",
-      "node_modules\\dom-helpers\\cjs\\hyphenateStyle.js",
-      "node_modules\\dom-helpers\\esm\\hyphenateStyle.d.ts",
-      "node_modules\\dom-helpers\\esm\\hyphenateStyle.js",
-      "node_modules\\es-abstract\\2022\\TestIntegrityLevel.js",
-      "node_modules\\es-abstract\\2022\\ToDateString.js",
-      "node_modules\\es-abstract\\2022\\TypedArraySpeciesCreate.js",
-      "node_modules\\es-abstract\\2023\\ArraySpeciesCreate.js",
-      "node_modules\\es-abstract\\2023\\DateString.js",
-      "node_modules\\es-abstract\\2023\\RawBytesToNumeric.js",
-      "node_modules\\es-abstract\\2023\\SpeciesConstructor.js",
-      "node_modules\\es-abstract\\2023\\TestIntegrityLevel.js",
-      "node_modules\\es-abstract\\2023\\ToDateString.js",
-      "node_modules\\es-abstract\\2023\\TypedArraySpeciesCreate.js",
-      "node_modules\\es-abstract\\2024\\ArraySpeciesCreate.js",
-      "node_modules\\es-abstract\\2024\\DateString.js",
-      "node_modules\\es-abstract\\2024\\RawBytesToNumeric.js",
-      "node_modules\\es-abstract\\2024\\SpeciesConstructor.js",
-      "node_modules\\es-abstract\\2024\\TestIntegrityLevel.js",
-      "node_modules\\es-abstract\\2024\\ToDateString.js",
-      "node_modules\\es-abstract\\2024\\TypedArraySpeciesCreate.js",
-      "node_modules\\es-abstract\\2025\\ArraySpeciesCreate.js",
-      "node_modules\\es-abstract\\2025\\DateString.js",
-      "node_modules\\es-abstract\\2025\\RawBytesToNumeric.js",
-      "node_modules\\es-abstract\\2025\\SpeciesConstructor.js",
-      "node_modules\\es-abstract\\2025\\TestIntegrityLevel.js",
-      "node_modules\\es-abstract\\2025\\ToDateString.js",
-      "node_modules\\es-abstract\\2025\\TypedArraySpeciesCreate.js",
-      "node_modules\\es-abstract\\helpers\\regexTester.js",
-      "node_modules\\es-iterator-helpers\\test\\tests.js",
-      "node_modules\\eslint-plugin-jsx-a11y\\__tests__\\index-test.js",
-      "node_modules\\events\\tests\\special-event-names.js",
-      "node_modules\\fast-json-stable-stringify\\benchmark\\test.json",
-      "node_modules\\fast-uri\\.github\\tests_checker.yml",
-      "node_modules\\fast-uri\\test\\ajv.test.js",
-      "node_modules\\fast-uri\\test\\equal.test.js",
-      "node_modules\\fast-uri\\test\\parse.test.js",
-      "node_modules\\fast-uri\\test\\resolve.test.js",
-      "node_modules\\fast-uri\\test\\rfc-3986.test.js",
-      "node_modules\\fast-uri\\test\\serialize.test.js",
-      "node_modules\\fast-uri\\test\\uri-js-compatibility.test.js",
-      "node_modules\\fast-uri\\test\\uri-js.test.js",
-      "node_modules\\fast-uri\\test\\util.test.js",
-      "node_modules\\fast-uri\\types\\index.test-d.ts",
-      "node_modules\\fastq\\test\\test.js",
-      "node_modules\\fd-slicer\\test\\test.js",
-      "node_modules\\find-root\\test\\test.js",
-      "node_modules\\for-each\\test\\test.js",
-      "node_modules\\fraction.js\\tests\\fraction.test.js",
-      "node_modules\\function.prototype.name\\test\\tests.js",
-      "node_modules\\gensync\\test\\index.test.js",
-      "node_modules\\globalthis\\test\\tests.js",
-      "node_modules\\has-symbols\\test\\tests.js",
-      "node_modules\\has-tostringtag\\test\\tests.js",
-      "node_modules\\json-schema-traverse\\spec\\index.spec.js",
-      "node_modules\\node-domexception\\.history\\test_20210527205603.js",
-      "node_modules\\node-domexception\\.history\\test_20210527205957.js",
-      "node_modules\\node-domexception\\.history\\test_20210527210021.js",
-      "node_modules\\node-plop\\types\\test.ts",
-      "node_modules\\object-inspect\\example\\inspect.js",
-      "node_modules\\object-inspect\\test\\inspect.js",
-      "node_modules\\object-inspect\\test\\quoteStyle.js",
-      "node_modules\\object.assign\\test\\tests.js",
-      "node_modules\\object.entries\\test\\tests.js",
-      "node_modules\\object.fromentries\\test\\tests.js",
-      "node_modules\\object.groupby\\test\\tests.js",
-      "node_modules\\object.values\\test\\tests.js",
-      "node_modules\\on-exit-leak-free\\test\\base.test.js",
-      "node_modules\\on-exit-leak-free\\test\\event-emitter-leak.test.js",
-      "node_modules\\pg-protocol\\dist\\inbound-parser.test.d.ts",
-      "node_modules\\pg-protocol\\dist\\inbound-parser.test.js",
-      "node_modules\\pg-protocol\\dist\\inbound-parser.test.js.map",
-      "node_modules\\pg-protocol\\dist\\outbound-serializer.test.d.ts",
-      "node_modules\\pg-protocol\\dist\\outbound-serializer.test.js"
+      "node_modules\\date-fns\\fp\\minutesToMilliseconds.mjs"
     ]
   },
   "structure": {
@@ -583,169 +586,40 @@
     "hasCiPipeline": true,
     "backendEndpoints": [],
     "frontendRoutes": [
-      "/",
-      "./runtime-types.d.ts",
-      "../shared/runtime-utils.ts",
-      "../shared/runtime-utils.ts",
-      "../shared/runtime-utils.ts",
-      "../shared-node/base-externals-utils.ts",
-      "../shared-node/node-externals-utils.ts",
-      "../shared-node/node-wasm-utils.ts",
-      "/",
-      "/",
-      "/",
-      "./runtime-types.d.ts",
-      "../shared/runtime-utils.ts",
-      "../shared/runtime-utils.ts",
-      "../shared/runtime-utils.ts",
-      "../shared-node/base-externals-utils.ts",
-      "../shared-node/node-externals-utils.ts",
-      "../shared-node/node-wasm-utils.ts",
-      "./runtime-types.d.ts",
-      "../shared/runtime-utils.ts",
-      "../shared/runtime-utils.ts",
-      "../shared/runtime-utils.ts",
-      "../shared-node/base-externals-utils.ts",
-      "../shared-node/node-externals-utils.ts",
-      "../shared-node/node-wasm-utils.ts",
-      "/",
-      "/",
-      "/",
-      "/",
-      "/",
-      "/",
-      "/",
-      "/",
-      "/",
-      "/",
-      "/",
-      "/",
-      "/",
-      "/",
-      "/",
-      "/",
-      "/",
-      "/",
-      "/",
-      "/",
-      "/",
-      "/",
-      "/",
-      "/",
-      "/",
-      "/",
-      "/",
-      "/",
-      "/",
-      "/",
-      "/",
-      "/",
-      "/",
-      "/",
-      "/",
-      "/",
-      "./runtime-types.d.ts",
-      "../shared/runtime-utils.ts",
-      "../shared/runtime-utils.ts",
-      "../shared/runtime-utils.ts",
-      "../shared-node/base-externals-utils.ts",
-      "../shared-node/node-externals-utils.ts",
-      "../shared-node/node-wasm-utils.ts",
-      "M",
-      "M ",
-      "M ",
-      "M",
-      "M ",
-      "M ",
-      "M ",
-      "./runtime-types.d.ts",
-      "../base/globals.d.ts",
-      "../../../shared/runtime-utils.ts",
-      "./dev-globals.d.ts",
-      "./dev-protocol.d.ts",
-      "./dev-extensions.ts",
-      "../../../browser/runtime/base/runtime-base.ts",
-      "../../../shared/runtime-types.d.ts",
-      "../base/runtime-base.ts",
-      "../base/dev-base.ts",
-      "./runtime-backend-dom.ts",
-      "../../../shared/require-type.d.ts",
-      "./runtime-types.d.ts",
-      "../base/globals.d.ts",
-      "../../../shared/runtime-utils.ts",
-      "./dev-globals.d.ts",
-      "./dev-protocol.d.ts",
-      "./dev-extensions.ts",
-      "../../../browser/runtime/base/runtime-base.ts",
-      "../../../shared/runtime-types.d.ts",
-      "../base/runtime-base.ts",
-      "../base/dev-base.ts",
-      "./runtime-backend-dom.ts",
-      "../../../shared/require-type.d.ts",
-      "./runtime-types.d.ts",
-      "../base/globals.d.ts",
-      "../../../shared/runtime-utils.ts",
-      "./dev-globals.d.ts",
-      "./dev-protocol.d.ts",
-      "./dev-extensions.ts",
-      "../../../browser/runtime/base/runtime-base.ts",
-      "../../../shared/runtime-types.d.ts",
-      "../base/runtime-base.ts",
-      "../base/dev-base.ts",
-      "./runtime-backend-dom.ts",
-      "../../../shared/require-type.d.ts",
-      "../../../shared/runtime-types.d.ts",
-      "../../runtime/base/dev-globals.d.ts",
-      "../../runtime/base/dev-protocol.d.ts",
-      "../../runtime/base/dev-extensions.ts",
-      "../../../shared/runtime-types.d.ts",
-      "../../runtime/base/dev-globals.d.ts",
-      "../../runtime/base/dev-protocol.d.ts",
-      "../../runtime/base/dev-extensions.ts",
-      "../../../shared/runtime-types.d.ts",
-      "../../runtime/base/dev-globals.d.ts",
-      "../../runtime/base/dev-protocol.d.ts",
-      "../../runtime/base/dev-extensions.ts",
-      "/",
-      "/",
-      "./runtime-types.d.ts",
-      "../shared/runtime-utils.ts",
-      "../shared/runtime-utils.ts",
-      "../shared/runtime-utils.ts",
-      "../shared-node/base-externals-utils.ts",
-      "../shared-node/node-externals-utils.ts",
-      "../shared-node/node-wasm-utils.ts",
-      "/",
-      "/",
-      "/",
-      "/",
-      "/",
-      "M",
-      "M ",
-      "M ",
-      "M",
-      "M ",
-      "M ",
-      "M ",
-      "./runtime-types.d.ts",
-      "../shared/runtime-utils.ts",
-      "../shared/runtime-utils.ts",
-      "../shared/runtime-utils.ts",
-      "../shared-node/base-externals-utils.ts",
-      "../shared-node/node-externals-utils.ts",
-      "../shared-node/node-wasm-utils.ts",
-      "/",
-      "./runtime-types.d.ts",
-      "../base/globals.d.ts",
-      "../../../shared/runtime-utils.ts",
-      "./dev-globals.d.ts",
-      "./dev-protocol.d.ts",
-      "./dev-extensions.ts",
-      "../shared/runtime-utils.ts",
-      "../base/runtime-base.ts",
-      "../../../shared/require-type.d.ts",
-      "../../../shared-node/base-externals-utils.ts",
-      "../base/dev-protocol.d.ts"
+      "/admin",
+      "/admin/calendar",
+      "/admin/products",
+      "/admin_services",
+      "/admin_bookings",
+      "/admin/quotes",
+      "/admin_tenants",
+      "/pos",
+      "/reports",
+      "/finance",
+      "/finance/movements",
+      "/finance/budgets",
+      "/finance/categories",
+      "/inventory",
+      "/inventory/supplies",
+      "/clientes",
+      "/clientes/nueva",
+      "/cart",
+      "/checkout",
+      "/orders",
+      "/profile",
+      "/account",
+      "/settings/calendar",
+      "/config",
+      "/favorites",
+      "/social",
+      "/retouch",
+      "/reorder",
+      "/login (valid)",
+      "/login (invalid)",
+      "/t/wondernails/admin/bookings",
+      "/t/wondernails/admin/customers",
+      "/t/wondernails/finance",
+      "/t/wondernails/inventory"
     ],
     "projectFiles": []
   },
@@ -783,21 +657,6 @@
       {
         "path": "fix-services-schema.js",
         "kind": "connectionstring",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "test-api-connection.js",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "test-pq.js",
-        "kind": "connectionstring",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": ".claude\\settings.json",
-        "kind": "api-key",
         "confidence": "Medium confidence"
       },
       {
@@ -941,11 +800,6 @@
         "confidence": "Medium confidence"
       },
       {
-        "path": "scripts\\check-test-db.ts",
-        "kind": "connectionstring",
-        "confidence": "Medium confidence"
-      },
-      {
         "path": "scripts\\check-user-role.js",
         "kind": "connectionstring",
         "confidence": "Medium confidence"
@@ -966,27 +820,7 @@
         "confidence": "Medium confidence"
       },
       {
-        "path": "scripts\\create-app-user.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
         "path": "scripts\\create-retouch-tables.js",
-        "kind": "connectionstring",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "scripts\\create-salontest-tenant.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "scripts\\create-salontest-tenant.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "scripts\\create-test-service.js",
         "kind": "connectionstring",
         "confidence": "Medium confidence"
       },
@@ -1036,28 +870,8 @@
         "confidence": "Medium confidence"
       },
       {
-        "path": "scripts\\test-all-tenants.ts",
-        "kind": "connectionstring",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "scripts\\test-monitoring.js",
-        "kind": "connectionstring",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "scripts\\test-rls.ts",
-        "kind": "connectionstring",
-        "confidence": "Medium confidence"
-      },
-      {
         "path": "scripts\\update-user-role.js",
         "kind": "connectionstring",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "scripts\\validate-scheduled-notifications-api.js",
-        "kind": "apikey",
         "confidence": "Medium confidence"
       },
       {
@@ -1096,61 +910,6 @@
         "confidence": "Medium confidence"
       },
       {
-        "path": "packages\\database\\connection.ts",
-        "kind": "connectionstring",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\builders\\TenantBuilder.ts",
-        "kind": "accesstoken",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\builders\\TenantBuilder.ts",
-        "kind": "refreshtoken",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\integration\\api-integration.spec.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\integration\\api-integration.spec.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\integration\\api-integration.spec.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\integration\\database-integration.spec.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\setup\\test-database.ts",
-        "kind": "connectionstring",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\setup\\test-database.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\unit\\complete-flows.test.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\unit\\user-operations.test.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
         "path": "apps\\web\\lib\\whatsapp.ts",
         "kind": "access_token",
         "confidence": "Medium confidence"
@@ -1161,21 +920,6 @@
         "confidence": "Medium confidence"
       },
       {
-        "path": "packages\\config\\src\\auth-api.ts",
-        "kind": "apikey",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "packages\\config\\src\\auth-api.ts",
-        "kind": "apikey",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "packages\\config\\src\\auth-env.ts",
-        "kind": "secret",
-        "confidence": "Medium confidence"
-      },
-      {
         "path": "packages\\config\\src\\auth.ts",
         "kind": "secret",
         "confidence": "Medium confidence"
@@ -1183,286 +927,6 @@
       {
         "path": "packages\\config\\src\\auth.ts",
         "kind": "clientsecret",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\e2e\\auth\\google-auth-flows.spec.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\e2e\\booking\\booking-admin-exhaustive.spec.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\e2e\\pos\\stry-001-pos-multitenant.spec.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\e2e\\profile\\profile-exhaustive.spec.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\e2e\\security\\stry-022-fixes.spec.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\e2e\\services\\service-crud.spec.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\integration\\api\\API.integration.spec.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\integration\\api\\API.integration.spec.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\integration\\api\\API.integration.spec.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\integration\\api\\product-api-copied.spec.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\integration\\api\\product-api-copied.spec.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\integration\\api\\product-api-copied.spec.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\integration\\api\\product-api.spec.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\integration\\api\\product-api.spec.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\integration\\api\\product-api.spec.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\unit\\auth\\jwt-service.spec.ts",
-        "kind": "secret",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\unit\\auth\\jwt-service.spec.ts",
-        "kind": "secret",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\unit\\auth\\jwt-service.spec.ts",
-        "kind": "secret",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\unit\\auth\\jwt-service.spec.ts",
-        "kind": "secret",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\unit\\auth\\jwt-service.spec.ts",
-        "kind": "secret",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\unit\\auth\\users-authorization.spec.ts",
-        "kind": "secret",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\unit\\auth\\users-authorization.spec.ts",
-        "kind": "secret",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\unit\\auth\\users-authorization.spec.ts",
-        "kind": "secret",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\unit\\auth\\users-authorization.spec.ts",
-        "kind": "secret",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\unit\\services\\AuthSecurity.spec.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\unit\\services\\AuthSecurity.spec.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\unit\\services\\AuthSecurity.spec.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\unit\\services\\AuthSecurity.spec.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\unit\\services\\AuthSecurity.spec.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\unit\\services\\AuthSecurity.spec.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\unit\\services\\AuthSecurity.spec.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\unit\\services\\AuthSecurity.spec.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\unit\\services\\AuthSecurity.spec.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\unit\\services\\AuthSecurity.spec.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\unit\\services\\AuthSecurity.spec.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\unit\\services\\AuthSecurity.spec.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\unit\\services\\AuthSecurity.spec.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\unit\\services\\AuthSecurity.spec.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\unit\\services\\AuthSecurity.spec.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\unit\\services\\AuthSecurity.spec.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\unit\\services\\AuthSecurity.spec.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\unit\\services\\AuthSecurity.spec.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\unit\\services\\AuthSecurity.spec.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\unit\\services\\AuthSecurity.spec.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\unit\\services\\AuthSecurity.spec.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\unit\\services\\UserService.spec.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\unit\\services\\UserService.spec.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\unit\\services\\UserService.spec.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\unit\\services\\UserService.spec.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\unit\\services\\UserService.spec.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\unit\\services\\UserService.spec.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\unit\\services\\UserService.spec.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\unit\\services\\UserService.spec.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\unit\\services\\UserService.spec.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\unit\\services\\UserService.spec.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "tests\\unit\\services\\UserService.spec.ts",
-        "kind": "password",
         "confidence": "Medium confidence"
       },
       {
@@ -1501,262 +965,112 @@
         "confidence": "Medium confidence"
       },
       {
-        "path": "apps\\web\\lib\\services\\UserService.ts",
+        "path": "apps\\web\\app\\api\\tenants\\route.ts",
         "kind": "password",
         "confidence": "Medium confidence"
       },
       {
-        "path": "apps\\web\\lib\\services\\UserService.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "packages\\core\\src\\auth\\result-helpers.ts",
-        "kind": "password",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "packages\\core\\src\\auth\\result-helpers.ts",
-        "kind": "apikey",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "apps\\web\\.next\\server\\chunks\\node_modules_ad24bcdb._.js",
-        "kind": "refreshtoken",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "apps\\web\\.next\\server\\chunks\\node_modules_ad24bcdb._.js",
-        "kind": "apikey",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
-        "kind": "secret",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
-        "kind": "secret",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
-        "kind": "secret",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
-        "kind": "secret",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
-        "kind": "secret",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
-        "kind": "secret",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
-        "kind": "secret",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
-        "kind": "secret",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
-        "kind": "secret",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
-        "kind": "secret",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
-        "kind": "secret",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
-        "kind": "secret",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
-        "kind": "secret",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
-        "kind": "secret",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
-        "kind": "secret",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
-        "kind": "secret",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
-        "kind": "secret",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
-        "kind": "secret",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
-        "kind": "secret",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
-        "kind": "secret",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
-        "kind": "secret",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
-        "kind": "secret",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
-        "kind": "secret",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
-        "kind": "secret",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
-        "kind": "secret",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
-        "kind": "secret",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
-        "kind": "secret",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
-        "kind": "secret",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
-        "kind": "secret",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
-        "kind": "secret",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
-        "kind": "secret",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
-        "kind": "secret",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
-        "kind": "secret",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
-        "kind": "secret",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
-        "kind": "secret",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
-        "kind": "secret",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
-        "kind": "secret",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
-        "kind": "secret",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
-        "kind": "secret",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
-        "kind": "secret",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
-        "kind": "secret",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "apps\\web\\.next\\server\\chunks\\node_modules_de9b768a._.js",
-        "kind": "secret",
-        "confidence": "Medium confidence"
-      },
-      {
-        "path": "apps\\web\\.next\\server\\chunks\\node_modules_e10160b7._.js",
+        "path": "apps\\web\\app\\api\\upload\\route.ts",
         "kind": "api_key",
         "confidence": "Medium confidence"
       },
       {
-        "path": "apps\\web\\.next\\server\\chunks\\node_modules_next_50f1b806._.js",
+        "path": "apps\\web\\app\\api\\auth\\register\\route-result-v2.ts",
         "kind": "password",
         "confidence": "Medium confidence"
       },
       {
-        "path": "apps\\web\\.next\\server\\chunks\\node_modules_next_85083532._.js",
+        "path": "apps\\web\\app\\api\\auth\\register\\route-result.ts",
         "kind": "password",
         "confidence": "Medium confidence"
       },
       {
-        "path": "apps\\web\\.next\\server\\chunks\\node_modules_next_dist_esm_build_templates_app-route_6877dc82.js",
+        "path": "apps\\web\\app\\api\\auth\\register\\route.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\app\\api\\debug\\seed-e2e\\route.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\app\\api\\debug\\seed-e2e\\route.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\app\\api\\debug\\seed-e2e\\route.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\app\\api\\diagnose\\connection-test\\route.ts",
+        "kind": "connectionstring",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\app\\api\\diagnose\\connection-test\\route.ts",
+        "kind": "connectionstring",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\app\\api\\diagnose\\connection-test\\route.ts",
+        "kind": "connectionstring",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\app\\api\\diagnose\\connection-test\\route.ts",
+        "kind": "connectionstring",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\app\\api\\diagnose\\connection-test\\route.ts",
+        "kind": "connectionstring",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\app\\api\\diagnose\\connection-test\\route.ts",
+        "kind": "connectionstring",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\app\\api\\diagnose\\connection-test\\route.ts",
+        "kind": "connectionstring",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\app\\api\\diagnose\\connection-test\\route.ts",
+        "kind": "connectionstring",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\app\\api\\diagnose\\connection-test\\route.ts",
+        "kind": "connectionstring",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\app\\api\\profile\\password\\route.ts",
+        "kind": "password",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\app\\api\\smart-publish\\generate\\route.ts",
+        "kind": "api_key",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\app\\api\\auth\\google\\callback\\route.ts",
+        "kind": "clientsecret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\app\\api\\tenants\\[tenant]\\calendar\\sync\\route.ts",
+        "kind": "clientsecret",
+        "confidence": "Medium confidence"
+      },
+      {
+        "path": "apps\\web\\app\\api\\v1\\social\\media\\upload\\route.ts",
         "kind": "api_key",
         "confidence": "Medium confidence"
       }
@@ -1765,37 +1079,66 @@
   "functionalMap": {
     "modules": [
       {
-        "name": "Mercadopago Payment",
+        "name": "Checkout",
         "priority": "P0",
         "riskLevel": "high",
         "confidence": "Medium confidence",
-        "screens": [],
-        "endpoints": [],
-        "tables": [
-          "mercadopago_payments",
-          "mercadopago_payments",
-          "mercadopago_payments",
-          "mercadopago_payments",
-          "mercadopago_payments",
-          "mercadopago_payments",
-          "mercadopago_payments",
-          "mercadopago_payments",
-          "mercadopago_payments"
+        "screens": [
+          "/checkout"
         ],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration", "smoke", "regression"],
+        "endpoints": [],
+        "tables": [],
+        "detectedRules": [
+          "User-facing workflow"
+        ],
+        "requiredTests": [
+          "unit",
+          "e2e",
+          "smoke",
+          "regression"
+        ],
         "qualityScore": 85
       },
       {
-        "name": "Oauth State Token",
+        "name": "Login (invalid)",
         "priority": "P0",
         "riskLevel": "high",
         "confidence": "Medium confidence",
-        "screens": [],
+        "screens": [
+          "/login (invalid)"
+        ],
         "endpoints": [],
-        "tables": ["oauth_state_tokens"],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration", "smoke", "regression"],
+        "tables": [],
+        "detectedRules": [
+          "User-facing workflow"
+        ],
+        "requiredTests": [
+          "unit",
+          "e2e",
+          "smoke",
+          "regression"
+        ],
+        "qualityScore": 85
+      },
+      {
+        "name": "Login (valid)",
+        "priority": "P0",
+        "riskLevel": "high",
+        "confidence": "Medium confidence",
+        "screens": [
+          "/login (valid)"
+        ],
+        "endpoints": [],
+        "tables": [],
+        "detectedRules": [
+          "User-facing workflow"
+        ],
+        "requiredTests": [
+          "unit",
+          "e2e",
+          "smoke",
+          "regression"
+        ],
         "qualityScore": 85
       },
       {
@@ -1803,317 +1146,45 @@
         "priority": "P0",
         "riskLevel": "high",
         "confidence": "Medium confidence",
-        "screens": [],
+        "screens": [
+          "/orders"
+        ],
         "endpoints": [],
         "tables": [
-          "orders",
-          "orders",
-          "orders",
-          "orders",
-          "orders",
-          "orders",
-          "orders",
           "orders"
         ],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration", "smoke", "regression"],
-        "qualityScore": 85
+        "detectedRules": [
+          "User-facing workflow",
+          "Persists data"
+        ],
+        "requiredTests": [
+          "unit",
+          "integration",
+          "e2e",
+          "smoke",
+          "regression"
+        ],
+        "qualityScore": 100
       },
       {
-        "name": "Order Item",
+        "name": "Reorder",
         "priority": "P0",
         "riskLevel": "high",
-        "confidence": "Medium confidence",
-        "screens": [],
-        "endpoints": [],
-        "tables": [
-          "order_items",
-          "order_items",
-          "order_items",
-          "order_items",
-          "order_items",
-          "order_items",
-          "order_items",
-          "order_items"
-        ],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration", "smoke", "regression"],
-        "qualityScore": 85
-      },
-      {
-        "name": "Payment",
-        "priority": "P0",
-        "riskLevel": "high",
-        "confidence": "Medium confidence",
-        "screens": [],
-        "endpoints": [],
-        "tables": [
-          "payments",
-          "payments",
-          "payments",
-          "payments",
-          "payments",
-          "payments",
-          "payments",
-          "payments"
-        ],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration", "smoke", "regression"],
-        "qualityScore": 85
-      },
-      {
-        "name": "User",
-        "priority": "P0",
-        "riskLevel": "high",
-        "confidence": "Medium confidence",
-        "screens": [],
-        "endpoints": [],
-        "tables": [
-          "users",
-          "users",
-          "users",
-          "users",
-          "users",
-          "users",
-          "users",
-          "users",
-          "users"
-        ],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration", "smoke", "regression"],
-        "qualityScore": 85
-      },
-      {
-        "name": "User Cart",
-        "priority": "P0",
-        "riskLevel": "high",
-        "confidence": "Medium confidence",
-        "screens": [],
-        "endpoints": [],
-        "tables": ["user_carts", "user_carts", "user_carts", "user_carts"],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration", "smoke", "regression"],
-        "qualityScore": 85
-      },
-      {
-        "name": "User Role",
-        "priority": "P0",
-        "riskLevel": "high",
-        "confidence": "Medium confidence",
-        "screens": [],
-        "endpoints": [],
-        "tables": ["user_roles"],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration", "smoke", "regression"],
-        "qualityScore": 85
-      },
-      {
-        "name": "Customer",
-        "priority": "P1",
-        "riskLevel": "medium",
-        "confidence": "Medium confidence",
-        "screens": [],
-        "endpoints": [],
-        "tables": [
-          "customers",
-          "customers",
-          "customers",
-          "customers",
-          "customers",
-          "customers",
-          "customers",
-          "customers",
-          "customers",
-          "customers",
-          "customers"
-        ],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration", "smoke"],
-        "qualityScore": 85
-      },
-      {
-        "name": "Customer Advance",
-        "priority": "P1",
-        "riskLevel": "medium",
-        "confidence": "Medium confidence",
-        "screens": [],
-        "endpoints": [],
-        "tables": ["customer_advances"],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration", "smoke"],
-        "qualityScore": 85
-      },
-      {
-        "name": "Customer Visit",
-        "priority": "P1",
-        "riskLevel": "medium",
-        "confidence": "Medium confidence",
-        "screens": [],
-        "endpoints": [],
-        "tables": [
-          "customer_visits",
-          "customer_visits",
-          "customer_visits",
-          "customer_visits",
-          "customer_visits",
-          "customer_visits",
-          "customer_visits",
-          "customer_visits",
-          "customer_visits",
-          "customer_visits"
-        ],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration", "smoke"],
-        "qualityScore": 85
-      },
-      {
-        "name": "Customer Visit Service",
-        "priority": "P1",
-        "riskLevel": "medium",
-        "confidence": "Medium confidence",
-        "screens": [],
-        "endpoints": [],
-        "tables": [
-          "customer_visit_services",
-          "customer_visit_services",
-          "customer_visit_services",
-          "customer_visit_services",
-          "customer_visit_services",
-          "customer_visit_services",
-          "customer_visit_services",
-          "customer_visit_services",
-          "customer_visit_services",
-          "customer_visit_services"
-        ],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration", "smoke"],
-        "qualityScore": 85
-      },
-      {
-        "name": ".",
-        "priority": "P2",
-        "riskLevel": "low",
         "confidence": "Medium confidence",
         "screens": [
-          "./runtime-types.d.ts",
-          "./runtime-types.d.ts",
-          "./runtime-types.d.ts",
-          "./runtime-types.d.ts",
-          "./runtime-types.d.ts",
-          "./dev-globals.d.ts",
-          "./dev-protocol.d.ts",
-          "./dev-extensions.ts",
-          "./runtime-backend-dom.ts",
-          "./runtime-types.d.ts",
-          "./dev-globals.d.ts",
-          "./dev-protocol.d.ts",
-          "./dev-extensions.ts",
-          "./runtime-backend-dom.ts",
-          "./runtime-types.d.ts",
-          "./dev-globals.d.ts",
-          "./dev-protocol.d.ts",
-          "./dev-extensions.ts",
-          "./runtime-backend-dom.ts",
-          "./runtime-types.d.ts",
-          "./runtime-types.d.ts",
-          "./runtime-types.d.ts",
-          "./dev-globals.d.ts",
-          "./dev-protocol.d.ts",
-          "./dev-extensions.ts"
+          "/reorder"
         ],
         "endpoints": [],
         "tables": [],
-        "detectedRules": ["User-facing workflow"],
-        "requiredTests": ["unit", "e2e"],
-        "qualityScore": 85
-      },
-      {
-        "name": "..",
-        "priority": "P2",
-        "riskLevel": "low",
-        "confidence": "Medium confidence",
-        "screens": [
-          "../shared/runtime-utils.ts",
-          "../shared/runtime-utils.ts",
-          "../shared/runtime-utils.ts",
-          "../shared-node/base-externals-utils.ts",
-          "../shared-node/node-externals-utils.ts",
-          "../shared-node/node-wasm-utils.ts",
-          "../shared/runtime-utils.ts",
-          "../shared/runtime-utils.ts",
-          "../shared/runtime-utils.ts",
-          "../shared-node/base-externals-utils.ts",
-          "../shared-node/node-externals-utils.ts",
-          "../shared-node/node-wasm-utils.ts",
-          "../shared/runtime-utils.ts",
-          "../shared/runtime-utils.ts",
-          "../shared/runtime-utils.ts",
-          "../shared-node/base-externals-utils.ts",
-          "../shared-node/node-externals-utils.ts",
-          "../shared-node/node-wasm-utils.ts",
-          "../shared/runtime-utils.ts",
-          "../shared/runtime-utils.ts",
-          "../shared/runtime-utils.ts",
-          "../shared-node/base-externals-utils.ts",
-          "../shared-node/node-externals-utils.ts",
-          "../shared-node/node-wasm-utils.ts",
-          "../base/globals.d.ts",
-          "../../../shared/runtime-utils.ts",
-          "../../../browser/runtime/base/runtime-base.ts",
-          "../../../shared/runtime-types.d.ts",
-          "../base/runtime-base.ts",
-          "../base/dev-base.ts",
-          "../../../shared/require-type.d.ts",
-          "../base/globals.d.ts",
-          "../../../shared/runtime-utils.ts",
-          "../../../browser/runtime/base/runtime-base.ts",
-          "../../../shared/runtime-types.d.ts",
-          "../base/runtime-base.ts",
-          "../base/dev-base.ts",
-          "../../../shared/require-type.d.ts",
-          "../base/globals.d.ts",
-          "../../../shared/runtime-utils.ts",
-          "../../../browser/runtime/base/runtime-base.ts",
-          "../../../shared/runtime-types.d.ts",
-          "../base/runtime-base.ts",
-          "../base/dev-base.ts",
-          "../../../shared/require-type.d.ts",
-          "../../../shared/runtime-types.d.ts",
-          "../../runtime/base/dev-globals.d.ts",
-          "../../runtime/base/dev-protocol.d.ts",
-          "../../runtime/base/dev-extensions.ts",
-          "../../../shared/runtime-types.d.ts",
-          "../../runtime/base/dev-globals.d.ts",
-          "../../runtime/base/dev-protocol.d.ts",
-          "../../runtime/base/dev-extensions.ts",
-          "../../../shared/runtime-types.d.ts",
-          "../../runtime/base/dev-globals.d.ts",
-          "../../runtime/base/dev-protocol.d.ts",
-          "../../runtime/base/dev-extensions.ts",
-          "../shared/runtime-utils.ts",
-          "../shared/runtime-utils.ts",
-          "../shared/runtime-utils.ts",
-          "../shared-node/base-externals-utils.ts",
-          "../shared-node/node-externals-utils.ts",
-          "../shared-node/node-wasm-utils.ts",
-          "../shared/runtime-utils.ts",
-          "../shared/runtime-utils.ts",
-          "../shared/runtime-utils.ts",
-          "../shared-node/base-externals-utils.ts",
-          "../shared-node/node-externals-utils.ts",
-          "../shared-node/node-wasm-utils.ts",
-          "../base/globals.d.ts",
-          "../../../shared/runtime-utils.ts",
-          "../shared/runtime-utils.ts",
-          "../base/runtime-base.ts",
-          "../../../shared/require-type.d.ts",
-          "../../../shared-node/base-externals-utils.ts",
-          "../base/dev-protocol.d.ts"
+        "detectedRules": [
+          "User-facing workflow"
         ],
-        "endpoints": [],
-        "tables": [],
-        "detectedRules": ["User-facing workflow"],
-        "requiredTests": ["unit", "e2e"],
+        "requiredTests": [
+          "unit",
+          "e2e",
+          "smoke",
+          "regression"
+        ],
         "qualityScore": 85
       },
       {
@@ -2121,237 +1192,197 @@
         "priority": "P2",
         "riskLevel": "low",
         "confidence": "Medium confidence",
-        "screens": [],
+        "screens": [
+          "/account"
+        ],
         "endpoints": [],
         "tables": [
-          "accounts",
-          "accounts",
-          "accounts",
-          "accounts",
-          "accounts",
-          "accounts",
-          "accounts",
-          "accounts",
           "accounts"
         ],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration"],
-        "qualityScore": 85
-      },
-      {
-        "name": "Advance Application",
-        "priority": "P2",
-        "riskLevel": "low",
-        "confidence": "Medium confidence",
-        "screens": [],
-        "endpoints": [],
-        "tables": ["advance_applications"],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration"],
-        "qualityScore": 85
-      },
-      {
-        "name": "Api Key",
-        "priority": "P2",
-        "riskLevel": "low",
-        "confidence": "Medium confidence",
-        "screens": [],
-        "endpoints": [],
-        "tables": ["api_keys"],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration"],
-        "qualityScore": 85
-      },
-      {
-        "name": "Audit Log",
-        "priority": "P2",
-        "riskLevel": "low",
-        "confidence": "Medium confidence",
-        "screens": [],
-        "endpoints": [],
-        "tables": [
-          "audit_logs",
-          "audit_logs",
-          "audit_logs",
-          "audit_logs",
-          "audit_logs",
-          "audit_logs",
-          "audit_logs",
-          "audit_logs",
-          "audit_logs"
+        "detectedRules": [
+          "User-facing workflow",
+          "Persists data"
         ],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration"],
-        "qualityScore": 85
-      },
-      {
-        "name": "Booking",
-        "priority": "P2",
-        "riskLevel": "low",
-        "confidence": "Medium confidence",
-        "screens": [],
-        "endpoints": [],
-        "tables": [
-          "bookings",
-          "bookings",
-          "bookings",
-          "bookings",
-          "bookings",
-          "bookings",
-          "bookings",
-          "bookings"
+        "requiredTests": [
+          "unit",
+          "integration",
+          "e2e"
         ],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration"],
-        "qualityScore": 85
+        "qualityScore": 100
       },
       {
-        "name": "Budget",
+        "name": "Admin Booking",
         "priority": "P2",
         "riskLevel": "low",
         "confidence": "Medium confidence",
-        "screens": [],
-        "endpoints": [],
-        "tables": ["budgets"],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration"],
-        "qualityScore": 85
-      },
-      {
-        "name": "Budget Category",
-        "priority": "P2",
-        "riskLevel": "low",
-        "confidence": "Medium confidence",
-        "screens": [],
-        "endpoints": [],
-        "tables": ["budget_categories"],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration"],
-        "qualityScore": 85
-      },
-      {
-        "name": "Campaign",
-        "priority": "P2",
-        "riskLevel": "low",
-        "confidence": "Medium confidence",
-        "screens": [],
-        "endpoints": [],
-        "tables": [
-          "campaigns",
-          "campaigns",
-          "campaigns",
-          "campaigns",
-          "campaigns"
+        "screens": [
+          "/admin_bookings"
         ],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration"],
+        "endpoints": [],
+        "tables": [],
+        "detectedRules": [
+          "User-facing workflow"
+        ],
+        "requiredTests": [
+          "unit",
+          "e2e"
+        ],
         "qualityScore": 85
       },
       {
-        "name": "Channel Account",
+        "name": "Admin Service",
         "priority": "P2",
         "riskLevel": "low",
         "confidence": "Medium confidence",
-        "screens": [],
-        "endpoints": [],
-        "tables": [
-          "channel_accounts",
-          "channel_accounts",
-          "channel_accounts",
-          "channel_accounts",
-          "channel_accounts",
-          "channel_accounts",
-          "channel_accounts",
-          "channel_accounts"
+        "screens": [
+          "/admin_services"
         ],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration"],
+        "endpoints": [],
+        "tables": [],
+        "detectedRules": [
+          "User-facing workflow"
+        ],
+        "requiredTests": [
+          "unit",
+          "e2e"
+        ],
         "qualityScore": 85
       },
       {
-        "name": "Channel Credential",
+        "name": "Admin Tenant",
         "priority": "P2",
         "riskLevel": "low",
         "confidence": "Medium confidence",
-        "screens": [],
-        "endpoints": [],
-        "tables": [
-          "channel_credentials",
-          "channel_credentials",
-          "channel_credentials",
-          "channel_credentials",
-          "channel_credentials",
-          "channel_credentials",
-          "channel_credentials",
-          "channel_credentials"
+        "screens": [
+          "/admin_tenants"
         ],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration"],
+        "endpoints": [],
+        "tables": [],
+        "detectedRules": [
+          "User-facing workflow"
+        ],
+        "requiredTests": [
+          "unit",
+          "e2e"
+        ],
         "qualityScore": 85
       },
       {
-        "name": "Content Variant",
+        "name": "Calendar",
         "priority": "P2",
         "riskLevel": "low",
         "confidence": "Medium confidence",
-        "screens": [],
-        "endpoints": [],
-        "tables": [
-          "content_variants",
-          "content_variants",
-          "content_variants",
-          "content_variants",
-          "content_variants",
-          "content_variants",
-          "content_variants",
-          "content_variants"
+        "screens": [
+          "/admin/calendar"
         ],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration"],
+        "endpoints": [],
+        "tables": [],
+        "detectedRules": [
+          "User-facing workflow"
+        ],
+        "requiredTests": [
+          "unit",
+          "e2e"
+        ],
         "qualityScore": 85
       },
       {
-        "name": "Financial Kpi",
+        "name": "Cart",
         "priority": "P2",
         "riskLevel": "low",
         "confidence": "Medium confidence",
-        "screens": [],
-        "endpoints": [],
-        "tables": [
-          "financial_kpis",
-          "financial_kpis",
-          "financial_kpis",
-          "financial_kpis",
-          "financial_kpis",
-          "financial_kpis",
-          "financial_kpis",
-          "financial_kpis",
-          "financial_kpis"
+        "screens": [
+          "/cart"
         ],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration"],
+        "endpoints": [],
+        "tables": [],
+        "detectedRules": [
+          "User-facing workflow"
+        ],
+        "requiredTests": [
+          "unit",
+          "e2e"
+        ],
         "qualityScore": 85
       },
       {
-        "name": "Financial Movement",
+        "name": "Cliente",
         "priority": "P2",
         "riskLevel": "low",
         "confidence": "Medium confidence",
-        "screens": [],
-        "endpoints": [],
-        "tables": [
-          "financial_movements",
-          "financial_movements",
-          "financial_movements",
-          "financial_movements",
-          "financial_movements",
-          "financial_movements",
-          "financial_movements",
-          "financial_movements",
-          "financial_movements"
+        "screens": [
+          "/clientes",
+          "/clientes/nueva"
         ],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration"],
+        "endpoints": [],
+        "tables": [],
+        "detectedRules": [
+          "User-facing workflow"
+        ],
+        "requiredTests": [
+          "unit",
+          "e2e"
+        ],
+        "qualityScore": 85
+      },
+      {
+        "name": "Config",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [
+          "/config"
+        ],
+        "endpoints": [],
+        "tables": [],
+        "detectedRules": [
+          "User-facing workflow"
+        ],
+        "requiredTests": [
+          "unit",
+          "e2e"
+        ],
+        "qualityScore": 85
+      },
+      {
+        "name": "Favorite",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [
+          "/favorites"
+        ],
+        "endpoints": [],
+        "tables": [],
+        "detectedRules": [
+          "User-facing workflow"
+        ],
+        "requiredTests": [
+          "unit",
+          "e2e"
+        ],
+        "qualityScore": 85
+      },
+      {
+        "name": "Finance",
+        "priority": "P2",
+        "riskLevel": "low",
+        "confidence": "Medium confidence",
+        "screens": [
+          "/finance",
+          "/finance/movements",
+          "/finance/budgets",
+          "/finance/categories"
+        ],
+        "endpoints": [],
+        "tables": [],
+        "detectedRules": [
+          "User-facing workflow"
+        ],
+        "requiredTests": [
+          "unit",
+          "e2e"
+        ],
         "qualityScore": 85
       },
       {
@@ -2360,281 +1391,56 @@
         "riskLevel": "low",
         "confidence": "Medium confidence",
         "screens": [
-          "/",
-          "/",
-          "/",
-          "/",
-          "/",
-          "/",
-          "/",
-          "/",
-          "/",
-          "/",
-          "/",
-          "/",
-          "/",
-          "/",
-          "/",
-          "/",
-          "/",
-          "/",
-          "/",
-          "/",
-          "/",
-          "/",
-          "/",
-          "/",
-          "/",
-          "/",
-          "/",
-          "/",
-          "/",
-          "/",
-          "/",
-          "/",
-          "/",
-          "/",
-          "/",
-          "/",
-          "/",
-          "/",
-          "/",
-          "/",
-          "/",
-          "/",
-          "/",
-          "/",
-          "/",
-          "/",
-          "/",
-          "/"
+          "/admin"
         ],
         "endpoints": [],
         "tables": [],
-        "detectedRules": ["User-facing workflow"],
-        "requiredTests": ["unit", "e2e"],
-        "qualityScore": 85
-      },
-      {
-        "name": "Inventory Alert",
-        "priority": "P2",
-        "riskLevel": "low",
-        "confidence": "Medium confidence",
-        "screens": [],
-        "endpoints": [],
-        "tables": [
-          "inventory_alerts",
-          "inventory_alerts",
-          "inventory_alerts",
-          "inventory_alerts"
+        "detectedRules": [
+          "User-facing workflow"
         ],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration"],
-        "qualityScore": 85
-      },
-      {
-        "name": "Inventory Expense Link",
-        "priority": "P2",
-        "riskLevel": "low",
-        "confidence": "Medium confidence",
-        "screens": [],
-        "endpoints": [],
-        "tables": ["inventory_expense_links"],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration"],
-        "qualityScore": 85
-      },
-      {
-        "name": "Inventory Transaction",
-        "priority": "P2",
-        "riskLevel": "low",
-        "confidence": "Medium confidence",
-        "screens": [],
-        "endpoints": [],
-        "tables": [
-          "inventory_transactions",
-          "inventory_transactions",
-          "inventory_transactions",
-          "inventory_transactions"
+        "requiredTests": [
+          "unit",
+          "e2e"
         ],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration"],
         "qualityScore": 85
       },
       {
-        "name": "M",
+        "name": "Inventory",
         "priority": "P2",
         "riskLevel": "low",
         "confidence": "Medium confidence",
         "screens": [
-          "M",
-          "M ",
-          "M ",
-          "M",
-          "M ",
-          "M ",
-          "M ",
-          "M",
-          "M ",
-          "M ",
-          "M",
-          "M ",
-          "M ",
-          "M "
+          "/inventory",
+          "/inventory/supplies"
         ],
         "endpoints": [],
         "tables": [],
-        "detectedRules": ["User-facing workflow"],
-        "requiredTests": ["unit", "e2e"],
+        "detectedRules": [
+          "User-facing workflow"
+        ],
+        "requiredTests": [
+          "unit",
+          "e2e"
+        ],
         "qualityScore": 85
       },
       {
-        "name": "Media Asset",
+        "name": "Pos",
         "priority": "P2",
         "riskLevel": "low",
         "confidence": "Medium confidence",
-        "screens": [],
-        "endpoints": [],
-        "tables": [
-          "media_assets",
-          "media_assets",
-          "media_assets",
-          "media_assets",
-          "media_assets",
-          "media_assets",
-          "media_assets",
-          "media_assets"
+        "screens": [
+          "/pos"
         ],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration"],
-        "qualityScore": 85
-      },
-      {
-        "name": "Media Rendition",
-        "priority": "P2",
-        "riskLevel": "low",
-        "confidence": "Medium confidence",
-        "screens": [],
         "endpoints": [],
-        "tables": [
-          "media_renditions",
-          "media_renditions",
-          "media_renditions",
-          "media_renditions",
-          "media_renditions",
-          "media_renditions",
-          "media_renditions",
-          "media_renditions"
+        "tables": [],
+        "detectedRules": [
+          "User-facing workflow"
         ],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration"],
-        "qualityScore": 85
-      },
-      {
-        "name": "Mercadopago Token",
-        "priority": "P2",
-        "riskLevel": "low",
-        "confidence": "Medium confidence",
-        "screens": [],
-        "endpoints": [],
-        "tables": [
-          "mercadopago_tokens",
-          "mercadopago_tokens",
-          "mercadopago_tokens",
-          "mercadopago_tokens",
-          "mercadopago_tokens",
-          "mercadopago_tokens",
-          "mercadopago_tokens",
-          "mercadopago_tokens",
-          "mercadopago_tokens"
+        "requiredTests": [
+          "unit",
+          "e2e"
         ],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration"],
-        "qualityScore": 85
-      },
-      {
-        "name": "Pos Terminal",
-        "priority": "P2",
-        "riskLevel": "low",
-        "confidence": "Medium confidence",
-        "screens": [],
-        "endpoints": [],
-        "tables": [
-          "pos_terminals",
-          "pos_terminals",
-          "pos_terminals",
-          "pos_terminals",
-          "pos_terminals",
-          "pos_terminals",
-          "pos_terminals",
-          "pos_terminals",
-          "pos_terminals"
-        ],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration"],
-        "qualityScore": 85
-      },
-      {
-        "name": "Post Job",
-        "priority": "P2",
-        "riskLevel": "low",
-        "confidence": "Medium confidence",
-        "screens": [],
-        "endpoints": [],
-        "tables": [
-          "post_jobs",
-          "post_jobs",
-          "post_jobs",
-          "post_jobs",
-          "post_jobs",
-          "post_jobs",
-          "post_jobs",
-          "post_jobs"
-        ],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration"],
-        "qualityScore": 85
-      },
-      {
-        "name": "Post Result",
-        "priority": "P2",
-        "riskLevel": "low",
-        "confidence": "Medium confidence",
-        "screens": [],
-        "endpoints": [],
-        "tables": [
-          "post_results",
-          "post_results",
-          "post_results",
-          "post_results",
-          "post_results",
-          "post_results",
-          "post_results",
-          "post_results"
-        ],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration"],
-        "qualityScore": 85
-      },
-      {
-        "name": "Posting Rule",
-        "priority": "P2",
-        "riskLevel": "low",
-        "confidence": "Medium confidence",
-        "screens": [],
-        "endpoints": [],
-        "tables": [
-          "posting_rules",
-          "posting_rules",
-          "posting_rules",
-          "posting_rules",
-          "posting_rules",
-          "posting_rules",
-          "posting_rules",
-          "posting_rules"
-        ],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration"],
         "qualityScore": 85
       },
       {
@@ -2642,87 +1448,41 @@
         "priority": "P2",
         "riskLevel": "low",
         "confidence": "Medium confidence",
-        "screens": [],
+        "screens": [
+          "/admin/products"
+        ],
         "endpoints": [],
         "tables": [
-          "products",
-          "products",
-          "products",
-          "products",
-          "products",
-          "products",
-          "products",
           "products"
         ],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration"],
-        "qualityScore": 85
-      },
-      {
-        "name": "Product Alert Config",
-        "priority": "P2",
-        "riskLevel": "low",
-        "confidence": "Medium confidence",
-        "screens": [],
-        "endpoints": [],
-        "tables": [
-          "product_alert_config",
-          "product_alert_config",
-          "product_alert_config",
-          "product_alert_config"
+        "detectedRules": [
+          "User-facing workflow",
+          "Persists data"
         ],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration"],
-        "qualityScore": 85
-      },
-      {
-        "name": "Product Inventory",
-        "priority": "P2",
-        "riskLevel": "low",
-        "confidence": "Medium confidence",
-        "screens": [],
-        "endpoints": [],
-        "tables": [
-          "product_inventory",
-          "product_inventory",
-          "product_inventory",
-          "product_inventory"
+        "requiredTests": [
+          "unit",
+          "integration",
+          "e2e"
         ],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration"],
-        "qualityScore": 85
+        "qualityScore": 100
       },
       {
-        "name": "Product Review",
+        "name": "Profile",
         "priority": "P2",
         "riskLevel": "low",
         "confidence": "Medium confidence",
-        "screens": [],
-        "endpoints": [],
-        "tables": [
-          "product_reviews",
-          "product_reviews",
-          "product_reviews",
-          "product_reviews",
-          "product_reviews",
-          "product_reviews",
-          "product_reviews",
-          "product_reviews"
+        "screens": [
+          "/profile"
         ],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration"],
-        "qualityScore": 85
-      },
-      {
-        "name": "Public",
-        "priority": "P2",
-        "riskLevel": "low",
-        "confidence": "Medium confidence",
-        "screens": [],
         "endpoints": [],
-        "tables": ["public"],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration"],
+        "tables": [],
+        "detectedRules": [
+          "User-facing workflow"
+        ],
+        "requiredTests": [
+          "unit",
+          "e2e"
+        ],
         "qualityScore": 85
       },
       {
@@ -2730,457 +1490,120 @@
         "priority": "P2",
         "riskLevel": "low",
         "confidence": "Medium confidence",
-        "screens": [],
-        "endpoints": [],
-        "tables": ["quotes"],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration"],
-        "qualityScore": 85
-      },
-      {
-        "name": "Quote Item",
-        "priority": "P2",
-        "riskLevel": "low",
-        "confidence": "Medium confidence",
-        "screens": [],
-        "endpoints": [],
-        "tables": ["quote_items"],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration"],
-        "qualityScore": 85
-      },
-      {
-        "name": "Reel",
-        "priority": "P2",
-        "riskLevel": "low",
-        "confidence": "Medium confidence",
-        "screens": [],
-        "endpoints": [],
-        "tables": ["reels", "reels", "reels", "reels", "reels"],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration"],
-        "qualityScore": 85
-      },
-      {
-        "name": "Scheduled Notification",
-        "priority": "P2",
-        "riskLevel": "low",
-        "confidence": "Medium confidence",
-        "screens": [],
-        "endpoints": [],
-        "tables": ["scheduled_notifications"],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration"],
-        "qualityScore": 85
-      },
-      {
-        "name": "Service",
-        "priority": "P2",
-        "riskLevel": "low",
-        "confidence": "Medium confidence",
-        "screens": [],
+        "screens": [
+          "/admin/quotes"
+        ],
         "endpoints": [],
         "tables": [
-          "services",
-          "services",
-          "services",
-          "services",
-          "services",
-          "services",
-          "services",
-          "services",
-          "services",
-          "services"
+          "quotes"
         ],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration"],
-        "qualityScore": 85
-      },
-      {
-        "name": "Service Product",
-        "priority": "P2",
-        "riskLevel": "low",
-        "confidence": "Medium confidence",
-        "screens": [],
-        "endpoints": [],
-        "tables": [
-          "service_products",
-          "service_products",
-          "service_products",
-          "service_products"
+        "detectedRules": [
+          "User-facing workflow",
+          "Persists data"
         ],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration"],
-        "qualityScore": 85
-      },
-      {
-        "name": "Service Quote",
-        "priority": "P2",
-        "riskLevel": "low",
-        "confidence": "Medium confidence",
-        "screens": [],
-        "endpoints": [],
-        "tables": [
-          "service_quotes",
-          "service_quotes",
-          "service_quotes",
-          "service_quotes"
+        "requiredTests": [
+          "unit",
+          "integration",
+          "e2e"
         ],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration"],
-        "qualityScore": 85
+        "qualityScore": 100
       },
       {
-        "name": "Service Retouch Config",
+        "name": "Report",
         "priority": "P2",
         "riskLevel": "low",
         "confidence": "Medium confidence",
-        "screens": [],
-        "endpoints": [],
-        "tables": ["service_retouch_config"],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration"],
-        "qualityScore": 85
-      },
-      {
-        "name": "Session",
-        "priority": "P2",
-        "riskLevel": "low",
-        "confidence": "Medium confidence",
-        "screens": [],
-        "endpoints": [],
-        "tables": [
-          "sessions",
-          "sessions",
-          "sessions",
-          "sessions",
-          "sessions",
-          "sessions",
-          "sessions",
-          "sessions",
-          "sessions"
+        "screens": [
+          "/reports"
         ],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration"],
-        "qualityScore": 85
-      },
-      {
-        "name": "Social Content Library",
-        "priority": "P2",
-        "riskLevel": "low",
-        "confidence": "Medium confidence",
-        "screens": [],
         "endpoints": [],
-        "tables": [
-          "social_content_library",
-          "social_content_library",
-          "social_content_library",
-          "social_content_library"
+        "tables": [],
+        "detectedRules": [
+          "User-facing workflow"
         ],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration"],
-        "qualityScore": 85
-      },
-      {
-        "name": "Social Post",
-        "priority": "P2",
-        "riskLevel": "low",
-        "confidence": "Medium confidence",
-        "screens": [],
-        "endpoints": [],
-        "tables": [
-          "social_posts",
-          "social_posts",
-          "social_posts",
-          "social_posts",
-          "social_posts",
-          "social_posts",
-          "social_posts",
-          "social_posts",
-          "social_posts",
-          "social_posts",
-          "social_posts",
-          "social_posts",
-          "social_posts"
+        "requiredTests": [
+          "unit",
+          "e2e"
         ],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration"],
         "qualityScore": 85
       },
       {
-        "name": "Social Post Analytic",
+        "name": "Retouch",
         "priority": "P2",
         "riskLevel": "low",
         "confidence": "Medium confidence",
-        "screens": [],
-        "endpoints": [],
-        "tables": [
-          "social_post_analytics",
-          "social_post_analytics",
-          "social_post_analytics",
-          "social_post_analytics"
+        "screens": [
+          "/retouch"
         ],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration"],
-        "qualityScore": 85
-      },
-      {
-        "name": "Social Post Target",
-        "priority": "P2",
-        "riskLevel": "low",
-        "confidence": "Medium confidence",
-        "screens": [],
         "endpoints": [],
-        "tables": [
-          "social_post_targets",
-          "social_post_targets",
-          "social_post_targets",
-          "social_post_targets",
-          "social_post_targets",
-          "social_post_targets",
-          "social_post_targets",
-          "social_post_targets",
-          "social_post_targets"
+        "tables": [],
+        "detectedRules": [
+          "User-facing workflow"
         ],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration"],
-        "qualityScore": 85
-      },
-      {
-        "name": "Social Post Variant",
-        "priority": "P2",
-        "riskLevel": "low",
-        "confidence": "Medium confidence",
-        "screens": [],
-        "endpoints": [],
-        "tables": [
-          "social_post_variants",
-          "social_post_variants",
-          "social_post_variants",
-          "social_post_variants"
+        "requiredTests": [
+          "unit",
+          "e2e"
         ],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration"],
         "qualityScore": 85
       },
       {
-        "name": "Staff",
+        "name": "Setting",
         "priority": "P2",
         "riskLevel": "low",
         "confidence": "Medium confidence",
-        "screens": [],
-        "endpoints": [],
-        "tables": [
-          "staff",
-          "staff",
-          "staff",
-          "staff",
-          "staff",
-          "staff",
-          "staff",
-          "staff"
+        "screens": [
+          "/settings/calendar"
         ],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration"],
-        "qualityScore": 85
-      },
-      {
-        "name": "Support Ticket",
-        "priority": "P2",
-        "riskLevel": "low",
-        "confidence": "Medium confidence",
-        "screens": [],
         "endpoints": [],
-        "tables": ["support_tickets"],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration"],
-        "qualityScore": 85
-      },
-      {
-        "name": "Tenant",
-        "priority": "P2",
-        "riskLevel": "low",
-        "confidence": "Medium confidence",
-        "screens": [],
-        "endpoints": [],
-        "tables": [
-          "tenants",
-          "tenants",
-          "tenants",
-          "tenants",
-          "tenants",
-          "tenants",
-          "tenants",
-          "tenants",
-          "tenants",
-          "tenants",
-          "tenants"
+        "tables": [],
+        "detectedRules": [
+          "User-facing workflow"
         ],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration"],
-        "qualityScore": 85
-      },
-      {
-        "name": "Tenant Channel",
-        "priority": "P2",
-        "riskLevel": "low",
-        "confidence": "Medium confidence",
-        "screens": [],
-        "endpoints": [],
-        "tables": [
-          "tenant_channels",
-          "tenant_channels",
-          "tenant_channels",
-          "tenant_channels",
-          "tenant_channels",
-          "tenant_channels",
-          "tenant_channels",
-          "tenant_channels"
+        "requiredTests": [
+          "unit",
+          "e2e"
         ],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration"],
         "qualityScore": 85
       },
       {
-        "name": "Tenant Config",
+        "name": "Social",
         "priority": "P2",
         "riskLevel": "low",
         "confidence": "Medium confidence",
-        "screens": [],
-        "endpoints": [],
-        "tables": [
-          "tenant_configs",
-          "tenant_configs",
-          "tenant_configs",
-          "tenant_configs",
-          "tenant_configs",
-          "tenant_configs",
-          "tenant_configs",
-          "tenant_configs",
-          "tenant_configs"
+        "screens": [
+          "/social"
         ],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration"],
-        "qualityScore": 85
-      },
-      {
-        "name": "Tenant Holiday",
-        "priority": "P2",
-        "riskLevel": "low",
-        "confidence": "Medium confidence",
-        "screens": [],
         "endpoints": [],
-        "tables": ["tenant_holidays"],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration"],
-        "qualityScore": 85
-      },
-      {
-        "name": "Tenant Quota",
-        "priority": "P2",
-        "riskLevel": "low",
-        "confidence": "Medium confidence",
-        "screens": [],
-        "endpoints": [],
-        "tables": [
-          "tenant_quotas",
-          "tenant_quotas",
-          "tenant_quotas",
-          "tenant_quotas",
-          "tenant_quotas",
-          "tenant_quotas",
-          "tenant_quotas",
-          "tenant_quotas"
+        "tables": [],
+        "detectedRules": [
+          "User-facing workflow"
         ],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration"],
-        "qualityScore": 85
-      },
-      {
-        "name": "Tenant Social Platform",
-        "priority": "P2",
-        "riskLevel": "low",
-        "confidence": "Medium confidence",
-        "screens": [],
-        "endpoints": [],
-        "tables": [
-          "tenant_social_platforms",
-          "tenant_social_platforms",
-          "tenant_social_platforms",
-          "tenant_social_platforms"
+        "requiredTests": [
+          "unit",
+          "e2e"
         ],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration"],
         "qualityScore": 85
       },
       {
-        "name": "Ticket Comment",
+        "name": "T",
         "priority": "P2",
         "riskLevel": "low",
         "confidence": "Medium confidence",
-        "screens": [],
-        "endpoints": [],
-        "tables": ["ticket_comments"],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration"],
-        "qualityScore": 85
-      },
-      {
-        "name": "Transaction Category",
-        "priority": "P2",
-        "riskLevel": "low",
-        "confidence": "Medium confidence",
-        "screens": [],
-        "endpoints": [],
-        "tables": ["transaction_categories"],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration"],
-        "qualityScore": 85
-      },
-      {
-        "name": "Verification Token",
-        "priority": "P2",
-        "riskLevel": "low",
-        "confidence": "Medium confidence",
-        "screens": [],
-        "endpoints": [],
-        "tables": [
-          "verification_tokens",
-          "verification_tokens",
-          "verification_tokens",
-          "verification_tokens",
-          "verification_tokens",
-          "verification_tokens",
-          "verification_tokens",
-          "verification_tokens",
-          "verification_tokens"
+        "screens": [
+          "/t/wondernails/admin/bookings",
+          "/t/wondernails/admin/customers",
+          "/t/wondernails/finance",
+          "/t/wondernails/inventory"
         ],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration"],
-        "qualityScore": 85
-      },
-      {
-        "name": "Visit Photo",
-        "priority": "P2",
-        "riskLevel": "low",
-        "confidence": "Medium confidence",
-        "screens": [],
         "endpoints": [],
-        "tables": ["visit_photos"],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration"],
-        "qualityScore": 85
-      },
-      {
-        "name": "Whatsapp Message",
-        "priority": "P2",
-        "riskLevel": "low",
-        "confidence": "Medium confidence",
-        "screens": [],
-        "endpoints": [],
-        "tables": ["whatsapp_messages"],
-        "detectedRules": ["Persists data"],
-        "requiredTests": ["unit", "integration"],
+        "tables": [],
+        "detectedRules": [
+          "User-facing workflow"
+        ],
+        "requiredTests": [
+          "unit",
+          "e2e"
+        ],
         "qualityScore": 85
       }
     ]
@@ -3189,13 +1612,6 @@
     {
       "type": "missing_doc",
       "title": "Missing required documentation: ROADMAP.md",
-      "description": "Required Quality OS documentation was not found.",
-      "priority": "P2",
-      "confidence": "High confidence"
-    },
-    {
-      "type": "missing_doc",
-      "title": "Missing required documentation: USER-STORIES.md",
       "description": "Required Quality OS documentation was not found.",
       "priority": "P2",
       "confidence": "High confidence"
@@ -3301,7 +1717,7 @@
     {
       "type": "possible_secret_in_code",
       "title": "Possible secrets detected in project files",
-      "description": "Detected 200 possible secret signal(s). Values are intentionally not exposed by Quality OS.",
+      "description": "Detected 88 possible secret signal(s). Values are intentionally not exposed by Quality OS.",
       "priority": "P0",
       "confidence": "Medium confidence"
     },
@@ -3322,147 +1738,136 @@
   ],
   "agentTasks": [
     {
-      "id": "c709ef8e-584c-4cd4-978d-e7e4411c55ce",
+      "id": "d6c84135-5b61-451b-bfd9-bd8e08ac6d88",
       "assignedAgent": "Docs Agent",
       "title": "Create draft ROADMAP.md",
       "description": "Generate a draft marked as Generated draft and Needs human review.",
       "priority": "P2",
       "status": "open",
       "sourceReport": "quality-report",
-      "createdAt": "2026-05-30T02:00:52.4871533+00:00",
-      "updatedAt": "2026-05-30T02:00:52.4871537+00:00"
+      "createdAt": "2026-06-08T02:00:39.4332664+00:00",
+      "updatedAt": "2026-06-08T02:00:39.4332667+00:00"
     },
     {
-      "id": "bc751347-5669-4ba9-9e94-f8296976845a",
-      "assignedAgent": "Docs Agent",
-      "title": "Create draft USER-STORIES.md",
-      "description": "Generate a draft marked as Generated draft and Needs human review.",
-      "priority": "P2",
-      "status": "open",
-      "sourceReport": "quality-report",
-      "createdAt": "2026-05-30T02:00:52.4871549+00:00",
-      "updatedAt": "2026-05-30T02:00:52.487155+00:00"
-    },
-    {
-      "id": "542d8240-3e42-4fa5-8cf5-0e74910477b3",
+      "id": "a828ebf1-b511-4f15-b1eb-9a9b7dba0dcb",
       "assignedAgent": "Docs Agent",
       "title": "Create draft ACCEPTANCE-CRITERIA.md",
       "description": "Generate a draft marked as Generated draft and Needs human review.",
       "priority": "P2",
       "status": "open",
       "sourceReport": "quality-report",
-      "createdAt": "2026-05-30T02:00:52.4871552+00:00",
-      "updatedAt": "2026-05-30T02:00:52.4871553+00:00"
+      "createdAt": "2026-06-08T02:00:39.4332681+00:00",
+      "updatedAt": "2026-06-08T02:00:39.4332681+00:00"
     },
     {
-      "id": "2af40ab1-0e80-4aac-a78a-a9f2fe05dad9",
+      "id": "a6ebc6ce-9338-4040-94ed-d0ba872f6312",
       "assignedAgent": "Docs Agent",
       "title": "Create draft API-SPEC.md",
       "description": "Generate a draft marked as Generated draft and Needs human review.",
       "priority": "P2",
       "status": "open",
       "sourceReport": "quality-report",
-      "createdAt": "2026-05-30T02:00:52.4871558+00:00",
-      "updatedAt": "2026-05-30T02:00:52.4871558+00:00"
+      "createdAt": "2026-06-08T02:00:39.4332684+00:00",
+      "updatedAt": "2026-06-08T02:00:39.4332684+00:00"
     },
     {
-      "id": "6fb20352-7207-4fce-b7b1-0bcc52930c61",
+      "id": "78ceddaa-e640-45e4-8945-a70c5eff794f",
       "assignedAgent": "Docs Agent",
       "title": "Create draft DATABASE.md",
       "description": "Generate a draft marked as Generated draft and Needs human review.",
       "priority": "P2",
       "status": "open",
       "sourceReport": "quality-report",
-      "createdAt": "2026-05-30T02:00:52.4871565+00:00",
-      "updatedAt": "2026-05-30T02:00:52.4871565+00:00"
+      "createdAt": "2026-06-08T02:00:39.4332686+00:00",
+      "updatedAt": "2026-06-08T02:00:39.4332687+00:00"
     },
     {
-      "id": "510c25a9-8627-458c-8a61-e5b9a0f0da74",
+      "id": "57f60e82-a43e-48bc-86db-3b68df1d3b29",
       "assignedAgent": "Docs Agent",
       "title": "Create draft TEST-PLAN.md",
       "description": "Generate a draft marked as Generated draft and Needs human review.",
       "priority": "P1",
       "status": "open",
       "sourceReport": "quality-report",
-      "createdAt": "2026-05-30T02:00:52.487158+00:00",
-      "updatedAt": "2026-05-30T02:00:52.4871581+00:00"
+      "createdAt": "2026-06-08T02:00:39.4332691+00:00",
+      "updatedAt": "2026-06-08T02:00:39.4332691+00:00"
     },
     {
-      "id": "02a70b84-abb4-4123-82f2-9cd3224b7742",
+      "id": "e6431942-631b-417c-b877-b92884fe1c1d",
       "assignedAgent": "Docs Agent",
       "title": "Create draft SECURITY.md",
       "description": "Generate a draft marked as Generated draft and Needs human review.",
       "priority": "P1",
       "status": "open",
       "sourceReport": "quality-report",
-      "createdAt": "2026-05-30T02:00:52.4871584+00:00",
-      "updatedAt": "2026-05-30T02:00:52.4871584+00:00"
+      "createdAt": "2026-06-08T02:00:39.4332696+00:00",
+      "updatedAt": "2026-06-08T02:00:39.4332696+00:00"
     },
     {
-      "id": "893c4de7-b88c-49b7-97ec-443c6cc146e8",
+      "id": "78e925be-cd17-4fcf-93f7-45c75f10360d",
       "assignedAgent": "Docs Agent",
       "title": "Create draft DEPLOYMENT.md",
       "description": "Generate a draft marked as Generated draft and Needs human review.",
       "priority": "P2",
       "status": "open",
       "sourceReport": "quality-report",
-      "createdAt": "2026-05-30T02:00:52.4871587+00:00",
-      "updatedAt": "2026-05-30T02:00:52.4871587+00:00"
+      "createdAt": "2026-06-08T02:00:39.4332699+00:00",
+      "updatedAt": "2026-06-08T02:00:39.4332699+00:00"
     },
     {
-      "id": "1044b6bf-5989-4572-8825-04c81df0a087",
+      "id": "328ef930-3200-456e-9e25-e145438a087b",
       "assignedAgent": "Docs Agent",
       "title": "Create draft QUALITY-REPORT.md",
       "description": "Generate a draft marked as Generated draft and Needs human review.",
       "priority": "P2",
       "status": "open",
       "sourceReport": "quality-report",
-      "createdAt": "2026-05-30T02:00:52.487159+00:00",
-      "updatedAt": "2026-05-30T02:00:52.4871591+00:00"
+      "createdAt": "2026-06-08T02:00:39.4332701+00:00",
+      "updatedAt": "2026-06-08T02:00:39.4332702+00:00"
     },
     {
-      "id": "72ad6a39-5825-481b-a884-e2262b10666e",
+      "id": "a4877480-e8f0-4fd1-be5a-8418334165ea",
       "assignedAgent": "Docs Agent",
       "title": "Create draft CHANGELOG.md",
       "description": "Generate a draft marked as Generated draft and Needs human review.",
       "priority": "P2",
       "status": "open",
       "sourceReport": "quality-report",
-      "createdAt": "2026-05-30T02:00:52.4871593+00:00",
-      "updatedAt": "2026-05-30T02:00:52.4871594+00:00"
+      "createdAt": "2026-06-08T02:00:39.4332707+00:00",
+      "updatedAt": "2026-06-08T02:00:39.4332707+00:00"
     },
     {
-      "id": "5cb37392-d36a-408d-b205-06d1aeae40e8",
+      "id": "3fd84a46-92c8-40d6-ba01-606ac1e74d44",
       "assignedAgent": "Security Agent",
       "title": "Review possible secrets",
       "description": "Inspect detected secret signal locations, rotate exposed credentials if needed, and move secrets to an approved secret store.",
       "priority": "P0",
       "status": "open",
       "sourceReport": "quality-report",
-      "createdAt": "2026-05-30T02:00:52.4871653+00:00",
-      "updatedAt": "2026-05-30T02:00:52.4871653+00:00"
+      "createdAt": "2026-06-08T02:00:39.4332785+00:00",
+      "updatedAt": "2026-06-08T02:00:39.4332785+00:00"
     },
     {
-      "id": "d4e5a0de-18aa-4c05-8e30-89954e7a3cd9",
+      "id": "a535e386-0f4a-4cf9-8c47-0b01187bbbfc",
       "assignedAgent": "Security Agent",
       "title": "Define project guard rules",
       "description": "Create .agents/guards rules for forbidden actions, security, database, and architecture.",
       "priority": "P1",
       "status": "open",
       "sourceReport": "quality-report",
-      "createdAt": "2026-05-30T02:00:52.4888811+00:00",
-      "updatedAt": "2026-05-30T02:00:52.4888813+00:00"
+      "createdAt": "2026-06-08T02:00:39.4346443+00:00",
+      "updatedAt": "2026-06-08T02:00:39.4346446+00:00"
     },
     {
-      "id": "bc7caa11-e15c-4fb5-bbf7-0ca834cfc8ce",
+      "id": "f12ec09d-890a-48a5-9d4c-50d05d5f696f",
       "assignedAgent": "QA Agent",
       "title": "Create quality.config.json",
       "description": "Define minimum score, critical flows, required docs, required test types, environments, and allowed commands.",
       "priority": "P1",
       "status": "open",
       "sourceReport": "quality-report",
-      "createdAt": "2026-05-30T02:00:52.488941+00:00",
-      "updatedAt": "2026-05-30T02:00:52.4889411+00:00"
+      "createdAt": "2026-06-08T02:00:39.4346995+00:00",
+      "updatedAt": "2026-06-08T02:00:39.4346996+00:00"
     }
   ]
 }

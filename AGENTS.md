@@ -1,5 +1,66 @@
 # Repository Guidelines
 
+## 🔄 Pipeline Workflow (Multi-Agent Skills)
+
+### Modo autónomo — un solo comando
+```
+/flow "historia de usuario"
+```
+Ejecuta el pipeline completo con **una sola pausa humana** (aprobación de spec). Todo lo demás es automático hasta abrir el PR.
+
+### Modo manual — paso a paso
+```
+[Historia de usuario]
+       ↓
+1. /spec            ← spec funcional + Gherkin  [⏸ aprobación humana]
+       ↓
+2. /test-spec       ← matriz Gherkin → tests    [auto-continúa]
+       ↓
+3. /implement       ← código productivo         [auto-continúa]
+       ↓
+4. /test-implementation ← tests desde matriz    [auto-continúa]
+       ↓
+5. /quality-runner  ← build+coverage+E2E+regression → PR automático
+```
+
+### Reglas del pipeline
+- `/spec` genera Gherkin en los criterios de aceptación — son la fuente de verdad para tests.
+- No avanzar de `/spec` sin aprobación humana.
+- `/test-spec` genera `test-matrix.md`: cada Scenario → archivo de test. Esta matriz es obligatoria.
+- `/quality-runner` verifica que **todos** los Scenarios tengan test antes de aprobar el PR.
+- No abrir PR si `quality-runner` no produce `✅ LISTO PARA PR`.
+- Leer `.agents/memory/workflow-state.json` antes de cualquier acción.
+
+### Skills disponibles
+| Comando | Skill | Descripción | Archivo |
+|---------|-------|-------------|---------|
+| `/flow` | flow | **Orquestador autónomo** — pipeline completo | `.agents/skills/flow/SKILL.md` |
+| `/spec` | spec | Spec funcional + Gherkin interactivo | `.agents/skills/spec/SKILL.md` |
+| `/test-spec` | test-spec | Matriz Gherkin → estrategia de tests | `.agents/skills/test-spec/SKILL.md` |
+| `/implement` | implement | Código productivo con Result Pattern | `.agents/skills/implement/SKILL.md` |
+| `/test-implementation` | test-implementation | Tests desde matriz de trazabilidad | `.agents/skills/test-implementation/SKILL.md` |
+| `/quality-runner` | quality-runner | Validación completa + PR automático | `.agents/skills/quality-runner/SKILL.md` |
+| `/handoff` | handoff | Handoff entre agentes | `.agents/skills/handoff/SKILL.md` |
+
+### Artefactos por story en `.agents/sprint/{STRY-XXX}/`
+| Archivo | Generado por | Contenido |
+|---------|-------------|-----------|
+| `plan.md` | `/spec` | Spec completa + Scenarios Gherkin |
+| `test-spec.md` | `/test-spec` | Estrategia de pruebas completa |
+| `test-matrix.md` | `/test-spec` | Tabla Scenario → archivo de test → estado |
+| `pr-body.md` | `/quality-runner` | Descripción del PR lista para `gh pr create` |
+
+### Memoria del pipeline
+| Archivo | Contenido |
+|---------|-----------|
+| `.agents/memory/workflow-state.json` | Estado JSON del pipeline (etapa, statuses, blockers) |
+| `.agents/memory/current-task.md` | Etapa actual, agente, criterio de salida |
+| `.agents/memory/handoff.md` | Paquete para el siguiente agente |
+| `.agents/memory/decisions.md` | Log de decisiones |
+| `.agents/memory/errors.md` | Log de errores con intentos de fix |
+
+---
+
 ## Project Structure & Module Organization
 
 - **Monolith Architecture**: `apps/web` is the Next.js App Router application (port 3001) containing both UI and API routes.

@@ -37,141 +37,96 @@
           "tests-e2e",
           "correccion",
           "video-demo"
-        ],
-        "maxRetries": 5
-      }
+        ]
+      },
+      "maxRetries": 5
     },
     {
-      "id": "interface-design",
+      "id": "spec",
       "scope": "project-local",
       "enabled": true,
-      "path": ".agents/skills/interface-design/SKILL.md",
-      "purpose": "Diseno de interfaces de producto (dashboard/admin/app/tool), no marketing.",
+      "path": ".agents/skills/spec/SKILL.md",
+      "purpose": "Define una especificacion funcional interactiva desde una historia de usuario: asunciones, refinamiento por pregunta, spec final. Usar con /spec.",
       "useWhen": [
-        "disenar o redisenar UI de paneles internos",
-        "crear flujos de producto con intencion visual clara",
-        "trabajar layouts de data-heavy interfaces"
+        "usuario dice '/spec' o 'quiero definir una spec'",
+        "se necesita borrador funcional antes de implementar",
+        "se requiere validar asunciones de negocio antes de codigo"
       ],
       "doNotUseWhen": [
-        "landing pages o sitios de marketing",
-        "campanas promocionales"
-      ]
-    },
-    {
-      "id": "customer-service-chatbot",
-      "scope": "project-local",
-      "enabled": true,
-      "path": ".agents/skills/customer-service-chatbot/SKILL.md",
-      "purpose": "Disenar, implementar, depurar o mejorar flujos de chatbot de soporte al cliente con aislamiento por tenant.",
-      "useWhen": [
-        "implementar chatbot de atencion al cliente",
-        "crear o corregir FAQs, intents, respuestas o escalamiento de soporte",
-        "trabajar flujos de chat relacionados con reservas, ordenes, productos o clientes"
-      ],
-      "doNotUseWhen": [
-        "la tarea no involucra soporte conversacional",
-        "solo se requiere una pantalla administrativa sin comportamiento de chat"
-      ]
-    },
-    {
-      "id": "debug-agent",
-      "scope": "project-local",
-      "enabled": true,
-      "path": ".agents/SYSTEM_PROMPT.md",
-      "purpose": "Protocolo de debugging con memoria persistente. Sigue el ciclo de autocorreccion y documenta aprendizajes.",
-      "useWhen": [
-        "test fallido que requiere analisis",
-        "error en produccion o desarrollo",
-        "comportamiento inesperado del sistema",
-        "necesidad de analizar causa raiz"
-      ],
-      "doNotUseWhen": [
-        "tarea simple sin errores",
-        "feature nueva sin bugs conocidos"
+        "la spec ya existe y esta aprobada",
+        "usuario pide implementar directamente"
       ],
       "protocol": {
-        "readFirst": [
-          ".agents/history/debug_logs.md",
-          ".agents/history/test_cases.md"
-        ],
-        "updateAfter": [
-          ".agents/history/debug_logs.md",
-          ".agents/session/current_task.md"
-        ],
-        "maxRetries": 3
-      }
-    },
-    {
-      "id": "test-generator",
-      "scope": "project-local",
-      "enabled": true,
-      "path": ".agents/protocols/testing.md",
-      "purpose": "Generar tests basados en casos borde documentados y protocolos de testing.",
-      "useWhen": [
-        "nuevo feature que requiere tests",
-        "regresion detectada que necesita test de prevencion",
-        "aumentar cobertura de codigo",
-        "implementar tests de integracion"
-      ],
-      "doNotUseWhen": [
-        "codigo legacy que sera refactorizado pronto",
-        "prototipos o spikes"
-      ],
-      "protocol": {
-        "readFirst": [
-          ".agents/history/test_cases.md",
-          ".agents/protocols/testing.md"
-        ],
-        "templates": [
-          "tests/unit/services/*.spec.ts",
-          "tests/integration/api/*.spec.ts"
-        ],
-        "minCoverage": {
-          "services": 80,
-          "api": 70,
-          "utils": 90
-        }
-      }
-    },
-    {
-      "id": "multitenant-guard",
-      "scope": "project-local",
-      "enabled": true,
-      "path": ".agents/protocols/multitenancy.md",
-      "purpose": "Validar que cambios respetan aislamiento multitenant y reglas RLS.",
-      "useWhen": [
-        "modificar queries de base de datos",
-        "crear nuevas tablas o modificar schema",
-        "implementar nuevos endpoints de API",
-        "tocar codigo de autenticacion/autorizacion"
-      ],
-      "doNotUseWhen": [
-        "cambios puramente de UI sin logica de datos",
-        "documentacion sin codigo"
-      ],
-      "protocol": {
-        "readFirst": [
-          ".agents/protocols/multitenancy.md",
-          ".agents/memory/context_be.md"
-        ],
-        "validateWith": ["npm run test:security", "npm run rls:test"],
-        "checklist": [
-          "filtro tenantId en todas las queries",
-          "RLS habilitado en tablas nuevas",
-          "contexto de tenant del usuario autenticado"
+        "phases": [
+          "rellenar-espacios",
+          "mostrar-asunciones",
+          "refinamiento-interactivo",
+          "confirmar-spec",
+          "handoff"
         ]
       }
     },
     {
-      "id": "ci-cd-gate",
+      "id": "test-spec",
       "scope": "project-local",
       "enabled": true,
-      "path": ".agents/protocols/validation.md",
-      "purpose": "Gatekeeper de calidad: ejecuta pipeline completo de validación y bloquea merge si no pasa",
+      "path": ".agents/skills/test-spec/SKILL.md",
+      "purpose": "Define la estrategia de pruebas y calidad a partir de una spec funcional. Matriz de cobertura + plan de tests. Usar con /test-spec.",
       "useWhen": [
-        "agente declara feature lista",
-        "se requiere verificación antes de merge",
-        "ci pipeline necesita validación"
+        "usuario dice '/test-spec' o 'crear estrategia de pruebas'",
+        "despues de aprobar una spec funcional",
+        "se necesita plan de testing antes de implementar"
+      ],
+      "doNotUseWhen": [
+        "no hay spec funcional aprobada",
+        "solo se pide correr tests existentes"
+      ],
+      "protocol": {
+        "phases": [
+          "validar-entrada",
+          "detectar-tipo",
+          "matriz-cobertura",
+          "estrategia-pruebas",
+          "handoff"
+        ]
+      }
+    },
+    {
+      "id": "test-implementation",
+      "scope": "project-local",
+      "enabled": true,
+      "path": ".agents/skills/test-implementation/SKILL.md",
+      "purpose": "Implementa tests (Vitest + Playwright) basados en test-spec y feature ya codificada. Solo tests, no logica de negocio. Usar con /test-implementation.",
+      "useWhen": [
+        "usuario dice '/test-implementation' o 'implementar tests'",
+        "feature ya codificada y necesita tests",
+        "gap de cobertura detectado"
+      ],
+      "doNotUseWhen": [
+        "no hay test-spec definido",
+        "feature aun no esta implementada"
+      ],
+      "protocol": {
+        "phases": [
+          "validar-entrada",
+          "detectar-stack",
+          "tabla-gaps",
+          "crear-tests",
+          "verificar-compilacion",
+          "handoff"
+        ]
+      }
+    },
+    {
+      "id": "quality-runner",
+      "scope": "project-local",
+      "enabled": true,
+      "path": ".agents/skills/quality-runner/SKILL.md",
+      "purpose": "Ejecuta el pipeline completo de calidad: prettier → lint → typecheck → build → unit → integration → security → Playwright E2E. Ultima puerta antes del PR. Usar con /quality-runner.",
+      "useWhen": [
+        "usuario dice '/quality-runner' o 'valida todo'",
+        "agente declara feature lista y necesita gate de calidad",
+        "antes de abrir PR"
       ],
       "doNotUseWhen": [
         "feature aun en desarrollo",
@@ -179,142 +134,46 @@
       ],
       "protocol": {
         "steps": [
+          "prettier",
           "npm run lint",
           "npm run typecheck",
           "npm run build",
-          "npx vitest run --reporter=basic",
-          "npx playwright test --reporter=list --timeout=60000"
+          "npm run test:unit",
+          "npm run test:integration",
+          "npm run test:security",
+          "npm run test:e2e:subset -- --grep [feature]"
         ],
-        "gate": "Si cualquier paso falla, feature NO está lista. Se repite ciclo de corrección.",
+        "gate": "Si cualquier paso falla, feature NO esta lista. Max 3 intentos de correccion por error.",
         "metrics": [
           "cobertura unitaria >= 80%",
           "E2E >= 1 test por feature",
           "0 errores lint",
           "0 errores typecheck",
           "build exitoso"
-        ]
-      }
-    },
-    {
-      "id": "find-skills",
-      "scope": "global-session",
-      "enabled": true,
-      "path": "C:/Users/JAGZA/.agents/skills/find-skills/SKILL.md",
-      "purpose": "Descubrir skills instalables segun necesidad funcional.",
-      "useWhen": [
-        "el usuario pregunta si existe una skill para una tarea",
-        "se requiere ampliar capacidades del agente"
-      ],
-      "doNotUseWhen": ["la tarea ya se cubre con skills actuales"]
-    },
-    {
-      "id": "skill-creator",
-      "scope": "global-session",
-      "enabled": true,
-      "path": "C:/Users/JAGZA/.codex/skills/.system/skill-creator/SKILL.md",
-      "purpose": "Crear o actualizar skills con instrucciones reutilizables.",
-      "useWhen": [
-        "definir una nueva skill para procesos repetitivos del equipo",
-        "estandarizar workflows tecnicos en SKILL.md"
-      ],
-      "doNotUseWhen": [
-        "solo se necesita resolver una tarea puntual sin reusable workflow"
-      ]
-    },
-    {
-      "id": "skill-installer",
-      "scope": "global-session",
-      "enabled": true,
-      "path": "C:/Users/JAGZA/.codex/skills/.system/skill-installer/SKILL.md",
-      "purpose": "Instalar skills desde catalogo curado o repositorio GitHub.",
-      "useWhen": [
-        "se necesita instalar skill externa",
-        "se requiere bootstrap rapido de capacidad nueva"
-      ],
-      "doNotUseWhen": ["la skill ya esta instalada y operativa"]
-    },
-    {
-      "id": "pr-reviewer",
-      "scope": "project-local",
-      "enabled": true,
-      "path": ".agents/skills/pr-reviewer/SKILL.md",
-      "purpose": "Revision tecnica de PR o entrega post-QA: diff, Result Pattern, multitenancy, seguridad, alineacion con US/plan.md antes de merge o visto bueno.",
-      "useWhen": [
-        "usuario pide revisar PR o pre-merge o reviewer",
-        "agente notifico listo para revision tras Playwright verde",
-        "se necesita checklist tecnico antes de visto bueno o merge"
-      ],
-      "doNotUseWhen": [
-        "aun no hay diff ni PR ni entrega para revisar",
-        "solo se pide ejecutar tests (usar story-orchestrator o test-generator)"
-      ],
-      "protocol": {
-        "readFirst": ["docs/stories/active/", ".agents/sprint/", "AGENTS.md"],
-        "followSkill": ".agents/skills/pr-reviewer/SKILL.md"
-      }
-    },
-    {
-      "id": "spec-discovery",
-      "scope": "project-local",
-      "enabled": true,
-      "path": ".agents/skills/spec-discovery/SKILL.md",
-      "purpose": "Descubre y valida specs funcionales desde una historia de usuario: borrador con asunciones, listado para revision del dueno, preguntas una a una con barra de progreso y 4 opciones + Otra.",
-      "useWhen": [
-        "usuario pide definir spec o especificacion antes de implementar",
-        "usuario entrega historia de usuario para rellenar espacios en blanco",
-        "se necesita validar asunciones no tecnicas o funcionales antes de .specs/",
-        "usuario dice 'crea spec', 'define spec' o equivalente"
-      ],
-      "doNotUseWhen": [
-        "la spec ya existe y esta aprobada en .specs/",
-        "usuario pide implementar directamente (usar story-orchestrator)",
-        "solo revision de PR (usar pr-reviewer)"
-      ],
-      "protocol": {
-        "readFirst": [
-          ".agents/skills/spec-discovery/spec-template.md",
-          ".specs/sesiones_deportivas.md"
         ],
-        "followSkill": ".agents/skills/spec-discovery/SKILL.md",
+        "maxRetries": 3
+      }
+    },
+    {
+      "id": "handoff",
+      "scope": "project-local",
+      "enabled": true,
+      "path": ".agents/skills/handoff/SKILL.md",
+      "purpose": "Genera un paquete de handoff conciso para que otro agente continuie el workflow con minimo uso de tokens. Usar con /handoff.",
+      "useWhen": [
+        "se completo una etapa y el trabajo continua con otro agente",
+        "se requiere pasar contexto eficiente entre agentes"
+      ],
+      "doNotUseWhen": [
+        "misma sesion continua sin cambio de agente",
+        "tarea trivial de un solo paso"
+      ],
+      "protocol": {
         "phases": [
-          "borrador-con-asunciones",
-          "listado-revision",
-          "preguntas-una-a-una",
-          "listo-para-crear-spec"
+          "recopilar-contexto",
+          "generar-handoff",
+          "actualizar-memoria"
         ]
-      }
-    },
-    {
-      "id": "story-orchestrator",
-      "scope": "project-local",
-      "enabled": true,
-      "path": ".agents/skills/story-orchestrator/SKILL.md",
-      "purpose": "Orquestador completo de User Stories: PM → Architect → Dev → QA → Done. Ciclo autonomo sin intervencion humana.",
-      "useWhen": [
-        "usuario dice 'Implementa [X]' o 'Desarrolla [X]'",
-        "usuario dice 'valida todo'",
-        "se requiere pipeline completo de story desde backlog hasta merge-ready",
-        "necesita ejecutar el flujo PM → Architect → Dev → QA"
-      ],
-      "doNotUseWhen": [
-        "solo es correccion menor (usar debug-agent)",
-        "solo es consulta de estado (leer summaries)"
-      ],
-      "protocol": {
-        "readFirst": [
-          ".agents/SYSTEM_PROMPT.md",
-          "docs/stories/BACKLOG.md",
-          "docs/stories/_template.md"
-        ],
-        "followProtocol": ".agents/protocols/story-orchestrator.md",
-        "phases": [
-          "pm-analysis",
-          "architect-design",
-          "dev-implementation",
-          "qa-validation",
-          "merge-ready"
-        ],
-        "maxRetries": 5
       }
     }
   ],

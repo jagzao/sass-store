@@ -1,5 +1,4 @@
 - [P2] Docs Agent: Create draft ROADMAP.md
-- [P2] Docs Agent: Create draft USER-STORIES.md
 - [P2] Docs Agent: Create draft ACCEPTANCE-CRITERIA.md
 - [P2] Docs Agent: Create draft API-SPEC.md
 - [P2] Docs Agent: Create draft DATABASE.md

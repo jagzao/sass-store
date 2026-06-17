@@ -1,5 +1,4 @@
 - [P2] Missing required documentation: ROADMAP.md: Required Quality OS documentation was not found.
-- [P2] Missing required documentation: USER-STORIES.md: Required Quality OS documentation was not found.
 - [P2] Missing required documentation: ACCEPTANCE-CRITERIA.md: Required Quality OS documentation was not found.
 - [P2] Missing required documentation: API-SPEC.md: Required Quality OS documentation was not found.
 - [P2] Missing required documentation: DATABASE.md: Required Quality OS documentation was not found.
@@ -14,6 +13,6 @@
 - [P1] Environment file should be reviewed: .env.test: A non-example .env file was detected. Confirm it is excluded from source control and does not contain secrets.
 - [P1] Environment file should be reviewed: apps\web\.env.local: A non-example .env file was detected. Confirm it is excluded from source control and does not contain secrets.
 - [P1] Environment file should be reviewed: apps\web\.env.local.backup: A non-example .env file was detected. Confirm it is excluded from source control and does not contain secrets.
-- [P0] Possible secrets detected in project files: Detected 200 possible secret signal(s). Values are intentionally not exposed by Quality OS.
-- [P1] No agent rules found: The .agents folder exists but does not define guard rules under guards/\*.md.
+- [P0] Possible secrets detected in project files: Detected 88 possible secret signal(s). Values are intentionally not exposed by Quality OS.
+- [P1] No agent rules found: The .agents folder exists but does not define guard rules under guards/*.md.
 - [P1] Missing quality.config.json: The project does not define a Quality OS contract.

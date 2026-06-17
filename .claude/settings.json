@@ -45,7 +45,9 @@
       "PowerShell(try { $r = Invoke-WebRequest -Uri \"http://127.0.0.1:5678/healthz\" -Method GET -UseBasicParsing -ErrorAction Stop; \"Status: $\\($r.StatusCode\\)\" } catch { \"n8n error: $_\" })",
       "PowerShell(& sqlite3 $dbPath \"SELECT id, name, active FROM workflow_entity;\" 2>&1)",
       "PowerShell($dbPath = \"c:\\\\Dev\\\\Triger\\\\Automation\\\\n8n\\\\n8n_data\\\\database.sqlite\")",
-      "PowerShell(docker exec $\\(docker ps --filter \"name=n8n\" --filter \"name=postgres\" -q | Select-Object -First 1\\) psql -U n8n -d n8n -c \"SELECT id, name, active FROM workflow_entity;\" 2>&1 | Select-Object -First 30)"
+      "PowerShell(docker exec $\\(docker ps --filter \"name=n8n\" --filter \"name=postgres\" -q | Select-Object -First 1\\) psql -U n8n -d n8n -c \"SELECT id, name, active FROM workflow_entity;\" 2>&1 | Select-Object -First 30)",
+      "Bash(powershell -Command \"\\(Get-ChildItem 'c:\\\\Dev\\\\Zo\\\\sass-store\\\\apps\\\\web\\\\public\\\\assets\\\\sprites\\\\tennis-ball\\\\*.webp' | Measure-Object -Property Length -Sum\\).Sum / 1MB\")",
+      "Bash(node -e \"const p=require\\('./package.json'\\); console.log\\('scripts:', JSON.stringify\\(p.scripts, null, 2\\)\\)\")"
     ]
   }
 }
