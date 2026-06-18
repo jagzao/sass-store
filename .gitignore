@@ -1,135 +1,24 @@
-# Dependencies
+# dependencies
 node_modules/
-/.pnp
+.pnp
 .pnp.js
 
-# Testing
-/coverage
-
-# Next.js
+# next.js
 .next/
 out/
-build
-dist
 
-# Production
-/build
+# production
+build/
 
-# Misc
+# misc
 .DS_Store
 *.pem
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
-# Debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
-# Local env files
-.env
-.env*.local
-.env.test
-.env.dev
-.env.qa
-.env.prod
-.env.staging
-.env.free
-apps/web/.env*
-!apps/web/.env.example
-
-# Vercel
-.vercel
-
-# TypeScript
-*.tsbuildinfo
-
-# Database
-dev.db
-*.db
-
-# IDE
-.vscode
-.idea
-
-# Logs
-logs
-*.log
-
-# Cache
-.cache
-.parcel-cache
-.turbo/
-
-# Temporary files
-.tmp
-.temp
-nul
-
-# Backup files
-*.bak
-*.backup
-*~
-*.swp
-*.swo
-
-# OS generated files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-
-# Drizzle
-/migrations
-
-# Playwright
-test-results/
-test-results.json/
-playwright-report/
-
-# Local scripts & artifacts
-scripts/start-server-bg.js
-scripts/start-server.ps1
-video_2_frames/
-
-# Test output files
-test_output*.txt
-*.png
-
-# Evidence artifacts (logs, API proofs, screenshots) — keep folder, ignore contents
-tests/evidence/**/*
-!tests/evidence/.gitkeep
-
-# Agents alerts (temporary)
-agents/alerts/
-
-# E2E tests with debug code (work in progress)
-tests/e2e/services/
-
-# Build logs
-build-log.txt
-build-log2.txt
-next-build-out*.txt
-
-# Agent / skill artifacts
-skills-lock.json
-start-e2e-*.cmd
-.kilocode/
-.junie/
-.kiro/
-.qwen/
-.trae/
-.windsurf/
-.claude/skills/
-
-# Debug temp files
-*.err
-*.out
-apps/*.err
-apps/*.out
-
-# Video processing / sprite artifacts
-video_2_frames/
-
-
