@@ -1,0 +1,15 @@
+{
+  "currentFeature": "STRY-025-mejoras-calendario-citas-notificaciones",
+  "currentStage": "quality-runner",
+  "lastAgent": "test-implementation",
+  "nextRecommendedAgent": "quality-runner",
+  "specStatus": "done",
+  "testSpecStatus": "done",
+  "implementationStatus": "done",
+  "testImplementationStatus": "done",
+  "qualityRunnerStatus": "pending",
+  "humanApprovalRequired": false,
+  "prReady": false,
+  "lastUpdated": "2026-06-06",
+  "blockers": []
+}

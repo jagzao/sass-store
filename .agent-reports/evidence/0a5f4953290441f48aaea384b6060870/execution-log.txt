@@ -1,0 +1,15 @@
+Test Run: test
+Type: test
+Status: blocked
+Command: npm test
+Working Directory: C:\Dev\Zo\sass-store
+Environment: local
+Exit Code: n/a
+Started At: 2026-06-05T17:15:45.4872396+00:00
+Finished At: 2026-06-05T17:15:45.4872639+00:00
+
+STDOUT
+
+
+STDERR
+Command is not allowlisted: npm test
