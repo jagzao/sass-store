@@ -1,3 +1,5 @@
+import { randomUUID } from "crypto";
+import bcrypt from "bcryptjs";
 import { db } from "./connection";
 import { tenants, services, products, staff } from "./schema";
 import { users, userRoles } from "@sass-store/database/schema";
@@ -559,13 +561,37 @@ export async function seedTenantData() {
       }),
     );
 
-    // 5. Seed Admin User Roles — jagzao@gmail.com as Admin in all active tenants
+    // 5. Seed Admin User + roles — jagzao@gmail.com / admin in all active tenants
     const adminEmail = "jagzao@gmail.com";
-    const [adminUser] = await db
+    const adminPassword = "admin";
+    let [adminUser] = await db
       .select({ id: users.id })
       .from(users)
       .where(eq(users.email, adminEmail))
       .limit(1);
+
+    if (!adminUser) {
+      const hashedPassword = await bcrypt.hash(adminPassword, 10);
+      const [created] = await db
+        .insert(users)
+        .values({
+          id: randomUUID(),
+          email: adminEmail,
+          password: hashedPassword,
+          name: "Admin User",
+          emailVerified: new Date(),
+        })
+        .returning({ id: users.id });
+      adminUser = created;
+      console.warn(`✅ Created admin user: ${adminEmail}`);
+    } else {
+      const hashedPassword = await bcrypt.hash(adminPassword, 10);
+      await db
+        .update(users)
+        .set({ password: hashedPassword, updatedAt: new Date() })
+        .where(eq(users.email, adminEmail));
+      console.warn(`✅ Admin password synced: ${adminEmail}`);
+    }
 
     if (adminUser) {
       const activeSlugs = [
@@ -594,10 +620,6 @@ export async function seedTenantData() {
             });
           console.warn(`✅ Admin role set: ${adminEmail} → ${slug}`);
         }),
-      );
-    } else {
-      console.warn(
-        `⚠️  User ${adminEmail} not found — skipping user_roles seed`,
       );
     }
 

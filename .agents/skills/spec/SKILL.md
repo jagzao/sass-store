@@ -85,7 +85,23 @@ Cuando todas las asunciones esten resueltas, generar la especificacion final con
 
 Guardar en `.agents/sprint/{STRY-XXX}/plan.md` y actualizar `docs/stories/active/` si aplica.
 
-## FASE 5 — Handoff
+## FASE 5 — Commit de etapa
+
+Hacer commit de la spec antes de avanzar:
+
+```bash
+FEATURE=$(node -e "try{const s=require('./.agents/memory/workflow-state.json');console.log(s.currentFeature||'feature')}catch{console.log('feature')}")
+
+git add .agents/sprint/ docs/stories/ 2>/dev/null || true
+git diff --cached --quiet || git commit -m "docs(spec): ${FEATURE} — especificacion funcional
+
+Stage: spec
+Co-Authored-By: Claude <noreply@anthropic.com>"
+```
+
+Si git no está inicializado o no hay cambios → continuar sin error.
+
+## FASE 6 — Handoff
 
 Al terminar mostrar:
 ```

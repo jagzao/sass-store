@@ -99,7 +99,21 @@ npm run test:unit -- --run
 - Si falla en código productivo → documentar en `errors.md`, no corregir aquí
 - Si falla al intento 3 → BLOQUEANTE
 
-## FASE 6 — Actualizar memoria y auto-continuar
+## FASE 6 — Commit de tests y auto-continuar
+
+Hacer commit de los tests implementados:
+
+```bash
+FEATURE=$(node -e "try{const s=require('./.agents/memory/workflow-state.json');console.log(s.currentFeature||'feature')}catch{console.log('feature')}")
+
+git add tests/ .agents/sprint/ 2>/dev/null || true
+git diff --cached --quiet || git commit -m "test(impl): ${FEATURE} — tests implementados
+
+Stage: test-implementation
+Co-Authored-By: Claude <noreply@anthropic.com>"
+```
+
+Si git no está inicializado o no hay cambios staged → continuar sin error.
 
 Actualizar `.agents/memory/workflow-state.json`:
 ```json

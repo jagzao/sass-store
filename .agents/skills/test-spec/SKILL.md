@@ -79,11 +79,23 @@ Generar documento con:
 - [ ] Isolation test: tenant A no ve datos de tenant B
 ```
 
-## FASE 6 — Guardar y auto-continuar
+## FASE 6 — Guardar, commit y auto-continuar
 
 Guardar en:
 - `.agents/sprint/{STRY-XXX}/test-spec.md` — documento completo
 - `.agents/sprint/{STRY-XXX}/test-matrix.md` — solo la tabla de trazabilidad (la usa `/test-implementation` y `/quality-runner`)
+
+Hacer commit de la estrategia de pruebas:
+
+```bash
+FEATURE=$(node -e "try{const s=require('./.agents/memory/workflow-state.json');console.log(s.currentFeature||'feature')}catch{console.log('feature')}")
+
+git add .agents/sprint/ 2>/dev/null || true
+git diff --cached --quiet || git commit -m "docs(test-spec): ${FEATURE} — estrategia de pruebas
+
+Stage: test-spec
+Co-Authored-By: Claude <noreply@anthropic.com>"
+```
 
 Actualizar `.agents/memory/workflow-state.json`:
 ```json

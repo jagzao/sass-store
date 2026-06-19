@@ -110,7 +110,23 @@ npm run lint
 
 - Corregir automáticamente todos los warnings de lint en archivos tocados.
 
-## FASE 5 — Actualizar memoria y auto-continuar
+## FASE 5 — Commit de implementación
+
+Hacer commit del código implementado antes de avanzar:
+
+```bash
+FEATURE=$(node -e "try{const s=require('./.agents/memory/workflow-state.json');console.log(s.currentFeature||'feature')}catch{console.log('feature')}")
+
+git add apps/web/app/ apps/web/components/ packages/ scripts/ 2>/dev/null || true
+git diff --cached --quiet || git commit -m "feat(impl): ${FEATURE} — implementacion
+
+Stage: implement
+Co-Authored-By: Claude <noreply@anthropic.com>"
+```
+
+Si git no está inicializado o no hay cambios staged → continuar sin error.
+
+## FASE 5b — Actualizar memoria y auto-continuar
 
 Actualizar `.agents/memory/workflow-state.json`:
 ```json
