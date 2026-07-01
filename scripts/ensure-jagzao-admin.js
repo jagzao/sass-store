@@ -10,7 +10,7 @@ const bcrypt = require("bcryptjs");
 const { randomUUID } = require("crypto");
 
 const ADMIN_EMAIL = "jagzao@gmail.com";
-const ADMIN_PASSWORD = "admin";
+const ADMIN_PASSWORD = process.env.SEED_ADMIN_PASSWORD ?? "admin";
 const ADMIN_NAME = "Admin User";
 
 const ACTIVE_TENANT_SLUGS = [
@@ -60,7 +60,7 @@ async function main() {
        WHERE id = $3`,
       [hashedPassword, ADMIN_NAME, userId],
     );
-    console.log("Updated user password:", ADMIN_EMAIL);
+    console.log("Updated admin credentials for:", ADMIN_EMAIL);
   }
 
   const passwordCheck = await client.query(
@@ -71,7 +71,7 @@ async function main() {
     ADMIN_PASSWORD,
     passwordCheck.rows[0].password,
   );
-  console.log("Password verify (admin):", match ? "OK" : "FAIL");
+  console.log("Credentials verify:", match ? "OK" : "FAIL");
 
   for (const slug of ACTIVE_TENANT_SLUGS) {
     const tenantRes = await client.query(
