@@ -1,0 +1,130 @@
+{
+  "name": "WA Reactivación — 15 días sin cita (Wondernails)",
+  "settings": { "executionOrder": "v1" },
+  "nodes": [
+    {
+      "id": "trig-schedule",
+      "name": "Cada Hora (09-19h)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [200, 400],
+      "parameters": {
+        "rule": {
+          "interval": [{ "field": "hours", "hoursInterval": 1 }]
+        }
+      }
+    },
+    {
+      "id": "filter-horario",
+      "name": "Solo en Horario Laboral",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [400, 400],
+      "parameters": {
+        "jsCode": "const hora = new Date().toLocaleString('es-MX', { hour: 'numeric', hour12: false, timeZone: 'America/Mexico_City' });\nconst h = parseInt(hora);\nif (h < 9 || h >= 19) return [];\nreturn $input.all();"
+      }
+    },
+    {
+      "id": "db-clientes-15dias",
+      "name": "Clientes sin cita 15 días",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [620, 400],
+      "credentials": {
+        "postgres": {
+          "id": "FmvG7eSe9Y6nG73Z",
+          "name": "sass-store Supabase DB"
+        }
+      },
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  c.id::text AS customer_id,\n  c.name AS customer_name,\n  c.phone,\n  t.slug AS tenant_slug,\n  wt.phone_number_id,\n  MAX(cv.created_at) AS last_visit\nFROM customers c\nJOIN tenants t ON t.id = c.tenant_id\nJOIN wa_tenant_config wt ON wt.tenant_slug = t.slug\nLEFT JOIN customer_visits cv ON cv.customer_id = c.id\nWHERE\n  t.slug = 'wondernails'\n  AND c.phone IS NOT NULL\n  AND c.phone != ''\n  AND wt.phone_number_id IS NOT NULL\nGROUP BY c.id, c.name, c.phone, t.slug, wt.phone_number_id\nHAVING\n  MAX(cv.created_at) IS NOT NULL\n  AND MAX(cv.created_at) < NOW() - INTERVAL '15 days'\n  AND MAX(cv.created_at) >= NOW() - INTERVAL '16 days'\n  AND NOT EXISTS (\n    SELECT 1 FROM whatsapp_messages wm\n    WHERE wm.numero = c.phone\n      AND wm.metadata->>'reminder_type' = 'reactivacion_15d'\n      AND wm.created_at >= NOW() - INTERVAL '30 days'\n  )\nLIMIT 20",
+        "options": {}
+      }
+    },
+    {
+      "id": "code-msg",
+      "name": "Construir Mensaje Alicia",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [840, 400],
+      "parameters": {
+        "jsCode": "const items = $('Clientes sin cita 15 días').all();\nif (items.length === 0) return [];\nreturn items.map(item => {\n  const c = item.json;\n  const nombre = c.customer_name ? c.customer_name.split(' ')[0] : '';\n  const msg = `Hola ${nombre} soy Alicia de ⚜️WondernailsWN⚜️ hace ya 15 días de la DE TU ÚLTIMA CITA Avísame si requieres servicio 💞\\nTe dejo el link \\n📱 Checa los horarios y agenda tu cita https://calendar.app.google/tvrtjSGLPcnfbFrA7`;\n  return {\n    json: {\n      phone: c.phone,\n      phoneNumberId: c.phone_number_id,\n      msg,\n      customerId: c.customer_id,\n      tenantSlug: c.tenant_slug\n    }\n  };\n});"
+      }
+    },
+    {
+      "id": "send-wa",
+      "name": "Enviar WA Reactivación",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1060, 400],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'https://graph.facebook.com/v18.0/' + $json.phoneNumberId + '/messages' }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer {{WA_TOKEN}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({ messaging_product: 'whatsapp', to: $json.phone, type: 'text', text: { body: $json.msg } }) }}",
+        "options": { "timeout": 10000 }
+      }
+    },
+    {
+      "id": "log-db",
+      "name": "Registrar en whatsapp_messages",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [1280, 400],
+      "credentials": {
+        "postgres": {
+          "id": "FmvG7eSe9Y6nG73Z",
+          "name": "sass-store Supabase DB"
+        }
+      },
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO whatsapp_messages (mensaje_id, numero, contenido, tipo, direccion, estado, metadata)\nVALUES (\n  gen_random_uuid()::text,\n  '{{ $json.phone }}',\n  '{{ $json.msg }}',\n  'text',\n  'outbound',\n  'sent',\n  json_build_object(\n    'reminder_type', 'reactivacion_15d',\n    'customer_id', '{{ $json.customerId }}',\n    'tenant_slug', '{{ $json.tenantSlug }}',\n    'automation', true\n  )::jsonb\n) ON CONFLICT DO NOTHING",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Cada Hora (09-19h)": {
+      "main": [
+        [{ "node": "Solo en Horario Laboral", "type": "main", "index": 0 }]
+      ]
+    },
+    "Solo en Horario Laboral": {
+      "main": [
+        [{ "node": "Clientes sin cita 15 días", "type": "main", "index": 0 }]
+      ]
+    },
+    "Clientes sin cita 15 días": {
+      "main": [
+        [{ "node": "Construir Mensaje Alicia", "type": "main", "index": 0 }]
+      ]
+    },
+    "Construir Mensaje Alicia": {
+      "main": [
+        [{ "node": "Enviar WA Reactivación", "type": "main", "index": 0 }]
+      ]
+    },
+    "Enviar WA Reactivación": {
+      "main": [
+        [
+          {
+            "node": "Registrar en whatsapp_messages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

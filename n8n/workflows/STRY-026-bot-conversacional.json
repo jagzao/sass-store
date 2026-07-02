@@ -1,0 +1,445 @@
+{
+  "name": "STRY-026: WA Bot Conversacional (Ollama)",
+  "settings": { "executionOrder": "v1" },
+  "nodes": [
+    {
+      "id": "trig-bot",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [200, 300],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "wa-bot",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "webhookId": "wa-bot-stry026-v1"
+    },
+    {
+      "id": "resp-bot",
+      "name": "Respond OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [400, 160],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"ok\": true }"
+      }
+    },
+    {
+      "id": "parse-wa",
+      "name": "Parse WA Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [400, 420],
+      "parameters": {
+        "jsCode": "// Handle raw WhatsApp Cloud API webhook OR normalized sass-store format\nconst body = $json.body || $json;\n\n// Try raw WhatsApp format first\nlet phone = null, msgBody = null, phoneNumberId = null, customerName = null, msgId = null;\n\nconst entry = body?.entry?.[0];\nconst change = entry?.changes?.[0]?.value;\nif (change?.messages?.[0]) {\n  const msg = change.messages[0];\n  if (msg.type !== 'text') return []; // skip non-text messages\n  phone = msg.from;\n  msgBody = msg.text?.body || '';\n  phoneNumberId = change.metadata?.phone_number_id;\n  customerName = change.contacts?.[0]?.profile?.name || null;\n  msgId = msg.id;\n} else if (body?.message?.phone) {\n  // Normalized sass-store format\n  phone = body.message.phone;\n  msgBody = body.message.content || body.message.body || '';\n  phoneNumberId = body.phoneNumberId || '214863935038316';\n  customerName = body.message.customerName || null;\n  msgId = body.message.messageId || null;\n} else {\n  return []; // skip unknown format\n}\n\nif (!msgBody.trim()) return [];\n\nreturn [{ json: { phone, msgBody, phoneNumberId, customerName, msgId } }];"
+      }
+    },
+    {
+      "id": "db-tenant",
+      "name": "Get Tenant + Services",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [620, 420],
+      "credentials": {
+        "postgres": {
+          "id": "FmvG7eSe9Y6nG73Z",
+          "name": "sass-store Supabase DB"
+        }
+      },
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT t.id as tenant_id, t.slug as tenant_slug, t.name as tenant_name, wt.bot_name, wt.tone, wt.phone_number_id, wt.admin_phone, s.name as service_name, s.price, s.duration_minutes FROM wa_tenant_config wt JOIN tenants t ON t.slug = wt.tenant_slug LEFT JOIN services s ON s.tenant_id = t.id AND s.is_active = true WHERE wt.phone_number_id = '{{ $json.phoneNumberId }}' LIMIT 20",
+        "options": {}
+      }
+    },
+    {
+      "id": "build-prompt",
+      "name": "Build Ollama Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [840, 420],
+      "parameters": {
+        "jsCode": "const rows = $('Get Tenant + Services').all().map(i => i.json);\nconst cfg = rows[0] || {};\nconst services = rows.filter(r => r.service_name).map(r => r.service_name + ' ($' + r.price + ' MXN, ' + r.duration_minutes + 'min)').join(', ');\nconst msgBody = $('Parse WA Payload').item.json.msgBody;\nconst phone = $('Parse WA Payload').item.json.phone;\nconst customerName = $('Parse WA Payload').item.json.customerName;\nconst today = new Date().toLocaleDateString('es-MX', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'America/Mexico_City' });\nconst tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0];\nconst todayIso = new Date().toISOString().split('T')[0];\n\nconst systemPrompt = 'Eres ' + (cfg.bot_name || 'Asistente') + ' de ' + (cfg.tenant_name || 'el salón') + '. Tono: ' + (cfg.tone || 'amigable y profesional') + '. Español mexicano. Responde SOLO con JSON válido sin markdown.\\n\\nServicios disponibles: ' + (services || 'manicure, pedicure, uñas gel, acrílico') + '\\nFecha de hoy: ' + today + ' (' + todayIso + ')\\nMañana: ' + tomorrow + '\\n\\nEstructura de respuesta OBLIGATORIA:\\n{\"intent\":\"AGENDAR|CONSULTAR|OTRO\",\"service\":\"nombre o null\",\"date\":\"YYYY-MM-DD o null\",\"time\":\"HH:MM o null\",\"clientName\":\"nombre o null\",\"missing\":[\"servicio\",\"fecha\",\"hora\"],\"reply\":\"respuesta amigable si OTRO, null si AGENDAR/CONSULTAR\"}';\n\nreturn [{\n  json: {\n    phone,\n    customerName,\n    tenantId: cfg.tenant_id,\n    tenantSlug: cfg.tenant_slug,\n    tenantName: cfg.tenant_name,\n    phoneNumberId: cfg.phone_number_id || rows[0]?.phone_number_id,\n    adminPhone: cfg.admin_phone,\n    systemPrompt,\n    userMessage: msgBody\n  }\n}];"
+      }
+    },
+    {
+      "id": "call-ollama",
+      "name": "Call Ollama Cloud",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1060, 420],
+      "parameters": {
+        "method": "POST",
+        "url": "https://ollama.com/v1/chat/completions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer {{OLLAMA_KEY}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({ model: 'kimi-k2.5', messages: [{ role: 'system', content: $json.systemPrompt }, { role: 'user', content: $json.userMessage }], max_tokens: 300, temperature: 0.3, stream: false }) }}",
+        "options": { "timeout": 15000 }
+      }
+    },
+    {
+      "id": "parse-ollama",
+      "name": "Parse Ollama Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1280, 420],
+      "parameters": {
+        "jsCode": "const aiResp = $('Call Ollama Cloud').item.json;\nconst ctx = $('Build Ollama Prompt').item.json;\nconst raw = aiResp?.choices?.[0]?.message?.content?.trim() || '{\"intent\":\"OTRO\",\"reply\":\"Hola, ¿en qué te puedo ayudar?\"}';\n\nlet parsed;\ntry {\n  // Remove markdown code blocks if present\n  const clean = raw.replace(/```json?\\s*/g,'').replace(/```/g,'').trim();\n  parsed = JSON.parse(clean);\n} catch (e) {\n  parsed = { intent: 'OTRO', reply: 'Lo siento, no entendí bien. ¿Puedes repetirlo?' };\n}\n\nconst missing = parsed.missing || [];\nif (parsed.intent === 'AGENDAR') {\n  if (!parsed.service) missing.push('el servicio que deseas');\n  if (!parsed.date) missing.push('la fecha');\n  if (!parsed.time) missing.push('la hora');\n}\n\nreturn [{\n  json: {\n    ...ctx,\n    intent: parsed.intent || 'OTRO',\n    service: parsed.service || null,\n    date: parsed.date || null,\n    time: parsed.time || null,\n    clientName: parsed.clientName || ctx.customerName || null,\n    missing: [...new Set(missing)],\n    isComplete: parsed.intent === 'AGENDAR' && !!parsed.service && !!parsed.date && !!parsed.time,\n    reply: parsed.reply || null\n  }\n}];"
+      }
+    },
+    {
+      "id": "switch-intent",
+      "name": "Route Intent",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [1500, 420],
+      "parameters": {
+        "mode": "rules",
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "id": "1",
+                    "leftValue": "={{ $json.intent }}",
+                    "rightValue": "AGENDAR",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "AGENDAR"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "id": "2",
+                    "leftValue": "={{ $json.intent }}",
+                    "rightValue": "CONSULTAR",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "CONSULTAR"
+            }
+          ]
+        },
+        "fallbackOutput": "extra"
+      }
+    },
+    {
+      "id": "if-complete",
+      "name": "Info Completa?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [1720, 300],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "1",
+              "leftValue": "={{ $json.isComplete }}",
+              "rightValue": true,
+              "operator": { "type": "boolean", "operation": "equals" }
+            }
+          ],
+          "combinator": "and"
+        }
+      }
+    },
+    {
+      "id": "send-missing",
+      "name": "Pedir Info Faltante",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1940, 200],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'https://graph.facebook.com/v18.0/' + $json.phoneNumberId + '/messages' }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer {{WA_TOKEN}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({ messaging_product: 'whatsapp', to: $json.phone, type: 'text', text: { body: 'Para agendar tu cita necesito saber ' + $json.missing.join(' y ') + '. ¿Me lo puedes indicar? 😊' } }) }}"
+      }
+    },
+    {
+      "id": "db-lookup-svc",
+      "name": "Lookup Service",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [1940, 400],
+      "credentials": {
+        "postgres": {
+          "id": "FmvG7eSe9Y6nG73Z",
+          "name": "sass-store Supabase DB"
+        }
+      },
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT s.id, s.name, s.price, s.duration_minutes FROM services s JOIN tenants t ON s.tenant_id = t.id WHERE t.id = '{{ $json.tenantId }}'::uuid AND LOWER(s.name) LIKE '%' || LOWER('{{ $json.service }}') || '%' AND s.is_active = true ORDER BY s.name LIMIT 1",
+        "options": {}
+      }
+    },
+    {
+      "id": "if-svc",
+      "name": "Servicio Encontrado?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [2160, 400],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "1",
+              "leftValue": "={{ $json.id !== undefined && $json.id !== null }}",
+              "rightValue": true,
+              "operator": { "type": "boolean", "operation": "equals" }
+            }
+          ],
+          "combinator": "and"
+        }
+      }
+    },
+    {
+      "id": "send-nosvc",
+      "name": "Servicio No Encontrado",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2380, 500],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'https://graph.facebook.com/v18.0/' + $('Parse Ollama Response').item.json.phoneNumberId + '/messages' }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer {{WA_TOKEN}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({ messaging_product: 'whatsapp', to: $('Parse Ollama Response').item.json.phone, type: 'text', text: { body: 'No encontré ese servicio 😕 ¿Puedes escribir el nombre exacto? Por ejemplo: manicure, uñas gel, pedicure.' } }) }}"
+      }
+    },
+    {
+      "id": "db-save-convo",
+      "name": "Guardar Conversacion",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [2380, 320],
+      "credentials": {
+        "postgres": {
+          "id": "FmvG7eSe9Y6nG73Z",
+          "name": "sass-store Supabase DB"
+        }
+      },
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO wa_booking_conversations (phone, tenant_slug, state, service_id, service_name, service_price, date_iso, time_str, trigger_msg_id) VALUES ('{{ $('Parse Ollama Response').item.json.phone }}', '{{ $('Parse Ollama Response').item.json.tenantSlug }}', 'awaiting_confirm', '{{ $json.id }}'::uuid, '{{ $json.name }}', {{ $json.price }}, '{{ $('Parse Ollama Response').item.json.date }}'::date, '{{ $('Parse Ollama Response').item.json.time }}', '{{ $('Parse Ollama Response').item.json.msgId }}') ON CONFLICT (trigger_msg_id) DO NOTHING RETURNING id, service_name, service_price, date_iso, time_str",
+        "options": {}
+      }
+    },
+    {
+      "id": "send-confirm-btn",
+      "name": "Enviar Botones Confirmar",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2600, 320],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'https://graph.facebook.com/v18.0/' + $('Parse Ollama Response').item.json.phoneNumberId + '/messages' }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer {{WA_TOKEN}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ (() => { const c = $('Guardar Conversacion').item.json; const ctx = $('Parse Ollama Response').item.json; const svc = $('Lookup Service').item.json; const dateObj = new Date((c.date_iso || ctx.date) + 'T12:00:00'); const days = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado']; const months = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre']; const dateStr = days[dateObj.getDay()] + ' ' + dateObj.getDate() + ' de ' + months[dateObj.getMonth()]; const clienteName = ctx.clientName ? '\\n👤 *Cliente:* ' + ctx.clientName : ''; const body = '¡Perfecto! Esto es lo que voy a agendar 💅' + clienteName + '\\n\\n📋 *Servicio:* ' + (c.service_name || svc.name) + '\\n📅 *Fecha:* ' + dateStr + '\\n⏰ *Hora:* ' + (c.time_str || ctx.time) + '\\n💰 *Precio:* $' + (c.service_price || svc.price) + ' MXN\\n\\n¿Confirmamos tu cita?'; return JSON.stringify({ messaging_product: 'whatsapp', to: ctx.phone, type: 'interactive', interactive: { type: 'button', body: { text: body }, action: { buttons: [{ type: 'reply', reply: { id: 'confirmar', title: '✅ Confirmar' } }, { type: 'reply', reply: { id: 'cancelar', title: '❌ Cancelar' } }] } } }); })() }}"
+      }
+    },
+    {
+      "id": "db-bookings",
+      "name": "Obtener Citas Cliente",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [1720, 540],
+      "credentials": {
+        "postgres": {
+          "id": "FmvG7eSe9Y6nG73Z",
+          "name": "sass-store Supabase DB"
+        }
+      },
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT b.start_time, s.name as service_name, b.status FROM bookings b LEFT JOIN services s ON s.id = b.service_id JOIN tenants t ON t.id = b.tenant_id WHERE b.customer_phone = '{{ $json.phone }}' AND t.slug = '{{ $json.tenantSlug }}' AND b.start_time >= NOW() AND b.status IN ('confirmed','pending') ORDER BY b.start_time LIMIT 5",
+        "options": {}
+      }
+    },
+    {
+      "id": "send-bookings",
+      "name": "Enviar Citas WA",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1940, 540],
+      "parameters": {
+        "jsCode": "const citas = $('Obtener Citas Cliente').all().map(i => i.json);\nconst ctx = $('Parse Ollama Response').item.json;\nlet msg;\nif (citas.length === 0) {\n  msg = 'No tienes citas próximas agendadas 📅 ¿Quieres que te agende una?';\n} else {\n  const days = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];\n  const lista = citas.map(c => {\n    const d = new Date(c.start_time);\n    return '• ' + days[d.getDay()] + ' ' + d.toLocaleDateString('es-MX',{day:'2-digit',month:'short'}) + ' a las ' + d.toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit',hour12:true}) + ' — ' + c.service_name;\n  }).join('\\n');\n  msg = 'Tus próximas citas 📅\\n\\n' + lista + '\\n\\n¿Necesitas algo más?';\n}\nreturn [{ json: { phone: ctx.phone, phoneNumberId: ctx.phoneNumberId, msg } }];"
+      }
+    },
+    {
+      "id": "send-bookings-wa",
+      "name": "Enviar Lista Citas WA",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2160, 540],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'https://graph.facebook.com/v18.0/' + $json.phoneNumberId + '/messages' }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer {{WA_TOKEN}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({ messaging_product: 'whatsapp', to: $json.phone, type: 'text', text: { body: $json.msg } }) }}"
+      }
+    },
+    {
+      "id": "send-otro-wa",
+      "name": "Respuesta General WA",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1720, 700],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'https://graph.facebook.com/v18.0/' + $json.phoneNumberId + '/messages' }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer {{WA_TOKEN}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({ messaging_product: 'whatsapp', to: $json.phone, type: 'text', text: { body: $json.reply || '¡Hola! 😊 ¿En qué te puedo ayudar? Puedo agendar citas o consultar tus próximas visitas.' } }) }}"
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          { "node": "Respond OK", "type": "main", "index": 0 },
+          { "node": "Parse WA Payload", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Parse WA Payload": {
+      "main": [
+        [{ "node": "Get Tenant + Services", "type": "main", "index": 0 }]
+      ]
+    },
+    "Get Tenant + Services": {
+      "main": [[{ "node": "Build Ollama Prompt", "type": "main", "index": 0 }]]
+    },
+    "Build Ollama Prompt": {
+      "main": [[{ "node": "Call Ollama Cloud", "type": "main", "index": 0 }]]
+    },
+    "Call Ollama Cloud": {
+      "main": [
+        [{ "node": "Parse Ollama Response", "type": "main", "index": 0 }]
+      ]
+    },
+    "Parse Ollama Response": {
+      "main": [[{ "node": "Route Intent", "type": "main", "index": 0 }]]
+    },
+    "Route Intent": {
+      "main": [
+        [{ "node": "Info Completa?", "type": "main", "index": 0 }],
+        [{ "node": "Obtener Citas Cliente", "type": "main", "index": 0 }],
+        [{ "node": "Respuesta General WA", "type": "main", "index": 0 }]
+      ]
+    },
+    "Info Completa?": {
+      "main": [
+        [{ "node": "Lookup Service", "type": "main", "index": 0 }],
+        [{ "node": "Pedir Info Faltante", "type": "main", "index": 0 }]
+      ]
+    },
+    "Lookup Service": {
+      "main": [[{ "node": "Servicio Encontrado?", "type": "main", "index": 0 }]]
+    },
+    "Servicio Encontrado?": {
+      "main": [
+        [{ "node": "Guardar Conversacion", "type": "main", "index": 0 }],
+        [{ "node": "Servicio No Encontrado", "type": "main", "index": 0 }]
+      ]
+    },
+    "Guardar Conversacion": {
+      "main": [
+        [{ "node": "Enviar Botones Confirmar", "type": "main", "index": 0 }]
+      ]
+    },
+    "Obtener Citas Cliente": {
+      "main": [[{ "node": "Enviar Citas WA", "type": "main", "index": 0 }]]
+    },
+    "Enviar Citas WA": {
+      "main": [
+        [{ "node": "Enviar Lista Citas WA", "type": "main", "index": 0 }]
+      ]
+    }
+  }
+}

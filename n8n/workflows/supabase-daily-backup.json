@@ -1,0 +1,314 @@
+{
+  "name": "Backup Diario Supabase → Google Drive",
+  "settings": { "executionOrder": "v1" },
+  "tags": [{ "name": "backup" }, { "name": "supabase" }],
+  "nodes": [
+    {
+      "id": "trig-daily",
+      "name": "Diario 2 AM (México)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [200, 400],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 2 * * *"
+            }
+          ]
+        },
+        "timezone": "America/Mexico_City"
+      }
+    },
+    {
+      "id": "export-users",
+      "name": "Export users",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [420, 100],
+      "credentials": {
+        "postgres": {
+          "id": "FmvG7eSe9Y6nG73Z",
+          "name": "sass-store Supabase DB"
+        }
+      },
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT * FROM users",
+        "options": {}
+      }
+    },
+    {
+      "id": "export-tenants",
+      "name": "Export tenants",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [420, 220],
+      "credentials": {
+        "postgres": {
+          "id": "FmvG7eSe9Y6nG73Z",
+          "name": "sass-store Supabase DB"
+        }
+      },
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT * FROM tenants",
+        "options": {}
+      }
+    },
+    {
+      "id": "export-bookings",
+      "name": "Export bookings",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [420, 340],
+      "credentials": {
+        "postgres": {
+          "id": "FmvG7eSe9Y6nG73Z",
+          "name": "sass-store Supabase DB"
+        }
+      },
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT * FROM bookings",
+        "options": {}
+      }
+    },
+    {
+      "id": "export-customers",
+      "name": "Export customers",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [420, 460],
+      "credentials": {
+        "postgres": {
+          "id": "FmvG7eSe9Y6nG73Z",
+          "name": "sass-store Supabase DB"
+        }
+      },
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT * FROM customers",
+        "options": {}
+      }
+    },
+    {
+      "id": "export-customer-visits",
+      "name": "Export customer_visits",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [420, 580],
+      "credentials": {
+        "postgres": {
+          "id": "FmvG7eSe9Y6nG73Z",
+          "name": "sass-store Supabase DB"
+        }
+      },
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT * FROM customer_visits",
+        "options": {}
+      }
+    },
+    {
+      "id": "export-services",
+      "name": "Export services",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [420, 700],
+      "credentials": {
+        "postgres": {
+          "id": "FmvG7eSe9Y6nG73Z",
+          "name": "sass-store Supabase DB"
+        }
+      },
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT * FROM services",
+        "options": {}
+      }
+    },
+    {
+      "id": "export-products",
+      "name": "Export products",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [420, 820],
+      "credentials": {
+        "postgres": {
+          "id": "FmvG7eSe9Y6nG73Z",
+          "name": "sass-store Supabase DB"
+        }
+      },
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT * FROM products",
+        "options": {}
+      }
+    },
+    {
+      "id": "export-user-roles",
+      "name": "Export user_roles",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [420, 940],
+      "credentials": {
+        "postgres": {
+          "id": "FmvG7eSe9Y6nG73Z",
+          "name": "sass-store Supabase DB"
+        }
+      },
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT * FROM user_roles",
+        "options": {}
+      }
+    },
+    {
+      "id": "merge-all",
+      "name": "Combinar Todo en JSON",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [680, 520],
+      "parameters": {
+        "jsCode": "const ts = new Date().toISOString();\nconst collect = (nodeName) => {\n  try { return $node[nodeName].all().map(i => i.json); } catch(e) { return []; }\n};\nconst backup = {\n  generated_at: ts,\n  project: 'sass-store-mvp',\n  tables: {\n    users: collect('Export users'),\n    tenants: collect('Export tenants'),\n    bookings: collect('Export bookings'),\n    customers: collect('Export customers'),\n    customer_visits: collect('Export customer_visits'),\n    services: collect('Export services'),\n    products: collect('Export products'),\n    user_roles: collect('Export user_roles')\n  },\n  counts: {}\n};\nfor (const [k, v] of Object.entries(backup.tables)) backup.counts[k] = v.length;\nconsole.log('Backup counts:', JSON.stringify(backup.counts));\nreturn [{ json: { backup, ts, filename: `sass-store-backup-${ts.slice(0,10)}.json`, content: JSON.stringify(backup, null, 2) } }];"
+      }
+    },
+    {
+      "id": "upload-gdrive",
+      "name": "Subir a Google Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [900, 520],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "gdrive-backup",
+          "name": "Google Drive Backup"
+        }
+      },
+      "parameters": {
+        "operation": "upload",
+        "name": "={{ $json.filename }}",
+        "driveId": { "__rl": true, "value": "MyDrive", "mode": "list" },
+        "folderId": {
+          "__rl": true,
+          "value": "{{GDRIVE_BACKUP_FOLDER_ID}}",
+          "mode": "id"
+        },
+        "inputDataFieldName": "content",
+        "options": {
+          "mimeType": "application/json"
+        }
+      }
+    },
+    {
+      "id": "notify-wa",
+      "name": "Notificar Admin por WA",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1120, 520],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'https://graph.facebook.com/v18.0/' + $env.WA_PHONE_NUMBER_ID + '/messages' }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer {{WA_TOKEN}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({ messaging_product: 'whatsapp', to: $env.ADMIN_PHONE, type: 'text', text: { body: '✅ Backup Supabase completado\\n' + $json.filename + '\\n\\nRegistros:\\n' + Object.entries($json.backup.counts).map(([k,v]) => k + ': ' + v).join('\\n') } }) }}"
+      }
+    },
+    {
+      "id": "on-error",
+      "name": "Notificar Error por WA",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 720],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'https://graph.facebook.com/v18.0/' + $env.WA_PHONE_NUMBER_ID + '/messages' }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer {{WA_TOKEN}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({ messaging_product: 'whatsapp', to: $env.ADMIN_PHONE, type: 'text', text: { body: '❌ ERROR en Backup Supabase: ' + $json.error.message } }) }}"
+      }
+    }
+  ],
+  "connections": {
+    "Diario 2 AM (México)": {
+      "main": [
+        [
+          { "node": "Export users", "type": "main", "index": 0 },
+          { "node": "Export tenants", "type": "main", "index": 0 },
+          { "node": "Export bookings", "type": "main", "index": 0 },
+          { "node": "Export customers", "type": "main", "index": 0 },
+          { "node": "Export customer_visits", "type": "main", "index": 0 },
+          { "node": "Export services", "type": "main", "index": 0 },
+          { "node": "Export products", "type": "main", "index": 0 },
+          { "node": "Export user_roles", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Export users": {
+      "main": [
+        [{ "node": "Combinar Todo en JSON", "type": "main", "index": 0 }]
+      ]
+    },
+    "Export tenants": {
+      "main": [
+        [{ "node": "Combinar Todo en JSON", "type": "main", "index": 0 }]
+      ]
+    },
+    "Export bookings": {
+      "main": [
+        [{ "node": "Combinar Todo en JSON", "type": "main", "index": 0 }]
+      ]
+    },
+    "Export customers": {
+      "main": [
+        [{ "node": "Combinar Todo en JSON", "type": "main", "index": 0 }]
+      ]
+    },
+    "Export customer_visits": {
+      "main": [
+        [{ "node": "Combinar Todo en JSON", "type": "main", "index": 0 }]
+      ]
+    },
+    "Export services": {
+      "main": [
+        [{ "node": "Combinar Todo en JSON", "type": "main", "index": 0 }]
+      ]
+    },
+    "Export products": {
+      "main": [
+        [{ "node": "Combinar Todo en JSON", "type": "main", "index": 0 }]
+      ]
+    },
+    "Export user_roles": {
+      "main": [
+        [{ "node": "Combinar Todo en JSON", "type": "main", "index": 0 }]
+      ]
+    },
+    "Combinar Todo en JSON": {
+      "main": [[{ "node": "Subir a Google Drive", "type": "main", "index": 0 }]]
+    },
+    "Subir a Google Drive": {
+      "main": [
+        [{ "node": "Notificar Admin por WA", "type": "main", "index": 0 }]
+      ]
+    }
+  }
+}
