@@ -1,0 +1,346 @@
+{
+  "name": "STRY-026: WA Recordatorios",
+  "settings": { "executionOrder": "v1" },
+  "nodes": [
+    {
+      "id": "trig-rem",
+      "name": "Cada 5 Minutos",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [200, 400],
+      "parameters": {
+        "rule": { "interval": [{ "field": "minutes", "minutesInterval": 5 }] }
+      }
+    },
+    {
+      "id": "db-new-bookings",
+      "name": "Citas Nuevas (Confirmacion)",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [420, 200],
+      "credentials": {
+        "postgres": {
+          "id": "FmvG7eSe9Y6nG73Z",
+          "name": "sass-store Supabase DB"
+        }
+      },
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT b.id::text as booking_id, b.customer_phone as phone, b.customer_name, s.name as service_name, b.start_time, wt.phone_number_id, t.name as tenant_name FROM bookings b JOIN tenants t ON t.id = b.tenant_id JOIN wa_tenant_config wt ON wt.tenant_slug = t.slug LEFT JOIN services s ON s.id = b.service_id WHERE b.status = 'confirmed' AND b.customer_phone IS NOT NULL AND b.created_at >= NOW() - interval '10 minutes' AND NOT EXISTS (SELECT 1 FROM whatsapp_messages wm WHERE wm.numero = b.customer_phone AND wm.metadata->>'booking_id' = b.id::text AND wm.metadata->>'reminder_type' = 'confirmacion') LIMIT 20",
+        "options": {}
+      }
+    },
+    {
+      "id": "db-24h",
+      "name": "Citas en 24h",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [420, 340],
+      "credentials": {
+        "postgres": {
+          "id": "FmvG7eSe9Y6nG73Z",
+          "name": "sass-store Supabase DB"
+        }
+      },
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT b.id::text as booking_id, b.customer_phone as phone, b.customer_name, s.name as service_name, b.start_time, wt.phone_number_id, t.name as tenant_name FROM bookings b JOIN tenants t ON t.id = b.tenant_id JOIN wa_tenant_config wt ON wt.tenant_slug = t.slug LEFT JOIN services s ON s.id = b.service_id WHERE b.status = 'confirmed' AND b.customer_phone IS NOT NULL AND b.start_time BETWEEN NOW() + interval '23 hours 55 minutes' AND NOW() + interval '24 hours 5 minutes' AND NOT EXISTS (SELECT 1 FROM whatsapp_messages wm WHERE wm.numero = b.customer_phone AND wm.metadata->>'booking_id' = b.id::text AND wm.metadata->>'reminder_type' = '24h') LIMIT 20",
+        "options": {}
+      }
+    },
+    {
+      "id": "db-1h",
+      "name": "Citas en 1h",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [420, 480],
+      "credentials": {
+        "postgres": {
+          "id": "FmvG7eSe9Y6nG73Z",
+          "name": "sass-store Supabase DB"
+        }
+      },
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT b.id::text as booking_id, b.customer_phone as phone, b.customer_name, s.name as service_name, b.start_time, wt.phone_number_id, t.name as tenant_name FROM bookings b JOIN tenants t ON t.id = b.tenant_id JOIN wa_tenant_config wt ON wt.tenant_slug = t.slug LEFT JOIN services s ON s.id = b.service_id WHERE b.status = 'confirmed' AND b.customer_phone IS NOT NULL AND b.start_time BETWEEN NOW() + interval '55 minutes' AND NOW() + interval '65 minutes' AND NOT EXISTS (SELECT 1 FROM whatsapp_messages wm WHERE wm.numero = b.customer_phone AND wm.metadata->>'booking_id' = b.id::text AND wm.metadata->>'reminder_type' = '1h') LIMIT 20",
+        "options": {}
+      }
+    },
+    {
+      "id": "db-admin-daily",
+      "name": "Resumen Diario Admin (8am)",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [420, 620],
+      "credentials": {
+        "postgres": {
+          "id": "FmvG7eSe9Y6nG73Z",
+          "name": "sass-store Supabase DB"
+        }
+      },
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT t.slug as tenant_slug, t.name as tenant_name, wt.admin_phone as phone, wt.phone_number_id, COUNT(b.id)::text as total_citas, json_agg(json_build_object('hora', TO_CHAR(b.start_time AT TIME ZONE 'America/Mexico_City', 'HH12:MI AM'), 'cliente', COALESCE(b.customer_name, b.customer_phone), 'servicio', COALESCE(s.name, 'Servicio')) ORDER BY b.start_time) as citas FROM tenants t JOIN wa_tenant_config wt ON wt.tenant_slug = t.slug JOIN bookings b ON b.tenant_id = t.id LEFT JOIN services s ON s.id = b.service_id WHERE b.status = 'confirmed' AND b.customer_phone IS NOT NULL AND DATE(b.start_time AT TIME ZONE 'America/Mexico_City') = CURRENT_DATE AND EXTRACT(HOUR FROM NOW() AT TIME ZONE 'America/Mexico_City') = 8 AND EXTRACT(MINUTE FROM NOW() AT TIME ZONE 'America/Mexico_City') BETWEEN 0 AND 10 AND wt.admin_phone IS NOT NULL AND NOT EXISTS (SELECT 1 FROM whatsapp_messages wm WHERE wm.numero = wt.admin_phone AND wm.metadata->>'reminder_type' = 'admin_daily' AND DATE(wm.created_at) = CURRENT_DATE) GROUP BY t.slug, t.name, wt.admin_phone, wt.phone_number_id LIMIT 10",
+        "options": {}
+      }
+    },
+    {
+      "id": "code-msg-confirmacion",
+      "name": "Msg Confirmacion",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [680, 200],
+      "parameters": {
+        "jsCode": "const items = $('Citas Nuevas (Confirmacion)').all();\nif (items.length === 0) return [];\nreturn items.map(item => {\n  const b = item.json;\n  const d = new Date(b.start_time);\n  const days = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];\n  const months = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];\n  const dateStr = days[d.getDay()] + ' ' + d.getDate() + ' de ' + months[d.getMonth()];\n  const timeStr = d.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', hour12: true, timeZone: 'America/Mexico_City' });\n  const msg = '¡Tu cita fue registrada! 🎉\\n\\n📋 ' + (b.service_name || 'Servicio') + '\\n📅 ' + dateStr + '\\n⏰ ' + timeStr + '\\n\\nEn ' + b.tenant_name + ' te esperamos. Si necesitas cancelar o cambiar, escríbenos 😊';\n  return { json: { phone: b.phone, phoneNumberId: b.phone_number_id, msg, bookingId: b.booking_id, reminderType: 'confirmacion' } };\n});"
+      }
+    },
+    {
+      "id": "code-msg-24h",
+      "name": "Msg 24h",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [680, 340],
+      "parameters": {
+        "jsCode": "const items = $('Citas en 24h').all();\nif (items.length === 0) return [];\nreturn items.map(item => {\n  const b = item.json;\n  const d = new Date(b.start_time);\n  const timeStr = d.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', hour12: true, timeZone: 'America/Mexico_City' });\n  const msg = '¡Nos vemos mañana! 💅\\n\\nRecuerda que tienes tu cita de *' + (b.service_name || 'servicio') + '* mañana a las *' + timeStr + '* en ' + b.tenant_name + '.\\n\\nTe esperamos. ¡Hasta mañana! 😊';\n  return { json: { phone: b.phone, phoneNumberId: b.phone_number_id, msg, bookingId: b.booking_id, reminderType: '24h' } };\n});"
+      }
+    },
+    {
+      "id": "code-msg-1h",
+      "name": "Msg 1h",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [680, 480],
+      "parameters": {
+        "jsCode": "const items = $('Citas en 1h').all();\nif (items.length === 0) return [];\nreturn items.map(item => {\n  const b = item.json;\n  const msg = '¡Nos vemos en una hora! ⏰\\n\\nTu cita de *' + (b.service_name || 'servicio') + '* es en *60 minutos* en ' + b.tenant_name + '.\\n\\n¡Ya casi es tu momento! 💅';\n  return { json: { phone: b.phone, phoneNumberId: b.phone_number_id, msg, bookingId: b.booking_id, reminderType: '1h' } };\n});"
+      }
+    },
+    {
+      "id": "code-msg-admin",
+      "name": "Msg Admin Diario",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [680, 620],
+      "parameters": {
+        "jsCode": "const items = $('Resumen Diario Admin (8am)').all();\nif (items.length === 0) return [];\nreturn items.map(item => {\n  const r = item.json;\n  const citas = typeof r.citas === 'string' ? JSON.parse(r.citas) : (r.citas || []);\n  const lista = citas.map(c => '• ' + c.hora + ' — ' + c.cliente + ' (' + c.servicio + ')').join('\\n');\n  const msg = '🗓️ *Agenda de hoy — ' + r.tenant_name + '*\\n\\nTienes *' + r.total_citas + ' cita(s)* hoy:\\n\\n' + lista + '\\n\\n¡Que tengas un excelente día! 💪✨';\n  return { json: { phone: r.phone, phoneNumberId: r.phone_number_id, msg, bookingId: null, reminderType: 'admin_daily', tenantSlug: r.tenant_slug } };\n});"
+      }
+    },
+    {
+      "id": "send-confirmacion",
+      "name": "Enviar Confirmacion WA",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 200],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'https://graph.facebook.com/v18.0/' + $json.phoneNumberId + '/messages' }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer {{WA_TOKEN}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({ messaging_product: 'whatsapp', to: $json.phone, type: 'text', text: { body: $json.msg } }) }}",
+        "options": { "timeout": 10000 }
+      }
+    },
+    {
+      "id": "send-24h",
+      "name": "Enviar Recordatorio 24h",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 340],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'https://graph.facebook.com/v18.0/' + $json.phoneNumberId + '/messages' }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer {{WA_TOKEN}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({ messaging_product: 'whatsapp', to: $json.phone, type: 'text', text: { body: $json.msg } }) }}",
+        "options": { "timeout": 10000 }
+      }
+    },
+    {
+      "id": "send-1h",
+      "name": "Enviar Recordatorio 1h",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 480],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'https://graph.facebook.com/v18.0/' + $json.phoneNumberId + '/messages' }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer {{WA_TOKEN}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({ messaging_product: 'whatsapp', to: $json.phone, type: 'text', text: { body: $json.msg } }) }}",
+        "options": { "timeout": 10000 }
+      }
+    },
+    {
+      "id": "send-admin",
+      "name": "Enviar Resumen Admin",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 620],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'https://graph.facebook.com/v18.0/' + $json.phoneNumberId + '/messages' }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer {{WA_TOKEN}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({ messaging_product: 'whatsapp', to: $json.phone, type: 'text', text: { body: $json.msg } }) }}",
+        "options": { "timeout": 10000 }
+      }
+    },
+    {
+      "id": "log-confirmacion",
+      "name": "Log Confirmacion",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [1120, 200],
+      "credentials": {
+        "postgres": {
+          "id": "FmvG7eSe9Y6nG73Z",
+          "name": "sass-store Supabase DB"
+        }
+      },
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO whatsapp_messages (mensaje_id, numero, contenido, tipo, direccion, estado, metadata) VALUES (gen_random_uuid()::text, '{{ $json.phone }}', '{{ $json.msg }}', 'text', 'outbound', 'sent', json_build_object('reminder_type', 'confirmacion', 'booking_id', '{{ $json.bookingId }}', 'automation', true)::jsonb) ON CONFLICT DO NOTHING",
+        "options": {}
+      }
+    },
+    {
+      "id": "log-24h",
+      "name": "Log 24h",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [1120, 340],
+      "credentials": {
+        "postgres": {
+          "id": "FmvG7eSe9Y6nG73Z",
+          "name": "sass-store Supabase DB"
+        }
+      },
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO whatsapp_messages (mensaje_id, numero, contenido, tipo, direccion, estado, metadata) VALUES (gen_random_uuid()::text, '{{ $json.phone }}', '{{ $json.msg }}', 'text', 'outbound', 'sent', json_build_object('reminder_type', '24h', 'booking_id', '{{ $json.bookingId }}', 'automation', true)::jsonb) ON CONFLICT DO NOTHING",
+        "options": {}
+      }
+    },
+    {
+      "id": "log-1h",
+      "name": "Log 1h",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [1120, 480],
+      "credentials": {
+        "postgres": {
+          "id": "FmvG7eSe9Y6nG73Z",
+          "name": "sass-store Supabase DB"
+        }
+      },
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO whatsapp_messages (mensaje_id, numero, contenido, tipo, direccion, estado, metadata) VALUES (gen_random_uuid()::text, '{{ $json.phone }}', '{{ $json.msg }}', 'text', 'outbound', 'sent', json_build_object('reminder_type', '1h', 'booking_id', '{{ $json.bookingId }}', 'automation', true)::jsonb) ON CONFLICT DO NOTHING",
+        "options": {}
+      }
+    },
+    {
+      "id": "log-admin",
+      "name": "Log Admin",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [1120, 620],
+      "credentials": {
+        "postgres": {
+          "id": "FmvG7eSe9Y6nG73Z",
+          "name": "sass-store Supabase DB"
+        }
+      },
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO whatsapp_messages (mensaje_id, numero, contenido, tipo, direccion, estado, metadata) VALUES (gen_random_uuid()::text, '{{ $json.phone }}', '{{ $json.msg }}', 'text', 'outbound', 'sent', json_build_object('reminder_type', 'admin_daily', 'tenant_slug', '{{ $json.tenantSlug }}', 'automation', true)::jsonb) ON CONFLICT DO NOTHING",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Cada 5 Minutos": {
+      "main": [
+        [
+          { "node": "Citas Nuevas (Confirmacion)", "type": "main", "index": 0 },
+          { "node": "Citas en 24h", "type": "main", "index": 0 },
+          { "node": "Citas en 1h", "type": "main", "index": 0 },
+          { "node": "Resumen Diario Admin (8am)", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Citas Nuevas (Confirmacion)": {
+      "main": [[{ "node": "Msg Confirmacion", "type": "main", "index": 0 }]]
+    },
+    "Citas en 24h": {
+      "main": [[{ "node": "Msg 24h", "type": "main", "index": 0 }]]
+    },
+    "Citas en 1h": {
+      "main": [[{ "node": "Msg 1h", "type": "main", "index": 0 }]]
+    },
+    "Resumen Diario Admin (8am)": {
+      "main": [[{ "node": "Msg Admin Diario", "type": "main", "index": 0 }]]
+    },
+    "Msg Confirmacion": {
+      "main": [
+        [{ "node": "Enviar Confirmacion WA", "type": "main", "index": 0 }]
+      ]
+    },
+    "Msg 24h": {
+      "main": [
+        [{ "node": "Enviar Recordatorio 24h", "type": "main", "index": 0 }]
+      ]
+    },
+    "Msg 1h": {
+      "main": [
+        [{ "node": "Enviar Recordatorio 1h", "type": "main", "index": 0 }]
+      ]
+    },
+    "Msg Admin Diario": {
+      "main": [[{ "node": "Enviar Resumen Admin", "type": "main", "index": 0 }]]
+    },
+    "Enviar Confirmacion WA": {
+      "main": [[{ "node": "Log Confirmacion", "type": "main", "index": 0 }]]
+    },
+    "Enviar Recordatorio 24h": {
+      "main": [[{ "node": "Log 24h", "type": "main", "index": 0 }]]
+    },
+    "Enviar Recordatorio 1h": {
+      "main": [[{ "node": "Log 1h", "type": "main", "index": 0 }]]
+    },
+    "Enviar Resumen Admin": {
+      "main": [[{ "node": "Log Admin", "type": "main", "index": 0 }]]
+    }
+  }
+}

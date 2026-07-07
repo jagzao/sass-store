@@ -1,15 +1,20 @@
 {
-  "currentFeature": "STRY-025-mejoras-calendario-citas-notificaciones",
-  "currentStage": "quality-runner",
-  "lastAgent": "test-implementation",
-  "nextRecommendedAgent": "quality-runner",
+  "currentFeature": "STRY-026-pwa-instalable-fix-servicios-observabilidad",
+  "currentStage": "implementation",
+  "lastAgent": "test-spec",
+  "nextRecommendedAgent": "dev",
   "specStatus": "done",
   "testSpecStatus": "done",
   "implementationStatus": "done",
   "testImplementationStatus": "done",
-  "qualityRunnerStatus": "pending",
+  "qualityRunnerStatus": "done",
   "humanApprovalRequired": false,
-  "prReady": false,
-  "lastUpdated": "2026-06-06",
-  "blockers": []
+  "prReady": true,
+  "lastUpdated": "2026-07-07",
+  "currentStage": "pr-ready",
+  "lastAgent": "quality-runner",
+  "blockers": [
+    "C3 analisis de errores reales: pendiente logs/URLs Sentry o Vercel del dueño",
+    "Rotacion credencial Supabase: el dueño debe rotar la password (fuga en git history — FS ya redactado)"
+  ]
 }

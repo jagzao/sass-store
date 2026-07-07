@@ -1,7 +1,7 @@
 
 const postgres = require('./node_modules/postgres');
 
-const connectionString = "postgresql://postgres.jedryjmljffuvegggjmw:TSGmf_3G-rbLbz!@aws-1-us-east-2.pooler.supabase.com:6543/postgres?pgbouncer=true";
+const connectionString = "postgresql://postgres.jedryjmljffuvegggjmw:@aws-1-us-east-2.pooler.supabase.com:6543/postgres?pgbouncer=true";
 
 const sql = postgres(connectionString, { ssl: 'require' });
 

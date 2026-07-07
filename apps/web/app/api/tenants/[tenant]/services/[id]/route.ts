@@ -10,6 +10,14 @@ export const dynamic = "force-dynamic";
 const updateServiceSchema = z.object({
   name: z.string().min(1).max(200).optional(),
   description: z.string().optional(),
+  shortDescription: z.preprocess(
+    (val) => (val === undefined ? undefined : val === null ? null : val),
+    z.string().max(140).nullable().optional(),
+  ),
+  longDescription: z.preprocess(
+    (val) => (val === undefined ? undefined : val === null ? null : val),
+    z.string().nullable().optional(),
+  ),
   price: z.number().positive().optional(),
   imageUrl: z.preprocess(
     (val) => (val === "" ? null : val),

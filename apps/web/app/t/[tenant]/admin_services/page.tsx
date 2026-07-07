@@ -10,11 +10,15 @@ import MenuDesignerModal from "@/components/admin/menu-designer/MenuDesignerModa
 import AdminRouteGuard from "@/components/auth/AdminRouteGuard";
 import { useTenantTheme } from "@/lib/hooks/useTenantTheme";
 import { SmartPublishWizard } from "@/components/smart-publish/SmartPublishWizard";
+import { PushOptIn } from "@/components/push/PushOptIn";
+import { filterServices } from "@/lib/services/services-filter";
 
 interface Service {
   id: string;
   name: string;
   description: string;
+  shortDescription?: string | null;
+  longDescription?: string | null;
   price: string;
   imageUrl?: string;
   videoUrl?: string;
@@ -48,29 +52,31 @@ export default function AdminServicesPage() {
   const ITEMS_PER_PAGE = 10;
 
   // Derived filtered & sorted services
-  const filteredServices = services
-    .filter((service) => {
-      if (searchTerm.length < 3) return true;
-      const lowerSearch = searchTerm.toLowerCase();
-      return (
-        service.name.toLowerCase().includes(lowerSearch) ||
-        service.description.toLowerCase().includes(lowerSearch)
-      );
-    })
-    .sort((a, b) => {
-      const aValue = a[sortConfig.key];
-      const bValue = b[sortConfig.key];
+  const filteredServices = filterServices(services, searchTerm).sort((a, b) => {
+    const aValue = a[sortConfig.key];
+    const bValue = b[sortConfig.key];
 
-      if (aValue === undefined || bValue === undefined) return 0;
+    if (aValue === undefined || bValue === undefined) return 0;
 
-      if (aValue < bValue) {
-        return sortConfig.direction === "asc" ? -1 : 1;
-      }
-      if (aValue > bValue) {
-        return sortConfig.direction === "asc" ? 1 : -1;
-      }
-      return 0;
-    });
+    let aVal = aValue;
+    let bVal = bValue;
+
+    if (sortConfig.key === "price") {
+      aVal = parseFloat(aValue);
+      bVal = parseFloat(bValue);
+    } else if (sortConfig.key === "duration") {
+      aVal = parseFloat(aValue);
+      bVal = parseFloat(bValue);
+    }
+
+    if (aVal < bVal) {
+      return sortConfig.direction === "asc" ? -1 : 1;
+    }
+    if (aVal > bVal) {
+      return sortConfig.direction === "asc" ? 1 : -1;
+    }
+    return 0;
+  });
 
   const totalPages = Math.ceil(filteredServices.length / ITEMS_PER_PAGE);
   const paginatedServices = filteredServices.slice(
@@ -104,6 +110,8 @@ export default function AdminServicesPage() {
     initialValues: {
       name: "",
       description: "",
+      shortDescription: "",
+      longDescription: "",
       price: "",
       imageUrl: "",
       videoUrl: "",
@@ -143,7 +151,7 @@ export default function AdminServicesPage() {
     try {
       if (!silent) setLoading(true);
       const response = await fetch(
-        `/api/v1/public/services?tenant=${tenantSlug}`,
+        `/api/tenants/${tenantSlug}/services?includeInactive=true`,
       );
       if (response.ok) {
         const data = await response.json();
@@ -161,6 +169,8 @@ export default function AdminServicesPage() {
     setFormData({
       name: service.name,
       description: service.description || "",
+      shortDescription: service.shortDescription || "",
+      longDescription: service.longDescription || "",
       price: service.price,
       imageUrl: service.imageUrl || "",
       videoUrl: service.videoUrl || "",
@@ -241,6 +251,8 @@ export default function AdminServicesPage() {
     setFormData({
       name: "",
       description: "",
+      shortDescription: "",
+      longDescription: "",
       price: "",
       imageUrl: "",
       videoUrl: "",
@@ -271,6 +283,10 @@ export default function AdminServicesPage() {
               </p>
             </div>
             <div className="flex gap-2 flex-wrap">
+              <PushOptIn
+                tenantSlug={tenantSlug}
+                publicKey={process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY}
+              />
               <button
                 onClick={() => setIsWizardOpen(true)}
                 className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-lg hover:from-indigo-600 hover:to-purple-700 transition-all shadow-sm font-medium"
@@ -412,7 +428,9 @@ export default function AdminServicesPage() {
                           {service.name}
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-900 max-w-xs truncate">
-                          {service.description || "Sin descripción"}
+                          {service.shortDescription ||
+                            service.description ||
+                            "Sin descripción"}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                           {service.duration} h
@@ -582,7 +600,47 @@ export default function AdminServicesPage() {
                       }
                       rows={3}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Descripción detallada del servicio"
+                      placeholder="Descripción general del servicio"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Descripción corta{" "}
+                      <span className="text-gray-400 font-normal">
+                        (máx. 140 caracteres — tarjetas/SEO)
+                      </span>
+                    </label>
+                    <input
+                      type="text"
+                      maxLength={140}
+                      value={formData.shortDescription}
+                      onChange={(e) =>
+                        setFieldValue("shortDescription", e.target.value)
+                      }
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="Frase corta de venta para tarjetas"
+                    />
+                    <p className="text-xs text-gray-400 mt-1">
+                      {formData.shortDescription?.length || 0}/140
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Descripción larga{" "}
+                      <span className="text-gray-400 font-normal">
+                        (opcional — modal/página detallada)
+                      </span>
+                    </label>
+                    <textarea
+                      value={formData.longDescription}
+                      onChange={(e) =>
+                        setFieldValue("longDescription", e.target.value)
+                      }
+                      rows={4}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="Detalle extenso del servicio"
                     />
                   </div>
 

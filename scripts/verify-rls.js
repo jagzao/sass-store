@@ -2,7 +2,7 @@ const { Pool } = require("pg");
 
 const pool = new Pool({
   connectionString:
-    "postgresql://postgres.jedryjmljffuvegggjmw:TSGmf_3G-rbLbz!@aws-1-us-east-2.pooler.supabase.com:5432/postgres",
+    "postgresql://postgres.jedryjmljffuvegggjmw:@aws-1-us-east-2.pooler.supabase.com:5432/postgres",
 });
 
 async function verify() {

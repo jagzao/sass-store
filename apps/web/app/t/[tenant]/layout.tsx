@@ -1,5 +1,6 @@
 import { Suspense, type ReactNode } from "react";
 import { notFound } from "next/navigation";
+import type { Metadata, Viewport } from "next";
 import TenantHeader from "@/components/ui/TenantHeader";
 import { getTenantBySlug } from "@/lib/server/get-tenant";
 import { CircuitSpotlight } from "@/components/ui/CircuitSpotlight";
@@ -12,6 +13,43 @@ import { getTenantStaticParams } from "@/lib/server/tenant-static-params";
 
 // ISR: revalidate tenant pages every 60 seconds
 export const revalidate = 60;
+
+// STRY-026 — PWA: manifest dinámico por tenant.
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ tenant: string }>;
+}): Promise<Metadata> {
+  const { tenant } = await params;
+  return {
+    manifest: `/t/${tenant}/manifest.webmanifest`,
+    appleWebApp: {
+      capable: true,
+      statusBarStyle: "default",
+      title: tenant,
+    },
+  };
+}
+
+// STRY-026 — theme color por tenant (para la barra del navegador / PWA).
+export async function generateViewport({
+  params,
+}: {
+  params: Promise<{ tenant: string }>;
+}): Promise<Viewport> {
+  const { tenant } = await params;
+  const t = await getTenantBySlug(tenant);
+  const color =
+    t?.branding?.primaryColor &&
+    /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(t.branding.primaryColor)
+      ? t.branding.primaryColor
+      : "#6366f1";
+  return {
+    themeColor: color,
+    width: "device-width",
+    initialScale: 1,
+  };
+}
 
 // Pre-render known tenants at build time; unknown slugs trigger on-demand generation (dynamicParams = true by default)
 export async function generateStaticParams() {

@@ -2,16 +2,29 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import * as schema from "./schema";
 
-// Initialize PostgreSQL connection
-let connectionString = process.env.DATABASE_URL!;
+// Initialize PostgreSQL connection.
+// STRY-026: NO silent fallback to localhost. A missing/placeholder DATABASE_URL
+// must fail loudly (ConfigurationError semantics) instead of silently hitting a
+// local/phantom DB. Only the test environment is allowed a non-resolving dummy.
+let connectionString = process.env.DATABASE_URL || "";
 
-if (!connectionString || connectionString === "your-database-url-here") {
-  console.warn(
-    "[DB] DATABASE_URL is not properly configured, using mock connection",
-  );
-  // Use a dummy connection string that won't connect but won't crash
-  connectionString = "postgresql://user:password@localhost:5432/dummy";
+const PLACEHOLDER_VALUES = [
+  "",
+  "your-database-url-here",
+  "your_database_url_here",
+];
+
+function isPlaceholder(url: string): boolean {
+  return PLACEHOLDER_VALUES.includes(url.trim());
 }
+
+// Exported for unit testing (STRY-026 SC-06).
+export { isPlaceholder as _isPlaceholderForTest };
+
+// Host that will NEVER resolve to a real Postgres — guarantees a fast,
+// explicit connection failure instead of phantom data from a local DB.
+const INVALID_CONNECTION_STRING =
+  "postgresql://DATABASE_URL_NOT_CONFIGURED@invalid.invalid:5432/nope";
 
 // Singleton pattern to prevent connection pool exhaustion
 // CRITICAL: Supabase free tier has only 3-5 connection limit
@@ -104,11 +117,21 @@ function getClient() {
 
   const connectionString = getConnectionString();
 
-  if (!connectionString) {
-    console.error("❌ DATABASE_URL is not defined!");
-    // Return a dummy client to prevent crash on import, but will fail on query
-    // This allows the app to at least start up and show a graphical error
-    return postgres("postgres://invalid:invalid@localhost:5432/invalid");
+  if (isPlaceholder(connectionString)) {
+    if (isTestEnv) {
+      // Tests are allowed a non-resolving dummy so imports don't crash.
+      console.warn(
+        "[DB] No DATABASE_URL in test env — using non-resolving dummy client",
+      );
+      return postgres(INVALID_CONNECTION_STRING, { ssl: false });
+    }
+    // STRY-026: fail loud. Do NOT silently fall back to a local/phantom DB.
+    console.error(
+      "❌ FATAL [DB] DATABASE_URL is not configured (or is a placeholder). " +
+        "Queries will fail until a real connection string is provided. " +
+        "Set DATABASE_URL in your environment (apps/web/.env.local).",
+    );
+    return postgres(INVALID_CONNECTION_STRING, { ssl: false });
   }
 
   console.log(`🔌 Initializing Lazy DB Connection...`);

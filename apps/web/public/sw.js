@@ -1,16 +1,18 @@
 /* eslint-disable no-console */
 // Service Worker para SASS Store - Secure Configuration
 // SEC-011: API responses are NEVER cached to prevent sensitive data exposure
-// Version: 2.0.0 - Security Hardened
+// STRY-026: improved offline (network-first navigations + offline fallback page)
+// Version: 3.0.0 - Offline + Security Hardened
 
-const CACHE_VERSION = 'sass-store-v2-secure';
-const STATIC_CACHE = 'sass-store-static-v2';
+const CACHE_VERSION = 'sass-store-v3-offline';
+const STATIC_CACHE = 'sass-store-static-v3';
+const RUNTIME_CACHE = 'sass-store-runtime-v3';
 
 // Recursos estáticos seguros para cache offline
 // Solo assets públicos, sin datos sensibles
 const STATIC_ASSETS = [
   '/',
-  '/manifest.json',
+  '/offline',
   '/favicon.ico',
   // Agregar más recursos estáticos públicos según sea necesario
 ];
@@ -41,8 +43,8 @@ self.addEventListener('activate', event => {
     caches.keys().then(cacheNames => {
       return Promise.all(
         cacheNames.map(cacheName => {
-          // Eliminar todos los caches excepto el estático actual
-          if (cacheName !== STATIC_CACHE) {
+          // Conservar solo los caches actuales (estático y runtime)
+          if (cacheName !== STATIC_CACHE && cacheName !== RUNTIME_CACHE) {
             console.log('[SW] Deleting old cache:', cacheName);
             return caches.delete(cacheName);
           }
@@ -124,14 +126,33 @@ self.addEventListener('fetch', event => {
     return;
   }
 
+  // STRY-026: navegación (HTML) — network-first, fallback a cache y luego /offline.
+  if (request.mode === 'navigate') {
+    event.respondWith(
+      fetch(request)
+        .then(response => {
+          // Cachear la página visitada en runtime para offline futuro.
+          if (response && response.status === 200) {
+            const clone = response.clone();
+            caches.open(RUNTIME_CACHE).then(cache => cache.put(request, clone));
+          }
+          return response;
+        })
+        .catch(async () => {
+          const cached = await caches.match(request);
+          if (cached) return cached;
+          const fallback = await caches.match('/offline');
+          return fallback || caches.match('/') || Response.error();
+        })
+    );
+    return;
+  }
+
   // Para todo lo demás: Network only (no cachear por defecto)
   // Esto es más seguro que cachear agresivamente
   event.respondWith(
     fetch(request).catch(() => {
-      // Solo para navegación, intentar servir index desde cache
-      if (request.mode === 'navigate') {
-        return caches.match('/');
-      }
+      // Para navegación ya manejada arriba; aquí assets no críticos.
       return new Response('Not available', { status: 503 });
     })
   );
