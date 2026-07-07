@@ -136,7 +136,7 @@ export async function POST(request: NextRequest) {
 
 // GET endpoint para probar con configuraciones predefinidas
 export async function GET() {
-  // Configuraciones predefinidas para probar
+  // STRY-026 — sin credenciales hardcodeadas. Solo configs desde env.
   const predefinedConfigs = [
     {
       name: "Actual (desde .env)",
@@ -144,23 +144,12 @@ export async function GET() {
     },
     {
       name: "Directa (sin pooler)",
-      connectionString:
-        process.env.DIRECT_DATABASE_URL ||
-        "postgresql://postgres.jedryjmljffuvegggjmw:TSGmf_3G-rbLbz!@db.jedryjmljffuvegggjmw.supabase.co:5432/postgres",
-    },
-    {
-      name: "Pooler (actual)",
-      connectionString:
-        "postgresql://postgres.jedryjmljffuvegggjmw:TSGmf_3G-rbLbz!@aws-1-us-east-2.pooler.supabase.com:6543/postgres?pgbouncer=true",
-    },
-    {
-      name: "Pooler (sin pgbouncer)",
-      connectionString:
-        "postgresql://postgres.jedryjmljffuvegggjmw:TSGmf_3G-rbLbz!@aws-1-us-east-2.pooler.supabase.com:6543/postgres",
+      connectionString: process.env.DIRECT_DATABASE_URL || "",
     },
     {
       name: "Local (desarrollo)",
       connectionString:
+        process.env.DEV_DATABASE_URL ||
         "postgresql://postgres:postgres@localhost:5432/sass_store",
     },
   ];

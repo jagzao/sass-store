@@ -1,12 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@sass-store/database";
 import { services, tenants } from "@sass-store/database/schema";
-import { eq, and } from "drizzle-orm";
+import { eq, and, desc } from "drizzle-orm";
 import { z } from "zod";
 
 const createServiceSchema = z.object({
   name: z.string().min(1).max(200),
   description: z.string().optional(),
+  shortDescription: z.string().max(140).optional(),
+  longDescription: z.string().optional(),
   price: z.number().positive(),
   imageUrl: z.union([z.string().url(), z.literal("")]).optional(),
   videoUrl: z.union([z.string().url(), z.literal("")]).optional(),
@@ -16,14 +18,22 @@ const createServiceSchema = z.object({
   metadata: z.record(z.any()).optional(),
 });
 
-export async function POST(
+export const dynamic = "force-dynamic";
+
+export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ tenant: string }> },
 ) {
   try {
     const { tenant: tenantSlug } = await params;
+    const searchParams = request.nextUrl.searchParams;
+    const includeInactive = searchParams.get("includeInactive") === "true";
+    const limit = Math.min(
+      parseInt(searchParams.get("limit") || "100", 10),
+      1000,
+    );
+    const offset = parseInt(searchParams.get("offset") || "0", 10);
 
-    // Find tenant
     const [tenant] = await db
       .select()
       .from(tenants)
@@ -34,12 +44,50 @@ export async function POST(
       return NextResponse.json({ error: "Tenant not found" }, { status: 404 });
     }
 
-    // Parse and validate request body
+    const conditions = [eq(services.tenantId, tenant.id)];
+
+    if (!includeInactive) {
+      conditions.push(eq(services.active, true));
+    }
+
+    const data = await db
+      .select()
+      .from(services)
+      .where(and(...conditions))
+      .orderBy(desc(services.createdAt))
+      .limit(limit)
+      .offset(offset);
+
+    return NextResponse.json({ data });
+  } catch (error) {
+    console.error("[API] Error fetching services:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
+  }
+}
+
+export async function POST(
+  request: NextRequest,
+  { params }: { params: Promise<{ tenant: string }> },
+) {
+  try {
+    const { tenant: tenantSlug } = await params;
+
+    const [tenant] = await db
+      .select()
+      .from(tenants)
+      .where(eq(tenants.slug, tenantSlug))
+      .limit(1);
+
+    if (!tenant) {
+      return NextResponse.json({ error: "Tenant not found" }, { status: 404 });
+    }
+
     const body = await request.json();
     const serviceData = createServiceSchema.parse(body);
 
-    // Create service
-    // Format price to ensure it has 2 decimal places
     const formattedPrice = serviceData.price.toFixed(2);
 
     const [newService] = await db
@@ -48,6 +96,8 @@ export async function POST(
         tenantId: tenant.id,
         name: serviceData.name,
         description: serviceData.description || null,
+        shortDescription: serviceData.shortDescription || null,
+        longDescription: serviceData.longDescription || null,
         price: formattedPrice,
         imageUrl: serviceData.imageUrl || null,
         videoUrl: serviceData.videoUrl || null,
@@ -61,6 +111,8 @@ export async function POST(
         tenantId: services.tenantId,
         name: services.name,
         description: services.description,
+        shortDescription: services.shortDescription,
+        longDescription: services.longDescription,
         price: services.price,
         imageUrl: services.imageUrl,
         duration: services.duration,

@@ -38,10 +38,34 @@
       "Bash(curl -s http://localhost:3003/api/health)",
       "Bash(curl -s --max-time 5 http://localhost:3003/api/health)",
       "Bash(curl -s http://127.0.0.1:5678/api/v1/workflows -H 'Content-Type: application/json' -H 'X-N8N-API-KEY: __CMDSUB_OUTPUT__' --max-time 5)",
-      "Bash(E2E_REUSE_SERVER=1 BASE_URL=http://localhost:3003 npm run test:e2e:subset -- --grep \"SmartPublishWizard\")"
+      "Bash(E2E_REUSE_SERVER=1 BASE_URL=http://localhost:3003 npm run test:e2e:subset -- --grep \"SmartPublishWizard\")",
+      "Bash(grep -iE \"\\(password|secret|api[_-]?key\\)\\\\s*[:=]\\\\s*['\\\\\"][^'\\\\\"]{8,}\")",
+      "PowerShell(cd \"C:\\\\Dev\\\\Zo\\\\sass-store\"; git status --short | Where-Object { $_ -match \"scripts/ensure\" })",
+      "mcp__31b685ec-e0b4-4e1d-afdc-9f179b6dc613__list_tables",
+      "PowerShell($env:PGPASSWORD = \"\"; pg_dump \"postgresql://postgres.jedryjmljffuvegggjmw:@db.jedryjmljffuvegggjmw.supabase.co:5432/postgres\" --schema=public --no-owner --no-acl -f \"C:\\\\Dev\\\\Zo\\\\sass-store\\\\backup-supabase-$\\(Get-Date -Format 'yyyyMMdd-HHmmss'\\).sql\" 2>&1 | Select-Object -Last 5)",
+      "PowerShell(Get-Command supabase -ErrorAction SilentlyContinue)",
+      "PowerShell(Get-Command npx -ErrorAction SilentlyContinue)",
+      "PowerShell(cd \"C:\\\\Dev\\\\Zo\\\\sass-store\"; $timestamp = Get-Date -Format 'yyyyMMdd-HHmmss'; npx supabase db dump --db-url \"postgresql://postgres.jedryjmljffuvegggjmw:@aws-1-us-east-2.pooler.supabase.com:5432/postgres\" -f \"backup-supabase-$timestamp.sql\" 2>&1 | Tee-Object -Variable output; $output | Select-Object -Last 10)",
+      "PowerShell(Get-Item \"C:\\\\Dev\\\\Zo\\\\sass-store\\\\backup-supabase-20260701-074907.sql\", \"C:\\\\Dev\\\\Zo\\\\sass-store\\\\backup-supabase-data-20260701.sql\" | Select-Object Name, @{N='Size MB';E={[math]::Round\\($_.Length/1MB, 2\\)}})",
+      "mcp__claude-in-chrome__javascript_tool",
+      "mcp__claude-in-chrome__navigate",
+      "mcp__claude-in-chrome__read_page",
+      "mcp__claude-in-chrome__tabs_context_mcp",
+      "PowerShell(Get-ChildItem \"$env:USERPROFILE\\\\.n8n\" -ErrorAction SilentlyContinue | Select-Object Name, Length; Get-ChildItem \"$env:APPDATA\\\\n8n\" -ErrorAction SilentlyContinue | Select-Object Name)",
+      "PowerShell(Select-String -Path \"C:\\\\Dev\\\\Zo\\\\sass-store\\\\.env\" -Pattern \"n8n|N8N\" -CaseSensitive:$false)",
+      "PowerShell(Get-ChildItem \"$env:APPDATA\\\\n8n\" -ErrorAction SilentlyContinue | Select-Object Name; Get-ChildItem \"$env:LOCALAPPDATA\\\\n8n\" -ErrorAction SilentlyContinue | Select-Object Name; Get-ChildItem \"$env:USERPROFILE\\\\.n8n\" -ErrorAction SilentlyContinue | Select-Object Name)",
+      "PowerShell(Get-Process -Id 28576 -ErrorAction SilentlyContinue | Select-Object Id, Path, CommandLine; \\(Get-WmiObject Win32_Process -Filter \"ProcessId=28576\"\\).CommandLine)",
+      "Bash(docker exec *)",
+      "Bash(python3 -c \"import sys,json; envs=json.load\\(sys.stdin\\); [print\\(e\\) for e in envs if any\\(k in e.upper\\(\\) for k in ['AUTH','USER','PASS','EMAIL','OWNER']\\)]\")",
+      "Bash(grep -v \"^$\")",
+      "Bash(python3 -c \"import sys,json; mounts=json.load\\(sys.stdin\\); [print\\(m\\) for m in mounts]\")",
+      "Bash(docker exec n8n node -e ' *)",
+      "Bash(docker cp *)"
     ],
     "deny": [],
     "ask": [],
-    "additionalDirectories": ["C:\\Dev\\Triger\\Automation\\n8n"]
+    "additionalDirectories": [
+      "C:\\Dev\\Triger\\Automation\\n8n"
+    ]
   }
 }

@@ -75,7 +75,7 @@ Primero, confirma si tus datos están intactos o necesitas restaurar:
 
    ```bash
    # Base de datos de PRODUCCIÓN
-   DATABASE_URL="postgresql://postgres.jedryjmljffuvegggjmw:TSGmf_3G-rbLbz!@aws-1-us-east-2.pooler.supabase.com:6543/postgres?pgbouncer=true"
+   DATABASE_URL="<DATABASE_URL-from-env>"
 
    # Base de datos de TEST (proyecto separado)
    TEST_DATABASE_URL="postgresql://postgres:[TU_PASSWORD]@db.[TU_REF].supabase.co:5432/postgres"
