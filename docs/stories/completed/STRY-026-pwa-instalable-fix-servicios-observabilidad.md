@@ -1,12 +1,13 @@
 # Story: PWA instalable por tenant + fix servicios + observabilidad
 
 > **ID:** STRY-026
-> **Estado:** analysis
+> **Estado:** done
 > **Prioridad:** P0
 > **Sprint:** S2
 > **Asignado:** PM → Architect → Dev → QA → Security
 > **Creado:** 2026-07-06
-> **Actualizado:** 2026-07-06
+> **Actualizado:** 2026-07-07
+> **PR:** https://github.com/jagzao/sass-store/pull/4 (merged)
 
 **Artefactos de sprint (agente / entrega):** `.agents/sprint/STRY-026-pwa-fix-servicios/` con `plan.md`, `implementacion.md`, `testing-usuario.md`.
 
