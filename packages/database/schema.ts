@@ -3323,3 +3323,35 @@ export const waAutomationRules = pgTable(
     triggerIdx: index("wa_automation_rules_trigger_idx").on(table.triggerEvent),
   }),
 );
+
+/**
+ * STRY-026 — Suscripciones push (Web Push) por tenant.
+ * Almacena cada suscripción de navegador para enviar notificaciones
+ * (el envío real vive en STRY-006; aquí solo la suscripción + aislamiento).
+ */
+export const pushSubscriptions = pgTable(
+  "push_subscriptions",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .references(() => tenants.id)
+      .notNull(),
+    endpoint: text("endpoint").notNull(),
+    p256dh: text("p256dh").notNull(),
+    auth: text("auth").notNull(),
+    userAgent: text("user_agent"),
+    active: boolean("active").notNull().default(true),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => ({
+    tenantIdx: index("push_subscriptions_tenant_idx").on(table.tenantId),
+    endpointIdx: uniqueIndex("push_subscriptions_endpoint_idx").on(
+      table.endpoint,
+    ),
+  }),
+);

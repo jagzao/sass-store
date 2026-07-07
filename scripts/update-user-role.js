@@ -5,7 +5,7 @@ const { randomUUID } = require("crypto");
 // Configuración de la base de datos
 const connectionString =
   process.env.DATABASE_URL ||
-  "postgresql://postgres.jedryjmljffuvegggjmw:TSGmf_3G-rbLbz!@aws-1-us-east-2.pooler.supabase.com:6543/postgres?pgbouncer=true";
+  "postgresql://postgres.jedryjmljffuvegggjmw:@aws-1-us-east-2.pooler.supabase.com:6543/postgres?pgbouncer=true";
 
 // Crear cliente de PostgreSQL
 const sql = postgres(connectionString);
