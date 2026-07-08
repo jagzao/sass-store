@@ -10,7 +10,6 @@ import { test, expect, Page } from "@playwright/test";
 const TENANTS = [
   { slug: "wondernails", name: "Wonder Nails", category: "Belleza" },
   { slug: "centro-tenistico", name: "Centro Tenístico", category: "Deportes" },
-  { slug: "delirios", name: "Delirios", category: "Lifestyle" },
   { slug: "manada-juma", name: "Manada Juma", category: "Booking" },
   { slug: "zo-system", name: "Zo System", category: "Software" },
 ];

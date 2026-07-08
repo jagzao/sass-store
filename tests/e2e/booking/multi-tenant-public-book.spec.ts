@@ -16,8 +16,8 @@ const TENANTS_BOOKING_NO_SERVICES = [
   { slug: "manada-juma", name: "Manada Juma" },
 ];
 
-// Tenants catalog sin servicios de agendado
-const TENANTS_NO_SERVICES = ["delirios"];
+// Tenants catalog sin servicios de agendado (delirios eliminado — ya no es cliente)
+const TENANTS_NO_SERVICES: string[] = [];
 
 for (const tenant of TENANTS_WITH_SERVICES) {
   test.describe(`Public booking — ${tenant.name} (${tenant.slug})`, () => {

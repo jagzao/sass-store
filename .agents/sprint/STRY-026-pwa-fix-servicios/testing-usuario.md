@@ -10,7 +10,7 @@
 
 - App levantada: `npm run dev` (puerto 3001) o build + `npm run start`.
 - `DATABASE_URL` = Supabase prod (tras Tramo A1). Confirmar con: ir a `/api/debug/ping` → 200.
-- Tenants activos a probar: **wondernails**, **vigistudio**, **delirios**.
+- Tenants activos a probar: **wondernails**, **centro-tenistico**, **manada-juma**.
 - Navegador: Chromium (Playwright) + Chrome/Edge real para validar "Instalar app".
 - VAPID keys generadas y en `.env` (para push).
 
@@ -119,7 +119,7 @@
 ## Barrera (§ 1.3) — orden de ejecución del agente
 
 1. Playwright **headed** sobre E1–E7 por tenant → detectar fallos visuales/UX → fix.
-2. Re-ejecutar hasta verde en **wondernails, vigistudio, delirios**.
+2. Re-ejecutar hasta verde en **wondernails, centro-tenistico, manada-juma**.
 3. Playwright **headless** `--grep STRY-026` en regresión.
 4. `npm run test:unit` verde.
 5. build / lint / typecheck verde.

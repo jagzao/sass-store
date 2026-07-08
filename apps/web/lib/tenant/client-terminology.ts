@@ -35,12 +35,7 @@ const SPORTS_KEYWORDS = [
   "volleyball",
 ];
 
-const BEAUTY_SLUGS = [
-  "wondernails",
-  "vigistudio",
-  "vainilla-vargas",
-  "delirios",
-];
+const BEAUTY_SLUGS = ["wondernails", "vigistudio", "vainilla-vargas"];
 
 function detectTenantType(tenantSlug: string): "beauty" | "sports" | "default" {
   const slug = tenantSlug.toLowerCase();

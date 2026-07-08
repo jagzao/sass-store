@@ -147,43 +147,6 @@ export async function seedTenantData() {
         },
       },
       {
-        slug: "delirios",
-        name: "Delirios",
-        description:
-          "Restaurante gourmet con cocina fusión y experiencias culinarias únicas",
-        mode: "catalog",
-        status: "active",
-        branding: {
-          primaryColor: "#8B4513",
-          secondaryColor: "#1F2937",
-        },
-        contact: {
-          phone: "+52-555-0210",
-          email: "reservas@delirios.local",
-          address: "Av. Reforma 123, CDMX",
-          website: "https://delirios.local",
-          hours: {
-            monday: "Closed",
-            tuesday: "13:00-23:00",
-            wednesday: "13:00-23:00",
-            thursday: "13:00-23:00",
-            friday: "13:00-00:00",
-            saturday: "12:00-00:00",
-            sunday: "12:00-22:00",
-          },
-        },
-        location: {
-          lat: 19.4326,
-          lng: -99.1332,
-          timezone: "America/Mexico_City",
-        },
-        quotas: {
-          maxServices: 40,
-          maxProducts: 60,
-          maxStaff: 20,
-        },
-      },
-      {
         slug: "zo-system",
         name: "Zo System",
         description: "Full-stack software development and consulting services",
@@ -597,7 +560,6 @@ export async function seedTenantData() {
       const activeSlugs = [
         "wondernails",
         "centro-tenistico",
-        "delirios",
         "manada-juma",
         "zo-system",
       ];

@@ -147,15 +147,6 @@ export default async function HomePage() {
                 </a>
 
                 <a
-                  href="/t/delirios"
-                  className="text-center p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow block"
-                >
-                  <div className="text-3xl mb-2">🍽️</div>
-                  <div className="text-sm font-medium">Delirios</div>
-                  <div className="text-xs text-gray-500">Comida saludable</div>
-                </a>
-
-                <a
                   href="/t/nom-nom"
                   className="text-center p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow block"
                 >

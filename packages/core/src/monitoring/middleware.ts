@@ -155,7 +155,7 @@ export class MonitoringMiddleware {
       .replace(/\/\d+/g, "/[id]") // Replace numeric IDs
       .replace(/\/[\w-]+(?=\/|$)/g, "/[slug]") // Replace slugs (could be improved)
       .replace(
-        /\/wondernails|\/zo-system|\/delirios|\/manada-juma|\/centro-tenistico/g,
+        /\/wondernails|\/zo-system|\/manada-juma|\/centro-tenistico/g,
         "/[tenant]",
       ); // Replace tenant names
   }

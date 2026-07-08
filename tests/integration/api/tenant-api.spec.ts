@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 
 test.describe("API Integration Tests", () => {
   const baseURL = process.env.BASE_URL || "http://127.0.0.1:3002";
-  const tenants = ["wondernails", "nom-nom", "delirios", "zo-system"];
+  const tenants = ["wondernails", "nom-nom", "zo-system"];
 
   test("Products API should enforce tenant isolation", async ({ request }) => {
     for (const tenant of tenants) {

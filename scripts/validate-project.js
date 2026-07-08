@@ -289,7 +289,6 @@ class ProjectValidator {
           "vigistudio",
           "villafuerte",
           "vainilla-vargas",
-          "delirios",
           "nom-nom",
         ];
         const existingTenants = tenantData.tenants.map((t) => t.slug);

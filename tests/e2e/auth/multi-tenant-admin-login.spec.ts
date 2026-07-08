@@ -29,7 +29,6 @@ const BASE = process.env.BASE_URL || "http://127.0.0.1:3002";
 // Tenants con HomeRouterWrapper → muestran hometenant-dashboard para Admin
 const DASHBOARD_TENANTS = [
   { slug: "wondernails", name: "Wonder Nails Studio", mode: "booking" },
-  { slug: "delirios", name: "Delirios", mode: "catalog" },
   { slug: "manada-juma", name: "Manada Juma", mode: "booking" },
 ];
 

@@ -115,7 +115,7 @@ Respuesta del dueño a la lista de 10 asunciones: **"0"** (ninguna a refinar →
 
 #### D1. `testing-usuario.md` por escenario × tenant
 - Escenarios: instalar PWA, guardar/editar servicio (con SmartPublish + admin), buscar, push subscribe.
-- **Tenants:** wondernails, vigistudio, delirios.
+- **Tenants:** wondernails, centro-tenistico, manada-juma.
 - #### D2. Playwright `--headed` → fixes → headless con grep `STRY-026`.
 - #### D3. UT verdes (`npm run test:unit`).
 - #### D4. build/lint/typecheck verdes.
@@ -138,6 +138,6 @@ Respuesta del dueño a la lista de 10 asunciones: **"0"** (ninguna a refinar →
 
 - [ ] Tramos A, B, C1-C2 completos (C3 depende del dueño)
 - [ ] build + lint + typecheck + UT + Playwright (headed+headless) en verde, alcance STRY-026
-- [ ] `testing-usuario.md` ejecutado 100% en wondernails, vigistudio, delirios
+- [ ] `testing-usuario.md` ejecutado 100% en wondernails, centro-tenistico, manada-juma
 - [ ] Evidencia de comandos pegada en el aviso al dueño
 - [ ] Esperar **visto bueno** explícito → `done` + push/publicar

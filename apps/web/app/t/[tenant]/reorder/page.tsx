@@ -35,14 +35,6 @@ const TENANTS_DATA = {
       secondaryColor: "#1F2937",
     },
   },
-  delirios: {
-    id: "delirios",
-    name: "Delirios",
-    branding: {
-      primaryColor: "#DC2626",
-      secondaryColor: "#1F2937",
-    },
-  },
   "nom-nom": {
     id: "nom-nom",
     name: "nom-nom",

@@ -16,7 +16,6 @@ const ADMIN_NAME = "Admin User";
 const ACTIVE_TENANT_SLUGS = [
   "wondernails",
   "centro-tenistico",
-  "delirios",
   "manada-juma",
   "zo-system",
 ];

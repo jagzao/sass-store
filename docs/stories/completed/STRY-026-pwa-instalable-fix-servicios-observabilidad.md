@@ -181,7 +181,7 @@ const PushSubscribeSchema = z.object({
 - [ ] Nueva RLS policy → pendiente evaluar (la nueva tabla sí la necesita)
 - [x] Modifica queries existentes → services PATCH ahora lee/escribe 3 descripciones
 - [x] Manifest es **por tenant** (una ruta dinámica que lee el tenant de la URL)
-- [x] **Tenants de prueba E2E:** `wondernails`, `vigistudio`, `delirios`
+- [x] **Tenants de prueba E2E:** `wondernails`, `centro-tenistico`, `manada-juma`
 
 ---
 

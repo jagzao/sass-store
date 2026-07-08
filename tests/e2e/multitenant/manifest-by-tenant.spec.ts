@@ -1,8 +1,8 @@
 import { test, expect } from "@playwright/test";
 
 // STRY-026 SC-02 — el manifest se sirve por tenant con su identidad.
-// Slugs reales presentes en la DB (verificados).
-const TENANTS = ["wondernails", "delirios", "centro-tenistico"];
+// Slugs reales presentes en la DB (verificados). delirios eliminado (ya no es cliente).
+const TENANTS = ["wondernails", "centro-tenistico", "manada-juma"];
 
 for (const slug of TENANTS) {
   test.describe(`PWA manifest por tenant — ${slug}`, () => {

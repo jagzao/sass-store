@@ -216,7 +216,7 @@ test.describe("NEED=HUMAN E2E Validation", () => {
 
   test("should validate API error handling", async ({ page }) => {
     // Test API error NEED=HUMAN scenarios
-    await page.goto("/t/delirios");
+    await page.goto("/t/zo-system");
 
     // Monitor network requests
     const failedRequests: string[] = [];

@@ -30,7 +30,7 @@ STRY-026 — PWA instalable por tenant + fix servicios + observabilidad
 | ID | Scenario | Estado |
 |----|----------|--------|
 | SC-01 | Instalación muestra logo/nombre | ✅ (manifest válido) |
-| SC-02 | Manifest se sirve por tenant | ✅ E2E 3 tenants (wondernails, delirios, centro-tenistico) |
+| SC-02 | Manifest se sirve por tenant | ✅ E2E 3 tenants (wondernails, centro-tenistico, manada-juma) |
 | SC-03 | Offline | ⚠️ SW implementado, E2E pendiente server estable |
 | SC-04 | Push subscription | ✅ API validada (subscribe 201, unsubscribe 200, 400/404 error paths) |
 | SC-05 | Sin localhost en prod | ✅ security |

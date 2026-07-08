@@ -60,17 +60,6 @@ class TenantWidgetRegistry {
       },
     });
 
-    // Delirios widgets con import dinámico
-    this.widgets.set("delirios", {
-      heroCarousel: {
-        component: lazy(() => import("../components/hero/HeroDeliriosWrapper")),
-        name: "HeroDelirios",
-        description:
-          "Hero slider fullscreen con círculos concéntricos, texto circular animado, blur de fondo, GSAP avanzado",
-        requiredProps: [],
-      },
-    });
-
     // Default/fallback widgets
     this.widgets.set("default", {
       heroCarousel: {

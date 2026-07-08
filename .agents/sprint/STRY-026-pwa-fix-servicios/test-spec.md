@@ -19,7 +19,7 @@ Cubrir el riesgo de **regresión en guardado/edición de servicios** (causa raí
 
 ## Datos de prueba
 
-- **Tenants:** `wondernails`, `vigistudio`, `delirios` (repetir escenarios críticos por slug)
+- **Tenants:** `wondernails`, `centro-tenistico`, `manada-juma` (repetir escenarios críticos por slug)
 - **Usuario:** `jagzao@gmail.com` / `admin`
 - **Servicio de prueba:** nombre `Test PWA`, precio `50`, duración `1.5`
 - **VAPID:** keys en `.env` (`NEXT_PUBLIC_VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT`)

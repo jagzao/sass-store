@@ -21,7 +21,6 @@ import { tenantLogger } from "@/lib/logger";
 const KNOWN_TENANTS = [
   "wondernails",
   "centro-tenistico",
-  "delirios",
   "manada-juma",
   "zo-system",
 ];
@@ -441,7 +440,6 @@ const TENANT_UUID_MAP: Record<string, string> = {
   wondernails: process.env.TENANT_UUID_WONDERNAILS || "wondernails",
   "centro-tenistico":
     process.env.TENANT_UUID_CENTRO_TENISTICO || "centro-tenistico",
-  delirios: process.env.TENANT_UUID_DELIRIOS || "delirios",
   "manada-juma": process.env.TENANT_UUID_MANADA_JUMA || "manada-juma",
   "zo-system": process.env.TENANT_UUID_ZO_SYSTEM || "zo-system",
 };
@@ -450,7 +448,6 @@ function buildTenantResponse(slug: string): FullResolvedTenant {
   const tenantModes: Record<string, "catalog" | "booking"> = {
     wondernails: "booking",
     "centro-tenistico": "booking",
-    delirios: "catalog",
     "manada-juma": "booking",
     "zo-system": "catalog",
   };
