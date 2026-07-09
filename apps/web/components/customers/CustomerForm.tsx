@@ -2,7 +2,19 @@
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { Save, X, Plus, Trash2 } from "lucide-react";
+import {
+  Save,
+  X,
+  Plus,
+  Trash2,
+  User,
+  Phone,
+  Mail,
+  Calendar,
+  MapPin,
+  FileText,
+  Pill,
+} from "lucide-react";
 import FormSelect from "@/components/ui/forms/FormSelect";
 
 interface CustomerFormProps {
@@ -176,75 +188,70 @@ export default function CustomerForm({
         </div>
       )}
 
-      <div className="space-y-6">
+      <div className="space-y-4">
         {/* Name */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Nombre Completo *
-          </label>
+        <div className="relative">
+          <User className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Ej: María García López"
+            aria-label="Nombre Completo"
+            className="w-full pl-9 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Nombre completo *"
           />
         </div>
 
         {/* Phone */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Teléfono *
-          </label>
+        <div className="relative">
+          <Phone className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
           <input
             type="tel"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
             required
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Ej: 555-1234"
+            aria-label="Teléfono"
+            className="w-full pl-9 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Teléfono *"
           />
         </div>
 
         {/* Email */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Email (Opcional)
-          </label>
+        <div className="relative">
+          <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Ej: maria@example.com"
+            aria-label="Email"
+            className="w-full pl-9 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Email (opcional)"
           />
         </div>
 
         {/* Birthday */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Fecha de Cumpleaños
-          </label>
+        <div className="relative">
+          <Calendar className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
           <input
             type="date"
             value={birthday}
             onChange={(e) => setBirthday(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            aria-label="Fecha de Cumpleaños"
+            className="w-full pl-9 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
         {/* Address */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Dirección (Opcional)
-          </label>
+        <div className="relative">
+          <MapPin className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-gray-400" />
           <textarea
             value={address}
             onChange={(e) => setAddress(e.target.value)}
             rows={2}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Ej: Calle Principal 123, Colonia Centro, Ciudad"
+            aria-label="Dirección"
+            className="w-full pl-9 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Dirección (opcional)"
           />
         </div>
 
@@ -314,16 +321,15 @@ export default function CustomerForm({
         </div>
 
         {/* General Notes */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Notas Generales
-          </label>
+        <div className="relative">
+          <FileText className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-gray-400" />
           <textarea
             value={generalNotes}
             onChange={(e) => setGeneralNotes(e.target.value)}
             rows={4}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Notas sobre preferencias especiales..."
+            aria-label="Notas Generales"
+            className="w-full pl-9 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Notas generales..."
           />
         </div>
 
@@ -433,16 +439,15 @@ export default function CustomerForm({
             </div>
 
             {/* Medications */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Medicamentos Actuales
-              </label>
+            <div className="relative">
+              <Pill className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-gray-400" />
               <textarea
                 value={medications}
                 onChange={(e) => setMedications(e.target.value)}
                 rows={2}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Registra si el paciente está tomando algún medicamento o tratamiento médico relevant..."
+                aria-label="Medicamentos Actuales"
+                className="w-full pl-9 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Medicamentos actuales..."
               />
             </div>
           </div>

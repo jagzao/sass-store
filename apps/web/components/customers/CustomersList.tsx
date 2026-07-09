@@ -305,58 +305,62 @@ export default function CustomersList({
       {/* Modal: Ver Expediente */}
       {selectedCustomerId && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-2 sm:p-4"
           onClick={() => setSelectedCustomerId(null)}
         >
           <div
-            className="bg-white rounded-xl shadow-2xl w-full max-w-5xl max-h-[92vh] overflow-y-auto"
+            className="bg-white rounded-lg sm:rounded-xl shadow-2xl w-full max-w-5xl max-h-[92vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between p-5 border-b border-gray-200 sticky top-0 bg-white z-10">
-              <h2 className="text-xl font-semibold text-[#5B21B6] font-serif">
-                {t.fileLabel}
-              </h2>
-              {/* Center: Save & Close button */}
-              <button
-                onClick={async () => {
-                  setSavingHistorial(true);
-                  try {
-                    await customerFileHeaderRef.current?.saveHistorial();
-                  } finally {
-                    setSavingHistorial(false);
-                  }
-                  setSelectedCustomerId(null);
-                }}
-                disabled={savingHistorial}
-                title="Guardar cambios y cerrar"
-                className="flex items-center gap-2 px-4 py-2 bg-[#7C3AED] text-white rounded-lg text-sm font-medium hover:bg-[#6D28D9] transition-colors disabled:opacity-60 shadow-sm"
-              >
-                {savingHistorial ? (
-                  <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full inline-block" />
-                ) : (
-                  <Save className="h-4 w-4" />
-                )}
-                {savingHistorial ? "Guardando..." : "Guardar y cerrar"}
-              </button>
-              <div className="flex items-center gap-3">
-                <a
-                  href={`/t/${tenantSlug}/clientes/${selectedCustomerId}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-blue-600 hover:text-blue-800 underline"
-                >
-                  Abrir en página completa ↗
-                </a>
+            <div className="sticky top-0 z-10 border-b border-gray-200 bg-white p-4 sm:p-5">
+              <div className="flex items-start justify-between gap-3">
+                <h2 className="text-lg sm:text-xl font-semibold text-[#5B21B6] font-serif leading-snug min-w-0">
+                  {t.fileLabel}
+                </h2>
                 <button
                   onClick={() => setSelectedCustomerId(null)}
-                  className="text-gray-400 hover:text-gray-600 p-1 rounded"
+                  className="shrink-0 text-gray-400 hover:text-gray-600 p-1 rounded -mr-1"
                   aria-label="Cerrar sin guardar"
                 >
                   <X className="h-5 w-5" />
                 </button>
               </div>
+              <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+                <button
+                  onClick={async () => {
+                    setSavingHistorial(true);
+                    try {
+                      await customerFileHeaderRef.current?.saveHistorial();
+                    } finally {
+                      setSavingHistorial(false);
+                    }
+                    setSelectedCustomerId(null);
+                  }}
+                  disabled={savingHistorial}
+                  title="Guardar cambios y cerrar"
+                  className="flex w-full sm:w-auto items-center justify-center gap-2 px-4 py-2.5 sm:py-2 bg-[#7C3AED] text-white rounded-lg text-sm font-medium hover:bg-[#6D28D9] transition-colors disabled:opacity-60 shadow-sm"
+                >
+                  {savingHistorial ? (
+                    <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full inline-block" />
+                  ) : (
+                    <Save className="h-4 w-4" />
+                  )}
+                  {savingHistorial ? "Guardando..." : "Guardar y cerrar"}
+                </button>
+                <a
+                  href={`/t/${tenantSlug}/clientes/${selectedCustomerId}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-blue-600 hover:text-blue-800 underline text-center sm:text-left py-1"
+                >
+                  <span className="sm:hidden">Ver página completa ↗</span>
+                  <span className="hidden sm:inline">
+                    Abrir en página completa ↗
+                  </span>
+                </a>
+              </div>
             </div>
-            <div className="p-5 space-y-6">
+            <div className="p-4 sm:p-5 space-y-6">
               <CustomerFileHeader
                 ref={customerFileHeaderRef}
                 tenantSlug={tenantSlug}
@@ -536,7 +540,7 @@ export default function CustomersList({
                       className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-900"
                     >
                       <Eye className="h-4 w-4" />
-                      Ver Expediente
+                      <span className="hidden sm:inline">Ver Expediente</span>
                     </button>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap max-w-[250px]">
