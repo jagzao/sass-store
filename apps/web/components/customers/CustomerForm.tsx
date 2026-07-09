@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import {
   Save,
   X,
-  Plus,
+  PlusCircle,
   Trash2,
   User,
   Phone,
@@ -14,6 +14,9 @@ import {
   MapPin,
   FileText,
   Pill,
+  Tag,
+  HeartPulse,
+  AlertTriangle,
 } from "lucide-react";
 import FormSelect from "@/components/ui/forms/FormSelect";
 
@@ -273,30 +276,32 @@ export default function CustomerForm({
 
         {/* Tags */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Etiquetas (Alergias, Preferencias, etc.)
-          </label>
           <div className="flex gap-2 mb-2">
-            <input
-              type="text"
-              value={newTag}
-              onChange={(e) => setNewTag(e.target.value)}
-              onKeyPress={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  handleAddTag();
-                }
-              }}
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Ej: Alérgica a acetona"
-            />
+            <div className="relative flex-1">
+              <Tag className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                value={newTag}
+                onChange={(e) => setNewTag(e.target.value)}
+                onKeyPress={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    handleAddTag();
+                  }
+                }}
+                aria-label="Etiquetas"
+                className="w-full pl-9 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Etiquetas (alergias, preferencias...)"
+              />
+            </div>
             <button
               type="button"
               onClick={handleAddTag}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center gap-1"
+              title="Agregar etiqueta"
+              aria-label="Agregar etiqueta"
+              className="px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center justify-center"
             >
-              <Plus className="h-4 w-4" />
-              Agregar
+              <PlusCircle className="h-5 w-5" />
             </button>
           </div>
           {tags.length > 0 && (
@@ -342,30 +347,32 @@ export default function CustomerForm({
           <div className="space-y-5">
             {/* Conditions */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Condiciones Médicas (Diabetes, Psoriasis, Dermatitis, etc.)
-              </label>
               <div className="flex gap-2 mb-2">
-                <input
-                  type="text"
-                  value={conditionsTag}
-                  onChange={(e) => setConditionsTag(e.target.value)}
-                  onKeyPress={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      handleAddCondition();
-                    }
-                  }}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
-                  placeholder="Ej: Diabetes Tipo 2"
-                />
+                <div className="relative flex-1">
+                  <HeartPulse className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                  <input
+                    type="text"
+                    value={conditionsTag}
+                    onChange={(e) => setConditionsTag(e.target.value)}
+                    onKeyPress={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        handleAddCondition();
+                      }
+                    }}
+                    aria-label="Condiciones Médicas"
+                    className="w-full pl-9 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                    placeholder="Condiciones médicas (Diabetes, Psoriasis...)"
+                  />
+                </div>
                 <button
                   type="button"
                   onClick={handleAddCondition}
-                  className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 flex items-center gap-1"
+                  title="Agregar condición"
+                  aria-label="Agregar condición"
+                  className="px-3 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 flex items-center justify-center"
                 >
-                  <Plus className="h-4 w-4" />
-                  Agregar
+                  <PlusCircle className="h-5 w-5" />
                 </button>
               </div>
               {conditions.length > 0 && (
@@ -391,30 +398,32 @@ export default function CustomerForm({
 
             {/* Allergies */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Alergias Conocidas
-              </label>
               <div className="flex gap-2 mb-2">
-                <input
-                  type="text"
-                  value={allergiesTag}
-                  onChange={(e) => setAllergiesTag(e.target.value)}
-                  onKeyPress={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      handleAddAllergy();
-                    }
-                  }}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
-                  placeholder="Ej: Acrilato, Polvo"
-                />
+                <div className="relative flex-1">
+                  <AlertTriangle className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                  <input
+                    type="text"
+                    value={allergiesTag}
+                    onChange={(e) => setAllergiesTag(e.target.value)}
+                    onKeyPress={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        handleAddAllergy();
+                      }
+                    }}
+                    aria-label="Alergias Conocidas"
+                    className="w-full pl-9 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
+                    placeholder="Alergias conocidas..."
+                  />
+                </div>
                 <button
                   type="button"
                   onClick={handleAddAllergy}
-                  className="px-4 py-2 bg-amber-600 text-white rounded-md hover:bg-amber-700 flex items-center gap-1"
+                  title="Agregar alergia"
+                  aria-label="Agregar alergia"
+                  className="px-3 py-2 bg-amber-600 text-white rounded-md hover:bg-amber-700 flex items-center justify-center"
                 >
-                  <Plus className="h-4 w-4" />
-                  Agregar
+                  <PlusCircle className="h-5 w-5" />
                 </button>
               </div>
               {allergies.length > 0 && (
