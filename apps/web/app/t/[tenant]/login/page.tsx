@@ -98,8 +98,8 @@ export default async function LoginPage({ params, searchParams }: PageProps) {
         className="relative z-10 mx-auto grid min-h-screen max-w-7xl grid-cols-1 items-center gap-8 px-6 py-8 lg:grid-cols-2 lg:px-12"
         id="login-page-root"
       >
-        {/* Left panel */}
-        <section className="flex flex-col justify-center lg:pr-12">
+        {/* Left panel — oculto en mobile, visible solo en desktop */}
+        <section className="hidden flex-col justify-center lg:flex lg:pr-12">
           <h1 className="mb-4 text-4xl font-light leading-tight text-white md:text-5xl lg:text-6xl">
             Bienvenido a
             <br />
@@ -170,9 +170,6 @@ export default async function LoginPage({ params, searchParams }: PageProps) {
                 {tenantInitial}
               </div>
               <h2 className="text-2xl font-bold text-white">Iniciar sesión</h2>
-              <p className="mt-1 text-sm text-gray-400">
-                Accede a tu cuenta de {tenantRow.name}
-              </p>
             </div>
 
             {/* Error display */}
