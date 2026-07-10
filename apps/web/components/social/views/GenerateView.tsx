@@ -57,6 +57,7 @@ const OBJECTIVES = [
 
 interface GenerateConfig {
   objective: string;
+  vibe: string;
   platforms: string[];
   dateRange: {
     start: string;
@@ -73,6 +74,7 @@ interface GenerateConfig {
     trends: number;
     tips: number;
   };
+  businessContext: string;
 }
 
 interface GeneratedPost {
@@ -89,9 +91,17 @@ interface GenerateViewProps {
   tenant: string;
 }
 
+const VIBES = [
+  { id: "professional", label: "Profesional" },
+  { id: "casual", label: "Casual" },
+  { id: "funny", label: "Divertido" },
+  { id: "inspiring", label: "Inspirador" },
+];
+
 export default function GenerateView({ tenant }: GenerateViewProps) {
   const [config, setConfig] = useState<GenerateConfig>({
     objective: "brand",
+    vibe: "professional",
     platforms: ["facebook", "instagram"],
     dateRange: {
       start: format(new Date(), "yyyy-MM-dd"),
@@ -108,11 +118,13 @@ export default function GenerateView({ tenant }: GenerateViewProps) {
       trends: 20,
       tips: 10,
     },
+    businessContext: "",
   });
 
   const [generatedPosts, setGeneratedPosts] = useState<GeneratedPost[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handlePlatformToggle = (platformId: string) => {
     setConfig((prev) => ({
@@ -125,8 +137,8 @@ export default function GenerateView({ tenant }: GenerateViewProps) {
 
   const handleGenerate = async () => {
     setIsGenerating(true);
+    setErrorMessage(null);
     try {
-      // Call AI generation endpoint
       const response = await fetch("/api/v1/social/generate", {
         method: "POST",
         headers: {
@@ -135,23 +147,26 @@ export default function GenerateView({ tenant }: GenerateViewProps) {
         body: JSON.stringify({
           tenant,
           objective: config.objective,
-          vibe: (config as any).vibe,
+          vibe: config.vibe,
           platforms: config.platforms,
           startDate: config.dateRange.start,
           endDate: config.dateRange.end,
           frequency: config.frequency,
           contentMix: config.contentMix,
+          businessContext: config.businessContext,
         }),
       });
 
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || "Failed to generate content");
-      }
-
       const result = await response.json();
 
-      // Transform API response to match component format
+      if (!response.ok || !result.success) {
+        throw new Error(
+          result.error?.message ||
+            result.error ||
+            "Servicio de generación no disponible. Intenta más tarde.",
+        );
+      }
+
       const posts: GeneratedPost[] = result.data.generatedPosts.map(
         (post: any) => ({
           id: post.id,
@@ -168,19 +183,9 @@ export default function GenerateView({ tenant }: GenerateViewProps) {
       setShowPreview(true);
     } catch (error) {
       console.error("Error generating content:", error);
-      const errorMessage =
-        error instanceof Error ? error.message : "Unknown error";
-
-      // Show user-friendly error message
-      if (errorMessage.includes("not configured")) {
-        alert(
-          "AI service not configured. Please ask your administrator to add ANTHROPIC_API_KEY to environment variables.",
-        );
-      } else if (errorMessage.includes("rate limit")) {
-        alert("AI rate limit exceeded. Please try again in a few moments.");
-      } else {
-        alert(`Error al generar contenido: ${errorMessage}`);
-      }
+      const message =
+        error instanceof Error ? error.message : "Error al generar contenido";
+      setErrorMessage(message);
     } finally {
       setIsGenerating(false);
     }
@@ -254,6 +259,13 @@ export default function GenerateView({ tenant }: GenerateViewProps) {
           </div>
         </div>
 
+        {/* Error Message */}
+        {errorMessage && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+            <p className="text-sm text-red-700">{errorMessage}</p>
+          </div>
+        )}
+
         {/* Configuration Form */}
         <div className="space-y-6">
           {/* Objective */}
@@ -283,6 +295,49 @@ export default function GenerateView({ tenant }: GenerateViewProps) {
                 </button>
               ))}
             </div>
+          </div>
+
+          {/* Vibe / Tone */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-3">
+              Tono
+            </label>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {VIBES.map((vibe) => (
+                <button
+                  key={vibe.id}
+                  onClick={() =>
+                    setConfig((prev) => ({ ...prev, vibe: vibe.id }))
+                  }
+                  className={`p-3 rounded-lg border-2 text-center transition-all ${
+                    config.vibe === vibe.id
+                      ? "border-blue-500 bg-blue-50"
+                      : "border-gray-200 hover:border-gray-300"
+                  }`}
+                >
+                  <span className="text-sm font-medium">{vibe.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Business Context */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-3">
+              Contexto del negocio
+            </label>
+            <textarea
+              value={config.businessContext}
+              onChange={(e) =>
+                setConfig((prev) => ({
+                  ...prev,
+                  businessContext: e.target.value,
+                }))
+              }
+              placeholder="Describe tu negocio, servicios destacados, promociones actuales..."
+              rows={3}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
           </div>
 
           {/* Platforms */}
