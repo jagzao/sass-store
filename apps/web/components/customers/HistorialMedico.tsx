@@ -165,7 +165,7 @@ const HistorialMedico = forwardRef<HistorialMedicoHandle, HistorialMedicoProps>(
 
         <div className="space-y-5">
           {/* ── Preferencias ─────────────────────────────────────── */}
-          <div className="bg-[#FAFAFE] rounded-xl border border-[#EDE9FE] p-4">
+          <div className="hidden bg-[#FAFAFE] rounded-xl border border-[#EDE9FE] p-4">
             <BlockHeader
               icon={<Music className="h-4 w-4" />}
               title="Preferencias"
@@ -175,11 +175,9 @@ const HistorialMedico = forwardRef<HistorialMedicoHandle, HistorialMedicoProps>(
             {!collapsedSections.preferencias && (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs text-[#7C3AED] font-medium mb-1">
-                    🎵 Música favorita
-                  </label>
                   <input
                     type="text"
+                    aria-label="Música favorita"
                     value={draft.musicaFavorita || ""}
                     onChange={(e) =>
                       setDraft((p) => ({
@@ -187,21 +185,19 @@ const HistorialMedico = forwardRef<HistorialMedicoHandle, HistorialMedicoProps>(
                         musicaFavorita: e.target.value,
                       }))
                     }
-                    placeholder="Ej: Reggaeton, Pop..."
+                    placeholder="🎵 Música favorita"
                     className="w-full text-sm px-3 py-2 border border-[#DDD6FE] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B5CF6]/40 bg-white"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-[#7C3AED] font-medium mb-1">
-                    🍿 Snack favorito
-                  </label>
                   <input
                     type="text"
+                    aria-label="Snack favorito"
                     value={draft.snackFavorito || ""}
                     onChange={(e) =>
                       setDraft((p) => ({ ...p, snackFavorito: e.target.value }))
                     }
-                    placeholder="Ej: Papas, Gomitas..."
+                    placeholder="🍿 Snack favorito"
                     className="w-full text-sm px-3 py-2 border border-[#DDD6FE] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B5CF6]/40 bg-white"
                   />
                 </div>
@@ -251,22 +247,19 @@ const HistorialMedico = forwardRef<HistorialMedicoHandle, HistorialMedicoProps>(
                   </div>
                 </div>
                 <div>
-                  <label className="block text-xs text-red-600 font-medium mb-1">
-                    Otras condiciones
-                  </label>
                   <input
                     type="text"
+                    aria-label="Otras condiciones"
                     value={draft.enfermedades?.otras || ""}
                     onChange={(e) => setEnfermedad("otras", e.target.value)}
-                    placeholder="Ej: Hipertensión, embarazo..."
+                    placeholder="Otras condiciones..."
                     className="w-full text-sm px-3 py-2 border border-red-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-300 bg-white"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-red-600 font-medium mb-1">
-                    Contraindicaciones / Observaciones
-                  </label>
                   <textarea
+                    aria-label="Contraindicaciones / Observaciones"
+                    placeholder="Contraindicaciones / observaciones"
                     value={draft.contraindicaciones || ""}
                     onChange={(e) =>
                       setDraft((p) => ({
