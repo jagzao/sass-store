@@ -124,10 +124,10 @@ export function AutomationCreateDialog({ open, onClose, tenantSlug }: Props) {
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1.5">
-            <Label htmlFor="rule-name">Nombre de la regla</Label>
             <Input
               id="rule-name"
-              placeholder="ej. Recordatorio post-visita"
+              aria-label="Nombre de la regla"
+              placeholder="Nombre de la regla"
               value={form.name}
               onChange={(e) => set("name", e.target.value)}
               required
@@ -159,11 +159,12 @@ export function AutomationCreateDialog({ open, onClose, tenantSlug }: Props) {
           </div>
 
           <div className="space-y-1.5">
-            <Label>Delay (minutos después del evento)</Label>
             <Input
               type="number"
               min={0}
               max={10080}
+              aria-label="Delay (minutos después del evento)"
+              placeholder="Delay (minutos después del evento)"
               value={form.delayMinutes}
               onChange={(e) => set("delayMinutes", e.target.value)}
             />
@@ -193,8 +194,8 @@ export function AutomationCreateDialog({ open, onClose, tenantSlug }: Props) {
 
           {form.actionType === "send_text" && (
             <div className="space-y-1.5">
-              <Label>Mensaje</Label>
               <Textarea
+                aria-label="Mensaje"
                 placeholder="Hola {{nombre}}, gracias por tu visita..."
                 rows={3}
                 value={form.message}
@@ -209,9 +210,9 @@ export function AutomationCreateDialog({ open, onClose, tenantSlug }: Props) {
 
           {form.actionType === "send_template" && (
             <div className="space-y-1.5">
-              <Label>ID de plantilla (aprobada en Meta)</Label>
               <Input
-                placeholder="booking_reminder_24h"
+                aria-label="ID de plantilla (aprobada en Meta)"
+                placeholder="ID de plantilla (aprobada en Meta)"
                 value={form.templateId}
                 onChange={(e) => set("templateId", e.target.value)}
                 required
