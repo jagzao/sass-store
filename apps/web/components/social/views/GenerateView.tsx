@@ -332,11 +332,9 @@ export default function GenerateView({ tenant }: GenerateViewProps) {
             </label>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs text-gray-500 mb-1">
-                  Desde
-                </label>
                 <input
                   type="date"
+                  aria-label="Desde"
                   value={config.dateRange.start}
                   onChange={(e) =>
                     setConfig((prev) => ({
@@ -348,11 +346,9 @@ export default function GenerateView({ tenant }: GenerateViewProps) {
                 />
               </div>
               <div>
-                <label className="block text-xs text-gray-500 mb-1">
-                  Hasta
-                </label>
                 <input
                   type="date"
+                  aria-label="Hasta"
                   value={config.dateRange.end}
                   onChange={(e) =>
                     setConfig((prev) => ({
@@ -373,13 +369,12 @@ export default function GenerateView({ tenant }: GenerateViewProps) {
             </label>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-xs text-gray-500 mb-1">
-                  Posts
-                </label>
                 <input
                   type="number"
                   min="0"
                   max="20"
+                  aria-label="Posts por semana"
+                  placeholder="Posts"
                   value={config.frequency.postsPerWeek}
                   onChange={(e) =>
                     setConfig((prev) => ({
@@ -394,13 +389,12 @@ export default function GenerateView({ tenant }: GenerateViewProps) {
                 />
               </div>
               <div>
-                <label className="block text-xs text-gray-500 mb-1">
-                  Reels
-                </label>
                 <input
                   type="number"
                   min="0"
                   max="10"
+                  aria-label="Reels por semana"
+                  placeholder="Reels"
                   value={config.frequency.reelsPerWeek}
                   onChange={(e) =>
                     setConfig((prev) => ({
@@ -415,13 +409,12 @@ export default function GenerateView({ tenant }: GenerateViewProps) {
                 />
               </div>
               <div>
-                <label className="block text-xs text-gray-500 mb-1">
-                  Stories
-                </label>
                 <input
                   type="number"
                   min="0"
                   max="20"
+                  aria-label="Stories por semana"
+                  placeholder="Stories"
                   value={config.frequency.storiesPerWeek}
                   onChange={(e) =>
                     setConfig((prev) => ({
