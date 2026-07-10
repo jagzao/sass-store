@@ -268,7 +268,6 @@ const HistorialMedico = forwardRef<HistorialMedicoHandle, HistorialMedicoProps>(
                       }))
                     }
                     rows={2}
-                    placeholder="Alergias a productos, reacciones previas..."
                     className="w-full text-sm px-3 py-2 border border-red-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-300 bg-white resize-none"
                   />
                 </div>
