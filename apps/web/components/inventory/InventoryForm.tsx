@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { Hash } from "lucide-react";
 import { useInventory } from "@/lib/hooks/useInventory";
 import { InventoryItem } from "@/lib/hooks/useInventory";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -190,9 +191,6 @@ export function InventoryForm({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Costo Unitario <span className="text-red-500">*</span>
-            </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <span className="text-gray-500 sm:text-sm">$</span>
@@ -204,6 +202,8 @@ export function InventoryForm({
                 onChange={handleChange}
                 min="0"
                 step="0.01"
+                aria-label="Costo Unitario"
+                placeholder="Costo unitario *"
                 className={`pl-7 w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   errors.unitPrice ? "border-red-500" : "border-gray-300"
                 }`}
@@ -215,9 +215,6 @@ export function InventoryForm({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Precio Venta <span className="text-red-500">*</span>
-            </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <span className="text-gray-500 sm:text-sm">$</span>
@@ -230,6 +227,8 @@ export function InventoryForm({
                 min="0"
                 step="0.01"
                 disabled
+                aria-label="Precio Venta"
+                placeholder="Precio venta"
                 className={`pl-7 w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   errors.salePrice ? "border-red-500" : "border-gray-300"
                 }`}
@@ -244,38 +243,42 @@ export function InventoryForm({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Cantidad Total <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="number"
-              name="quantity"
-              value={formData.quantity}
-              onChange={handleChange}
-              min="0"
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.quantity ? "border-red-500" : "border-gray-300"
-              }`}
-            />
+            <div className="relative">
+              <Hash className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <input
+                type="number"
+                name="quantity"
+                value={formData.quantity}
+                onChange={handleChange}
+                min="0"
+                aria-label="Cantidad Total"
+                placeholder="Cantidad total *"
+                className={`pl-9 w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  errors.quantity ? "border-red-500" : "border-gray-300"
+                }`}
+              />
+            </div>
             {errors.quantity && (
               <p className="mt-1 text-sm text-red-600">{errors.quantity}</p>
             )}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Punto de Reorden <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="number"
-              name="reorderPoint"
-              value={formData.reorderPoint}
-              onChange={handleChange}
-              min="0"
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.reorderPoint ? "border-red-500" : "border-gray-300"
-              }`}
-            />
+            <div className="relative">
+              <Hash className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <input
+                type="number"
+                name="reorderPoint"
+                value={formData.reorderPoint}
+                onChange={handleChange}
+                min="0"
+                aria-label="Punto de Reorden"
+                placeholder="Punto de reorden *"
+                className={`pl-9 w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  errors.reorderPoint ? "border-red-500" : "border-gray-300"
+                }`}
+              />
+            </div>
             {errors.reorderPoint && (
               <p className="mt-1 text-sm text-red-600">{errors.reorderPoint}</p>
             )}
