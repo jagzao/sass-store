@@ -339,11 +339,9 @@ export default function ReportsPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Desde
-                </label>
                 <input
                   type="date"
+                  aria-label="Desde"
                   value={dateFrom}
                   onChange={(e) => setDateFrom(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -351,11 +349,9 @@ export default function ReportsPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Hasta
-                </label>
                 <input
                   type="date"
+                  aria-label="Hasta"
                   value={dateTo}
                   onChange={(e) => setDateTo(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
