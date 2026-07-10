@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { Search } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { SearchableSelectSingle } from "@/components/ui/forms/SearchableSelectSingle";
@@ -102,16 +103,15 @@ const FilterPanel = ({
 
       {/* Filtros básicos siempre visibles */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Buscar
-          </label>
+        <div className="relative">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
           <input
             type="text"
-            placeholder="Referencia, descripción..."
+            placeholder="Buscar..."
+            aria-label="Buscar"
             value={filters.search || ""}
             onChange={(e) => handleFilterChange("search", e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full pl-9 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             disabled={loading}
           />
         </div>
