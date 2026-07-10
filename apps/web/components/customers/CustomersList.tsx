@@ -612,7 +612,15 @@ export default function CustomersList({
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap max-w-[200px]">
                     <div className="text-sm text-gray-900 flex items-center gap-1 truncate">
-                      <Phone className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                      <a
+                        href={`https://wa.me/${customer.phone.replace(/\D/g, "")}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title="Enviar WhatsApp"
+                        className="inline-flex items-center text-green-600 hover:text-green-700 transition-colors"
+                      >
+                        <Phone className="h-4 w-4 flex-shrink-0" />
+                      </a>
                       {customer.phone}
                     </div>
                     {customer.email && (
