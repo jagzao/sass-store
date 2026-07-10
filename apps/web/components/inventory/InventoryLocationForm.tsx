@@ -140,32 +140,24 @@ export function InventoryLocationForm({
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="name" className="text-right">
-                Nombre *
-              </Label>
-              <Input
-                id="name"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                className="col-span-3"
-                required
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="code" className="text-right">
-                Código *
-              </Label>
-              <Input
-                id="code"
-                name="code"
-                value={formData.code}
-                onChange={handleChange}
-                className="col-span-3"
-                required
-              />
-            </div>
+            <Input
+              id="name"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              aria-label="Nombre"
+              placeholder="Nombre *"
+              required
+            />
+            <Input
+              id="code"
+              name="code"
+              value={formData.code}
+              onChange={handleChange}
+              aria-label="Código"
+              placeholder="Código *"
+              required
+            />
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="type" className="text-right">
                 Tipo *
@@ -186,44 +178,32 @@ export function InventoryLocationForm({
                 </SelectContent>
               </Select>
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="address" className="text-right">
-                Dirección
-              </Label>
-              <Textarea
-                id="address"
-                name="address"
-                value={formData.address}
-                onChange={handleChange}
-                className="col-span-3"
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="city" className="text-right">
-                Ciudad
-              </Label>
-              <Input
-                id="city"
-                name="city"
-                value={formData.city}
-                onChange={handleChange}
-                className="col-span-3"
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="capacity" className="text-right">
-                Capacidad
-              </Label>
-              <Input
-                id="capacity"
-                name="capacity"
-                type="number"
-                min="0"
-                value={formData.capacity}
-                onChange={handleChange}
-                className="col-span-3"
-              />
-            </div>
+            <Textarea
+              id="address"
+              name="address"
+              value={formData.address}
+              onChange={handleChange}
+              aria-label="Dirección"
+              placeholder="Dirección..."
+            />
+            <Input
+              id="city"
+              name="city"
+              value={formData.city}
+              onChange={handleChange}
+              aria-label="Ciudad"
+              placeholder="Ciudad"
+            />
+            <Input
+              id="capacity"
+              name="capacity"
+              type="number"
+              min="0"
+              value={formData.capacity}
+              onChange={handleChange}
+              aria-label="Capacidad"
+              placeholder="Capacidad"
+            />
           </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={onClose}>
