@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { X, Calendar, Info } from "lucide-react";
+import { X, Calendar, Info, FileText } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type {
   BudgetPeriodType,
@@ -156,19 +156,20 @@ export function BudgetForm({
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           {/* Name */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Nombre del presupuesto *
-            </label>
-            <input
-              type="text"
-              value={formData.name}
-              onChange={(e) => handleChange("name", e.target.value)}
-              placeholder="Ej: Presupuesto Marzo 2026"
-              className={cn(
-                "w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500",
-                errors.name ? "border-red-500" : "border-gray-300",
-              )}
-            />
+            <div className="relative">
+              <FileText className="pointer-events-none absolute left-3 top-1/2 w-4 h-4 -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                value={formData.name}
+                onChange={(e) => handleChange("name", e.target.value)}
+                aria-label="Nombre del presupuesto"
+                placeholder="Nombre del presupuesto *"
+                className={cn(
+                  "w-full pl-9 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500",
+                  errors.name ? "border-red-500" : "border-gray-300",
+                )}
+              />
+            </div>
             {errors.name && (
               <p className="mt-1 text-sm text-red-600">{errors.name}</p>
             )}
@@ -206,15 +207,13 @@ export function BudgetForm({
           {/* Date Range */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Fecha de inicio *
-              </label>
               <div className="relative">
                 <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
                   type="date"
                   value={formData.startDate}
                   onChange={(e) => handleChange("startDate", e.target.value)}
+                  aria-label="Fecha de inicio"
                   className={cn(
                     "w-full pl-10 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500",
                     errors.startDate ? "border-red-500" : "border-gray-300",
@@ -226,15 +225,13 @@ export function BudgetForm({
               )}
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Fecha de fin *
-              </label>
               <div className="relative">
                 <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
                   type="date"
                   value={formData.endDate}
                   onChange={(e) => handleChange("endDate", e.target.value)}
+                  aria-label="Fecha de fin"
                   className={cn(
                     "w-full pl-10 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500",
                     errors.endDate ? "border-red-500" : "border-gray-300",
@@ -249,9 +246,6 @@ export function BudgetForm({
 
           {/* Total Limit */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Límite total *
-            </label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
                 $
@@ -262,7 +256,8 @@ export function BudgetForm({
                 min="0"
                 value={formData.totalLimit}
                 onChange={(e) => handleChange("totalLimit", e.target.value)}
-                placeholder="0.00"
+                aria-label="Límite total"
+                placeholder="Límite total *"
                 className={cn(
                   "w-full pl-8 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500",
                   errors.totalLimit ? "border-red-500" : "border-gray-300",
@@ -320,16 +315,15 @@ export function BudgetForm({
           </div>
 
           {/* Notes */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Notas
-            </label>
+          <div className="relative">
+            <FileText className="pointer-events-none absolute left-3 top-3 w-4 h-4 text-gray-400" />
             <textarea
               value={formData.notes}
               onChange={(e) => handleChange("notes", e.target.value)}
-              placeholder="Notas adicionales sobre el presupuesto..."
+              aria-label="Notas"
+              placeholder="Notas..."
               rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+              className="w-full pl-9 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
             />
           </div>
 
