@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { User, Phone, Mail, FileText } from "lucide-react";
 
 interface BookingClientProps {
   tenantData: {
@@ -371,10 +372,8 @@ Te enviaremos una confirmación por SMS.`);
 
               {/* Contact Info */}
               <div className="space-y-4 pt-4 border-t">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Nombre Completo *
-                  </label>
+                <div className="relative">
+                  <User className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                   <input
                     type="text"
                     value={customerInfo.name}
@@ -384,60 +383,57 @@ Te enviaremos una confirmación por SMS.`);
                         name: e.target.value,
                       }))
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Juan Pérez"
+                    className="w-full pl-9 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Nombre completo *"
+                    aria-label="Nombre Completo"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Teléfono *
-                  </label>
-                  <input
-                    type="tel"
-                    value={customerInfo.phone}
-                    onChange={handlePhoneChange}
-                    onKeyDown={(e) => {
-                      // Allow backspace, delete, tab, escape, enter, and arrow keys
-                      if (
-                        [
-                          "Backspace",
-                          "Delete",
-                          "Tab",
-                          "Escape",
-                          "Enter",
-                          "ArrowLeft",
-                          "ArrowRight",
-                        ].includes(e.key)
-                      ) {
-                        return;
-                      }
-                      // Allow Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
-                      if (
-                        (e.ctrlKey || e.metaKey) &&
-                        ["a", "c", "v", "x"].includes(e.key.toLowerCase())
-                      ) {
-                        return;
-                      }
-                      // Prevent all other non-digit characters except + at the beginning
-                      if (!/[\d+]/.test(e.key) && e.key !== "Unidentified") {
-                        e.preventDefault();
-                      }
-                    }}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="+52 555 123 4567"
-                    required
-                  />
+                  <div className="relative">
+                    <Phone className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                    <input
+                      type="tel"
+                      value={customerInfo.phone}
+                      onChange={handlePhoneChange}
+                      onKeyDown={(e) => {
+                        if (
+                          [
+                            "Backspace",
+                            "Delete",
+                            "Tab",
+                            "Escape",
+                            "Enter",
+                            "ArrowLeft",
+                            "ArrowRight",
+                          ].includes(e.key)
+                        ) {
+                          return;
+                        }
+                        if (
+                          (e.ctrlKey || e.metaKey) &&
+                          ["a", "c", "v", "x"].includes(e.key.toLowerCase())
+                        ) {
+                          return;
+                        }
+                        if (!/[\d+]/.test(e.key) && e.key !== "Unidentified") {
+                          e.preventDefault();
+                        }
+                      }}
+                      className="w-full pl-9 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="Teléfono *"
+                      aria-label="Teléfono"
+                      required
+                    />
+                  </div>
                   <p className="text-xs text-gray-500 mt-1">
                     Formato: +52 XXX XXX XXXX
                   </p>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Email (opcional)
-                  </label>
+                <div className="relative">
+                  <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                   <input
                     type="email"
                     value={customerInfo.email}
@@ -447,15 +443,14 @@ Te enviaremos una confirmación por SMS.`);
                         email: e.target.value,
                       }))
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="tu@email.com"
+                    className="w-full pl-9 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Email (opcional)"
+                    aria-label="Email"
                   />
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Notas (opcional)
-                  </label>
+                <div className="relative">
+                  <FileText className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <textarea
                     rows={3}
                     value={customerInfo.notes}
@@ -465,8 +460,8 @@ Te enviaremos una confirmación por SMS.`);
                         notes: e.target.value,
                       }))
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Alguna preferencia especial..."
+                    className="w-full pl-9 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Notas (opcional)..."
                   />
                 </div>
 
