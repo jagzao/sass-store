@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { X } from "lucide-react";
+import { X, Tag, FileText } from "lucide-react";
 import { ColorPicker } from "@/components/ui/color-picker";
 import { IconSelector } from "@/components/ui/icon-selector";
 import { cn } from "@/lib/utils";
@@ -143,19 +143,20 @@ export function CategoryForm({
 
           {/* Nombre */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Nombre *
-            </label>
-            <input
-              type="text"
-              value={formData.name}
-              onChange={(e) => handleChange("name", e.target.value)}
-              placeholder="Ej: Alimentación, Salario, etc."
-              className={cn(
-                "w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500",
-                errors.name ? "border-red-500" : "border-gray-300",
-              )}
-            />
+            <div className="relative">
+              <Tag className="pointer-events-none absolute left-3 top-1/2 w-4 h-4 -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                value={formData.name}
+                onChange={(e) => handleChange("name", e.target.value)}
+                aria-label="Nombre"
+                placeholder="Nombre *"
+                className={cn(
+                  "w-full pl-9 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500",
+                  errors.name ? "border-red-500" : "border-gray-300",
+                )}
+              />
+            </div>
             {errors.name && (
               <p className="mt-1 text-sm text-red-600">{errors.name}</p>
             )}
@@ -163,19 +164,20 @@ export function CategoryForm({
 
           {/* Descripción */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Descripción
-            </label>
-            <textarea
-              value={formData.description}
-              onChange={(e) => handleChange("description", e.target.value)}
-              placeholder="Descripción opcional de la categoría"
-              rows={3}
-              className={cn(
-                "w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none",
-                errors.description ? "border-red-500" : "border-gray-300",
-              )}
-            />
+            <div className="relative">
+              <FileText className="pointer-events-none absolute left-3 top-3 w-4 h-4 text-gray-400" />
+              <textarea
+                value={formData.description}
+                onChange={(e) => handleChange("description", e.target.value)}
+                aria-label="Descripción"
+                placeholder="Descripción (opcional)..."
+                rows={3}
+                className={cn(
+                  "w-full pl-9 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none",
+                  errors.description ? "border-red-500" : "border-gray-300",
+                )}
+              />
+            </div>
             {errors.description && (
               <p className="mt-1 text-sm text-red-600">{errors.description}</p>
             )}
