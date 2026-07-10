@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
+import { Store, Sparkles, Phone, Mail, MapPin } from "lucide-react";
 import { resolveTenant } from "@/lib/tenant/resolver";
-import { TopNav } from "@/components/navigation/top-nav";
 import { getTenantDataForPage } from "@/lib/db/tenant-service";
 
 interface PageProps {
@@ -26,15 +26,6 @@ export default async function ContentAdminPage({ params }: PageProps) {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Top Navigation */}
-      <TopNav
-        tenantInfo={{
-          id: tenantData.id,
-          name: tenantData.name,
-          categories: [],
-        }}
-      />
-
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-7xl mx-auto">
           {/* Page Header */}
@@ -84,25 +75,25 @@ export default async function ContentAdminPage({ params }: PageProps) {
                 </h2>
 
                 <div className="grid md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Nombre del Negocio
-                    </label>
+                  <div className="relative">
+                    <Store className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                     <input
                       type="text"
                       defaultValue={tenantData.name}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                      aria-label="Nombre del Negocio"
+                      placeholder="Nombre del negocio"
+                      className="w-full pl-9 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                     />
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Eslogan/Tagline
-                    </label>
+                  <div className="relative">
+                    <Sparkles className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                     <input
                       type="text"
                       defaultValue={tenantData.description}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                      aria-label="Eslogan/Tagline"
+                      placeholder="Eslogan / tagline"
+                      className="w-full pl-9 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                     />
                   </div>
                 </div>
@@ -153,48 +144,46 @@ export default async function ContentAdminPage({ params }: PageProps) {
                 </h2>
 
                 <div className="grid md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Teléfono
-                    </label>
+                  <div className="relative">
+                    <Phone className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                     <input
                       type="tel"
                       defaultValue={contact.phone}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                      aria-label="Teléfono"
+                      placeholder="Teléfono"
+                      className="w-full pl-9 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                     />
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Email
-                    </label>
+                  <div className="relative">
+                    <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                     <input
                       type="email"
                       defaultValue={contact.email}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                      aria-label="Email"
+                      placeholder="Email"
+                      className="w-full pl-9 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                     />
                   </div>
                 </div>
 
-                <div className="mt-6">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Dirección
-                  </label>
+                <div className="mt-6 relative">
+                  <MapPin className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <textarea
                     defaultValue={contact.address}
+                    aria-label="Dirección"
+                    placeholder="Dirección"
                     rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full pl-9 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                   />
                 </div>
 
                 <div className="mt-6">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Sitio Web
-                  </label>
                   <input
                     type="url"
                     defaultValue={contact.website || ""}
-                    placeholder="https://tu-sitio-web.com"
+                    aria-label="Sitio Web"
+                    placeholder="Sitio web (https://...)"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                   />
                 </div>
@@ -253,60 +242,44 @@ export default async function ContentAdminPage({ params }: PageProps) {
                 </h2>
 
                 <div className="grid md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Facebook
-                    </label>
-                    <div className="flex items-center">
-                      <span className="text-2xl mr-3">📘</span>
-                      <input
-                        type="url"
-                        placeholder="https://facebook.com/tu-negocio"
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-                      />
-                    </div>
+                  <div className="flex items-center">
+                    <span className="text-2xl mr-3">📘</span>
+                    <input
+                      type="url"
+                      aria-label="Facebook"
+                      placeholder="https://facebook.com/tu-negocio"
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                    />
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Instagram
-                    </label>
-                    <div className="flex items-center">
-                      <span className="text-2xl mr-3">📷</span>
-                      <input
-                        type="url"
-                        placeholder="https://instagram.com/tu-negocio"
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-                      />
-                    </div>
+                  <div className="flex items-center">
+                    <span className="text-2xl mr-3">📷</span>
+                    <input
+                      type="url"
+                      aria-label="Instagram"
+                      placeholder="https://instagram.com/tu-negocio"
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                    />
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      WhatsApp
-                    </label>
-                    <div className="flex items-center">
-                      <span className="text-2xl mr-3">💬</span>
-                      <input
-                        type="tel"
-                        placeholder="+52 55 1234 5678"
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-                      />
-                    </div>
+                  <div className="flex items-center">
+                    <span className="text-2xl mr-3">💬</span>
+                    <input
+                      type="tel"
+                      aria-label="WhatsApp"
+                      placeholder="WhatsApp +52 55 1234 5678"
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                    />
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      TikTok
-                    </label>
-                    <div className="flex items-center">
-                      <span className="text-2xl mr-3">🎵</span>
-                      <input
-                        type="url"
-                        placeholder="https://tiktok.com/@tu-negocio"
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-                      />
-                    </div>
+                  <div className="flex items-center">
+                    <span className="text-2xl mr-3">🎵</span>
+                    <input
+                      type="url"
+                      aria-label="TikTok"
+                      placeholder="https://tiktok.com/@tu-negocio"
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                    />
                   </div>
                 </div>
               </div>
@@ -384,7 +357,10 @@ export default async function ContentAdminPage({ params }: PageProps) {
                 </h3>
 
                 <div className="space-y-3">
-                  <button className="w-full text-left p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                  <a
+                    href={`/t/${resolvedParams.tenant}/admin/legal`}
+                    className="block w-full text-left p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                  >
                     <div className="flex items-center">
                       <span className="text-xl mr-3">🎨</span>
                       <div>
@@ -394,7 +370,7 @@ export default async function ContentAdminPage({ params }: PageProps) {
                         </div>
                       </div>
                     </div>
-                  </button>
+                  </a>
 
                   <button className="w-full text-left p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
                     <div className="flex items-center">
