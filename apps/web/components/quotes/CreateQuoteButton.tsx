@@ -155,58 +155,51 @@ export default function CreateQuoteButton({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Nombre del Cliente *
-            </label>
             <input
               type="text"
               name="customerName"
               required
+              aria-label="Nombre del Cliente"
               value={formData.customerName}
               onChange={handleChange}
               className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-              placeholder="Ej. Juan Pérez"
+              placeholder="Nombre del cliente *"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Email
-              </label>
               <input
                 type="email"
                 name="customerEmail"
+                aria-label="Email"
                 value={formData.customerEmail}
                 onChange={handleChange}
                 className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-                placeholder="juan@ejemplo.com"
+                placeholder="Email"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Teléfono
-              </label>
               <input
                 type="tel"
                 name="customerPhone"
+                aria-label="Teléfono"
                 value={formData.customerPhone}
                 onChange={handleChange}
                 className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-                placeholder="55-1234-5678"
+                placeholder="Teléfono"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Días de Validez
-            </label>
             <input
               type="number"
               name="validityDays"
               min="1"
               max="90"
+              aria-label="Días de Validez"
+              placeholder="Días de validez"
               value={formData.validityDays}
               onChange={handleChange}
               className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
@@ -214,16 +207,14 @@ export default function CreateQuoteButton({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Notas (Opcional)
-            </label>
             <textarea
               name="notes"
               rows={3}
+              aria-label="Notas"
               value={formData.notes}
               onChange={handleChange}
               className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-              placeholder="Detalles adicionales..."
+              placeholder="Notas (opcional)..."
             />
           </div>
 
