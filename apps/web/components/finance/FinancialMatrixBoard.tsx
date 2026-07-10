@@ -10,7 +10,7 @@ import {
   useState,
   type FormEvent,
 } from "react";
-import { Plus } from "lucide-react";
+import { Plus, DollarSign, Calendar, FileText } from "lucide-react";
 import {
   cloneMonthlyPlanning,
   fetchFinancialMatrix,
@@ -892,12 +892,14 @@ function FinancialMatrixBoardComponent({
               Quick entry
             </h3>
 
-            <div data-testid="quick-entry-form">
-              <label className="mb-3 block text-sm font-medium text-gray-700">
-                Monto proyectado
+            <div data-testid="quick-entry-form" className="space-y-3">
+              <div className="relative">
+                <DollarSign className="pointer-events-none absolute left-3 top-1/2 w-4 h-4 -translate-y-1/2 text-gray-400" />
                 <input
-                  className="mt-1 w-full rounded-md border border-gray-300 p-2"
+                  className="mt-1 w-full rounded-md border border-gray-300 p-2 pl-9"
                   data-testid="planned-amount-input"
+                  aria-label="Monto proyectado"
+                  placeholder="Monto proyectado"
                   value={cellEditor.projectedAmount}
                   onChange={(event) =>
                     setCellEditor((prev) => ({
@@ -906,13 +908,14 @@ function FinancialMatrixBoardComponent({
                     }))
                   }
                 />
-              </label>
+              </div>
 
-              <label className="mb-4 block text-sm font-medium text-gray-700">
-                Fecha
+              <div className="relative">
+                <Calendar className="pointer-events-none absolute left-3 top-1/2 w-4 h-4 -translate-y-1/2 text-gray-400" />
                 <input
                   type="date"
-                  className="mt-1 w-full rounded-md border border-gray-300 p-2"
+                  className="mt-1 w-full rounded-md border border-gray-300 p-2 pl-9"
+                  aria-label="Fecha"
                   value={cellEditor.paymentDate}
                   onChange={(event) =>
                     setCellEditor((prev) => ({
@@ -921,15 +924,16 @@ function FinancialMatrixBoardComponent({
                     }))
                   }
                 />
-              </label>
+              </div>
 
-              <label className="mb-4 block text-sm font-medium text-gray-700">
-                Monto real (Pago / Ingreso)
+              <div className="relative">
+                <DollarSign className="pointer-events-none absolute left-3 top-1/2 w-4 h-4 -translate-y-1/2 text-gray-400" />
                 <input
-                  className="mt-1 w-full rounded-md border border-gray-300 p-2"
+                  className="mt-1 w-full rounded-md border border-gray-300 p-2 pl-9"
                   data-testid="payment-amount-input"
+                  aria-label="Monto real (Pago / Ingreso)"
+                  placeholder="Monto real (pago / ingreso)"
                   value={cellEditor.paymentAmount}
-                  placeholder="0.00"
                   onChange={(event) =>
                     setCellEditor((prev) => ({
                       ...prev,
@@ -937,14 +941,15 @@ function FinancialMatrixBoardComponent({
                     }))
                   }
                 />
-              </label>
+              </div>
 
-              <label className="mb-4 block text-sm font-medium text-gray-700">
-                Descripción / Notas
+              <div className="relative">
+                <FileText className="pointer-events-none absolute left-3 top-1/2 w-4 h-4 -translate-y-1/2 text-gray-400" />
                 <input
-                  className="mt-1 w-full rounded-md border border-gray-300 p-2"
+                  className="mt-1 w-full rounded-md border border-gray-300 p-2 pl-9"
                   data-testid="payment-description-input"
-                  placeholder="Ej. Pago de Juan, Nómina, etc."
+                  aria-label="Descripción / Notas"
+                  placeholder="Descripción / notas"
                   value={cellEditor.description}
                   onChange={(event) =>
                     setCellEditor((prev) => ({
@@ -953,7 +958,7 @@ function FinancialMatrixBoardComponent({
                     }))
                   }
                 />
-              </label>
+              </div>
             </div>
 
             <div className="flex flex-wrap gap-2">
