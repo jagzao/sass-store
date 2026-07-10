@@ -225,79 +225,71 @@ export default function SessionsAdminClient({
                   {error}
                 </p>
               )}
-              <label className="block text-sm">
-                Título
-                <input
-                  className="mt-1 w-full border rounded px-3 py-2"
-                  value={form.title}
-                  onChange={(e) =>
-                    setForm((f) => ({ ...f, title: e.target.value }))
-                  }
-                  data-testid="session-title-input"
-                />
-              </label>
-              <label className="block text-sm">
-                Descripción
-                <textarea
-                  className="mt-1 w-full border rounded px-3 py-2"
-                  rows={2}
-                  value={form.description}
-                  onChange={(e) =>
-                    setForm((f) => ({ ...f, description: e.target.value }))
-                  }
-                />
-              </label>
+              <input
+                className="w-full border rounded px-3 py-2"
+                aria-label="Título"
+                placeholder="Título *"
+                value={form.title}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, title: e.target.value }))
+                }
+                data-testid="session-title-input"
+              />
+              <textarea
+                className="w-full border rounded px-3 py-2"
+                aria-label="Descripción"
+                placeholder="Descripción"
+                rows={2}
+                value={form.description}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, description: e.target.value }))
+                }
+              />
               <div className="grid grid-cols-2 gap-3">
-                <label className="block text-sm">
-                  Inicio
-                  <input
-                    type="datetime-local"
-                    className="mt-1 w-full border rounded px-2 py-2"
-                    value={form.startsAt}
-                    onChange={(e) =>
-                      setForm((f) => ({ ...f, startsAt: e.target.value }))
-                    }
-                  />
-                </label>
-                <label className="block text-sm">
-                  Fin
-                  <input
-                    type="datetime-local"
-                    className="mt-1 w-full border rounded px-2 py-2"
-                    value={form.endsAt}
-                    onChange={(e) =>
-                      setForm((f) => ({ ...f, endsAt: e.target.value }))
-                    }
-                  />
-                </label>
+                <input
+                  type="datetime-local"
+                  className="w-full border rounded px-2 py-2"
+                  aria-label="Inicio"
+                  value={form.startsAt}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, startsAt: e.target.value }))
+                  }
+                />
+                <input
+                  type="datetime-local"
+                  className="w-full border rounded px-2 py-2"
+                  aria-label="Fin"
+                  value={form.endsAt}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, endsAt: e.target.value }))
+                  }
+                />
               </div>
-              <label className="block text-sm">
-                Cupo máximo
-                <input
-                  type="number"
-                  min={1}
-                  max={100}
-                  className="mt-1 w-full border rounded px-3 py-2"
-                  value={form.maxCapacity}
-                  onChange={(e) =>
-                    setForm((f) => ({
-                      ...f,
-                      maxCapacity: Number(e.target.value),
-                    }))
-                  }
-                  data-testid="session-capacity-input"
-                />
-              </label>
-              <label className="block text-sm">
-                Ubicación (cancha)
-                <input
-                  className="mt-1 w-full border rounded px-3 py-2"
-                  value={form.location}
-                  onChange={(e) =>
-                    setForm((f) => ({ ...f, location: e.target.value }))
-                  }
-                />
-              </label>
+              <input
+                type="number"
+                min={1}
+                max={100}
+                className="w-full border rounded px-3 py-2"
+                aria-label="Cupo máximo"
+                placeholder="Cupo máximo"
+                value={form.maxCapacity}
+                onChange={(e) =>
+                  setForm((f) => ({
+                    ...f,
+                    maxCapacity: Number(e.target.value),
+                  }))
+                }
+                data-testid="session-capacity-input"
+              />
+              <input
+                className="w-full border rounded px-3 py-2"
+                aria-label="Ubicación (cancha)"
+                placeholder="Ubicación (cancha)"
+                value={form.location}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, location: e.target.value }))
+                }
+              />
               <div className="flex justify-end gap-2 pt-2">
                 <button
                   type="button"
