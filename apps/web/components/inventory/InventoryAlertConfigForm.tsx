@@ -82,94 +82,70 @@ export function InventoryAlertConfigForm({
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="productId" className="text-right">
-                Producto *
-              </Label>
-              <Input
-                id="productId"
-                name="productId"
-                value={formData.productId}
-                onChange={handleChange}
-                className="col-span-3"
-                required
-                disabled={!!productId}
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="minStock" className="text-right">
-                Stock Mínimo *
-              </Label>
-              <Input
-                id="minStock"
-                name="minStock"
-                type="number"
-                min="0"
-                value={formData.minStock}
-                onChange={handleChange}
-                className="col-span-3"
-                required
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="maxStock" className="text-right">
-                Stock Máximo *
-              </Label>
-              <Input
-                id="maxStock"
-                name="maxStock"
-                type="number"
-                min="0"
-                value={formData.maxStock}
-                onChange={handleChange}
-                className="col-span-3"
-                required
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="lowStockThreshold" className="text-right">
-                Umbral Bajo *
-              </Label>
-              <Input
-                id="lowStockThreshold"
-                name="lowStockThreshold"
-                type="number"
-                min="0"
-                value={formData.lowStockThreshold}
-                onChange={handleChange}
-                className="col-span-3"
-                required
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="highStockThreshold" className="text-right">
-                Umbral Alto *
-              </Label>
-              <Input
-                id="highStockThreshold"
-                name="highStockThreshold"
-                type="number"
-                min="0"
-                value={formData.highStockThreshold}
-                onChange={handleChange}
-                className="col-span-3"
-                required
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="expirationDays" className="text-right">
-                Días de Expiración
-              </Label>
-              <Input
-                id="expirationDays"
-                name="expirationDays"
-                type="number"
-                min="0"
-                value={formData.expirationDays}
-                onChange={handleChange}
-                className="col-span-3"
-              />
-            </div>
+            <Input
+              id="productId"
+              name="productId"
+              value={formData.productId}
+              onChange={handleChange}
+              aria-label="Producto"
+              placeholder="Producto *"
+              required
+              disabled={!!productId}
+            />
+            <Input
+              id="minStock"
+              name="minStock"
+              type="number"
+              min="0"
+              value={formData.minStock}
+              onChange={handleChange}
+              aria-label="Stock Mínimo"
+              placeholder="Stock mínimo *"
+              required
+            />
+            <Input
+              id="maxStock"
+              name="maxStock"
+              type="number"
+              min="0"
+              value={formData.maxStock}
+              onChange={handleChange}
+              aria-label="Stock Máximo"
+              placeholder="Stock máximo *"
+              required
+            />
+            <Input
+              id="lowStockThreshold"
+              name="lowStockThreshold"
+              type="number"
+              min="0"
+              value={formData.lowStockThreshold}
+              onChange={handleChange}
+              aria-label="Umbral Bajo"
+              placeholder="Umbral bajo *"
+              required
+            />
+            <Input
+              id="highStockThreshold"
+              name="highStockThreshold"
+              type="number"
+              min="0"
+              value={formData.highStockThreshold}
+              onChange={handleChange}
+              aria-label="Umbral Alto"
+              placeholder="Umbral alto *"
+              required
+            />
+            <Input
+              id="expirationDays"
+              name="expirationDays"
+              type="number"
+              min="0"
+              value={formData.expirationDays}
+              onChange={handleChange}
+              aria-label="Días de Expiración"
+              placeholder="Días de expiración"
+            />
           </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={onClose}>
