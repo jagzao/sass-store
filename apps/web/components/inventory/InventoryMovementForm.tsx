@@ -94,20 +94,16 @@ export function InventoryMovementForm({
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="productId" className="text-right">
-                Producto *
-              </Label>
-              <Input
-                id="productId"
-                name="productId"
-                value={formData.productId}
-                onChange={handleChange}
-                className="col-span-3"
-                required
-                disabled={!!productId}
-              />
-            </div>
+            <Input
+              id="productId"
+              name="productId"
+              value={formData.productId}
+              onChange={handleChange}
+              aria-label="Producto"
+              placeholder="Producto *"
+              required
+              disabled={!!productId}
+            />
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="type" className="text-right">
                 Tipo *
@@ -126,70 +122,50 @@ export function InventoryMovementForm({
                 </SelectContent>
               </Select>
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="quantity" className="text-right">
-                Cantidad *
-              </Label>
-              <Input
-                id="quantity"
-                name="quantity"
-                type="number"
-                min="1"
-                value={formData.quantity}
-                onChange={handleChange}
-                className="col-span-3"
-                required
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="reason" className="text-right">
-                Razón *
-              </Label>
-              <Textarea
-                id="reason"
-                name="reason"
-                value={formData.reason}
-                onChange={handleChange}
-                className="col-span-3"
-                required
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="notes" className="text-right">
-                Notas
-              </Label>
-              <Textarea
-                id="notes"
-                name="notes"
-                value={formData.notes}
-                onChange={handleChange}
-                className="col-span-3"
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="referenceId" className="text-right">
-                Referencia ID
-              </Label>
-              <Input
-                id="referenceId"
-                name="referenceId"
-                value={formData.referenceId}
-                onChange={handleChange}
-                className="col-span-3"
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="referenceType" className="text-right">
-                Tipo de Referencia
-              </Label>
-              <Input
-                id="referenceType"
-                name="referenceType"
-                value={formData.referenceType}
-                onChange={handleChange}
-                className="col-span-3"
-              />
-            </div>
+            <Input
+              id="quantity"
+              name="quantity"
+              type="number"
+              min="1"
+              value={formData.quantity}
+              onChange={handleChange}
+              aria-label="Cantidad"
+              placeholder="Cantidad *"
+              required
+            />
+            <Textarea
+              id="reason"
+              name="reason"
+              value={formData.reason}
+              onChange={handleChange}
+              aria-label="Razón"
+              placeholder="Razón *"
+              required
+            />
+            <Textarea
+              id="notes"
+              name="notes"
+              value={formData.notes}
+              onChange={handleChange}
+              aria-label="Notas"
+              placeholder="Notas..."
+            />
+            <Input
+              id="referenceId"
+              name="referenceId"
+              value={formData.referenceId}
+              onChange={handleChange}
+              aria-label="Referencia ID"
+              placeholder="Referencia ID"
+            />
+            <Input
+              id="referenceType"
+              name="referenceType"
+              value={formData.referenceType}
+              onChange={handleChange}
+              aria-label="Tipo de Referencia"
+              placeholder="Tipo de referencia"
+            />
           </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={onClose}>
