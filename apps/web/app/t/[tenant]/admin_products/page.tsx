@@ -3,7 +3,15 @@
 import { useParams } from "next/navigation";
 import { useEffect, useState, useCallback } from "react";
 import UserMenu from "@/components/auth/UserMenu";
-import { Trash2, Pencil } from "lucide-react";
+import {
+  Trash2,
+  Pencil,
+  Package,
+  FileText,
+  DollarSign,
+  Tag,
+  Folder,
+} from "lucide-react";
 
 import { useTenantTheme } from "@/lib/hooks/useTenantTheme";
 import AdminRouteGuard from "@/components/auth/AdminRouteGuard";
@@ -314,40 +322,43 @@ export default function AdminProductsPage() {
                   </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label className={getFormStyles().label}>SKU *</label>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="relative">
+                      <Package className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                       <input
                         type="text"
                         required
+                        aria-label="SKU"
                         value={formData.sku}
                         onChange={(e) =>
                           setFormData({ ...formData, sku: e.target.value })
                         }
-                        className={getFormStyles().input}
-                        placeholder="PROD-001"
+                        className={`${getFormStyles().input} pl-9`}
+                        placeholder="SKU *"
                       />
                     </div>
 
-                    <div>
-                      <label className={getFormStyles().label}>Nombre *</label>
+                    <div className="relative">
+                      <Tag className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                       <input
                         type="text"
                         required
+                        aria-label="Nombre"
                         value={formData.name}
                         onChange={(e) =>
                           setFormData({ ...formData, name: e.target.value })
                         }
-                        className={getFormStyles().input}
-                        placeholder="Nombre del producto"
+                        className={`${getFormStyles().input} pl-9`}
+                        placeholder="Nombre *"
                       />
                     </div>
                   </div>
 
-                  <div>
-                    <label className={getFormStyles().label}>Descripción</label>
+                  <div className="relative">
+                    <FileText className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-gray-400" />
                     <textarea
+                      aria-label="Descripción"
                       value={formData.description}
                       onChange={(e) =>
                         setFormData({
@@ -356,42 +367,40 @@ export default function AdminProductsPage() {
                         })
                       }
                       rows={3}
-                      className={getFormStyles().textarea}
-                      placeholder="Descripción detallada del producto"
+                      className={`${getFormStyles().textarea} pl-9`}
+                      placeholder="Descripción del producto"
                     />
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Precio *
-                      </label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="relative">
+                      <DollarSign className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                       <input
                         type="number"
                         step="0.01"
                         required
+                        aria-label="Precio"
                         value={formData.price}
                         onChange={(e) =>
                           setFormData({ ...formData, price: e.target.value })
                         }
-                        className={getFormStyles().input}
-                        placeholder="0.00"
+                        className={`${getFormStyles().input} pl-9`}
+                        placeholder="Precio *"
                       />
                     </div>
 
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Categoría *
-                      </label>
+                    <div className="relative">
+                      <Folder className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                       <input
                         type="text"
                         required
+                        aria-label="Categoría"
                         value={formData.category}
                         onChange={(e) =>
                           setFormData({ ...formData, category: e.target.value })
                         }
-                        className={getFormStyles().input}
-                        placeholder="Categoría del producto"
+                        className={`${getFormStyles().input} pl-9`}
+                        placeholder="Categoría *"
                       />
                     </div>
                   </div>
