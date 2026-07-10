@@ -265,19 +265,14 @@ export function PostComposer({
       <form onSubmit={handleSubmit} className="p-6 space-y-6">
         {/* Title */}
         <div>
-          <label
-            htmlFor="title"
-            className="block text-sm font-medium text-gray-700 mb-2"
-          >
-            Título (Opcional)
-          </label>
           <input
             type="text"
             id="title"
+            aria-label="Título"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="Título descriptivo para organización interna..."
+            placeholder="Título (opcional)..."
             maxLength={200}
           />
           <p className="text-xs text-gray-500 mt-1">
@@ -287,19 +282,14 @@ export function PostComposer({
 
         {/* Base Text */}
         <div>
-          <label
-            htmlFor="baseText"
-            className="block text-sm font-medium text-gray-700 mb-2"
-          >
-            Contenido Base <span className="text-red-500">*</span>
-          </label>
           <textarea
             id="baseText"
+            aria-label="Contenido Base"
             value={baseText}
             onChange={(e) => setBaseText(e.target.value)}
             rows={4}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="Escribe el contenido base que se adaptará a cada plataforma..."
+            placeholder="Contenido base *"
             required
             maxLength={2000}
           />
@@ -336,15 +326,10 @@ export function PostComposer({
           {isScheduled && (
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label
-                  htmlFor="date"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Fecha
-                </label>
                 <input
                   type="date"
                   id="date"
+                  aria-label="Fecha"
                   value={scheduledDate}
                   onChange={(e) => setScheduledDate(e.target.value)}
                   min={format(new Date(), "yyyy-MM-dd")}
@@ -353,15 +338,10 @@ export function PostComposer({
                 />
               </div>
               <div>
-                <label
-                  htmlFor="time"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Hora (MX)
-                </label>
                 <input
                   type="time"
                   id="time"
+                  aria-label="Hora (MX)"
                   value={scheduledTime}
                   onChange={(e) => setScheduledTime(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
