@@ -377,19 +377,14 @@ Agenda tu cita hoy. #WonderNails #Belleza`;
               <div className="px-6 py-4 space-y-6">
                 {/* Title */}
                 <div>
-                  <label
-                    htmlFor="title"
-                    className={`block text-sm font-medium ${styles.textSecondary} mb-2`}
-                  >
-                    Título interno
-                  </label>
                   <input
                     type="text"
                     id="title"
+                    aria-label="Título interno"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${styles.inputBg} ${styles.inputBorder} ${styles.text}`}
-                    placeholder="Título para organización interna..."
+                    placeholder="Título interno..."
                     maxLength={200}
                   />
                   <p className={`text-xs ${styles.textSecondary} mt-1`}>
@@ -399,13 +394,7 @@ Agenda tu cita hoy. #WonderNails #Belleza`;
 
                 {/* Base Content */}
                 <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <label
-                      htmlFor="content"
-                      className={`block text-sm font-medium ${styles.textSecondary}`}
-                    >
-                      Contenido base
-                    </label>
+                  <div className="flex items-center justify-end mb-2">
                     <button
                       type="button"
                       onClick={handleGenerateWithAI}
@@ -417,11 +406,12 @@ Agenda tu cita hoy. #WonderNails #Belleza`;
                   </div>
                   <textarea
                     id="content"
+                    aria-label="Contenido base"
                     value={baseContent}
                     onChange={(e) => setBaseContent(e.target.value)}
                     rows={4}
                     className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${styles.inputBg} ${styles.inputBorder} ${styles.text}`}
-                    placeholder="Escribe el contenido base..."
+                    placeholder="Contenido base..."
                     required
                   />
                   <p className={`text-xs ${styles.textSecondary} mt-1`}>
@@ -481,15 +471,10 @@ Agenda tu cita hoy. #WonderNails #Belleza`;
                   {isScheduled && (
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label
-                          htmlFor="date"
-                          className={`block text-sm font-medium ${styles.textSecondary} mb-2`}
-                        >
-                          Fecha
-                        </label>
                         <input
                           type="date"
                           id="date"
+                          aria-label="Fecha"
                           value={scheduledDate}
                           onChange={(e) => setScheduledDate(e.target.value)}
                           min={format(new Date(), "yyyy-MM-dd")}
@@ -498,15 +483,10 @@ Agenda tu cita hoy. #WonderNails #Belleza`;
                         />
                       </div>
                       <div>
-                        <label
-                          htmlFor="time"
-                          className={`block text-sm font-medium ${styles.textSecondary} mb-2`}
-                        >
-                          Hora
-                        </label>
                         <input
                           type="time"
                           id="time"
+                          aria-label="Hora"
                           value={scheduledTime}
                           onChange={(e) => setScheduledTime(e.target.value)}
                           className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${styles.inputBg} ${styles.inputBorder} ${styles.text}`}
