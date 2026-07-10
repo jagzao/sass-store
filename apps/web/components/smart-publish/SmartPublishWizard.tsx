@@ -141,13 +141,19 @@ export function SmartPublishWizard({ tenantSlug, onSuccess, onClose }: Props) {
 
       const json = await res.json();
 
-      if (!res.ok) {
-        throw new Error(json.error || "Error al generar");
+      if (!res.ok || !json.success) {
+        throw new Error(
+          json.error?.message || json.error || "Error al generar",
+        );
       }
 
-      const ai: AiResult = json.ai;
+      const payload = json.data as {
+        imageUrl: string | null;
+        ai: AiResult;
+      };
+      const ai = payload.ai;
       setAiResult(ai);
-      setUploadedImageUrl(json.imageUrl || null);
+      setUploadedImageUrl(payload.imageUrl || null);
 
       // Pre-fill editable fields
       setEditName(ai.name);
@@ -326,9 +332,6 @@ export function SmartPublishWizard({ tenantSlug, onSuccess, onClose }: Props) {
 
             {/* Price */}
             <div className="mb-6">
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Precio (MXN)
-              </label>
               <div className="relative">
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-semibold text-lg">
                   $
@@ -337,7 +340,8 @@ export function SmartPublishWizard({ tenantSlug, onSuccess, onClose }: Props) {
                   type="number"
                   min="0"
                   step="0.01"
-                  placeholder="0.00"
+                  aria-label="Precio (MXN)"
+                  placeholder="Precio (MXN)"
                   value={price}
                   onChange={(e) => setPrice(e.target.value)}
                   className="w-full pl-8 pr-4 py-4 text-xl font-semibold border-2 border-gray-200 rounded-2xl focus:border-indigo-400 focus:outline-none transition-colors"
@@ -456,16 +460,14 @@ export function SmartPublishWizard({ tenantSlug, onSuccess, onClose }: Props) {
             {/* Text area */}
             {(inputMode === "text" || inputMode === "both") && (
               <div className="mb-4">
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Descripción con tus palabras
-                </label>
                 <textarea
+                  aria-label="Descripción con tus palabras"
                   value={textDescription}
                   onChange={(e) => setTextDescription(e.target.value)}
                   placeholder={
                     itemType === "product"
-                      ? "Ej: Es una bolsa tejida a mano, de lana merino, colores azul y blanco, sirve para el diario..."
-                      : "Ej: Es un tratamiento facial de 1 hora con limpieza profunda, hidratación y mascarilla de vitamina C..."
+                      ? "Descripción con tus palabras. Ej: bolsa tejida a mano, lana merino, azul y blanco..."
+                      : "Descripción con tus palabras. Ej: tratamiento facial de 1 hora, limpieza profunda, vitamina C..."
                   }
                   rows={4}
                   className="w-full px-4 py-3 border-2 border-gray-200 rounded-2xl focus:border-indigo-400 focus:outline-none transition-colors resize-none text-sm leading-relaxed"
@@ -555,13 +557,12 @@ export function SmartPublishWizard({ tenantSlug, onSuccess, onClose }: Props) {
             <div className="space-y-4">
               {/* Name */}
               <div>
-                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">
-                  Nombre
-                </label>
                 <div className="relative">
                   <input
                     data-testid="wizard-name-input"
                     type="text"
+                    aria-label="Nombre"
+                    placeholder="Nombre"
                     value={editName}
                     onChange={(e) => setEditName(e.target.value)}
                     maxLength={200}
@@ -576,10 +577,9 @@ export function SmartPublishWizard({ tenantSlug, onSuccess, onClose }: Props) {
 
               {/* Description */}
               <div>
-                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">
-                  Descripción
-                </label>
                 <textarea
+                  aria-label="Descripción"
+                  placeholder="Descripción"
                   value={editDescription}
                   onChange={(e) => setEditDescription(e.target.value)}
                   rows={5}
@@ -590,11 +590,10 @@ export function SmartPublishWizard({ tenantSlug, onSuccess, onClose }: Props) {
               <div className="grid grid-cols-2 gap-3">
                 {/* Category */}
                 <div>
-                  <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">
-                    Categoría
-                  </label>
                   <input
                     type="text"
+                    aria-label="Categoría"
+                    placeholder="Categoría"
                     value={editCategory}
                     onChange={(e) => setEditCategory(e.target.value)}
                     className="w-full px-3 py-3 border border-gray-200 rounded-xl focus:border-indigo-400 focus:outline-none text-sm transition-colors"
@@ -604,11 +603,10 @@ export function SmartPublishWizard({ tenantSlug, onSuccess, onClose }: Props) {
                 {/* SKU (products only) */}
                 {itemType === "product" && (
                   <div>
-                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">
-                      Código (SKU)
-                    </label>
                     <input
                       type="text"
+                      aria-label="Código (SKU)"
+                      placeholder="Código (SKU)"
                       value={editSku}
                       onChange={(e) => setEditSku(e.target.value.toUpperCase())}
                       className="w-full px-3 py-3 border border-gray-200 rounded-xl focus:border-indigo-400 focus:outline-none text-sm font-mono transition-colors"
