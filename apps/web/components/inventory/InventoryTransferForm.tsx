@@ -101,20 +101,16 @@ export function InventoryTransferForm({
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="productId" className="text-right">
-                Producto *
-              </Label>
-              <Input
-                id="productId"
-                name="productId"
-                value={formData.productId}
-                onChange={handleChange}
-                className="col-span-3"
-                required
-                disabled={!!productId}
-              />
-            </div>
+            <Input
+              id="productId"
+              name="productId"
+              value={formData.productId}
+              onChange={handleChange}
+              aria-label="Producto"
+              placeholder="Producto *"
+              required
+              disabled={!!productId}
+            />
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="fromLocationId" className="text-right">
                 Origen *
@@ -157,46 +153,34 @@ export function InventoryTransferForm({
                 </SelectContent>
               </Select>
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="quantity" className="text-right">
-                Cantidad *
-              </Label>
-              <Input
-                id="quantity"
-                name="quantity"
-                type="number"
-                min="1"
-                value={formData.quantity}
-                onChange={handleChange}
-                className="col-span-3"
-                required
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="reason" className="text-right">
-                Razón *
-              </Label>
-              <Textarea
-                id="reason"
-                name="reason"
-                value={formData.reason}
-                onChange={handleChange}
-                className="col-span-3"
-                required
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="notes" className="text-right">
-                Notas
-              </Label>
-              <Textarea
-                id="notes"
-                name="notes"
-                value={formData.notes}
-                onChange={handleChange}
-                className="col-span-3"
-              />
-            </div>
+            <Input
+              id="quantity"
+              name="quantity"
+              type="number"
+              min="1"
+              value={formData.quantity}
+              onChange={handleChange}
+              aria-label="Cantidad"
+              placeholder="Cantidad *"
+              required
+            />
+            <Textarea
+              id="reason"
+              name="reason"
+              value={formData.reason}
+              onChange={handleChange}
+              aria-label="Razón"
+              placeholder="Razón *"
+              required
+            />
+            <Textarea
+              id="notes"
+              name="notes"
+              value={formData.notes}
+              onChange={handleChange}
+              aria-label="Notas"
+              placeholder="Notas..."
+            />
           </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={onClose}>
