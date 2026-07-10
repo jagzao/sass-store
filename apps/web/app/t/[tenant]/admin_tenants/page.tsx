@@ -821,10 +821,11 @@ function CreateTenantModal({
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className={labelClass}>Nombre *</label>
                     <input
                       type="text"
                       name="name"
+                      aria-label="Nombre"
+                      placeholder="Nombre *"
                       value={formData.name}
                       onChange={handleChange}
                       className={`${inputClass} ${fieldErrors["name"] ? "border-red-500" : ""}`}
@@ -837,10 +838,11 @@ function CreateTenantModal({
                   </div>
 
                   <div>
-                    <label className={labelClass}>Slug *</label>
                     <input
                       type="text"
                       name="slug"
+                      aria-label="Slug"
+                      placeholder="Slug *"
                       value={formData.slug}
                       onChange={handleChange}
                       className={`${inputClass} ${fieldErrors["slug"] ? "border-red-500" : ""}`}
@@ -899,9 +901,10 @@ function CreateTenantModal({
                   </div>
 
                   <div className="md:col-span-2">
-                    <label className={labelClass}>Descripción</label>
                     <textarea
                       name="description"
+                      aria-label="Descripción"
+                      placeholder="Descripción"
                       value={formData.description}
                       onChange={handleChange}
                       rows={2}
@@ -924,9 +927,10 @@ function CreateTenantModal({
 
                 <div className="grid grid-cols-1 gap-4">
                   <div>
-                    <label className={labelClass}>Nombre Admin</label>
                     <input
                       type="text"
+                      aria-label="Nombre Admin"
+                      placeholder="Nombre admin"
                       value={formData.adminUser.name}
                       onChange={(e) =>
                         handleNestedChange("adminUser", "name", e.target.value)
@@ -935,9 +939,10 @@ function CreateTenantModal({
                     />
                   </div>
                   <div>
-                    <label className={labelClass}>Email Admin *</label>
                     <input
                       type="email"
+                      aria-label="Email Admin"
+                      placeholder="Email admin *"
                       value={formData.adminUser.email}
                       onChange={(e) =>
                         handleNestedChange("adminUser", "email", e.target.value)
@@ -951,9 +956,10 @@ function CreateTenantModal({
                     )}
                   </div>
                   <div>
-                    <label className={labelClass}>Contraseña *</label>
                     <input
                       type="password"
+                      aria-label="Contraseña"
+                      placeholder="Contraseña *"
                       value={formData.adminUser.password}
                       onChange={(e) =>
                         handleNestedChange(
@@ -1373,10 +1379,11 @@ function EditTenantModal({
               <div className="space-y-4 animate-fadeIn">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className={labelClass}>Nombre *</label>
                     <input
                       type="text"
                       name="name"
+                      aria-label="Nombre"
+                      placeholder="Nombre *"
                       value={formData.name}
                       onChange={handleChange}
                       required
@@ -1385,10 +1392,11 @@ function EditTenantModal({
                   </div>
 
                   <div>
-                    <label className={labelClass}>Slug</label>
                     <input
                       type="text"
                       name="slug"
+                      aria-label="Slug"
+                      placeholder="Slug"
                       value={formData.slug}
                       disabled
                       className={`${inputClass} opacity-50 cursor-not-allowed`}
@@ -1443,9 +1451,10 @@ function EditTenantModal({
                   </div>
 
                   <div className="md:col-span-2">
-                    <label className={labelClass}>Descripción</label>
                     <textarea
                       name="description"
+                      aria-label="Descripción"
+                      placeholder="Descripción"
                       value={formData.description}
                       onChange={handleChange}
                       rows={3}
@@ -1634,14 +1643,14 @@ function EditTenantModal({
                     />
                   </div>
                   <div>
-                    <label className={labelClass}>Teléfono de Contacto</label>
                     <input
                       type="tel"
                       name="contactPhone"
+                      aria-label="Teléfono de Contacto"
+                      placeholder="Teléfono de contacto"
                       value={formData.contactPhone}
                       onChange={handleChange}
                       className={inputClass}
-                      placeholder="+52..."
                     />
                   </div>
                 </div>
