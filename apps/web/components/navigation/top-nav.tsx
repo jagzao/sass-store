@@ -120,11 +120,14 @@ export function TopNav({ tenantInfo }: TopNavProps) {
             )}
           </Link>
 
-          {/* Search Bar - Estilo Amazon */}
-          <form onSubmit={handleSearch} className="flex-1 max-w-3xl mx-8">
-            <div className="flex h-12 rounded-lg overflow-hidden shadow-sm">
+          {/* Search Bar - Estilo Amazon (oculto en móvil) */}
+          <form
+            onSubmit={handleSearch}
+            className="hidden md:block flex-1 max-w-3xl mx-4 lg:mx-8"
+          >
+            <div className="flex h-10 md:h-12 rounded-lg overflow-hidden shadow-sm">
               {/* Category Selector - Now SearchableSelectSingle */}
-              <div className="w-48">
+              <div className="w-32 lg:w-48">
                 <SearchableSelectSingle
                   options={categoryOptions}
                   value={selectedCategory}
@@ -175,7 +178,7 @@ export function TopNav({ tenantInfo }: TopNavProps) {
           </form>
 
           {/* Right Menu - Estilo Amazon */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 md:space-x-4">
             {/* Location (opcional para empatía local) */}
             {!isZoSystemTenant && (
               <div className="hidden md:flex flex-col items-start">
@@ -257,7 +260,7 @@ export function TopNav({ tenantInfo }: TopNavProps) {
               href={
                 isZoSystemTenant ? "/orders" : `/t/${currentTenantSlug}/orders`
               }
-              className="flex flex-col items-start hover:bg-gray-800 px-2 py-1 rounded transition-colors duration-150"
+              className="hidden md:flex flex-col items-start hover:bg-gray-800 px-2 py-1 rounded transition-colors duration-150"
             >
               <span className="text-xs text-gray-600">Devoluciones</span>
               <span className="text-sm font-semibold">y Pedidos</span>
@@ -288,14 +291,16 @@ export function TopNav({ tenantInfo }: TopNavProps) {
                   </span>
                 )}
               </div>
-              <span className="text-sm font-semibold">Carrito</span>
+              <span className="text-sm font-semibold hidden sm:inline">
+                Carrito
+              </span>
             </Link>
           </div>
         </div>
 
         {/* Secondary Nav */}
         <div className="border-t border-gray-700 py-2">
-          <div className="flex items-center space-x-6 text-sm">
+          <div className="flex items-center space-x-4 md:space-x-6 text-sm overflow-x-auto scrollbar-hide">
             {/* Only show global tenant navigation for zo-system */}
             {isZoSystemTenant && (
               <>
