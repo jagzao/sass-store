@@ -57,7 +57,7 @@ const DEFAULT_ICON = "/icon-512.png";
 function resolveLogo(branding: TenantBranding | null, slug: string): string {
   const logo = branding?.logoUrl || branding?.logo;
   if (!logo || isPlaceholderLogo(logo)) {
-    return `/tenants/${slug}/logo/logo.svg`;
+    return `/tenants/${slug}/logo/icon-512.png`;
   }
   return logo;
 }
@@ -89,16 +89,35 @@ export function buildTenantManifest(
   const themeColor = isHex(branding.primaryColor)
     ? (branding.primaryColor as string)
     : DEFAULT_THEME_COLOR;
-  const logo = resolveLogo(branding, tenant.slug);
 
   const shortName =
     tenant.name.length <= 12 ? tenant.name : tenant.name.slice(0, 12);
 
   const icons: WebAppManifestIcon[] = [
-    { src: logo, sizes: "192x192", type: "image/png", purpose: "any" },
-    { src: logo, sizes: "512x512", type: "image/png", purpose: "any" },
-    { src: logo, sizes: "512x512", type: "image/png", purpose: "maskable" },
-    { src: logo, sizes: "any", type: "image/png", purpose: "any" },
+    {
+      src: `/tenants/${tenant.slug}/logo/icon-192.png`,
+      sizes: "192x192",
+      type: "image/png",
+      purpose: "any",
+    },
+    {
+      src: `/tenants/${tenant.slug}/logo/icon-512.png`,
+      sizes: "512x512",
+      type: "image/png",
+      purpose: "any",
+    },
+    {
+      src: `/tenants/${tenant.slug}/logo/icon-192-maskable.png`,
+      sizes: "192x192",
+      type: "image/png",
+      purpose: "maskable",
+    },
+    {
+      src: `/tenants/${tenant.slug}/logo/icon-512-maskable.png`,
+      sizes: "512x512",
+      type: "image/png",
+      purpose: "maskable",
+    },
   ];
 
   return {
@@ -113,11 +132,7 @@ export function buildTenantManifest(
     orientation: "portrait-primary",
     background_color: DEFAULT_BACKGROUND,
     theme_color: themeColor,
-    icons: icons.map((icon) =>
-      icon.src === `/tenants/${tenant.slug}/logo/logo.svg`
-        ? { ...icon, type: "image/svg+xml" }
-        : icon,
-    ),
+    icons,
   };
 }
 

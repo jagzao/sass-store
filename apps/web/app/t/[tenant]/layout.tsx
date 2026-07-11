@@ -8,6 +8,7 @@ import ErrorBoundary from "@/components/ErrorBoundary";
 import { TenantStyles } from "@/components/tenant/TenantStyles";
 import { LiveRegionProvider } from "@/components/a11y/LiveRegion";
 import { GoogleAuthBinder } from "@/components/auth/GoogleAuthBinder";
+import { InstallAppButton } from "@/components/pwa/InstallAppButton";
 
 import { getTenantStaticParams } from "@/lib/server/tenant-static-params";
 
@@ -27,6 +28,27 @@ export async function generateMetadata({
       capable: true,
       statusBarStyle: "default",
       title: tenant,
+    },
+    icons: {
+      icon: [
+        {
+          url: `/tenants/${tenant}/logo/icon-32.png`,
+          sizes: "32x32",
+          type: "image/png",
+        },
+        {
+          url: `/tenants/${tenant}/logo/icon-192.png`,
+          sizes: "192x192",
+          type: "image/png",
+        },
+      ],
+      apple: [
+        {
+          url: `/tenants/${tenant}/logo/apple-touch-icon.png`,
+          sizes: "180x180",
+          type: "image/png",
+        },
+      ],
     },
   };
 }
@@ -120,6 +142,7 @@ export default async function TenantLayout({
           <main>
             <ErrorBoundary>{children}</ErrorBoundary>
           </main>
+          <InstallAppButton />
         </LiveRegionProvider>
       </div>
     </>
