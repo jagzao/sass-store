@@ -140,7 +140,7 @@ const wf = {
         sendBody: true,
         contentType: "raw",
         rawContentType: "application/json",
-        body: "={{ JSON.stringify({ model: 'glm-4.5-flash', messages: [{ role: 'system', content: $json.systemPrompt }, { role: 'user', content: $json.userPrompt }], max_tokens: 4000, temperature: 0.8, stream: false }) }}",
+        body: "={{ JSON.stringify({ model: 'glm-4.5-flash', messages: [{ role: 'system', content: $json.systemPrompt }, { role: 'user', content: $json.userPrompt }], max_tokens: 8000, temperature: 0.8, stream: false }) }}",
         options: { timeout: 180000 },
       },
       onError: "continueRegularOutput",

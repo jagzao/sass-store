@@ -9,7 +9,10 @@
       "name": "Webhook",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
-      "position": [160, 300],
+      "position": [
+        160,
+        300
+      ],
       "parameters": {
         "httpMethod": "POST",
         "path": "social-generate",
@@ -23,7 +26,10 @@
       "name": "BuildPrompt",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [400, 300],
+      "position": [
+        400,
+        300
+      ],
       "parameters": {
         "jsCode": "const data = $input.first().json.body || $input.first().json;\nconst { tenant, objective, vibe, platforms, startDate, endDate, frequency, contentMix, businessContext, platformLimits, platformGuidance } = data;\nconst objLabels = { sales: 'Ventas', brand: 'Marca', educational: 'Educativo', engagement: 'Engagement' };\nconst vibeLabels = { professional: 'Profesional', casual: 'Casual', funny: 'Divertido', inspiring: 'Inspirador' };\nconst start = new Date(startDate);\nconst end = new Date(endDate);\nconst daysDiff = Math.ceil((end - start) / 86400000);\nconst weeks = daysDiff / 7;\nconst tp = Math.floor(weeks * (frequency?.postsPerWeek || 3));\nconst tr = Math.floor(weeks * (frequency?.reelsPerWeek || 1));\nconst ts = Math.floor(weeks * (frequency?.storiesPerWeek || 2));\nconst tc = tp + tr + ts;\nconst pList = Array.isArray(platforms) ? platforms.join(', ') : platforms;\nconst guide = (platforms || []).map(function(p) { return '- ' + p + ': max ' + (platformLimits?.[p] || 2200) + '. ' + (platformGuidance?.[p] || ''); }).join('\\n');\nconst sys = 'Eres un experto en marketing de redes sociales. Genera contenido atractivo y listo para publicar. Responde SOLO con un JSON array valido, sin markdown, sin explicacion.';\nconst usr = 'Negocio: ' + tenant + '\\nObjetivo: ' + (objLabels[objective] || objective) + '\\nTono: ' + (vibeLabels[vibe] || vibe) + '\\nPlataformas: ' + pList + '\\nContexto: ' + (businessContext || 'Negocio local') + '\\n\\nDistribucion: Promocional ' + (contentMix?.promotions || 40) + '%, Antes/Despues ' + (contentMix?.before_after || 30) + '%, Tendencias ' + (contentMix?.trends || 20) + '%, Tips ' + (contentMix?.tips || 10) + '%\\n\\nGenera ' + tc + ' piezas (' + tp + ' posts, ' + tr + ' reels, ' + ts + ' stories).\\n\\nDevuelve SOLO un array JSON:\\n[{\"title\":\"max 60 chars\",\"content\":\"texto\",\"platforms\":[\"facebook\"],\"format\":\"post\",\"suggestedTime\":\"morning\",\"contentType\":\"promotional\"}]\\n\\nReglas:\\n' + guide + '\\n- Emojis moderados\\n- CTA cuando aplique\\n- No repitas';\nreturn [{ json: { systemPrompt: sys, userPrompt: usr, originalData: data, totalContent: tc } }];"
       }
@@ -33,7 +39,10 @@
       "name": "CallGLM",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [640, 300],
+      "position": [
+        640,
+        300
+      ],
       "parameters": {
         "method": "POST",
         "url": "https://open.bigmodel.cn/api/paas/v4/chat/completions",
@@ -53,7 +62,7 @@
         "sendBody": true,
         "contentType": "raw",
         "rawContentType": "application/json",
-        "body": "={{ JSON.stringify({ model: 'glm-4.5-flash', messages: [{ role: 'system', content: $json.systemPrompt }, { role: 'user', content: $json.userPrompt }], max_tokens: 4000, temperature: 0.8, stream: false }) }}",
+        "body": "={{ JSON.stringify({ model: 'glm-4.5-flash', messages: [{ role: 'system', content: $json.systemPrompt }, { role: 'user', content: $json.userPrompt }], max_tokens: 8000, temperature: 0.8, stream: false }) }}",
         "options": {
           "timeout": 180000
         }
@@ -65,7 +74,10 @@
       "name": "ParseResponse",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [880, 300],
+      "position": [
+        880,
+        300
+      ],
       "parameters": {
         "jsCode": "const llmResp = $input.first().json;\nconst buildData = $('BuildPrompt').first().json;\nconst od = buildData.originalData;\nconst tc = buildData.totalContent;\nvar generatedContent = [];\nvar parseOk = true;\nvar parseErrMsg = '';\ntry {\n  var rawContent = (llmResp.choices && llmResp.choices[0] && llmResp.choices[0].message && llmResp.choices[0].message.content) || '';\n  var cleaned = rawContent.replace(/```json/gi, '').replace(/```/g, '').trim();\n  var jsonMatch = cleaned.match(/\\[[\\s\\S]*\\]/);\n  generatedContent = JSON.parse(jsonMatch ? jsonMatch[0] : cleaned);\n} catch (e) {\n  parseOk = false;\n  parseErrMsg = e.message;\n}\nif (!parseOk) {\n  return [{ json: { success: false, error: 'No se pudo generar contenido. Intenta de nuevo.', details: parseErrMsg } }];\n}\nvar start = new Date(od.startDate);\nvar end = new Date(od.endDate);\nvar daysDiff = Math.ceil((end - start) / 86400000);\nvar timeMap = { morning: 9, afternoon: 14, evening: 19 };\nvar tcount = tc || generatedContent.length;\nvar posts = generatedContent.map(function(item, index) {\n  var dayOffset = Math.floor((index / Math.max(tcount, 1)) * daysDiff);\n  var postDate = new Date(start);\n  postDate.setDate(postDate.getDate() + dayOffset);\n  postDate.setHours(timeMap[item.suggestedTime] || 12, 0, 0, 0);\n  var vp = (item.platforms || []).filter(function(p) { return (od.platforms || []).indexOf(p) >= 0; });\n  var fp = vp.length > 0 ? vp : (od.platforms || []);\n  var fmt = ['post', 'reel', 'story'].indexOf(item.format) >= 0 ? item.format : 'post';\n  var ct = ['promotional', 'before_after', 'trending', 'tip'].indexOf(item.contentType) >= 0 ? item.contentType : 'promotional';\n  return { id: 'ai-' + index, title: (item.title || 'Post ' + (index + 1)).slice(0, 60), content: item.content || '', platforms: fp, format: fmt, scheduledAt: postDate.toISOString(), status: 'draft', contentType: ct };\n});\nposts.sort(function(a, b) { return new Date(a.scheduledAt) - new Date(b.scheduledAt); });\nvar result = {\n  success: true,\n  data: {\n    generatedPosts: posts,\n    summary: {\n      totalPosts: posts.length,\n      postsByFormat: {\n        post: posts.filter(function(p) { return p.format === 'post'; }).length,\n        reel: posts.filter(function(p) { return p.format === 'reel'; }).length,\n        story: posts.filter(function(p) { return p.format === 'story'; }).length\n      },\n      postsByType: {\n        promotional: posts.filter(function(p) { return p.contentType === 'promotional'; }).length,\n        before_after: posts.filter(function(p) { return p.contentType === 'before_after'; }).length,\n        trending: posts.filter(function(p) { return p.contentType === 'trending'; }).length,\n        tip: posts.filter(function(p) { return p.contentType === 'tip'; }).length\n      },\n      dateRange: { start: od.startDate, end: od.endDate }\n    }\n  }\n};\nreturn [{ json: result }];"
       }
@@ -75,7 +87,10 @@
       "name": "Respond",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
-      "position": [1120, 300],
+      "position": [
+        1120,
+        300
+      ],
       "parameters": {
         "respondWith": "json",
         "responseBody": "={{ JSON.stringify($json) }}",
