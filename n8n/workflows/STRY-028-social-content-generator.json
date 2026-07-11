@@ -1,10 +1,12 @@
 {
-  "name": "STRY-028: Social Content Generator (Ollama)",
-  "settings": { "executionOrder": "v1" },
+  "name": "STRY-028: Social Content Generator (GLM)",
+  "settings": {
+    "executionOrder": "v1"
+  },
   "nodes": [
     {
-      "id": "webhook-trigger",
-      "name": "Social Generate Webhook",
+      "id": "wh",
+      "name": "Webhook",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [160, 300],
@@ -14,105 +16,130 @@
         "responseMode": "responseNode",
         "options": {}
       },
-      "webhookId": "social-generate-stry028-v1"
+      "webhookId": "social-generate-stry028-v3"
     },
     {
-      "id": "build-prompt",
-      "name": "Build Ollama Prompt",
+      "id": "bp",
+      "name": "BuildPrompt",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [400, 300],
       "parameters": {
-        "jsCode": "const data = $input.first().json.body || $input.first().json;\nconst { tenant, objective, vibe, platforms, startDate, endDate, frequency, contentMix, businessContext, platformLimits, platformGuidance } = data;\n\nconst objectiveLabels = {\n  sales: 'Ventas y conversiones',\n  brand: 'Imagen de marca',\n  educational: 'Educativo',\n  engagement: 'Engagement'\n};\n\nconst vibeLabels = {\n  professional: 'Profesional',\n  casual: 'Casual',\n  funny: 'Divertido',\n  inspiring: 'Inspirador'\n};\n\nconst start = new Date(startDate);\nconst end = new Date(endDate);\nconst daysDiff = Math.ceil((end - start) / (1000 * 60 * 60 * 24));\nconst weeks = daysDiff / 7;\nconst totalPosts = Math.floor(weeks * (frequency?.postsPerWeek || 3));\nconst totalReels = Math.floor(weeks * (frequency?.reelsPerWeek || 1));\nconst totalStories = Math.floor(weeks * (frequency?.storiesPerWeek || 2));\nconst totalContent = totalPosts + totalReels + totalStories;\n\nconst platformList = Array.isArray(platforms) ? platforms.join(', ') : platforms;\nconst guidanceText = (platforms || []).map(p => {\n  const limit = platformLimits?.[p] || 2200;\n  const guide = platformGuidance?.[p] || '';\n  return `- ${p}: máximo ${limit} caracteres. ${guide}`;\n}).join('\\n');\n\nconst systemPrompt = `Eres un experto en marketing de redes sociales para pequeños negocios en México y Latinoamérica. Genera contenido atractivo, auténtico y listo para publicar. Responde SOLO con JSON válido, sin texto extra, sin markdown, sin bloques de código.`;\n\nconst userPrompt = `Negocio: ${tenant}\nObjetivo: ${objectiveLabels[objective] || objective}\nTono: ${vibeLabels[vibe] || vibe}\nPlataformas: ${platformList}\nContexto del negocio: ${businessContext || 'Negocio local'}\n\nDistribución de contenido:\n- Promocional: ${contentMix?.promotions || 40}%\n- Antes/Después: ${contentMix?.before_after || 30}%\n- Tendencias: ${contentMix?.trends || 20}%\n- Tips: ${contentMix?.tips || 10}%\n\nGenera ${totalContent} piezas de contenido distribuidas en:\n- ${totalPosts} posts\n- ${totalReels} reels\n- ${totalStories} stories\n\nPara cada pieza devuelve este JSON exacto (sin markdown):\n[\n  {\n    \"title\": \"título corto máximo 60 caracteres\",\n    \"content\": \"texto principal adaptado a cada plataforma\",\n    \"platforms\": [\"facebook\", \"instagram\"],\n    \"format\": \"post|reel|story\",\n    \"suggestedTime\": \"morning|afternoon|evening\",\n    \"contentType\": \"promotional|before_after|trending|tip\"\n  }\n]\n\nReglas por plataforma:\n${guidanceText}\n\n- Usa emojis con moderación\n- Incluye calls-to-action cuando apliquen\n- No repitas ideas\n- Adapta el tono a cada plataforma dentro del mismo contenido`};\n\nreturn [{\n  json: {\n    ollamaBody: {\n      model: $env.OLLAMA_MODEL || 'llama3.2',\n      messages: [\n        { role: 'system', content: systemPrompt },\n        { role: 'user', content: userPrompt }\n      ],\n      stream: false,\n      temperature: 0.8\n    },\n    originalData: data,\n    totalContent\n  }\n}];"
+        "jsCode": "const data = $input.first().json.body || $input.first().json;\nconst { tenant, objective, vibe, platforms, startDate, endDate, frequency, contentMix, businessContext, platformLimits, platformGuidance } = data;\nconst objLabels = { sales: 'Ventas', brand: 'Marca', educational: 'Educativo', engagement: 'Engagement' };\nconst vibeLabels = { professional: 'Profesional', casual: 'Casual', funny: 'Divertido', inspiring: 'Inspirador' };\nconst start = new Date(startDate);\nconst end = new Date(endDate);\nconst daysDiff = Math.ceil((end - start) / 86400000);\nconst weeks = daysDiff / 7;\nconst tp = Math.floor(weeks * (frequency?.postsPerWeek || 3));\nconst tr = Math.floor(weeks * (frequency?.reelsPerWeek || 1));\nconst ts = Math.floor(weeks * (frequency?.storiesPerWeek || 2));\nconst tc = tp + tr + ts;\nconst pList = Array.isArray(platforms) ? platforms.join(', ') : platforms;\nconst guide = (platforms || []).map(function(p) { return '- ' + p + ': max ' + (platformLimits?.[p] || 2200) + '. ' + (platformGuidance?.[p] || ''); }).join('\\n');\nconst sys = 'Eres un experto en marketing de redes sociales. Genera contenido atractivo y listo para publicar. Responde SOLO con un JSON array valido, sin markdown, sin explicacion.';\nconst usr = 'Negocio: ' + tenant + '\\nObjetivo: ' + (objLabels[objective] || objective) + '\\nTono: ' + (vibeLabels[vibe] || vibe) + '\\nPlataformas: ' + pList + '\\nContexto: ' + (businessContext || 'Negocio local') + '\\n\\nDistribucion: Promocional ' + (contentMix?.promotions || 40) + '%, Antes/Despues ' + (contentMix?.before_after || 30) + '%, Tendencias ' + (contentMix?.trends || 20) + '%, Tips ' + (contentMix?.tips || 10) + '%\\n\\nGenera ' + tc + ' piezas (' + tp + ' posts, ' + tr + ' reels, ' + ts + ' stories).\\n\\nDevuelve SOLO un array JSON:\\n[{\"title\":\"max 60 chars\",\"content\":\"texto\",\"platforms\":[\"facebook\"],\"format\":\"post\",\"suggestedTime\":\"morning\",\"contentType\":\"promotional\"}]\\n\\nReglas:\\n' + guide + '\\n- Emojis moderados\\n- CTA cuando aplique\\n- No repitas';\nreturn [{ json: { systemPrompt: sys, userPrompt: usr, originalData: data, totalContent: tc } }];"
       }
     },
     {
-      "id": "ollama-request",
-      "name": "Ollama Generate Content",
+      "id": "llm",
+      "name": "CallGLM",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [640, 300],
       "parameters": {
-        "url": "={{ $env.OLLAMA_API_URL || 'http://127.0.0.1:11434/v1/chat/completions' }}",
         "method": "POST",
+        "url": "https://open.bigmodel.cn/api/paas/v4/chat/completions",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "Content-Type", "value": "application/json" }
+            {
+              "name": "Authorization",
+              "value": "Bearer 860729174f864d9b9e279d6b5f5355d1.lHGvOopsK8mcsZnm"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
           ]
         },
         "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify($json.ollamaBody) }}",
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({ model: 'glm-4.5-flash', messages: [{ role: 'system', content: $json.systemPrompt }, { role: 'user', content: $json.userPrompt }], max_tokens: 4000, temperature: 0.8, stream: false }) }}",
         "options": {
-          "timeout": 90000,
-          "response": { "response": { "fullResponse": false } }
+          "timeout": 180000
         }
-      }
+      },
+      "onError": "continueRegularOutput"
     },
     {
-      "id": "parse-ollama",
-      "name": "Parse AI Response",
+      "id": "pr",
+      "name": "ParseResponse",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [880, 300],
       "parameters": {
-        "jsCode": "const ollamaResponse = $input.first().json;\nconst originalData = $('Build Ollama Prompt').first().json.originalData;\n\nlet generatedContent = [];\ntry {\n  const rawContent = ollamaResponse.choices?.[0]?.message?.content || ollamaResponse.message?.content || ollamaResponse.content || '';\n  const cleaned = rawContent\n    .replace(/```json\\s*/gi, '')\n    .replace(/```\\s*/g, '')\n    .trim();\n  const jsonMatch = cleaned.match(/\\[[\\s\\S]*\\]/);\n  generatedContent = JSON.parse(jsonMatch ? jsonMatch[0] : cleaned);\n} catch (parseError) {\n  return [{\n    json: {\n      success: false,\n      error: 'No se pudo generar contenido. Intenta de nuevo.',\n      details: parseError.message\n    }\n  }];\n}\n\nconst totalContent = $('Build Ollama Prompt').first().json.totalContent || generatedContent.length;\nconst start = new Date(originalData.startDate);\nconst end = new Date(originalData.endDate);\nconst daysDiff = Math.ceil((end - start) / (1000 * 60 * 60 * 24));\nconst timeMap = { morning: 9, afternoon: 14, evening: 19 };\n\nconst formattedPosts = generatedContent.map((item, index) => {\n  const dayOffset = Math.floor((index / Math.max(totalContent, 1)) * daysDiff);\n  const postDate = new Date(start);\n  postDate.setDate(postDate.getDate() + dayOffset);\n  postDate.setHours(timeMap[item.suggestedTime] || 12, 0, 0, 0);\n\n  const validPlatforms = (item.platforms || []).filter(p => (originalData.platforms || []).includes(p));\n  const finalPlatforms = validPlatforms.length > 0 ? validPlatforms : (originalData.platforms || []);\n\n  return {\n    id: `ai-generated-${index}`,\n    title: (item.title || `Post ${index + 1}`).slice(0, 60),\n    content: item.content || '',\n    platforms: finalPlatforms,\n    format: ['post', 'reel', 'story'].includes(item.format) ? item.format : 'post',\n    scheduledAt: postDate.toISOString(),\n    status: 'draft',\n    contentType: ['promotional', 'before_after', 'trending', 'tip'].includes(item.contentType) ? item.contentType : 'promotional'\n  };\n});\n\nformattedPosts.sort((a, b) => new Date(a.scheduledAt) - new Date(b.scheduledAt));\n\nreturn [{\n  json: {\n    success: true,\n    data: {\n      generatedPosts: formattedPosts,\n      summary: {\n        totalPosts: formattedPosts.length,\n        postsByFormat: {\n          post: formattedPosts.filter(p => p.format === 'post').length,\n          reel: formattedPosts.filter(p => p.format === 'reel').length,\n          story: formattedPosts.filter(p => p.format === 'story').length\n        },\n        postsByType: {\n          promotional: formattedPosts.filter(p => p.contentType === 'promotional').length,\n          before_after: formattedPosts.filter(p => p.contentType === 'before_after').length,\n          trending: formattedPosts.filter(p => p.contentType === 'trending').length,\n          tip: formattedPosts.filter(p => p.contentType === 'tip').length\n        },\n        dateRange: {\n          start: originalData.startDate,\n          end: originalData.endDate\n        }\n      }\n    }\n  }\n}];"
+        "jsCode": "const llmResp = $input.first().json;\nconst buildData = $('BuildPrompt').first().json;\nconst od = buildData.originalData;\nconst tc = buildData.totalContent;\nvar generatedContent = [];\nvar parseOk = true;\nvar parseErrMsg = '';\ntry {\n  var rawContent = (llmResp.choices && llmResp.choices[0] && llmResp.choices[0].message && llmResp.choices[0].message.content) || '';\n  var cleaned = rawContent.replace(/```json/gi, '').replace(/```/g, '').trim();\n  var jsonMatch = cleaned.match(/\\[[\\s\\S]*\\]/);\n  generatedContent = JSON.parse(jsonMatch ? jsonMatch[0] : cleaned);\n} catch (e) {\n  parseOk = false;\n  parseErrMsg = e.message;\n}\nif (!parseOk) {\n  return [{ json: { success: false, error: 'No se pudo generar contenido. Intenta de nuevo.', details: parseErrMsg } }];\n}\nvar start = new Date(od.startDate);\nvar end = new Date(od.endDate);\nvar daysDiff = Math.ceil((end - start) / 86400000);\nvar timeMap = { morning: 9, afternoon: 14, evening: 19 };\nvar tcount = tc || generatedContent.length;\nvar posts = generatedContent.map(function(item, index) {\n  var dayOffset = Math.floor((index / Math.max(tcount, 1)) * daysDiff);\n  var postDate = new Date(start);\n  postDate.setDate(postDate.getDate() + dayOffset);\n  postDate.setHours(timeMap[item.suggestedTime] || 12, 0, 0, 0);\n  var vp = (item.platforms || []).filter(function(p) { return (od.platforms || []).indexOf(p) >= 0; });\n  var fp = vp.length > 0 ? vp : (od.platforms || []);\n  var fmt = ['post', 'reel', 'story'].indexOf(item.format) >= 0 ? item.format : 'post';\n  var ct = ['promotional', 'before_after', 'trending', 'tip'].indexOf(item.contentType) >= 0 ? item.contentType : 'promotional';\n  return { id: 'ai-' + index, title: (item.title || 'Post ' + (index + 1)).slice(0, 60), content: item.content || '', platforms: fp, format: fmt, scheduledAt: postDate.toISOString(), status: 'draft', contentType: ct };\n});\nposts.sort(function(a, b) { return new Date(a.scheduledAt) - new Date(b.scheduledAt); });\nvar result = {\n  success: true,\n  data: {\n    generatedPosts: posts,\n    summary: {\n      totalPosts: posts.length,\n      postsByFormat: {\n        post: posts.filter(function(p) { return p.format === 'post'; }).length,\n        reel: posts.filter(function(p) { return p.format === 'reel'; }).length,\n        story: posts.filter(function(p) { return p.format === 'story'; }).length\n      },\n      postsByType: {\n        promotional: posts.filter(function(p) { return p.contentType === 'promotional'; }).length,\n        before_after: posts.filter(function(p) { return p.contentType === 'before_after'; }).length,\n        trending: posts.filter(function(p) { return p.contentType === 'trending'; }).length,\n        tip: posts.filter(function(p) { return p.contentType === 'tip'; }).length\n      },\n      dateRange: { start: od.startDate, end: od.endDate }\n    }\n  }\n};\nreturn [{ json: result }];"
       }
     },
     {
-      "id": "respond-webhook",
-      "name": "Respond to Webhook",
+      "id": "rw",
+      "name": "Respond",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
-      "position": [1120, 240],
+      "position": [1120, 300],
       "parameters": {
         "respondWith": "json",
         "responseBody": "={{ JSON.stringify($json) }}",
         "options": {
-          "responseCode": "={{ $json.success === false ? 500 : 200 }}",
+          "responseCode": 200,
           "responseHeaders": {
-            "entries": [{ "name": "Content-Type", "value": "application/json" }]
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
           }
-        }
-      }
-    },
-    {
-      "id": "error-handler",
-      "name": "Error Handler",
-      "type": "n8n-nodes-base.respondToWebhook",
-      "typeVersion": 1.1,
-      "position": [880, 500],
-      "parameters": {
-        "respondWith": "json",
-        "responseBody": "{ \"success\": false, \"error\": \"AI generation failed\" }",
-        "options": {
-          "responseCode": 500
         }
       }
     }
   ],
   "connections": {
-    "Social Generate Webhook": {
-      "main": [[{ "node": "Build Ollama Prompt", "type": "main", "index": 0 }]]
-    },
-    "Build Ollama Prompt": {
+    "Webhook": {
       "main": [
-        [{ "node": "Ollama Generate Content", "type": "main", "index": 0 }]
+        [
+          {
+            "node": "BuildPrompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
-    "Ollama Generate Content": {
+    "BuildPrompt": {
       "main": [
-        [{ "node": "Parse AI Response", "type": "main", "index": 0 }],
-        [{ "node": "Error Handler", "type": "main", "index": 0 }]
+        [
+          {
+            "node": "CallGLM",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
-    "Parse AI Response": {
-      "main": [[{ "node": "Respond to Webhook", "type": "main", "index": 0 }]]
+    "CallGLM": {
+      "main": [
+        [
+          {
+            "node": "ParseResponse",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ParseResponse": {
+      "main": [
+        [
+          {
+            "node": "Respond",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "pinData": {},
-  "versionId": "1",
   "meta": {
     "templateCredsSetupCompleted": false
   }
