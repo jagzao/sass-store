@@ -4,28 +4,25 @@ import { signIn } from "next-auth/react";
 
 interface GoogleLoginButtonProps {
   tenantSlug: string;
+  primaryColor?: string;
 }
 
-export function GoogleLoginButton({ tenantSlug }: GoogleLoginButtonProps) {
+export function GoogleLoginButton({
+  tenantSlug,
+  primaryColor = "#ff8000",
+}: GoogleLoginButtonProps) {
   const handleGoogleSignIn = () => {
-    // Preserve tenant context for potential OAuth error redirects.
     document.cookie = `auth_tenant_slug=${encodeURIComponent(tenantSlug)}; path=/; max-age=600; samesite=lax`;
     signIn("google", { callbackUrl: `/t/${tenantSlug}` });
   };
 
   return (
     <button
-      type="submit"
+      type="button"
       onClick={handleGoogleSignIn}
-      className="w-full inline-flex justify-center items-center gap-3 py-2.5 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+      className="w-full inline-flex items-center justify-center gap-3 rounded-xl border border-white/10 bg-[#0f1528] px-4 py-3 text-sm font-medium text-white transition-all hover:bg-[#121a30] hover:border-white/20"
     >
-      <svg
-        width="18"
-        height="18"
-        viewBox="0 0 18 18"
-        xmlns="http://www.w3.org/2000/svg"
-        aria-hidden="true"
-      >
+      <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
         <path
           d="M17.64 9.205c0-.639-.057-1.252-.164-1.841H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615Z"
           fill="#4285F4"
