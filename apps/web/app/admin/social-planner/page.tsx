@@ -5,6 +5,7 @@ import { PostComposer } from "@/components/social-planner/post-composer";
 import { SocialCalendar } from "@/components/social-planner/social-calendar";
 import { PostsList } from "@/components/social-planner/posts-list";
 import { ScheduleTimeline } from "@/components/social-planner/schedule-timeline";
+import { Calendar, ListOrdered, FileText, Plus } from "lucide-react";
 
 type ViewMode = "calendar" | "timeline" | "posts" | "compose";
 
@@ -59,42 +60,45 @@ export default function SocialPlannerPage() {
               <div className="flex bg-gray-100 rounded-lg p-1">
                 <button
                   onClick={() => setCurrentView("calendar")}
-                  className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                  className={`inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
                     currentView === "calendar"
                       ? "bg-white text-blue-600 shadow-sm"
                       : "text-gray-600 hover:text-gray-900"
                   }`}
                 >
-                  📅 Calendario
+                  <Calendar className="h-4 w-4" />{" "}
+                  <span className="hidden sm:inline">Calendario</span>
                 </button>
                 <button
                   onClick={() => setCurrentView("timeline")}
-                  className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                  className={`inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
                     currentView === "timeline"
                       ? "bg-white text-blue-600 shadow-sm"
                       : "text-gray-600 hover:text-gray-900"
                   }`}
                 >
-                  📋 Timeline
+                  <ListOrdered className="h-4 w-4" />{" "}
+                  <span className="hidden sm:inline">Timeline</span>
                 </button>
                 <button
                   onClick={() => setCurrentView("posts")}
-                  className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                  className={`inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
                     currentView === "posts"
                       ? "bg-white text-blue-600 shadow-sm"
                       : "text-gray-600 hover:text-gray-900"
                   }`}
                 >
-                  📝 Posts
+                  <FileText className="h-4 w-4" />{" "}
+                  <span className="hidden sm:inline">Posts</span>
                 </button>
               </div>
 
               {/* Create Post Button */}
               <button
                 onClick={handleCreatePost}
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center space-x-2"
+                className="inline-flex items-center gap-2 bg-blue-600 text-white px-3 sm:px-4 h-10 rounded-lg font-medium hover:bg-blue-700 transition-colors"
               >
-                <span>✏️</span>
+                <Plus className="h-4 w-4" />
                 <span>Crear Post</span>
               </button>
             </div>

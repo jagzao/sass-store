@@ -3,54 +3,63 @@
 import { useState, useEffect } from "react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import {
+  Facebook,
+  Instagram,
+  Linkedin,
+  Twitter,
+  Music2,
+  Building2,
+  MessageCircle,
+} from "lucide-react";
 
 const PLATFORMS = [
   {
     id: "facebook",
     name: "Facebook",
-    emoji: "📘",
+    Icon: Facebook,
     color: "bg-blue-600",
     maxLength: 63206,
   },
   {
     id: "instagram",
     name: "Instagram",
-    emoji: "📷",
+    Icon: Instagram,
     color: "bg-gradient-to-r from-purple-500 to-pink-500",
     maxLength: 2200,
   },
   {
     id: "linkedin",
     name: "LinkedIn",
-    emoji: "💼",
+    Icon: Linkedin,
     color: "bg-blue-700",
     maxLength: 3000,
   },
   {
     id: "x",
     name: "X (Twitter)",
-    emoji: "🐦",
+    Icon: Twitter,
     color: "bg-black",
     maxLength: 280,
   },
   {
     id: "tiktok",
     name: "TikTok",
-    emoji: "🎵",
+    Icon: Music2,
     color: "bg-black",
     maxLength: 2200,
   },
   {
     id: "gbp",
     name: "Google Business",
-    emoji: "🏢",
+    Icon: Building2,
     color: "bg-green-600",
     maxLength: 1500,
   },
   {
     id: "threads",
     name: "Threads",
-    emoji: "🧵",
+    Icon: MessageCircle,
     color: "bg-gray-900",
     maxLength: 500,
   },
@@ -370,7 +379,7 @@ export function PostComposer({
                 }`}
               >
                 <div className="text-center">
-                  <div className="text-2xl mb-1">{platform.emoji}</div>
+                  <platform.Icon className="h-6 w-6 mx-auto mb-1" />
                   <div className="text-sm font-medium">{platform.name}</div>
                 </div>
                 {selectedPlatforms.includes(platform.id) && (
@@ -407,7 +416,7 @@ export function PostComposer({
               return (
                 <div key={platformId} className="border rounded-lg p-4">
                   <div className="flex items-center mb-3">
-                    <span className="text-lg mr-2">{platform.emoji}</span>
+                    <platform.Icon className="h-5 w-5 mr-2 inline" />
                     <span className="font-medium">{platform.name}</span>
                     <span
                       className={`ml-auto text-sm ${isOverLimit ? "text-red-500" : "text-gray-500"}`}

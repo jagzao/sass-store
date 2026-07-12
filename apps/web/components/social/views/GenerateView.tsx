@@ -3,38 +3,68 @@
 import { useState, useEffect } from "react";
 import { format, addDays, startOfWeek, endOfWeek } from "date-fns";
 import { es } from "date-fns/locale";
+import {
+  Facebook,
+  Instagram,
+  Linkedin,
+  Twitter,
+  Music2,
+  Building2,
+  MessageCircle,
+  Tag,
+  Repeat2,
+  TrendingUp,
+  Lightbulb,
+  Sparkles,
+  X,
+  Check,
+  AlertCircle,
+  Loader2,
+} from "lucide-react";
 
 const PLATFORM_CONFIG = {
   facebook: {
-    emoji: "📘",
+    Icon: Facebook,
     name: "Facebook",
-    color: "bg-blue-100 text-blue-800",
+    color: "bg-blue-50 text-blue-600 border-blue-200",
   },
   instagram: {
-    emoji: "📷",
+    Icon: Instagram,
     name: "Instagram",
-    color: "bg-pink-100 text-pink-800",
+    color: "bg-pink-50 text-pink-600 border-pink-200",
   },
   linkedin: {
-    emoji: "💼",
+    Icon: Linkedin,
     name: "LinkedIn",
-    color: "bg-blue-100 text-blue-700",
+    color: "bg-blue-50 text-blue-700 border-blue-200",
   },
-  x: { emoji: "🐦", name: "X", color: "bg-gray-100 text-gray-800" },
-  tiktok: { emoji: "🎵", name: "TikTok", color: "bg-gray-100 text-gray-900" },
+  x: {
+    Icon: Twitter,
+    name: "X",
+    color: "bg-gray-50 text-gray-700 border-gray-200",
+  },
+  tiktok: {
+    Icon: Music2,
+    name: "TikTok",
+    color: "bg-gray-50 text-gray-900 border-gray-200",
+  },
   gbp: {
-    emoji: "🏢",
+    Icon: Building2,
     name: "Google Business",
-    color: "bg-green-100 text-green-800",
+    color: "bg-green-50 text-green-600 border-green-200",
   },
-  threads: { emoji: "🧵", name: "Threads", color: "bg-gray-100 text-gray-900" },
+  threads: {
+    Icon: MessageCircle,
+    name: "Threads",
+    color: "bg-gray-50 text-gray-900 border-gray-200",
+  },
 };
 
 const CONTENT_TYPES = [
-  { id: "promotions", label: "Promociones", icon: "🏷️" },
-  { id: "before_after", label: "Antes/Después", icon: "🔄" },
-  { id: "trends", label: "Tendencias", icon: "📈" },
-  { id: "tips", label: "Tips", icon: "💡" },
+  { id: "promotions", label: "Promociones", Icon: Tag },
+  { id: "before_after", label: "Antes/Después", Icon: Repeat2 },
+  { id: "trends", label: "Tendencias", Icon: TrendingUp },
+  { id: "tips", label: "Tips", Icon: Lightbulb },
 ];
 
 const OBJECTIVES = [
@@ -262,6 +292,7 @@ export default function GenerateView({ tenant }: GenerateViewProps) {
         {/* Error Message */}
         {errorMessage && (
           <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+            <AlertCircle className="h-4 w-4 flex-shrink-0 text-red-500" />
             <p className="text-sm text-red-700">{errorMessage}</p>
           </div>
         )}
@@ -350,29 +381,21 @@ export default function GenerateView({ tenant }: GenerateViewProps) {
                 <button
                   key={key}
                   onClick={() => handlePlatformToggle(key)}
-                  className={`relative p-3 rounded-lg border-2 transition-all ${
+                  className={`relative p-2 sm:p-3 rounded-lg border-2 transition-all ${
                     config.platforms.includes(key)
                       ? "border-blue-500 bg-blue-50"
                       : "border-gray-200 hover:border-gray-300"
                   }`}
                 >
-                  <div className="text-center">
-                    <div className="text-2xl mb-1">{platform.emoji}</div>
-                    <div className="text-sm font-medium">{platform.name}</div>
+                  <div className="flex flex-col items-center gap-1">
+                    <platform.Icon className="h-5 w-5 sm:h-6 sm:w-6" />
+                    <div className="text-xs sm:text-sm font-medium">
+                      {platform.name}
+                    </div>
                   </div>
                   {config.platforms.includes(key) && (
-                    <div className="absolute top-1 right-1 w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
-                      <svg
-                        className="w-2 h-2 text-white"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
+                    <div className="absolute top-1 right-1 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
+                      <Check className="w-3 h-3 text-white" />
                     </div>
                   )}
                 </button>
@@ -500,8 +523,8 @@ export default function GenerateView({ tenant }: GenerateViewProps) {
                   key={contentType.id}
                   className="flex items-center space-x-4"
                 >
-                  <div className="flex items-center space-x-2 w-32">
-                    <span>{contentType.icon}</span>
+                  <div className="flex items-center space-x-2 w-28 sm:w-32">
+                    <contentType.Icon className="h-4 w-4 flex-shrink-0" />
                     <span className="text-sm font-medium">
                       {contentType.label}
                     </span>
@@ -555,38 +578,23 @@ export default function GenerateView({ tenant }: GenerateViewProps) {
               disabled={
                 isGenerating || !isValidMix || config.platforms.length === 0
               }
-              className="w-full md:w-auto px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="w-full md:w-auto inline-flex items-center justify-center gap-2 px-6 h-12 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {isGenerating ? (
-                <span className="flex items-center justify-center">
-                  <svg
-                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                  </svg>
+                <>
+                  <Loader2 className="h-5 w-5 animate-spin" />
                   Generando contenido...
-                </span>
+                </>
               ) : (
-                `Generar ${Math.floor(
-                  (config.frequency.postsPerWeek +
-                    config.frequency.reelsPerWeek +
-                    config.frequency.storiesPerWeek) *
-                    4,
-                )} publicaciones`
+                <>
+                  <Sparkles className="h-5 w-5" />
+                  {`Generar ${Math.floor(
+                    (config.frequency.postsPerWeek +
+                      config.frequency.reelsPerWeek +
+                      config.frequency.storiesPerWeek) *
+                      4,
+                  )} publicaciones`}
+                </>
               )}
             </button>
           </div>
@@ -661,11 +669,14 @@ export default function GenerateView({ tenant }: GenerateViewProps) {
                                   : "bg-stone-100 text-stone-800"
                           }`}
                         >
-                          {
-                            CONTENT_TYPES.find(
-                              (ct) => ct.id === post.contentType,
-                            )?.icon
-                          }
+                          {(() => {
+                            const ct = CONTENT_TYPES.find(
+                              (c) => c.id === post.contentType,
+                            );
+                            return ct ? (
+                              <ct.Icon className="inline h-3 w-3 mr-1" />
+                            ) : null;
+                          })()}
                           <span className="ml-1">
                             {
                               CONTENT_TYPES.find(
