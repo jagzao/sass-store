@@ -4,6 +4,7 @@ import { useSession, signOut } from "next-auth/react";
 import { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { CTV_CLAY_ORANGE } from "@/lib/design/centro-tenistico-brand";
+import { InstallAppMenuItem } from "@/components/pwa/InstallAppButton";
 
 export default function UserMenu({
   tenantSlug,
@@ -224,6 +225,8 @@ export default function UserMenu({
                 🏢 Admin Tenants
               </a>
             )}
+            <hr className="my-1 border-gray-100 dark:border-gray-700" />
+            <InstallAppMenuItem onClick={closeMenu} />
             <button
               onClick={handleSignOut}
               className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"

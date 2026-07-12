@@ -8,6 +8,7 @@ import {
   usePathname,
 } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { InstallAppMenuItem } from "@/components/pwa/InstallAppButton";
 import UserMenu from "@/components/auth/UserMenu";
 import {
   AlertDialog,
@@ -832,6 +833,15 @@ export default function TenantProfilePage() {
                           Configura tu privacidad y datos
                         </div>
                       </button>
+                      <div
+                        className={`w-full px-4 py-3 rounded-lg transition-colors ${
+                          tenantSlug === "zo-system"
+                            ? "bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/10"
+                            : "bg-gray-50 hover:bg-gray-100"
+                        }`}
+                      >
+                        <InstallAppMenuItem />
+                      </div>
                     </div>
                   </div>
 

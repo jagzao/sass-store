@@ -170,7 +170,7 @@ export default function AddEditVisitModal({
         setLoading(true);
         setServicesError(null);
         const response = await fetch(
-          `/api/v1/public/services?tenant=${tenantSlug}`,
+          `/api/tenants/${tenantSlug}/services?includeInactive=true&limit=200`,
         );
 
         if (!response.ok) {
