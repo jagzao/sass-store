@@ -90,35 +90,61 @@ export function buildTenantManifest(
     ? (branding.primaryColor as string)
     : DEFAULT_THEME_COLOR;
 
+  // Use branding logo if present and valid; fallback to local PNG
+  const brandingLogo = resolveLogo(branding, tenant.slug);
+  const useGeneratedPng =
+    brandingLogo === `/tenants/${tenant.slug}/logo/icon-512.png`;
+
   const shortName =
     tenant.name.length <= 12 ? tenant.name : tenant.name.slice(0, 12);
 
-  const icons: WebAppManifestIcon[] = [
-    {
-      src: `/tenants/${tenant.slug}/logo/icon-192.png`,
-      sizes: "192x192",
-      type: "image/png",
-      purpose: "any",
-    },
-    {
-      src: `/tenants/${tenant.slug}/logo/icon-512.png`,
-      sizes: "512x512",
-      type: "image/png",
-      purpose: "any",
-    },
-    {
-      src: `/tenants/${tenant.slug}/logo/icon-192-maskable.png`,
-      sizes: "192x192",
-      type: "image/png",
-      purpose: "maskable",
-    },
-    {
-      src: `/tenants/${tenant.slug}/logo/icon-512-maskable.png`,
-      sizes: "512x512",
-      type: "image/png",
-      purpose: "maskable",
-    },
-  ];
+  const icons: WebAppManifestIcon[] = useGeneratedPng
+    ? [
+        {
+          src: `/tenants/${tenant.slug}/logo/icon-192.png`,
+          sizes: "192x192",
+          type: "image/png",
+          purpose: "any",
+        },
+        {
+          src: `/tenants/${tenant.slug}/logo/icon-512.png`,
+          sizes: "512x512",
+          type: "image/png",
+          purpose: "any",
+        },
+        {
+          src: `/tenants/${tenant.slug}/logo/icon-192-maskable.png`,
+          sizes: "192x192",
+          type: "image/png",
+          purpose: "maskable",
+        },
+        {
+          src: `/tenants/${tenant.slug}/logo/icon-512-maskable.png`,
+          sizes: "512x512",
+          type: "image/png",
+          purpose: "maskable",
+        },
+      ]
+    : [
+        {
+          src: brandingLogo,
+          sizes: "192x192",
+          type: "image/png",
+          purpose: "any",
+        },
+        {
+          src: brandingLogo,
+          sizes: "512x512",
+          type: "image/png",
+          purpose: "any",
+        },
+        {
+          src: brandingLogo,
+          sizes: "512x512",
+          type: "image/png",
+          purpose: "maskable",
+        },
+      ];
 
   return {
     id: `/t/${tenant.slug}`,
