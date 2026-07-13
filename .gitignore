@@ -96,43 +96,12 @@ video_2_frames/
 # Test output files
 test_output*.txt
 *.png
+# Exceptions: PWA icons and public assets MUST be in git
+!apps/web/public/**/*.png
 
 # Evidence artifacts (logs, API proofs, screenshots) — keep folder, ignore contents
 tests/evidence/**/*
 !tests/evidence/.gitkeep
-
-# Database backups (auto-generated daily, not source code)
-backups/
-
-# Temporary debug/test JSON dumps at root
-temp*.json
-response*.json
-final*.json
-auth.json
-pg-error-dump.json
-vitest-errors.json
-vitest-global.json
-test-output.json
-test-output.txt
-quote_payload.json
-test_*.json
-test1.json
-test2.json
-test3.json
-test4.json
-test5.json
-unit-fail.log
-
-# Playwright output
-playwright-report/
-test-results/
-
-# Debug screenshots at root (use tests/evidence/ for tracked screenshots)
-*.png
-*.jpg
-
-# Root-level log files (already covered by *.log but being explicit)
-*.log
 
 # Agents alerts (temporary)
 agents/alerts/
