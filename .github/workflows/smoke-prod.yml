@@ -1,0 +1,120 @@
+name: 🧪 Production Smoke Tests
+
+on:
+  schedule:
+    # Run every 4 hours
+    - cron: "0 */4 * * *"
+  workflow_dispatch:
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Playwright
+        run: npx playwright install --with-deps chromium
+
+      - name: Run smoke tests against production
+        env:
+          PROD_URL: https://sass-store-web.vercel.app
+        run: |
+          set -e
+
+          echo "=== Production Smoke Tests ==="
+          echo "Target: $PROD_URL"
+          echo ""
+
+          FAILURES=0
+
+          # 1. Health check
+          echo "1. Health check..."
+          HEALTH=$(curl -sf "$PROD_URL/api/health" | jq -r '.status' 2>/dev/null || echo "FAIL")
+          DB_STATUS=$(curl -sf "$PROD_URL/api/health" | jq -r '.checks.database.status' 2>/dev/null || echo "unknown")
+          if [ "$HEALTH" = "ok" ]; then
+            echo "   ✅ Health: ok | DB: $DB_STATUS"
+          else
+            echo "   ❌ Health check failed"
+            FAILURES=$((FAILURES + 1))
+          fi
+
+          # 2. Version
+          echo "2. Version check..."
+          VERSION=$(curl -sf "$PROD_URL/api/version" | jq -r '.version' 2>/dev/null || echo "FAIL")
+          echo "   Version: $VERSION"
+
+          # 3. Tenant pages load
+          echo "3. Tenant pages..."
+          for TENANT in wondernails centro-tenistico zo-system manada-juma; do
+            STATUS=$(curl -sf -o /dev/null -w "%{http_code}" "$PROD_URL/t/$TENANT" || echo "000")
+            if [ "$STATUS" = "200" ]; then
+              echo "   ✅ /t/$TENANT → 200"
+            else
+              echo "   ❌ /t/$TENANT → $STATUS"
+              FAILURES=$((FAILURES + 1))
+            fi
+          done
+
+          # 4. Public pages
+          echo "4. Public pages..."
+          for PATH_URL in /t/wondernails/products /t/wondernails/services /t/wondernails/contact; do
+            STATUS=$(curl -sf -o /dev/null -w "%{http_code}" "$PROD_URL$PATH_URL" || echo "000")
+            if [ "$STATUS" = "200" ]; then
+              echo "   ✅ $PATH_URL → 200"
+            else
+              echo "   ❌ $PATH_URL → $STATUS"
+              FAILURES=$((FAILURES + 1))
+            fi
+          done
+
+          # 5. PWA manifest
+          echo "5. PWA manifest..."
+          MANIFEST_STATUS=$(curl -sf -o /dev/null -w "%{http_code}" "$PROD_URL/t/wondernails/manifest.webmanifest" || echo "000")
+          if [ "$MANIFEST_STATUS" = "200" ]; then
+            ICON_COUNT=$(curl -sf "$PROD_URL/t/wondernails/manifest.webmanifest" | jq '.icons | length' 2>/dev/null || echo "0")
+            echo "   ✅ Manifest → 200 | Icons: $ICON_COUNT"
+          else
+            echo "   ❌ Manifest → $MANIFEST_STATUS"
+            FAILURES=$((FAILURES + 1))
+          fi
+
+          # 6. PWA icons accessible
+          echo "6. PWA icons..."
+          for ICON in icon-192.png icon-512.png apple-touch-icon.png; do
+            STATUS=$(curl -sf -o /dev/null -w "%{http_code}" "$PROD_URL/tenants/wondernails/logo/$ICON" || echo "000")
+            if [ "$STATUS" = "200" ]; then
+              echo "   ✅ $ICON → 200"
+            else
+              echo "   ❌ $ICON → $STATUS"
+              FAILURES=$((FAILURES + 1))
+            fi
+          done
+
+          # 7. Login page loads
+          echo "7. Login pages..."
+          for TENANT in wondernails centro-tenistico zo-system; do
+            STATUS=$(curl -sf -o /dev/null -w "%{http_code}" "$PROD_URL/t/$TENANT/login" || echo "000")
+            if [ "$STATUS" = "200" ]; then
+              echo "   ✅ /t/$TENANT/login → 200"
+            else
+              echo "   ❌ /t/$TENANT/login → $STATUS"
+              FAILURES=$((FAILURES + 1))
+            fi
+          done
+
+          # Summary
+          echo ""
+          echo "=== Summary ==="
+          if [ "$FAILURES" -eq 0 ]; then
+            echo "✅ All smoke tests passed"
+            exit 0
+          else
+            echo "❌ $FAILURES smoke test(s) failed"
+            exit 1
+          fi
