@@ -27,22 +27,15 @@ jobs:
       - name: 📦 Install dependencies
         run: npm install
 
-      - name: 🧪 Run tests
+      - name: 🧪 Lint + Typecheck
         run: |
           npm run lint
           npm run typecheck
-          npx vitest run tests/unit/social/ tests/integration/social/ || echo "Social tests warning"
 
-      - name: 🏗️ Build application
-        run: npm run build
-        env:
-          NODE_ENV: production
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
-          NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
-          AUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+      - name: 🧪 Unit tests
+        run: npx vitest run tests/unit/social/ tests/integration/social/ || echo "Social tests warning"
 
-      - name: 🚀 Deploy to Vercel
+      - name: 🚀 Deploy to Vercel (Vercel builds with its own env)
         uses: amondnet/vercel-action@v25
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
