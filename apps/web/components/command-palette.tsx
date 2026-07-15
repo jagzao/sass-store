@@ -188,7 +188,7 @@ export function CommandPalette() {
             </kbd>
           </div>
 
-          <Command.List className="max-h-80 overflow-y-auto p-2">
+          <Command.List className="max-h-80 overflow-y-auto p-2 custom-scrollbar">
             <Command.Empty className="py-6 text-center text-sm text-muted-foreground">
               No results found.
             </Command.Empty>

@@ -110,7 +110,7 @@ export function IconSelector({
       />
 
       {/* Grid de iconos */}
-      <div className="grid grid-cols-8 gap-2 max-h-48 overflow-y-auto p-2 border border-gray-200 rounded-lg">
+      <div className="grid grid-cols-8 gap-2 max-h-48 overflow-y-auto p-2 border border-gray-200 rounded-lg custom-scrollbar">
         {filteredIcons.map((icon) => {
           const IconComponent = (Icons as any)[icon.name];
           if (!IconComponent) return null;

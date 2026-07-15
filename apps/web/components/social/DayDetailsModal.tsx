@@ -176,7 +176,7 @@ export default function DayDetailsModal({
         </div>
 
         {/* Body */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-3">
+        <div className="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
           {isLoading ? (
             <div className="flex justify-center py-8">
               <div

@@ -121,7 +121,7 @@ export default function TokenManagementModal({
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-6 flex gap-6">
+        <div className="flex-1 overflow-y-auto p-6 flex gap-6 custom-scrollbar">
           {/* Platform List */}
           <div className="w-1/3 space-y-2">
             {PLATFORMS.map((p) => {

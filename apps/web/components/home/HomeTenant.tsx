@@ -44,7 +44,7 @@ export default function HomeTenant({
       <div className="space-y-6 max-w-7xl mx-auto">
         {/* Fila 1: Citas Hoy y Monitor de Retoques */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-auto md:h-[40vh] xl:h-[35vh]">
-          <section className="h-full overflow-y-auto pr-1 pb-2">
+          <section className="h-full overflow-y-auto pr-1 pb-2 custom-scrollbar">
             {sports ? (
               <SessionsTodaySection tenantSlug={tenantSlug} />
             ) : (
@@ -52,7 +52,7 @@ export default function HomeTenant({
             )}
           </section>
 
-          <section className="h-full overflow-y-auto pr-1 pb-2">
+          <section className="h-full overflow-y-auto pr-1 pb-2 custom-scrollbar">
             <PendingAppointmentsSection tenantSlug={tenantSlug} />
           </section>
         </div>

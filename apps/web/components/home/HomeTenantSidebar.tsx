@@ -79,7 +79,7 @@ export default function HomeTenantSidebar({
       </div>
 
       {/* Navigation Links */}
-      <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+      <nav className="flex-1 p-4 space-y-1 overflow-y-auto custom-scrollbar">
         <p className="text-xs font-medium text-gray-400 uppercase tracking-wider px-3 mb-3">
           Menú Principal
         </p>

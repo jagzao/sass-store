@@ -33,7 +33,7 @@ export default function DashboardLayoutWrapper({
         />
 
         {/* Dynamic Dashboard Page Content */}
-        <main className="flex-1 p-4 lg:p-6 pb-24 lg:pb-6 overflow-y-auto w-full">
+        <main className="flex-1 p-4 lg:p-6 pb-24 lg:pb-6 overflow-y-auto w-full custom-scrollbar">
           {children}
         </main>
       </div>

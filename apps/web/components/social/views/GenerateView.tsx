@@ -637,7 +637,7 @@ export default function GenerateView({ tenant }: GenerateViewProps) {
                 </div>
               </div>
 
-              <div className="p-6 overflow-y-auto max-h-[calc(90vh-200px)]">
+              <div className="p-6 overflow-y-auto max-h-[calc(90vh-200px)] custom-scrollbar">
                 <div className="space-y-4">
                   {generatedPosts.map((post) => (
                     <div key={post.id} className="border rounded-lg p-4">

@@ -798,7 +798,7 @@ export function NotificationsClient({
 
                       {/* Results */}
                       {customerResults.length > 0 && (
-                        <div className="border border-gray-200 rounded-lg overflow-hidden max-h-48 overflow-y-auto divide-y divide-gray-50">
+                        <div className="border border-gray-200 rounded-lg overflow-hidden max-h-48 overflow-y-auto divide-y divide-gray-50 custom-scrollbar">
                           {customerResults.map((c) => {
                             const selected = selectedCustomers.some(
                               (x) => x.id === c.id,

@@ -169,24 +169,29 @@ export default function UserMenu({
           }
         }}
         className={cn(
-          "flex items-center gap-2 transition-colors rounded-full p-1 pr-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
+          "flex items-center gap-3 transition-colors rounded-full p-1 pr-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
           variant === "dark" || variant === "transparent"
-            ? "text-white hover:text-gray-200 focus-visible:ring-white/50 focus-visible:ring-offset-black"
-            : "text-gray-700 hover:text-gray-900 focus-visible:ring-blue-500 focus-visible:ring-offset-white",
+            ? "text-white hover:bg-white/10 focus-visible:ring-white/50 focus-visible:ring-offset-black"
+            : "text-gray-700 hover:bg-black/5 focus-visible:ring-blue-500 focus-visible:ring-offset-white",
         )}
         aria-expanded={isOpen}
         aria-haspopup="menu"
         aria-controls={menuId}
       >
         <div
-          className="w-8 h-8 rounded-full flex items-center justify-center text-white font-semibold text-sm"
+          className="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold"
           style={{ backgroundColor: accentColor }}
         >
           {initials}
         </div>
-        <span className="hidden sm:inline font-medium max-w-[10rem] truncate">
-          {user.name?.split(" ")[0] || user.email?.split("@")[0]}
-        </span>
+        <div className="hidden sm:flex flex-col items-start leading-tight">
+          <span className="font-semibold text-sm max-w-[12rem] truncate">
+            {user.name || user.email?.split("@")[0] || "Usuario"}
+          </span>
+          <span className="text-xs text-gray-400 max-w-[12rem] truncate">
+            {user.email}
+          </span>
+        </div>
         <ChevronDown
           className={cn(
             "w-4 h-4 transition-transform duration-200",
@@ -198,9 +203,6 @@ export default function UserMenu({
       {isOpen && (
         <DropdownPanel
           menuId={menuId}
-          user={user}
-          initials={initials}
-          accentColor={accentColor}
           currentTenantSlug={currentTenantSlug}
           isAdminOrManager={isAdminOrManager}
           isZoSystem={isZoSystem}
@@ -215,9 +217,6 @@ export default function UserMenu({
 
 function DropdownPanel({
   menuId,
-  user,
-  initials,
-  accentColor,
   currentTenantSlug,
   isAdminOrManager,
   isZoSystem,
@@ -226,9 +225,6 @@ function DropdownPanel({
   onSignOut,
 }: {
   menuId: string;
-  user: { name?: string | null; email?: string | null };
-  initials: string;
-  accentColor: string;
   currentTenantSlug: string | null;
   isAdminOrManager: boolean;
   isZoSystem: boolean;
@@ -252,35 +248,14 @@ function DropdownPanel({
       aria-labelledby="user-menu-button"
       className={cn(
         "absolute right-0 top-full mt-2 z-50",
-        "w-[min(320px,calc(100vw-1rem))] max-h-[70vh] overflow-y-auto",
+        "w-[min(320px,calc(100vw-1rem))] max-h-[70vh]",
         "rounded-[14px] border border-[#2A2A2A] bg-[#121212]",
         "shadow-[0_16px_40px_rgba(0,0,0,0.45)]",
         "py-3 px-2",
         "origin-top-right transition-all duration-150 ease-out",
-        "scrollbar-thin scrollbar-thumb-[#2A2A2A] scrollbar-track-transparent",
+        "custom-scrollbar-dark",
       )}
     >
-      {/* Header */}
-      <div className="flex items-start gap-3 px-3 pb-3 border-b border-[#2A2A2A]">
-        <div
-          className="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold shrink-0"
-          style={{ backgroundColor: accentColor }}
-        >
-          {initials}
-        </div>
-        <div className="min-w-0">
-          <p className="text-sm font-semibold text-white truncate">
-            {user.name || user.email?.split("@")[0] || "Usuario"}
-          </p>
-          <p
-            className="text-xs text-gray-400 truncate"
-            title={user.email ?? undefined}
-          >
-            {user.email}
-          </p>
-        </div>
-      </div>
-
       {/* CUENTA */}
       <MenuSection title="Cuenta">
         <MenuItem

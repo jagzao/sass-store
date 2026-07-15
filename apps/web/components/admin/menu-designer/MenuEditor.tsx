@@ -223,7 +223,7 @@ const MenuEditor = ({
 
       {/* Editor Content Area */}
       <div
-        className="flex-1 overflow-y-auto bg-white relative"
+        className="flex-1 overflow-y-auto bg-white relative custom-scrollbar"
         onDragOver={(e) => e.preventDefault()}
         onDrop={(e) => {
           e.preventDefault();

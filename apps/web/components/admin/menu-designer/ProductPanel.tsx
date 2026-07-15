@@ -217,7 +217,7 @@ export default function ProductPanel({
         />
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4">
+      <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
         {activeTab === "products" ? (
           <div className="space-y-2">
             <div className="flex items-center justify-between mb-2">

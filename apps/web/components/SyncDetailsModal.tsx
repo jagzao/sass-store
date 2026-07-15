@@ -90,7 +90,7 @@ export default function SyncDetailsModal({
     }
 
     return (
-      <div className="overflow-y-auto max-h-[60vh]">
+      <div className="overflow-y-auto max-h-[60vh] custom-scrollbar">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50 sticky top-0">
             <tr>
@@ -229,7 +229,7 @@ export default function SyncDetailsModal({
           </nav>
         </div>
 
-        <div className="flex-1 overflow-auto bg-gray-50">
+        <div className="flex-1 overflow-auto bg-gray-50 custom-scrollbar">
           {activeTab === "new" && renderEventList(data.new, "new")}
           {activeTab === "existing" &&
             renderEventList(data.existing, "existing")}

@@ -85,7 +85,7 @@ export function MiniCart({ isVisible, onClose }: MiniCartProps) {
             </div>
           </div>
 
-          <div className="max-h-64 overflow-y-auto">
+          <div className="max-h-64 overflow-y-auto custom-scrollbar">
             {items.length === 0 ? (
               <div className="p-4 text-center text-gray-500">
                 Tu carrito está vacío

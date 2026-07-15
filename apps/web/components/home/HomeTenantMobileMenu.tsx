@@ -124,7 +124,7 @@ export default function HomeTenantMobileMenu({
         </div>
 
         {/* Navigation Links */}
-        <nav className="p-4 space-y-1 overflow-y-auto">
+        <nav className="p-4 space-y-1 overflow-y-auto custom-scrollbar-dark">
           <p className="text-xs font-medium text-gray-400 uppercase tracking-wider px-3 mb-3">
             Menú
           </p>

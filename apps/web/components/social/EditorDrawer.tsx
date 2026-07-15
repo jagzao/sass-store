@@ -373,7 +373,10 @@ Agenda tu cita hoy. #WonderNails #Belleza`;
             </div>
 
             {/* Content */}
-            <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto">
+            <form
+              onSubmit={handleSubmit}
+              className="flex-1 overflow-y-auto custom-scrollbar"
+            >
               <div className="px-6 py-4 space-y-6">
                 {/* Title */}
                 <div>

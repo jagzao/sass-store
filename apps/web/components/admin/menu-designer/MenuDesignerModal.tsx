@@ -347,7 +347,7 @@ export default function MenuDesignerModal({
               </div>
 
               {/* Sidebar Controls */}
-              <div className="w-64 bg-white dark:bg-gray-900 rounded-lg p-4 space-y-4 border border-gray-200 dark:border-gray-800 h-full overflow-y-auto">
+              <div className="w-64 bg-white dark:bg-gray-900 rounded-lg p-4 space-y-4 border border-gray-200 dark:border-gray-800 h-full overflow-y-auto custom-scrollbar">
                 <div>
                   <label className="block text-xs font-medium text-gray-500 mb-1">
                     Nombre del Diseño
@@ -371,7 +371,7 @@ export default function MenuDesignerModal({
                   <p className="text-xs text-gray-400 mb-2">
                     Arrastra productos y servicios al menú
                   </p>
-                  <div className="h-64 overflow-y-auto">
+                  <div className="h-64 overflow-y-auto custom-scrollbar">
                     <ProductPanel tenantSlug={tenantSlug} />
                   </div>
                 </div>

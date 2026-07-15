@@ -63,7 +63,7 @@ function VirtualListComponent<T>({
   return (
     <div
       ref={containerRef}
-      className={`overflow-y-auto ${className}`}
+      className={`overflow-y-auto custom-scrollbar ${className}`}
       style={{ height: containerHeight }}
     >
       <div style={{ paddingTop: `${topPadding}px` }} />

@@ -696,7 +696,7 @@ function FinancialMatrixBoardComponent({
 
       {hasRealMatrixData && (
         <div
-          className="max-h-[calc(100vh-250px)] overflow-auto rounded-lg border border-gray-200 bg-white shadow-sm"
+          className="max-h-[calc(100vh-250px)] overflow-auto rounded-lg border border-gray-200 bg-white shadow-sm custom-scrollbar"
           data-testid="matrix-scroll-container"
           onScroll={handleScroll}
           ref={scrollContainerRef}
