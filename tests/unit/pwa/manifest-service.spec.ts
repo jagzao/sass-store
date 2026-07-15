@@ -45,8 +45,8 @@ describe("Feature: PWA manifest dinámico por tenant (STRY-026)", () => {
       ...baseTenant,
       branding: { primaryColor: "#111111" },
     });
-    expect(m.icons[0].src).toBe("/tenants/wondernails/logo/logo.svg");
-    expect(m.icons[0].type).toBe("image/svg+xml");
+    expect(m.icons[0].src).toBe("/tenants/wondernails/logo/icon-192.png");
+    expect(m.icons[0].type).toBe("image/png");
   });
 
   it("short_name se trunca a 12 caracteres si el nombre es largo", () => {

@@ -1,6 +1,8 @@
 {
   "name": "sass-store: WA Automation Executor",
-  "settings": { "executionOrder": "v1" },
+  "settings": {
+    "executionOrder": "v1"
+  },
   "nodes": [
     {
       "id": "trig-auto",
@@ -9,7 +11,14 @@
       "typeVersion": 1.2,
       "position": [200, 300],
       "parameters": {
-        "rule": { "interval": [{ "field": "hours", "hoursInterval": 1 }] }
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 1
+            }
+          ]
+        }
       }
     },
     {
@@ -26,7 +35,7 @@
       },
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT ar.id AS rule_id, ar.tenant_slug, ar.action_type, ar.action_config, b.customer_phone AS phone, b.customer_name, s.name AS service_name, b.start_time, wt.phone_number_id FROM wa_automation_rules ar JOIN tenants t ON t.slug = ar.tenant_slug JOIN wa_tenant_config wt ON wt.tenant_slug = ar.tenant_slug JOIN bookings b ON b.tenant_id = t.id LEFT JOIN services s ON s.id = b.service_id WHERE ar.trigger_event = 'booking_confirmed' AND ar.enabled = true AND b.status = 'confirmed' AND b.created_at >= NOW() - interval '65 minutes' AND b.created_at >= NOW() - interval '65 minutes' - ((ar.action_config->>'delayMinutes')::int * interval '1 minute') AND b.customer_phone IS NOT NULL AND NOT EXISTS (SELECT 1 FROM whatsapp_messages wm WHERE wm.numero = b.customer_phone AND wm.metadata->>'rule_id' = ar.id::text AND wm.created_at >= b.created_at) LIMIT 20",
+        "query": "SELECT\n  ar.id AS rule_id,\n  ar.tenant_slug,\n  ar.action_type,\n  ar.action_config,\n  b.customer_phone AS phone,\n  b.customer_name,\n  s.name AS service_name,\n  b.start_time,\n  wt.phone_number_id,\n  b.created_at AS booking_created_at\nFROM wa_automation_rules ar\nJOIN tenants t ON t.slug = ar.tenant_slug\nJOIN wa_tenant_config wt ON wt.tenant_slug = ar.tenant_slug\nJOIN bookings b ON b.tenant_id = t.id\nLEFT JOIN services s ON s.id = b.service_id\nWHERE ar.trigger_event = 'booking_confirmed'\n  AND ar.enabled = true\n  AND b.status = 'confirmed'\n  AND b.customer_phone IS NOT NULL\n  AND b.created_at >= NOW() - INTERVAL '70 minutes'\n  AND b.created_at >= NOW() - INTERVAL '70 minutes' - COALESCE((ar.action_config->>'delayMinutes')::int, 0) * INTERVAL '1 minute'\n  AND NOT EXISTS (\n    SELECT 1 FROM whatsapp_messages wm\n    WHERE wm.numero = b.customer_phone\n      AND wm.metadata->>'rule_id' = ar.id::text\n      AND wm.created_at >= b.created_at\n  )\nLIMIT 20",
         "options": {}
       }
     },
@@ -44,7 +53,7 @@
       },
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT ar.id AS rule_id, ar.tenant_slug, ar.action_type, ar.action_config, c.phone, c.first_name AS customer_name, wt.phone_number_id FROM wa_automation_rules ar JOIN tenants t ON t.slug = ar.tenant_slug JOIN wa_tenant_config wt ON wt.tenant_slug = ar.tenant_slug JOIN customers c ON c.tenant_id = t.id WHERE ar.trigger_event = 'customer_inactive_30d' AND ar.enabled = true AND c.phone IS NOT NULL AND (c.last_visit_at IS NULL OR c.last_visit_at < NOW() - interval '30 days') AND NOT EXISTS (SELECT 1 FROM whatsapp_messages wm WHERE wm.numero = c.phone AND wm.metadata->>'rule_id' = ar.id::text AND wm.created_at >= NOW() - interval '31 days') LIMIT 20",
+        "query": "SELECT\n  ar.id AS rule_id,\n  ar.tenant_slug,\n  ar.action_type,\n  ar.action_config,\n  c.phone,\n  c.name AS customer_name,\n  wt.phone_number_id\nFROM wa_automation_rules ar\nJOIN tenants t ON t.slug = ar.tenant_slug\nJOIN wa_tenant_config wt ON wt.tenant_slug = ar.tenant_slug\nJOIN customers c ON c.tenant_id = t.id\nWHERE ar.trigger_event = 'customer_inactive_30d'\n  AND ar.enabled = true\n  AND c.phone IS NOT NULL\n  AND NOT EXISTS (\n    SELECT 1 FROM whatsapp_messages wm\n    WHERE wm.numero = c.phone\n      AND wm.metadata->>'rule_id' = ar.id::text\n      AND wm.created_at >= NOW() - INTERVAL '31 days'\n  )\n  AND NOT EXISTS (\n    SELECT 1 FROM bookings b\n    WHERE b.customer_phone = c.phone\n      AND b.tenant_id = c.tenant_id\n      AND b.start_time >= NOW() - INTERVAL '30 days'\n  )\nLIMIT 20",
         "options": {}
       }
     },
@@ -54,7 +63,9 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3,
       "position": [600, 300],
-      "parameters": { "mode": "append" }
+      "parameters": {
+        "mode": "append"
+      }
     },
     {
       "id": "if-triggers",
@@ -74,7 +85,10 @@
               "id": "1",
               "leftValue": "={{ $items().length }}",
               "rightValue": 0,
-              "operator": { "type": "number", "operation": "gt" }
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
             }
           ],
           "combinator": "and"
@@ -88,7 +102,7 @@
       "typeVersion": 2,
       "position": [1000, 220],
       "parameters": {
-        "jsCode": "const item = $json;\nconst config = item.action_config || {};\nlet msg = config.message || 'Hola, tenemos un mensaje para ti.';\nmsg = msg.replace(/\\{\\{nombre\\}\\}/g, item.customer_name || 'cliente');\nmsg = msg.replace(/\\{\\{servicio\\}\\}/g, item.service_name || '');\nif (item.start_time) {\n  const d = new Date(item.start_time);\n  msg = msg.replace(/\\{\\{fecha\\}\\}/g, d.toLocaleDateString('es-MX'));\n}\nreturn [{ json: { ...item, resolvedMessage: msg } }];"
+        "jsCode": "const item = $json;\nconst config = item.action_config || {};\nlet msg = config.message || \"Hola, tenemos un mensaje para ti.\";\nmsg = msg.replace(/\\{\\{nombre\\}\\}/g, item.customer_name || \"cliente\");\nmsg = msg.replace(/\\{\\{servicio\\}\\}/g, item.service_name || \"\");\nmsg = msg.replace(/\\{\\{tenant\\}\\}/g, item.tenant_name || item.tenant_slug || \"\");\nif (item.start_time) {\n  const d = new Date(item.start_time);\n  msg = msg.replace(/\\{\\{fecha\\}\\}/g, d.toLocaleDateString(\"es-MX\", { weekday: \"long\", day: \"numeric\", month: \"long\", hour: \"2-digit\", minute: \"2-digit\" }));\n}\nreturn [{ json: { ...item, resolvedMessage: msg } }];"
       }
     },
     {
@@ -103,8 +117,14 @@
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "Authorization", "value": "Bearer {{WA_TOKEN}}" },
-            { "name": "Content-Type", "value": "application/json" }
+            {
+              "name": "Authorization",
+              "value": "Bearer {{WA_TOKEN}}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
           ]
         },
         "sendBody": true,
@@ -127,7 +147,7 @@
       },
       "parameters": {
         "operation": "executeQuery",
-        "query": "INSERT INTO whatsapp_messages (mensaje_id, numero, contenido, tipo, direccion, estado, metadata) VALUES (gen_random_uuid()::text, '{{ $json.phone }}', '{{ $json.resolvedMessage }}', 'text', 'outbound', 'sent', '{\"rule_id\": \"{{ $json.rule_id }}\", \"automation\": true}'::jsonb) ON CONFLICT DO NOTHING",
+        "query": "INSERT INTO whatsapp_messages (\n  tenant_id,\n  mensaje_id,\n  numero,\n  contenido,\n  tipo,\n  direccion,\n  estado,\n  metadata,\n  related_entity_type,\n  related_entity_id\n) VALUES (\n  (SELECT id FROM tenants WHERE slug = '{{ $json.tenant_slug }}'),\n  gen_random_uuid()::text,\n  '{{ $json.phone }}',\n  '{{ $json.resolvedMessage }}',\n  'text',\n  'outbound',\n  'sent',\n  jsonb_build_object('rule_id', '{{ $json.rule_id }}', 'automation', true),\n  'automation_rule',\n  '{{ $json.rule_id }}'\n)\nON CONFLICT (mensaje_id) DO NOTHING",
         "options": {}
       }
     },
@@ -144,31 +164,91 @@
     "Every Hour": {
       "main": [
         [
-          { "node": "Booking Confirmed Triggers", "type": "main", "index": 0 },
-          { "node": "Inactive Customer Triggers", "type": "main", "index": 0 }
+          {
+            "node": "Booking Confirmed Triggers",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Inactive Customer Triggers",
+            "type": "main",
+            "index": 0
+          }
         ]
       ]
     },
     "Booking Confirmed Triggers": {
-      "main": [[{ "node": "Merge Triggers", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Merge Triggers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Inactive Customer Triggers": {
-      "main": [[{ "node": "Merge Triggers", "type": "main", "index": 1 }]]
+      "main": [
+        [
+          {
+            "node": "Merge Triggers",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
     },
     "Merge Triggers": {
-      "main": [[{ "node": "Has Triggers?", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Has Triggers?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Has Triggers?": {
       "main": [
-        [{ "node": "Build Message", "type": "main", "index": 0 }],
-        [{ "node": "No Triggers", "type": "main", "index": 0 }]
+        [
+          {
+            "node": "Build Message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Triggers",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Build Message": {
-      "main": [[{ "node": "Send WA", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Send WA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Send WA": {
-      "main": [[{ "node": "Log Sent", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Log Sent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   }
 }

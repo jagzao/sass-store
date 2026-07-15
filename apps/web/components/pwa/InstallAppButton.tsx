@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { Download } from "lucide-react";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -64,7 +65,7 @@ export function useInstallPrompt() {
 
 /**
  * Botón flotante "Instalar App" — se muestra cuando el browser dispara
- * beforeinstallprompt. Oculto si ya está instalado o si no es instalable.
+ * beforeinstallprompt. Oculto si ya está instalado o no es instalable.
  */
 export function InstallAppButton() {
   const { canInstall, installed, install } = useInstallPrompt();
@@ -77,19 +78,7 @@ export function InstallAppButton() {
       className="fixed bottom-4 right-4 z-50 flex items-center gap-2 bg-blue-600 text-white px-4 py-3 rounded-full shadow-lg hover:bg-blue-700 transition-colors text-sm font-medium"
       aria-label="Instalar aplicación"
     >
-      <svg
-        className="w-5 h-5"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-        strokeWidth={2}
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16"
-        />
-      </svg>
+      <Download className="w-5 h-5" />
       <span>Instalar App</span>
     </button>
   );
@@ -97,9 +86,18 @@ export function InstallAppButton() {
 
 /**
  * Item de menú inline "Instalar App" — para dropdowns y listas.
- * En browsers sin beforeinstallprompt (iOS Safari), muestra instrucciones.
+ * Se muestra solo en navegadores/browsers que soportan instalación PWA.
+ * ponytail: iOS hint retirado del dropdown; el botón flotante sigue con fallback nativo.
  */
-export function InstallAppMenuItem({ onClick }: { onClick?: () => void }) {
+export function InstallAppMenuItem({
+  onClick,
+  className,
+  iconClassName,
+}: {
+  onClick?: () => void;
+  className?: string;
+  iconClassName?: string;
+}) {
   const { canInstall, installed, install } = useInstallPrompt();
 
   const handleClick = async () => {
@@ -109,20 +107,18 @@ export function InstallAppMenuItem({ onClick }: { onClick?: () => void }) {
     onClick?.();
   };
 
-  if (installed) return null;
+  // Solo mostrar si el browser anuncia que puede instalar.
+  if (installed || !canInstall) return null;
 
   return (
     <button
       onClick={handleClick}
-      className="flex items-center gap-3 w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-sm"
+      role="menuitem"
+      className={className}
+      aria-label="Instalar aplicación"
     >
-      <span className="text-lg">📱</span>
-      <span>Instalar App</span>
-      {!canInstall && (
-        <span className="ml-auto text-xs text-gray-400">
-          iOS: Compartir → Inicio
-        </span>
-      )}
+      <Download className={iconClassName} />
+      <span>Instalar aplicación</span>
     </button>
   );
 }
