@@ -98,7 +98,7 @@
       },
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT s.id, s.name, s.price, s.duration_minutes FROM services s JOIN tenants t ON s.tenant_id = t.id WHERE t.slug = '{{ $json.tenantSlug }}' AND LOWER(s.name) LIKE '%{{ $json.service }}%' AND s.is_active = true ORDER BY s.name LIMIT 1",
+        "query": "SELECT s.id, s.name, s.price, s.duration FROM services s JOIN tenants t ON s.tenant_id = t.id WHERE t.slug = '{{ $json.tenantSlug }}' AND LOWER(s.name) LIKE '%{{ $json.service }}%' AND s.active = true ORDER BY s.name LIMIT 1",
         "options": {}
       }
     },

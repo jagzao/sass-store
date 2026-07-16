@@ -87,7 +87,7 @@
       },
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT DISTINCT c.phone, c.first_name FROM customers c JOIN tenants t ON c.tenant_id = t.id WHERE t.slug = '{{ $('Get Scheduled Campaigns').item.json.tenant_slug }}' AND c.phone IS NOT NULL LIMIT 500",
+        "query": "SELECT DISTINCT c.phone, c.name AS first_name FROM customers c JOIN tenants t ON c.tenant_id = t.id WHERE t.slug = '{{ $('Get Scheduled Campaigns').item.json.tenant_slug }}' AND c.phone IS NOT NULL LIMIT 500",
         "options": {}
       }
     },

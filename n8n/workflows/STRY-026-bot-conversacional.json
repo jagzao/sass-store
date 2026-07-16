@@ -51,7 +51,7 @@
       },
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT t.id as tenant_id, t.slug as tenant_slug, t.name as tenant_name, wt.bot_name, wt.tone, wt.phone_number_id, wt.admin_phone, s.name as service_name, s.price, s.duration_minutes FROM wa_tenant_config wt JOIN tenants t ON t.slug = wt.tenant_slug LEFT JOIN services s ON s.tenant_id = t.id AND s.is_active = true WHERE wt.phone_number_id = '{{ $json.phoneNumberId }}' LIMIT 20",
+        "query": "SELECT t.id as tenant_id, t.slug as tenant_slug, t.name as tenant_name, wt.bot_name, wt.tone, wt.phone_number_id, wt.escalation_phone, s.name as service_name, s.price, s.duration FROM wa_tenant_config wt JOIN tenants t ON t.slug = wt.tenant_slug LEFT JOIN services s ON s.tenant_id = t.id AND s.active = true WHERE wt.phone_number_id = '{{ $json.phoneNumberId }}' LIMIT 20",
         "options": {}
       }
     },
@@ -62,7 +62,7 @@
       "typeVersion": 2,
       "position": [840, 420],
       "parameters": {
-        "jsCode": "const rows = $('Get Tenant + Services').all().map(i => i.json);\nconst cfg = rows[0] || {};\nconst services = rows.filter(r => r.service_name).map(r => r.service_name + ' ($' + r.price + ' MXN, ' + r.duration_minutes + 'min)').join(', ');\nconst msgBody = $('Parse WA Payload').item.json.msgBody;\nconst phone = $('Parse WA Payload').item.json.phone;\nconst customerName = $('Parse WA Payload').item.json.customerName;\nconst today = new Date().toLocaleDateString('es-MX', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'America/Mexico_City' });\nconst tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0];\nconst todayIso = new Date().toISOString().split('T')[0];\n\nconst systemPrompt = 'Eres ' + (cfg.bot_name || 'Asistente') + ' de ' + (cfg.tenant_name || 'el salón') + '. Tono: ' + (cfg.tone || 'amigable y profesional') + '. Español mexicano. Responde SOLO con JSON válido sin markdown.\\n\\nServicios disponibles: ' + (services || 'manicure, pedicure, uñas gel, acrílico') + '\\nFecha de hoy: ' + today + ' (' + todayIso + ')\\nMañana: ' + tomorrow + '\\n\\nEstructura de respuesta OBLIGATORIA:\\n{\"intent\":\"AGENDAR|CONSULTAR|OTRO\",\"service\":\"nombre o null\",\"date\":\"YYYY-MM-DD o null\",\"time\":\"HH:MM o null\",\"clientName\":\"nombre o null\",\"missing\":[\"servicio\",\"fecha\",\"hora\"],\"reply\":\"respuesta amigable si OTRO, null si AGENDAR/CONSULTAR\"}';\n\nreturn [{\n  json: {\n    phone,\n    customerName,\n    tenantId: cfg.tenant_id,\n    tenantSlug: cfg.tenant_slug,\n    tenantName: cfg.tenant_name,\n    phoneNumberId: cfg.phone_number_id || rows[0]?.phone_number_id,\n    adminPhone: cfg.admin_phone,\n    systemPrompt,\n    userMessage: msgBody\n  }\n}];"
+        "jsCode": "const rows = $('Get Tenant + Services').all().map(i => i.json);\nconst cfg = rows[0] || {};\nconst services = rows.filter(r => r.service_name).map(r => r.service_name + ' ($' + r.price + ' MXN, ' + r.duration + 'min)').join(', ');\nconst msgBody = $('Parse WA Payload').item.json.msgBody;\nconst phone = $('Parse WA Payload').item.json.phone;\nconst customerName = $('Parse WA Payload').item.json.customerName;\nconst today = new Date().toLocaleDateString('es-MX', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'America/Mexico_City' });\nconst tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0];\nconst todayIso = new Date().toISOString().split('T')[0];\n\nconst systemPrompt = 'Eres ' + (cfg.bot_name || 'Asistente') + ' de ' + (cfg.tenant_name || 'el salón') + '. Tono: ' + (cfg.tone || 'amigable y profesional') + '. Español mexicano. Responde SOLO con JSON válido sin markdown.\\n\\nServicios disponibles: ' + (services || 'manicure, pedicure, uñas gel, acrílico') + '\\nFecha de hoy: ' + today + ' (' + todayIso + ')\\nMañana: ' + tomorrow + '\\n\\nEstructura de respuesta OBLIGATORIA:\\n{\"intent\":\"AGENDAR|CONSULTAR|OTRO\",\"service\":\"nombre o null\",\"date\":\"YYYY-MM-DD o null\",\"time\":\"HH:MM o null\",\"clientName\":\"nombre o null\",\"missing\":[\"servicio\",\"fecha\",\"hora\"],\"reply\":\"respuesta amigable si OTRO, null si AGENDAR/CONSULTAR\"}';\n\nreturn [{\n  json: {\n    phone,\n    customerName,\n    tenantId: cfg.tenant_id,\n    tenantSlug: cfg.tenant_slug,\n    tenantName: cfg.tenant_name,\n    phoneNumberId: cfg.phone_number_id || rows[0]?.phone_number_id,\n    adminPhone: cfg.escalation_phone,\n    systemPrompt,\n    userMessage: msgBody\n  }\n}];"
       }
     },
     {
@@ -214,7 +214,7 @@
       },
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT s.id, s.name, s.price, s.duration_minutes FROM services s JOIN tenants t ON s.tenant_id = t.id WHERE t.id = '{{ $json.tenantId }}'::uuid AND LOWER(s.name) LIKE '%' || LOWER('{{ $json.service }}') || '%' AND s.is_active = true ORDER BY s.name LIMIT 1",
+        "query": "SELECT s.id, s.name, s.price, s.duration FROM services s JOIN tenants t ON s.tenant_id = t.id WHERE t.id = '{{ $json.tenantId }}'::uuid AND LOWER(s.name) LIKE '%' || LOWER('{{ $json.service }}') || '%' AND s.active = true ORDER BY s.name LIMIT 1",
         "options": {}
       }
     },

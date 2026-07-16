@@ -42,7 +42,7 @@
       },
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT s.name AS service_name, s.price, s.duration_minutes, wt.bot_name, wt.tone, wt.display_name, wt.fallback_msg, wt.max_ai_tokens, wt.ai_enabled FROM services s JOIN tenants t ON s.tenant_id = t.id JOIN wa_tenant_config wt ON wt.tenant_slug = t.slug WHERE t.slug = '{{ $json.body.tenantSlug }}' AND s.is_active = true LIMIT 10",
+        "query": "SELECT s.name AS service_name, s.price, s.duration, wt.bot_name, wt.tone, wt.display_name, wt.fallback_msg, wt.max_ai_tokens, wt.ai_enabled FROM services s JOIN tenants t ON s.tenant_id = t.id JOIN wa_tenant_config wt ON wt.tenant_slug = t.slug WHERE t.slug = '{{ $json.body.tenantSlug }}' AND s.active = true LIMIT 10",
         "options": {}
       }
     },

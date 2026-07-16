@@ -4,10 +4,9 @@
  * Servicio para guardar y recuperar mensajes de WhatsApp en la DB
  */
 
-import { db } from "./db/connection";
+import { db } from "@sass-store/database";
+import { whatsappMessages } from "@sass-store/database/schema";
 import { eq, desc, and, sql } from "drizzle-orm";
-
-const whatsappMessages: any = null;
 
 /**
  * Guardar mensaje saliente enviado via WhatsApp
