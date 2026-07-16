@@ -1,5 +1,5 @@
 {
-  "name": "Backup Diario Supabase → Google Drive",
+  "name": "Backup Diario Supabase → Disco Local",
   "settings": { "executionOrder": "v1" },
   "tags": [{ "name": "backup" }, { "name": "supabase" }],
   "nodes": [
@@ -176,30 +176,15 @@
       }
     },
     {
-      "id": "upload-gdrive",
-      "name": "Subir a Google Drive",
-      "type": "n8n-nodes-base.googleDrive",
-      "typeVersion": 3,
+      "id": "save-local",
+      "name": "Guardar en Disco Local",
+      "type": "n8n-nodes-base.writeFile",
+      "typeVersion": 1,
       "position": [900, 520],
-      "credentials": {
-        "googleDriveOAuth2Api": {
-          "id": "gdrive-backup",
-          "name": "Google Drive Backup"
-        }
-      },
       "parameters": {
-        "operation": "upload",
-        "name": "={{ $json.filename }}",
-        "driveId": { "__rl": true, "value": "MyDrive", "mode": "list" },
-        "folderId": {
-          "__rl": true,
-          "value": "{{GDRIVE_BACKUP_FOLDER_ID}}",
-          "mode": "id"
-        },
-        "inputDataFieldName": "content",
-        "options": {
-          "mimeType": "application/json"
-        }
+        "fileName": "={{ ($env.BACKUP_DIR || '/tmp/backups') + '/' + $json.filename }}",
+        "dataPropertyName": "content",
+        "options": {}
       }
     },
     {
@@ -243,7 +228,7 @@
         "sendBody": true,
         "contentType": "raw",
         "rawContentType": "application/json",
-        "body": "={{ JSON.stringify({ messaging_product: 'whatsapp', to: $env.ADMIN_PHONE, type: 'text', text: { body: '❌ ERROR en Backup Supabase: ' + $json.error.message } }) }}"
+        "body": "={{ JSON.stringify({ messaging_product: 'whatsapp', to: $env.ADMIN_PHONE, type: 'text', text: { body: '❌ ERROR en Backup Supabase: ' + ($json.error?.message || JSON.stringify($json.error || 'desconocido')) } }) }}"
       }
     }
   ],
@@ -303,11 +288,80 @@
       ]
     },
     "Combinar Todo en JSON": {
-      "main": [[{ "node": "Subir a Google Drive", "type": "main", "index": 0 }]]
-    },
-    "Subir a Google Drive": {
       "main": [
-        [{ "node": "Notificar Admin por WA", "type": "main", "index": 0 }]
+        [{ "node": "Guardar en Disco Local", "type": "main", "index": 0 }]
+      ]
+    },
+    "Guardar en Disco Local": {
+      "main": [
+        [
+          { "node": "Notificar Admin por WA", "type": "main", "index": 0 },
+          { "node": "Notificar Error por WA", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Export users": {
+      "main": [
+        [
+          { "node": "Combinar Todo en JSON", "type": "main", "index": 0 },
+          { "node": "Notificar Error por WA", "type": "error", "index": 0 }
+        ]
+      ]
+    },
+    "Export tenants": {
+      "main": [
+        [
+          { "node": "Combinar Todo en JSON", "type": "main", "index": 0 },
+          { "node": "Notificar Error por WA", "type": "error", "index": 0 }
+        ]
+      ]
+    },
+    "Export bookings": {
+      "main": [
+        [
+          { "node": "Combinar Todo en JSON", "type": "main", "index": 0 },
+          { "node": "Notificar Error por WA", "type": "error", "index": 0 }
+        ]
+      ]
+    },
+    "Export customers": {
+      "main": [
+        [
+          { "node": "Combinar Todo en JSON", "type": "main", "index": 0 },
+          { "node": "Notificar Error por WA", "type": "error", "index": 0 }
+        ]
+      ]
+    },
+    "Export customer_visits": {
+      "main": [
+        [
+          { "node": "Combinar Todo en JSON", "type": "main", "index": 0 },
+          { "node": "Notificar Error por WA", "type": "error", "index": 0 }
+        ]
+      ]
+    },
+    "Export services": {
+      "main": [
+        [
+          { "node": "Combinar Todo en JSON", "type": "main", "index": 0 },
+          { "node": "Notificar Error por WA", "type": "error", "index": 0 }
+        ]
+      ]
+    },
+    "Export products": {
+      "main": [
+        [
+          { "node": "Combinar Todo en JSON", "type": "main", "index": 0 },
+          { "node": "Notificar Error por WA", "type": "error", "index": 0 }
+        ]
+      ]
+    },
+    "Export user_roles": {
+      "main": [
+        [
+          { "node": "Combinar Todo en JSON", "type": "main", "index": 0 },
+          { "node": "Notificar Error por WA", "type": "error", "index": 0 }
+        ]
       ]
     }
   }
