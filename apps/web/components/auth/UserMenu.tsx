@@ -11,7 +11,6 @@ import {
 } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { CTV_CLAY_ORANGE } from "@/lib/design/centro-tenistico-brand";
 import { cn } from "@/lib/utils";
 import { InstallAppMenuItem } from "@/components/pwa/InstallAppButton";
 import {
@@ -27,10 +26,63 @@ import {
   Wallet,
   Bell,
   Settings,
-  Download,
   LogOut,
   ChevronDown,
 } from "lucide-react";
+
+interface TenantPalette {
+  mode: "light" | "dark";
+  bg: string;
+  fg: string;
+  mutedFg: string;
+  border: string;
+  primary: string;
+  error: string;
+}
+
+const tenantPalettes: Record<string, TenantPalette> = {
+  wondernails: {
+    mode: "light",
+    bg: "#FAF8F5",
+    fg: "#1F1F1F",
+    mutedFg: "#6B5C47",
+    border: "#E8E0D5",
+    primary: "#C5A059",
+    error: "#DC2626",
+  },
+  "centro-tenistico": {
+    mode: "dark",
+    bg: "#1A1208",
+    fg: "#F5F0E8",
+    mutedFg: "#A89B8C",
+    border: "#3D3228",
+    primary: "#D47535",
+    error: "#EF4444",
+  },
+  "zo-system": {
+    mode: "light",
+    bg: "#FFFFFF",
+    fg: "#111827",
+    mutedFg: "#6B7280",
+    border: "#E5E7EB",
+    primary: "#DC2626",
+    error: "#DC2626",
+  },
+};
+
+function resolveTenantPalette(tenantSlug: string | null): TenantPalette {
+  return (
+    tenantPalettes[tenantSlug ?? ""] || {
+      mode: "light",
+      bg: "#FFFFFF",
+      fg: "#111827",
+      mutedFg: "#6B7280",
+      border: "#E5E7EB",
+      primary: "#2563EB",
+      error: "#EF4444",
+    }
+  );
+}
 
 export default function UserMenu({
   tenantSlug,
@@ -53,6 +105,8 @@ export default function UserMenu({
     (typeof window !== "undefined"
       ? localStorage.getItem("currentTenant")
       : null);
+
+  const palette = resolveTenantPalette(currentTenantSlug);
 
   const openMenu = useCallback(() => setIsOpen(true), []);
   const closeMenu = useCallback(() => {
@@ -129,14 +183,7 @@ export default function UserMenu({
               : "px-4 py-2 rounded border border-[#D4AF37] text-[#D4AF37] bg-transparent hover:bg-[#D4AF37] hover:text-black transition-colors font-medium"
             : isDark
               ? "bg-[#FF8000] text-black hover:bg-[#FF5500] hover:shadow-[0_0_15px_rgba(255,128,0,0.4)] px-4 py-2 rounded transition-all font-bold"
-              : currentTenantSlug === "centro-tenistico"
-                ? "px-5 py-2 rounded-lg text-white text-sm font-medium tracking-wide border border-white/15 shadow-none transition-all duration-300 hover:brightness-110 hover:shadow-md"
-                : "bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        }
-        style={
-          !isTransparent && !isDark && currentTenantSlug === "centro-tenistico"
-            ? { backgroundColor: CTV_CLAY_ORANGE }
-            : undefined
+              : "bg-[var(--color-primary)] text-white px-4 py-2 rounded hover:opacity-90 transition-all"
         }
       >
         Iniciar Sesión
@@ -154,7 +201,9 @@ export default function UserMenu({
     user.email?.charAt(0).toUpperCase() ||
     "?";
 
-  const accentColor = variant === "dark" ? "#FF8000" : "#2563EB";
+  const accentColor = variant === "dark" ? "#FF8000" : palette.primary;
+
+  const emailColor = palette.mutedFg;
 
   return (
     <div className="relative" ref={menuRef}>
@@ -188,7 +237,10 @@ export default function UserMenu({
           <span className="font-semibold text-sm max-w-[12rem] truncate">
             {user.name || user.email?.split("@")[0] || "Usuario"}
           </span>
-          <span className="text-xs text-gray-400 max-w-[12rem] truncate">
+          <span
+            className="text-xs max-w-[12rem] truncate"
+            style={{ color: emailColor }}
+          >
             {user.email}
           </span>
         </div>
@@ -203,6 +255,7 @@ export default function UserMenu({
       {isOpen && (
         <DropdownPanel
           menuId={menuId}
+          palette={palette}
           currentTenantSlug={currentTenantSlug}
           isAdminOrManager={isAdminOrManager}
           isZoSystem={isZoSystem}
@@ -217,6 +270,7 @@ export default function UserMenu({
 
 function DropdownPanel({
   menuId,
+  palette,
   currentTenantSlug,
   isAdminOrManager,
   isZoSystem,
@@ -225,6 +279,7 @@ function DropdownPanel({
   onSignOut,
 }: {
   menuId: string;
+  palette: TenantPalette;
   currentTenantSlug: string | null;
   isAdminOrManager: boolean;
   isZoSystem: boolean;
@@ -240,16 +295,21 @@ function DropdownPanel({
 
   const tenant = currentTenantSlug ?? "zo-system";
   const isActive = (href: string) => pathname === href;
+  const { bg, fg, mutedFg, border, primary, error } = palette;
+  const hoverBg = `${primary}2E`;
+  const activeBg = `${primary}3D`;
+  const focusRing = `0 0 0 2px ${primary}66`;
 
   return (
     <div
       id={menuId}
       role="menu"
       aria-labelledby="user-menu-button"
+      style={{ backgroundColor: bg, borderColor: border, color: fg }}
       className={cn(
         "absolute right-0 top-full mt-2 z-50",
         "w-[min(320px,calc(100vw-1rem))] max-h-[70vh]",
-        "rounded-[14px] border border-[#2A2A2A] bg-[#121212]",
+        "rounded-[14px] border",
         "shadow-[0_16px_40px_rgba(0,0,0,0.45)]",
         "py-3 px-2",
         "origin-top-right transition-all duration-150 ease-out",
@@ -257,13 +317,14 @@ function DropdownPanel({
       )}
     >
       {/* CUENTA */}
-      <MenuSection title="Cuenta">
+      <MenuSection title="Cuenta" mutedFg={mutedFg}>
         <MenuItem
           ref={firstItemRef}
           href={`/t/${tenant}/profile`}
           icon={User}
           label="Mi perfil"
           active={isActive(`/t/${tenant}/profile`)}
+          palette={{ fg, mutedFg, primary, activeBg, hoverBg, focusRing }}
           onClick={onClose}
         />
         <MenuItem
@@ -271,18 +332,20 @@ function DropdownPanel({
           icon={ShoppingBag}
           label="Mis pedidos"
           active={isActive(`/t/${tenant}/orders`)}
+          palette={{ fg, mutedFg, primary, activeBg, hoverBg, focusRing }}
           onClick={onClose}
         />
       </MenuSection>
 
       {/* MARKETING */}
       {isAdminOrManager && (
-        <MenuSection title="Marketing">
+        <MenuSection title="Marketing" mutedFg={mutedFg}>
           <MenuItem
             href={`/t/${tenant}/social`}
             icon={Share2}
             label="Redes sociales"
             active={isActive(`/t/${tenant}/social`)}
+            palette={{ fg, mutedFg, primary, activeBg, hoverBg, focusRing }}
             onClick={onClose}
           />
           {isZoSystem && (
@@ -291,6 +354,7 @@ function DropdownPanel({
               icon={Megaphone}
               label="Social Post"
               active={isActive(`/t/${tenant}/social`)}
+              palette={{ fg, mutedFg, primary, activeBg, hoverBg, focusRing }}
               onClick={onClose}
             />
           )}
@@ -298,12 +362,13 @@ function DropdownPanel({
       )}
 
       {/* GESTIÓN */}
-      <MenuSection title="Gestión">
+      <MenuSection title="Gestión" mutedFg={mutedFg}>
         <MenuItem
           href={`/t/${tenant}/clientes`}
           icon={Users}
           label="Clientes"
           active={isActive(`/t/${tenant}/clientes`)}
+          palette={{ fg, mutedFg, primary, activeBg, hoverBg, focusRing }}
           onClick={onClose}
         />
         {isAdminOrManager && (
@@ -312,6 +377,7 @@ function DropdownPanel({
             icon={Package}
             label="Inventario"
             active={isActive(`/t/${tenant}/inventory`)}
+            palette={{ fg, mutedFg, primary, activeBg, hoverBg, focusRing }}
             onClick={onClose}
           />
         )}
@@ -320,6 +386,7 @@ function DropdownPanel({
           icon={Boxes}
           label="Admin Productos"
           active={isActive(`/t/${tenant}/admin_products`)}
+          palette={{ fg, mutedFg, primary, activeBg, hoverBg, focusRing }}
           onClick={onClose}
         />
         <MenuItem
@@ -327,6 +394,7 @@ function DropdownPanel({
           icon={Wrench}
           label="Admin Servicios"
           active={isActive(`/t/${tenant}/admin_services`)}
+          palette={{ fg, mutedFg, primary, activeBg, hoverBg, focusRing }}
           onClick={onClose}
         />
         {isZoSystem && (
@@ -335,6 +403,7 @@ function DropdownPanel({
             icon={Building2}
             label="Admin Tenants"
             active={isActive("/t/zo-system/admin_tenants")}
+            palette={{ fg, mutedFg, primary, activeBg, hoverBg, focusRing }}
             onClick={onClose}
           />
         )}
@@ -342,12 +411,13 @@ function DropdownPanel({
 
       {/* SISTEMA */}
       {isAdminOrManager && (
-        <MenuSection title="Sistema">
+        <MenuSection title="Sistema" mutedFg={mutedFg}>
           <MenuItem
             href={`/t/${tenant}/finance`}
             icon={Wallet}
             label="Finanzas"
             active={isActive(`/t/${tenant}/finance`)}
+            palette={{ fg, mutedFg, primary, activeBg, hoverBg, focusRing }}
             onClick={onClose}
           />
           <MenuItem
@@ -355,6 +425,7 @@ function DropdownPanel({
             icon={Bell}
             label="Notificaciones"
             active={isActive(`/t/${tenant}/admin/notifications`)}
+            palette={{ fg, mutedFg, primary, activeBg, hoverBg, focusRing }}
             onClick={onClose}
           />
           <MenuItem
@@ -362,6 +433,7 @@ function DropdownPanel({
             icon={Settings}
             label="Configuración"
             active={isActive(`/t/${tenant}/admin/content`)}
+            palette={{ fg, mutedFg, primary, activeBg, hoverBg, focusRing }}
             onClick={onClose}
           />
         </MenuSection>
@@ -371,15 +443,20 @@ function DropdownPanel({
       <div className="px-1">
         <InstallAppMenuItem
           onClick={onClose}
-          iconClassName="w-[18px] h-[18px] text-gray-400 group-hover:text-white transition-colors"
-          className="group flex items-center gap-3 w-full h-10 px-3 rounded-lg text-sm text-gray-200 hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30"
+          iconClassName="w-[18px] h-[18px] text-[var(--color-muted-foreground,#9CA3AF)] group-hover:text-[var(--color-foreground,#FFFFFF)] transition-colors"
+          className="group flex items-center gap-3 w-full h-10 px-3 rounded-lg text-sm text-[var(--color-foreground,#E5E7EB)] hover:bg-[var(--color-muted,#374151)]/50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-ring,#3B82F6)]/30"
         />
       </div>
 
       {/* Divider + logout */}
-      <div className="my-2 border-t border-[#2A2A2A]" />
+      <div className="my-2 border-t" style={{ borderColor: border }} />
       <div className="px-1">
-        <SignOutItem onSignOut={onSignOut} />
+        <SignOutItem
+          onSignOut={onSignOut}
+          error={error}
+          hoverBg={`${error}1A`}
+          focusRing={`0 0 0 2px ${error}4D`}
+        />
       </div>
     </div>
   );
@@ -387,14 +464,19 @@ function DropdownPanel({
 
 function MenuSection({
   title,
+  mutedFg,
   children,
 }: {
   title: string;
+  mutedFg: string;
   children: React.ReactNode;
 }) {
   return (
     <div className="py-2" role="group" aria-label={title}>
-      <p className="px-3 text-[11px] font-semibold uppercase tracking-wider text-gray-500 mb-1">
+      <p
+        className="px-3 text-[11px] font-semibold uppercase tracking-wider mb-1"
+        style={{ color: mutedFg }}
+      >
         {title}
       </p>
       <div className="space-y-0.5">{children}</div>
@@ -408,13 +490,25 @@ const MenuItem = ({
   icon: Icon,
   label,
   active,
+  palette,
   onClick,
 }: {
   ref?: React.Ref<HTMLAnchorElement>;
   href: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: React.ComponentType<{
+    className?: string;
+    style?: React.CSSProperties;
+  }>;
   label: string;
   active: boolean;
+  palette: {
+    fg: string;
+    mutedFg: string;
+    primary: string;
+    activeBg: string;
+    hoverBg: string;
+    focusRing: string;
+  };
   onClick: () => void;
 }) => {
   return (
@@ -423,20 +517,36 @@ const MenuItem = ({
       href={href}
       role="menuitem"
       onClick={onClick}
-      className={cn(
-        "group flex items-center gap-3 w-full h-10 px-3 rounded-lg text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30",
-        active
-          ? "bg-white/10 text-white"
-          : "text-gray-200 hover:bg-white/10 hover:text-white",
-      )}
+      style={{
+        color: active ? palette.primary : palette.fg,
+        backgroundColor: active ? palette.activeBg : undefined,
+      }}
+      className="group flex items-center gap-3 w-full h-10 px-3 rounded-lg text-sm transition-colors focus-visible:outline-none"
+      onFocus={(e) => {
+        e.currentTarget.style.boxShadow = palette.focusRing;
+      }}
+      onBlur={(e) => {
+        e.currentTarget.style.boxShadow = "";
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.backgroundColor = palette.hoverBg;
+        e.currentTarget.style.color = palette.fg;
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.backgroundColor = active ? palette.activeBg : "";
+        e.currentTarget.style.color = active ? palette.primary : palette.fg;
+      }}
       aria-current={active ? "page" : undefined}
     >
-      <Icon className="w-[18px] h-[18px] text-gray-400 group-hover:text-white transition-colors" />
+      <Icon
+        className="w-[18px] h-[18px] transition-colors"
+        style={{ color: active ? palette.primary : palette.mutedFg }}
+      />
       <span className="font-medium">{label}</span>
       {active && (
         <span
           className="ml-auto w-1.5 h-1.5 rounded-full"
-          style={{ backgroundColor: "#FF8000" }}
+          style={{ backgroundColor: palette.primary }}
           aria-hidden="true"
         />
       )}
@@ -444,14 +554,37 @@ const MenuItem = ({
   );
 };
 
-function SignOutItem({ onSignOut }: { onSignOut: () => void }) {
+function SignOutItem({
+  onSignOut,
+  error,
+  hoverBg,
+  focusRing,
+}: {
+  onSignOut: () => void;
+  error: string;
+  hoverBg: string;
+  focusRing: string;
+}) {
   return (
     <button
       onClick={onSignOut}
       role="menuitem"
-      className="group flex items-center gap-3 w-full h-10 px-3 rounded-lg text-sm text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400/40"
+      style={{ color: error }}
+      className="group flex items-center gap-3 w-full h-10 px-3 rounded-lg text-sm transition-colors focus-visible:outline-none"
+      onFocus={(e) => {
+        e.currentTarget.style.boxShadow = focusRing;
+      }}
+      onBlur={(e) => {
+        e.currentTarget.style.boxShadow = "";
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.backgroundColor = hoverBg;
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.backgroundColor = "";
+      }}
     >
-      <LogOut className="w-[18px] h-[18px]" />
+      <LogOut className="w-[18px] h-[18px]" style={{ color: error }} />
       <span className="font-medium">Cerrar sesión</span>
     </button>
   );

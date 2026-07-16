@@ -31,3 +31,11 @@
 **Error:** `npx tsc --noEmit` (apps/web) reporta 22 errores `implicit any` (TS7006/TS7031) en archivos **no tocados** por STRY-026: `components/finance/{BudgetManager,CategoryManager,FinancialDashboard}.tsx`, `components/inventory/SupplyExpenseReport.tsx`, `hooks/use{Budgets,Categories,SupplyExpenses}.ts`, `components/admin/menu-designer/MenuEditor.tsx`.
 **Estado:** no corregidos (fuera de alcance). `next build` (Turbopack) pasa a pesar de ellos; `npm run lint` = 0 errores. Código nuevo de STRY-026 = 0 errores de tipo.
 **Acción:** deuda para otra US.
+
+### 2026-07-16 — STRY-029 quality-runner — Build falla por módulos legales preexistentes
+**Síntoma:** `npm run build` falla con 4 errores de Turbopack:
+- `./apps/web/lib/services/dataPrivacyRequestService.ts:2:1` Export `dataPrivacyRequests` doesn't exist in `@sass-store/database/schema`
+- `./apps/web/lib/services/legalConsentService.ts:3:1` Export `legalConsents` doesn't exist
+- `./apps/web/lib/services/legalDocumentService.ts:2:1` Export `legalDocuments` doesn't exist (×2)
+**Impacto:** Build roto global, no introducido por STRY-029. UserMenu no tiene relación con estos imports.
+**Estado:** BLOQUEANTE PREEXISTENTE. No corregido en esta story para no ampliar alcance. Requiere sincronizar schema de DB con exports de `packages/database/schema.ts`.
