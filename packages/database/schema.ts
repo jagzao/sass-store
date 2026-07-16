@@ -3355,3 +3355,85 @@ export const pushSubscriptions = pgTable(
     ),
   }),
 );
+
+/** STRY-027 — Documentos legales por tenant */
+export const legalDocuments = pgTable(
+  "legal_documents",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .references(() => tenants.id)
+      .notNull(),
+    documentType: varchar("document_type", { length: 50 }).notNull(),
+    title: varchar("title", { length: 255 }).notNull(),
+    content: text("content").notNull(),
+    version: varchar("version", { length: 50 }).notNull(),
+    status: varchar("status", { length: 20 }).notNull().default("published"),
+    effectiveAt: timestamp("effective_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => ({
+    tenantIdx: index("legal_documents_tenant_idx").on(table.tenantId),
+    tenantTypeIdx: uniqueIndex("legal_documents_tenant_type_idx").on(
+      table.tenantId,
+      table.documentType,
+    ),
+  }),
+);
+
+/** STRY-027 — Consentimientos legales aceptados por usuarios */
+export const legalConsents = pgTable(
+  "legal_consents",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .references(() => tenants.id)
+      .notNull(),
+    userId: uuid("user_id"),
+    subjectEmail: varchar("subject_email", { length: 255 }).notNull(),
+    termsVersion: varchar("terms_version", { length: 50 }).notNull(),
+    privacyVersion: varchar("privacy_version", { length: 50 }).notNull(),
+    marketingConsent: boolean("marketing_consent").notNull().default(false),
+    whatsappConsent: boolean("whatsapp_consent").notNull().default(false),
+    ipHash: varchar("ip_hash", { length: 64 }),
+    userAgent: text("user_agent"),
+    acceptedAt: timestamp("accepted_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => ({
+    tenantIdx: index("legal_consents_tenant_idx").on(table.tenantId),
+    emailIdx: index("legal_consents_email_idx").on(table.subjectEmail),
+  }),
+);
+
+/** STRY-027 — Solicitudes ARCO de privacidad */
+export const dataPrivacyRequests = pgTable(
+  "data_privacy_requests",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .references(() => tenants.id)
+      .notNull(),
+    userId: uuid("user_id"),
+    requestType: varchar("request_type", { length: 20 }).notNull(),
+    subjectEmail: varchar("subject_email", { length: 255 }).notNull(),
+    notes: text("notes"),
+    status: varchar("status", { length: 20 }).notNull().default("pending"),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => ({
+    tenantIdx: index("data_privacy_requests_tenant_idx").on(table.tenantId),
+    statusIdx: index("data_privacy_requests_status_idx").on(table.status),
+    emailIdx: index("data_privacy_requests_email_idx").on(table.subjectEmail),
+  }),
+);
