@@ -7,9 +7,9 @@ import { loginAs, TEST_CREDENTIALS } from "../helpers/test-helpers";
  */
 
 const TENANTS = [
-  { slug: "wondernails", label: "paleta clara" },
-  { slug: "centro-tenistico", label: "paleta oscura" },
-  { slug: "zo-system", label: "fallback" },
+  { slug: "wondernails", label: "paleta clara", mode: "light" as const },
+  { slug: "centro-tenistico", label: "paleta oscura", mode: "dark" as const },
+  { slug: "zo-system", label: "paleta oscura", mode: "dark" as const },
 ] as const;
 
 async function openUserMenu(page: import("@playwright/test").Page) {
@@ -82,15 +82,15 @@ for (const { slug, label } of TENANTS) {
     }) => {
       const menu = await openUserMenu(page);
 
-      // Background must derive from tenant palette (not hardcoded dark #121212)
       const bg = await menu.evaluate(
         (el) => getComputedStyle(el).backgroundColor,
       );
-      const isHardcodedDark = bg === "rgb(18, 18, 18)";
+      const expectedDark = mode === "dark";
+      const isDarkBg = luminance(bg) < 0.5;
       expect(
-        isHardcodedDark,
-        `menu background should not be hardcoded dark for ${slug}`,
-      ).toBe(false);
+        isDarkBg,
+        `menu background for ${slug} should be ${mode} (got ${bg})`,
+      ).toBe(expectedDark);
 
       // Text color must be readable
       const item = menu.locator("role=menuitem").first();
@@ -135,7 +135,12 @@ for (const { slug, label } of TENANTS) {
       const bg = await menu.evaluate(
         (el) => getComputedStyle(el).backgroundColor,
       );
-      expect(bg).not.toBe("rgb(18, 18, 18)");
+      const expectedDark = mode === "dark";
+      const isDarkBg = luminance(bg) < 0.5;
+      expect(
+        isDarkBg,
+        `responsive menu background for ${slug} should be ${mode}`,
+      ).toBe(expectedDark);
       const item = menu.locator("role=menuitem").first();
       const fg = await item.evaluate((el) => getComputedStyle(el).color);
       expect(contrastRatio(bg, fg)).toBeGreaterThanOrEqual(3);

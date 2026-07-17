@@ -12,6 +12,7 @@ import {
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { useTenant } from "@/lib/tenant/tenant-provider";
 import { InstallAppMenuItem } from "@/components/pwa/InstallAppButton";
 import {
   User,
@@ -40,48 +41,27 @@ interface TenantPalette {
   error: string;
 }
 
-const tenantPalettes: Record<string, TenantPalette> = {
-  wondernails: {
-    mode: "light",
-    bg: "#FAF8F5",
-    fg: "#1F1F1F",
-    mutedFg: "#6B5C47",
-    border: "#E8E0D5",
-    primary: "#C5A059",
-    error: "#DC2626",
-  },
-  "centro-tenistico": {
-    mode: "dark",
-    bg: "#1A1208",
-    fg: "#F5F0E8",
-    mutedFg: "#A89B8C",
-    border: "#3D3228",
-    primary: "#D47535",
+function buildPalette(
+  tenant: ReturnType<typeof useTenant>["tenant"] | null,
+): TenantPalette {
+  const isDark = tenant?.branding?.theme === "dark";
+  const primary =
+    tenant?.branding?.primaryColor ||
+    (typeof window !== "undefined"
+      ? getComputedStyle(document.documentElement).getPropertyValue(
+          "--color-primary",
+        )
+      : "") ||
+    "#2563EB";
+  return {
+    mode: isDark ? "dark" : "light",
+    bg: isDark ? "#121212" : "#FFFFFF",
+    fg: isDark ? "#FAFAFA" : "#09090B",
+    mutedFg: isDark ? "#A1A1AA" : "#71717A",
+    border: isDark ? "#27272A" : "#E4E4E7",
+    primary: primary.trim() || "#2563EB",
     error: "#EF4444",
-  },
-  "zo-system": {
-    mode: "light",
-    bg: "#FFFFFF",
-    fg: "#111827",
-    mutedFg: "#6B7280",
-    border: "#E5E7EB",
-    primary: "#DC2626",
-    error: "#DC2626",
-  },
-};
-
-function resolveTenantPalette(tenantSlug: string | null): TenantPalette {
-  return (
-    tenantPalettes[tenantSlug ?? ""] || {
-      mode: "light",
-      bg: "#FFFFFF",
-      fg: "#111827",
-      mutedFg: "#6B7280",
-      border: "#E5E7EB",
-      primary: "#2563EB",
-      error: "#EF4444",
-    }
-  );
+  };
 }
 
 export default function UserMenu({
@@ -98,15 +78,17 @@ export default function UserMenu({
   const triggerRef = useRef<HTMLButtonElement>(null);
   const menuId = useId();
   const pathname = usePathname();
+  const tenantContext = useTenant();
 
   const currentTenantSlug =
     tenantSlug ||
+    tenantContext?.tenant?.slug ||
     (pathname?.startsWith("/t/") ? pathname.split("/")[2] : null) ||
     (typeof window !== "undefined"
       ? localStorage.getItem("currentTenant")
       : null);
 
-  const palette = resolveTenantPalette(currentTenantSlug);
+  const palette = buildPalette(tenantContext?.tenant ?? null);
 
   const openMenu = useCallback(() => setIsOpen(true), []);
   const closeMenu = useCallback(() => {
