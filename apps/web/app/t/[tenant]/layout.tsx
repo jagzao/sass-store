@@ -10,6 +10,7 @@ import { LiveRegionProvider } from "@/components/a11y/LiveRegion";
 import { GoogleAuthBinder } from "@/components/auth/GoogleAuthBinder";
 import { InstallAppButton } from "@/components/pwa/InstallAppButton";
 import { TenantProvider } from "@/lib/tenant/tenant-provider";
+import { auth } from "@/lib/auth";
 
 import { getTenantStaticParams } from "@/lib/server/tenant-static-params";
 
@@ -86,6 +87,11 @@ interface TenantLayoutProps {
   }>;
 }
 
+function isStaffRole(role?: string | null): boolean {
+  if (!role) return false;
+  return ["admin", "gerente", "personal"].includes(role.toLowerCase());
+}
+
 export default async function TenantLayout({
   children,
   params,
@@ -115,6 +121,12 @@ export default async function TenantLayout({
   const isDark =
     (isZoSystem || tenantData.branding.theme === "dark") && !isCentroTenistico;
 
+  // On the tenant root route, staff users get the dashboard header (HomeTenantHeader).
+  // Hide the public TenantHeader to avoid duplicate headers.
+  const session = await auth();
+  const userRole = (session?.user as { role?: string } | undefined)?.role;
+  const showPublicHeader = !isStaffRole(userRole);
+
   return (
     <>
       <TenantStyles
@@ -134,12 +146,14 @@ export default async function TenantLayout({
         >
           <LiveRegionProvider>
             {isDark && <CircuitSpotlight />}
-            <TenantHeader
-              tenantData={tenantData}
-              variant={
-                isWondernails ? "transparent" : isDark ? "dark" : "default"
-              }
-            />
+            {showPublicHeader && (
+              <TenantHeader
+                tenantData={tenantData}
+                variant={
+                  isWondernails ? "transparent" : isDark ? "dark" : "default"
+                }
+              />
+            )}
             <GoogleAuthBinder tenantSlug={tenantSlug} />
             <main>
               <ErrorBoundary>{children}</ErrorBoundary>
