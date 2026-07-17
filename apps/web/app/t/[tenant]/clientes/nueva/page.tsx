@@ -14,7 +14,13 @@ export default async function NewCustomerPage({ params }: PageProps) {
 
   return (
     <LiveRegionProvider>
-      <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+      <div
+        className="min-h-screen"
+        style={{
+          backgroundColor: "var(--color-background)",
+          color: "var(--color-foreground)",
+        }}
+      >
         {/* Main Content */}
         <main className="container mx-auto px-4 py-8">
           {/* Breadcrumb */}
@@ -23,17 +29,24 @@ export default async function NewCustomerPage({ params }: PageProps) {
               <li className="inline-flex items-center">
                 <a
                   href={`/t/${tenantSlug}`}
-                  className="text-gray-700 hover:text-blue-600 inline-flex items-center"
+                  className="hover:underline inline-flex items-center"
+                  style={{ color: "var(--color-muted-foreground)" }}
                 >
                   Inicio
                 </a>
               </li>
               <li>
                 <div className="flex items-center">
-                  <span className="mx-2 text-gray-400">/</span>
+                  <span
+                    className="mx-2"
+                    style={{ color: "var(--color-muted-foreground)" }}
+                  >
+                    /
+                  </span>
                   <a
                     href={`/t/${tenantSlug}/clientes`}
-                    className="text-gray-700 hover:text-blue-600"
+                    className="hover:underline"
+                    style={{ color: "var(--color-muted-foreground)" }}
                   >
                     {terms.plural}
                   </a>
@@ -41,8 +54,15 @@ export default async function NewCustomerPage({ params }: PageProps) {
               </li>
               <li aria-current="page">
                 <div className="flex items-center">
-                  <span className="mx-2 text-gray-400">/</span>
-                  <span className="text-gray-500">{terms.addLabel}</span>
+                  <span
+                    className="mx-2"
+                    style={{ color: "var(--color-muted-foreground)" }}
+                  >
+                    /
+                  </span>
+                  <span style={{ color: "var(--color-foreground)" }}>
+                    {terms.addLabel}
+                  </span>
                 </div>
               </li>
             </ol>
@@ -50,10 +70,13 @@ export default async function NewCustomerPage({ params }: PageProps) {
 
           {/* Page Title */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            <h1
+              className="text-3xl font-bold mb-2"
+              style={{ color: "var(--color-foreground)" }}
+            >
               {terms.addLabel}
             </h1>
-            <p className="text-gray-600">
+            <p style={{ color: "var(--color-muted-foreground)" }}>
               Complete la información básica del {terms.singularLower}
             </p>
           </div>

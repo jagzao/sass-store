@@ -27,7 +27,6 @@ export function TenantProvider({
   // Apply tenant branding to CSS custom properties
   useEffect(() => {
     const root = document.documentElement;
-    const isDark = tenant.branding.theme === "dark";
 
     // Set CSS custom properties for theming (with neon yellow sanitizer)
     const isYellow = (color: string) =>
@@ -44,24 +43,9 @@ export function TenantProvider({
 
     root.style.setProperty("--color-primary", pColor);
     root.style.setProperty("--color-secondary", sColor);
-
-    // Theme-aware tokens used by shared components (e.g. UserMenu)
-    root.style.setProperty(
-      "--color-background",
-      isDark ? "#121212" : "#FFFFFF",
-    );
-    root.style.setProperty(
-      "--color-foreground",
-      isDark ? "#FAFAFA" : "#09090B",
-    );
-    root.style.setProperty(
-      "--color-muted-foreground",
-      isDark ? "#A1A1AA" : "#71717A",
-    );
-    root.style.setProperty("--color-border", isDark ? "#27272A" : "#E4E4E7");
-    root.style.setProperty("--color-muted", isDark ? "#27272A" : "#F4F4F5");
     root.style.setProperty("--color-ring", pColor);
     root.style.setProperty("--color-error", "#EF4444");
+    // ponytail: background/foreground/muted variables are owned by ThemeProvider
 
     // Update favicon
     const favicon = document.querySelector(

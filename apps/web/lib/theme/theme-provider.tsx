@@ -44,7 +44,12 @@ export function ThemeProvider({
   defaultMode = "system",
   tenantBranding,
 }: ThemeProviderProps) {
-  const [mode, setMode] = useState<ThemeMode>(defaultMode);
+  const [mode, setMode] = useState<ThemeMode>(() => {
+    if (typeof window === "undefined") return defaultMode;
+    const saved = localStorage.getItem("theme-mode") as ThemeMode | null;
+    if (saved && ["light", "dark", "system"].includes(saved)) return saved;
+    return defaultMode;
+  });
   const [branding, setBranding] = useState(tenantBranding);
 
   // Determine the actual theme based on mode and system preference
@@ -107,16 +112,6 @@ export function ThemeProvider({
       localStorage.setItem("theme-mode", mode);
     }
   }, [mode]);
-
-  // Load theme mode from localStorage on mount
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("theme-mode") as ThemeMode | null;
-      if (saved && ["light", "dark", "system"].includes(saved)) {
-        setMode(saved);
-      }
-    }
-  }, []);
 
   const value: ThemeContextValue = {
     theme,

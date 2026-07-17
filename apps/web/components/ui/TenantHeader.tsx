@@ -5,6 +5,8 @@ import { usePathname } from "next/navigation";
 import TenantLogo from "@/components/ui/TenantLogo";
 import TenantNavigation from "@/components/ui/TenantNavigation";
 import UserMenu from "@/components/auth/UserMenu";
+import ThemeToggle from "@/components/theme/ThemeToggle";
+import { InstallAppHeaderButton } from "@/components/pwa/InstallAppButton";
 import { TenantData } from "@/types/tenant";
 
 interface TenantHeaderProps {
@@ -83,7 +85,11 @@ export default function TenantHeader({
           variant={effectiveVariant}
           navLinks={tenantData.branding.navLinks}
         />
-        <UserMenu tenantSlug={tenantData.slug} variant={effectiveVariant} />
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          <InstallAppHeaderButton />
+          <UserMenu tenantSlug={tenantData.slug} variant={effectiveVariant} />
+        </div>
       </div>
     </header>
   );

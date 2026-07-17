@@ -184,83 +184,113 @@ export default function CustomerForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow p-6">
+    <form
+      onSubmit={handleSubmit}
+      className="rounded-lg shadow p-6"
+      style={{
+        backgroundColor: "var(--color-background)",
+        color: "var(--color-foreground)",
+      }}
+    >
       {error && (
-        <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
-          <p className="text-red-800 text-sm">{error}</p>
+        <div
+          className="mb-6 rounded-lg p-4"
+          style={{ backgroundColor: "var(--color-error)", opacity: 0.1 }}
+        >
+          <p className="text-sm" style={{ color: "var(--color-error)" }}>
+            {error}
+          </p>
         </div>
       )}
 
       <div className="space-y-4">
         {/* Name */}
         <div className="relative">
-          <User className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+          <User
+            className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2"
+            style={{ color: "var(--color-muted-foreground)" }}
+          />
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
             aria-label="Nombre Completo"
-            className="w-full pl-9 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full pl-9 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--color-ring)] theme-input"
             placeholder="Nombre completo *"
           />
         </div>
 
         {/* Phone */}
         <div className="relative">
-          <Phone className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+          <Phone
+            className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2"
+            style={{ color: "var(--color-muted-foreground)" }}
+          />
           <input
             type="tel"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
             required
             aria-label="Teléfono"
-            className="w-full pl-9 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full pl-9 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--color-ring)] theme-input"
             placeholder="Teléfono *"
           />
         </div>
 
         {/* Email */}
         <div className="relative">
-          <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+          <Mail
+            className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2"
+            style={{ color: "var(--color-muted-foreground)" }}
+          />
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             aria-label="Email"
-            className="w-full pl-9 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full pl-9 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--color-ring)] theme-input"
             placeholder="Email (opcional)"
           />
         </div>
 
         {/* Birthday */}
         <div className="relative">
-          <Calendar className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+          <Calendar
+            className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2"
+            style={{ color: "var(--color-muted-foreground)" }}
+          />
           <input
             type="date"
             value={birthday}
             onChange={(e) => setBirthday(e.target.value)}
             aria-label="Fecha de Cumpleaños"
-            className="w-full pl-9 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full pl-9 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--color-ring)] theme-input"
           />
         </div>
 
         {/* Address */}
         <div className="relative">
-          <MapPin className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-gray-400" />
+          <MapPin
+            className="pointer-events-none absolute left-3 top-3 h-4 w-4"
+            style={{ color: "var(--color-muted-foreground)" }}
+          />
           <textarea
             value={address}
             onChange={(e) => setAddress(e.target.value)}
             rows={2}
             aria-label="Dirección"
-            className="w-full pl-9 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full pl-9 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--color-ring)] theme-input"
             placeholder="Dirección (opcional)"
           />
         </div>
 
         {/* Status */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label
+            className="block text-sm font-medium mb-2"
+            style={{ color: "var(--color-muted-foreground)" }}
+          >
             Estado
           </label>
           <FormSelect
@@ -278,7 +308,10 @@ export default function CustomerForm({
         <div>
           <div className="flex gap-2 mb-2">
             <div className="relative flex-1">
-              <Tag className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <Tag
+                className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2"
+                style={{ color: "var(--color-muted-foreground)" }}
+              />
               <input
                 type="text"
                 value={newTag}
@@ -290,7 +323,7 @@ export default function CustomerForm({
                   }
                 }}
                 aria-label="Etiquetas"
-                className="w-full pl-9 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full pl-9 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--color-ring)] theme-input"
                 placeholder="Etiquetas (alergias, preferencias...)"
               />
             </div>
@@ -299,7 +332,11 @@ export default function CustomerForm({
               onClick={handleAddTag}
               title="Agregar etiqueta"
               aria-label="Agregar etiqueta"
-              className="px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center justify-center"
+              className="px-3 py-2 rounded-md flex items-center justify-center"
+              style={{
+                backgroundColor: "var(--color-primary)",
+                color: "#FFFFFF",
+              }}
             >
               <PlusCircle className="h-5 w-5" />
             </button>
@@ -340,7 +377,10 @@ export default function CustomerForm({
 
         {/* SECTION: MEDICAL HISTORY */}
         <div className="pt-6 mt-6 border-t border-gray-200">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">
+          <h3
+            className="text-lg font-medium mb-4"
+            style={{ color: "var(--color-foreground)" }}
+          >
             ⚕️ Historial Médico
           </h3>
 
@@ -468,14 +508,23 @@ export default function CustomerForm({
         <button
           type="button"
           onClick={handleCancel}
-          className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+          className="px-4 py-2 rounded-md text-sm font-medium transition-colors"
+          style={{
+            border: "1px solid var(--color-border)",
+            color: "var(--color-foreground)",
+            backgroundColor: "var(--color-background)",
+          }}
         >
           Cancelar
         </button>
         <button
           type="submit"
           disabled={submitting || !name.trim() || !phone.trim()}
-          className="inline-flex items-center gap-2 px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+          className="inline-flex items-center gap-2 px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium disabled:cursor-not-allowed transition-colors"
+          style={{
+            backgroundColor: "var(--color-primary)",
+            color: "#FFFFFF",
+          }}
         >
           <Save className="h-4 w-4" />
           {submitting

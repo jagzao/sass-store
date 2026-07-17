@@ -10,6 +10,7 @@ import { LiveRegionProvider } from "@/components/a11y/LiveRegion";
 import { GoogleAuthBinder } from "@/components/auth/GoogleAuthBinder";
 import { InstallAppButton } from "@/components/pwa/InstallAppButton";
 import { TenantProvider } from "@/lib/tenant/tenant-provider";
+import { ThemeProvider } from "@/lib/theme/theme-provider";
 
 import { getTenantStaticParams } from "@/lib/server/tenant-static-params";
 
@@ -123,30 +124,36 @@ export default async function TenantLayout({
         primaryColor={tenantData.branding?.primaryColor}
       />
       <TenantProvider tenant={tenantData}>
-        <div
-          className={`min-h-screen ${
-            isWondernails
-              ? "bg-[#F8F9FA] text-[#333333]"
-              : isDark
-                ? "bg-[#0D0D0D] text-white font-[family-name:var(--font-montserrat)] relative"
-                : "bg-[#F8F9FA] text-gray-900"
-          }`}
+        <ThemeProvider
+          defaultMode={isZoSystem ? "dark" : "system"}
+          tenantBranding={{
+            primaryColor: tenantData.branding?.primaryColor || "#DC2626",
+            secondaryColor: tenantData.branding?.secondaryColor,
+          }}
         >
-          <LiveRegionProvider>
-            {isDark && <CircuitSpotlight />}
-            <TenantHeader
-              tenantData={tenantData}
-              variant={
-                isWondernails ? "transparent" : isDark ? "dark" : "default"
-              }
-            />
-            <GoogleAuthBinder tenantSlug={tenantSlug} />
-            <main>
-              <ErrorBoundary>{children}</ErrorBoundary>
-            </main>
-            <InstallAppButton />
-          </LiveRegionProvider>
-        </div>
+          <div
+            className="min-h-screen transition-colors"
+            style={{
+              backgroundColor: "var(--color-background)",
+              color: "var(--color-foreground)",
+            }}
+          >
+            <LiveRegionProvider>
+              {isDark && <CircuitSpotlight />}
+              <TenantHeader
+                tenantData={tenantData}
+                variant={
+                  isWondernails ? "transparent" : isDark ? "dark" : "default"
+                }
+              />
+              <GoogleAuthBinder tenantSlug={tenantSlug} />
+              <main>
+                <ErrorBoundary>{children}</ErrorBoundary>
+              </main>
+              <InstallAppButton />
+            </LiveRegionProvider>
+          </div>
+        </ThemeProvider>
       </TenantProvider>
     </>
   );

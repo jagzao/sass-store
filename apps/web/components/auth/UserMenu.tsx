@@ -13,6 +13,7 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { useTenant } from "@/lib/tenant/tenant-provider";
+import { useTheme } from "@/lib/theme/theme-provider";
 import { InstallAppMenuItem } from "@/components/pwa/InstallAppButton";
 import {
   User,
@@ -43,8 +44,13 @@ interface TenantPalette {
 
 function buildPalette(
   tenant: ReturnType<typeof useTenant>["tenant"] | null,
+  themeMode: ReturnType<typeof useTheme>["mode"],
 ): TenantPalette {
-  const isDark = tenant?.branding?.theme === "dark";
+  const isDark =
+    themeMode === "dark" || themeMode === "system"
+      ? typeof window !== "undefined" &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches
+      : false;
   const primary =
     tenant?.branding?.primaryColor ||
     (typeof window !== "undefined"
@@ -79,6 +85,7 @@ export default function UserMenu({
   const menuId = useId();
   const pathname = usePathname();
   const tenantContext = useTenant();
+  const { mode: themeMode } = useTheme();
 
   const currentTenantSlug =
     tenantSlug ||
@@ -88,7 +95,7 @@ export default function UserMenu({
       ? localStorage.getItem("currentTenant")
       : null);
 
-  const palette = buildPalette(tenantContext?.tenant ?? null);
+  const palette = buildPalette(tenantContext?.tenant ?? null, themeMode);
 
   const openMenu = useCallback(() => setIsOpen(true), []);
   const closeMenu = useCallback(() => {
@@ -287,7 +294,11 @@ function DropdownPanel({
       id={menuId}
       role="menu"
       aria-labelledby="user-menu-button"
-      style={{ backgroundColor: bg, borderColor: border, color: fg }}
+      style={{
+        backgroundColor: "var(--color-background)",
+        borderColor: "var(--color-border)",
+        color: "var(--color-foreground)",
+      }}
       className={cn(
         "absolute right-0 top-full mt-2 z-50",
         "w-[min(320px,calc(100vw-1rem))] max-h-[70vh]",
@@ -431,7 +442,10 @@ function DropdownPanel({
       </div>
 
       {/* Divider + logout */}
-      <div className="my-2 border-t" style={{ borderColor: border }} />
+      <div
+        className="my-2 border-t"
+        style={{ borderColor: "var(--color-border)" }}
+      />
       <div className="px-1">
         <SignOutItem
           onSignOut={onSignOut}
@@ -457,7 +471,7 @@ function MenuSection({
     <div className="py-2" role="group" aria-label={title}>
       <p
         className="px-3 text-[11px] font-semibold uppercase tracking-wider mb-1"
-        style={{ color: mutedFg }}
+        style={{ color: "var(--color-muted-foreground)" }}
       >
         {title}
       </p>
@@ -500,7 +514,7 @@ const MenuItem = ({
       role="menuitem"
       onClick={onClick}
       style={{
-        color: active ? palette.primary : palette.fg,
+        color: active ? palette.primary : "var(--color-foreground)",
         backgroundColor: active ? palette.activeBg : undefined,
       }}
       className="group flex items-center gap-3 w-full h-10 px-3 rounded-lg text-sm transition-colors focus-visible:outline-none"
@@ -511,18 +525,22 @@ const MenuItem = ({
         e.currentTarget.style.boxShadow = "";
       }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.backgroundColor = palette.hoverBg;
-        e.currentTarget.style.color = palette.fg;
+        e.currentTarget.style.backgroundColor = "var(--color-muted)";
+        e.currentTarget.style.color = "var(--color-foreground)";
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.backgroundColor = active ? palette.activeBg : "";
-        e.currentTarget.style.color = active ? palette.primary : palette.fg;
+        e.currentTarget.style.color = active
+          ? palette.primary
+          : "var(--color-foreground)";
       }}
       aria-current={active ? "page" : undefined}
     >
       <Icon
         className="w-[18px] h-[18px] transition-colors"
-        style={{ color: active ? palette.primary : palette.mutedFg }}
+        style={{
+          color: active ? palette.primary : "var(--color-muted-foreground)",
+        }}
       />
       <span className="font-medium">{label}</span>
       {active && (

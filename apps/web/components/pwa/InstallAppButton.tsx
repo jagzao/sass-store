@@ -75,7 +75,7 @@ export function InstallAppButton() {
   return (
     <button
       onClick={install}
-      className="fixed bottom-4 right-4 z-50 flex items-center gap-2 bg-blue-600 text-white px-4 py-3 rounded-full shadow-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+      className="hidden md:flex fixed bottom-4 right-4 z-50 items-center gap-2 bg-blue-600 text-white px-4 py-3 rounded-full shadow-lg hover:bg-blue-700 transition-colors text-sm font-medium"
       aria-label="Instalar aplicación"
     >
       <Download className="w-5 h-5" />
@@ -119,6 +119,36 @@ export function InstallAppMenuItem({
     >
       <Download className={iconClassName} />
       <span>Instalar aplicación</span>
+    </button>
+  );
+}
+
+/**
+ * Botón icono "Instalar App" para el header.
+ * Se muestra solo en navegadores que soportan instalación PWA.
+ * Visible en mobile y desktop junto al menú de usuario.
+ */
+export function InstallAppHeaderButton({
+  className = "",
+}: {
+  className?: string;
+}) {
+  const { canInstall, installed, install } = useInstallPrompt();
+
+  if (installed || !canInstall) return null;
+
+  return (
+    <button
+      onClick={install}
+      aria-label="Instalar aplicación"
+      data-testid="pwa-install-header"
+      className={`p-2 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-ring)]/50 ${className}`}
+      style={{
+        color: "var(--color-foreground)",
+        backgroundColor: "var(--color-muted)",
+      }}
+    >
+      <Download className="w-5 h-5" />
     </button>
   );
 }
