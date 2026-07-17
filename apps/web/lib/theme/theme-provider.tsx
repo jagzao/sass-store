@@ -44,12 +44,10 @@ export function ThemeProvider({
   defaultMode = "system",
   tenantBranding,
 }: ThemeProviderProps) {
-  const [mode, setMode] = useState<ThemeMode>(() => {
-    if (typeof window === "undefined") return defaultMode;
-    const saved = localStorage.getItem("theme-mode") as ThemeMode | null;
-    if (saved && ["light", "dark", "system"].includes(saved)) return saved;
-    return defaultMode;
-  });
+  // ponytail: use defaultMode on first render so SSR/hydration match. LocalStorage
+  // is read once in a layout effect to avoid a server/client mismatch.
+  const [mode, setMode] = useState<ThemeMode>(defaultMode);
+  const [mounted, setMounted] = useState(false);
   const [branding, setBranding] = useState(tenantBranding);
 
   // Determine the actual theme based on mode and system preference
@@ -106,12 +104,22 @@ export function ThemeProvider({
     }
   }, [mode]);
 
+  // ponytail: one-shot hydration-safe sync with localStorage.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const saved = localStorage.getItem("theme-mode") as ThemeMode | null;
+    if (saved && ["light", "dark", "system"].includes(saved)) {
+      setMode(saved);
+    }
+    setMounted(true);
+  }, []);
+
   // Persist theme mode to localStorage
   useEffect(() => {
-    if (typeof window !== "undefined") {
+    if (mounted && typeof window !== "undefined") {
       localStorage.setItem("theme-mode", mode);
     }
-  }, [mode]);
+  }, [mode, mounted]);
 
   const value: ThemeContextValue = {
     theme,
