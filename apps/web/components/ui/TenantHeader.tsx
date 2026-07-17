@@ -28,40 +28,6 @@ export default function TenantHeader({
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // DASHBOARD LAYOUT OVERLAP FIX:
-  // If the user is on an admin dashboard route, we completely hide this generic public header
-  // so that the DashboardLayoutWrapper's header and sidebar can take over correctly without overlapping logos.
-  // ALWAYS place early returns AFTER all hooks.
-  // Rutas donde otro layout (dashboard) lleva su propia cabecera.
-  // No incluir `/contact`: la página pública es `/t/{slug}/contact` y debe mostrar este header.
-  const adminRoutes = [
-    "/finance",
-    "/social",
-    "/clientes",
-    "/inventory",
-    "/bookings",
-    "/settings",
-    "/admin",
-  ];
-
-  // Páginas admin que deben conservar el navbar público (logo + nav del tenant).
-  const keepPublicHeaderRoutes = [
-    "/admin/calendar",
-    "/admin_bookings",
-    "/admin/notifications",
-    "/clientes",
-  ];
-  const showPublicTenantHeader = keepPublicHeaderRoutes.some((route) =>
-    pathname?.includes(route),
-  );
-  const isDashboardRoute =
-    !showPublicTenantHeader &&
-    adminRoutes.some((route) => pathname?.includes(route));
-
-  if (isDashboardRoute) {
-    return null;
-  }
-
   const effectiveVariant =
     variant || (tenantData.branding.theme === "dark" ? "dark" : "default");
   const isTransparent = variant === "transparent";

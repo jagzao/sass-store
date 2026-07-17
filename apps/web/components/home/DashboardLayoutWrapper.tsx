@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import HomeTenantBottomNav from "./HomeTenantBottomNav";
-import HomeTenantHeader from "./HomeTenantHeader";
 import HomeTenantMobileMenu from "./HomeTenantMobileMenu";
 
 export interface DashboardLayoutWrapperProps {
@@ -25,12 +24,7 @@ export default function DashboardLayoutWrapper({
     >
       {/* Main Content Area - Full Width */}
       <div className="flex-1 flex flex-col min-h-screen max-w-full overflow-hidden">
-        {/* Header with user info and tenant branding */}
-        <HomeTenantHeader
-          tenantName={tenantName}
-          tenantSlug={tenantSlug}
-          onMenuClick={() => setMobileMenuOpen(true)}
-        />
+        {/* TenantHeader from /t/[tenant]/layout.tsx handles top navigation. */}
 
         {/* Dynamic Dashboard Page Content */}
         <main className="flex-1 p-4 lg:p-6 pb-24 lg:pb-6 overflow-y-auto w-full custom-scrollbar">
