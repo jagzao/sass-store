@@ -11,32 +11,57 @@ export const ZoServices = () => {
         {/* Left Content */}
         <div className="lg:w-1/2">
           <h2 className="text-4xl font-bold text-white mb-6 font-[family-name:var(--font-rajdhani)] uppercase tracking-wider pl-4 border-l-4 border-white">
-            Servicios Expertos
+            Servicios de Desarrollo
           </h2>
           <p className="text-gray-400 text-lg mb-8 leading-relaxed font-[family-name:var(--font-montserrat)]">
-            Más allá del código: Consultoría estratégica, auditoría de
-            arquitectura y desarrollo de equipos de alto rendimiento.
+            Productizado para arrancar rápido y escalar: migraciones .NET, APIs,
+            frontends Next.js, bug fixes y automatización n8n/Python.
           </p>
 
           <div className="space-y-4 mb-10">
             {[
-              "Consultoría de Arquitectura de Software",
-              "Auditoría de Performance & Seguridad",
-              "Mentoria para Equipos Técnicos",
-              "Desarrollo de MVPs Escalables",
+              {
+                name: "Migración a .NET 8 / Modernización",
+                price: "desde $350 USD",
+              },
+              {
+                name: "API REST / Backend (.NET 8 / NestJS / Node.js)",
+                price: "desde $250 USD",
+              },
+              {
+                name: "Aplicaciones Web con Next.js / React / TypeScript",
+                price: "desde $300 USD",
+              },
+              {
+                name: "Bug fix / Feature en .NET, React, Vue o Node",
+                price: "desde $90 USD",
+              },
+              {
+                name: "Automatización de workflows con n8n / Python",
+                price: "desde $250 USD",
+              },
+              {
+                name: "Consultoría Técnica / Revisión de Arquitectura",
+                price: "$150 USD / hora",
+              },
             ].map((item, i) => (
-              <div key={i} className="flex items-center gap-3">
-                <div className="w-2 h-2 rounded-full bg-[#FF8000]" />
-                <span className="text-gray-300 font-medium">{item}</span>
+              <div key={i} className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-2 rounded-full bg-[#FF8000]" />
+                  <span className="text-gray-300 font-medium">{item.name}</span>
+                </div>
+                <span className="text-sm text-[#FF8000] font-semibold">
+                  {item.price}
+                </span>
               </div>
             ))}
           </div>
 
           <Link
-            href="/t/zo-system/contact"
+            href="/t/zo-system/services"
             className="inline-block px-8 py-3 rounded-lg bg-white text-black font-bold hover:bg-gray-200 transition-colors"
           >
-            Agendar Consulta Inicial
+            Ver todos los servicios
           </Link>
         </div>
 

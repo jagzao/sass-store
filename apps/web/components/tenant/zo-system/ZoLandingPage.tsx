@@ -6,7 +6,8 @@ import { ZoServices } from "./ZoServices";
 import { MouseSpotlight } from "./MouseSpotlight";
 import { ZoLandingPageWrapper } from "./ZoLandingPageWrapper";
 import { fetchRevalidating } from "@/lib/api/fetch-with-cache";
-import { Product } from "@/types/tenant";
+import { Product, Service } from "@/types/tenant";
+import { ZoStackBanner } from "./ZoStackBanner";
 
 interface ZoLandingPageProps {
   tenantSlug: string;
@@ -20,6 +21,7 @@ export default async function ZoLandingPage({
       <div className="min-h-screen bg-[#0D0D0D] text-white font-[family-name:var(--font-montserrat)] selection:bg-[#FF8000] selection:text-white">
         <MouseSpotlight />
         <ZoHero />
+        <ZoStackBanner />
 
         <Suspense
           fallback={<div className="h-96 w-full animate-pulse bg-white/5" />}
@@ -30,11 +32,12 @@ export default async function ZoLandingPage({
         <ZoProjects />
         <ZoServices />
 
-        {/* Footer (Simplified for now) */}
+        {/* Footer */}
         <footer className="py-10 border-t border-white/10 text-center text-gray-500 text-sm">
           <p>
             &copy; {new Date().getFullYear()} Zo System. All rights reserved.
           </p>
+          <p className="mt-2">Texcoco, México · jagzao@gmail.com</p>
         </footer>
       </div>
     </ZoLandingPageWrapper>

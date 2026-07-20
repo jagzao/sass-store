@@ -15,36 +15,57 @@ export const ZoHero = () => {
           className="max-w-5xl mx-auto"
         >
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-tight mb-6 font-[family-name:var(--font-rajdhani)] uppercase text-white drop-shadow-[0_0_15px_rgba(255,128,0,0.1)]">
-            Ingeniería de Software
+            Arquitectura
             <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">
-              de Alto Impacto
+              & Desarrollo de Software
             </span>
           </h1>
 
-          <p className="text-lg md:text-2xl text-[#A0A0A0] max-w-3xl mx-auto mb-12 font-[family-name:var(--font-montserrat)] leading-relaxed">
-            Desde Starter Kits de nivel empresarial hasta automatización
-            avanzada con IA.
+          <p className="text-lg md:text-2xl text-[#A0A0A0] max-w-3xl mx-auto mb-8 font-[family-name:var(--font-montserrat)] leading-relaxed">
+            Senior Full-Stack Engineer con 10+ años construyendo plataformas
+            .NET 8, React, Next.js, Node.js, Python y Azure para equipos
+            remotos.
             <br className="hidden md:block" />
             <span className="text-gray-400">
-              Soluciones escalables construidas por un experto.
+              Consultoría, MVPs, automatización y modernización.
             </span>
           </p>
 
+          <div className="flex flex-wrap items-center justify-center gap-3 mb-10">
+            {[
+              ".NET 8",
+              "React",
+              "Next.js",
+              "TypeScript",
+              "Node.js",
+              "Python",
+              "Azure",
+              "n8n",
+            ].map((tech) => (
+              <span
+                key={tech}
+                className="px-3 py-1 rounded-full border border-white/10 bg-white/5 text-sm text-gray-300"
+              >
+                {tech}
+              </span>
+            ))}
+          </div>
+
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
             <Link
-              href="/t/zo-system/products"
+              href="/t/zo-system/services"
               className="group relative px-8 py-4 rounded-full bg-[#FF8000] text-white font-bold text-lg tracking-wider overflow-hidden shadow-[0_0_20px_rgba(255,128,0,0.3)] hover:shadow-[0_0_40px_rgba(255,128,0,0.5)] transition-all duration-300"
             >
-              <span className="relative z-10">EXPLORAR SOLUCIONES</span>
+              <span className="relative z-10">VER SERVICIOS</span>
               <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
             </Link>
 
             <Link
-              href="/t/zo-system/projects"
+              href="/t/zo-system/development"
               className="group relative px-8 py-4 rounded-full border-2 border-[#EAFF00] text-[#EAFF00] font-bold text-lg tracking-wider hover:bg-[#EAFF00]/10 transition-all duration-300 shadow-[0_0_10px_rgba(234,255,0,0.1)] hover:shadow-[0_0_20px_rgba(234,255,0,0.2)]"
             >
-              <span className="relative z-10">VER PROYECTOS</span>
+              <span className="relative z-10">PORTAL DE PROYECTOS</span>
             </Link>
           </div>
         </motion.div>

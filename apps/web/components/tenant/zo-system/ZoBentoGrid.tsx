@@ -12,17 +12,17 @@ interface ZoBentoGridProps {
 export const ZoBentoGrid = ({ products }: ZoBentoGridProps) => {
   if (!products || products.length === 0) return null;
 
-  // Find SaaS Starter Kit to highlight (mock logic or real if name matches)
-  const starterKitIndex = products.findIndex((p) =>
-    p.name.toLowerCase().includes("starter kit"),
-  );
-
-  // Reorder to put starter kit first if found
-  const displayProducts = [...products];
-  if (starterKitIndex > -1) {
-    const [starterKit] = displayProducts.splice(starterKitIndex, 1);
-    displayProducts.unshift(starterKit);
-  }
+  // Reorder: featured first, then templates, then packages
+  const displayProducts = [...products].sort((a, b) => {
+    if (a.featured && !b.featured) return -1;
+    if (!a.featured && b.featured) return 1;
+    const categoryOrder: Record<string, number> = {
+      templates: 0,
+      packages: 1,
+      consulting: 2,
+    };
+    return (categoryOrder[a.category] ?? 3) - (categoryOrder[b.category] ?? 3);
+  });
 
   return (
     <section className="container mx-auto px-4 py-20">
@@ -54,13 +54,27 @@ export const ZoBentoGrid = ({ products }: ZoBentoGridProps) => {
               <div className="p-6 md:p-8 flex flex-col h-full z-10">
                 <div className="flex justify-between items-start mb-4">
                   {/* Tech Badges (Mock based on description) */}
-                  <div className="flex gap-2">
-                    <span className="px-2 py-1 rounded bg-white/5 text-[10px] text-gray-400 border border-white/5">
-                      .NET
-                    </span>
-                    <span className="px-2 py-1 rounded bg-white/5 text-[10px] text-gray-400 border border-white/5">
-                      REACT
-                    </span>
+                  <div className="flex gap-2 flex-wrap">
+                    {(
+                      (product.metadata as Record<string, unknown> | undefined)
+                        ?.tech as string[] | undefined
+                    )?.map((tech) => (
+                      <span
+                        key={tech}
+                        className="px-2 py-1 rounded bg-white/5 text-[10px] text-gray-400 border border-white/5"
+                      >
+                        {tech.toUpperCase()}
+                      </span>
+                    )) ?? (
+                      <>
+                        <span className="px-2 py-1 rounded bg-white/5 text-[10px] text-gray-400 border border-white/5">
+                          .NET
+                        </span>
+                        <span className="px-2 py-1 rounded bg-white/5 text-[10px] text-gray-400 border border-white/5">
+                          REACT
+                        </span>
+                      </>
+                    )}
                   </div>
                   <div className="bg-white/5 rounded-full p-2">
                     <svg

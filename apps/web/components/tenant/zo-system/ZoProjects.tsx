@@ -7,43 +7,39 @@ import { motion, useScroll, useTransform } from "framer-motion";
 const projects = [
   {
     id: 1,
-    title: "EcoSmart Dashboard",
-    description: "IoT Energy Monitoring Platform for Enterprise",
-    image: "/projects/ecosmart.jpg",
+    title: "Sass Store",
+    description:
+      "Marketplace multi-tenant con autenticación, catálogo, citas, pagos y panel admin. Next.js + TypeScript + Drizzle + PostgreSQL.",
+    image: "/projects/sass-store.jpg",
+    link: "https://github.com/jagzao/sass-store",
+    type: "Live Demo",
+  },
+  {
+    id: 2,
+    title: "Saloneo",
+    description:
+      "ERP multi-tenant para salones con agenda, e-commerce y pagos. React + Supabase + Vercel.",
+    image: "/projects/saloneo.jpg",
     link: "#",
     type: "Case Study",
   },
   {
-    id: 2,
-    title: "FinTech Vault",
-    description: "High-security banking interface with biometrics",
-    image: "/projects/fintech.jpg",
-    link: "#",
-    type: "Live Demo",
-  },
-  {
     id: 3,
-    title: "MediCare AI",
-    description: "Diagnostic assistance tool for radiologists",
-    image: "/projects/medicare.jpg",
+    title: "Portal de Citas Multi-tenant",
+    description:
+      "Sistema de reservas white-label para negocios de servicios. Node.js / Next.js / Tailwind.",
+    image: "/projects/booking-portal.jpg",
     link: "#",
     type: "Case Study",
   },
   {
     id: 4,
-    title: "Urban Logistics",
-    description: "Real-time fleet tracking system",
-    image: "/projects/logistics.jpg",
-    link: "#",
-    type: "Live Demo",
-  },
-  {
-    id: 5,
-    title: "Crypto Exchange",
-    description: "Decentralized trading platform UI",
-    image: "/projects/crypto.jpg",
-    link: "#",
-    type: "Case Study",
+    title: "Whisper Transcription CLI",
+    description:
+      "Herramienta Python para transcripción de audio/video con FFmpeg y OpenAI Whisper.",
+    image: "/projects/whisper-cli.jpg",
+    link: "https://github.com/jagzao/whisper-cli",
+    type: "Open Source",
   },
 ];
 
@@ -110,11 +106,21 @@ export const ZoProjects = () => {
                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                   <Link
                     href={project.link}
+                    target={
+                      project.link.startsWith("http") ? "_blank" : undefined
+                    }
+                    rel={
+                      project.link.startsWith("http")
+                        ? "noopener noreferrer"
+                        : undefined
+                    }
                     className="px-6 py-2 rounded-full border border-[#EAFF00] text-[#EAFF00] font-bold hover:bg-[#EAFF00] hover:text-black transition-all transform translate-y-4 group-hover:translate-y-0 duration-300"
                   >
                     {project.type === "Live Demo"
                       ? "▶ Live Demo"
-                      : "Read Case Study"}
+                      : project.type === "Open Source"
+                        ? "Ver Código"
+                        : "Read Case Study"}
                   </Link>
                 </div>
               </div>
