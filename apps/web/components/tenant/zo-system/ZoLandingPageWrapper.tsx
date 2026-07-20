@@ -8,17 +8,23 @@ interface ZoLandingPageWrapperProps {
 
 export function ZoLandingPageWrapper({ children }: ZoLandingPageWrapperProps) {
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      const x = `${e.clientX}px`;
-      const y = `${e.clientY}px`;
-      document.documentElement.style.setProperty("--mouse-x", x);
-      document.documentElement.style.setProperty("--mouse-y", y);
-      document.body.style.setProperty("--mouse-x", x);
-      document.body.style.setProperty("--mouse-y", y);
+    // Smooth scroll for anchor links
+    const handleClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const anchor = target.closest('a[href^="#"]');
+      if (!anchor) return;
+      const href = anchor.getAttribute("href");
+      if (!href || href === "#") return;
+      const id = href.replace("#", "");
+      const el = document.getElementById(id);
+      if (el) {
+        e.preventDefault();
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
     };
 
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
+    document.addEventListener("click", handleClick);
+    return () => document.removeEventListener("click", handleClick);
   }, []);
 
   return <>{children}</>;

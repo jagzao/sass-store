@@ -1,78 +1,90 @@
-"use client";
-
-import React from "react";
-import Link from "next/link";
-import { motion } from "framer-motion";
-
-export const ZoHero = () => {
+export function ZoHero() {
   return (
-    <section className="relative min-h-[90vh] flex items-center justify-center pt-12 px-4 overflow-hidden">
-      <div className="container mx-auto text-center z-10 relative">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="max-w-5xl mx-auto"
-        >
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-tight mb-6 font-[family-name:var(--font-rajdhani)] uppercase text-white drop-shadow-[0_0_15px_rgba(255,128,0,0.1)]">
-            Arquitectura
-            <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">
-              & Desarrollo de Software
-            </span>
-          </h1>
-
-          <p className="text-lg md:text-2xl text-[#A0A0A0] max-w-3xl mx-auto mb-8 font-[family-name:var(--font-montserrat)] leading-relaxed">
-            Senior Full-Stack Engineer con 10+ años construyendo plataformas
-            .NET 8, React, Next.js, Node.js, Python y Azure para equipos
-            remotos.
-            <br className="hidden md:block" />
-            <span className="text-gray-400">
-              Consultoría, MVPs, automatización y modernización.
-            </span>
-          </p>
-
-          <div className="flex flex-wrap items-center justify-center gap-3 mb-10">
-            {[
-              ".NET 8",
-              "React",
-              "Next.js",
-              "TypeScript",
-              "Node.js",
-              "Python",
-              "Azure",
-              "n8n",
-            ].map((tech) => (
-              <span
-                key={tech}
-                className="px-3 py-1 rounded-full border border-white/10 bg-white/5 text-sm text-gray-300"
+    <section className="relative overflow-hidden bg-[#0A0A0A]">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="max-w-2xl">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight text-white leading-[1.1]">
+              Software B2B que automatiza operaciones y escala con tu negocio
+            </h1>
+            <p className="mt-6 text-lg text-gray-400 leading-relaxed">
+              Desarrollamos plataformas SaaS, modernizamos aplicaciones .NET e
+              integramos automatizaciones con inteligencia artificial para
+              empresas de operaciones, finanzas y servicios.
+            </p>
+            <div className="mt-8 flex flex-col sm:flex-row gap-4">
+              <a
+                href="https://calendly.com/jagzao"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center px-6 py-3 rounded bg-[#DC2626] text-white font-medium hover:bg-[#B91D1D] transition-colors"
               >
-                {tech}
-              </span>
-            ))}
+                Agenda una llamada
+              </a>
+              <a
+                href="/t/zo-system/#casos"
+                className="inline-flex items-center justify-center px-6 py-3 rounded border border-white/20 text-white font-medium hover:bg-white/5 transition-colors"
+              >
+                Ver casos reales
+              </a>
+            </div>
+            <p className="mt-6 text-sm text-gray-500">
+              10+ años desarrollando soluciones con .NET, React, Vue, Azure y
+              PostgreSQL para equipos internacionales.
+            </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-            <Link
-              href="/t/zo-system/services"
-              className="group relative px-8 py-4 rounded-full bg-[#FF8000] text-white font-bold text-lg tracking-wider overflow-hidden shadow-[0_0_20px_rgba(255,128,0,0.3)] hover:shadow-[0_0_40px_rgba(255,128,0,0.5)] transition-all duration-300"
-            >
-              <span className="relative z-10">VER SERVICIOS</span>
-              <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-            </Link>
-
-            <Link
-              href="/t/zo-system/development"
-              className="group relative px-8 py-4 rounded-full border-2 border-[#EAFF00] text-[#EAFF00] font-bold text-lg tracking-wider hover:bg-[#EAFF00]/10 transition-all duration-300 shadow-[0_0_10px_rgba(234,255,0,0.1)] hover:shadow-[0_0_20px_rgba(234,255,0,0.2)]"
-            >
-              <span className="relative z-10">PORTAL DE PROYECTOS</span>
-            </Link>
+          <div className="relative">
+            <div className="relative rounded-lg border border-white/10 bg-[#111111] p-4 shadow-2xl">
+              <div className="absolute -inset-px rounded-lg bg-gradient-to-br from-[#DC2626]/20 via-transparent to-[#F59E0B]/10" />
+              <div className="relative space-y-3">
+                <div className="flex items-center justify-between text-xs text-gray-500">
+                  <span>Dashboard de operaciones</span>
+                  <span className="px-2 py-0.5 rounded bg-[#DC2626]/10 text-[#DC2626]">
+                    En producción
+                  </span>
+                </div>
+                <div className="grid grid-cols-3 gap-3">
+                  {[
+                    { label: "Ingresos", value: "$1.2M" },
+                    { label: "Usuarios activos", value: "8,420" },
+                    { label: "Tareas automatizadas", value: "124k" },
+                  ].map((k) => (
+                    <div
+                      key={k.label}
+                      className="rounded bg-[#1A1A1A] p-3 border border-white/5"
+                    >
+                      <div className="text-xs text-gray-500">{k.label}</div>
+                      <div className="text-lg font-semibold text-white mt-1">
+                        {k.value}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="rounded bg-[#1A1A1A] p-3 border border-white/5 h-40 flex items-end gap-2">
+                  {[40, 65, 50, 85, 60, 90, 75].map((h, i) => (
+                    <div
+                      key={i}
+                      className="flex-1 rounded-t bg-gradient-to-t from-[#DC2626] to-[#F59E0B] opacity-80"
+                      style={{ height: `${h}%` }}
+                    />
+                  ))}
+                </div>
+                <div className="flex gap-2">
+                  {["React", ".NET", "PostgreSQL", "Azure"].map((t) => (
+                    <span
+                      key={t}
+                      className="px-2 py-1 rounded bg-white/5 text-xs text-gray-400 border border-white/5"
+                    >
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
-        </motion.div>
+        </div>
       </div>
-
-      {/* Decorative Elements to enhance Spotlight */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#FF8000]/5 rounded-full blur-[120px] -z-10 pointer-events-none" />
     </section>
   );
-};
+}

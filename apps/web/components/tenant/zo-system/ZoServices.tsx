@@ -1,129 +1,119 @@
-"use client";
-
-import React from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { Rocket, CloudCog, Bot, SearchCheck, ArrowRight } from "lucide-react";
 
-export const ZoServices = () => {
+const services = [
+  {
+    icon: Rocket,
+    name: "Desarrollo de plataformas SaaS",
+    description:
+      "Aplicaciones multi-tenant, portales administrativos, suscripciones, pagos, permisos, dashboards e integraciones empresariales.",
+    capabilities: [
+      "Multi-tenant",
+      "Dashboards",
+      "Pagos y suscripciones",
+      "Permisos RBAC",
+      "Integraciones",
+    ],
+  },
+  {
+    icon: CloudCog,
+    name: "Modernización .NET y cloud",
+    description:
+      "Migración de sistemas heredados, construcción de APIs, microservicios, Azure, PostgreSQL, SQL Server y optimización de arquitectura.",
+    capabilities: [
+      "Migración .NET",
+      "APIs REST",
+      "Azure",
+      "PostgreSQL / SQL Server",
+      "Docker",
+    ],
+  },
+  {
+    icon: Bot,
+    name: "Automatización e inteligencia artificial",
+    description:
+      "Agentes inteligentes, RAG, automatizaciones con n8n, procesamiento documental, asistentes empresariales e integración de modelos de IA.",
+    capabilities: [
+      "Agentes y RAG",
+      "n8n",
+      "Procesamiento documental",
+      "Asistentes empresariales",
+      "OpenAI-compatible APIs",
+    ],
+  },
+  {
+    icon: SearchCheck,
+    name: "Auditoría y rescate de proyectos",
+    description:
+      "Revisión de arquitectura, rendimiento, seguridad, deuda técnica, calidad del código y estabilización de aplicaciones existentes.",
+    capabilities: [
+      "Revisión de arquitectura",
+      "Performance",
+      "Seguridad",
+      "Deuda técnica",
+      "Plan de rescate",
+    ],
+  },
+];
+
+export function ZoServices() {
   return (
-    <section className="container mx-auto px-4 py-20 relative">
-      <div className="flex flex-col lg:flex-row items-center gap-16">
-        {/* Left Content */}
-        <div className="lg:w-1/2">
-          <h2 className="text-4xl font-bold text-white mb-6 font-[family-name:var(--font-rajdhani)] uppercase tracking-wider pl-4 border-l-4 border-white">
-            Servicios de Desarrollo
-          </h2>
-          <p className="text-gray-400 text-lg mb-8 leading-relaxed font-[family-name:var(--font-montserrat)]">
-            Productizado para arrancar rápido y escalar: migraciones .NET, APIs,
-            frontends Next.js, bug fixes y automatización n8n/Python.
+    <section id="servicios" className="bg-[#0A0A0A] py-20 lg:py-28">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-2xl">
+          <p className="text-sm font-medium text-[#DC2626] uppercase tracking-wider">
+            Servicios
           </p>
-
-          <div className="space-y-4 mb-10">
-            {[
-              {
-                name: "Migración a .NET 8 / Modernización",
-                price: "desde $350 USD",
-              },
-              {
-                name: "API REST / Backend (.NET 8 / NestJS / Node.js)",
-                price: "desde $250 USD",
-              },
-              {
-                name: "Aplicaciones Web con Next.js / React / TypeScript",
-                price: "desde $300 USD",
-              },
-              {
-                name: "Bug fix / Feature en .NET, React, Vue o Node",
-                price: "desde $90 USD",
-              },
-              {
-                name: "Automatización de workflows con n8n / Python",
-                price: "desde $250 USD",
-              },
-              {
-                name: "Consultoría Técnica / Revisión de Arquitectura",
-                price: "$150 USD / hora",
-              },
-            ].map((item, i) => (
-              <div key={i} className="flex items-center justify-between gap-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 rounded-full bg-[#FF8000]" />
-                  <span className="text-gray-300 font-medium">{item.name}</span>
-                </div>
-                <span className="text-sm text-[#FF8000] font-semibold">
-                  {item.price}
-                </span>
-              </div>
-            ))}
-          </div>
-
-          <Link
-            href="/t/zo-system/services"
-            className="inline-block px-8 py-3 rounded-lg bg-white text-black font-bold hover:bg-gray-200 transition-colors"
-          >
-            Ver todos los servicios
-          </Link>
+          <h2 className="mt-3 text-3xl sm:text-4xl font-semibold tracking-tight text-white">
+            Especialización concreta para proyectos empresariales
+          </h2>
+          <p className="mt-4 text-gray-400">
+            No ofrecemos servicios genéricos. Cada propuesta se construye sobre
+            arquitectura, código mantenible y entregas medibles.
+          </p>
         </div>
 
-        {/* Right Content: Dashboard Preview (Floating Mockup) */}
-        <div className="lg:w-1/2 relative perspective-[1000px]">
-          <motion.div
-            initial={{ rotateY: -10, rotateX: 5, opacity: 0 }}
-            whileInView={{ rotateY: -5, rotateX: 2, opacity: 1 }}
-            transition={{ duration: 1 }}
-            className="relative z-10 bg-[#161616] rounded-xl border border-white/10 shadow-2xl overflow-hidden p-4 transform transition-transform hover:scale-[1.02] duration-500 hover:border-[#FF8000]/30"
-            style={{ transformStyle: "preserve-3d" }}
-          >
-            {/* Mock Browser Header */}
-            <div className="flex items-center gap-2 mb-4 border-b border-white/5 pb-2">
-              <div className="w-3 h-3 rounded-full bg-red-500/50" />
-              <div className="w-3 h-3 rounded-full bg-stone-500/50" />
-              <div className="w-3 h-3 rounded-full bg-green-500/50" />
-              <div className="ml-4 h-4 w-60 bg-white/5 rounded-full" />
-            </div>
-
-            {/* Mock Dashboard Body */}
-            <div className="grid grid-cols-4 gap-4 h-[300px]">
-              {/* Sidebar */}
-              <div className="col-span-1 bg-white/5 rounded-lg p-2 space-y-2">
-                <div className="h-2 w-12 bg-white/10 rounded mb-4" />
-                <div className="h-6 w-full bg-[#FF8000]/20 rounded border border-[#FF8000]/30" />
-                <div className="h-6 w-full bg-white/5 rounded" />
-                <div className="h-6 w-full bg-white/5 rounded" />
-              </div>
-              {/* Main Area */}
-              <div className="col-span-3 space-y-4">
-                <div className="flex gap-4">
-                  <div className="flex-1 h-20 bg-gradient-to-br from-purple-500/10 to-blue-500/10 rounded-lg border border-white/5 p-3">
-                    <div className="h-2 w-10 bg-white/20 rounded mb-2" />
-                    <div className="h-6 w-20 bg-white/30 rounded" />
+        <div className="mt-12 grid md:grid-cols-2 gap-6">
+          {services.map((service) => {
+            const Icon = service.icon;
+            return (
+              <div
+                key={service.name}
+                className="group rounded-xl border border-white/10 bg-[#111111] p-6 hover:border-[#DC2626]/40 transition-colors"
+              >
+                <div className="flex items-start justify-between">
+                  <div className="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-[#DC2626]/10 text-[#DC2626]">
+                    <Icon className="w-5 h-5" aria-hidden="true" />
                   </div>
-                  <div className="flex-1 h-20 bg-gradient-to-br from-orange-500/10 to-red-500/10 rounded-lg border border-white/5 p-3">
-                    <div className="h-2 w-10 bg-white/20 rounded mb-2" />
-                    <div className="h-6 w-20 bg-white/30 rounded" />
-                  </div>
+                  <Link
+                    href="/t/zo-system/contact"
+                    className="text-sm text-[#DC2626] hover:text-white inline-flex items-center gap-1 transition-colors"
+                  >
+                    Solicitar evaluación
+                    <ArrowRight className="w-4 h-4" aria-hidden="true" />
+                  </Link>
                 </div>
-                {/* Chart Area */}
-                <div className="h-32 bg-white/5 rounded-lg border border-white/5 flex items-end justify-between p-4 gap-2">
-                  {[40, 60, 45, 70, 50, 80, 65].map((h, i) => (
-                    <div
-                      key={i}
-                      className="w-full bg-[#FF8000] opacity-50 rounded-t"
-                      style={{ height: `${h}%` }}
-                    />
+                <h3 className="mt-4 text-xl font-semibold text-white">
+                  {service.name}
+                </h3>
+                <p className="mt-2 text-gray-400 text-sm leading-relaxed">
+                  {service.description}
+                </p>
+                <ul className="mt-4 flex flex-wrap gap-2">
+                  {service.capabilities.map((cap) => (
+                    <li
+                      key={cap}
+                      className="px-2 py-1 rounded bg-white/5 text-xs text-gray-400 border border-white/5"
+                    >
+                      {cap}
+                    </li>
                   ))}
-                </div>
+                </ul>
               </div>
-            </div>
-
-            {/* Reflection/Shine */}
-            <div className="absolute inset-0 bg-gradient-to-tr from-white/5 to-transparent pointer-events-none" />
-          </motion.div>
-
-          {/* Backdrop Glow */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[#FF8000]/10 blur-[80px] -z-10" />
+            );
+          })}
         </div>
       </div>
     </section>
   );
-};
+}

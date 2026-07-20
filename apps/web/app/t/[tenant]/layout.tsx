@@ -140,12 +140,14 @@ export default async function TenantLayout({
           >
             <LiveRegionProvider>
               {isDark && <CircuitSpotlight />}
-              <TenantHeader
-                tenantData={tenantData}
-                variant={
-                  isWondernails ? "transparent" : isDark ? "dark" : "default"
-                }
-              />
+              {!isZoSystem && (
+                <TenantHeader
+                  tenantData={tenantData}
+                  variant={
+                    isWondernails ? "transparent" : isDark ? "dark" : "default"
+                  }
+                />
+              )}
               <GoogleAuthBinder tenantSlug={tenantSlug} />
               <main>
                 <ErrorBoundary>{children}</ErrorBoundary>
