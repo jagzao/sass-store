@@ -1,17 +1,15 @@
 {
-  "currentFeature": "STRY-029-user-menu-tenant-palette",
-  "currentStage": "pr-ready",
-  "lastAgent": "quality-runner",
-  "nextRecommendedAgent": "pr-reviewer",
+  "currentFeature": "STRY-031-user-feedback-n8n-pipeline",
+  "currentStage": "test-spec",
+  "lastAgent": "spec",
+  "nextRecommendedAgent": "test-spec",
   "specStatus": "done",
-  "testSpecStatus": "done",
-  "implementationStatus": "done",
-  "testImplementationStatus": "done",
-  "qualityRunnerStatus": "done",
-  "humanApprovalRequired": true,
-  "prReady": true,
-  "lastUpdated": "2026-07-16",
-  "blockers": [
-    "Build global roto por módulos legales preexistentes (legalDocuments/legalConsents/dataPrivacyRequests no exportados de packages/database/schema.ts). No bloquea el cambio de UserMenu pero debe resolverse antes de mergear."
-  ]
+  "testSpecStatus": "pending",
+  "implementationStatus": "pending",
+  "testImplementationStatus": "pending",
+  "qualityRunnerStatus": "pending",
+  "humanApprovalRequired": false,
+  "prReady": false,
+  "lastUpdated": "2026-07-21",
+  "blockers": []
 }
