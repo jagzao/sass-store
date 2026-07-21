@@ -3664,3 +3664,72 @@ export const devDailyReportsRelations = relations(
     }),
   }),
 );
+
+// ========================================================================
+// USER FEEDBACK — STRY-031
+// ========================================================================
+
+export const feedbackCategories = [
+  "opinion",
+  "sugerencia",
+  "problema",
+] as const;
+
+export type FeedbackCategory = (typeof feedbackCategories)[number];
+
+export const feedbackStatuses = [
+  "pending",
+  "sent",
+  "failed",
+  "retrying",
+] as const;
+
+export type FeedbackStatus = (typeof feedbackStatuses)[number];
+
+export const feedback = pgTable(
+  "feedback",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .references(() => tenants.id)
+      .notNull(),
+    category: varchar("category", { length: 20 }).notNull(),
+    message: text("message").notNull(),
+    context: jsonb("context").notNull().default("{}"),
+    userId: uuid("user_id").references(() => users.id),
+    email: varchar("email", { length: 255 }),
+    status: varchar("status", { length: 20 }).notNull().default("pending"),
+    n8nResponse: jsonb("n8n_response"),
+    n8nRequestUrl: varchar("n8n_request_url", { length: 500 }),
+    attempts: integer("attempts").notNull().default(0),
+    lastAttemptAt: timestamp("last_attempt_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => ({
+    tenantIdx: index("feedback_tenant_idx").on(table.tenantId),
+    statusIdx: index("feedback_status_idx").on(table.status),
+    categoryIdx: index("feedback_category_idx").on(table.category),
+    userIdx: index("feedback_user_idx").on(table.userId),
+    createdAtIdx: index("feedback_created_at_idx").on(table.createdAt),
+    tenantStatusIdx: index("feedback_tenant_status_idx").on(
+      table.tenantId,
+      table.status,
+    ),
+  }),
+);
+
+export const feedbackRelations = relations(feedback, ({ one }) => ({
+  tenant: one(tenants, {
+    fields: [feedback.tenantId],
+    references: [tenants.id],
+  }),
+  user: one(users, {
+    fields: [feedback.userId],
+    references: [users.id],
+  }),
+}));
