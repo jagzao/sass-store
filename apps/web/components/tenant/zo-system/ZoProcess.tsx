@@ -33,44 +33,71 @@ const steps = [
 
 export function ZoProcess() {
   return (
-    <section id="proceso" className="bg-[#0A0A0A] py-20 lg:py-28">
+    <section id="proceso" className="relative bg-[#070708] py-24 lg:py-32">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto">
-          <p className="text-sm font-medium text-[#DC2626] uppercase tracking-wider">
+          <p className="text-sm font-medium text-[#e8343d] uppercase tracking-wider">
             Proceso
           </p>
-          <h2 className="mt-3 text-3xl sm:text-4xl font-semibold tracking-tight text-white">
+          <h2 className="mt-3 text-[clamp(2rem,4vw,3rem)] font-semibold tracking-tight text-[#f5f5f7] leading-tight">
             Cómo trabajamos
           </h2>
-          <p className="mt-4 text-gray-400">
+          <p className="mt-4 text-lg text-[#a7abb4]">
             Un proceso claro para reducir riesgo, mantener transparencia y
             entregar valor desde la primera semana.
           </p>
         </div>
 
-        <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {steps.map((step) => {
-            const Icon = step.icon;
-            return (
-              <div
-                key={step.number}
-                className="relative rounded-xl border border-white/10 bg-[#111111] p-6"
-              >
-                <div className="text-xs font-mono text-[#F59E0B] mb-4">
-                  {step.number}
+        <div className="mt-16 hidden lg:block">
+          <div className="relative">
+            <div className="absolute top-[2.25rem] left-[12%] right-[12%] h-px bg-gradient-to-r from-[#282a31] via-[#7d161c] to-[#282a31]" />
+            <div className="grid grid-cols-4 gap-8">
+              {steps.map((step, i) => {
+                const Icon = step.icon;
+                return (
+                  <div key={step.number} className="relative text-center">
+                    <div className="relative z-10 mx-auto mb-6 inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#111216] border border-[#282a31] text-[#e8343d]">
+                      <Icon className="w-6 h-6" aria-hidden="true" />
+                    </div>
+                    <div className="text-sm font-mono text-[#c9a24e] mb-2">
+                      {step.number}
+                    </div>
+                    <h3 className="text-lg font-semibold text-[#f5f5f7]">
+                      {step.title}
+                    </h3>
+                    <p className="mt-2 text-sm text-[#a7abb4] leading-relaxed">
+                      {step.description}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-14 lg:hidden">
+          <div className="relative space-y-10 pl-8">
+            <div className="absolute left-[1.25rem] top-3 bottom-3 w-px bg-gradient-to-b from-[#7d161c] via-[#282a31] to-[#282a31]" />
+            {steps.map((step) => {
+              const Icon = step.icon;
+              return (
+                <div key={step.number} className="relative">
+                  <div className="absolute -left-[2.05rem] top-0 inline-flex items-center justify-center w-10 h-10 rounded-full bg-[#111216] border border-[#282a31] text-[#e8343d]">
+                    <Icon className="w-5 h-5" aria-hidden="true" />
+                  </div>
+                  <div className="text-sm font-mono text-[#c9a24e] mb-1">
+                    {step.number}
+                  </div>{" "}
+                  <h3 className="text-lg font-semibold text-[#f5f5f7]">
+                    {step.title}
+                  </h3>
+                  <p className="mt-1 text-sm text-[#a7abb4] leading-relaxed">
+                    {step.description}
+                  </p>
                 </div>
-                <div className="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-white/5 text-white mb-4">
-                  <Icon className="w-5 h-5" aria-hidden="true" />
-                </div>
-                <h3 className="text-lg font-semibold text-white">
-                  {step.title}
-                </h3>
-                <p className="mt-2 text-sm text-gray-400 leading-relaxed">
-                  {step.description}
-                </p>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       </div>
     </section>

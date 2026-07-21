@@ -13,7 +13,7 @@ import { ZoFooter } from "./ZoFooter";
 import { ZoLandingPageWrapper } from "./ZoLandingPageWrapper";
 import { getTenantBySlug } from "@/lib/server/get-tenant";
 import { db } from "@sass-store/database";
-import { products, services, tenants } from "@sass-store/database/schema";
+import { products, tenants } from "@sass-store/database/schema";
 import { eq, and } from "drizzle-orm";
 
 interface ZoLandingPageProps {
@@ -57,7 +57,7 @@ export default async function ZoLandingPage({
 
   return (
     <ZoLandingPageWrapper>
-      <div className="min-h-screen bg-[#0A0A0A] text-white antialiased selection:bg-[#DC2626] selection:text-white">
+      <div className="min-h-screen bg-[#070708] text-[#f5f5f7] antialiased selection:bg-[#e8343d] selection:text-white">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
@@ -73,7 +73,7 @@ export default async function ZoLandingPage({
           <ZoStack />
           <ZoCTA />
         </main>
-        <Suspense fallback={<div className="h-40 bg-[#0A0A0A]" />}>
+        <Suspense fallback={<div className="h-40 bg-[#070708]" />}>
           <ZoFooterSection tenantId={tenantId} />
         </Suspense>
       </div>

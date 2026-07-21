@@ -58,58 +58,64 @@ const services = [
 
 export function ZoServices() {
   return (
-    <section id="servicios" className="bg-[#0A0A0A] py-20 lg:py-28">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="servicios" className="relative bg-[#070708] py-24 lg:py-32">
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#0d0e11] via-transparent to-[#0d0e11] opacity-50" />
+      <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-2xl">
-          <p className="text-sm font-medium text-[#DC2626] uppercase tracking-wider">
+          <p className="text-sm font-medium text-[#e8343d] uppercase tracking-wider">
             Servicios
           </p>
-          <h2 className="mt-3 text-3xl sm:text-4xl font-semibold tracking-tight text-white">
+          <h2 className="mt-3 text-[clamp(2rem,4vw,3rem)] font-semibold tracking-tight text-[#f5f5f7] leading-tight">
             Especialización concreta para proyectos empresariales
           </h2>
-          <p className="mt-4 text-gray-400">
+          <p className="mt-4 text-lg text-[#a7abb4] max-w-[54ch]">
             No ofrecemos servicios genéricos. Cada propuesta se construye sobre
             arquitectura, código mantenible y entregas medibles.
           </p>
         </div>
 
-        <div className="mt-12 grid md:grid-cols-2 gap-6">
-          {services.map((service) => {
+        <div className="mt-14 grid md:grid-cols-2 gap-5">
+          {services.map((service, index) => {
             const Icon = service.icon;
+            const accent =
+              index % 2 === 0 ? "from-[#e8343d]" : "from-[#c9a24e]";
             return (
-              <div
+              <article
                 key={service.name}
-                className="group rounded-xl border border-white/10 bg-[#111111] p-6 hover:border-[#DC2626]/40 transition-colors"
+                className="group relative rounded-xl border border-[#282a31] bg-[#111216] p-6 lg:p-7 hover:border-[#e8343d]/50 hover:bg-[#18191e] transition-all"
               >
+                <div
+                  className={`absolute top-0 left-0 right-0 h-1 rounded-t-xl bg-gradient-to-r ${accent} to-transparent opacity-70`}
+                />
                 <div className="flex items-start justify-between">
-                  <div className="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-[#DC2626]/10 text-[#DC2626]">
-                    <Icon className="w-5 h-5" aria-hidden="true" />
+                  <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-[#7d161c]/40 text-[#e8343d] border border-[#7d161c]">
+                    <Icon className="w-6 h-6" aria-hidden="true" />
                   </div>
                   <Link
                     href="/t/zo-system/contact"
-                    className="text-sm text-[#DC2626] hover:text-white inline-flex items-center gap-1 transition-colors"
+                    className="text-sm text-[#e8343d] hover:text-[#ff4650] inline-flex items-center gap-1 transition-colors"
                   >
                     Solicitar evaluación
                     <ArrowRight className="w-4 h-4" aria-hidden="true" />
                   </Link>
                 </div>
-                <h3 className="mt-4 text-xl font-semibold text-white">
+                <h3 className="mt-5 text-xl font-semibold text-[#f5f5f7]">
                   {service.name}
                 </h3>
-                <p className="mt-2 text-gray-400 text-sm leading-relaxed">
+                <p className="mt-2 text-[#a7abb4] leading-relaxed">
                   {service.description}
                 </p>
-                <ul className="mt-4 flex flex-wrap gap-2">
+                <ul className="mt-5 flex flex-wrap gap-2">
                   {service.capabilities.map((cap) => (
                     <li
                       key={cap}
-                      className="px-2 py-1 rounded bg-white/5 text-xs text-gray-400 border border-white/5"
+                      className="px-3 py-1 rounded-full bg-[#18191e] text-xs text-[#a7abb4] border border-[#282a31]"
                     >
                       {cap}
                     </li>
                   ))}
                 </ul>
-              </div>
+              </article>
             );
           })}
         </div>

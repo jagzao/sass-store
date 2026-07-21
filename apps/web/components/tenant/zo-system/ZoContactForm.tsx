@@ -21,6 +21,9 @@ const projectTypes = [
   "Otro",
 ];
 
+const inputClass =
+  "w-full rounded-lg border border-[#282a31] bg-[#18191e] px-3.5 py-2.5 text-[#f5f5f7] placeholder-[#737782] focus:border-[#e8343d] focus:outline-none focus:ring-1 focus:ring-[#e8343d] transition-shadow";
+
 export default function ZoContactForm() {
   const [form, setForm] = useState({
     name: "",
@@ -91,80 +94,55 @@ export default function ZoContactForm() {
   };
 
   return (
-    <section className="min-h-screen bg-[#0A0A0A] text-white">
+    <section className="min-h-screen bg-[#070708] text-[#f5f5f7] pt-24">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
         <div className="grid lg:grid-cols-2 gap-12">
           <div className="max-w-lg">
             <Link
               href="/t/zo-system"
-              className="text-sm text-gray-400 hover:text-white transition-colors"
+              className="text-sm text-[#737782] hover:text-[#f5f5f7] transition-colors"
             >
               ← Volver a inicio
             </Link>
-            <h1 className="mt-6 text-3xl sm:text-4xl font-semibold tracking-tight text-white">
+            <h1 className="mt-6 text-[clamp(2rem,4vw,3rem)] font-semibold tracking-tight text-[#f5f5f7]">
               Contacto
             </h1>
-            <p className="mt-4 text-gray-400">
+            <p className="mt-4 text-lg text-[#a7abb4]">
               Cuéntanos qué sistema necesitas construir, modernizar o rescatar.
               Revisaremos tu caso y te propondremos la mejor estrategia técnica.
             </p>
 
             <div className="mt-8 space-y-4">
-              <a
+              <ContactCard
                 href="https://calendly.com/jagzao"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-3 p-4 rounded-lg border border-white/10 bg-[#111111] hover:border-[#DC2626]/40 transition-colors"
-              >
-                <div className="w-10 h-10 rounded-lg bg-[#DC2626]/10 flex items-center justify-center text-[#DC2626]">
-                  <Phone className="w-5 h-5" />
-                </div>
-                <div>
-                  <div className="text-sm font-medium text-white">
-                    Agenda una llamada
-                  </div>
-                  <div className="text-xs text-gray-400">
-                    Disponible de lunes a viernes
-                  </div>
-                </div>
-              </a>
-
-              <a
+                title="Agenda una llamada"
+                subtitle="Disponible de lunes a viernes"
+                icon={Phone}
+                accent="red"
+              />
+              <ContactCard
                 href="https://wa.me/525549264189"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-3 p-4 rounded-lg border border-white/10 bg-[#111111] hover:border-[#DC2626]/40 transition-colors"
-              >
-                <div className="w-10 h-10 rounded-lg bg-green-500/10 flex items-center justify-center text-green-400">
-                  <MessageCircle className="w-5 h-5" />
-                </div>
-                <div>
-                  <div className="text-sm font-medium text-white">WhatsApp</div>
-                  <div className="text-xs text-gray-400">+52 55 4926 4189</div>
-                </div>
-              </a>
-
-              <a
+                title="WhatsApp"
+                subtitle="+52 55 4926 4189"
+                icon={MessageCircle}
+                accent="green"
+              />
+              <ContactCard
                 href="mailto:jagzao@gmail.com"
-                className="flex items-center gap-3 p-4 rounded-lg border border-white/10 bg-[#111111] hover:border-[#DC2626]/40 transition-colors"
-              >
-                <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center text-gray-300">
-                  <Mail className="w-5 h-5" />
-                </div>
-                <div>
-                  <div className="text-sm font-medium text-white">Email</div>
-                  <div className="text-xs text-gray-400">jagzao@gmail.com</div>
-                </div>
-              </a>
+                title="Email"
+                subtitle="jagzao@gmail.com"
+                icon={Mail}
+                accent="neutral"
+              />
             </div>
 
-            <div className="mt-8 flex items-center gap-4">
+            <div className="mt-8 flex items-center gap-5">
               <a
                 href="https://www.linkedin.com/in/jagzao"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="LinkedIn"
-                className="text-gray-400 hover:text-white transition-colors"
+                className="text-[#737782] hover:text-[#e8343d] transition-colors"
               >
                 <Linkedin className="w-5 h-5" />
               </a>
@@ -173,28 +151,28 @@ export default function ZoContactForm() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="GitHub"
-                className="text-gray-400 hover:text-white transition-colors"
+                className="text-[#737782] hover:text-[#e8343d] transition-colors"
               >
                 <Github className="w-5 h-5" />
               </a>
             </div>
           </div>
 
-          <div className="rounded-xl border border-white/10 bg-[#111111] p-6 sm:p-8">
+          <div className="rounded-xl border border-[#282a31] bg-[#111216] p-6 sm:p-8">
             {status === "success" ? (
               <div className="text-center py-12">
                 <CheckCircle2 className="w-12 h-12 text-green-400 mx-auto" />
-                <h2 className="mt-4 text-xl font-semibold text-white">
+                <h2 className="mt-4 text-xl font-semibold text-[#f5f5f7]">
                   Mensaje enviado
                 </h2>
-                <p className="mt-2 text-gray-400">
+                <p className="mt-2 text-[#a7abb4]">
                   Revisaremos tu mensaje y te contactaremos en menos de 24 horas
                   hábiles.
                 </p>
                 <button
                   type="button"
                   onClick={() => setStatus("idle")}
-                  className="mt-6 text-sm text-[#DC2626] hover:text-white"
+                  className="mt-6 text-sm text-[#e8343d] hover:text-[#ff4650]"
                 >
                   Enviar otro mensaje
                 </button>
@@ -202,13 +180,7 @@ export default function ZoContactForm() {
             ) : (
               <form onSubmit={handleSubmit} className="space-y-5" noValidate>
                 <div className="grid sm:grid-cols-2 gap-5">
-                  <div>
-                    <label
-                      htmlFor="name"
-                      className="block text-sm font-medium text-gray-300 mb-1.5"
-                    >
-                      Nombre *
-                    </label>
+                  <Field label="Nombre *" htmlFor="name" error={errors.name}>
                     <input
                       type="text"
                       id="name"
@@ -217,23 +189,12 @@ export default function ZoContactForm() {
                       onChange={(e) =>
                         setForm((f) => ({ ...f, name: e.target.value }))
                       }
-                      className="w-full rounded-lg border border-white/10 bg-[#0A0A0A] px-3 py-2.5 text-white placeholder-gray-500 focus:border-[#DC2626] focus:outline-none focus:ring-1 focus:ring-[#DC2626]"
+                      className={inputClass}
                       placeholder="Tu nombre"
                     />
-                    {errors.name && (
-                      <p className="mt-1 text-xs text-[#DC2626]">
-                        {errors.name}
-                      </p>
-                    )}
-                  </div>
+                  </Field>
 
-                  <div>
-                    <label
-                      htmlFor="company"
-                      className="block text-sm font-medium text-gray-300 mb-1.5"
-                    >
-                      Empresa
-                    </label>
+                  <Field label="Empresa" htmlFor="company">
                     <input
                       type="text"
                       id="company"
@@ -242,19 +203,13 @@ export default function ZoContactForm() {
                       onChange={(e) =>
                         setForm((f) => ({ ...f, company: e.target.value }))
                       }
-                      className="w-full rounded-lg border border-white/10 bg-[#0A0A0A] px-3 py-2.5 text-white placeholder-gray-500 focus:border-[#DC2626] focus:outline-none focus:ring-1 focus:ring-[#DC2626]"
+                      className={inputClass}
                       placeholder="Nombre de la empresa"
                     />
-                  </div>
+                  </Field>
                 </div>
 
-                <div>
-                  <label
-                    htmlFor="email"
-                    className="block text-sm font-medium text-gray-300 mb-1.5"
-                  >
-                    Correo *
-                  </label>
+                <Field label="Correo *" htmlFor="email" error={errors.email}>
                   <input
                     type="email"
                     id="email"
@@ -263,23 +218,16 @@ export default function ZoContactForm() {
                     onChange={(e) =>
                       setForm((f) => ({ ...f, email: e.target.value }))
                     }
-                    className="w-full rounded-lg border border-white/10 bg-[#0A0A0A] px-3 py-2.5 text-white placeholder-gray-500 focus:border-[#DC2626] focus:outline-none focus:ring-1 focus:ring-[#DC2626]"
+                    className={inputClass}
                     placeholder="tu@empresa.com"
                   />
-                  {errors.email && (
-                    <p className="mt-1 text-xs text-[#DC2626]">
-                      {errors.email}
-                    </p>
-                  )}
-                </div>
+                </Field>
 
-                <div>
-                  <label
-                    htmlFor="type"
-                    className="block text-sm font-medium text-gray-300 mb-1.5"
-                  >
-                    Tipo de proyecto *
-                  </label>
+                <Field
+                  label="Tipo de proyecto *"
+                  htmlFor="type"
+                  error={errors.type}
+                >
                   <select
                     id="type"
                     name="type"
@@ -287,7 +235,7 @@ export default function ZoContactForm() {
                     onChange={(e) =>
                       setForm((f) => ({ ...f, type: e.target.value }))
                     }
-                    className="w-full rounded-lg border border-white/10 bg-[#0A0A0A] px-3 py-2.5 text-white focus:border-[#DC2626] focus:outline-none focus:ring-1 focus:ring-[#DC2626]"
+                    className={inputClass}
                   >
                     <option value="">Selecciona una opción</option>
                     {projectTypes.map((t) => (
@@ -296,18 +244,13 @@ export default function ZoContactForm() {
                       </option>
                     ))}
                   </select>
-                  {errors.type && (
-                    <p className="mt-1 text-xs text-[#DC2626]">{errors.type}</p>
-                  )}
-                </div>
+                </Field>
 
-                <div>
-                  <label
-                    htmlFor="description"
-                    className="block text-sm font-medium text-gray-300 mb-1.5"
-                  >
-                    Descripción del proyecto *
-                  </label>
+                <Field
+                  label="Descripción del proyecto *"
+                  htmlFor="description"
+                  error={errors.description}
+                >
                   <textarea
                     id="description"
                     name="description"
@@ -316,23 +259,15 @@ export default function ZoContactForm() {
                     onChange={(e) =>
                       setForm((f) => ({ ...f, description: e.target.value }))
                     }
-                    className="w-full rounded-lg border border-white/10 bg-[#0A0A0A] px-3 py-2.5 text-white placeholder-gray-500 focus:border-[#DC2626] focus:outline-none focus:ring-1 focus:ring-[#DC2626]"
+                    className={inputClass}
                     placeholder="¿Qué problema necesitas resolver? ¿Qué sistemas usas hoy? ¿Cuál es el objetivo de negocio?"
                   />
-                  {errors.description && (
-                    <p className="mt-1 text-xs text-[#DC2626]">
-                      {errors.description}
-                    </p>
-                  )}
-                </div>
+                </Field>
 
-                <div>
-                  <label
-                    htmlFor="budget"
-                    className="block text-sm font-medium text-gray-300 mb-1.5"
-                  >
-                    Presupuesto aproximado (opcional)
-                  </label>
+                <Field
+                  label="Presupuesto aproximado (opcional)"
+                  htmlFor="budget"
+                >
                   <select
                     id="budget"
                     name="budget"
@@ -340,7 +275,7 @@ export default function ZoContactForm() {
                     onChange={(e) =>
                       setForm((f) => ({ ...f, budget: e.target.value }))
                     }
-                    className="w-full rounded-lg border border-white/10 bg-[#0A0A0A] px-3 py-2.5 text-white focus:border-[#DC2626] focus:outline-none focus:ring-1 focus:ring-[#DC2626]"
+                    className={inputClass}
                   >
                     <option value="">Selecciona un rango</option>
                     <option value="10k-25k">$10,000 – $25,000 USD</option>
@@ -349,7 +284,7 @@ export default function ZoContactForm() {
                     <option value="100k+">Más de $100,000 USD</option>
                     <option value="unknown">Aún por definir</option>
                   </select>
-                </div>
+                </Field>
 
                 <input
                   type="text"
@@ -359,7 +294,7 @@ export default function ZoContactForm() {
                 />
 
                 {status === "error" && (
-                  <p className="text-sm text-[#DC2626]">
+                  <p className="text-sm text-[#e8343d]">
                     No se pudo enviar el mensaje. Intenta de nuevo o contáctanos
                     por email.
                   </p>
@@ -368,7 +303,7 @@ export default function ZoContactForm() {
                 <button
                   type="submit"
                   disabled={status === "submitting"}
-                  className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 rounded bg-[#DC2626] text-white font-medium hover:bg-[#B91D1D] transition-colors disabled:opacity-60"
+                  className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg bg-[#e8343d] text-[#f5f5f7] font-medium shadow-[0_0_0_1px_#7d161c,0_8px_24px_-10px_rgba(232,52,61,0.35)] hover:bg-[#ff4650] hover:shadow-[0_0_0_1px_#7d161c,0_12px_32px_-8px_rgba(232,52,61,0.45)] transition-all disabled:opacity-60 min-h-[48px]"
                 >
                   {status === "submitting" ? (
                     <>
@@ -388,5 +323,69 @@ export default function ZoContactForm() {
         </div>
       </div>
     </section>
+  );
+}
+
+function Field({
+  label,
+  htmlFor,
+  error,
+  children,
+}: {
+  label: string;
+  htmlFor: string;
+  error?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div>
+      <label
+        htmlFor={htmlFor}
+        className="block text-sm font-medium text-[#a7abb4] mb-1.5"
+      >
+        {label}
+      </label>
+      {children}
+      {error && <p className="mt-1 text-xs text-[#e8343d]">{error}</p>}
+    </div>
+  );
+}
+
+function ContactCard({
+  href,
+  title,
+  subtitle,
+  icon: Icon,
+  accent,
+}: {
+  href: string;
+  title: string;
+  subtitle: string;
+  icon: typeof Phone;
+  accent: "red" | "green" | "neutral";
+}) {
+  const accentClasses =
+    accent === "red"
+      ? "bg-[#7d161c]/40 text-[#e8343d] border-[#7d161c]"
+      : accent === "green"
+        ? "bg-green-500/10 text-green-400 border-green-500/20"
+        : "bg-[#18191e] text-[#a7abb4] border-[#282a31]";
+  return (
+    <a
+      href={href}
+      target={href.startsWith("http") ? "_blank" : undefined}
+      rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
+      className="flex items-center gap-4 p-4 rounded-xl border border-[#282a31] bg-[#111216] hover:border-[#e8343d]/50 hover:bg-[#18191e] transition-colors"
+    >
+      <div
+        className={`w-11 h-11 rounded-lg flex items-center justify-center border ${accentClasses}`}
+      >
+        <Icon className="w-5 h-5" />
+      </div>
+      <div>
+        <div className="text-sm font-medium text-[#f5f5f7]">{title}</div>
+        <div className="text-xs text-[#737782]">{subtitle}</div>
+      </div>
+    </a>
   );
 }

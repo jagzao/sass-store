@@ -116,57 +116,25 @@ export function TenantStyles({
         `
     : isZoSystem
       ? `
-          /* Zo System Dark Mode Overrides */
+          /* Zo Systems — premium dark palette */
           :root {
-            --background: 13 13 13;
-            --foreground: 255 255 255;
-            --primary: 255 128 0;
-            --primary-foreground: 13 13 13;
-            --font-sans: var(--font-montserrat);
+            --background: 7 7 8;
+            --foreground: 245 245 247;
+            --primary: 232 52 61;
+            --primary-foreground: 245 245 247;
+            --font-sans: var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
           }
 
           body {
-            background-color: #0D0D0D !important;
-            color: #FFFFFF !important;
+            background-color: #070708 !important;
+            color: #f5f5f7 !important;
             overflow-x: hidden !important;
           }
 
+          /* Keep headings neutral; components set their own typography */
           h1, h2, h3, h4, h5, h6 {
-            font-family: var(--font-rajdhani), sans-serif !important;
-            color: #FFFFFF !important;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
+            color: inherit !important;
           }
-
-          /* Glassmorphism for Cards */
-          [data-testid="product-card"], [data-testid="service-card"], .glass-panel {
-            background: rgba(255, 255, 255, 0.03) !important;
-            backdrop-filter: blur(10px) !important;
-            border: 1px solid rgba(255, 255, 255, 0.1) !important;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
-          }
-
-          /* Neon Accents for Text */
-          .text-primary, .text-neon-orange {
-            color: #FF8000 !important;
-          }
-          
-          .text-secondary, .text-neon-yellow {
-             color: #EAFF00 !important;
-          }
-
-          /* Inputs */
-          input, select, textarea {
-            background-color: rgba(255, 255, 255, 0.05) !important;
-            border-color: rgba(255, 255, 255, 0.1) !important;
-            color: white !important;
-          }
-          
-          /* Modals */
-           [role="dialog"], .modal-content {
-            background-color: #0D0D0D !important;
-            border: 1px solid rgba(255, 255, 255, 0.1) !important;
-           }
         `
       : `
           /* Default tenant styles — uses tenant's actual primary color */

@@ -1,225 +1,133 @@
-import { ArrowUpRight, Layers, Bot, Store, ShieldCheck } from "lucide-react";
+import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
 
 const cases = [
   {
-    icon: Layers,
     name: "ReelFlow",
-    context:
-      "Empresa de marketing que necesitaba procesar, revisar y publicar cientos de videos cortos por semana para múltiples marcas.",
+    category: "Automatización de contenido",
     problem:
       "Proceso manual de descarga, edición, revisión, subtítulos y publicación en redes sociales. Errores frecuentes y lentitud.",
     solution:
       "Plataforma multi-tenant que automatiza el pipeline de videos: ingestión, procesamiento, aprobación, programación y publicación.",
-    responsibilities: [
-      "Arquitectura multi-tenant",
-      "Pipeline de procesamiento de video",
-      "Colas y workers con Celery",
-      "Panel de administración",
-      "Observabilidad",
-    ],
-    tech: [
-      "React",
-      "FastAPI",
-      "PostgreSQL",
-      "Redis",
-      "Celery",
-      "Docker",
-      "Prometheus",
-      "Grafana",
-    ],
+    tech: ["React", "FastAPI", "PostgreSQL", "Redis", "Celery", "Docker"],
     outcome:
       "Reducción del tiempo de publicación de horas a minutos con trazabilidad completa.",
     status: "En producción",
+    image: "reelflow-dashboard",
   },
   {
-    icon: Bot,
     name: "ConversAI",
-    context:
-      "Empresa de servicios que recibía consultas repetitivas por web y WhatsApp y necesitaba respuestas personalizadas por negocio.",
+    category: "Agente inteligente multi-tenant",
     problem:
       "Atención manual saturada, respuestas inconsistentes y dificultad para mantener conocimiento actualizado por cliente.",
     solution:
       "Agente inteligente multi-tenant con RAG que responde desde la información privada de cada negocio, con panel de control.",
-    responsibilities: [
-      "Diseño de arquitectura RAG",
-      "Integración multi-tenant",
-      "Conector de WhatsApp",
-      "Panel administrativo",
-      "Embeddings y retrieval",
-    ],
-    tech: [
-      "Python",
-      "FastAPI",
-      "PostgreSQL",
-      "OpenAI-compatible API",
-      "RAG",
-      "n8n",
-    ],
+    tech: ["Python", "FastAPI", "PostgreSQL", "OpenAI", "RAG", "n8n"],
     outcome:
       "Respuestas automáticas con contexto de cada negocio y escalabilidad por tenant.",
     status: "Piloto activo",
+    image: "conversai-widget",
   },
   {
-    icon: Store,
     name: "SaaS Store",
-    context:
-      "Plataforma vertical para negocios de servicios que necesitan catálogo, reservas, inventario, publicaciones y administración.",
+    category: "Plataforma vertical multi-tenant",
     problem:
       "Soluciones fragmentadas, altos costos de integración y dificultad para lanzar nuevos tenants rápidamente.",
     solution:
       "SaaS multi-tenant unificado con catálogo, ventas, reservas, inventario, publicaciones y administración centralizada.",
-    responsibilities: [
-      "Arquitectura multi-tenant",
-      "Catálogo y reservas",
-      "Inventario",
-      "Publicaciones automatizadas",
-      "Panel administrativo",
-    ],
-    tech: [
-      "Nuxt",
-      "Vue",
-      "TypeScript",
-      "Cloudflare Workers",
-      "D1",
-      "Drizzle",
-      "R2",
-      "KV",
-    ],
+    tech: ["Nuxt", "Vue", "Cloudflare Workers", "D1", "Drizzle", "R2"],
     outcome:
       "Lanzamiento de nuevos tenants en minutos con costos operativos reducidos.",
     status: "En producción",
+    image: "saas-store-admin",
   },
   {
-    icon: ShieldCheck,
     name: "Plataforma de usuarios y permisos",
-    context:
-      "Caso anonimizado basado en el proyecto para EY. Empresa internacional con múltiples aplicaciones empresariales y duplicidad de control de accesos.",
+    category: "Caso anonimizado · EY",
     problem:
       "Cada aplicación gestionaba usuarios y permisos de forma independiente, generando riesgo de seguridad y sobrecarga operativa.",
     solution:
       "Microfrontend Vue distribuido como paquete NPM e instalado en diferentes aplicaciones empresariales para centralizar usuarios, roles y permisos.",
-    responsibilities: [
-      "Diseño de RBAC",
-      "Microfrontend reusable",
-      "Integración con .NET",
-      "Azure DevOps",
-      "CI/CD",
-    ],
-    tech: [
-      "Vue",
-      "TypeScript",
-      ".NET",
-      "Azure",
-      "RBAC",
-      "Microservicios",
-      "CI/CD",
-    ],
+    tech: ["Vue", "TypeScript", ".NET", "Azure", "RBAC", "CI/CD"],
     outcome:
       "Centralización de permisos con despliegue controlado en aplicaciones críticas.",
     status: "Entregado",
+    image: "rbac-microfrontend",
     anonymized: true,
   },
 ];
 
 export function ZoCases() {
   return (
-    <section id="casos" className="bg-[#0E0E0E] py-20 lg:py-28">
+    <section id="casos" className="relative bg-[#0d0e11] py-24 lg:py-32">
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#c9a24e]/30 to-transparent" />
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-2xl">
-          <p className="text-sm font-medium text-[#DC2626] uppercase tracking-wider">
+          <p className="text-sm font-medium text-[#e8343d] uppercase tracking-wider">
             Casos de éxito
           </p>
-          <h2 className="mt-3 text-3xl sm:text-4xl font-semibold tracking-tight text-white">
+          <h2 className="mt-3 text-[clamp(2rem,4vw,3rem)] font-semibold tracking-tight text-[#f5f5f7] leading-tight">
             Proyectos reales, arquitecturas reales
           </h2>
-          <p className="mt-4 text-gray-400">
+          <p className="mt-4 text-lg text-[#a7abb4] max-w-[54ch]">
             Estos proyectos reflejan el tipo de desafíos que resolvemos: SaaS
             multi-tenant, automatización, IA empresarial y modernización de
             sistemas.
           </p>
         </div>
 
-        <div className="mt-12 grid md:grid-cols-2 gap-6">
-          {cases.map((c) => {
-            const Icon = c.icon;
+        <div className="mt-16 space-y-20 lg:space-y-28">
+          {cases.map((c, index) => {
+            const isReversed = index % 2 === 1;
             return (
               <article
                 key={c.name}
-                className="rounded-xl border border-white/10 bg-[#111111] overflow-hidden"
+                className={`grid lg:grid-cols-[1.25fr_1fr] gap-8 lg:gap-14 items-center ${isReversed ? "lg:grid-flow-dense" : ""}`}
               >
-                <div className="p-6">
-                  <div className="flex items-center gap-3">
-                    <div className="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-[#F59E0B]/10 text-[#F59E0B]">
-                      <Icon className="w-5 h-5" aria-hidden="true" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-xl font-semibold text-white">
-                        {c.name}
-                      </h3>
-                      {c.anonymized && (
-                        <span className="text-xs text-gray-500">
-                          Caso anonimizado
-                        </span>
-                      )}
-                    </div>
-                    <span
-                      className={`px-2 py-1 rounded text-xs font-medium ${
-                        c.status === "En producción"
-                          ? "bg-green-500/10 text-green-400"
-                          : c.status === "Entregado"
-                            ? "bg-blue-500/10 text-blue-400"
-                            : "bg-yellow-500/10 text-yellow-400"
-                      }`}
-                    >
-                      {c.status}
+                <div
+                  className={`relative ${isReversed ? "lg:col-start-2" : ""}`}
+                >
+                  <CaseImage name={c.name} image={c.image} />
+                </div>
+                <div
+                  className={`${isReversed ? "lg:col-start-1 lg:row-start-1" : ""}`}
+                >
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="text-xs font-medium text-[#c9a24e] uppercase tracking-wider">
+                      {c.category}
                     </span>
+                    <StatusBadge status={c.status} />
                   </div>
-
-                  <div className="mt-5 space-y-4 text-sm">
-                    <div>
-                      <span className="font-medium text-gray-300">
-                        Contexto:
-                      </span>{" "}
-                      <span className="text-gray-400">{c.context}</span>
-                    </div>
-                    <div>
-                      <span className="font-medium text-gray-300">
-                        Problema:
-                      </span>{" "}
-                      <span className="text-gray-400">{c.problem}</span>
-                    </div>
-                    <div>
-                      <span className="font-medium text-gray-300">
-                        Solución:
-                      </span>{" "}
-                      <span className="text-gray-400">{c.solution}</span>
-                    </div>
-                    <div>
-                      <span className="font-medium text-gray-300">
-                        Responsabilidades:
-                      </span>{" "}
-                      <span className="text-gray-400">
-                        {c.responsibilities.join(" · ")}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="font-medium text-gray-300">
-                        Resultado:
-                      </span>{" "}
-                      <span className="text-gray-400">{c.outcome}</span>
-                    </div>
+                  <h3 className="text-2xl sm:text-3xl font-semibold text-[#f5f5f7]">
+                    {c.name}
+                  </h3>
+                  {c.anonymized && (
+                    <p className="mt-1 text-sm text-[#737782]">
+                      Caso anonimizado
+                    </p>
+                  )}
+                  <div className="mt-6 space-y-4">
+                    <CaseBlock label="Problema" text={c.problem} />
+                    <CaseBlock label="Solución" text={c.solution} />
+                    <CaseBlock label="Resultado" text={c.outcome} />
                   </div>
-
-                  <div className="mt-5 flex flex-wrap gap-2">
+                  <div className="mt-6 flex flex-wrap gap-2">
                     {c.tech.map((t) => (
                       <span
                         key={t}
-                        className="px-2 py-1 rounded bg-white/5 text-xs text-gray-400 border border-white/5"
+                        className="px-3 py-1 rounded-full bg-[#111216] text-xs text-[#a7abb4] border border-[#282a31]"
                       >
                         {t}
                       </span>
                     ))}
                   </div>
+                  <Link
+                    href="/t/zo-system/contact"
+                    className="mt-7 inline-flex items-center gap-1.5 text-sm font-medium text-[#e8343d] hover:text-[#ff4650] transition-colors"
+                  >
+                    Conocer más sobre este proyecto
+                    <ArrowUpRight className="w-4 h-4" />
+                  </Link>
                 </div>
               </article>
             );
@@ -227,5 +135,75 @@ export function ZoCases() {
         </div>
       </div>
     </section>
+  );
+}
+
+function CaseBlock({ label, text }: { label: string; text: string }) {
+  return (
+    <div>
+      <span className="text-xs font-semibold text-[#f5f5f7] uppercase tracking-wider">
+        {label}
+      </span>
+      <p className="mt-1 text-[#a7abb4] leading-relaxed">{text}</p>
+    </div>
+  );
+}
+
+function StatusBadge({ status }: { status: string }) {
+  const cls =
+    status === "En producción"
+      ? "bg-[#111216] text-[#4ade80] border-[#14532d]"
+      : status === "Entregado"
+        ? "bg-[#111216] text-[#60a5fa] border-[#1e3a8a]"
+        : "bg-[#111216] text-[#facc15] border-[#713f12]";
+  return (
+    <span
+      className={`px-2.5 py-1 rounded-full text-xs font-medium border ${cls}`}
+    >
+      {status}
+    </span>
+  );
+}
+
+function CaseImage({ name, image }: { name: string; image: string }) {
+  return (
+    <div className="relative group">
+      {
+        // Placeholder for real product screenshot.
+        // Drop image at public/tenants/zo-system/{image}.png and replace the inner content with <img />.
+      }
+      <div className="relative rounded-xl overflow-hidden border border-[#282a31] bg-[#111216] shadow-[0_24px_60px_-24px_rgba(0,0,0,0.7),0_0_0_1px_rgba(40,42,49,0.8)] transition-transform duration-500 group-hover:scale-[1.01]">
+        <div className="flex items-center gap-2 px-4 py-3 bg-[#18191e] border-b border-[#282a31]">
+          <span className="w-2.5 h-2.5 rounded-full bg-[#7d161c]" />
+          <span className="w-2.5 h-2.5 rounded-full bg-[#7d6839]" />
+          <span className="w-2.5 h-2.5 rounded-full bg-[#282a31]" />
+          <span className="ml-3 text-[11px] text-[#737782] font-mono">
+            {image}.png
+          </span>
+        </div>
+        <div className="aspect-[16/10] bg-[#070708] flex items-center justify-center">
+          <div className="text-center px-8">
+            <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-[#e8343d]/10 text-[#e8343d] mb-4">
+              <svg
+                width="28"
+                height="28"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+              >
+                <rect x="3" y="3" width="18" height="18" rx="2" />
+                <path d="M3 9h18M9 21V9" />
+              </svg>
+            </div>
+            <div className="text-base font-medium text-[#a7abb4]">{name}</div>
+            <div className="text-sm text-[#737782] mt-2">
+              Imagen real pendiente: public/tenants/zo-system/{image}.png
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="pointer-events-none absolute -inset-4 bg-gradient-to-tr from-[#e8343d]/5 to-[#c9a24e]/5 rounded-2xl blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+    </div>
   );
 }
