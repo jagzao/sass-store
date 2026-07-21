@@ -15,6 +15,12 @@ dist
 # Production
 /build
 
+# Ad-hoc documentation at repo root — keep docs/ for committed docs
+/*.md
+/*.txt
+!README.md
+!LICENSE*
+
 # Misc
 .DS_Store
 *.pem
@@ -124,12 +130,73 @@ start-e2e-*.cmd
 .trae/
 .windsurf/
 .claude/skills/
+.agents/skills/
+.agents/sprint/
+.agents/memory/
 
 # Debug temp files
 *.err
 *.out
 apps/*.err
 apps/*.out
+debug-*
+login-dump*
+login-page-dump*
+tmp-*
+tmp_*
+temp*.json
+temp*.txt
+err.txt
+err*.txt
+foo.txt
+*.log
+
+# One-off helper scripts (keep only committed ones)
+auto-*.js
+confirm-yes*.js
+confirm-yes*.bat
+check-*-schema.js
+check-*-visits.js
+fix-*.js
+fix-*.ts
+fix-*.bat
+fix-*.sh
+apply-migrations.js
+apply-migration*.sql
+ejecutar-migracion.bat
+kill_*.bat
+kill-*.bat
+restart-app.*
+run_nightly_tests.bat
+start-docker-tunnel.*
+swarm
+swarm.bat
+
+# Test/debug artifacts
+vitest.*.config.ts
+vitest-*.txt
+vitest-*.json
+test-output*
+test-results*
+test-debug*
+test*.json
+test_*.json
+failed_tests_list.txt
+extracted-fails.txt
+startup-report.json
+pg-error-dump.json
+quote_payload.json
+response*.json
+final*.json
+jest.setup.ts
+manifest.json
+
+# Database backups and raw dumps (use a secure vault, not git)
+backup*.sql
+backups/
+*backup*.sql
+*dump*.sql
+auth.json
 
 # Video processing / sprite artifacts
 video_2_frames/
