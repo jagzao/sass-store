@@ -347,6 +347,28 @@ export async function generateMetadata({ params }: PageProps) {
     };
   }
 
+  if (tenantSlug === "zo-system") {
+    return {
+      title:
+        "Zo Systems | Desarrollo de software, SaaS e inteligencia artificial",
+      description:
+        tenant.description ||
+        "Desarrollo de plataformas SaaS, modernización de aplicaciones .NET e integración de automatización con inteligencia artificial para empresas.",
+      openGraph: {
+        title:
+          "Zo Systems | Desarrollo de software, SaaS e inteligencia artificial",
+        description: tenant.description,
+        type: "website",
+      },
+      twitter: {
+        card: "summary_large_image",
+        title:
+          "Zo Systems | Desarrollo de software, SaaS e inteligencia artificial",
+        description: tenant.description,
+      },
+    };
+  }
+
   return {
     title: `${tenant.name} - ${tenant.description || "Inicio"}`,
     description: tenant.description || `Bienvenido a ${tenant.name}`,

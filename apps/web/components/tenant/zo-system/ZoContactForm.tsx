@@ -116,7 +116,7 @@ export default function ZoContactForm() {
               <ContactCard
                 href="https://calendly.com/jagzao"
                 title="Agenda una llamada"
-                subtitle="Disponible de lunes a viernes"
+                subtitle="Reservar cita de 30 minutos"
                 icon={Phone}
                 accent="red"
               />
@@ -130,7 +130,7 @@ export default function ZoContactForm() {
               <ContactCard
                 href="mailto:jagzao@gmail.com"
                 title="Email"
-                subtitle="jagzao@gmail.com"
+                subtitle="jagzao@gmail.com · correo corporativo en configuración"
                 icon={Mail}
                 accent="neutral"
               />

@@ -45,7 +45,7 @@ const TENANTS_DATA = {
   },
   "zo-system": {
     id: "zo-system",
-    name: "Zo System",
+    name: "Zo Systems",
     branding: {
       primaryColor: "#DC2626",
       secondaryColor: "#1F2937",

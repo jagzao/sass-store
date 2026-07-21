@@ -6,7 +6,7 @@ import { tenantLogger } from "@/lib/logger";
 // Default fallback tenant (zo-system)
 const DEFAULT_TENANT: Tenant = {
   id: "zo-system",
-  name: "Zo System",
+  name: "Zo Systems",
   slug: "zo-system",
   description: "Default fallback tenant for unmapped hosts",
   mode: "catalog",

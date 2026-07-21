@@ -7,6 +7,7 @@ import { ZoServices } from "./ZoServices";
 import { ZoCases } from "./ZoCases";
 import { ZoProcess } from "./ZoProcess";
 import { ZoWhyUs } from "./ZoWhyUs";
+import { ZoFrontend } from "./ZoFrontend";
 import { ZoStack } from "./ZoStack";
 import { ZoCTA } from "./ZoCTA";
 import { ZoFooter } from "./ZoFooter";
@@ -68,6 +69,7 @@ export default async function ZoLandingPage({
           <ZoCredibilityBar />
           <ZoServices />
           <ZoCases />
+          <ZoFrontend />
           <ZoProcess />
           <ZoWhyUs />
           <ZoStack />

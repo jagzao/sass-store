@@ -2,10 +2,14 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { projects, projectAssetPath } from "./projects-data";
+
+const heroMain = projects.find((p) => p.slug === "centro-tenistico")!;
+const heroSecondary = projects.find((p) => p.slug === "wondernails")!;
+const heroTertiary = projects.find((p) => p.slug === "zo-portfolio")!;
 
 export function ZoHero() {
   const [loaded, setLoaded] = useState(false);
-  const ref = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const id = requestAnimationFrame(() => setLoaded(true));
@@ -13,10 +17,7 @@ export function ZoHero() {
   }, []);
 
   return (
-    <section
-      ref={ref}
-      className="relative overflow-hidden bg-[#070708] pt-28 lg:pt-36 pb-16 lg:pb-24"
-    >
+    <section className="relative overflow-hidden bg-[#070708] pt-28 lg:pt-36 pb-16 lg:pb-24">
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-[#e8343d]/5 rounded-full blur-[120px] opacity-60" />
         <div className="absolute bottom-0 right-0 w-[600px] h-[400px] bg-[#c9a24e]/5 rounded-full blur-[100px] opacity-40" />
@@ -25,12 +26,14 @@ export function ZoHero() {
       <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-[55%_45%] gap-12 lg:gap-10 items-center">
           <div
-            className={`transition-all duration-700 ${loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
+            className={`transition-all duration-700 ${
+              loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+            }`}
           >
             <p className="text-sm font-medium text-[#e8343d] uppercase tracking-wider mb-4">
               Desarrollo de software empresarial
             </p>
-            <h1 className="text-[clamp(2.5rem,5vw,4rem)] font-semibold leading-[1.05] tracking-tight text-[#f5f5f7] max-w-[16ch]">
+            <h1 className="text-[clamp(2.5rem,5vw,4rem)] font-semibold leading-[1.05] tracking-tight text-[#f5f5f7] max-w-[18ch]">
               Software B2B que{" "}
               <span className="bg-gradient-to-r from-[#e8343d] via-[#ff4650] to-[#c9a24e] bg-clip-text text-transparent">
                 automatiza
@@ -65,7 +68,9 @@ export function ZoHero() {
           </div>
 
           <div
-            className={`relative transition-all duration-700 delay-200 ${loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
+            className={`relative transition-all duration-700 delay-200 ${
+              loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+            }`}
           >
             <HeroComposition />
           </div>
@@ -78,41 +83,71 @@ export function ZoHero() {
 function HeroComposition() {
   return (
     <div className="relative mx-auto lg:mx-0 w-full max-w-xl">
-      {
-        // Placeholder composition. Replace src values with real product screenshots.
-        // Required images (public/tenants/zo-system/):
-        //   - reelflow-dashboard.png
-        //   - saas-store-mobile.png
-        //   - conversai-widget.png
-      }
       <div className="relative z-10 rounded-xl overflow-hidden border border-[#282a31] bg-[#111216] shadow-[0_24px_60px_-20px_rgba(0,0,0,0.7),0_0_0_1px_rgba(232,52,61,0.08)]">
-        <BrowserBar title="ReelFlow — Panel de publicaciones" />
-        <div className="aspect-[16/10] bg-[#0d0e11] flex items-center justify-center">
-          <ProductPlaceholder
-            label="ReelFlow"
-            sublabel="Requiere captura real: dashboard de publicaciones"
-          />
-        </div>
+        <BrowserBar title={heroMain.name} />
+        <ProjectImage
+          slug={heroMain.slug}
+          alt={`Captura de ${heroMain.name}`}
+          aspect="aspect-[16/10]"
+        />
       </div>
 
       <div className="absolute -top-4 -right-6 z-20 w-32 sm:w-40 rounded-lg overflow-hidden border border-[#282a31] bg-[#111216] shadow-[0_16px_40px_-12px_rgba(0,0,0,0.6),0_0_0_1px_rgba(201,162,78,0.12)] hidden sm:block">
-        <BrowserBar title="SaaS Store" />
-        <div className="aspect-[9/16] bg-[#0d0e11] flex items-center justify-center">
-          <ProductPlaceholder label="SaaS Store" sublabel="captura móvil" />
-        </div>
+        <BrowserBar title={heroSecondary.name} />
+        <ProjectImage
+          slug={heroSecondary.slug}
+          alt={`Captura móvil de ${heroSecondary.name}`}
+          aspect="aspect-[9/16]"
+          mobile
+        />
       </div>
 
       <div className="absolute -bottom-5 -left-6 z-20 w-40 sm:w-48 rounded-lg overflow-hidden border border-[#282a31] bg-[#111216] shadow-[0_16px_40px_-12px_rgba(0,0,0,0.6),0_0_0_1px_rgba(232,52,61,0.12)] hidden sm:block">
-        <BrowserBar title="ConversAI" />
-        <div className="aspect-[16/10] bg-[#0d0e11] flex items-center justify-center">
-          <ProductPlaceholder
-            label="ConversAI"
-            sublabel="widget de asistente"
-          />
-        </div>
+        <BrowserBar title={heroTertiary.name} />
+        <ProjectImage
+          slug={heroTertiary.slug}
+          alt={`Captura de ${heroTertiary.name}`}
+          aspect="aspect-[16/10]"
+        />
       </div>
 
       <div className="pointer-events-none absolute -inset-10 bg-gradient-to-tr from-[#e8343d]/10 via-transparent to-[#c9a24e]/10 blur-2xl opacity-50" />
+    </div>
+  );
+}
+
+function ProjectImage({
+  slug,
+  alt,
+  aspect,
+  mobile = false,
+}: {
+  slug: string;
+  alt: string;
+  aspect: string;
+  mobile?: boolean;
+}) {
+  const [error, setError] = useState(false);
+  const src = projectAssetPath(
+    slug,
+    mobile ? "cover-mobile.webp" : "cover-desktop.webp",
+  );
+  return (
+    <div className={`relative ${aspect} bg-[#0d0e11] overflow-hidden`}>
+      {error ? (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <span className="text-xs text-[#737782]">Imagen pendiente</span>
+        </div>
+      ) : (
+        <img
+          src={src}
+          alt={alt}
+          loading="eager"
+          decoding="async"
+          className="absolute inset-0 w-full h-full object-cover object-top"
+          onError={() => setError(true)}
+        />
+      )}
     </div>
   );
 }
@@ -128,36 +163,6 @@ function BrowserBar({ title }: { title: string }) {
       <span className="ml-2 text-[10px] text-[#737782] font-mono truncate">
         {title}
       </span>
-    </div>
-  );
-}
-
-function ProductPlaceholder({
-  label,
-  sublabel,
-}: {
-  label: string;
-  sublabel: string;
-}) {
-  return (
-    <div className="text-center px-6">
-      <div className="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-[#e8343d]/10 text-[#e8343d] mb-3">
-        <svg
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.5"
-        >
-          <rect x="3" y="3" width="18" height="18" rx="2" />
-          <path d="M3 9h18M9 21V9" />
-        </svg>
-      </div>
-      <div className="text-sm font-medium text-[#a7abb4]">{label}</div>
-      <div className="text-xs text-[#737782] mt-1 max-w-[14ch] mx-auto leading-tight">
-        {sublabel}
-      </div>
     </div>
   );
 }

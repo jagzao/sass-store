@@ -99,7 +99,7 @@ export function useTenant(): TenantContext {
     return {
       tenant: {
         id: "zo-system",
-        name: "Zo System",
+        name: "Zo Systems",
         slug: "zo-system",
         description: "Default tenant",
         mode: "catalog",

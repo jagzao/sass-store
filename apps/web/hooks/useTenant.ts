@@ -38,7 +38,7 @@ export function useTenant() {
         const mockTenant: Tenant = {
           id: tenantSlug === "wondernails" ? "1" : "2",
           slug: tenantSlug,
-          name: tenantSlug === "wondernails" ? "WonderNails" : "Zo System",
+          name: tenantSlug === "wondernails" ? "WonderNails" : "Zo Systems",
           domain:
             tenantSlug === "wondernails" ? "wondernails.com" : "zosystem.com",
           logo: "",

@@ -57,7 +57,7 @@ const recentPurchases: Product[] = [
     price: 299.0,
     image: "💻",
     tenant: "zo-system",
-    tenantName: "Zo System",
+    tenantName: "Zo Systems",
     lastPurchased: "2024-01-12",
   },
   {
@@ -66,7 +66,7 @@ const recentPurchases: Product[] = [
     price: 899.0,
     image: "🔗",
     tenant: "zo-system",
-    tenantName: "Zo System",
+    tenantName: "Zo Systems",
     lastPurchased: "2024-01-08",
   },
 ];
