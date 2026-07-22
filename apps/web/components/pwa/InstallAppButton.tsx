@@ -75,7 +75,11 @@ export function InstallAppButton() {
   return (
     <button
       onClick={install}
-      className="hidden md:flex fixed bottom-4 right-4 z-50 items-center gap-2 bg-blue-600 text-white px-4 py-3 rounded-full shadow-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+      className="hidden md:flex fixed bottom-4 right-4 z-50 items-center gap-2 px-4 py-3 rounded-full shadow-lg transition-colors text-sm font-medium"
+      style={{
+        backgroundColor: "var(--color-primary)",
+        color: "#ffffff",
+      }}
       aria-label="Instalar aplicación"
     >
       <Download className="w-5 h-5" />

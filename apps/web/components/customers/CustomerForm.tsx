@@ -346,13 +346,18 @@ export default function CustomerForm({
               {tags.map((tag, index) => (
                 <span
                   key={index}
-                  className="inline-flex items-center gap-1 px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm"
+                  className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm"
+                  style={{
+                    backgroundColor:
+                      "color-mix(in srgb, var(--color-primary) 18%, transparent)",
+                    color: "var(--color-foreground)",
+                  }}
                 >
                   {tag}
                   <button
                     type="button"
                     onClick={() => handleRemoveTag(tag)}
-                    className="hover:text-purple-900"
+                    style={{ color: "var(--color-muted-foreground)" }}
                   >
                     <X className="h-3 w-3" />
                   </button>
@@ -364,19 +369,25 @@ export default function CustomerForm({
 
         {/* General Notes */}
         <div className="relative">
-          <FileText className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-gray-400" />
+          <FileText
+            className="pointer-events-none absolute left-3 top-3 h-4 w-4"
+            style={{ color: "var(--color-muted-foreground)" }}
+          />
           <textarea
             value={generalNotes}
             onChange={(e) => setGeneralNotes(e.target.value)}
             rows={4}
             aria-label="Notas Generales"
-            className="w-full pl-9 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="theme-input w-full pl-9 px-3 py-2 rounded-md focus:outline-none focus:ring-2"
             placeholder="Notas generales..."
           />
         </div>
 
         {/* SECTION: MEDICAL HISTORY */}
-        <div className="pt-6 mt-6 border-t border-gray-200">
+        <div
+          className="pt-6 mt-6 border-t"
+          style={{ borderColor: "var(--color-border)" }}
+        >
           <h3
             className="text-lg font-medium mb-4"
             style={{ color: "var(--color-foreground)" }}
@@ -389,7 +400,10 @@ export default function CustomerForm({
             <div>
               <div className="flex gap-2 mb-2">
                 <div className="relative flex-1">
-                  <HeartPulse className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                  <HeartPulse
+                    className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2"
+                    style={{ color: "var(--color-muted-foreground)" }}
+                  />
                   <input
                     type="text"
                     value={conditionsTag}
@@ -401,7 +415,7 @@ export default function CustomerForm({
                       }
                     }}
                     aria-label="Condiciones Médicas"
-                    className="w-full pl-9 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                    className="theme-input w-full pl-9 px-3 py-2 rounded-md focus:outline-none focus:ring-2"
                     placeholder="Condiciones médicas (Diabetes, Psoriasis...)"
                   />
                 </div>
@@ -410,7 +424,8 @@ export default function CustomerForm({
                   onClick={handleAddCondition}
                   title="Agregar condición"
                   aria-label="Agregar condición"
-                  className="px-3 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 flex items-center justify-center"
+                  className="px-3 py-2 rounded-md flex items-center justify-center text-white"
+                  style={{ backgroundColor: "var(--color-error, #dc2626)" }}
                 >
                   <PlusCircle className="h-5 w-5" />
                 </button>
@@ -420,13 +435,18 @@ export default function CustomerForm({
                   {conditions.map((condition, index) => (
                     <span
                       key={index}
-                      className="inline-flex items-center gap-1 px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm font-medium"
+                      className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium"
+                      style={{
+                        backgroundColor:
+                          "color-mix(in srgb, var(--color-error, #dc2626) 18%, transparent)",
+                        color: "var(--color-foreground)",
+                      }}
                     >
                       {condition}
                       <button
                         type="button"
                         onClick={() => handleRemoveCondition(condition)}
-                        className="hover:text-red-900"
+                        style={{ color: "var(--color-muted-foreground)" }}
                       >
                         <X className="h-3 w-3" />
                       </button>
@@ -440,7 +460,10 @@ export default function CustomerForm({
             <div>
               <div className="flex gap-2 mb-2">
                 <div className="relative flex-1">
-                  <AlertTriangle className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                  <AlertTriangle
+                    className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2"
+                    style={{ color: "var(--color-muted-foreground)" }}
+                  />
                   <input
                     type="text"
                     value={allergiesTag}
@@ -452,7 +475,7 @@ export default function CustomerForm({
                       }
                     }}
                     aria-label="Alergias Conocidas"
-                    className="w-full pl-9 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
+                    className="theme-input w-full pl-9 px-3 py-2 rounded-md focus:outline-none focus:ring-2"
                     placeholder="Alergias conocidas..."
                   />
                 </div>
@@ -461,7 +484,8 @@ export default function CustomerForm({
                   onClick={handleAddAllergy}
                   title="Agregar alergia"
                   aria-label="Agregar alergia"
-                  className="px-3 py-2 bg-amber-600 text-white rounded-md hover:bg-amber-700 flex items-center justify-center"
+                  className="px-3 py-2 rounded-md flex items-center justify-center text-white"
+                  style={{ backgroundColor: "var(--color-warning, #d97706)" }}
                 >
                   <PlusCircle className="h-5 w-5" />
                 </button>
@@ -471,13 +495,18 @@ export default function CustomerForm({
                   {allergies.map((allergy, index) => (
                     <span
                       key={index}
-                      className="inline-flex items-center gap-1 px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-sm font-medium"
+                      className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium"
+                      style={{
+                        backgroundColor:
+                          "color-mix(in srgb, var(--color-warning, #d97706) 18%, transparent)",
+                        color: "var(--color-foreground)",
+                      }}
                     >
                       {allergy}
                       <button
                         type="button"
                         onClick={() => handleRemoveAllergy(allergy)}
-                        className="hover:text-amber-900"
+                        style={{ color: "var(--color-muted-foreground)" }}
                       >
                         <X className="h-3 w-3" />
                       </button>
@@ -489,13 +518,16 @@ export default function CustomerForm({
 
             {/* Medications */}
             <div className="relative">
-              <Pill className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-gray-400" />
+              <Pill
+                className="pointer-events-none absolute left-3 top-3 h-4 w-4"
+                style={{ color: "var(--color-muted-foreground)" }}
+              />
               <textarea
                 value={medications}
                 onChange={(e) => setMedications(e.target.value)}
                 rows={2}
                 aria-label="Medicamentos Actuales"
-                className="w-full pl-9 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="theme-input w-full pl-9 px-3 py-2 rounded-md focus:outline-none focus:ring-2"
                 placeholder="Medicamentos actuales..."
               />
             </div>
@@ -504,7 +536,10 @@ export default function CustomerForm({
       </div>
 
       {/* Actions */}
-      <div className="flex justify-end gap-3 mt-8 pt-6 border-t border-gray-200">
+      <div
+        className="flex justify-end gap-3 mt-8 pt-6 border-t"
+        style={{ borderColor: "var(--color-border)" }}
+      >
         <button
           type="button"
           onClick={handleCancel}
