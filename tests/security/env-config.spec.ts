@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { readFileSync } from "node:fs";
+import { readFileSync, existsSync } from "node:fs";
 import { resolve } from "node:path";
 
 describe("Feature: sin fallback silencioso a localhost (STRY-026 SC-05)", () => {
@@ -25,10 +25,14 @@ describe("Feature: sin fallback silencioso a localhost (STRY-026 SC-05)", () => 
   });
 
   it("check-services-schema.js no contiene la credencial hardcoded", () => {
-    const debugSrc = readFileSync(
-      resolve(__dirname, "../../check-services-schema.js"),
-      "utf8",
-    );
+    // ponytail: archivo fue removido en chore/reorganize (33a2c2f2).
+    // Si el archivo no existe, no puede contener credencial hardcodeada.
+    const debugPath = resolve(__dirname, "../../check-services-schema.js");
+    if (!existsSync(debugPath)) {
+      expect(true).toBe(true);
+      return;
+    }
+    const debugSrc = readFileSync(debugPath, "utf8");
     expect(/postgres\.jedryjmljffuvegggjmw:[^"'\s)]+@/.test(debugSrc)).toBe(
       false,
     );
