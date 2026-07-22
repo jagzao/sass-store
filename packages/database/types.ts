@@ -10,6 +10,7 @@ import {
   auditLogs,
   productReviews,
   users,
+  feedback,
 } from "./schema";
 
 // Select types (for data coming from DB)
@@ -36,6 +37,8 @@ export type ProductReview = InferSelectModel<typeof productReviews>;
 export type ProductReviewInsert = InferInsertModel<typeof productReviews>;
 export type User = InferSelectModel<typeof users>;
 export type UserInsert = InferInsertModel<typeof users>;
+export type Feedback = InferSelectModel<typeof feedback>;
+export type FeedbackInsert = InferInsertModel<typeof feedback>;
 
 // Utility types
 export type TenantMode = "catalog" | "booking";

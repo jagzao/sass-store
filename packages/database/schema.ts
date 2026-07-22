@@ -532,6 +532,8 @@ export const tenantsRelations = relations(tenants, ({ many }) => ({
   // Budgets
   budgets: many(budgets),
   scheduledNotifications: many(scheduledNotifications),
+  // Development portal
+  devProjects: many(devProjects),
 }));
 
 export const tenantConfigsRelations = relations(tenantConfigs, ({ one }) => ({
@@ -3437,3 +3439,297 @@ export const dataPrivacyRequests = pgTable(
     emailIdx: index("data_privacy_requests_email_idx").on(table.subjectEmail),
   }),
 );
+
+// ========================================================================
+// DEVELOPMENT PORTAL - Customer project tracking & sprint dailies
+// ========================================================================
+
+export const devProjectStatus = pgEnum("dev_project_status", [
+  "active",
+  "completed",
+  "paused",
+  "cancelled",
+]);
+
+export const devSprintStatus = pgEnum("dev_sprint_status", [
+  "planned",
+  "active",
+  "completed",
+  "cancelled",
+]);
+
+export const devTaskStatus = pgEnum("dev_task_status", [
+  "backlog",
+  "todo",
+  "in_progress",
+  "in_review",
+  "done",
+  "blocked",
+]);
+
+export const devProjects = pgTable(
+  "dev_projects",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .references(() => tenants.id)
+      .notNull(),
+    name: varchar("name", { length: 200 }).notNull(),
+    description: text("description"),
+    status: devProjectStatus("status").notNull().default("active"),
+    startDate: date("start_date"),
+    targetDate: date("target_date"),
+    displayOrder: integer("display_order").notNull().default(0),
+    metadata: jsonb("metadata").default("{}"),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    tenantIdx: index("dev_projects_tenant_idx").on(table.tenantId),
+    statusIdx: index("dev_projects_status_idx").on(table.status),
+    tenantStatusIdx: index("dev_projects_tenant_status_idx").on(
+      table.tenantId,
+      table.status,
+    ),
+  }),
+);
+
+export const devSprints = pgTable(
+  "dev_sprints",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .references(() => tenants.id)
+      .notNull(),
+    projectId: uuid("project_id")
+      .references(() => devProjects.id, { onDelete: "cascade" })
+      .notNull(),
+    name: varchar("name", { length: 200 }).notNull(),
+    goal: text("goal"),
+    status: devSprintStatus("status").notNull().default("planned"),
+    startDate: date("start_date"),
+    endDate: date("end_date"),
+    displayOrder: integer("display_order").notNull().default(0),
+    metadata: jsonb("metadata").default("{}"),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    tenantIdx: index("dev_sprints_tenant_idx").on(table.tenantId),
+    projectIdx: index("dev_sprints_project_idx").on(table.projectId),
+    statusIdx: index("dev_sprints_status_idx").on(table.status),
+    tenantStatusIdx: index("dev_sprints_tenant_status_idx").on(
+      table.tenantId,
+      table.status,
+    ),
+  }),
+);
+
+export const devTasks = pgTable(
+  "dev_tasks",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .references(() => tenants.id)
+      .notNull(),
+    projectId: uuid("project_id")
+      .references(() => devProjects.id, { onDelete: "cascade" })
+      .notNull(),
+    sprintId: uuid("sprint_id").references(() => devSprints.id, {
+      onDelete: "set null",
+    }),
+    title: varchar("title", { length: 255 }).notNull(),
+    description: text("description"),
+    status: devTaskStatus("status").notNull().default("backlog"),
+    priority: varchar("priority", { length: 20 }).notNull().default("medium"), // low | medium | high | critical
+    assigneeName: varchar("assignee_name", { length: 100 }),
+    completedAt: timestamp("completed_at"),
+    dueDate: date("due_date"),
+    displayOrder: integer("display_order").notNull().default(0),
+    metadata: jsonb("metadata").default("{}"),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    tenantIdx: index("dev_tasks_tenant_idx").on(table.tenantId),
+    projectIdx: index("dev_tasks_project_idx").on(table.projectId),
+    sprintIdx: index("dev_tasks_sprint_idx").on(table.sprintId),
+    statusIdx: index("dev_tasks_status_idx").on(table.status),
+    tenantStatusIdx: index("dev_tasks_tenant_status_idx").on(
+      table.tenantId,
+      table.status,
+    ),
+    completedAtIdx: index("dev_tasks_completed_at_idx").on(table.completedAt),
+  }),
+);
+
+export const devDailyReports = pgTable(
+  "dev_daily_reports",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .references(() => tenants.id)
+      .notNull(),
+    projectId: uuid("project_id")
+      .references(() => devProjects.id, { onDelete: "cascade" })
+      .notNull(),
+    sprintId: uuid("sprint_id").references(() => devSprints.id, {
+      onDelete: "set null",
+    }),
+    reportDate: date("report_date").notNull(),
+    summary: text("summary").notNull(),
+    completedItems: text("completed_items")
+      .array()
+      .notNull()
+      .default(sql`ARRAY[]::text[]`),
+    nextSteps: text("next_steps")
+      .array()
+      .notNull()
+      .default(sql`ARRAY[]::text[]`),
+    blockers: text("blockers")
+      .array()
+      .notNull()
+      .default(sql`ARRAY[]::text[]`),
+    generatedBy: varchar("generated_by", { length: 50 })
+      .notNull()
+      .default("system"), // system | manual
+    metadata: jsonb("metadata").default("{}"),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    tenantIdx: index("dev_daily_reports_tenant_idx").on(table.tenantId),
+    projectIdx: index("dev_daily_reports_project_idx").on(table.projectId),
+    sprintIdx: index("dev_daily_reports_sprint_idx").on(table.sprintId),
+    reportDateIdx: index("dev_daily_reports_date_idx").on(table.reportDate),
+    tenantDateUnique: uniqueIndex(
+      "dev_daily_reports_tenant_project_date_idx",
+    ).on(table.tenantId, table.projectId, table.reportDate),
+  }),
+);
+
+// Development portal relations
+export const devProjectsRelations = relations(devProjects, ({ one, many }) => ({
+  tenant: one(tenants, {
+    fields: [devProjects.tenantId],
+    references: [tenants.id],
+  }),
+  sprints: many(devSprints),
+  tasks: many(devTasks),
+  dailyReports: many(devDailyReports),
+}));
+
+export const devSprintsRelations = relations(devSprints, ({ one, many }) => ({
+  tenant: one(tenants, {
+    fields: [devSprints.tenantId],
+    references: [tenants.id],
+  }),
+  project: one(devProjects, {
+    fields: [devSprints.projectId],
+    references: [devProjects.id],
+  }),
+  tasks: many(devTasks),
+  dailyReports: many(devDailyReports),
+}));
+
+export const devTasksRelations = relations(devTasks, ({ one }) => ({
+  tenant: one(tenants, {
+    fields: [devTasks.tenantId],
+    references: [tenants.id],
+  }),
+  project: one(devProjects, {
+    fields: [devTasks.projectId],
+    references: [devProjects.id],
+  }),
+  sprint: one(devSprints, {
+    fields: [devTasks.sprintId],
+    references: [devSprints.id],
+  }),
+}));
+
+export const devDailyReportsRelations = relations(
+  devDailyReports,
+  ({ one }) => ({
+    tenant: one(tenants, {
+      fields: [devDailyReports.tenantId],
+      references: [tenants.id],
+    }),
+    project: one(devProjects, {
+      fields: [devDailyReports.projectId],
+      references: [devProjects.id],
+    }),
+    sprint: one(devSprints, {
+      fields: [devDailyReports.sprintId],
+      references: [devSprints.id],
+    }),
+  }),
+);
+
+// ========================================================================
+// USER FEEDBACK — STRY-031
+// ========================================================================
+
+export const feedbackCategories = [
+  "opinion",
+  "sugerencia",
+  "problema",
+] as const;
+
+export type FeedbackCategory = (typeof feedbackCategories)[number];
+
+export const feedbackStatuses = [
+  "pending",
+  "sent",
+  "failed",
+  "retrying",
+] as const;
+
+export type FeedbackStatus = (typeof feedbackStatuses)[number];
+
+export const feedback = pgTable(
+  "feedback",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .references(() => tenants.id)
+      .notNull(),
+    category: varchar("category", { length: 20 }).notNull(),
+    message: text("message").notNull(),
+    context: jsonb("context").notNull().default("{}"),
+    userId: uuid("user_id").references(() => users.id),
+    email: varchar("email", { length: 255 }),
+    status: varchar("status", { length: 20 }).notNull().default("pending"),
+    n8nResponse: jsonb("n8n_response"),
+    n8nRequestUrl: varchar("n8n_request_url", { length: 500 }),
+    attempts: integer("attempts").notNull().default(0),
+    lastAttemptAt: timestamp("last_attempt_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => ({
+    tenantIdx: index("feedback_tenant_idx").on(table.tenantId),
+    statusIdx: index("feedback_status_idx").on(table.status),
+    categoryIdx: index("feedback_category_idx").on(table.category),
+    userIdx: index("feedback_user_idx").on(table.userId),
+    createdAtIdx: index("feedback_created_at_idx").on(table.createdAt),
+    tenantStatusIdx: index("feedback_tenant_status_idx").on(
+      table.tenantId,
+      table.status,
+    ),
+  }),
+);
+
+export const feedbackRelations = relations(feedback, ({ one }) => ({
+  tenant: one(tenants, {
+    fields: [feedback.tenantId],
+    references: [tenants.id],
+  }),
+  user: one(users, {
+    fields: [feedback.userId],
+    references: [users.id],
+  }),
+}));

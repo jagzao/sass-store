@@ -8,37 +8,42 @@ const navigationItems = [
   {
     name: "Dashboard",
     href: "/admin",
-    icon: "🏠",
+    icon: "Y?",
   },
   {
     name: "Social Planner",
     href: "/admin/social-planner",
-    icon: "📱",
+    icon: "Y",
   },
   {
     name: "Productos",
     href: "/admin/products",
-    icon: "📦",
+    icon: "Y",
   },
   {
     name: "Servicios",
     href: "/admin/services",
-    icon: "⚡",
+    icon: "s",
   },
   {
     name: "Contenido",
     href: "/admin/content",
-    icon: "📄",
+    icon: "Y",
   },
   {
     name: "Calendario",
     href: "/admin/calendar",
-    icon: "📅",
+    icon: "Y.",
   },
   {
-    name: "Configuración",
+    name: "Feedback",
+    href: "/admin/feedback",
+    icon: "Y",
+  },
+  {
+    name: "Configuracin",
     href: "/admin/settings",
-    icon: "⚙️",
+    icon: "sT?",
   },
 ];
 
