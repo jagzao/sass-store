@@ -1,5 +1,13 @@
 import Link from "next/link";
-import { Rocket, CloudCog, Bot, SearchCheck, ArrowRight } from "lucide-react";
+import {
+  Rocket,
+  CloudCog,
+  Bot,
+  SearchCheck,
+  ArrowRight,
+  Code2,
+  Bug,
+} from "lucide-react";
 
 const services = [
   {
@@ -26,6 +34,32 @@ const services = [
       "Azure",
       "PostgreSQL / SQL Server",
       "Docker",
+    ],
+  },
+  {
+    icon: Code2,
+    name: "Desarrollo de API y backend",
+    description:
+      "Diseño e implementación de APIs REST y GraphQL en .NET 8, NestJS o Node.js: autenticación, autorización RBAC, documentación OpenAPI, observabilidad y despliegue en Azure o Vercel.",
+    capabilities: [
+      "REST / GraphQL",
+      ".NET 8 / NestJS / Node.js",
+      "RBAC + JWT",
+      "OpenAPI",
+      "Azure / Vercel",
+    ],
+  },
+  {
+    icon: Bug,
+    name: "Bug fix y feature en multi-stack",
+    description:
+      "Resolución de incidentes, hotfixes y desarrollo de features puntuales en aplicaciones .NET, React, Vue o Node.js existentes, con onboarding rápido y entregas cortas.",
+    capabilities: [
+      "Hotfixes .NET",
+      "Features React / Vue",
+      "Node.js maintenance",
+      "Onboarding rápido",
+      "Entregas cortas",
     ],
   },
   {

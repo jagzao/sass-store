@@ -47,18 +47,24 @@ export function ZoHero() {
             </p>
             <div className="mt-8 flex flex-col sm:flex-row gap-4">
               <Link
+                href="/t/zo-system/services"
+                className="inline-flex items-center justify-center px-6 py-3.5 rounded-lg bg-[#e8343d] text-[#f5f5f7] font-medium shadow-[0_0_0_1px_#7d161c,0_8px_24px_-10px_rgba(232,52,61,0.35)] hover:bg-[#ff4650] hover:shadow-[0_0_0_1px_#7d161c,0_12px_32px_-8px_rgba(232,52,61,0.45)] hover:-translate-y-0.5 transition-all min-h-[48px]"
+              >
+                Ver servicios
+              </Link>
+              <Link
+                href="/t/zo-system/development"
+                className="inline-flex items-center justify-center px-6 py-3.5 rounded-lg border border-[#282a31] text-[#f5f5f7] font-medium hover:bg-[#18191e] hover:border-[#a7abb4]/40 transition-all min-h-[48px]"
+              >
+                Portal de clientes
+              </Link>
+              <Link
                 href="https://calendly.com/jagzao"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center px-6 py-3.5 rounded-lg bg-[#e8343d] text-[#f5f5f7] font-medium shadow-[0_0_0_1px_#7d161c,0_8px_24px_-10px_rgba(232,52,61,0.35)] hover:bg-[#ff4650] hover:shadow-[0_0_0_1px_#7d161c,0_12px_32px_-8px_rgba(232,52,61,0.45)] hover:-translate-y-0.5 transition-all min-h-[48px]"
+                className="inline-flex items-center justify-center px-6 py-3.5 rounded-lg border border-[#282a31] text-[#a7abb4] font-medium hover:bg-[#18191e] hover:border-[#a7abb4]/40 transition-all min-h-[48px]"
               >
-                Agenda una llamada
-              </Link>
-              <Link
-                href="/t/zo-system/#casos"
-                className="inline-flex items-center justify-center px-6 py-3.5 rounded-lg border border-[#282a31] text-[#f5f5f7] font-medium hover:bg-[#18191e] hover:border-[#a7abb4]/40 transition-all min-h-[48px]"
-              >
-                Ver casos reales
+                Agendar llamada
               </Link>
             </div>
             <p className="mt-6 text-sm text-[#737782]">
