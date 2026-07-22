@@ -6,7 +6,18 @@ import {
   devDailyReports,
   tenantConfigs,
 } from "@sass-store/database";
-import { eq, and, desc, asc, sql, gte, lte, isNull, or } from "drizzle-orm";
+import {
+  eq,
+  and,
+  desc,
+  asc,
+  sql,
+  gte,
+  lte,
+  isNull,
+  or,
+  inArray,
+} from "drizzle-orm";
 import {
   Result,
   Ok,
@@ -145,7 +156,7 @@ export class DevelopmentService {
         db
           .select()
           .from(devSprints)
-          .where(sql`${devSprints.projectId} = ANY(${projectIds}::uuid[])`)
+          .where(inArray(devSprints.projectId, projectIds))
           .orderBy(asc(devSprints.displayOrder), asc(devSprints.startDate)),
         (error) =>
           ErrorFactories.database(
@@ -159,7 +170,7 @@ export class DevelopmentService {
         db
           .select()
           .from(devTasks)
-          .where(sql`${devTasks.projectId} = ANY(${projectIds}::uuid[])`)
+          .where(inArray(devTasks.projectId, projectIds))
           .orderBy(asc(devTasks.displayOrder), desc(devTasks.createdAt)),
         (error) =>
           ErrorFactories.database(

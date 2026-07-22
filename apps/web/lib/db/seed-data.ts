@@ -455,6 +455,48 @@ export async function seedTenantData() {
           ],
         },
       },
+      {
+        tenantId: tenantMap["zo-system"],
+        name: "Desarrollo de API y backend",
+        description:
+          "Diseño e implementación de APIs REST y GraphQL en .NET 8, NestJS o Node.js: autenticación, autorización RBAC, documentación OpenAPI, observabilidad y despliegue en Azure o Vercel.",
+        price: "280.00",
+        duration: 480,
+        featured: true,
+        active: true,
+        metadata: {
+          image: "ðŸ”§",
+          category: "backend",
+          capabilities: [
+            "REST / GraphQL",
+            ".NET 8 / NestJS / Node.js",
+            "RBAC + JWT",
+            "OpenAPI",
+            "Azure / Vercel",
+          ],
+        },
+      },
+      {
+        tenantId: tenantMap["zo-system"],
+        name: "Bug fix y feature en multi-stack",
+        description:
+          "Resolución de incidentes, hotfixes y desarrollo de features puntuales en aplicaciones .NET, React, Vue o Node.js existentes, con onboarding rápido y entregas cortas.",
+        price: "90.00",
+        duration: 240,
+        featured: true,
+        active: true,
+        metadata: {
+          image: "ðŸ§¯",
+          category: "bugfix",
+          capabilities: [
+            "Hotfixes .NET",
+            "Features React / Vue",
+            "Node.js maintenance",
+            "Onboarding rápido",
+            "Entregas cortas",
+          ],
+        },
+      },
     ];
 
     // Deactivate old zo-system placeholder services that no longer match seed

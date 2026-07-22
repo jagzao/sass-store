@@ -141,10 +141,12 @@ function BookingHistoryView({
 
 function DevelopmentPortalView({
   tenantName,
+  tenantSlug,
   projects,
   dailyReports,
 }: {
   tenantName: string;
+  tenantSlug: string;
   projects: DevProjectWithSprints[];
   dailyReports: DevDailyReportDto[];
 }) {
@@ -313,7 +315,7 @@ function DevelopmentPortalView({
             <div className="flex items-center justify-between">
               <h2 className="text-2xl font-semibold">Sprint Daily</h2>
               <a
-                href="/t/zo-system/services"
+                href={`/t/${tenantSlug}/services`}
                 className="text-sm text-primary hover:underline"
               >
                 Agendar consulta
@@ -394,6 +396,7 @@ function DevelopmentPortalView({
 
 export function DevelopmentPortalClient({
   tenantName,
+  tenantSlug,
   businessType,
   projects,
   dailyReports,
@@ -411,6 +414,7 @@ export function DevelopmentPortalClient({
   return (
     <DevelopmentPortalView
       tenantName={tenantName}
+      tenantSlug={tenantSlug}
       projects={projects}
       dailyReports={dailyReports}
     />

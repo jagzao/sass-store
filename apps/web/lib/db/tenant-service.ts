@@ -285,12 +285,10 @@ export class TenantService {
           const [tenantServices, tenantProducts, tenantStaff] =
             await withTenantContext(db, tenantData.id, null, async (db) => {
               return await Promise.all([
-                tenantData.mode === "booking"
-                  ? db
-                      .select()
-                      .from(services)
-                      .where(eq(services.tenantId, tenantData.id))
-                  : Promise.resolve([]),
+                db
+                  .select()
+                  .from(services)
+                  .where(eq(services.tenantId, tenantData.id)),
                 db
                   .select({
                     id: products.id,
