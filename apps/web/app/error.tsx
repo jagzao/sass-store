@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import * as Sentry from "@sentry/nextjs";
 
 interface ErrorProps {
   error: Error & { digest?: string };
@@ -13,6 +14,9 @@ export default function Error({ error, reset }: ErrorProps) {
   useEffect(() => {
     setMounted(true);
     console.error("Application Error:", error);
+    if (process.env.NEXT_PUBLIC_SENTRY_DSN) {
+      Sentry.captureException(error);
+    }
   }, [error]);
 
   if (!mounted) {
