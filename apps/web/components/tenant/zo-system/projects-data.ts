@@ -78,36 +78,6 @@ export const projects: Project[] = [
     hasAssets: false,
   },
   {
-    slug: "saas-store",
-    name: "SaaS Store",
-    category: "Plataforma vertical multi-tenant",
-    type: "platform",
-    shortDescription:
-      "SaaS unificado para catálogo, ventas, reservas, inventario y administración de negocios de servicios.",
-    problem:
-      "Soluciones fragmentadas, altos costos de integración y dificultad para lanzar nuevos tenants rápidamente.",
-    solution:
-      "SaaS multi-tenant unificado con catálogo, ventas, reservas, inventario, publicaciones y administración centralizada.",
-    tech: ["Nuxt", "Vue", "Cloudflare Workers", "D1", "Drizzle", "R2"],
-    badges: ["SaaS", "Multi-tenant", "Admin Platform"],
-    hasAssets: false,
-  },
-  {
-    slug: "conversai",
-    name: "ConversAI",
-    category: "Agente inteligente multi-tenant",
-    type: "platform",
-    shortDescription:
-      "Agente de atención con RAG que responde desde la información privada de cada negocio.",
-    problem:
-      "Atención manual saturada, respuestas inconsistentes y dificultad para mantener conocimiento actualizado por cliente.",
-    solution:
-      "Agente inteligente multi-tenant con RAG que responde desde la información privada de cada negocio, con panel de control.",
-    tech: ["Python", "FastAPI", "PostgreSQL", "OpenAI", "RAG", "n8n"],
-    badges: ["AI", "Multi-tenant", "Automation"],
-    hasAssets: false,
-  },
-  {
     slug: "rbac",
     name: "Plataforma de usuarios y permisos",
     category: "Caso anonimizado · EY",

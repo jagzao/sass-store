@@ -10,12 +10,7 @@ import { ZoWhyUs } from "./ZoWhyUs";
 import { ZoFrontend } from "./ZoFrontend";
 import { ZoStack } from "./ZoStack";
 import { ZoCTA } from "./ZoCTA";
-import { ZoFooter } from "./ZoFooter";
 import { ZoLandingPageWrapper } from "./ZoLandingPageWrapper";
-import { getTenantBySlug } from "@/lib/server/get-tenant";
-import { db } from "@sass-store/database";
-import { products, tenants } from "@sass-store/database/schema";
-import { eq, and } from "drizzle-orm";
 
 interface ZoLandingPageProps {
   tenantSlug: string;
@@ -53,9 +48,6 @@ export const metadata: Metadata = {
 export default async function ZoLandingPage({
   tenantSlug,
 }: ZoLandingPageProps) {
-  const tenant = await getTenantBySlug(tenantSlug);
-  const tenantId = tenant?.id ?? "";
-
   return (
     <ZoLandingPageWrapper>
       <div className="min-h-screen bg-[#070708] text-[#f5f5f7] antialiased selection:bg-[#e8343d] selection:text-white">
@@ -75,9 +67,6 @@ export default async function ZoLandingPage({
           <ZoStack />
           <ZoCTA />
         </main>
-        <Suspense fallback={<div className="h-40 bg-[#070708]" />}>
-          <ZoFooterSection tenantId={tenantId} />
-        </Suspense>
       </div>
     </ZoLandingPageWrapper>
   );
@@ -100,25 +89,3 @@ const structuredData = {
   },
   sameAs: ["https://www.linkedin.com/in/jagzao", "https://github.com/jagzao"],
 };
-
-async function ZoFooterSection({ tenantId }: { tenantId: string }) {
-  if (!tenantId) return <ZoFooter products={[]} />;
-  const productRows = await db
-    .select({
-      id: products.id,
-      name: products.name,
-      metadata: products.metadata,
-    })
-    .from(products)
-    .where(and(eq(products.tenantId, tenantId), eq(products.active, true)))
-    .limit(6);
-  return (
-    <ZoFooter
-      products={productRows.map((p) => ({
-        id: p.id,
-        name: p.name,
-        metadata: p.metadata,
-      }))}
-    />
-  );
-}
