@@ -77,6 +77,7 @@ interface PostComposerProps {
   onSuccess: () => void;
   initialDate?: Date;
   postIdToEdit?: string | null;
+  tenantSlug?: string;
 }
 
 export function PostComposer({
@@ -84,6 +85,7 @@ export function PostComposer({
   onSuccess,
   initialDate,
   postIdToEdit,
+  tenantSlug = "wondernails",
 }: PostComposerProps) {
   const [title, setTitle] = useState("");
   const [baseText, setBaseText] = useState("");
@@ -200,36 +202,42 @@ export function PostComposer({
       }));
 
       let response;
+      // ponytail: /api/v1/social/queue soporta upsert vía campo id.
+      // El endpoint /api/v1/social/posts no existe.
       if (postIdToEdit) {
-        // If editing an existing post, use PUT method
-        response = await fetch(`/api/v1/social/posts/${postIdToEdit}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            title: title || null,
-            baseText,
-            scheduledAtUtc,
-            timezone,
-            targets,
-            updatedBy: "admin", // TODO: Get from auth context
-          }),
-        });
-      } else {
-        // If creating a new post, use POST method
-        response = await fetch("/api/v1/social/posts", {
+        response = await fetch("/api/v1/social/queue", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
+            id: postIdToEdit,
+            tenant: tenantSlug,
             title: title || null,
             baseText,
+            status: isScheduled ? "scheduled" : "draft",
             scheduledAtUtc,
             timezone,
-            targets,
-            createdBy: "admin", // TODO: Get from auth context
+            platforms: targets,
+            updatedBy: "admin",
+          }),
+        });
+      } else {
+        // If creating a new post, use POST method
+        response = await fetch("/api/v1/social/queue", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            tenant: tenantSlug,
+            title: title || null,
+            baseText,
+            status: isScheduled ? "scheduled" : "draft",
+            scheduledAtUtc,
+            timezone,
+            platforms: targets,
+            createdBy: "admin",
           }),
         });
       }
