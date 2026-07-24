@@ -198,6 +198,11 @@ backups/
 *dump*.sql
 auth.json
 
+# Local backup environment and target directory
+.env.backup
+C:\backups\
+c:/backups/
+
 # Video processing / sprite artifacts
 video_2_frames/
 
