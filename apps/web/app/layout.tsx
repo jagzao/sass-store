@@ -4,6 +4,7 @@ import { ToastProvider } from "@/components/ui/toast-provider";
 import { AuthSessionProvider } from "@/components/providers/session-provider";
 import { CartSyncProvider } from "@/components/cart/CartSyncProvider";
 import { ClientInit } from "@/components/client-init";
+import { FeedbackWidgetProvider } from "@/components/feedback/FeedbackWidgetContext";
 import { FeedbackWidget } from "@/components/feedback/FeedbackWidget";
 import { Providers } from "./providers";
 
@@ -34,10 +35,12 @@ export default async function RootLayout({ children }: RootLayoutProps) {
           <AuthSessionProvider>
             <ToastProvider>
               <CartSyncProvider>
-                <div className="min-h-screen bg-background">
-                  {children}
-                  <FeedbackWidget />
-                </div>
+                <FeedbackWidgetProvider>
+                  <div className="min-h-screen bg-background">
+                    {children}
+                    <FeedbackWidget />
+                  </div>
+                </FeedbackWidgetProvider>
               </CartSyncProvider>
             </ToastProvider>
           </AuthSessionProvider>

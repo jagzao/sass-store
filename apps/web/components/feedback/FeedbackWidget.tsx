@@ -1,12 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useToast } from "@/components/ui/toast-provider";
 import { useTenantSlug } from "@/lib/tenant/client-resolver";
+import { useFeedbackWidget } from "./FeedbackWidgetContext";
+import type { FeedbackCategory } from "@sass-store/validation/src/feedback";
 
-type Category = "opinion" | "sugerencia" | "problema";
+type Category = FeedbackCategory;
 
 const categoryLabels: Record<Category, string> = {
   opinion: "Opinión",
@@ -15,15 +17,30 @@ const categoryLabels: Record<Category, string> = {
 };
 
 export function FeedbackWidget() {
-  const [open, setOpen] = useState(false);
-  const [category, setCategory] = useState<Category>("opinion");
-  const [message, setMessage] = useState("");
+  const {
+    isOpen,
+    open,
+    close,
+    initialCategory,
+    initialContext,
+    initialMessage,
+  } = useFeedbackWidget();
+  const [category, setCategory] = useState<Category>(initialCategory);
+  const [message, setMessage] = useState(initialMessage);
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const pathname = usePathname();
   const { data: session } = useSession();
   const tenantSlug = useTenantSlug();
   const { showToast } = useToast();
+
+  useEffect(() => {
+    setCategory(initialCategory);
+  }, [initialCategory]);
+
+  useEffect(() => {
+    setMessage(initialMessage);
+  }, [initialMessage]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,6 +60,7 @@ export function FeedbackWidget() {
           message: message.trim(),
           email: email || undefined,
           route: pathname,
+          context: initialContext,
         }),
       });
 
@@ -55,7 +73,7 @@ export function FeedbackWidget() {
         showToast(data.data?.message || "Gracias por tu feedback", "success");
         setMessage("");
         setEmail("");
-        setOpen(false);
+        close();
       } else {
         showToast(
           data.error?.message || "No se pudo enviar el feedback",
@@ -75,9 +93,9 @@ export function FeedbackWidget() {
 
   return (
     <>
-      {!open && (
+      {!isOpen && (
         <button
-          onClick={() => setOpen(true)}
+          onClick={() => open()}
           aria-label="Abrir feedback"
           className="fixed bottom-4 right-4 z-40 bg-[#FF8000] hover:bg-[#E67300] text-white rounded-full p-4 shadow-lg transition-colors"
         >
@@ -97,12 +115,12 @@ export function FeedbackWidget() {
         </button>
       )}
 
-      {open && (
+      {isOpen && (
         <div className="fixed bottom-4 right-4 z-50 w-80 sm:w-96 bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden">
           <div className="bg-[#FF8000] text-white px-4 py-3 flex justify-between items-center">
             <h3 className="font-semibold">Tu opinión nos ayuda a mejorar</h3>
             <button
-              onClick={() => setOpen(false)}
+              onClick={() => close()}
               aria-label="Cerrar feedback"
               className="text-white hover:text-gray-200"
             >

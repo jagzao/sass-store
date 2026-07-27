@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import * as Sentry from "@sentry/nextjs";
+import { FeedbackErrorTrigger } from "@/components/feedback/FeedbackErrorTrigger";
 
 interface ErrorProps {
   error: Error & { digest?: string };
@@ -148,6 +149,8 @@ export default function Error({ error, reset }: ErrorProps) {
             <span className="mr-2">📞</span>
             Soporte
           </a>
+
+          <FeedbackErrorTrigger error={error} />
         </div>
 
         {/* Error Report */}

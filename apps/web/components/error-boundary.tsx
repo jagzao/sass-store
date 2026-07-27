@@ -2,6 +2,7 @@
 
 import React, { Component, ErrorInfo, ReactNode } from "react";
 import { Button } from "@sass-store/ui";
+import { FeedbackErrorTrigger } from "@/components/feedback/FeedbackErrorTrigger";
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -148,6 +149,12 @@ export class ErrorBoundary extends Component<
                 Ir al inicio
               </Button>
             </div>
+
+            {error && (
+              <div className="mt-4 flex justify-center">
+                <FeedbackErrorTrigger error={error} />
+              </div>
+            )}
           </div>
         </div>
       );

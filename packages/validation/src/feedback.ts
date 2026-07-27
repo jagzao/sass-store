@@ -9,6 +9,8 @@ export const feedbackCategories = [
 
 export const FeedbackCategorySchema = z.enum(feedbackCategories);
 
+export type FeedbackCategory = z.infer<typeof FeedbackCategorySchema>;
+
 export const CreateFeedbackSchema = z.object({
   category: FeedbackCategorySchema,
   message: z.string().min(10).max(2000),

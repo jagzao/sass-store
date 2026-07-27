@@ -13,7 +13,7 @@ export default defineConfig({
     globalSetup: "./tests/setup/vitest.global-setup.ts",
     setupFiles: ["./tests/setup/vitest.setup.ts"],
     // Only modern .spec.ts test files. Legacy .test.ts files must be migrated manually.
-    include: ["tests/**/*.spec.ts"],
+    include: ["tests/**/*.spec.{ts,tsx}"],
     exclude: [
       "node_modules",
       "dist",

@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { FeedbackErrorTrigger } from "@/components/feedback/FeedbackErrorTrigger";
 
 interface TenantErrorProps {
   error: Error & { digest?: string };
@@ -55,6 +56,8 @@ export default function TenantError({ error, reset }: TenantErrorProps) {
           >
             Volver al inicio
           </button>
+
+          <FeedbackErrorTrigger error={error} />
         </div>
       </div>
     </div>
