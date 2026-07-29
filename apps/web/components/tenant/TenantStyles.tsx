@@ -1,7 +1,10 @@
 "use client";
 
 import { useServerInsertedHTML } from "next/navigation";
-import { useState } from "react";
+import {
+  hexToHSLComponents,
+  getContrastingForegroundHSL,
+} from "@/lib/theme/theme-system";
 
 interface TenantStylesProps {
   isWondernails: boolean;
@@ -14,6 +17,20 @@ export function TenantStyles({
   isZoSystem,
   primaryColor = "#059669",
 }: TenantStylesProps) {
+  // ponytail: centro-tenistico primary is too light for the dark body foreground (#1F2937).
+  // Fall back to a darker terracotta so bg-primary/text-primary-foreground pass WCAG AA.
+  const safePrimaryColor =
+    primaryColor?.toLowerCase() === "#b85c38" ? "#8B3A1F" : primaryColor;
+  const primaryHSL = hexToHSLComponents(safePrimaryColor);
+  const primaryForegroundHSL = getContrastingForegroundHSL(safePrimaryColor);
+
+  // Widget panel headings must always respect primary-foreground, never tenant heading overrides.
+  const widgetHeadingOverride = `
+    [data-testid="feedback-widget-panel"] h3 {
+      color: hsl(var(--primary-foreground)) !important;
+    }
+  `;
+
   const css = isWondernails
     ? `
           /* 1. FIX THE MODAL */
@@ -81,24 +98,29 @@ export function TenantStyles({
           }
           
           /* Additional Helpers to ensure consistency */
+          /* ponytail: valid HSL values; previous raw RGB broke Shadcn token rendering.
+             Primary is computed from tenant color so bg-primary/text-primary-foreground stay accessible. */
           :root {
-            --background: 255 255 255;
-            --foreground: 51 51 51;
-            --primary: 197 160 89;
-            --primary-foreground: 255 255 255;
+            --background: 0 0% 97%;
+            --foreground: 0 0% 20%;
+            --primary: ${primaryHSL};
+            --primary-foreground: ${primaryForegroundHSL};
+            --color-primary: ${safePrimaryColor};
           }
-          
+
           h1, h2, h3, h4, h5, h6 {
             color: #C5A059 !important;
           }
-          
+
           p, span, div, li {
              color: #333333;
           }
-          
+
+          ${widgetHeadingOverride}
+
           .btn-primary, button[type="submit"] {
-            background-color: #C5A059 !important;
-            color: white !important;
+            background-color: ${safePrimaryColor} !important;
+            color: hsl(var(--primary-foreground)) !important;
             border: none !important;
           }
           
@@ -117,11 +139,12 @@ export function TenantStyles({
     : isZoSystem
       ? `
           /* Zo Systems — premium dark palette */
+          /* ponytail: valid HSL values; previous raw numbers were invalid HSL. */
           :root {
-            --background: 7 7 8;
-            --foreground: 245 245 247;
-            --primary: 232 52 61;
-            --primary-foreground: 245 245 247;
+            --background: 240 5% 3%;
+            --foreground: 0 0% 96%;
+            --primary: ${primaryHSL};
+            --primary-foreground: ${primaryForegroundHSL};
             --font-sans: var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
           }
 
@@ -149,11 +172,14 @@ export function TenantStyles({
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
           }
 
+          /* ponytail: valid HSL; previous raw RGB broke Shadcn tokens (#F9FAFB -> 180° cyan).
+             primary is HSL-ified from the tenant hex so bg-primary/text-primary-foreground stay accessible. */
           :root {
-            --background: 249 250 251;
-            --foreground: 31 41 55;
-            --primary-foreground: 255 255 255;
-            --color-primary: ${primaryColor};
+            --background: 220 14% 96%;
+            --foreground: 220 14% 20%;
+            --primary: ${primaryHSL};
+            --primary-foreground: ${primaryForegroundHSL};
+            --color-primary: ${safePrimaryColor};
           }
 
           h1, h2, h3, h4, h5, h6 {
@@ -164,14 +190,16 @@ export function TenantStyles({
             color: #374151;
           }
 
+          ${widgetHeadingOverride}
+
           .btn-primary, button[type="submit"], .bg-primary {
-            background-color: ${primaryColor} !important;
-            color: white !important;
+            background-color: ${safePrimaryColor} !important;
+            color: hsl(var(--primary-foreground)) !important;
             border: none !important;
           }
 
           .text-primary {
-            color: ${primaryColor} !important;
+            color: ${safePrimaryColor} !important;
           }
 
           /* Modals use neutral border, not wondernails gold */

@@ -29,7 +29,7 @@ export default function Error({ error, reset }: ErrorProps) {
           <h1 className="text-4xl font-bold text-white mb-2">
             ¡Oops! Algo salió mal
           </h1>
-          <p className="text-gray-600">Estamos trabajando para solucionarlo</p>
+          <p className="text-white/80">Estamos trabajando para solucionarlo</p>
         </div>
       </div>
     );
@@ -81,7 +81,7 @@ export default function Error({ error, reset }: ErrorProps) {
           <h1 className="text-4xl font-bold text-white mb-2">
             ¡Oops! Algo salió mal
           </h1>
-          <p className="text-gray-600">
+          <p className="text-white/80">
             No te preocupes, estamos trabajando para solucionarlo
           </p>
         </div>
@@ -118,7 +118,7 @@ export default function Error({ error, reset }: ErrorProps) {
             </button>
           </div>
 
-          <p className="text-sm text-gray-600 mt-3">
+          <p className="text-sm text-white/70 mt-3">
             El sistema intentará limpiar datos corruptos y restablecer la
             conexión
           </p>
@@ -154,7 +154,7 @@ export default function Error({ error, reset }: ErrorProps) {
         </div>
 
         {/* Error Report */}
-        <div className="text-gray-600 text-sm mb-6">
+        <div className="text-white/70 text-sm mb-6">
           <p>Error ID: {error.digest || "N/A"}</p>
           <p>Tiempo: {new Date().toLocaleString("es-MX")}</p>
         </div>

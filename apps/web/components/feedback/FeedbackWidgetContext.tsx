@@ -28,6 +28,8 @@ interface FeedbackWidgetContextValue {
   initialCategory: Category;
   initialContext: Record<string, unknown>;
   initialMessage: string;
+  isErrorPage: boolean;
+  setErrorPage: (value: boolean) => void;
 }
 
 const FeedbackWidgetContext = createContext<FeedbackWidgetContextValue | null>(
@@ -41,6 +43,7 @@ export function FeedbackWidgetProvider({ children }: { children: ReactNode }) {
     {},
   );
   const [initialMessage, setInitialMessage] = useState("");
+  const [isErrorPage, setErrorPage] = useState(false);
 
   const open = useCallback((options: OpenOptions = {}) => {
     setInitialCategory(options.category ?? "opinion");
@@ -62,6 +65,8 @@ export function FeedbackWidgetProvider({ children }: { children: ReactNode }) {
         initialCategory,
         initialContext,
         initialMessage,
+        isErrorPage,
+        setErrorPage,
       }}
     >
       {children}

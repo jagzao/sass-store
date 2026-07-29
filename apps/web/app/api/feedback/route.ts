@@ -13,7 +13,9 @@ import {
   listFeedbackByTenant,
 } from "@/lib/services/feedback-service";
 import { getTenantIdForRequest } from "@/lib/tenant/resolver";
+import { TenantService } from "@/lib/db/tenant-service";
 import { AdvancedRateLimiter } from "@/lib/security/rate-limiter";
+import { assertTenantAccess } from "@/lib/auth/api-auth";
 
 const feedbackRateLimiter = new AdvancedRateLimiter({
   windowMs: 15 * 60 * 1000,
@@ -57,6 +59,16 @@ const parseListQuery = (
   });
 };
 
+const resolveTenant = async (
+  request: NextRequest,
+): Promise<{ id: string; slug: string } | null> => {
+  const slug = request.headers.get("x-tenant") ?? undefined;
+  if (!slug) return null;
+
+  const tenant = await TenantService.getTenantBySlug(slug);
+  return tenant ? { id: tenant.id, slug: tenant.slug } : null;
+};
+
 export const POST = withResultHandler(async (request: NextRequest) => {
   const rateResult = await feedbackRateLimiter.checkLimit(request, "feedback");
 
@@ -70,7 +82,12 @@ export const POST = withResultHandler(async (request: NextRequest) => {
     );
   }
 
-  const tenantId = await getTenantIdForRequest(request);
+  const tenant = await resolveTenant(request);
+  if (!tenant) {
+    return Err(
+      ErrorFactories.validation("tenant context is required", "tenant"),
+    );
+  }
 
   const bodyResult = await (async () => {
     try {
@@ -96,7 +113,7 @@ export const POST = withResultHandler(async (request: NextRequest) => {
 
   const result = await submitFeedback({
     ...bodyResult.data,
-    tenantId,
+    tenantId: tenant.id,
     userId: session?.user?.id,
     context: {
       route: bodyResult.data.route,
@@ -114,11 +131,17 @@ export const GET = withResultHandler(async (request: NextRequest) => {
     return Err(ErrorFactories.authentication("missing_token"));
   }
 
-  const tenantId = request.headers.get("x-tenant-id");
-  if (!tenantId) {
+  const tenant = await resolveTenant(request);
+  if (!tenant) {
     return Err(
-      ErrorFactories.validation("tenant context is required", "tenantId"),
+      ErrorFactories.validation("tenant context is required", "tenant"),
     );
+  }
+
+  try {
+    assertTenantAccess(session, tenant.slug);
+  } catch {
+    return Err(ErrorFactories.authorization("tenant", tenant.slug));
   }
 
   const queryResult = parseListQuery(request);
@@ -130,6 +153,6 @@ export const GET = withResultHandler(async (request: NextRequest) => {
 
   return listFeedbackByTenant({
     ...query,
-    tenantId,
+    tenantId: tenant.id,
   });
 });

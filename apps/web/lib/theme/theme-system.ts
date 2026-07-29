@@ -309,3 +309,47 @@ export function isLightColor(color: string): boolean {
 export function getContrastingTextColor(backgroundColor: string): string {
   return isLightColor(backgroundColor) ? "#000000" : "#FFFFFF";
 }
+
+/**
+ * Convert a hex color to HSL components string suitable for CSS custom properties.
+ * Returns space-separated "H S% L%" (e.g. "38 45% 56%"). Defaults to the input on failure.
+ */
+export function hexToHSLComponents(color: string): string {
+  if (!color.startsWith("#")) return color;
+
+  const hex = color.replace("#", "");
+  if (!/^[0-9a-fA-F]{6}$/.test(hex)) return color;
+
+  const r = parseInt(hex.substring(0, 2), 16) / 255;
+  const g = parseInt(hex.substring(2, 4), 16) / 255;
+  const b = parseInt(hex.substring(4, 6), 16) / 255;
+
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  const l = (max + min) / 2;
+
+  if (max === min) {
+    return `0 0% ${Math.round(l * 100)}%`;
+  }
+
+  const d = max - min;
+  const s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+
+  let h = 0;
+  if (max === r) {
+    h = ((g - b) / d + (g < b ? 6 : 0)) / 6;
+  } else if (max === g) {
+    h = ((b - r) / d + 2) / 6;
+  } else {
+    h = ((r - g) / d + 4) / 6;
+  }
+
+  return `${Math.round(h * 360)} ${Math.round(s * 100)}% ${Math.round(l * 100)}%`;
+}
+
+/**
+ * Get HSL foreground components (0 0% 100% or 0 0% 0%) for a given hex background.
+ */
+export function getContrastingForegroundHSL(backgroundColor: string): string {
+  return isLightColor(backgroundColor) ? "0 0% 0%" : "0 0% 100%";
+}

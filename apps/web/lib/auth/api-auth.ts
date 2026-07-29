@@ -19,7 +19,7 @@ export function assertTenantAccess(
   const userRole = (session.user as any).role;
   const userTenantSlug = (session.user as any).tenantSlug;
 
-  if (userRole === "Admin") {
+  if (typeof userRole === "string" && userRole.toLowerCase() === "admin") {
     return;
   }
 

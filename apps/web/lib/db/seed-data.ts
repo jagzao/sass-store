@@ -26,7 +26,7 @@ export async function seedTenantData() {
         mode: "booking",
         status: "active",
         branding: {
-          primaryColor: "#EC4899",
+          primaryColor: "#C5A059",
           secondaryColor: "#1F2937",
           logo: null,
           heroConfig: {
@@ -269,9 +269,7 @@ export async function seedTenantData() {
             ],
             set: { value: jsonValue, updatedAt: new Date() },
           });
-        console.warn(
-          `✅ Tenant config: ${config.category}.${config.key} → ${config.value}`,
-        );
+        // SECURITY: Redacted sensitive log;
       }),
     );
 

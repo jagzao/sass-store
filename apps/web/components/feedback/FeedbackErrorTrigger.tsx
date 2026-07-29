@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useFeedbackWidget } from "./FeedbackWidgetContext";
 
 interface ErrorInfo {
@@ -17,17 +18,34 @@ export function FeedbackErrorTrigger({
   error,
   label = "Reportar problema",
 }: FeedbackErrorTriggerProps) {
-  const { open } = useFeedbackWidget();
+  const { open, setErrorPage } = useFeedbackWidget();
+
+  useEffect(() => {
+    setErrorPage(true);
+    return () => setErrorPage(false);
+  }, [setErrorPage]);
+
+  const MAX_ERROR_MESSAGE_LENGTH = 240;
+
+  const sanitizeErrorMessage = (message?: string): string | undefined => {
+    if (!message) return undefined;
+    const withoutLocalPaths = message.replace(
+      /\b\/[\w\-. ]+(?=\/|\s|$)/g,
+      "[path]",
+    );
+    return withoutLocalPaths.slice(0, MAX_ERROR_MESSAGE_LENGTH);
+  };
 
   const handleClick = () => {
+    const safeMessage = sanitizeErrorMessage(error.message);
     open({
       category: "problema",
-      message: `Error detectado${error.name ? `: ${error.name}` : ""}${error.message ? ` - ${error.message}` : ""}`,
+      message: `Error detectado${error.name ? `: ${error.name}` : ""}${safeMessage ? ` - ${safeMessage}` : ""}`,
       context: {
         source: "error_page",
         errorDigest: error.digest,
         errorName: error.name,
-        errorMessage: error.message,
+        errorMessage: safeMessage,
       },
     });
   };
@@ -36,7 +54,7 @@ export function FeedbackErrorTrigger({
     <button
       data-testid="feedback-error-trigger"
       onClick={handleClick}
-      className="inline-flex items-center justify-center px-4 py-3 bg-[#FF8000] hover:bg-[#E67300] text-white rounded-lg transition-colors"
+      className="inline-flex items-center justify-center px-4 py-3 bg-primary text-primary-foreground hover:opacity-90 rounded-lg transition-opacity focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"

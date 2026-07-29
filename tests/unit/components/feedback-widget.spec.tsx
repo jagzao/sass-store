@@ -7,6 +7,7 @@ import {
   useFeedbackWidget,
 } from "@/components/feedback/FeedbackWidgetContext";
 import { FeedbackErrorTrigger } from "@/components/feedback/FeedbackErrorTrigger";
+import { ErrorBoundary } from "@/components/error-boundary";
 
 function Consumer() {
   const { isOpen, initialCategory, initialContext, initialMessage } =
@@ -77,5 +78,53 @@ describe("FeedbackErrorTrigger", () => {
     expect(screen.getByTestId("open").textContent).toBe("open");
     expect(screen.getByTestId("category").textContent).toBe("problema");
     expect(screen.getByTestId("source").textContent).toBe("error_page");
+  });
+
+  it("trunca y sanitiza paths locales del mensaje de error", () => {
+    const longMessage = "a".repeat(300);
+    render(
+      <FeedbackWidgetProvider>
+        <Consumer />
+        <FeedbackErrorTrigger
+          error={{
+            digest: "abc123",
+            name: "ChunkLoadError",
+            message: `/home/user/app/broken.js ${longMessage}`,
+          }}
+        />
+      </FeedbackWidgetProvider>,
+    );
+
+    fireEvent.click(screen.getByText("Reportar problema"));
+
+    const message = screen.getByTestId("message").textContent ?? "";
+    expect(message.length).toBeLessThanOrEqual(260);
+    expect(message).not.toContain("/home/user/app/broken.js");
+    expect(message).toContain("[path]");
+  });
+});
+
+function Kaboom() {
+  throw new Error("component boundary failure");
+}
+
+describe("ErrorBoundary", () => {
+  it("muestra trigger de feedback cuando un componente hijo falla", () => {
+    render(
+      <FeedbackWidgetProvider>
+        <Consumer />
+        <ErrorBoundary>
+          <Kaboom />
+        </ErrorBoundary>
+      </FeedbackWidgetProvider>,
+    );
+
+    expect(screen.getByText("Algo salió mal")).toBeInTheDocument();
+    expect(screen.getByTestId("feedback-error-trigger")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId("feedback-error-trigger"));
+
+    expect(screen.getByTestId("open").textContent).toBe("open");
+    expect(screen.getByTestId("category").textContent).toBe("problema");
   });
 });

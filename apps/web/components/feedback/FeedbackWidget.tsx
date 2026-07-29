@@ -24,6 +24,7 @@ export function FeedbackWidget() {
     initialCategory,
     initialContext,
     initialMessage,
+    isErrorPage,
   } = useFeedbackWidget();
   const [category, setCategory] = useState<Category>(initialCategory);
   const [message, setMessage] = useState(initialMessage);
@@ -54,7 +55,10 @@ export function FeedbackWidget() {
     try {
       const response = await fetch("/api/feedback", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(tenantSlug ? { "x-tenant": tenantSlug } : {}),
+        },
         body: JSON.stringify({
           category,
           message: message.trim(),
@@ -87,17 +91,16 @@ export function FeedbackWidget() {
     }
   };
 
-  if (!tenantSlug) {
-    return null;
-  }
+  const showFloatingButton = !isOpen && !isErrorPage;
 
   return (
     <>
-      {!isOpen && (
+      {showFloatingButton && (
         <button
           onClick={() => open()}
           aria-label="Abrir feedback"
-          className="fixed bottom-4 right-4 z-40 bg-[#FF8000] hover:bg-[#E67300] text-white rounded-full p-4 shadow-lg transition-colors"
+          aria-expanded={isOpen}
+          className="fixed bottom-4 right-4 z-40 bg-primary text-primary-foreground hover:opacity-90 rounded-full p-4 shadow-lg transition-opacity focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -116,15 +119,31 @@ export function FeedbackWidget() {
       )}
 
       {isOpen && (
-        <div className="fixed bottom-4 right-4 z-50 w-80 sm:w-96 bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden">
-          <div className="bg-[#FF8000] text-white px-4 py-3 flex justify-between items-center">
+        <div
+          data-testid="feedback-widget-panel"
+          className="fixed bottom-4 right-4 z-50 w-80 sm:w-96 bg-card text-card-foreground rounded-lg shadow-xl border border-border overflow-hidden"
+        >
+          <div className="bg-primary text-primary-foreground px-4 py-3 flex justify-between items-center">
             <h3 className="font-semibold">Tu opinión nos ayuda a mejorar</h3>
             <button
               onClick={() => close()}
               aria-label="Cerrar feedback"
-              className="text-white hover:text-gray-200"
+              className="text-primary-foreground hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-ring rounded p-1"
             >
-              ×
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M18 6 6 18" />
+                <path d="m6 6 12 12" />
+              </svg>
             </button>
           </div>
 
@@ -135,10 +154,10 @@ export function FeedbackWidget() {
                   key={key}
                   type="button"
                   onClick={() => setCategory(key)}
-                  className={`flex-1 py-2 px-2 text-sm rounded-md border transition-colors ${
+                  className={`flex-1 py-2 px-2 text-sm rounded-md border transition-colors focus:outline-none focus:ring-2 focus:ring-ring ${
                     category === key
-                      ? "bg-[#FF8000] text-white border-[#FF8000]"
-                      : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+                      ? "bg-primary text-primary-foreground border-primary"
+                      : "bg-background text-foreground border-border hover:bg-muted"
                   }`}
                 >
                   {categoryLabels[key]}
@@ -151,7 +170,8 @@ export function FeedbackWidget() {
               onChange={(e) => setMessage(e.target.value)}
               placeholder="Cuéntanos qué piensas o qué problema encontraste..."
               rows={4}
-              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FF8000] text-gray-900"
+              aria-label="Mensaje de feedback"
+              className="w-full p-3 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-ring bg-background text-foreground placeholder:text-muted-foreground"
               required
               minLength={10}
               maxLength={2000}
@@ -163,14 +183,15 @@ export function FeedbackWidget() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Tu email (opcional)"
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FF8000] text-gray-900"
+                aria-label="Email opcional"
+                className="w-full p-3 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-ring bg-background text-foreground placeholder:text-muted-foreground"
               />
             )}
 
             <button
               type="submit"
               disabled={loading || message.trim().length < 10}
-              className="w-full bg-[#FF8000] hover:bg-[#E67300] disabled:bg-gray-400 text-white font-medium py-2 px-4 rounded-md transition-colors"
+              className="w-full bg-primary text-primary-foreground hover:opacity-90 disabled:opacity-50 font-medium py-2 px-4 rounded-md transition-opacity focus:outline-none focus:ring-2 focus:ring-ring"
             >
               {loading ? "Enviando..." : "Enviar feedback"}
             </button>

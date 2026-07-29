@@ -9,6 +9,11 @@ import {
   ListFeedbackQuery,
 } from "@sass-store/validation/src/feedback";
 
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+const isUuid = (value: string): boolean => UUID_RE.test(value);
+
 export interface FeedbackContext {
   route?: string;
   userAgent?: string;
@@ -30,14 +35,18 @@ export interface SubmitFeedbackResult {
 
 const N8N_WEBHOOK_URL = process.env.N8N_FEEDBACK_WEBHOOK_URL;
 
-const getTenantById = async (
+const getTenantByIdOrSlug = async (
   tenantId: string,
 ): Promise<Result<{ id: string; slug: string }, DomainError>> => {
   const result = await fromPromise(
     db
       .select({ id: tenants.id, slug: tenants.slug })
       .from(tenants)
-      .where(eq(tenants.id, tenantId))
+      .where(
+        isUuid(tenantId)
+          ? eq(tenants.id, tenantId)
+          : eq(tenants.slug, tenantId),
+      )
       .limit(1),
     (error) =>
       ErrorFactories.database(
@@ -138,13 +147,8 @@ const sendToN8n = async (
 
 const insertFeedbackRecord = async (
   input: SubmitFeedbackInput,
+  tenant: { id: string; slug: string },
 ): Promise<Result<Feedback, DomainError>> => {
-  const tenantResult = await getTenantById(input.tenantId);
-  if (!tenantResult.success) {
-    return tenantResult as Result<never, DomainError>;
-  }
-
-  const tenant = tenantResult.data;
   const context: FeedbackContext = {
     ...input.context,
     route: input.context?.route ?? input.route,
@@ -219,14 +223,14 @@ const updateFeedbackStatus = async (
 export const submitFeedback = async (
   input: SubmitFeedbackInput,
 ): Promise<Result<SubmitFeedbackResult, DomainError>> => {
-  const tenantResult = await getTenantById(input.tenantId);
+  const tenantResult = await getTenantByIdOrSlug(input.tenantId);
   if (!tenantResult.success) {
     return tenantResult as Result<never, DomainError>;
   }
 
   const tenant = tenantResult.data;
 
-  const insertResult = await insertFeedbackRecord(input);
+  const insertResult = await insertFeedbackRecord(input, tenant);
   if (!insertResult.success) {
     return insertResult as Result<never, DomainError>;
   }

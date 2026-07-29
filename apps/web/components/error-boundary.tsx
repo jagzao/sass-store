@@ -95,11 +95,11 @@ export class ErrorBoundary extends Component<
 
       // Default error UI
       return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-          <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8">
-            <div className="flex items-center justify-center w-12 h-12 mx-auto bg-red-100 rounded-full mb-4">
+        <div className="min-h-screen flex items-center justify-center bg-background px-4">
+          <div className="max-w-md w-full bg-card text-card-foreground rounded-lg shadow-lg p-8 border border-border">
+            <div className="flex items-center justify-center w-12 h-12 mx-auto bg-destructive/20 rounded-full mb-4">
               <svg
-                className="w-6 h-6 text-red-600"
+                className="w-6 h-6 text-destructive"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -113,24 +113,24 @@ export class ErrorBoundary extends Component<
               </svg>
             </div>
 
-            <h1 className="text-2xl font-bold text-center text-gray-900 mb-2">
+            <h1 className="text-2xl font-bold text-center text-card-foreground mb-2">
               Algo salió mal
             </h1>
 
-            <p className="text-center text-gray-600 mb-6">
+            <p className="text-center text-muted-foreground mb-6">
               Lo sentimos, ocurrió un error inesperado. Por favor intenta
               recargar la página.
             </p>
 
             {process.env.NODE_ENV === "development" && error && (
-              <details className="mb-6 p-4 bg-gray-50 rounded border border-gray-200">
-                <summary className="cursor-pointer font-medium text-sm text-gray-700 mb-2">
+              <details className="mb-6 p-4 bg-muted rounded border border-border">
+                <summary className="cursor-pointer font-medium text-sm text-muted-foreground mb-2">
                   Detalles del error (solo desarrollo)
                 </summary>
-                <div className="mt-2 text-xs font-mono text-red-600 overflow-auto max-h-40">
+                <div className="mt-2 text-xs font-mono text-destructive overflow-auto max-h-40">
                   <p className="font-bold">{error.toString()}</p>
                   {errorInfo && (
-                    <pre className="mt-2 text-gray-600 whitespace-pre-wrap">
+                    <pre className="mt-2 text-muted-foreground whitespace-pre-wrap">
                       {errorInfo.componentStack}
                     </pre>
                   )}
@@ -151,7 +151,7 @@ export class ErrorBoundary extends Component<
             </div>
 
             {error && (
-              <div className="mt-4 flex justify-center">
+              <div className="mt-6 flex justify-center">
                 <FeedbackErrorTrigger error={error} />
               </div>
             )}
