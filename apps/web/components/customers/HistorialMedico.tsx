@@ -36,6 +36,7 @@ interface HistorialMedicoProps {
   customerId: string;
   initialData?: HistorialMedicoData;
   onSave: (data: HistorialMedicoData) => Promise<void>;
+  defaultCollapsed?: boolean;
 }
 
 const DEDOS = ["pulgar", "indice", "medio", "anular", "menique"] as const;
@@ -102,7 +103,7 @@ function BlockHeader({
 
 // ─── Main Component (forwardRef) ────────────────────────────────────────────
 const HistorialMedico = forwardRef<HistorialMedicoHandle, HistorialMedicoProps>(
-  ({ initialData = {}, onSave }, ref) => {
+  ({ initialData = {}, onSave, defaultCollapsed = false }, ref) => {
     const [draft, setDraft] = useState<HistorialMedicoData>(initialData);
 
     // Sync when initialData changes (e.g. customer reloads)
@@ -114,11 +115,11 @@ const HistorialMedico = forwardRef<HistorialMedicoHandle, HistorialMedicoProps>(
     const [collapsedSections, setCollapsedSections] = useState<
       Record<string, boolean>
     >({
-      preferencias: false,
-      sanitario: false,
+      preferencias: defaultCollapsed,
+      sanitario: defaultCollapsed,
       medidas: true,
-      estilo: false,
-      notas: false,
+      estilo: defaultCollapsed,
+      notas: defaultCollapsed,
     });
     const toggleSection = (key: string) =>
       setCollapsedSections((s) => ({ ...s, [key]: !s[key] }));

@@ -101,6 +101,7 @@ interface AddEditVisitModalProps {
     photos?: VisitPhoto[];
   };
   medicalHistoryNotes?: string;
+  defaultCollapsed?: boolean;
   onClose: (shouldRefresh?: boolean) => void;
 }
 
@@ -110,6 +111,7 @@ export default function AddEditVisitModal({
   visit,
   initialDraft,
   medicalHistoryNotes,
+  defaultCollapsed,
   onClose,
 }: AddEditVisitModalProps) {
   const historialRef = useRef<HistorialMedicoHandle>(null);
@@ -158,11 +160,19 @@ export default function AddEditVisitModal({
   const [medicalInitialData, setMedicalInitialData] =
     useState<HistorialMedicoData>({});
 
+  const [collapsedDefault, setCollapsedDefault] = useState(
+    defaultCollapsed ?? false,
+  );
+
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  useEffect(() => {
+    setCollapsedDefault(defaultCollapsed ?? false);
+  }, [defaultCollapsed]);
 
   useEffect(() => {
     async function fetchServices() {
@@ -1180,6 +1190,7 @@ export default function AddEditVisitModal({
                     customerId={targetCustomerId}
                     initialData={medicalInitialData}
                     onSave={handleSaveHistorialMedico}
+                    defaultCollapsed={collapsedDefault}
                   />
                 );
               })()}

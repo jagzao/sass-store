@@ -51,6 +51,10 @@ async function applyRLSPolicies() {
       ALTER TABLE audit_logs ENABLE ROW LEVEL SECURITY;
       ALTER TABLE tenant_configs ENABLE ROW LEVEL SECURITY;
       ALTER TABLE api_keys ENABLE ROW LEVEL SECURITY;
+      ALTER TABLE nail_quote_options ENABLE ROW LEVEL SECURITY;
+      ALTER TABLE nail_quotes ENABLE ROW LEVEL SECURITY;
+      ALTER TABLE nail_quote_lines ENABLE ROW LEVEL SECURITY;
+      ALTER TABLE booking_deposits ENABLE ROW LEVEL SECURITY;
     `);
 
     console.log("✓ RLS enabled on all multi-tenant tables");
@@ -664,6 +668,114 @@ async function applyRLSPolicies() {
         USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
     `);
     console.log("✓ RLS policies applied to tenant_configs table");
+
+    await db.execute(`
+      -- Nail Quote Options table RLS
+      DROP POLICY IF EXISTS tenant_isolation_nail_quote_options_select ON nail_quote_options;
+      DROP POLICY IF EXISTS tenant_isolation_nail_quote_options_insert ON nail_quote_options;
+      DROP POLICY IF EXISTS tenant_isolation_nail_quote_options_update ON nail_quote_options;
+      DROP POLICY IF EXISTS tenant_isolation_nail_quote_options_delete ON nail_quote_options;
+
+      CREATE POLICY tenant_isolation_nail_quote_options_select ON nail_quote_options
+        FOR SELECT
+        USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+
+      CREATE POLICY tenant_isolation_nail_quote_options_insert ON nail_quote_options
+        FOR INSERT
+        WITH CHECK (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+
+      CREATE POLICY tenant_isolation_nail_quote_options_update ON nail_quote_options
+        FOR UPDATE
+        USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid)
+        WITH CHECK (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+
+      CREATE POLICY tenant_isolation_nail_quote_options_delete ON nail_quote_options
+        FOR DELETE
+        USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+    `);
+
+    console.log("✓ RLS policies applied to nail_quote_options table");
+
+    await db.execute(`
+      -- Nail Quotes table RLS
+      DROP POLICY IF EXISTS tenant_isolation_nail_quotes_select ON nail_quotes;
+      DROP POLICY IF EXISTS tenant_isolation_nail_quotes_insert ON nail_quotes;
+      DROP POLICY IF EXISTS tenant_isolation_nail_quotes_update ON nail_quotes;
+      DROP POLICY IF EXISTS tenant_isolation_nail_quotes_delete ON nail_quotes;
+
+      CREATE POLICY tenant_isolation_nail_quotes_select ON nail_quotes
+        FOR SELECT
+        USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+
+      CREATE POLICY tenant_isolation_nail_quotes_insert ON nail_quotes
+        FOR INSERT
+        WITH CHECK (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+
+      CREATE POLICY tenant_isolation_nail_quotes_update ON nail_quotes
+        FOR UPDATE
+        USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid)
+        WITH CHECK (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+
+      CREATE POLICY tenant_isolation_nail_quotes_delete ON nail_quotes
+        FOR DELETE
+        USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+    `);
+
+    console.log("✓ RLS policies applied to nail_quotes table");
+
+    await db.execute(`
+      -- Nail Quote Lines table RLS
+      DROP POLICY IF EXISTS tenant_isolation_nail_quote_lines_select ON nail_quote_lines;
+      DROP POLICY IF EXISTS tenant_isolation_nail_quote_lines_insert ON nail_quote_lines;
+      DROP POLICY IF EXISTS tenant_isolation_nail_quote_lines_update ON nail_quote_lines;
+      DROP POLICY IF EXISTS tenant_isolation_nail_quote_lines_delete ON nail_quote_lines;
+
+      CREATE POLICY tenant_isolation_nail_quote_lines_select ON nail_quote_lines
+        FOR SELECT
+        USING (quote_id IN (SELECT id FROM nail_quotes WHERE tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid));
+
+      CREATE POLICY tenant_isolation_nail_quote_lines_insert ON nail_quote_lines
+        FOR INSERT
+        WITH CHECK (quote_id IN (SELECT id FROM nail_quotes WHERE tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid));
+
+      CREATE POLICY tenant_isolation_nail_quote_lines_update ON nail_quote_lines
+        FOR UPDATE
+        USING (quote_id IN (SELECT id FROM nail_quotes WHERE tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid))
+        WITH CHECK (quote_id IN (SELECT id FROM nail_quotes WHERE tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid));
+
+      CREATE POLICY tenant_isolation_nail_quote_lines_delete ON nail_quote_lines
+        FOR DELETE
+        USING (quote_id IN (SELECT id FROM nail_quotes WHERE tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid));
+    `);
+
+    console.log("✓ RLS policies applied to nail_quote_lines table");
+
+    await db.execute(`
+      -- Booking Deposits table RLS
+      DROP POLICY IF EXISTS tenant_isolation_booking_deposits_select ON booking_deposits;
+      DROP POLICY IF EXISTS tenant_isolation_booking_deposits_insert ON booking_deposits;
+      DROP POLICY IF EXISTS tenant_isolation_booking_deposits_update ON booking_deposits;
+      DROP POLICY IF EXISTS tenant_isolation_booking_deposits_delete ON booking_deposits;
+
+      CREATE POLICY tenant_isolation_booking_deposits_select ON booking_deposits
+        FOR SELECT
+        USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+
+      CREATE POLICY tenant_isolation_booking_deposits_insert ON booking_deposits
+        FOR INSERT
+        WITH CHECK (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+
+      CREATE POLICY tenant_isolation_booking_deposits_update ON booking_deposits
+        FOR UPDATE
+        USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid)
+        WITH CHECK (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+
+      CREATE POLICY tenant_isolation_booking_deposits_delete ON booking_deposits
+        FOR DELETE
+        USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::uuid);
+    `);
+
+    console.log("✓ RLS policies applied to booking_deposits table");
 
     await db.execute(`
       -- API Keys table RLS

@@ -3733,3 +3733,161 @@ export const feedbackRelations = relations(feedback, ({ one }) => ({
     references: [users.id],
   }),
 }));
+
+// ── STRY-032: Nail quote catalog and quotes ───────────────────────────────
+
+export const nailQuoteOptions = pgTable(
+  "nail_quote_options",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .references(() => tenants.id)
+      .notNull(),
+    category: varchar("category", { length: 20 }).notNull(), // material | length | shape | addon
+    key: varchar("key", { length: 50 }).notNull(),
+    label: varchar("label", { length: 100 }).notNull(),
+    basePrice: integer("base_price").notNull().default(0), // cents
+    baseDurationMinutes: integer("base_duration_minutes").notNull().default(0),
+    imageUrl: text("image_url"),
+    order: integer("order").notNull().default(0),
+    isActive: boolean("is_active").notNull().default(true),
+    metadata: jsonb("metadata").default("{}"),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    tenantCategoryKeyIdx: uniqueIndex(
+      "nail_quote_options_tenant_category_key_idx",
+    ).on(table.tenantId, table.category, table.key),
+    tenantIdx: index("nail_quote_options_tenant_idx").on(table.tenantId),
+    categoryIdx: index("nail_quote_options_category_idx").on(table.category),
+  }),
+);
+
+export const nailQuotes = pgTable(
+  "nail_quotes",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .references(() => tenants.id)
+      .notNull(),
+    customerId: uuid("customer_id").references(() => customers.id),
+    customerName: varchar("customer_name", { length: 200 }),
+    customerPhone: varchar("customer_phone", { length: 20 }),
+    totalAmount: decimal("total_amount", { precision: 10, scale: 2 }).notNull(),
+    durationMinutes: integer("duration_minutes").notNull().default(0),
+    status: varchar("status", { length: 20 }).notNull().default("pending"), // pending | converted | cancelled
+    source: varchar("source", { length: 30 }).notNull().default("nail_quoter"),
+    idempotencyKey: varchar("idempotency_key", { length: 255 }),
+    metadata: jsonb("metadata").default("{}"),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    tenantIdx: index("nail_quotes_tenant_idx").on(table.tenantId),
+    customerIdx: index("nail_quotes_customer_idx").on(table.customerId),
+    statusIdx: index("nail_quotes_status_idx").on(table.status),
+    idempotencyIdx: index("nail_quotes_idempotency_idx").on(
+      table.tenantId,
+      table.idempotencyKey,
+    ),
+  }),
+);
+
+export const nailQuoteLines = pgTable(
+  "nail_quote_lines",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    quoteId: uuid("quote_id")
+      .references(() => nailQuotes.id, { onDelete: "cascade" })
+      .notNull(),
+    optionId: uuid("option_id")
+      .references(() => nailQuoteOptions.id)
+      .notNull(),
+    category: varchar("category", { length: 20 }).notNull(),
+    key: varchar("key", { length: 50 }).notNull(),
+    label: varchar("label", { length: 100 }).notNull(),
+    unitPrice: decimal("unit_price", { precision: 10, scale: 2 }).notNull(),
+    durationMinutes: integer("duration_minutes").notNull().default(0),
+    order: integer("order").notNull().default(0),
+    metadata: jsonb("metadata").default("{}"),
+    createdAt: timestamp("created_at").defaultNow(),
+  },
+  (table) => ({
+    quoteIdx: index("nail_quote_lines_quote_idx").on(table.quoteId),
+    optionIdx: index("nail_quote_lines_option_idx").on(table.optionId),
+  }),
+);
+
+export const bookingDeposits = pgTable(
+  "booking_deposits",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .references(() => tenants.id)
+      .notNull(),
+    bookingId: uuid("booking_id")
+      .references(() => bookings.id, { onDelete: "cascade" })
+      .notNull(),
+    amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
+    status: varchar("status", { length: 20 }).notNull().default("pending"), // pending | paid | waived
+    dueAt: timestamp("due_at"),
+    paidAt: timestamp("paid_at"),
+    metadata: jsonb("metadata").default("{}"),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    tenantIdx: index("booking_deposits_tenant_idx").on(table.tenantId),
+    bookingIdx: uniqueIndex("booking_deposits_booking_idx").on(table.bookingId),
+    statusIdx: index("booking_deposits_status_idx").on(table.status),
+  }),
+);
+
+export const nailQuoteOptionsRelations = relations(
+  nailQuoteOptions,
+  ({ one, many }) => ({
+    tenant: one(tenants, {
+      fields: [nailQuoteOptions.tenantId],
+      references: [tenants.id],
+    }),
+    lines: many(nailQuoteLines),
+  }),
+);
+
+export const nailQuotesRelations = relations(nailQuotes, ({ one, many }) => ({
+  tenant: one(tenants, {
+    fields: [nailQuotes.tenantId],
+    references: [tenants.id],
+  }),
+  customer: one(customers, {
+    fields: [nailQuotes.customerId],
+    references: [customers.id],
+  }),
+  lines: many(nailQuoteLines),
+}));
+
+export const nailQuoteLinesRelations = relations(nailQuoteLines, ({ one }) => ({
+  quote: one(nailQuotes, {
+    fields: [nailQuoteLines.quoteId],
+    references: [nailQuotes.id],
+  }),
+  option: one(nailQuoteOptions, {
+    fields: [nailQuoteLines.optionId],
+    references: [nailQuoteOptions.id],
+  }),
+}));
+
+export const bookingDepositsRelations = relations(
+  bookingDeposits,
+  ({ one }) => ({
+    tenant: one(tenants, {
+      fields: [bookingDeposits.tenantId],
+      references: [tenants.id],
+    }),
+    booking: one(bookings, {
+      fields: [bookingDeposits.bookingId],
+      references: [bookings.id],
+    }),
+  }),
+);

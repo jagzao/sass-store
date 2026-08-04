@@ -12,3 +12,5 @@ export * from "./security";
 export * from "./result";
 export * from "./errors/types";
 export * from "./rate-limit";
+export * from "./services/nail-quote/types";
+export * from "./services/nail-quote/calculate";

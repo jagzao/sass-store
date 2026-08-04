@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Plus, Eye, Edit, Trash2, Calendar, DollarSign } from "lucide-react";
 import AddEditVisitModal from "./AddEditVisitModal";
+import NailQuoterModal from "./NailQuoterModal";
 import VisitDetailModal from "./VisitDetailModal";
 
 interface Visit {
@@ -40,12 +41,18 @@ export default function CustomerVisitsHistory({
   const [visits, setVisits] = useState<Visit[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showNailQuoter, setShowNailQuoter] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [selectedVisit, setSelectedVisit] = useState<Visit | null>(null);
   const [editingVisit, setEditingVisit] = useState<Visit | null>(null);
+  const [nailSalon, setNailSalon] = useState(false);
 
   useEffect(() => {
     fetchVisits();
+    fetch(`/api/tenants/${tenantSlug}/nail-salon-check`)
+      .then((res) => res.json())
+      .then((json) => setNailSalon(!!json.nailSalon))
+      .catch(() => setNailSalon(false));
   }, [tenantSlug, customerId]);
 
   async function fetchVisits() {
@@ -66,7 +73,11 @@ export default function CustomerVisitsHistory({
 
   const handleAddVisit = () => {
     setEditingVisit(null);
-    setShowAddModal(true);
+    if (nailSalon) {
+      setShowNailQuoter(true);
+    } else {
+      setShowAddModal(true);
+    }
   };
 
   const handleEditVisit = (visit: Visit) => {
@@ -106,6 +117,7 @@ export default function CustomerVisitsHistory({
 
   const handleModalClose = async (shouldRefresh?: boolean) => {
     setShowAddModal(false);
+    setShowNailQuoter(false);
     setEditingVisit(null);
     if (shouldRefresh) {
       await fetchVisits();
@@ -173,7 +185,7 @@ export default function CustomerVisitsHistory({
             className={`inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium ${isLuxury ? "text-white bg-[#D4AF37] hover:bg-[#b3932d]" : "text-white bg-blue-600 hover:bg-blue-700"} transition-colors`}
           >
             <Plus className="h-4 w-4 mr-2" />
-            Nueva Visita
+            {nailSalon ? "Cotizar Uñas" : "Nueva Visita"}
           </button>
         </div>
 
@@ -199,7 +211,7 @@ export default function CustomerVisitsHistory({
               className={`inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium ${isLuxury ? "text-white bg-[#D4AF37] hover:bg-[#b3932d]" : "text-white bg-blue-600 hover:bg-blue-700"} transition-colors`}
             >
               <Plus className="h-4 w-4 mr-2" />
-              Registrar Primera Visita
+              {nailSalon ? "Cotizar Uñas" : "Registrar Primera Visita"}
             </button>
           </div>
         ) : (
@@ -339,6 +351,16 @@ export default function CustomerVisitsHistory({
           tenantSlug={tenantSlug}
           customerId={customerId}
           visit={editingVisit}
+          defaultCollapsed={true}
+          onClose={handleModalClose}
+        />
+      )}
+
+      {/* Nail Quoter Modal */}
+      {showNailQuoter && (
+        <NailQuoterModal
+          tenantSlug={tenantSlug}
+          customerId={customerId}
           onClose={handleModalClose}
         />
       )}
