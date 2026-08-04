@@ -7,6 +7,7 @@ import {
   CTV_PAGE_BG,
 } from "@/lib/design/centro-tenistico-brand";
 import { WN_PAGE_BG } from "@/lib/design/wondernails-brand";
+import { redirect } from "next/navigation";
 import { BookCalendarClient } from "./book-calendar-client";
 
 interface BookPageProps {
@@ -20,6 +21,12 @@ type TenantServiceRow = TenantWithData["services"][number];
 export default async function BookPage({ params }: BookPageProps) {
   const resolvedParams = await params;
   const tenantData = await getTenantDataForPage(resolvedParams.tenant);
+
+  // SC-11: tenant sin modo "booking" → redirect a home con mensaje
+  if (tenantData.mode !== "booking") {
+    redirect(`/t/${resolvedParams.tenant}?no_booking=1`);
+  }
+
   const services = tenantData.services;
   const defaultStaffId = tenantData.staff[0]?.id;
 

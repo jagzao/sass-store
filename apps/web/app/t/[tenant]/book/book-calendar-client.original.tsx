@@ -163,37 +163,6 @@ export function BookCalendarClient({
   >([]);
   const [linkedCustomerId, setLinkedCustomerId] = useState<string | null>(null);
 
-  // SC-04: X-Idempotency-Key emitida por el backend al montar. Previene
-  // duplicados por doble submit y permite replay seguro en caso de retry.
-  const [idempotencyKey, setIdempotencyKey] = useState<string>("");
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const cached = sessionStorage.getItem(`bk:idem:${tenantSlug}`);
-        if (cached) {
-          if (!cancelled) setIdempotencyKey(cached);
-          return;
-        }
-        const r = await fetch(
-          `/api/tenants/${tenantSlug}/book/idempotency-key`,
-        );
-        if (!r.ok) return;
-        const json = await r.json();
-        const key = json?.data?.key;
-        if (key && !cancelled) {
-          setIdempotencyKey(key);
-          sessionStorage.setItem(`bk:idem:${tenantSlug}`, key);
-        }
-      } catch {
-        // fail-open: sin key el POST sigue funcionando, solo sin idempotencia
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [tenantSlug]);
-
   const runCustomerMatch = useCallback(async () => {
     if (isAuthed || !showGuestFields) return;
     const phone = customerPhone.replace(/\D/g, "");
@@ -304,7 +273,6 @@ export function BookCalendarClient({
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          ...(idempotencyKey ? { "X-Idempotency-Key": idempotencyKey } : {}),
         },
         body: JSON.stringify({
           serviceId: selectedService.id,
@@ -327,7 +295,7 @@ export function BookCalendarClient({
           endTime: endTime.toISOString(),
           notes: notes.trim() || undefined,
           totalPrice: selectedService.price,
-          status: "confirmed",
+          status: "pending",
         }),
       });
 
@@ -340,11 +308,6 @@ export function BookCalendarClient({
       setSuccessMessage(
         "Cita agendada correctamente. El admin del tenant ya fue notificado.",
       );
-      // SC-04: invalidar key tras éxito para que un nuevo submit use key nueva.
-      if (idempotencyKey) {
-        sessionStorage.removeItem(`bk:idem:${tenantSlug}`);
-        setIdempotencyKey("");
-      }
       setSelectedTime("");
       setCustomerName("");
       setCustomerPhone("");
