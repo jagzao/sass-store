@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { db } from "@sass-store/database";
 import {
   bookings,
@@ -6,8 +6,12 @@ import {
   services,
   tenants,
 } from "@sass-store/database/schema";
-import { eq, and } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { z } from "zod";
+import { withResultHandler } from "@sass-store/core/src/middleware/result-handler";
+import { Result, Ok, Err } from "@sass-store/core/src/result";
+import { DomainError, ErrorFactories } from "@sass-store/core/src/errors/types";
+import { validateWithZod } from "@sass-store/validation/src/zod-result";
 import { enqueueBookingRescheduleNotification } from "@/lib/notifications/booking-reschedule-notification";
 import { rescheduleBookingReminderNotifications } from "@/lib/notifications/booking-reminder-notification";
 import { cancelPendingBookingNotifications } from "@/lib/notifications/scheduled-notification-queue";
@@ -38,22 +42,27 @@ const patchSchema = z
     },
   );
 
-export async function DELETE(
-  _request: NextRequest,
-  { params }: { params: Promise<{ tenant: string; id: string }> },
-) {
-  try {
-    const { tenant: tenantSlug, id: bookingId } = await params;
+async function resolveTenantId(
+  tenantSlug: string,
+): Promise<Result<{ id: string; name: string }, DomainError>> {
+  const [tenant] = await db
+    .select({ id: tenants.id, name: tenants.name })
+    .from(tenants)
+    .where(eq(tenants.slug, tenantSlug))
+    .limit(1);
+  if (!tenant) return Err(ErrorFactories.notFound("Tenant", tenantSlug));
+  return Ok(tenant);
+}
 
-    const [tenant] = await db
-      .select({ id: tenants.id })
-      .from(tenants)
-      .where(eq(tenants.slug, tenantSlug))
-      .limit(1);
-
-    if (!tenant) {
-      return NextResponse.json({ error: "Tenant not found" }, { status: 404 });
-    }
+export const DELETE = withResultHandler(
+  async (
+    _request: NextRequest,
+    context: { params: Promise<{ tenant: string; id: string }> },
+  ): Promise<Result<unknown, DomainError>> => {
+    const { tenant: tenantSlug, id: bookingId } = await context.params;
+    const tenantResult = await resolveTenantId(tenantSlug);
+    if (!tenantResult.success) return tenantResult;
+    const tenant = tenantResult.data;
 
     const [deleted] = await db
       .delete(bookings)
@@ -61,47 +70,27 @@ export async function DELETE(
       .returning({ id: bookings.id });
 
     if (!deleted) {
-      return NextResponse.json(
-        { error: "Booking not found or does not belong to this tenant" },
-        { status: 404 },
-      );
+      return Err(ErrorFactories.notFound("Booking", bookingId));
     }
 
-    try {
-      await cancelPendingBookingNotifications(bookingId, [
-        "booking_reminder_24h",
-        "booking_reminder_1h",
-      ]);
-    } catch (cancelError) {
-      console.error("Booking reminder cancel on delete:", cancelError);
-    }
+    cancelPendingBookingNotifications(bookingId, [
+      "booking_reminder_24h",
+      "booking_reminder_1h",
+    ]).catch((e) => console.error("[bookings] reminder cancel error:", e));
 
-    return NextResponse.json({ success: true, id: deleted.id });
-  } catch (error) {
-    console.error("Booking DELETE error:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 },
-    );
-  }
-}
+    return Ok({ success: true, id: deleted.id });
+  },
+);
 
-export async function GET(
-  _request: NextRequest,
-  { params }: { params: Promise<{ tenant: string; id: string }> },
-) {
-  try {
-    const { tenant: tenantSlug, id: bookingId } = await params;
-
-    const [tenant] = await db
-      .select({ id: tenants.id })
-      .from(tenants)
-      .where(eq(tenants.slug, tenantSlug))
-      .limit(1);
-
-    if (!tenant) {
-      return NextResponse.json({ error: "Tenant not found" }, { status: 404 });
-    }
+export const GET = withResultHandler(
+  async (
+    _request: NextRequest,
+    context: { params: Promise<{ tenant: string; id: string }> },
+  ): Promise<Result<unknown, DomainError>> => {
+    const { tenant: tenantSlug, id: bookingId } = await context.params;
+    const tenantResult = await resolveTenantId(tenantSlug);
+    if (!tenantResult.success) return tenantResult;
+    const tenant = tenantResult.data;
 
     const result = await db.query.bookings.findFirst({
       where: and(eq(bookings.id, bookingId), eq(bookings.tenantId, tenant.id)),
@@ -109,39 +98,41 @@ export async function GET(
     });
 
     if (!result) {
-      return NextResponse.json({ error: "Booking not found" }, { status: 404 });
+      return Err(ErrorFactories.notFound("Booking", bookingId));
     }
 
-    return NextResponse.json({
-      data: { ...result, totalPrice: Number(result.totalPrice) },
-    });
-  } catch (error) {
-    console.error("Booking GET by ID error:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 },
-    );
-  }
-}
+    return Ok({ data: { ...result, totalPrice: Number(result.totalPrice) } });
+  },
+);
 
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: Promise<{ tenant: string; id: string }> },
-) {
-  try {
-    const { tenant: tenantSlug, id: bookingId } = await params;
-    const body = await request.json();
-    const data = patchSchema.parse(body);
+export const PATCH = withResultHandler(
+  async (
+    request: NextRequest,
+    context: { params: Promise<{ tenant: string; id: string }> },
+  ): Promise<Result<unknown, DomainError>> => {
+    const { tenant: tenantSlug, id: bookingId } = await context.params;
 
-    const [tenant] = await db
-      .select({ id: tenants.id, name: tenants.name })
-      .from(tenants)
-      .where(eq(tenants.slug, tenantSlug))
-      .limit(1);
-
-    if (!tenant) {
-      return NextResponse.json({ error: "Tenant not found" }, { status: 404 });
+    let body: unknown;
+    try {
+      body = await request.json();
+    } catch (error) {
+      return Err(
+        ErrorFactories.validation(
+          "Failed to parse request body",
+          undefined,
+          undefined,
+          error,
+        ),
+      );
     }
+
+    const validated = validateWithZod(patchSchema, body);
+    if (!validated.success) return validated;
+    const data = validated.data;
+
+    const tenantResult = await resolveTenantId(tenantSlug);
+    if (!tenantResult.success) return tenantResult;
+    const tenant = tenantResult.data;
 
     const [existingBooking] = await db
       .select({
@@ -159,7 +150,7 @@ export async function PATCH(
       .limit(1);
 
     if (!existingBooking) {
-      return NextResponse.json({ error: "Booking not found" }, { status: 404 });
+      return Err(ErrorFactories.notFound("Booking", bookingId));
     }
 
     if (data.customerId) {
@@ -173,12 +164,8 @@ export async function PATCH(
           ),
         )
         .limit(1);
-
       if (!customer) {
-        return NextResponse.json(
-          { error: "Cliente no encontrado en este tenant" },
-          { status: 404 },
-        );
+        return Err(ErrorFactories.notFound("Customer", data.customerId));
       }
     }
 
@@ -205,7 +192,7 @@ export async function PATCH(
       .returning();
 
     if (!updated) {
-      return NextResponse.json({ error: "Booking not found" }, { status: 404 });
+      return Err(ErrorFactories.notFound("Booking", bookingId));
     }
 
     let scheduledNotification = null;
@@ -298,23 +285,11 @@ export async function PATCH(
       }
     }
 
-    return NextResponse.json({
+    return Ok({
       data: { ...updated, totalPrice: Number(updated.totalPrice) },
       scheduledNotification,
       bookingReminders,
       statusNotification,
     });
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: "Estado inválido", details: error.errors },
-        { status: 400 },
-      );
-    }
-    console.error("Booking PATCH error:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 },
-    );
-  }
-}
+  },
+);
