@@ -34,17 +34,17 @@ function getRedis(): Redis | null {
 /**
  * Extracts the client IP from Next.js runtime.
  *
- * Trusts Cloudflare's `cf-connecting-ip` and the platform `x-forwarded-for`
- * chain only when present. Falls back to "unknown" so the limiter still
- * degrades safely. IPv6 addresses are normalized to their /64 prefix so a
- * single network cannot rotate the last 64 bits to evade the counter.
+ * Trusts ONLY Cloudflare's `cf-connecting-ip` (set por el edge de CF, no
+ * spoofable por el cliente). Cualquier otro header (X-Forwarded-For,
+ * X-Real-IP) es trivialmente spoofable y fue rejectado por el review
+ * STRY-021 (NEW H-A). Si no hay cf-connecting-ip → "unknown" y el limiter
+ * degrada (fail-open para usuarios legítimos detrás de proxy no-Cloudflare;
+ * pendiente configurar TRUST_PROXY en ops si se usa otro CDN).
+ *
+ * IPv6 normalizado a /64 (ver normalizeIp).
  */
 export function getClientIp(request: NextRequest): string {
-  const raw =
-    request.headers.get("cf-connecting-ip") ??
-    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-    request.headers.get("x-real-ip") ??
-    "unknown";
+  const raw = request.headers.get("cf-connecting-ip") ?? "unknown";
   return normalizeIp(raw);
 }
 

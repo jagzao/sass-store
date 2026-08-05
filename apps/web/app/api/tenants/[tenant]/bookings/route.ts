@@ -173,10 +173,12 @@ async function resolveTenantReadOnly(
   return Ok(tenant);
 }
 
-/** Postgres unique_violation — emitted by the booking_slot_uniq partial index. */
+/** Postgres unique_violation — emitted by the booking_slot_uniq partial index.
+ *  Drizzle/postgres-js pueden wrappear el error en DrizzleQueryError con cause. */
 function isUniqueViolation(error: unknown): boolean {
-  const code = (error as { code?: string } | undefined)?.code;
-  return code === "23505";
+  if (!error || typeof error !== "object") return false;
+  const e = error as { code?: string; cause?: { code?: string } };
+  return e.code === "23505" || e.cause?.code === "23505";
 }
 
 /**
@@ -263,6 +265,8 @@ export const POST = withResultHandler(
     }
 
     // 5. Idempotency: replay guard (SC-04, SC-04b).
+    //    Pre-check: si la key ya tiene un bookingId real, replay.
+    //    Si está "pending" (otro request en curso), rechazar con 409.
     const idempotencyKey = request.headers.get("x-idempotency-key");
     const clientIp = getClientIp(request);
     if (idempotencyKey) {
@@ -288,6 +292,14 @@ export const POST = withResultHandler(
             replayed: true,
           });
         }
+      }
+      if (consumed.data.replayed && consumed.data.pending) {
+        // Otro request con la misma key está en curso.
+        return Err(
+          ErrorFactories.bookingSlotTaken(
+            "Another booking request with this idempotency key is in progress",
+          ),
+        );
       }
     }
 

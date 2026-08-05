@@ -52,7 +52,7 @@ beforeEach(() => {
 });
 
 describe("STRY-021 idempotency (SC-04, SC-04b)", () => {
-  it("SC-04: second consume returns the first bookingId (replay)", async () => {
+  it("SC-04: pre-check + record + replay lifecycle", async () => {
     const { issueKey, consumeKey } =
       await import("../../apps/web/lib/booking/idempotency");
 
@@ -60,15 +60,47 @@ describe("STRY-021 idempotency (SC-04, SC-04b)", () => {
     if (!issued.success) throw new Error("issueKey failed");
     const key = issued.data.key;
 
-    const first = await consumeKey(key, "booking-001");
-    expect(first.success).toBe(true);
+    // 1. Pre-check (bookingId=""): marca pending, no replay
+    const pre = await consumeKey(key, "");
+    expect(pre.success).toBe(true);
+    if (pre.success) {
+      expect(pre.data.replayed).toBe(false);
+    }
+
+    // 2. Record (bookingId="booking-001"): graba bookingId real
+    const record = await consumeKey(key, "booking-001");
+    expect(record.success).toBe(true);
+    if (record.success) {
+      expect(record.data.replayed).toBe(false);
+    }
+
+    // 3. Replay: segundo POST con misma key → retorna booking-001
+    const replay = await consumeKey(key, "");
+    expect(replay.success).toBe(true);
+    if (replay.success) {
+      expect(replay.data.replayed).toBe(true);
+      expect(replay.data.bookingId).toBe("booking-001");
+    }
+  });
+
+  it("SC-04: concurrent pre-check returns pending flag", async () => {
+    const { issueKey, consumeKey } =
+      await import("../../apps/web/lib/booking/idempotency");
+
+    const issued = await issueKey("1.2.3.4", "wondernails");
+    if (!issued.success) throw new Error("issueKey failed");
+    const key = issued.data.key;
+
+    // Primer pre-check marca pending
+    const first = await consumeKey(key, "");
     if (first.success) expect(first.data.replayed).toBe(false);
 
-    const second = await consumeKey(key, "booking-001");
+    // Segundo pre-check ve pending → retorna pending=true
+    const second = await consumeKey(key, "");
     expect(second.success).toBe(true);
     if (second.success) {
       expect(second.data.replayed).toBe(true);
-      expect(second.data.bookingId).toBe("booking-001");
+      expect(second.data.pending).toBe(true);
     }
   });
 
