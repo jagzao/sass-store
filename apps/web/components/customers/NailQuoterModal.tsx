@@ -405,7 +405,10 @@ export default function NailQuoterModal({
               className="flex w-full items-center justify-between text-left"
             >
               <div className="flex items-center gap-4">
-                <span className="text-lg font-bold text-rose-900">
+                <span
+                  data-testid="quote-total"
+                  className="text-lg font-bold text-rose-900"
+                >
                   {calculation ? formatNailQuotePrice(calculation.total) : "$0"}
                 </span>
                 <span className="text-sm text-rose-700">
