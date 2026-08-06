@@ -9,7 +9,7 @@ description: >-
   "actúa como orquestador del proyecto", or delegates an activity end-to-end without
   specifying which sub-pipeline to run.
 metadata:
-  version: "1.2"
+  version: "1.3"
   language: es
 ---
 
@@ -151,6 +151,14 @@ si difiere del default Claude Code, o si se sobreescribió `routing.md`).
 
 ## Fase 4 — Delegar y ejecutar
 
+**Default absoluto: delegar la implementación a un task agent general asíncrono** con un
+prompt detallado que incluya contexto completo (archivos a leer, orden de ejecución,
+validaciones, límites, formato del reporte final). No es una opción configurable — es el
+único modo. Preguntar "¿cómo ejecutamos Fase 4?" o "¿task agent vs inline?" es anti-patrón.
+
+Excepción única: la actividad es trivial (< 50 líneas, 1 archivo, sin migraciones). En ese
+caso el agente principal implementa inline directamente, también sin preguntar.
+
 Invocar el pipeline elegido en Fase 2 con la actividad refinada de Fase 1 como entrada. Dejar
 que ese skill corra completo (incluye su propio loop de corrección interno — no lo
 sustituyas). Si el pipeline reporta BLOQUEANTE:
@@ -161,6 +169,10 @@ sustituyas). Si el pipeline reporta BLOQUEANTE:
    inventar una salida verde falsa.
 3. Escalar de nivel de modelo (Fase 3) solo si no hay progreso verificable en 2 intentos
    consecutivos con el mismo error.
+
+Al cerrar Fase 4 (verde o con debt documentada) **avanzar automáticamente a Fase 5 en el
+mismo turno**. Anti-patrón: mostrar "estado working, decisión te toca" o "¿continuar a UAT
+o cerramos?" — eso rompe el default de continuidad.
 
 **Heartbeat del claim:** al cerrar cada fase (4, 5, 6, 7) refrescar `updatedAt` en
 `status.json` aunque `state` siga en `"working"` — evita que otro agente lo trate como
@@ -242,6 +254,50 @@ que ya generan `flow`/`auto-implement`/`story-orchestrator`):
 de 8 artefactos, usar solo los que apliquen — no rellenar por rellenar).
 
 ---
+
+## Defaults del pipeline (no preguntar por estos — ejecutar directo)
+
+Estas son las decisiones que el agente TOMA sin pedir confirmación. La regla
+de oro 1 ("continuar automáticamente entre fases") opera con estos defaults:
+
+1. **Fase 4 siempre delega a task agent general asíncrono** con prompt detallado
+   para implementación completa. No es opción del usuario "cómo ejecutar" — el
+   default es el único modo. Solo cambiar si la implementación es trivial
+   (< 50 líneas, 1 archivo) y en ese caso también es automático.
+
+2. **Después de Fase 4 cerrar verde** → Fase 5 (UAT) arranca en el mismo turno.
+   No mostrar "Decisión te toma" o "¿Continuar UAT o cerramos?" — esos son
+   anti-patrones. Solo detener Fase 5 si: no hay superficie UI (saltar a Fase 6)
+   o hay bloqueo ambiental sin workaround (ej: DB productiva inaccesible y la
+   migración es requerida).
+
+3. **Setup items ambiguos (DB productiva, secrets, deploy)** → listarlos y
+   ejecutar los que no tocan producción. Preguntar solo por los que sí la tocan
+   (1 pregunta consolidada, multi-select). No preguntar por: dev server, lint,
+   tests, migración en DB de dev/staging.
+
+4. **Cierre de sesión** → si hay git messy state (commits en branch errónea,
+   archivos sin commitear), el agente limpia solo: cherry-pick al branch
+   correcto, reset del branch erróneo, commit de archivos pendientes. No
+   preguntar "¿cómo cerramos?" — aplicar el fix directo.
+
+5. **Multi-select para autorizar** → solo cuando cada opción es un cambio
+   reversible y el usuario necesita decir "sí a estos N items". No para
+   decisiones de flujo ("¿continuar?").
+
+## Anti-patrones (frases que NO decir al usuario)
+
+Estas frases rompen el default de autonomía. Si el agente las va a decir,
+debe detenerse y re-formular como acción directa:
+
+- "¿Continuar UAT o cerramos aquí?" → continuar UAT, no es opción
+- "¿Cómo ejecutamos Fase 4?" → task agent asíncrono, no es opción
+- "¿Disparar /project-lead?" → si Fase 2 dice caso 2, disparar, no es opción
+- "¿Avanzar a Fase X+1?" → default es avanzar
+- "Decisión te toca" → si no hay gate humano obligatorio real, no es decisión
+- "¿Probamos con story real?" → si spec terminó, pipeline continúa solo
+- "¿Cerrar aquí o seguir?" → si hay más fases pendientes, seguir
+- "¿Quieres que avance?" → avance es default, no requiere confirmación
 
 ## Reglas de oro
 
