@@ -2,7 +2,7 @@
 name: spec
 description: Define a feature specification from a user story through an interactive assumption-refinement session. Use when the user says "/spec", "quiero definir una spec", "ayudame con una especificacion", or provides a user story to elaborate.
 metadata:
-  version: "1.1"
+  version: "1.2"
   language: es
 ---
 
@@ -101,13 +101,36 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
 
 Si git no está inicializado o no hay cambios → continuar sin error.
 
-## FASE 6 — Handoff
+## FASE 6 — Handoff y auto-continuacion
 
-Al terminar mostrar:
+**Regla absoluta: NO preguntar al usuario si continuar.** El usuario ya confirmó las
+asunciones en FASE 2 y refinó las que no le gustaron en FASE 3. La spec está completa y
+validada. Preguntar de nuevo es fricción innecesaria.
+
+**Acción default: disparar `/test-spec` automáticamente** con la spec recién generada como
+entrada. `/test-spec` a su vez encadena con `/implement` (línea 109 de su SKILL.md), así que
+el pipeline continúa solo hasta PR o blocker.
+
+Mostrar UN solo bloque al terminar y disparar en el mismo turno:
+
 ```
 ✅ Especificacion funcional lista.
-Siguiente paso: ejecuta /test-spec usando esta especificacion como entrada.
+Artefactos en .agents/sprint/{STRY-XXX}/plan.md
+
+Disparando /test-spec automaticamente...
 ```
+
+**Excepción — parar sin preguntar** (mostrar mensaje y no continuar):
+- Si git no estaba inicializado (no se pudo hacer FASE 5 commit) → parar, informar al usuario.
+- Si el usuario dijo explícitamente "no continúes" o "espera" en algún turno previo → respetar.
+- Si una asunción quedó marcada como "decision de negocio pendiente" en FASE 3 → parar con
+  esa única pregunta explícita.
+
+**No son excepciones** (siempre continuar automáticamente):
+- "No estoy seguro si el plan es bueno" → no es blocker, el pipeline tiene Fase 6 review.
+- "Esto puede fallar en implementación" → es responsabilidad del pipeline, no del usuario.
+- "El usuario quizás quiera revisar" → puede interrumpir con ESC si quiere.
+
 Actualizar `.agents/memory/workflow-state.json`: `specStatus: "done"`, `currentStage: "test-spec"`.
 
 ## Notas
