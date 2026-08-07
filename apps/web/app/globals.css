@@ -600,3 +600,24 @@
   background-size: 200% auto;
   animation: goldShimmer 3s linear infinite;
 }
+
+/* Wonder — asistente IA de WonderNails: glow sutil en el avatar flotante.
+   Solo box-shadow (no transform/translate): un botón que se desplaza rompe
+   los checks de estabilidad de Playwright y es más difícil de tocar en mobile. */
+@keyframes wonderGlow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(236, 26, 128, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(236, 26, 128, 0);
+  }
+}
+
+.wonder-float {
+  animation: wonderGlow 2.6s ease-in-out infinite;
+}
+
+.wonder-float:hover {
+  animation-play-state: paused;
+}

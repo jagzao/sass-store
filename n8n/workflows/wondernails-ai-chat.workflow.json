@@ -1,0 +1,141 @@
+{
+  "id": "wondernails-ai-chat",
+  "name": "STRY-034: Wondernails AI Chat (Wonder)",
+  "settings": { "executionOrder": "v1" },
+  "nodes": [
+    {
+      "id": "trig-chat",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [200, 300],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "wondernails-ai-chat",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "webhookId": "wondernails-ai-chat-v1"
+    },
+    {
+      "id": "parse-chat",
+      "name": "Parse Chat Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [420, 300],
+      "parameters": {
+        "jsCode": "const body = $json.body || $json;\nconst tenantSlug = (body.tenantSlug || 'wondernails').trim();\nconst message = (body.message || '').trim();\nconst history = Array.isArray(body.history) ? body.history.slice(-6) : [];\nconst sessionId = body.sessionId || null;\n\nif (!message) return [];\n\nreturn [{ json: { tenantSlug, message, history, sessionId } }];"
+      }
+    },
+    {
+      "id": "db-tenant-chat",
+      "name": "Get Tenant + Services",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [640, 300],
+      "credentials": {
+        "postgres": {
+          "id": "FmvG7eSe9Y6nG73Z",
+          "name": "sass-store Supabase DB"
+        }
+      },
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT t.id as tenant_id, t.slug as tenant_slug, t.name as tenant_name, wt.bot_name, wt.tone, s.name as service_name, s.price, s.duration FROM tenants t LEFT JOIN wa_tenant_config wt ON wt.tenant_slug = t.slug LEFT JOIN services s ON s.tenant_id = t.id AND s.active = true WHERE t.slug = '{{ $json.tenantSlug }}' LIMIT 20",
+        "options": {}
+      }
+    },
+    {
+      "id": "build-chat-prompt",
+      "name": "Build Ollama Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [860, 300],
+      "parameters": {
+        "jsCode": "const rows = $('Get Tenant + Services').all().map(i => i.json);\nconst cfg = rows[0] || {};\nconst ctx = $('Parse Chat Payload').item.json;\nconst services = rows.filter(r => r.service_name).map(r => r.service_name + ' ($' + r.price + ' MXN, ' + r.duration + 'min)').join(', ');\n\nconst systemPrompt = 'Eres ' + (cfg.bot_name || 'Wonder') + ', el asistente virtual de ' + (cfg.tenant_name || 'WonderNails') + '. Tono: ' + (cfg.tone || 'amigable, cercano y profesional') + '. Responde en español, en 1-3 oraciones, sin markdown.\\n\\nServicios disponibles: ' + (services || 'manicure, pedicure, uñas gel, acrílico') + '\\n\\nSi el usuario quiere agendar una cita, invítalo amablemente a hacerlo desde el botón \\'Reservar\\' del sitio (no intentes agendar la cita tú mismo en esta conversación). Si preguntan algo fuera de tu alcance como salón de belleza, dilo con honestidad y ofrece ayuda con lo que sí sabes.';\n\nconst historyMessages = (ctx.history || []).map(h => ({ role: h.role === 'assistant' ? 'assistant' : 'user', content: String(h.content || '').slice(0, 500) }));\n\nreturn [{\n  json: {\n    tenantSlug: ctx.tenantSlug,\n    sessionId: ctx.sessionId,\n    systemPrompt,\n    userMessage: ctx.message,\n    historyMessages\n  }\n}];"
+      }
+    },
+    {
+      "id": "call-ollama-chat",
+      "name": "Call Ollama Cloud",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1080, 300],
+      "parameters": {
+        "method": "POST",
+        "url": "https://ollama.com/v1/chat/completions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer {{OLLAMA_KEY}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({ model: 'kimi-k2.5', messages: [{ role: 'system', content: $json.systemPrompt }, ...$json.historyMessages, { role: 'user', content: $json.userMessage }], max_tokens: 250, temperature: 0.5, stream: false }) }}",
+        "options": { "timeout": 15000 }
+      }
+    },
+    {
+      "id": "parse-ollama-chat",
+      "name": "Parse Ollama Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1300, 300],
+      "parameters": {
+        "jsCode": "const aiResp = $('Call Ollama Cloud').item.json;\nconst ctx = $('Build Ollama Prompt').item.json;\nconst reply = aiResp?.choices?.[0]?.message?.content?.trim() || 'Hola, soy Wonder 🐾 En este momento no puedo responder, ¿puedes intentar de nuevo en un momento?';\n\nreturn [{ json: { reply, tenantSlug: ctx.tenantSlug, sessionId: ctx.sessionId } }];"
+      }
+    },
+    {
+      "id": "resp-chat",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1520, 300],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ success: true, reply: $json.reply, sessionId: $json.sessionId }) }}",
+        "options": { "responseCode": 200 }
+      }
+    },
+    {
+      "id": "resp-chat-error",
+      "name": "Respond Error",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1080, 500],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ success: false, reply: 'Wonder no puede responder en este momento 🐾' }) }}",
+        "options": { "responseCode": 200 }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [[{ "node": "Parse Chat Payload", "type": "main", "index": 0 }]]
+    },
+    "Parse Chat Payload": {
+      "main": [[{ "node": "Get Tenant + Services", "type": "main", "index": 0 }]]
+    },
+    "Get Tenant + Services": {
+      "main": [[{ "node": "Build Ollama Prompt", "type": "main", "index": 0 }]]
+    },
+    "Build Ollama Prompt": {
+      "main": [[{ "node": "Call Ollama Cloud", "type": "main", "index": 0 }]]
+    },
+    "Call Ollama Cloud": {
+      "main": [
+        [
+          { "node": "Parse Ollama Response", "type": "main", "index": 0 },
+          { "node": "Respond Error", "type": "error", "index": 0 }
+        ]
+      ]
+    },
+    "Parse Ollama Response": {
+      "main": [[{ "node": "Respond to Webhook", "type": "main", "index": 0 }]]
+    }
+  }
+}

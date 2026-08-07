@@ -5,7 +5,7 @@ import { AuthSessionProvider } from "@/components/providers/session-provider";
 import { CartSyncProvider } from "@/components/cart/CartSyncProvider";
 import { ClientInit } from "@/components/client-init";
 import { FeedbackWidgetProvider } from "@/components/feedback/FeedbackWidgetContext";
-import { FeedbackWidget } from "@/components/feedback/FeedbackWidget";
+import { TenantAwareAssistant } from "@/components/assistant/TenantAwareAssistant";
 import { Providers } from "./providers";
 
 export const metadata = {
@@ -38,7 +38,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
                 <FeedbackWidgetProvider>
                   <div className="min-h-screen bg-background">
                     {children}
-                    <FeedbackWidget />
+                    <TenantAwareAssistant />
                   </div>
                 </FeedbackWidgetProvider>
               </CartSyncProvider>

@@ -22,26 +22,24 @@ test.describe("Feature: Icono de feedback junto al logo del tenant", () => {
   test("SC-02 — icono visible y clicable en header transparente sin scroll (wondernails)", async ({
     page,
   }) => {
+    // STRY-034: en wondernails el icono del header abre el asistente Wonder
+    // (mismo FeedbackWidgetContext.open() que el trigger flotante).
     await page.goto("/t/wondernails");
 
     const icon = page.getByTestId("feedback-header-icon");
     await expect(icon).toBeVisible();
     await icon.click();
 
-    await expect(
-      page.getByText("Tu opinión nos ayuda a mejorar"),
-    ).toBeVisible();
+    await expect(page.getByTestId("wonder-chat-panel")).toBeVisible();
   });
 
-  test("SC-05 — boton flotante de feedback sigue disponible junto al icono del header", async ({
+  test("SC-05 — trigger flotante de Wonder sigue disponible junto al icono del header (wondernails)", async ({
     page,
   }) => {
     await page.goto("/t/wondernails");
 
     await expect(page.getByTestId("feedback-header-icon")).toBeVisible();
-    await expect(
-      page.getByRole("button", { name: "Abrir feedback" }),
-    ).toBeVisible();
+    await expect(page.getByTestId("wonder-assistant-trigger")).toBeVisible();
   });
 
   test("SC-06 — icono visible junto al logo en viewport mobile", async ({
