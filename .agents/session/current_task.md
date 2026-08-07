@@ -13,6 +13,7 @@
 | STRY-023 | Sesiones deportivas (clases grupales) | 🔄 EN PROGRESO |
 | STRY-024 | Editar datos personales del cliente desde expediente | 🔄 EN PROGRESO |
 | STRY-025 | Mejoras calendario, citas y notificaciones | 🔄 EN PROGRESO |
+| feedback-icon-tenant-header | Ícono de feedback junto al logo del tenant en TenantHeader | 📝 SPEC LISTA |
 
 ---
 
@@ -34,6 +35,14 @@ Plan: .agents/sprint/STRY-024-editar-cliente-expediente/plan.md
 Navegación Día/Semana/Mes, modal seguimiento citas vencidas, botón WhatsApp con enlace, rediseño calendario.
 Plan: .agents/sprint/STRY-025-mejoras-calendario-citas-notificaciones/plan.md
 Test spec: .agents/sprint/STRY-025-mejoras-calendario-citas-notificaciones/test-spec.md
+
+---
+
+## feedback-icon-tenant-header — Ícono de feedback junto al logo del tenant
+Ícono junto al logo en `TenantHeader` (todos los tenants) que abre el panel de feedback existente
+(`FeedbackWidget` + `FeedbackWidgetContext`, ya montado global en `app/layout.tsx`). El botón flotante
+inferior derecho se mantiene. Visible en variantes default/transparent/dark, con/sin scroll, y en mobile.
+Spec: .agents/memory/tasks/feedback-icon-tenant-header.md
 
 ---
 
