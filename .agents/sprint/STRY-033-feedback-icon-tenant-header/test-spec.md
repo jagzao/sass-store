@@ -17,11 +17,13 @@ Verificar que el nuevo ícono de feedback en `TenantHeader` es visible y funcion
 |----|----------|-------------|-----------------|-----------|--------|
 | SC-01 | Ícono visible junto al logo en header default | E2E | `tests/e2e/feedback/feedback-icon-header.spec.ts` | Alta | ⬜ pendiente |
 | SC-02 | Ícono visible en header transparente sin scroll | E2E | `tests/e2e/feedback/feedback-icon-header.spec.ts` | Media | ⬜ pendiente |
-| SC-03 | Ícono visible en header oscuro | E2E | `tests/e2e/feedback/feedback-icon-header.spec.ts` | Media | ⬜ pendiente |
-| SC-04 | Click en el ícono abre el panel de feedback (categoría Opinión) | E2E | `tests/e2e/feedback/feedback-icon-header.spec.ts` | Alta | ⬜ pendiente |
-| SC-05 | Botón flotante sigue disponible en paralelo | E2E (regresión, reutiliza test existente) | `tests/e2e/feedback/send-opinion.spec.ts` (ya existe) | Media | ⬜ pendiente (solo re-ejecutar) |
+| SC-03 | Ícono visible en header oscuro | Unit — ver nota | `tests/unit/components/feedback-header-button.spec.tsx` | Media | ⬜ pendiente |
+| SC-04 | Click en el ícono abre el panel de feedback (categoría Opinión) | E2E + Unit | `tests/e2e/feedback/feedback-icon-header.spec.ts`, `tests/unit/components/feedback-header-button.spec.tsx` | Alta | ⬜ pendiente |
+| SC-05 | Botón flotante sigue disponible en paralelo | E2E | `tests/e2e/feedback/feedback-icon-header.spec.ts` + regresión en `send-opinion.spec.ts` | Media | ⬜ pendiente |
 | SC-06 | Ícono visible en mobile sin colapsar a menú | E2E | `tests/e2e/feedback/feedback-icon-header.spec.ts` | Media | ⬜ pendiente |
-| SC-07 | Feature aplica a todos los tenants (wondernails, zo-system, centro-tenistico) | E2E (parametrizado) | `tests/e2e/feedback/feedback-icon-header.spec.ts` | Alta | ⬜ pendiente |
+| SC-07 | Feature aplica a todos los tenants con TenantHeader (wondernails, manada-juma, centro-tenistico) | E2E (parametrizado) | `tests/e2e/feedback/feedback-icon-header.spec.ts` | Alta | ⬜ pendiente |
+
+> Nota SC-03/SC-07: `zo-system` es el único tenant seed con `branding.theme: "dark"`, pero `apps/web/app/t/[tenant]/layout.tsx` excluye explícitamente a `zo-system` de renderizar `TenantHeader` (`{!isZoSystem && <TenantHeader ... />}`). Por eso la variante `dark` se cubre con test unitario del componente en aislamiento, y SC-07 usa los 3 tenants que sí renderizan `TenantHeader`.
 
 ## Datos de prueba
 
