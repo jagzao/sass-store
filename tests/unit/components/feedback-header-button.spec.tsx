@@ -33,39 +33,18 @@ describe("FeedbackHeaderButton", () => {
     expect(screen.getByTestId("category").textContent).toBe("opinion");
   });
 
-  it("SC-01: variante default usa texto oscuro para contraste sobre header claro", () => {
-    render(
-      <FeedbackWidgetProvider>
-        <FeedbackHeaderButton variant="default" />
-      </FeedbackWidgetProvider>,
-    );
+  it.each(["default", "transparent", "dark"] as const)(
+    "SC-01/02/03: variante %s usa var(--color-foreground)/var(--color-muted) para contraste consistente",
+    (variant) => {
+      render(
+        <FeedbackWidgetProvider>
+          <FeedbackHeaderButton variant={variant} />
+        </FeedbackWidgetProvider>,
+      );
 
-    expect(screen.getByTestId("feedback-header-icon").className).toContain(
-      "text-gray-700",
-    );
-  });
-
-  it("SC-02: variante transparent usa texto blanco para contraste", () => {
-    render(
-      <FeedbackWidgetProvider>
-        <FeedbackHeaderButton variant="transparent" />
-      </FeedbackWidgetProvider>,
-    );
-
-    expect(screen.getByTestId("feedback-header-icon").className).toContain(
-      "text-white",
-    );
-  });
-
-  it("SC-03: variante dark usa texto blanco para contraste", () => {
-    render(
-      <FeedbackWidgetProvider>
-        <FeedbackHeaderButton variant="dark" />
-      </FeedbackWidgetProvider>,
-    );
-
-    expect(screen.getByTestId("feedback-header-icon").className).toContain(
-      "text-white",
-    );
-  });
+      const button = screen.getByTestId("feedback-header-icon");
+      expect(button.style.color).toBe("var(--color-foreground)");
+      expect(button.style.backgroundColor).toBe("var(--color-muted)");
+    },
+  );
 });
