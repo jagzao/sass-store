@@ -340,6 +340,12 @@ export const bookings = pgTable(
     staffIdx: index("booking_staff_idx").on(table.staffId),
     timeIdx: index("booking_time_idx").on(table.startTime),
     statusIdx: index("booking_status_idx").on(table.status),
+    // STRY-021 SC-12: atomic race protection on active staff slots.
+    // Mirror of migrations/add-booking-slot-unique-index.sql. Drizzle's index
+    // .where() keeps db:generate in sync with the hand-written migration.
+    slotUniq: uniqueIndex("booking_slot_uniq")
+      .on(table.staffId, table.startTime)
+      .where(sql`status IN ('confirmed', 'pending') AND staff_id IS NOT NULL`),
   }),
 );
 

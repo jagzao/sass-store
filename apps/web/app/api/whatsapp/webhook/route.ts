@@ -27,10 +27,15 @@ import {
   newSession,
   appendMessage,
 } from "@/lib/wa/session-store";
+import { redactPII } from "@/lib/wa/redact-pii";
+import { handleBookingConfirmIntent } from "@/lib/wa/booking-confirm-handler";
 
 const WEBHOOK_VERIFY_TOKEN = process.env.WHATSAPP_WEBHOOK_VERIFY_TOKEN!;
 const N8N_BASE_URL = process.env.N8N_BASE_URL ?? "http://127.0.0.1:5678";
 const N8N_WEBHOOK_SECRET = process.env.N8N_WEBHOOK_SECRET ?? "";
+
+// STRY-021 SC-17 — reject replays older than 5 minutes.
+const MAX_MESSAGE_AGE_MS = 5 * 60 * 1000;
 
 /** Mapeo intent → path del webhook en n8n */
 const INTENT_WEBHOOK: Record<string, string> = {
@@ -94,9 +99,59 @@ export async function POST(request: NextRequest) {
         const value = change.value;
         if (!value?.messages) continue;
         for (const msg of value.messages) {
+          // STRY-021 SC-17 — replay protection: drop stale messages.
+          if (!isMessageFresh(msg.timestamp)) {
+            console.warn(
+              "[WA Webhook] Stale message rejected",
+              redactPII({
+                object: body.object,
+                entry: [
+                  {
+                    id: entry.id,
+                    changes: [
+                      {
+                        value: {
+                          messaging_product: value.messaging_product,
+                          metadata: value.metadata,
+                          messages: [msg],
+                        },
+                      },
+                    ],
+                  },
+                ],
+              }),
+            );
+            continue;
+          }
+
           const normalized = normalizeMessage(msg, value.metadata);
           // Guardar en DB — idempotente, siempre
           await saveMessage(normalized);
+
+          // STRY-021 SC-07..09c — booking confirm/cancel intents are handled
+          // in-process under triple-match auth. n8n still gets the dispatch
+          // for audit/session updates, but the booking mutation is owned here.
+          if (
+            normalized.buttonPayload &&
+            (normalized.buttonPayload.startsWith("confirm|") ||
+              normalized.buttonPayload.startsWith("cancel|"))
+          ) {
+            const tenantSlug = await resolveTenant(normalized.phoneNumberId);
+            if (tenantSlug) {
+              try {
+                await handleBookingConfirmIntent({
+                  tenantSlug,
+                  customerPhone: normalized.phone,
+                  buttonPayload: normalized.buttonPayload,
+                });
+              } catch (e) {
+                console.error("[WA Webhook] Booking confirm intent error", {
+                  error: e instanceof Error ? e.message : String(e),
+                });
+              }
+            }
+          }
+
           // Dispatch reactivo a n8n — fire-and-forget
           dispatchToN8n(normalized).catch((e) =>
             console.error("[WA Webhook] Dispatch error:", e),
@@ -114,6 +169,15 @@ export async function POST(request: NextRequest) {
       { status: 500 },
     );
   }
+}
+
+/** STRY-021 SC-17 — true when msg.timestamp is within ±5min of server clock. */
+function isMessageFresh(timestamp: string | undefined): boolean {
+  if (!timestamp) return false;
+  const ts = Number(timestamp);
+  if (!Number.isFinite(ts)) return false;
+  const ageMs = Math.abs(Date.now() - ts * 1000);
+  return ageMs <= MAX_MESSAGE_AGE_MS;
 }
 
 // ─── Dispatch a n8n ───────────────────────────────────────────────────────────

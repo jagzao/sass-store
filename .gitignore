@@ -130,7 +130,6 @@ start-e2e-*.cmd
 .trae/
 .windsurf/
 .claude/skills/
-.agents/skills/
 .agents/sprint/
 .agents/memory/
 

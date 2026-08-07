@@ -11,23 +11,21 @@ import {
 import { motion } from "framer-motion";
 import { useSession } from "next-auth/react";
 import { getOrdinal } from "@/lib/booking/book-date-format";
-import { SearchableSelectSingle } from "@/components/ui/forms/SearchableSelectSingle";
 import type { SelectOption } from "@/components/ui/forms/SearchableSelect";
-import {
-  CTV_CLAY_ORANGE,
-  CTV_INK,
-  CTV_MUTED,
-} from "@/lib/design/centro-tenistico-brand";
-import {
-  WN_CHARCOAL,
-  WN_GOLD,
-  WN_LILAC_SPOTLIGHT,
-  WN_MUTED,
-} from "@/lib/design/wondernails-brand";
+import { CTV_CLAY_ORANGE } from "@/lib/design/centro-tenistico-brand";
+import { WN_GOLD } from "@/lib/design/wondernails-brand";
+import { ServiceStep } from "./ServiceStep";
+import { DateTimeStep, WEEKDAY_SHORT, DAY_NUMBER } from "./DateTimeStep";
+import { CustomerConfirmStep } from "./CustomerConfirmStep";
 
 /**
  * CTV: mismo lenguaje visual que el hero (menta #F0FDF4, rejilla, serif, arcilla #B85C38).
- * Otros tenants: panel oscuro tipo “night booking”.
+ * Otros tenants: panel oscuro “night booking”.
+ *
+ * STRY-021 PR1 — The 3 sections are now rendered by ServiceStep, DateTimeStep
+ * and CustomerConfirmStep. This parent owns all state and remains the single
+ * orchestrator. The DOM output is byte-identical to the pre-refactor version
+ * (smoke E2E selectors preserved).
  */
 export interface BookServiceOption {
   id: string;
@@ -57,8 +55,6 @@ const ALL_TIME_SLOTS = [
   "19:00",
 ];
 
-const WEEKDAY_SHORT = new Intl.DateTimeFormat("en-US", { weekday: "short" });
-const DAY_NUMBER = new Intl.DateTimeFormat("en-US", { day: "numeric" });
 const MONTH_TITLE = new Intl.DateTimeFormat("en-US", {
   month: "long",
   year: "numeric",
@@ -85,16 +81,6 @@ const panelItem = {
   },
 };
 
-function formatSlotLabel(slot: string) {
-  const [h, m] = slot.split(":").map((v) => Number(v));
-  if (Number.isNaN(h) || Number.isNaN(m)) return slot;
-  const d = new Date(2000, 0, 1, h, m);
-  return new Intl.DateTimeFormat("es-MX", {
-    hour: "numeric",
-    minute: "2-digit",
-  }).format(d);
-}
-
 /** Formatea dígitos de teléfono a (XXX) XXX-XXXX para mejor UX; si >10 dígitos usa +X (XXX) XXX-XXXX */
 function formatPhoneDisplay(raw: string): string {
   const digits = raw.replace(/\D/g, "");
@@ -112,44 +98,6 @@ const priceMx = (value: number) =>
     currency: "MXN",
     maximumFractionDigits: 0,
   }).format(value);
-
-function ChevronLeft({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden
-    >
-      <path d="M15 18l-6-6 6-6" />
-    </svg>
-  );
-}
-
-function ChevronRight({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden
-    >
-      <path d="M9 18l6-6-6-6" />
-    </svg>
-  );
-}
 
 function serviceLabel(s: BookServiceOption) {
   const title = s.name?.trim();
@@ -214,6 +162,37 @@ export function BookCalendarClient({
     }[]
   >([]);
   const [linkedCustomerId, setLinkedCustomerId] = useState<string | null>(null);
+
+  // SC-04: X-Idempotency-Key emitida por el backend al montar. Previene
+  // duplicados por doble submit y permite replay seguro en caso de retry.
+  const [idempotencyKey, setIdempotencyKey] = useState<string>("");
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const cached = sessionStorage.getItem(`bk:idem:${tenantSlug}`);
+        if (cached) {
+          if (!cancelled) setIdempotencyKey(cached);
+          return;
+        }
+        const r = await fetch(
+          `/api/tenants/${tenantSlug}/book/idempotency-key`,
+        );
+        if (!r.ok) return;
+        const json = await r.json();
+        const key = json?.data?.key;
+        if (key && !cancelled) {
+          setIdempotencyKey(key);
+          sessionStorage.setItem(`bk:idem:${tenantSlug}`, key);
+        }
+      } catch {
+        // fail-open: sin key el POST sigue funcionando, solo sin idempotencia
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [tenantSlug]);
 
   const runCustomerMatch = useCallback(async () => {
     if (isAuthed || !showGuestFields) return;
@@ -325,6 +304,7 @@ export function BookCalendarClient({
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          ...(idempotencyKey ? { "X-Idempotency-Key": idempotencyKey } : {}),
         },
         body: JSON.stringify({
           serviceId: selectedService.id,
@@ -347,7 +327,7 @@ export function BookCalendarClient({
           endTime: endTime.toISOString(),
           notes: notes.trim() || undefined,
           totalPrice: selectedService.price,
-          status: "pending",
+          status: "confirmed",
         }),
       });
 
@@ -360,6 +340,11 @@ export function BookCalendarClient({
       setSuccessMessage(
         "Cita agendada correctamente. El admin del tenant ya fue notificado.",
       );
+      // SC-04: invalidar key tras éxito para que un nuevo submit use key nueva.
+      if (idempotencyKey) {
+        sessionStorage.removeItem(`bk:idem:${tenantSlug}`);
+        setIdempotencyKey("");
+      }
       setSelectedTime("");
       setCustomerName("");
       setCustomerPhone("");
@@ -466,268 +451,39 @@ export function BookCalendarClient({
             initial="hidden"
             animate="show"
           >
-            {/* Header */}
-            <motion.header
-              variants={panelItem}
-              className={
-                isLightPanel
-                  ? "px-5 pt-5 pb-4 border-b border-stone-100"
-                  : "px-5 pt-5 pb-4 border-b border-white/[0.08]"
+            <ServiceStep
+              isCTV={isCTV}
+              isLuxury={isLuxury}
+              isLightPanel={isLightPanel}
+              serviceOptions={serviceOptions}
+              selectedServiceId={selectedService?.id ?? ""}
+              selectedServiceLabel={
+                selectedService ? serviceLabel(selectedService) : ""
               }
-            >
-              <div data-testid="book-service-select">
-                <SearchableSelectSingle
-                  placeholder="Buscar servicio..."
-                  isClearable={false}
-                  options={serviceOptions}
-                  value={
-                    selectedService
-                      ? {
-                          value: selectedService.id,
-                          label: serviceLabel(selectedService),
-                        }
-                      : undefined
-                  }
-                  onChange={(v) => {
-                    const opt = v as SelectOption | null;
-                    if (!opt || typeof opt !== "object") return;
-                    setSelectedServiceId(String(opt.value));
-                  }}
-                  menuPortalTarget={
-                    typeof document !== "undefined" ? document.body : undefined
-                  }
-                />
-              </div>
-              <p
-                className={`text-[11px] sm:text-xs mt-3 tracking-wide ${!isLightPanel ? "text-zinc-500" : ""}`}
-                style={
-                  isCTV
-                    ? { color: CTV_MUTED }
-                    : isLuxury
-                      ? { color: WN_MUTED }
-                      : undefined
-                }
-              >
-                {serviceMeta}
-              </p>
-            </motion.header>
+              serviceMeta={serviceMeta}
+              onChange={setSelectedServiceId}
+              panelItem={panelItem}
+            />
 
-            {/* Date carousel */}
-            <motion.div
-              variants={panelItem}
-              className={
-                isLightPanel
-                  ? "px-4 sm:px-5 py-4 border-b border-stone-100"
-                  : "px-4 sm:px-5 py-4 border-b border-white/[0.06]"
-              }
-            >
-              <div className="space-y-4">
-                <div className="flex items-center justify-between gap-3">
-                  <button
-                    type="button"
-                    className={
-                      isLightPanel
-                        ? "flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-stone-200 bg-white text-stone-500 hover:bg-stone-50 hover:text-stone-800 disabled:opacity-30 disabled:pointer-events-none transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--book-accent)]/30"
-                        : "flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-white/55 hover:text-white hover:bg-white/[0.06] disabled:opacity-25 disabled:pointer-events-none transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white/25"
-                    }
-                    aria-label="Previous dates"
-                    onClick={handlePreviousDates}
-                    disabled={carouselPage === 0}
-                  >
-                    <ChevronLeft />
-                  </button>
-                  <span
-                    className={
-                      isLightPanel
-                        ? "text-[13px] font-medium tracking-[0.06em] capitalize text-center flex-1"
-                        : "text-[13px] font-medium tracking-wide text-zinc-300 capitalize text-center flex-1"
-                    }
-                    style={
-                      isCTV
-                        ? { color: CTV_INK }
-                        : isLuxury
-                          ? { color: WN_CHARCOAL }
-                          : undefined
-                    }
-                  >
-                    {monthTitle}
-                  </span>
-                  <button
-                    type="button"
-                    className={
-                      isLightPanel
-                        ? "flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-stone-200 bg-white text-stone-500 hover:bg-stone-50 hover:text-stone-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--book-accent)]/30"
-                        : "flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-white/55 hover:text-white hover:bg-white/[0.06] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white/25"
-                    }
-                    aria-label="Next dates"
-                    onClick={handleNextDates}
-                  >
-                    <ChevronRight />
-                  </button>
-                </div>
+            <DateTimeStep
+              isCTV={isCTV}
+              isLuxury={isLuxury}
+              isLightPanel={isLightPanel}
+              accent={accent}
+              monthTitle={monthTitle}
+              carouselPage={carouselPage}
+              weekDates={weekDates}
+              selectedDate={selectedDate}
+              availableSlots={availableSlots}
+              selectedTime={selectedTime}
+              panelItem={panelItem}
+              onPrevDates={handlePreviousDates}
+              onNextDates={handleNextDates}
+              onSelectDate={setSelectedDate}
+              onSelectTime={setSelectedTime}
+            />
 
-                <div
-                  className={isLuxury ? "relative -mx-1 px-1 py-1" : undefined}
-                >
-                  {isLuxury ? (
-                    <div
-                      className="pointer-events-none absolute inset-0 rounded-2xl opacity-90"
-                      aria-hidden
-                      style={{ background: WN_LILAC_SPOTLIGHT }}
-                    />
-                  ) : null}
-                  <div
-                    className={
-                      isLightPanel
-                        ? "relative flex gap-2 overflow-x-auto pb-0.5 [scrollbar-width:thin] [scrollbar-color:rgba(120,113,108,0.35)_transparent]"
-                        : "flex gap-2 overflow-x-auto pb-0.5 -mx-1 px-1 [scrollbar-width:thin] [scrollbar-color:rgba(255,255,255,0.2)_transparent]"
-                    }
-                  >
-                    {weekDates.map((day) => {
-                      const isSelected = selectedDate === day.iso;
-                      return (
-                        <button
-                          key={day.iso}
-                          type="button"
-                          onClick={() => setSelectedDate(day.iso)}
-                          data-testid={`book-day-${day.iso}`}
-                          className={`min-w-[4.75rem] shrink-0 rounded-xl px-2 py-2.5 text-center transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${
-                            isLuxury
-                              ? "focus-visible:ring-[#C5A059]/40 focus-visible:ring-offset-white"
-                              : isCTV
-                                ? "focus-visible:ring-[#B85C38]/40 focus-visible:ring-offset-white"
-                                : "focus-visible:ring-[color:var(--book-accent)]/50 focus-visible:ring-offset-0"
-                          } ${
-                            isSelected
-                              ? isLuxury
-                                ? "border-2 border-[#C5A059] bg-white text-[#333333] shadow-[0_8px_24px_-8px_rgba(200,160,255,0.35)]"
-                                : isCTV
-                                  ? "text-white shadow-md ring-1 ring-black/5"
-                                  : "text-white ring-1 ring-white/10"
-                              : isLightPanel
-                                ? "border border-stone-200 bg-white text-stone-800 hover:border-stone-300 hover:bg-stone-50/80"
-                                : "border border-white/[0.1] bg-white/[0.03] text-white/80 hover:bg-white/[0.06] hover:border-white/[0.14]"
-                          }`}
-                          style={
-                            isSelected && !isLuxury
-                              ? {
-                                  backgroundColor: accent,
-                                  boxShadow: isCTV
-                                    ? `0 8px 22px -6px ${accent}55`
-                                    : `0 0 0 1px ${accent}, 0 8px 24px -6px rgba(0,0,0,0.45)`,
-                                }
-                              : undefined
-                          }
-                        >
-                          <p
-                            className={`text-[9px] font-semibold uppercase tracking-[0.14em] ${
-                              isSelected
-                                ? isLuxury
-                                  ? "text-[#C5A059]"
-                                  : "text-white/90"
-                                : isLightPanel
-                                  ? "text-stone-500"
-                                  : "text-white/70"
-                            }`}
-                          >
-                            {day.dayLabel}
-                          </p>
-                          <p
-                            className={`text-[15px] font-semibold tabular-nums leading-tight mt-0.5 ${
-                              isLightPanel && (!isSelected || isLuxury)
-                                ? "text-stone-900"
-                                : ""
-                            }`}
-                          >
-                            {day.dateLabel}
-                          </p>
-                          <p
-                            className={`text-[9px] mt-1 font-normal ${
-                              isSelected
-                                ? isLuxury
-                                  ? "text-gray-500"
-                                  : "text-white/80"
-                                : isLightPanel
-                                  ? "text-stone-400"
-                                  : "text-white/50"
-                            }`}
-                          >
-                            {day.available ? "Libre" : "Ocupado"}
-                          </p>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Time slots */}
-            <motion.div
-              variants={panelItem}
-              className={
-                isLightPanel
-                  ? "px-4 sm:px-5 py-4 border-b border-stone-100"
-                  : "px-4 sm:px-5 py-4 border-b border-white/[0.06]"
-              }
-            >
-              <h2
-                className={
-                  isLightPanel
-                    ? "text-[11px] font-semibold uppercase tracking-[0.2em] mb-3"
-                    : "text-[11px] font-medium uppercase tracking-[0.16em] text-zinc-500 mb-3"
-                }
-                style={
-                  isCTV
-                    ? { color: CTV_MUTED }
-                    : isLuxury
-                      ? { color: WN_GOLD }
-                      : undefined
-                }
-              >
-                Horarios disponibles
-              </h2>
-              <div className="grid grid-cols-3 gap-2 sm:gap-2.5">
-                {availableSlots.map((slot) => {
-                  const isSelected = selectedTime === slot;
-                  return (
-                    <button
-                      key={slot}
-                      type="button"
-                      data-testid={`book-time-${slot}`}
-                      onClick={() => setSelectedTime(slot)}
-                      className={`rounded-xl border py-2.5 text-[12px] sm:text-[13px] font-semibold tabular-nums transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--book-accent)]/40 ${
-                        isLuxury
-                          ? isSelected
-                            ? "border-2 border-[#C5A059] bg-[#C5A059]/10 text-[#333333] shadow-sm"
-                            : "border border-[#C5A059]/45 bg-white text-[#333333] hover:bg-[#C5A059]/5 hover:border-[#C5A059]"
-                          : isCTV
-                            ? isSelected
-                              ? "border-transparent text-white shadow-md"
-                              : "border-stone-200 bg-white text-stone-800 hover:bg-stone-50 hover:border-stone-300"
-                            : isSelected
-                              ? "border-transparent text-white shadow-sm focus-visible:ring-offset-0"
-                              : "border-white/[0.1] bg-white/[0.03] text-white/88 hover:bg-white/[0.07] hover:border-white/[0.12] focus-visible:ring-offset-0"
-                      }`}
-                      style={
-                        isSelected && !isLuxury
-                          ? {
-                              backgroundColor: accent,
-                              boxShadow: isCTV
-                                ? `0 6px 18px -6px ${accent}66`
-                                : `inset 0 1px 0 0 rgba(255,255,255,0.12)`,
-                            }
-                          : undefined
-                      }
-                    >
-                      {formatSlotLabel(slot)}
-                    </button>
-                  );
-                })}
-              </div>
-            </motion.div>
-
-            {/* Summary + CTA */}
+            {/* Submit footer — kept inline to preserve panel stagger sequence (PR1). */}
             <motion.footer
               variants={panelItem}
               className={
@@ -761,177 +517,50 @@ export function BookCalendarClient({
         </motion.div>
 
         {showGuestFields ? (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              delay: 0.08,
-              duration: 0.3,
-              ease: [0.22, 1, 0.36, 1],
+          <CustomerConfirmStep
+            isCTV={isCTV}
+            isLuxury={isLuxury}
+            isLightPanel={isLightPanel}
+            inputClass={inputClass}
+            lightInputClass={lightInputClass}
+            customerName={customerName}
+            customerPhone={customerPhone}
+            customerEmail={customerEmail}
+            notes={notes}
+            customerMatches={customerMatches}
+            linkedCustomerId={linkedCustomerId}
+            errorMessage={errorMessage}
+            successMessage={successMessage}
+            onNameChange={(v) => {
+              setCustomerName(v);
+              setLinkedCustomerId(null);
             }}
-            className={
-              isLightPanel
-                ? "rounded-2xl border border-stone-200/90 bg-white p-5 sm:p-6 shadow-[0_16px_40px_-28px_rgba(160,130,180,0.12)]"
-                : "rounded-2xl border border-zinc-200 bg-white p-5 sm:p-6 shadow-sm"
-            }
-            data-testid="book-customer-fields"
-            style={
-              isCTV
-                ? { color: CTV_INK }
-                : isLuxury
-                  ? { color: WN_CHARCOAL }
-                  : undefined
-            }
-          >
-            <h3
-              className={
-                isLightPanel
-                  ? "mb-4 text-[11px] font-semibold uppercase tracking-[0.2em]"
-                  : "mb-4 text-[11px] font-semibold uppercase tracking-[0.14em] text-zinc-500"
+            onPhoneChange={setCustomerPhone}
+            onEmailChange={setCustomerEmail}
+            onNotesChange={setNotes}
+            onPickMatch={setLinkedCustomerId}
+            formatPhoneDisplay={formatPhoneDisplay}
+            phoneInputRef={(node) => {
+              if (!node) return;
+              const raw = node.value;
+              const digitsBefore = raw
+                .slice(0, node.selectionStart || 0)
+                .replace(/\D/g, "").length;
+              const formatted = formatPhoneDisplay(customerPhone);
+              if (raw !== formatted) {
+                let newPos = 0;
+                let count = 0;
+                for (let i = 0; i < formatted.length; i++) {
+                  if (/\d/.test(formatted[i])) count++;
+                  newPos = i + 1;
+                  if (count >= digitsBefore) break;
+                }
+                requestAnimationFrame(() => {
+                  node.setSelectionRange(newPos, newPos);
+                });
               }
-              style={
-                isCTV
-                  ? { color: CTV_MUTED }
-                  : isLuxury
-                    ? { color: WN_GOLD }
-                    : undefined
-              }
-            >
-              Tus datos
-            </h3>
-            {customerMatches.length > 0 ? (
-              <div
-                className="mb-4 rounded-xl border border-[#C5A059]/25 bg-[#C5A059]/5 p-3 space-y-2"
-                data-testid="book-customer-matches"
-              >
-                <p className="text-xs font-medium text-[#333333]">
-                  ¿Ya eres nuestra clienta? Selecciona tu perfil para vincular
-                  la cita:
-                </p>
-                {customerMatches.map((m) => (
-                  <button
-                    key={m.id}
-                    type="button"
-                    onClick={() =>
-                      setLinkedCustomerId(
-                        linkedCustomerId === m.id ? null : m.id,
-                      )
-                    }
-                    className={`w-full text-left px-3 py-2 rounded-lg border text-sm transition-colors ${
-                      linkedCustomerId === m.id
-                        ? "border-[#C5A059] bg-white ring-1 ring-[#C5A059]/40"
-                        : "border-gray-200 bg-white hover:border-[#C5A059]/40"
-                    }`}
-                  >
-                    <span className="font-medium text-[#333333]">{m.name}</span>
-                    {m.phone ? (
-                      <span className="block text-xs text-gray-500">
-                        {m.phone}
-                      </span>
-                    ) : null}
-                    <span className="text-[10px] text-gray-400">
-                      Coincide: {m.reasons.join(", ")}
-                    </span>
-                  </button>
-                ))}
-                <button
-                  type="button"
-                  onClick={() => setLinkedCustomerId(null)}
-                  className="text-xs text-gray-500 underline"
-                >
-                  Reservar como clienta nueva
-                </button>
-              </div>
-            ) : null}
-            <div className="grid sm:grid-cols-2 gap-3 sm:gap-4">
-              <input
-                type="text"
-                value={customerName}
-                onChange={(event) => {
-                  setCustomerName(event.target.value);
-                  setLinkedCustomerId(null);
-                }}
-                className={isLightPanel ? inputClass : lightInputClass}
-                placeholder="Nombre completo"
-                data-testid="book-customer-name"
-                required
-              />
-              <input
-                ref={(node) => {
-                  if (!node) return;
-                  // keep caret at logical digit position after format re-render
-                  const raw = node.value;
-                  const digitsBefore = raw
-                    .slice(0, node.selectionStart || 0)
-                    .replace(/\D/g, "").length;
-                  const formatted = formatPhoneDisplay(customerPhone);
-                  if (raw !== formatted) {
-                    let newPos = 0;
-                    let count = 0;
-                    for (let i = 0; i < formatted.length; i++) {
-                      if (/\d/.test(formatted[i])) count++;
-                      newPos = i + 1;
-                      if (count >= digitsBefore) break;
-                    }
-                    requestAnimationFrame(() => {
-                      node.setSelectionRange(newPos, newPos);
-                    });
-                  }
-                }}
-                type="tel"
-                inputMode="numeric"
-                value={formatPhoneDisplay(customerPhone)}
-                onChange={(event) => {
-                  const raw = event.target.value;
-                  const digits = raw.replace(/\D/g, "").slice(0, 15);
-                  setCustomerPhone(digits);
-                }}
-                className={isLightPanel ? inputClass : lightInputClass}
-                placeholder="Teléfono"
-                data-testid="book-customer-phone"
-                required
-              />
-              <input
-                type="email"
-                value={customerEmail}
-                onChange={(event) => {
-                  const email = event.target.value.toLowerCase().trimStart();
-                  setCustomerEmail(email);
-                }}
-                onBlur={() => {
-                  setCustomerEmail((prev) => prev.trim());
-                }}
-                className={isLightPanel ? inputClass : lightInputClass}
-                placeholder="Email (opcional)"
-                data-testid="book-customer-email"
-              />
-              <textarea
-                value={notes}
-                onChange={(event) => setNotes(event.target.value)}
-                className={`${isLightPanel ? inputClass : lightInputClass} resize-none`}
-                placeholder="Notas (opcional)"
-                data-testid="book-customer-notes"
-                rows={3}
-              />
-            </div>
-
-            {errorMessage ? (
-              <p
-                className={`text-sm mt-3 ${isCTV ? "text-red-700" : "text-red-400"}`}
-                data-testid="book-error"
-              >
-                {errorMessage}
-              </p>
-            ) : null}
-            {successMessage ? (
-              <p
-                className={`text-sm mt-3 ${isCTV ? "text-emerald-700" : "text-emerald-500"}`}
-                data-testid="book-success"
-              >
-                {successMessage}
-              </p>
-            ) : null}
-          </motion.div>
+            }}
+          />
         ) : (
           <>
             {errorMessage ? (

@@ -2,7 +2,7 @@
 name: spec
 description: Define a feature specification from a user story through an interactive assumption-refinement session. Use when the user says "/spec", "quiero definir una spec", "ayudame con una especificacion", or provides a user story to elaborate.
 metadata:
-  version: "1.1"
+  version: "1.3"
   language: es
 ---
 
@@ -101,13 +101,58 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
 
 Si git no está inicializado o no hay cambios → continuar sin error.
 
-## FASE 6 — Handoff
+## FASE 6 — Handoff y auto-continuacion
 
-Al terminar mostrar:
+**Regla absoluta: NO preguntar al usuario si continuar.** El usuario ya confirmó las
+asunciones en FASE 2 y refinó las que no le gustaron en FASE 3. La spec está completa y
+validada. Preguntar de nuevo es fricción innecesaria.
+
+### Anti-patrones (frases prohibidas en FASE 6)
+
+Estas frases rompen el default de autonomía. Si el agente las va a decir, debe detenerse
+y re-formular como acción directa en el mismo turno:
+
+- "¿Disparar /project-lead ahora?" → prohibido. Si FASE 4.7 cerró sin blockers, disparar.
+- "¿Story real ahora?" → prohibido. Si la spec terminó, el pipeline continúa solo.
+- "¿Continuar automático con el pipeline completo?" → prohibido. Es el default.
+- "¿Avanzar a Fase 5 / /test-spec / /project-lead?" → prohibido. Avance es default.
+- "Decisión te toca" sin gate humano obligatorio real → prohibido.
+- Mostrar 2+ opciones de pipeline (manual vs automático) → prohibido. Solo existe el
+  modo automático. El usuario puede pedir manual si lo quiere.
+
+### Acción default: disparar `/project-lead` automáticamente
+
+Si FASE 4.7 cerró SIN blockers, invocar inmediatamente el skill `project-lead` con la
+misma actividad como entrada. Project-lead Fase 0 leera los 3 artefactos del sprint folder,
+Fase 2 caera en caso 2 (`plan.md` con AC cerrados → `auto-implement`), Fase 3 leera
+`routing.md` sin recalcular, y el pipeline correra hasta estado final o blocker real.
+
+Mostrar UN solo bloque al terminar y disparar en el mismo turno:
+
 ```
 ✅ Especificacion funcional lista.
-Siguiente paso: ejecuta /test-spec usando esta especificacion como entrada.
+Disparando /project-lead automaticamente...
 ```
+
+### Excepciones — parar sin preguntar
+
+Solo detener el pipeline si (mostrar mensaje y no continuar):
+
+1. Git no inicializado (no se pudo hacer FASE 5 commit) → parar, informar.
+2. Usuario dijo "espera" / "para" / "no continues" en turno previo → respetar.
+3. Una asunción quedó marcada explícitamente como "decision de negocio pendiente"
+   en FASE 3 → parar con esa única pregunta explícita.
+4. FASE 4.7 cerró CON blockers (al menos 1 sin resolver tras 3 rondas) → parar con
+   estado `blocked`, listar blockers, no disparar pipeline.
+
+### No son excepciones (se ignoran y se continúa)
+
+- "No estoy seguro si el plan es bueno" → el pipeline tiene Fase 6 review, no es gate.
+- "Esto puede fallar en implementación" → responsabilidad del pipeline, no del user.
+- "El usuario quizás quiera revisar el plan" → si quiere, interrumpe con ESC.
+- "Implementación va a tardar mucho" → no es gate, task agent es async.
+- "Setup items pueden requerir config" → ejecutar lo automático, preguntar solo prod.
+
 Actualizar `.agents/memory/workflow-state.json`: `specStatus: "done"`, `currentStage: "test-spec"`.
 
 ## Notas

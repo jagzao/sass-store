@@ -152,6 +152,10 @@ export const CommonSchemas = {
   // UUID validation
   uuid: resultSchema(z.string().uuid()),
 
+  // STRY-021: Mexican mobile phone — exactly 10 digits after normalization.
+  // Backend must strip +52 / non-digits before validating.
+  phoneMX: resultSchema(z.string().regex(/^[0-9]{10}$/)),
+
   // Positive integer
   positiveInt: resultSchema(z.number().int().positive()),
 

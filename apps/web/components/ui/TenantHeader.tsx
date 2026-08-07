@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import TenantLogo from "@/components/ui/TenantLogo";
 import TenantNavigation from "@/components/ui/TenantNavigation";
+import { FeedbackHeaderButton } from "@/components/feedback/FeedbackHeaderButton";
 import UserMenu from "@/components/auth/UserMenu";
 import ThemeToggle from "@/components/theme/ThemeToggle";
 import { InstallAppHeaderButton } from "@/components/pwa/InstallAppButton";
@@ -70,13 +71,16 @@ export default function TenantHeader({
       <div
         className={`container mx-auto px-4 flex items-center justify-between ${isCentroTenistico ? "py-2" : ""} ${isPointerTransparent ? "pointer-events-auto" : ""}`}
       >
-        <TenantLogo
-          tenantSlug={tenantData.slug}
-          tenantName={tenantData.name}
-          primaryColor={tenantData.branding.primaryColor}
-          variant={effectiveVariant}
-          logoUrl={tenantData.branding.logoUrl || tenantData.branding.logo}
-        />
+        <div className="flex items-center gap-2">
+          <TenantLogo
+            tenantSlug={tenantData.slug}
+            tenantName={tenantData.name}
+            primaryColor={tenantData.branding.primaryColor}
+            variant={effectiveVariant}
+            logoUrl={tenantData.branding.logoUrl || tenantData.branding.logo}
+          />
+          <FeedbackHeaderButton variant={effectiveVariant} />
+        </div>
         <TenantNavigation
           tenantSlug={tenantData.slug}
           primaryColor={tenantData.branding.primaryColor}

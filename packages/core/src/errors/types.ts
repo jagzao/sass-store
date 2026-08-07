@@ -131,6 +131,43 @@ export interface CloneOperationError extends BaseDomainError {
   readonly target: string;
 }
 
+// STRY-021 — Booking domain specific errors
+export interface BookingSlotTakenError extends BaseDomainError {
+  readonly type: "BookingSlotTakenError";
+  readonly bookingId?: string;
+  readonly startTime?: string;
+}
+
+export interface InvalidPhoneError extends BaseDomainError {
+  readonly type: "InvalidPhoneError";
+  readonly field?: string;
+  readonly value?: string;
+}
+
+export interface RateLimitExceededError extends BaseDomainError {
+  readonly type: "RateLimitExceededError";
+  readonly limit: number;
+  readonly window: string;
+  readonly retryAfter?: number;
+  readonly reason?: "ip_limit_exceeded" | "phone_limit_exceeded";
+}
+
+export interface TenantNotBookingModeError extends BaseDomainError {
+  readonly type: "TenantNotBookingModeError";
+  readonly tenantSlug: string;
+  readonly mode: string;
+}
+
+export interface IdempotencyKeyMismatchError extends BaseDomainError {
+  readonly type: "IdempotencyKeyMismatchError";
+  readonly key: string;
+}
+
+export interface StaleMessageError extends BaseDomainError {
+  readonly type: "StaleMessageError";
+  readonly messageAgeSec?: number;
+}
+
 // Union type for all domain errors
 export type DomainError =
   | ValidationError
@@ -148,7 +185,13 @@ export type DomainError =
   | MatrixError
   | InvalidGranularityError
   | InvalidDateRangeError
-  | CloneOperationError;
+  | CloneOperationError
+  | BookingSlotTakenError
+  | InvalidPhoneError
+  | RateLimitExceededError
+  | TenantNotBookingModeError
+  | IdempotencyKeyMismatchError
+  | StaleMessageError;
 
 // Error factories for convenient creation
 export const ErrorFactories = {
@@ -366,6 +409,71 @@ export const ErrorFactories = {
     target,
     timestamp: new Date(),
   }),
+
+  // STRY-021 — Booking domain factories
+  bookingSlotTaken: (
+    message?: string,
+    bookingId?: string,
+    startTime?: string,
+  ): BookingSlotTakenError => ({
+    type: "BookingSlotTakenError",
+    message: message ?? "Booking slot already taken",
+    bookingId,
+    startTime,
+    timestamp: new Date(),
+  }),
+
+  invalidPhone: (
+    value?: string,
+    message?: string,
+    field?: string,
+  ): InvalidPhoneError => ({
+    type: "InvalidPhoneError",
+    message: message ?? "Invalid phone number",
+    field,
+    value,
+    timestamp: new Date(),
+  }),
+
+  rateLimitExceeded: (
+    limit: number,
+    window: string,
+    reason?: "ip_limit_exceeded" | "phone_limit_exceeded",
+    retryAfter?: number,
+  ): RateLimitExceededError => ({
+    type: "RateLimitExceededError",
+    message: `Rate limit exceeded: ${limit} requests per ${window}`,
+    limit,
+    window,
+    reason,
+    retryAfter,
+    timestamp: new Date(),
+  }),
+
+  tenantNotBookingMode: (
+    tenantSlug: string,
+    mode: string,
+  ): TenantNotBookingModeError => ({
+    type: "TenantNotBookingModeError",
+    message: `Tenant "${tenantSlug}" is not in booking mode (current: ${mode})`,
+    tenantSlug,
+    mode,
+    timestamp: new Date(),
+  }),
+
+  idempotencyKeyMismatch: (key: string): IdempotencyKeyMismatchError => ({
+    type: "IdempotencyKeyMismatchError",
+    message: "Idempotency key was issued to a different client",
+    key,
+    timestamp: new Date(),
+  }),
+
+  staleMessage: (messageAgeSec?: number): StaleMessageError => ({
+    type: "StaleMessageError",
+    message: "Message timestamp outside acceptable window",
+    messageAgeSec,
+    timestamp: new Date(),
+  }),
 };
 
 // Type guards for error types
@@ -405,6 +513,24 @@ export const ErrorTypeGuards = {
   ): error is InvalidDateRangeError => error.type === "InvalidDateRangeError",
   isCloneOperationError: (error: DomainError): error is CloneOperationError =>
     error.type === "CloneOperationError",
+  isBookingSlotTakenError: (
+    error: DomainError,
+  ): error is BookingSlotTakenError => error.type === "BookingSlotTakenError",
+  isInvalidPhoneError: (error: DomainError): error is InvalidPhoneError =>
+    error.type === "InvalidPhoneError",
+  isRateLimitExceededError: (
+    error: DomainError,
+  ): error is RateLimitExceededError => error.type === "RateLimitExceededError",
+  isTenantNotBookingModeError: (
+    error: DomainError,
+  ): error is TenantNotBookingModeError =>
+    error.type === "TenantNotBookingModeError",
+  isIdempotencyKeyMismatchError: (
+    error: DomainError,
+  ): error is IdempotencyKeyMismatchError =>
+    error.type === "IdempotencyKeyMismatchError",
+  isStaleMessageError: (error: DomainError): error is StaleMessageError =>
+    error.type === "StaleMessageError",
 };
 
 // Convert standard Error to DomainError
@@ -454,6 +580,18 @@ export const getHttpStatusCode = (error: DomainError): number => {
       return 402;
     case "TenantError":
       return 403;
+    case "BookingSlotTakenError":
+      return 409;
+    case "InvalidPhoneError":
+      return 400;
+    case "RateLimitExceededError":
+      return 429;
+    case "TenantNotBookingModeError":
+      return 422;
+    case "IdempotencyKeyMismatchError":
+      return 401;
+    case "StaleMessageError":
+      return 401;
     case "InvalidGranularityError":
     case "InvalidDateRangeError":
       return 400;

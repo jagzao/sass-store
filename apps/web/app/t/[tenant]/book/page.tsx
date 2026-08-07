@@ -7,7 +7,17 @@ import {
   CTV_PAGE_BG,
 } from "@/lib/design/centro-tenistico-brand";
 import { WN_PAGE_BG } from "@/lib/design/wondernails-brand";
+import { redirect } from "next/navigation";
 import { BookCalendarClient } from "./book-calendar-client";
+
+// SC-11: el check de mode debe ejecutarse en cada request, no servirse desde
+// cache ISR del layout padre. Sin esto, un tenant cambiado a catalog seguiría
+// sirviendo la página cacheada hasta el próximo revalidate (60s).
+// ponytail: en Next.js 16 con Turbopack el ISR del layout padre puede ignorar
+// force-dynamic del child; si se necesita garantía total, mover el check al
+// layout o quitar revalidate=60 global.
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 interface BookPageProps {
   params: Promise<{
@@ -20,6 +30,12 @@ type TenantServiceRow = TenantWithData["services"][number];
 export default async function BookPage({ params }: BookPageProps) {
   const resolvedParams = await params;
   const tenantData = await getTenantDataForPage(resolvedParams.tenant);
+
+  // SC-11: tenant sin modo "booking" → redirect a home con mensaje
+  if (tenantData.mode !== "booking") {
+    redirect(`/t/${resolvedParams.tenant}?no_booking=1`);
+  }
+
   const services = tenantData.services;
   const defaultStaffId = tenantData.staff[0]?.id;
 
