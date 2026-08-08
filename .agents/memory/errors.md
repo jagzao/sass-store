@@ -39,3 +39,27 @@
 - `./apps/web/lib/services/legalDocumentService.ts:2:1` Export `legalDocuments` doesn't exist (×2)
 **Impacto:** Build roto global, no introducido por STRY-029. UserMenu no tiene relación con estos imports.
 **Estado:** BLOQUEANTE PREEXISTENTE. No corregido en esta story para no ampliar alcance. Requiere sincronizar schema de DB con exports de `packages/database/schema.ts`.
+
+### 2026-08-05 — bugfix — Redirección de rutas tenant caía al login global `/auth/signin` en vez de `/t/{tenant}/login`
+**Síntoma:** visitar una ruta admin de tenant sin sesión (p. ej. `/t/wondernails/admin`) redirigía a `http://localhost:3003/auth/signin?callbackUrl=...` en lugar de `http://localhost:3003/t/wondernails/login?callbackUrl=...`.
+**Causa raíz:** varios guards usaban el login global de NextAuth (`/auth/signin` o `/api/auth/signin`) en vez del login del tenant actual:
+- `apps/web/app/t/[tenant]/admin/layout.tsx`
+- `apps/web/app/t/[tenant]/admin/quotes/page.tsx` y `[id]/page.tsx`
+- `apps/web/lib/auth/tenant-validation.ts` (errores de validación)
+- `apps/web/proxy.ts` (bloqueo de rutas `/t/*/admin` sin cookie)
+**Fix aplicado:** todos los puntos anteriores ahora construyen URL de login con prefijo `/t/{tenantSlug}` y conservan `callbackUrl`. El login global `/auth/signin` solo se usa para rutas sin contexto de tenant (`/admin` nativo).
+**Regresión:** `tests/e2e/auth/multi-tenant-admin-login.spec.ts` verifica que `/t/{tenant}/admin` sin sesión llega a `/t/{tenant}/login` para todos los tenants activos.
+**Estado:** RESUELTO.
+
+### 2026-08-07 — STRY-033 test-implementation — feedback-error-trigger no visible en /_test-error (preexistente)
+**Síntoma:** `tests/e2e/error-feedback-widget.spec.ts` — 2 casos fallan: `getByTestId("feedback-error-trigger")` timeout en `/_test-error` y `/t/{tenant}/_test-error`.
+**Verificación:** reproducido con `git stash` (código de STRY-033 fuera del working tree) — falla igual. No es una regresión introducida por el ícono de feedback en `TenantHeader`.
+**Estado:** NO CORREGIDO — fuera de alcance de STRY-033. Pendiente investigar por separado (posible cambio en `app/_test-error/page.tsx` o `FeedbackErrorTrigger` sin acompañar el test, o timing del boundary de error).
+
+### 2026-08-07 — bugfix (post STRY-034) — Hero carousel de wondernails: texto invisible/parpadeante al cargar
+**Síntoma:** el panel de texto del slide principal ("DESTACADO", título, topic, descripción, botón "VER MÁS") aparecía en blanco o borroso durante varios segundos al cargar `/t/wondernails`, tanto en local como en producción (Vercel). Reportado por el usuario con capturas de pantalla.
+**Reproducción:** con Playwright headed (`document.visibilityState`/`hasFocus` reales, no la tab de automatización de Chrome extension que da falsos negativos por estar en background) se confirmó vía polling de `getComputedStyle(title).opacity` cada 400ms: la opacidad subía a ~0.97, y luego CAÍA de vuelta a ~0.3 (con blur y translateY) antes de volver a subir a 1 varios segundos después — un reinicio de la animación de entrada, no una animación lenta.
+**Causa raíz:** `HeroWondernailsFinal.tsx` renderiza `defaultSlides` (placeholder) inmediatamente y dispara el stagger de entrada (`staggerMainText`, GSAP `fromTo opacity 0→1`). Cuando el fetch async de servicios/productos reales completa, `setSlides(mappedSlides)` reemplaza los slides — como el `key` de `CarouselItem` era `` `${slide.img}-${idx}` ``, y las imágenes reales difieren de las placeholder, React desmontaba y remontaba los nodos, y el `useLayoutEffect` (que dependía de `slides`) volvía a disparar el stagger desde `opacity:0` a mitad del primer ciclo — dejando el texto invisible/borroso durante el reinicio.
+**Fix:** (1) `key={idx}` en vez de `` key={`${slide.img}-${idx}`} `` — mantiene la identidad del nodo DOM al cambiar de placeholder a datos reales, así React actualiza el contenido in-place en vez de remontar. (2) Se quitó `slides` del array de dependencias del `useLayoutEffect` de inicialización — el stagger de entrada corre una sola vez al montar, no se repite cuando cambian los datos.
+**Test de regresión:** `tests/e2e/tenant/wondernails-hero-carousel.spec.ts` — verifica que la opacidad del título nunca regresa por debajo de 0.5 después de haber alcanzado ≥0.85 (detecta el patrón de reinicio), y que el título es visible (opacidad > 0.8) a los pocos segundos de cargar.
+**Estado:** RESUELTO. Verificado visualmente (screenshot) y con Playwright antes/después del fix.
