@@ -848,7 +848,12 @@ export default function WondernailsCarouselFinal({
     }, listRef);
 
     return () => ctx.revert();
-  }, [applyPositions, updateBackground, staggerMainText, slides]);
+    // Deliberately excludes `slides`: this entrance stagger should only play
+    // once on mount. Re-running it when the async featured-content fetch
+    // swaps placeholder slides for real data restarts the animation from
+    // opacity 0 mid-flight, leaving the hero text invisible/blurred for
+    // seconds (see .agents/memory/errors.md 2026-08-07 STRY-034 bugfix).
+  }, [applyPositions, updateBackground, staggerMainText]);
 
   // Autoplay effect
   useEffect(() => {
@@ -976,7 +981,11 @@ export default function WondernailsCarouselFinal({
         <div className={styles.list} ref={listRef} data-testid="carousel-list">
           {slides.map((slide, idx) => (
             <CarouselItem
-              key={`${slide.img}-${idx}`}
+              // Stable position-based key: keeps the DOM node identity when
+              // the async fetch swaps placeholder slides for real data, so
+              // React updates content in place instead of remounting (which
+              // would replay the entrance animation, see effect comment above).
+              key={idx}
               slide={slide}
               index={idx}
               onSeeMore={openDetail}

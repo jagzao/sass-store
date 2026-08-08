@@ -7,7 +7,8 @@ test.describe("Feature: Captura y enrutamiento de feedback", () => {
   }) => {
     await loginAsAdmin(page);
 
-    await page.goto("/t/wondernails");
+    // STRY-034: wondernails reemplazó el botón plano de feedback por Wonder.
+    await page.goto("/t/manada-juma");
     await page.getByRole("button", { name: "Abrir feedback" }).click();
     await page.getByRole("button", { name: "Opinión" }).click();
     await page
